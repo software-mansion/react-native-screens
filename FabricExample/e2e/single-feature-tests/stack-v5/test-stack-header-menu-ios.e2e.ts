@@ -2,79 +2,52 @@ import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
   dismissToast,
+  scrollToAndTap,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
-  CLASS_NAME_UI_LABEL,
-  CLASS_NAME_UI_MODERN_BAR_BUTTON,
-  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
-  CLASS_NAME_UI_CONTEXT_MENU_CELL,
-  CLASS_NAME_UI_IMAGE_VIEW,
-} from '../../native-class-names';
+import { CLASS_NAME_UI_LABEL } from '../../native-class-names';
 import { IosElementAttributes } from 'detox/detox';
+import {
+  checkmarkFor,
+  contextMenu,
+  dismissContextMenu,
+  menuRow,
+  menuRowIcon,
+  openContextMenu,
+} from '../../e2e-utils';
+import { headerItem } from '../../e2e-utils';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
-const menuOneBarButton = element(
-  by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON).and(by.label('Menu 1')),
-);
+const menuOneBarButton = headerItem('Menu 1', { control: true });
 
 const headerTitle = element(
   by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Menu')),
 );
 
-const contextMenu = element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
-
-function menuCell(itemLabel: string) {
-  return by
-    .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-    .and(by.label(itemLabel));
-}
-
-function checkmarkFor(itemLabel: string) {
-  return element(by.id('checkmark').withAncestor(menuCell(itemLabel)));
-}
-
-/** A menu row's SF Symbol, whose identifier is the symbol name. */
-function iconFor(iconId: string, itemLabel: string) {
-  return element(
-    by
-      .type(CLASS_NAME_UI_IMAGE_VIEW)
-      .and(by.id(iconId))
-      .withAncestor(menuCell(itemLabel)),
-  );
-}
-
-async function scrollTo(matcher: Detox.NativeMatcher) {
-  await waitFor(element(matcher))
-    .toBeVisible()
-    .whileElement(by.id(SCROLLVIEW_ID))
-    .scroll(200, 'down');
-}
+// Small steps keep a short picker row from being scrolled past; the Detox
+// default start point is kept.
+const SCROLL = {
+  scrollViewId: SCROLLVIEW_ID,
+  pixels: 200,
+  startPercentage: NaN,
+};
 
 /**
- * Opens the picker, taps the option, closes it again. Option ids
- * (`<label>-<option>`) repeat across both sections, so only one picker may be
- * open at a time.
+ * Option ids (`<label>-<option>`) repeat across both sections, so only one
+ * picker may be open at a time — `selectPickerOption` closes it again.
  */
-async function selectPickerOption(pickerId: string, optionId: string) {
-  await scrollTo(by.id(pickerId));
-  await element(by.id(pickerId)).tap();
-  await scrollTo(by.id(optionId));
-  await element(by.id(optionId)).tap();
-  await element(by.id(pickerId)).tap();
+async function setPicker(pickerId: string, label: string, option: string) {
+  await selectPickerOption({ pickerId, label, option }, SCROLL);
 }
 
 async function tapSendButton(buttonId: string) {
-  await scrollTo(by.id(buttonId));
-  await element(by.id(buttonId)).tap();
+  await scrollToAndTap(buttonId, SCROLL);
 }
 
 async function openMenuOne() {
-  await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
-  await menuOneBarButton.tap();
-  await waitFor(contextMenu).toBeVisible().withTimeout(2000);
+  await openContextMenu(menuOneBarButton);
 }
 
 /**
@@ -86,21 +59,7 @@ async function openTitleMenu() {
     (await headerTitle.getAttributes()) as IosElementAttributes;
   const { x, y, width, height } = titleAttributes.frame;
   await device.tap({ x: x + width / 2, y: y + height / 2 });
-  await waitFor(contextMenu).toBeVisible().withTimeout(2000);
-}
-
-/**
- * Taps the dimming layer to dismiss the menu. The menu is anchored to the
- * trailing bar button, so a point near the left edge never lands on it.
- */
-async function dismissMenu() {
-  const textAttributes = (await element(
-    by.text('setMenuOptions (Menu 1)'),
-  ).getAttributes()) as IosElementAttributes;
-  const x = textAttributes.frame.x;
-  const y = textAttributes.frame.y + textAttributes.frame.height / 2;
-  await device.tap({ x, y });
-  await waitFor(contextMenu).not.toExist().withTimeout(2000);
+  await waitFor(contextMenu()).toBeVisible().withTimeout(2000);
 }
 
 describeIfiOS('Stack Header Menu (iOS)', () => {
@@ -127,7 +86,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await expect(element(by.text('Toggle 1-3'))).toBeVisible();
       await expect(element(by.text('Submenu with Radio'))).toBeVisible();
 
-      await dismissMenu();
+      await dismissContextMenu();
     });
 
     it('should dismiss the menu and emit toast after tapping the action item "Action 1-1"', async () => {
@@ -135,7 +94,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Action 1-1')).tap();
       await dismissToast('1. Clicked Action 1-1');
 
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
     });
   });
 
@@ -145,10 +104,9 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Toggle 1-1')).tap();
       await dismissToast('1. Selected "toggle-1-1"');
 
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
 
-      await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
-      await menuOneBarButton.tap();
+      await openMenuOne();
 
       await expect(checkmarkFor('Toggle 1-1')).toBeVisible();
     });
@@ -157,10 +115,9 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Toggle 1-3')).tap();
       await dismissToast('1. Selected "toggle-1-1", "toggle-1-3"');
 
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
 
-      await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
-      await menuOneBarButton.tap();
+      await openMenuOne();
 
       await expect(checkmarkFor('Toggle 1-1')).toBeVisible();
       await expect(checkmarkFor('Toggle 1-3')).toBeVisible();
@@ -170,10 +127,9 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Toggle 1-1')).tap();
       await dismissToast('1. Selected "toggle-1-3"');
 
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
 
-      await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
-      await menuOneBarButton.tap();
+      await openMenuOne();
 
       await expect(checkmarkFor('Toggle 1-1')).not.toExist();
       await expect(checkmarkFor('Toggle 1-3')).toBeVisible();
@@ -192,10 +148,9 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await waitFor(
         element(by.label('1. Selected unique "radio-1-1"')),
       ).not.toBeVisible();
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
 
-      await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
-      await menuOneBarButton.tap();
+      await openMenuOne();
       await element(by.text('Submenu with Radio')).tap();
 
       await expect(checkmarkFor('Radio 1-1')).toBeVisible();
@@ -206,9 +161,8 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Radio 1-2')).tap();
       await dismissToast('1. Selected unique "radio-1-2"');
 
-      await expect(contextMenu).not.toExist();
-      await waitFor(menuOneBarButton).toBeVisible().withTimeout(2000);
-      await menuOneBarButton.tap();
+      await expect(contextMenu()).not.toExist();
+      await openMenuOne();
       await element(by.text('Submenu with Radio')).tap();
 
       await expect(checkmarkFor('Radio 1-1')).not.toExist();
@@ -221,7 +175,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
 
   describe('title menu', () => {
     it('should open a menu with both title actions when the header title is tapped', async () => {
-      await dismissMenu();
+      await dismissContextMenu();
 
       await openTitleMenu();
 
@@ -233,7 +187,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Title Action 1')).tap();
       await dismissToast('1. Clicked "Title Action 1"');
 
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
     });
 
     it('should dismiss the title menu and emit a toast after tapping "Title Action 2"', async () => {
@@ -241,7 +195,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
       await element(by.text('Title Action 2')).tap();
       await dismissToast('1. Clicked "Title Action 2"');
 
-      await expect(contextMenu).not.toExist();
+      await expect(contextMenu()).not.toExist();
     });
   });
 });
@@ -258,10 +212,7 @@ describeIfiOS(
     });
 
     it('should rename the targeted menu item', async () => {
-      await selectPickerOption(
-        'menu-item-options-title-picker',
-        'title-new title',
-      );
+      await setPicker('menu-item-options-title-picker', 'title', 'New Title');
       await tapSendButton('send-menu-item-options-button');
 
       await openMenuOne();
@@ -271,42 +222,31 @@ describeIfiOS(
     });
 
     it('should add an icon to the renamed item while keeping its title', async () => {
-      await expect(iconFor('star.fill', 'New Title')).not.toExist();
-      await dismissMenu();
+      await expect(menuRowIcon('star.fill', 'New Title')).not.toExist();
+      await dismissContextMenu();
 
-      await selectPickerOption(
-        'menu-item-options-title-picker',
-        'title-no change',
-      );
-      await selectPickerOption(
-        'menu-item-options-icon-picker',
-        'icon-star.fill',
-      );
+      await setPicker('menu-item-options-title-picker', 'title', 'no change');
+      await setPicker('menu-item-options-icon-picker', 'icon', 'star.fill');
       await tapSendButton('send-menu-item-options-button');
 
       await openMenuOne();
 
-      await expect(
-        element(
-          by
-            .label('New Title')
-            .and(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW))
-            .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL)),
-        ),
-      ).toBeVisible();
-      await expect(iconFor('star.fill', 'New Title')).toBeVisible();
+      await expect(menuRow('New Title', { actionsOnly: true })).toBeVisible();
+      await expect(menuRowIcon('star.fill', 'New Title')).toBeVisible();
     });
 
     it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true', async () => {
-      await dismissMenu();
+      await dismissContextMenu();
 
-      await selectPickerOption(
+      await setPicker(
         'menu-item-options-target-id-picker',
-        'target-id-toggle-1-1',
+        'target id',
+        'toggle-1-1',
       );
-      await selectPickerOption(
+      await setPicker(
         'menu-item-options-toggle-state-picker',
-        'togglestate-true',
+        'toggleState',
+        'true',
       );
       await tapSendButton('send-menu-item-options-button');
 
@@ -318,15 +258,17 @@ describeIfiOS(
     });
 
     it('should keep Radio 1-1 selected when deselecting it in a singleSelection submenu', async () => {
-      await dismissMenu();
+      await dismissContextMenu();
 
-      await selectPickerOption(
+      await setPicker(
         'menu-item-options-target-id-picker',
-        'target-id-radio-1-1',
+        'target id',
+        'radio-1-1',
       );
-      await selectPickerOption(
+      await setPicker(
         'menu-item-options-toggle-state-picker',
-        'togglestate-false',
+        'toggleState',
+        'false',
       );
       await tapSendButton('send-menu-item-options-button');
 
@@ -337,15 +279,17 @@ describeIfiOS(
     });
 
     it('should move the singleSelection checkmark from Radio 1-1 to Radio 1-2', async () => {
-      await dismissMenu();
+      await dismissContextMenu();
 
-      await selectPickerOption(
+      await setPicker(
         'menu-item-options-target-id-picker',
-        'target-id-radio-1-2',
+        'target id',
+        'radio-1-2',
       );
-      await selectPickerOption(
+      await setPicker(
         'menu-item-options-toggle-state-picker',
-        'togglestate-true',
+        'toggleState',
+        'true',
       );
       await tapSendButton('send-menu-item-options-button');
 
@@ -373,7 +317,7 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
   });
 
   it('should rename the targeted submenu', async () => {
-    await selectPickerOption('menu-options-title-picker', 'title-new title');
+    await setPicker('menu-options-title-picker', 'title', 'New Title');
     await tapSendButton('send-menu-options-button');
 
     await openMenuOne();
@@ -383,18 +327,18 @@ describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
   });
 
   it('should add an icon to the renamed submenu while keeping its title', async () => {
-    await expect(iconFor('bell.fill', 'New Title')).not.toExist();
-    await dismissMenu();
+    await expect(menuRowIcon('bell.fill', 'New Title')).not.toExist();
+    await dismissContextMenu();
 
-    await selectPickerOption('menu-options-title-picker', 'title-no change');
-    await selectPickerOption('menu-options-icon-picker', 'icon-bell.fill');
+    await setPicker('menu-options-title-picker', 'title', 'no change');
+    await setPicker('menu-options-icon-picker', 'icon', 'bell.fill');
     await tapSendButton('send-menu-options-button');
 
     await openMenuOne();
 
     await expect(element(by.text('New Title'))).toBeVisible();
-    await expect(iconFor('bell.fill', 'New Title')).toBeVisible();
+    await expect(menuRowIcon('bell.fill', 'New Title')).toBeVisible();
 
-    await dismissMenu();
+    await dismissContextMenu();
   });
 });

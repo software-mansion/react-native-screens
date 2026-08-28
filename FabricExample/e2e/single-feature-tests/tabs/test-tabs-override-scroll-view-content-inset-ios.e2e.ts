@@ -4,6 +4,7 @@ import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
   forceTapByLabeliOS,
+  getElementAttributes,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
@@ -34,21 +35,8 @@ async function getTabBarFrame(): Promise<{
   return (attrs as IosElementAttributes).frame;
 }
 
-async function getElementFrame(testID: string): Promise<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}> {
-  const attrs = await element(by.id(testID)).getAttributes();
-
-  if ('elements' in attrs) {
-    throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for testID: "${testID}".`,
-    );
-  }
-  return (attrs as IosElementAttributes).frame;
-}
+const getElementFrame = async (testID: string) =>
+  (await getElementAttributes({ by: 'id', value: testID })).frame;
 
 function isAboveTabBar(
   itemFrame: { y: number; height: number },

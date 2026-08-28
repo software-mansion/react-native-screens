@@ -55,6 +55,9 @@ export const CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW =
 
 export const CLASS_NAME_UI_CONTEXT_MENU_VIEW = '_UIContextMenuView';
 export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
+/** UIKit's full-screen "Dismiss context menu" overlay behind the platter. */
+export const CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW =
+  '_UIContextMenuPlatterTransitionView';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';

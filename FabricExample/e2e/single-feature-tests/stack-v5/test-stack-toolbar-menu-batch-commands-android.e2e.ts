@@ -1,7 +1,7 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import type { NativeMatcher } from 'detox/detox';
 import {
+  actionMenuItem,
   createOverflowMenuHelpers,
   describeIfAndroid,
   expectCheckBox,
@@ -12,7 +12,6 @@ import {
   scrollToAndTap,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '../../native-class-names';
 
 // Stateful walkthrough of scenario.md: the menu's checked state is cumulative
 // and the screen has no full reset, so each case starts where the previous one
@@ -27,11 +26,9 @@ const EVENT_TIMEOUT_MS = 3000;
 // Generous on purpose: a slow image download must not read as a failed batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
-// `by.label` matches the button in both its icon-only (title as content
-// description) and text form; the form is told apart by the rendered text.
-const appleToolbarButton: NativeMatcher = by
-  .label('Apple')
-  .and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
+// Matches the button in both its icon-only and text form; the form is told
+// apart by the rendered text.
+const appleToolbarButton = actionMenuItem('Apple');
 
 async function expectAppleNotInToolbar() {
   await expect(element(appleToolbarButton)).not.toExist();

@@ -24,10 +24,10 @@ function assertSupportedVersionString(
 
 function compareVersions(
   version: MajorVersion | MajorMinorVersion,
-  versionToCompare: MajorVersion | MajorMinorVersion,
+  minimumVersion: MajorVersion | MajorMinorVersion,
 ) {
   const [majorA, minorA = '0'] = version.split('.').map(Number);
-  const [majorB, minorB = '0'] = versionToCompare.split('.').map(Number);
+  const [majorB, minorB = '0'] = minimumVersion.split('.').map(Number);
   if (majorA !== majorB) {
     return majorA - majorB;
   } else {
@@ -35,12 +35,13 @@ function compareVersions(
   }
 }
 
+/** `true` when `version` is at least `minimumVersion`. */
 export default function isVersionEqualOrHigherThan(
-  first: string,
-  second: string,
+  version: string,
+  minimumVersion: string,
 ) {
-  assertSupportedVersionString(first);
-  assertSupportedVersionString(second);
+  assertSupportedVersionString(version);
+  assertSupportedVersionString(minimumVersion);
 
-  return compareVersions(first, second) >= 0;
+  return compareVersions(version, minimumVersion) >= 0;
 }

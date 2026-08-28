@@ -1,4 +1,5 @@
-import { device, expect, element, by } from 'detox';
+import { expect as jestExpect } from '@jest/globals';
+import { device, expect, element, by, waitFor } from 'detox';
 import {
   AndroidElementAttributes,
   IosElementAttributes,
@@ -6,13 +7,28 @@ import {
 } from 'detox/detox';
 import isVersionEqualOrHigherThan from './helpers/isVersionEqualOrHigherThan';
 import {
+  CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
   CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
   CLASS_NAME_ANDROID_RADIO_BUTTON,
+  CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
+  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
+  CLASS_NAME_UI_CONTEXT_MENU_CELL,
+  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
+  CLASS_NAME_UI_IMAGE_VIEW,
+  CLASS_NAME_UI_MODERN_BAR_BUTTON,
+  CLASS_NAME_UI_TAB_BAR,
 } from './native-class-names';
 
 const { getIOSVersionNumber } = require('../../scripts/e2e/ios-devices.js');
+
+/** Default for waits Detox's idle sync already mostly covers. */
+const DEFAULT_TIMEOUT_MS = 3000;
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
@@ -21,10 +37,8 @@ export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
 /**
- * Detox exposes no runtime UIUserInterfaceIdiom query, so the idiom is inferred
- * from the simulator name requested via `RNS_APPLE_SIM_NAME` (see
- * scripts/e2e/ios-devices.js). iPad-only suites self-skip on the default iPhone
- * run and execute only with e.g. RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)".
+ * Inferred from `RNS_APPLE_SIM_NAME` (Detox has no idiom query), e.g.
+ * RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)". See scripts/e2e/ios-devices.js.
  */
 export const isIPadTarget =
   device.getPlatform() === 'ios' &&
@@ -32,11 +46,7 @@ export const isIPadTarget =
 
 export const describeIfiPad = isIPadTarget ? describe : describe.skip;
 
-/**
- * True when running on iOS at `version` or newer. Use it to pick between the
- * legacy and iOS 26 variants of the private UIKit class names in
- * ./native-class-names.
- */
+/** `true` on iOS at `version` or newer; `false` on Android. */
 export function isIOSVersionAtLeast(version: string): boolean {
   return (
     device.getPlatform() === 'ios' &&
@@ -44,11 +54,7 @@ export function isIOSVersionAtLeast(version: string): boolean {
   );
 }
 
-/**
- * Suites for iOS 26+ only features (e.g. `bottomAccessory`, the header overflow
- * button). `isIOSVersionAtLeast` is false on Android, so these stay iOS-only
- * and additionally self-skip on iOS 18 and older.
- */
+/** Suites for iOS 26+ only features; skipped on Android and older iOS. */
 export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
   ? describe
   : describe.skip;
@@ -61,27 +67,40 @@ export type ScrollOptions = {
   pixels?: number;
   /** Swipe start, as a fraction of height. `NaN` leaves it to Detox. */
   startPercentage?: number;
+  /** Scroll direction; `whileElement` only ever scrolls one way. */
+  direction?: 'up' | 'down';
 };
 
+/** A `testID`, or any matcher for targets that carry no `testID`. */
+export type ScrollTarget = string | NativeMatcher;
+
+function toMatcher(target: ScrollTarget): NativeMatcher {
+  return typeof target === 'string' ? by.id(target) : target;
+}
+
 export async function scrollUntilVisible(
-  id: string,
+  target: ScrollTarget,
   scrollViewId: string,
-  { pixels = 600, startPercentage = 0.85 }: ScrollOptions = {},
+  {
+    pixels = 600,
+    startPercentage = 0.85,
+    direction = 'down',
+  }: ScrollOptions = {},
 ) {
-  await waitFor(element(by.id(id)))
+  await waitFor(element(toMatcher(target)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(pixels, 'down', Number.NaN, startPercentage);
+    .scroll(pixels, direction, Number.NaN, startPercentage);
 }
 
 /** Rewinds to the top first — `whileElement` only scrolls one way. */
 export async function rewindAndScrollUntilVisible(
-  id: string,
+  target: ScrollTarget,
   scrollViewId: string,
   options: ScrollOptions = {},
 ) {
   await element(by.id(scrollViewId)).scrollTo('top');
-  await scrollUntilVisible(id, scrollViewId, options);
+  await scrollUntilVisible(target, scrollViewId, options);
 }
 
 export async function selectIssueTestScreen(screenName: string) {
@@ -108,67 +127,49 @@ export async function selectIssueTestScreen(screenName: string) {
   await element(by.id(`issue-tests-${screenName}`)).tap();
 }
 
-export async function selectComponentIntegrationTestsScreen(
+/** Root → `section` list → `scenarioGroup` list → `screenKey`. */
+async function selectTestsScreen(
+  section: 'single-feature-tests' | 'component-integration-tests',
   scenarioGroup: string,
   screenKey: string,
 ) {
   const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
-  await scrollUntilVisible(
-    'root-screen-component-integration-tests',
+  const sectionScrollView = `${section}-scrollview`;
+  const groupScrollView = `${scenarioGroupId}-scenarios-scrollview`;
+
+  await scrollToAndTapInList(
+    `root-screen-${section}`,
     'root-screen-examples-scrollview',
   );
-  await element(by.id('root-screen-component-integration-tests')).tap();
-
-  await waitFor(element(by.id('component-integration-tests-scrollview')))
+  await waitFor(element(by.id(sectionScrollView)))
     .toBeVisible()
-    .withTimeout(3000);
+    .withTimeout(DEFAULT_TIMEOUT_MS);
 
-  await scrollUntilVisible(
-    `component-integration-tests-${scenarioGroupId}`,
-    'component-integration-tests-scrollview',
+  await scrollToAndTapInList(
+    `${section}-${scenarioGroupId}`,
+    sectionScrollView,
   );
-
-  await element(by.id(`component-integration-tests-${scenarioGroupId}`)).tap();
-  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
+  await waitFor(element(by.id(groupScrollView)))
     .toBeVisible()
-    .withTimeout(3000);
+    .withTimeout(DEFAULT_TIMEOUT_MS);
 
-  await scrollUntilVisible(
-    `${screenKey}`,
-    `${scenarioGroupId}-scenarios-scrollview`,
-  );
-  await element(by.id(`${screenKey}`)).tap();
+  await scrollToAndTapInList(screenKey, groupScrollView);
 }
 
-export async function selectSingleFeatureTestsScreen(
+async function scrollToAndTapInList(id: string, scrollViewId: string) {
+  await scrollUntilVisible(id, scrollViewId);
+  await element(by.id(id)).tap();
+}
+
+export const selectSingleFeatureTestsScreen = (
   scenarioGroup: string,
   screenKey: string,
-) {
-  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
-  await scrollUntilVisible(
-    'root-screen-single-feature-tests',
-    'root-screen-examples-scrollview',
-  );
-  await element(by.id('root-screen-single-feature-tests')).tap();
-  await waitFor(element(by.id('single-feature-tests-scrollview')))
-    .toBeVisible()
-    .withTimeout(3000);
+) => selectTestsScreen('single-feature-tests', scenarioGroup, screenKey);
 
-  await scrollUntilVisible(
-    `single-feature-tests-${scenarioGroupId}`,
-    'single-feature-tests-scrollview',
-  );
-  await element(by.id(`single-feature-tests-${scenarioGroupId}`)).tap();
-  await waitFor(element(by.id(`${scenarioGroupId}-scenarios-scrollview`)))
-    .toBeVisible()
-    .withTimeout(3000);
-
-  await scrollUntilVisible(
-    `${screenKey}`,
-    `${scenarioGroupId}-scenarios-scrollview`,
-  );
-  await element(by.id(`${screenKey}`)).tap();
-}
+export const selectComponentIntegrationTestsScreen = (
+  scenarioGroup: string,
+  screenKey: string,
+) => selectTestsScreen('component-integration-tests', scenarioGroup, screenKey);
 
 /** @see apps/src/shared/SettingsPicker.tsx — derives option `testID`s. */
 export function pickerOptionId(pickerLabel: string, option: string): string {
@@ -194,37 +195,57 @@ type PickerSelection = {
 };
 
 /**
- * Closes the picker again: its option rows stay in the hierarchy while open and
- * would collide with the `by.text` matchers used for native popups.
- *
- * Returns early when the picker already shows `option`. The check reads the same
- * line the closing assertion checks, and `getAttributes` has no visibility
- * constraint, so an already-set picker costs one read and no gesture at all.
- * It assumes the picker is collapsed — true unless an earlier call threw partway,
- * which fails its own test first.
+ * Sets a picker to `option` and closes it (open option rows collide with the
+ * `by.text` popup matchers). No-op when it already shows `option`. Omit
+ * `control` for pickers outside a scroll view — they are tapped in place.
  */
 export async function selectPickerOption(
   { pickerId, label, option }: PickerSelection,
-  { scrollViewId, ...scroll }: SettingsControlOptions,
+  control?: SettingsControlOptions,
 ) {
   const expected = `${label}: ${option}`;
 
-  if ((await getTopmostMatch(by.id(pickerId))).text === expected) {
+  const current = await getTopmostMatch(by.id(pickerId));
+  if ((current.text ?? current.label) === expected) {
     return;
   }
 
-  const control = { scrollViewId, ...scroll };
-  await scrollToAndTap(pickerId, control);
-  await scrollToAndTap(pickerOptionId(label, option), control);
-  await scrollToAndTap(pickerId, control);
+  const tap = async (id: string) => {
+    if (control) {
+      await scrollToAndTap(id, control);
+    } else {
+      await element(by.id(id)).tap();
+    }
+  };
 
-  await expect(element(by.id(pickerId))).toHaveText(expected);
+  await tap(pickerId);
+  await tap(pickerOptionId(label, option));
+  await tap(pickerId);
+
+  await expectPickerValue(pickerId, expected);
+}
+
+/** The value is an RN `Text`: `text` on Android, `label` on iOS. */
+async function expectPickerValue(pickerId: string, expected: string) {
+  if (device.getPlatform() === 'ios') {
+    await expect(element(by.id(pickerId))).toHaveLabel(expected);
+  } else {
+    await expect(element(by.id(pickerId))).toHaveText(expected);
+  }
 }
 
 /** `to` is the state expected afterwards — a swallowed tap fails here. Omit
  * `control` on screens whose switches sit outside any scroll view. */
+type SwitchToggle = {
+  switchId: string;
+  /** The switch's `label` prop. */
+  label: string;
+  /** The state expected after the tap. */
+  to: boolean;
+};
+
 export async function toggleSettingsSwitch(
-  { switchId, label, to }: { switchId: string; label: string; to: boolean },
+  { switchId, label, to }: SwitchToggle,
   control?: SettingsControlOptions,
 ) {
   if (control) {
@@ -234,6 +255,17 @@ export async function toggleSettingsSwitch(
   await element(by.id(switchId)).tap();
 
   await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
+}
+
+/** Asserts the toolbar-menu screens' `Last clicked: <id>` line. */
+export async function expectLastClicked(
+  id: string,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  await rewindAndScrollUntilVisible('last-clicked-text', scrollViewId, scroll);
+  await expect(element(by.id('last-clicked-text'))).toHaveText(
+    `Last clicked: ${id}`,
+  );
 }
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
@@ -262,11 +294,7 @@ function resolveMatcher({ by: matcher, value }: ElementMatcher) {
   }
 }
 
-/**
- * Attributes of a single element on either platform. Cast to
- * `IosElementAttributes` / `AndroidElementAttributes` at the call site for
- * platform-specific fields.
- */
+/** Attributes of exactly one element; throws on an ambiguous match. */
 export async function getElementAttributes(
   matcher: ElementMatcher,
 ): Promise<ElementAttributes> {
@@ -285,20 +313,21 @@ export async function getElementAttributes(
 
   return attrs as ElementAttributes;
 }
-/**
- * Coordinate-based tap on iOS, bypassing Detox's visibility checks so an
- * element obstructed by other UI layers can still be hit.
- */
+
+type Frame = ElementAttributes['frame'];
+
+/** Coordinate tap at (`xFraction`, 1/2) of `frame`, bypassing visibility checks. */
+async function tapWithinFrame({ x, y, width, height }: Frame, xFraction = 0.5) {
+  await device.tap({ x: x + width * xFraction, y: y + height / 2 });
+}
+
+/** Coordinate tap (iOS) — bypasses Detox's visibility check. */
 export async function forceTapByLabeliOS(testLabel: string) {
-  const elementAttributes = await getElementAttributes({
+  const { frame } = await getElementAttributes({
     by: 'label',
     value: testLabel,
   });
-  const { x, y, width, height } = elementAttributes.frame;
-  await device.tap({
-    x: x + width / 2,
-    y: y + height / 2,
-  });
+  await tapWithinFrame(frame);
 }
 
 export async function forceSelectTabByLabel(label: string) {
@@ -309,10 +338,37 @@ export async function forceSelectTabByLabel(label: string) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// iOS 26 tab bar bottom accessory
+// ---------------------------------------------------------------------------
+
+/** The accessory host view; a single match is asserted by `getElementAttributes`. */
+export const getBottomAccessoryAttributes = () =>
+  getElementAttributes({
+    by: 'type',
+    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
+  }) as Promise<IosElementAttributes>;
+
+/** The `UITabBar`; a single match is asserted by `getElementAttributes`. */
+export const getTabBarAttributes = () =>
+  getElementAttributes({
+    by: 'type',
+    value: CLASS_NAME_UI_TAB_BAR,
+  }) as Promise<IosElementAttributes>;
+
+/** Asserts the accessory sits above the tab bar (iPhone "extended" layout). */
+export async function expectBottomAccessoryAboveTabBar() {
+  const bottomAccessory = await getBottomAccessoryAttributes();
+  const tabBar = await getTabBarAttributes();
+  jestExpect(tabBar.frame.y).toBeGreaterThan(
+    bottomAccessory.frame.y + bottomAccessory.frame.height,
+  );
+}
+
 export async function dismissToast(message: string) {
   await waitFor(element(by.label(message)))
     .toBeVisible()
-    .withTimeout(3000);
+    .withTimeout(DEFAULT_TIMEOUT_MS);
   await element(by.label(message)).tap();
 }
 
@@ -338,9 +394,8 @@ type MatchOptions = {
 };
 
 /**
- * Every element matching `matcher`, normalizing `getAttributes()`'s single- and
- * multi-element shapes into one array ordered by view hierarchy (topmost
- * stacked screen last). Throws on no match, so a crash is not read as "found 0".
+ * All matches as one array (topmost stacked screen last). Throws on no match
+ * unless `orEmpty`, so a crashed app is not read as "found 0".
  */
 export async function getMatches(
   matcher: NativeMatcher,
@@ -373,22 +428,14 @@ export async function getTopmostMatch(
   return matches[matches.length - 1];
 }
 
-/**
- * Taps `matcher`'s last match — the topmost stacked screen's copy. Pass a
- * freshly built matcher: on Android `atIndex` rewrites it in place, so a reused
- * one stays pinned to the index tapped here.
- */
+/** Taps the last match (topmost stacked screen). Pass a fresh matcher: `atIndex` mutates it on Android. */
 export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   await element(matcher)
     .atIndex((await countMatches(matcher)) - 1)
     .tap();
 }
 
-/**
- * Only "nothing matched yet" / "not visible yet" are worth retrying. Anything
- * else — a crashed app, a lost session, a bad matcher — must surface as itself,
- * not as a settle timeout.
- */
+/** Only "no match yet" / "not visible yet" are worth retrying. */
 function isTransientMatchError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return (
@@ -398,15 +445,9 @@ function isTransientMatchError(error: unknown): boolean {
 }
 
 /**
- * Asserts the last match of `buildMatcher()` — the topmost stacked screen's
- * copy — is visible. Indexed because a bare `toBeVisible()` throws once several
- * screens are attached; polled because header chrome can lag the content.
- *
- * Pass a factory, not a matcher: on Android `atIndex` rewrites one in place, so
- * a reused matcher would pin later polls to the first attempt's index, where a
- * now-buried view still reads as visible and would pass falsely.
- *
- * Only for elements expected to be present — absence burns the full timeout.
+ * Polls until the last match of `buildMatcher()` (the topmost stacked screen's
+ * copy) is visible. Takes a factory: on Android `atIndex` mutates the matcher,
+ * so a reused one would stay pinned to the first poll's index.
  */
 export async function expectTopmostVisible(
   buildMatcher: () => NativeMatcher,
@@ -450,15 +491,12 @@ type WaitUntilOptions = {
 };
 
 /**
- * Polls `predicate` until it resolves `true`, or fails once `timeout` elapses.
- * Prefer Detox's `waitFor(...).withTimeout(...)`, which syncs with the app
- * instead of sampling it; this is for conditions it cannot express — notably
- * anything about the match *set*, since on Android `waitFor` retries natively
- * against a single view and a transient ambiguous match is terminal.
+ * Polls `predicate` until `true` or `timeout`. Prefer Detox's `waitFor`; use
+ * this only for conditions it cannot express, e.g. match counts.
  */
 export async function waitUntil(
   predicate: () => Promise<boolean>,
-  { timeout = 3000, interval = 100, message }: WaitUntilOptions,
+  { timeout = DEFAULT_TIMEOUT_MS, interval = 100, message }: WaitUntilOptions,
 ): Promise<void> {
   const deadline = Date.now() + timeout;
 
@@ -490,10 +528,13 @@ export const MENU_ANIMATION_TIMEOUT_MS = 5000;
 export const MENU_PRESENCE_TIMEOUT_MS = 250;
 
 /** The accessibility label AppCompat gives the overflow button. */
-const OVERFLOW_MENU_LABEL = 'More options';
+export const OVERFLOW_MENU_LABEL = 'More options';
 
-export const overflowMenu = () =>
-  element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
+/** The popup hosting the overflow menu (or, once opened, a submenu). */
+export const overflowMenuMatcher = (): NativeMatcher =>
+  by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW);
+
+export const overflowMenu = () => element(overflowMenuMatcher());
 
 /**
  * A multi-toggle group renders check boxes and a single-selection one radio
@@ -517,10 +558,47 @@ export function menuItemToggle(
 }
 
 /**
- * Asserts `title`'s row hosts a check box (a multi-toggle group) — the sibling
- * widget is asserted absent so a mismatched group type fails loudly instead of
- * matching nothing.
+ * The visible image view in `title`'s row — divider, submenu arrow or icon;
+ * they share one class and Detox cannot tell them apart by resource id.
  */
+export function menuItemImage(title: string): NativeMatcher {
+  return by
+    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
+    .withAncestor(menuItemRow(title));
+}
+
+/** `title` inside the focused popup (row title or submenu header). */
+export function overflowMenuText(title: string): NativeMatcher {
+  return by.text(title).withAncestor(overflowMenuMatcher());
+}
+
+/**
+ * A toolbar action button, matched by label in both forms; icon-only buttons
+ * have empty text, text buttons show `title`.
+ */
+export function actionMenuItem(title: string): NativeMatcher {
+  return by.label(title).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
+}
+
+/** Asserts the open popup lists `titles` top to bottom in this order. */
+export async function expectOverflowMenuOrder(
+  titles: readonly string[],
+): Promise<void> {
+  const rows: { title: string; top: number }[] = [];
+
+  for (const title of titles) {
+    const matches = await getMatches(overflowMenuText(title));
+    if (matches.length !== 1) {
+      throw new Error(`Expected a single menu row titled "${title}".`);
+    }
+    rows.push({ title, top: matches[0].frame.y });
+  }
+
+  const topToBottom = [...rows].sort((a, b) => a.top - b.top).map(r => r.title);
+  jestExpect(topToBottom).toEqual([...titles]);
+}
+
+/** Asserts `title`'s row hosts a check box (multi-toggle group), not a radio. */
 export async function expectCheckBox(title: string, checked: boolean) {
   await expect(
     element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
@@ -571,10 +649,7 @@ export type OverflowMenuControl = {
   maxMenuDepth?: number;
 };
 
-/**
- * The helpers that depend on the screen behind the popup, bound to one spec's
- * scroll view.
- */
+/** Overflow-menu helpers bound to one spec's scroll view. */
 export function createOverflowMenuHelpers({
   scrollViewId,
   maxMenuDepth = 3,
@@ -647,5 +722,172 @@ export function createOverflowMenuHelpers({
     await closingMenuAfter(assertions);
   };
 
-  return { waitForScreen, closeMenuIfOpen, closingMenuAfter, withOverflowMenu };
+  const waitForMenuItem = async (title: string) => {
+    await waitFor(element(overflowMenuText(title)))
+      .toBeVisible()
+      .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+  };
+
+  /** Taps `title` in the open popup and waits for the popup to go away. */
+  const tapMenuItem = async (title: string) => {
+    await waitForMenuItem(title);
+    await element(overflowMenuText(title)).tap();
+    await waitFor(element(overflowMenuText(title)))
+      .not.toExist()
+      .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+    await waitForScreen();
+  };
+
+  return {
+    waitForScreen,
+    closeMenuIfOpen,
+    closingMenuAfter,
+    withOverflowMenu,
+    waitForMenuItem,
+    tapMenuItem,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// iOS Stack v5 header items (UIBarButtonItem)
+// ---------------------------------------------------------------------------
+
+export type HeaderItemOptions = {
+  /**
+   * Match the inner control (`_UIModernBarButton`) instead of the item
+   * container (`_UIButtonBarButton`). Both carry the title as their label.
+   */
+  control?: boolean;
+};
+
+/** A title-only header item, addressed by its visible title. */
+export function headerItem(
+  title: string,
+  { control = false }: HeaderItemOptions = {},
+) {
+  return element(
+    by
+      .type(
+        control
+          ? CLASS_NAME_UI_MODERN_BAR_BUTTON
+          : CLASS_NAME_UI_BUTTON_BAR_BUTTON,
+      )
+      .and(by.label(title)),
+  );
+}
+
+/** A header item's icon, by icon id (SF Symbol name or asset path). */
+export function barButtonIcon(iconId: string) {
+  return element(
+    by.id(iconId).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// iOS context menu (UIMenu presented from a header item or the title)
+// ---------------------------------------------------------------------------
+
+/**
+ * Detox's idle sync does not cover the menu's present/dismiss animation, so
+ * waits that straddle it must be explicit.
+ */
+export const CONTEXT_MENU_ANIMATION_TIMEOUT_MS = 2000;
+
+/** The list hosting the rows of the presented menu (or submenu). */
+export const contextMenu = () =>
+  element(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW));
+
+export type MenuRowOptions = {
+  /**
+   * Restrict to selectable rows (those inside a `_UIContextMenuCell`). This
+   * excludes a submenu's pinned title/back row, which shares the label of the
+   * submenu's first entry when that item also has an `onPress`.
+   */
+  actionsOnly?: boolean;
+};
+
+/** Matcher for a row of a presented menu, addressed by its visible label. */
+export function menuRowMatcher(
+  title: string,
+  { actionsOnly = false }: MenuRowOptions = {},
+): NativeMatcher {
+  const row = by
+    .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
+    .and(by.label(title));
+  return actionsOnly
+    ? row.withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_CELL))
+    : row;
+}
+
+/** A row of a presented menu, addressed by its visible label. */
+export function menuRow(title: string, options?: MenuRowOptions) {
+  return element(menuRowMatcher(title, options));
+}
+
+/** A submenu's pinned title row — its own class, not a menu row. */
+export function submenuTitleRow(title: string) {
+  return element(
+    by
+      .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
+      .and(by.label(title))
+      .withAncestor(by.type(CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW)),
+  );
+}
+
+/** The checkmark of a checked toggle / singleSelection row. */
+export function checkmarkFor(title: string) {
+  return element(by.id('checkmark').withAncestor(menuRowMatcher(title)));
+}
+
+/** The submenu chevron; absent on inlined submenus. */
+export function chevronFor(title: string) {
+  return element(by.id('chevron.forward').withAncestor(menuRowMatcher(title)));
+}
+
+/** A menu row's icon by icon id; addressed by row title, since parent rows stay attached under a submenu. */
+export function menuRowIcon(iconId: string, title: string) {
+  return element(
+    by
+      .type(CLASS_NAME_UI_IMAGE_VIEW)
+      .and(by.id(iconId))
+      .withAncestor(menuRowMatcher(title)),
+  );
+}
+
+export type OpenContextMenuOptions = {
+  /** `longPress` for an item that also has an `onPress` — a tap fires that. */
+  gesture?: 'tap' | 'longPress';
+  timeout?: number;
+};
+
+/** Opens the menu attached to `anchor` and waits for it to present. */
+export async function openContextMenu(
+  anchor: Detox.NativeElement,
+  {
+    gesture = 'tap',
+    timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+  }: OpenContextMenuOptions = {},
+) {
+  await waitFor(anchor).toBeVisible().withTimeout(timeout);
+  if (gesture === 'longPress') {
+    await anchor.longPress();
+  } else {
+    await anchor.tap();
+  }
+  await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
+}
+
+/**
+ * Dismisses the menu at any submenu depth by tapping UIKit's dismiss overlay
+ * near its leading edge (a tap on the menu itself only pops one level).
+ */
+export async function dismissContextMenu(
+  timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+) {
+  const { frame } = await getElementAttributes({
+    by: 'type',
+    value: CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW,
+  });
+  await tapWithinFrame(frame, 0.1);
+  await waitFor(contextMenu()).not.toExist().withTimeout(timeout);
 }

@@ -1,17 +1,18 @@
-import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import {
+  actionMenuItem,
+  createOverflowMenuHelpers,
   describeIfAndroid,
-  rewindAndScrollUntilVisible,
+  expectLastClicked as expectLastClickedText,
+  expectOverflowMenuOrder,
+  menuItemImage,
+  openOverflowMenu,
+  OVERFLOW_MENU_LABEL,
+  overflowMenuText,
+  scrollToAndTap,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
-  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
-  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
-  CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
-} from '../../native-class-names';
 // Typed from the screen, so a rename there fails type-checking here.
 import type {
   CmdIconOption,
@@ -33,13 +34,6 @@ const HEADER_TITLE: HeaderTitle = 'Show As Action Test';
 // enough not to carry a short picker option row past the viewport.
 const SCROLL_STEP = { pixels: 300 };
 
-// Detox's idle sync does not cover popup animations, so waits that straddle the
-// menu opening or dismissing must be explicit.
-const MENU_ANIMATION_TIMEOUT = 2000;
-
-// Probes an already-settled popup: by then it is either up or was never opened.
-const MENU_PRESENCE_TIMEOUT = 250;
-
 // A `showAsAction` change re-inflates the action menu, and a rotation does it
 // from a configuration change, so the toolbar can lag the assertion.
 const TOOLBAR_UPDATE_TIMEOUT = 3000;
@@ -54,37 +48,20 @@ const ALL_TITLES = Object.keys({
   'Item Number Three': true,
 } satisfies Record<MenuTitle, true>) as MenuTitle[];
 
-const popup = by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW);
+const overflowRow = (title: MenuTitle) => overflowMenuText(title);
 
-const overflowRow = (title: MenuTitle) => by.text(title).withAncestor(popup);
-
-// A row's `group_divider` and `submenuarrow` share this class but are GONE here,
-// and `by.type` matches visible views only — so a match is an icon.
-const overflowRowImage = (title: MenuTitle) =>
-  by
-    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
-    .withAncestor(
-      by
-        .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
-        .withDescendant(by.text(title)),
-    );
+// A row's `group_divider` and `submenuarrow` are GONE here, so a match is an
+// icon.
+const overflowRowImage = (title: MenuTitle) => menuItemImage(title);
 
 // `by.label` matches the action button in both its forms — icon-only (title as
 // content description) and text (title as text) — so the form is told apart by
 // the rendered text: AppCompat clears an icon-only button's text (`setText(null)`)
 // and shows the title only while no icon is set or WITH_TEXT is in effect.
 // @see androidx.appcompat.view.menu.ActionMenuItemView.updateTextButtonVisibility
-const actionItem = (title: MenuTitle) =>
-  element(
-    by.label(title).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW)),
-  );
+const actionItem = (title: MenuTitle) => element(actionMenuItem(title));
 
 const SCROLL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
-
-async function scrollToAndTap(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
-  await element(by.id(id)).tap();
-}
 
 type Slot = 1 | 2 | 3;
 
@@ -139,14 +116,10 @@ async function sendCommand(options: {
     SCROLL,
   );
 
-  await scrollToAndTap('send-command-button');
+  await scrollToAndTap('send-command-button', SCROLL);
 }
 
-const overflowButton = () => element(by.label('More options'));
-
-async function openMenu() {
-  await overflowButton().tap();
-}
+const overflowButton = () => element(by.label(OVERFLOW_MENU_LABEL));
 
 /**
  * With every item promoted nothing is left to overflow, so AppCompat drops the
@@ -158,66 +131,8 @@ async function expectNoOverflowMenu() {
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
 }
 
-async function waitForMenuItem(title: MenuTitle) {
-  await waitFor(element(overflowRow(title)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-}
-
-// Detox searches one window: while the popup holds focus nothing behind it is
-// in the hierarchy, so the screen itself has to become addressable again.
-async function waitForScreen() {
-  await waitFor(element(by.id(SCROLLVIEW_ID)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-}
-
-async function tapMenuItem(title: MenuTitle) {
-  await waitForMenuItem(title);
-  await element(overflowRow(title)).tap();
-  await waitFor(element(overflowRow(title)))
-    .not.toExist()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-  await waitForScreen();
-}
-
-// Back only when the popup is up: otherwise the activity takes it and pops the
-// test screen.
-async function closeMenuIfOpen() {
-  const isOpen = await waitFor(element(popup))
-    .toExist()
-    .withTimeout(MENU_PRESENCE_TIMEOUT)
-    .then(
-      () => true,
-      () => false,
-    );
-
-  if (!isOpen) {
-    return;
-  }
-
-  await device.pressBack();
-  await waitForScreen();
-}
-
-// Rows are stacked vertically, so their y positions carry the menu order. Only
-// callable while the menu is open.
-async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
-  const rows: { title: MenuTitle; top: number }[] = [];
-
-  for (const title of titles) {
-    const attributes = await element(overflowRow(title)).getAttributes();
-
-    if ('elements' in attributes) {
-      throw new Error(`Expected a single menu row titled "${title}".`);
-    }
-
-    rows.push({ title, top: attributes.frame.y });
-  }
-
-  const topToBottom = [...rows].sort((a, b) => a.top - b.top).map(r => r.title);
-  jestExpect(topToBottom).toEqual([...titles]);
-}
+const { closeMenuIfOpen, withOverflowMenu, waitForMenuItem, tapMenuItem } =
+  createOverflowMenuHelpers({ scrollViewId: SCROLLVIEW_ID });
 
 // Asserts the exact overflow menu contents — the given titles top to bottom in
 // that order, each row icon-less, all other titles absent — then closes it.
@@ -226,11 +141,9 @@ async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
 ): Promise<void> {
-  await openMenu();
-
-  let assertionFailed = false;
-
-  try {
+  // A leaked popup would fail every later step of this stateful suite;
+  // `withOverflowMenu` closes it even when an assertion throws.
+  await withOverflowMenu(async () => {
     // Rows populate in one layout pass, so once the first is up the
     // `not.toExist()` checks below cannot pass prematurely.
     await waitForMenuItem(expectedVisible[0]);
@@ -241,27 +154,14 @@ async function expectMenuItems(
       await expect(element(overflowRowImage(title))).not.toExist();
     }
 
-    await expectMenuOrder(expectedVisible);
+    await expectOverflowMenuOrder(expectedVisible);
 
     for (const title of ALL_TITLES) {
       if (!expectedVisible.includes(title)) {
         await expect(element(overflowRow(title))).not.toExist();
       }
     }
-  } catch (error) {
-    assertionFailed = true;
-    throw error;
-  } finally {
-    // A leaked popup would fail every later step of this stateful suite.
-    try {
-      await closeMenuIfOpen();
-    } catch (cleanupError) {
-      // A throw from `finally` would replace the error that actually failed.
-      if (!assertionFailed) {
-        throw cleanupError;
-      }
-    }
-  }
+  });
 }
 
 /**
@@ -306,14 +206,7 @@ async function expectNoActionItems() {
 }
 
 async function expectLastClicked(id: IdOption) {
-  await rewindAndScrollUntilVisible(
-    'last-clicked-text',
-    SCROLLVIEW_ID,
-    SCROLL_STEP,
-  );
-  await expect(element(by.id('last-clicked-text'))).toHaveText(
-    `Last clicked: ${id}`,
-  );
+  await expectLastClickedText(id, SCROLL);
 }
 
 describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
@@ -343,14 +236,14 @@ describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
     });
 
     it('reports item-1 when tapping "I1" in the overflow menu', async () => {
-      await openMenu();
+      await openOverflowMenu();
       await tapMenuItem('I1');
 
       await expectLastClicked('item-1');
     });
 
     it('reports item-3 when tapping "Item Number Three"', async () => {
-      await openMenu();
+      await openOverflowMenu();
       await tapMenuItem('Item Number Three');
 
       await expectLastClicked('item-3');

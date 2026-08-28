@@ -1,5 +1,4 @@
 import { device, element, by, waitFor } from 'detox';
-import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
@@ -39,8 +38,6 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  *   iOS and manually on Android via the direct launch documented in the
  *   scenario.
  */
-
-type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
 
 async function waitForRoute(routeName: string): Promise<void> {
   await waitFor(element(by.text(`Name: ${routeName}`)))

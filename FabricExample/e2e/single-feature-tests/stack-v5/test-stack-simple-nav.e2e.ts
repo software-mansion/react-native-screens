@@ -1,6 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
   describeIfAndroid,
   describeIfiOS,
@@ -36,8 +35,6 @@ import {
  *   gesture-back are verified on iOS and manually on Android via the direct
  *   launch documented in the scenario.
  */
-
-type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
 
 describeIfiOS('Stack v5: simple navigation', () => {
   /**

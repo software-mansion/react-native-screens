@@ -9,17 +9,9 @@ import {
 } from '../../e2e-utils';
 import {
   CLASS_NAME_UI_LABEL,
-  CLASS_NAME_UI_MODERN_BAR_BUTTON,
   CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW,
 } from '../../native-class-names';
-
-// The icon of the header bar button item, addressed by its icon id (SF Symbol
-// name or asset path).
-function barButtonIcon(sfSymbolName: string) {
-  return element(
-    by.id(sfSymbolName).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
-  );
-}
+import { barButtonIcon } from '../../e2e-utils';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
 // screen's index.tsx).
