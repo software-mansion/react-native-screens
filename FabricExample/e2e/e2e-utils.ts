@@ -8,9 +8,12 @@ import {
 import isVersionEqualOrHigherThan from './helpers/isVersionEqualOrHigherThan';
 import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_APP_BAR_LAYOUT,
+  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
   CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
   CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
   CLASS_NAME_ANDROID_RADIO_BUTTON,
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
@@ -270,50 +273,6 @@ export async function expectLastClicked(
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
-type ElementMatcher = {
-  /** Which matcher to resolve the element by. */
-  by: 'label' | 'id' | 'type';
-  /** The label text, testID, or native type name to match. */
-  value: string;
-  /** Disambiguate when the matcher resolves to multiple elements. */
-  index?: number;
-};
-
-function resolveMatcher({ by: matcher, value }: ElementMatcher) {
-  switch (matcher) {
-    case 'label':
-      return by.label(value);
-    case 'id':
-      return by.id(value);
-    case 'type':
-      return by.type(value);
-    default: {
-      const _exhaustive: never = matcher;
-      throw new Error(`Unsupported matcher: ${_exhaustive}`);
-    }
-  }
-}
-
-/** Attributes of exactly one element; throws on an ambiguous match. */
-export async function getElementAttributes(
-  matcher: ElementMatcher,
-): Promise<ElementAttributes> {
-  const target = element(resolveMatcher(matcher));
-  const attrs = await (matcher.index === undefined
-    ? target
-    : target.atIndex(matcher.index)
-  ).getAttributes();
-
-  if ('elements' in attrs) {
-    throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for ${matcher.by}: "${matcher.value}". ` +
-        `Pass an \`index\` to disambiguate.`,
-    );
-  }
-
-  return attrs as ElementAttributes;
-}
-
 type Frame = ElementAttributes['frame'];
 
 /** Coordinate tap at (`xFraction`, 1/2) of `frame`, bypassing visibility checks. */
@@ -323,11 +282,7 @@ async function tapWithinFrame({ x, y, width, height }: Frame, xFraction = 0.5) {
 
 /** Coordinate tap (iOS) — bypasses Detox's visibility check. */
 export async function forceTapByLabeliOS(testLabel: string) {
-  const { frame } = await getElementAttributes({
-    by: 'label',
-    value: testLabel,
-  });
-  await tapWithinFrame(frame);
+  await tapWithinFrame(await getFrame(by.label(testLabel)));
 }
 
 export async function forceSelectTabByLabel(label: string) {
@@ -342,19 +297,17 @@ export async function forceSelectTabByLabel(label: string) {
 // iOS 26 tab bar bottom accessory
 // ---------------------------------------------------------------------------
 
-/** The accessory host view; a single match is asserted by `getElementAttributes`. */
+/** The accessory host view; a single match is asserted by `getSingleMatch`. */
 export const getBottomAccessoryAttributes = () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-  }) as Promise<IosElementAttributes>;
+  getSingleMatch(
+    by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY),
+  ) as Promise<IosElementAttributes>;
 
-/** The `UITabBar`; a single match is asserted by `getElementAttributes`. */
+/** The `UITabBar`; a single match is asserted by `getSingleMatch`. */
 export const getTabBarAttributes = () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_UI_TAB_BAR,
-  }) as Promise<IosElementAttributes>;
+  getSingleMatch(
+    by.type(CLASS_NAME_UI_TAB_BAR),
+  ) as Promise<IosElementAttributes>;
 
 /** Asserts the accessory sits above the tab bar (iPhone "extended" layout). */
 export async function expectBottomAccessoryAboveTabBar() {
@@ -420,6 +373,23 @@ export async function countMatches(
   return (await getMatches(matcher, options)).length;
 }
 
+/** Attributes of `matcher`'s only match; throws when it resolves to several. */
+export async function getSingleMatch(
+  matcher: NativeMatcher,
+): Promise<ElementAttributes> {
+  const matches = await getMatches(matcher);
+  if (matches.length > 1) {
+    throw new Error(
+      `Matcher resolved to ${matches.length} elements, expected exactly one.`,
+    );
+  }
+  return matches[0];
+}
+
+export async function getFrame(matcher: NativeMatcher) {
+  return (await getSingleMatch(matcher)).frame;
+}
+
 /** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
 export async function getTopmostMatch(
   matcher: NativeMatcher,
@@ -428,11 +398,84 @@ export async function getTopmostMatch(
   return matches[matches.length - 1];
 }
 
+/** Trimmed text of the topmost screen's copy of `testID` (`''` when unset). */
+export async function readTopmostText(testID: string): Promise<string> {
+  const topmost = await getTopmostMatch(by.id(testID));
+  return (topmost.text ?? topmost.label ?? '').trim();
+}
+
+/** Scrolls `id` into view and returns its text (`''` when unset). */
+export async function readText(
+  id: string,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+): Promise<string> {
+  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+  return (await getSingleMatch(by.id(id))).text ?? '';
+}
+
 /** Taps the last match (topmost stacked screen). Pass a fresh matcher: `atIndex` mutates it on Android. */
 export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   await element(matcher)
     .atIndex((await countMatches(matcher)) - 1)
     .tap();
+}
+
+// ---------------------------------------------------------------------------
+// Stack v5 test screens: route information (Android, covered screens attached)
+// ---------------------------------------------------------------------------
+
+/** @see apps/src/tests/shared/components/stack-v5/StackRouteInformation.tsx */
+const ROUTE_KEY_TEST_ID = 'stack-route-key';
+
+/** The `Key: ...` label of the topmost screen. */
+const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
+
+/**
+ * Matches the route key label of any screen on `routeName`. Keys are minted as
+ * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
+ * so this pins the route, not the instance.
+ */
+const routeKeyPattern = (routeName: string) =>
+  new RegExp(`^Key: r-${routeName}-\\d+$`);
+
+/**
+ * Waits until the topmost screen is `routeName` and returns its route key. The
+ * key identifies the route *and* the instance, so one read settles continuity
+ * (same key) or a push (new key). Polled rather than `waitFor(...)`: Detox
+ * intersects a view only with its parents, never with an occluding sibling, so
+ * `toBeVisible()` on a buried screen passes at once and would not gate a pop.
+ */
+export async function waitForTopmostRoute(routeName: string): Promise<string> {
+  const pattern = routeKeyPattern(routeName);
+  let lastSeen = '<never read>';
+
+  await waitUntil(
+    async () => {
+      lastSeen = await readTopmostRouteKey();
+      return pattern.test(lastSeen);
+    },
+    {
+      message: () =>
+        `the topmost route to be "${routeName}"; topmost key was "${lastSeen}"`,
+    },
+  );
+
+  return lastSeen;
+}
+
+/**
+ * Taps a Push/Pop/Toggle button on the topmost stacked screen. React Native's
+ * core `<Button>` uppercases its `title` on Android, so pass the rendered text.
+ */
+export async function tapTopmostButton(title: string): Promise<void> {
+  await tapTopmost(by.text(title));
+}
+
+/** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
+export async function expectTopmostButtons(titles: string[]): Promise<void> {
+  for (const title of titles) {
+    await expectTopmostVisible(() => by.text(title));
+  }
 }
 
 /** Only "no match yet" / "not visible yet" are worth retrying. */
@@ -526,6 +569,90 @@ export const MENU_ANIMATION_TIMEOUT_MS = 5000;
 
 /** Probes an already-settled popup: by now it is either up or was never opened. */
 export const MENU_PRESENCE_TIMEOUT_MS = 250;
+
+// ---------------------------------------------------------------------------
+// Android Stack v5 header (toolbar) matchers
+// ---------------------------------------------------------------------------
+//
+// Factories, built fresh per call: on Android `atIndex` rewrites a matcher in
+// place (see `tapTopmost`), so a shared one would stay pinned to an index.
+
+/**
+ * The Stack v5 header's toolbar. Scoped to `MaterialToolbar` so it never
+ * matches the example app's own legacy header, a `CustomToolbar` — which
+ * extends `Toolbar` but not `MaterialToolbar`.
+ */
+export const stackV5Toolbar = (): NativeMatcher =>
+  by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
+
+/**
+ * The Stack v5 header's app bar. Every stacked screen keeps its own
+ * `AppBarLayout`, so the bare class matches several; only the Stack v5 header
+ * wraps a `MaterialToolbar`.
+ */
+export const stackV5AppBar = (): NativeMatcher =>
+  by.type(CLASS_NAME_ANDROID_APP_BAR_LAYOUT).withDescendant(stackV5Toolbar());
+
+/**
+ * The header's back chevron — the toolbar's navigation icon. A covered screen
+ * keeps its toolbar but loses its navigation icon, so while a headered screen
+ * is on top this resolves to that screen's chevron alone. Absence is not
+ * reliable: under a headerless top screen the covered screen's chevron is
+ * still there and still reads visible.
+ */
+export const stackV5BackButton = (): NativeMatcher =>
+  by
+    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
+    .withAncestor(stackV5Toolbar());
+
+/** A native header title, which renders as a `MaterialToolbar` child. */
+export const stackV5HeaderTitle = (title: string): NativeMatcher =>
+  by.text(title).withAncestor(stackV5Toolbar());
+
+/**
+ * A `showAsAction` change re-inflates the action menu, and a rotation does it
+ * from a configuration change, so the toolbar can lag an assertion.
+ */
+export const TOOLBAR_UPDATE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
+
+/**
+ * Asserts `title` is promoted to the toolbar as an icon-only button. Asserted
+ * positively through the cleared text — on Android a negated matcher passes on
+ * a missing view. Which icon it is cannot be asserted through Detox.
+ */
+export async function expectIconActionItem(title: string) {
+  await waitFor(element(actionMenuItem(title)))
+    .toBeVisible()
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+  await waitFor(element(actionMenuItem(title)))
+    .toHaveText('')
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+}
+
+/**
+ * Asserts `title` is promoted to the toolbar with its title as text — no icon
+ * set, or WITH_TEXT put the title beside the icon. Whether an icon sits next
+ * to the text is not assertable: it is a compound drawable, not a view.
+ */
+export async function expectTextActionItem(title: string) {
+  await waitFor(element(actionMenuItem(title)))
+    .toBeVisible()
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+  await waitFor(element(actionMenuItem(title)))
+    .toHaveText(title)
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+}
+
+/** Asserts `title` is not promoted: the button is in neither form. */
+export async function expectNoActionItem(title: string) {
+  await waitFor(element(actionMenuItem(title)))
+    .not.toExist()
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+}
+
+// ---------------------------------------------------------------------------
+// Android toolbar overflow menu (Stack v5 header)
+// ---------------------------------------------------------------------------
 
 /** The accessibility label AppCompat gives the overflow button. */
 export const OVERFLOW_MENU_LABEL = 'More options';
@@ -884,10 +1011,9 @@ export async function openContextMenu(
 export async function dismissContextMenu(
   timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
 ) {
-  const { frame } = await getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW,
-  });
-  await tapWithinFrame(frame, 0.1);
+  await tapWithinFrame(
+    await getFrame(by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW)),
+    0.1,
+  );
   await waitFor(contextMenu()).not.toExist().withTimeout(timeout);
 }

@@ -5,9 +5,11 @@ import {
   createOverflowMenuHelpers,
   describeIfAndroid,
   expectCheckBox,
+  expectIconActionItem,
   expectRadioButton,
-  getElementAttributes,
+  expectTextActionItem,
   menuItemRow,
+  readText as readTextIn,
   rewindAndScrollUntilVisible,
   scrollToAndTap,
   selectSingleFeatureTestsScreen,
@@ -21,47 +23,34 @@ import {
 const SCROLLVIEW_ID = 'toolbar-menu-batch-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 const SCROLL_STEP = { pixels: 300 };
+const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
 const EVENT_TIMEOUT_MS = 3000;
 // Generous on purpose: a slow image download must not read as a failed batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
-// Matches the button in both its icon-only and text form; the form is told
-// apart by the rendered text.
-const appleToolbarButton = actionMenuItem('Apple');
+const APPLE = 'Apple';
 
 async function expectAppleNotInToolbar() {
-  await expect(element(appleToolbarButton)).not.toExist();
+  await expect(element(actionMenuItem(APPLE))).not.toExist();
 }
 
-// Asserted positively: on Android a negated matcher passes on a missing view.
-async function expectAppleInToolbarWithIcon() {
-  await expect(element(appleToolbarButton)).toBeVisible();
-  // AppCompat clears an icon-only action button's text (`setText(null)`).
-  await expect(element(appleToolbarButton)).toHaveText('');
-}
-
-async function expectAppleInToolbarWithoutIcon() {
-  await expect(element(appleToolbarButton)).toBeVisible();
-  await expect(element(appleToolbarButton)).toHaveText('Apple');
-}
+const expectAppleInToolbarWithIcon = () => expectIconActionItem(APPLE);
+const expectAppleInToolbarWithoutIcon = () => expectTextActionItem(APPLE);
 
 async function scrollIntoView(id: string) {
   await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 }
 
 async function tapById(id: string) {
-  await scrollToAndTap(id, { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP });
+  await scrollToAndTap(id, SETTINGS_CONTROL);
 }
 
 const { closeMenuIfOpen, withOverflowMenu } = createOverflowMenuHelpers({
   scrollViewId: SCROLLVIEW_ID,
 });
 
-async function readText(id: string): Promise<string> {
-  await scrollIntoView(id);
-  return (await getElementAttributes({ by: 'id', value: id })).text ?? '';
-}
+const readText = (id: string) => readTextIn(id, SETTINGS_CONTROL);
 
 async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
   await scrollIntoView('events-count-text');

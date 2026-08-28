@@ -9,7 +9,7 @@ import {
   getMatches,
   MENU_ANIMATION_TIMEOUT_MS,
   menuItemImage,
-  OVERFLOW_MENU_LABEL,
+  openOverflowMenu,
   overflowMenuMatcher,
   overflowMenuText,
   rewindAndScrollUntilVisible,
@@ -177,9 +177,9 @@ async function waitForMenuTextCount(text: MenuText, count: number) {
   );
 }
 
-async function openOverflowMenu() {
-  await element(by.label(OVERFLOW_MENU_LABEL)).tap();
-  // No step ever renames or hides "Top Item", so it gates the open animation.
+async function openTopLevelMenu() {
+  await openOverflowMenu();
+  // No step ever renames or hides "Top Item", so it gates the rows populating.
   await waitForMenuTextCount('Top Item', 1);
 }
 
@@ -193,7 +193,7 @@ async function openMenu(
   gate: MenuText,
   gateCount: number,
 ) {
-  await openOverflowMenu();
+  await openTopLevelMenu();
 
   for (let i = 0; i < path.length; i++) {
     await element(menuText(path[i])).tap();
@@ -279,7 +279,7 @@ async function expectUntitledSubmenu(
   rowCount: number,
   expected: [MenuText, ...MenuText[]],
 ) {
-  await openOverflowMenu();
+  await openTopLevelMenu();
 
   await closingMenuAfter(async () => {
     jestExpect(await countMatches(menuRow(), { orEmpty: true })).toBe(rowCount);

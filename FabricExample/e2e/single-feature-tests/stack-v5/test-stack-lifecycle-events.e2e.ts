@@ -4,7 +4,7 @@ import {
   describeIfiOS,
   selectSingleFeatureTestsScreen,
   dismissToast,
-  tapTopmost,
+  tapTopmostButton,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
@@ -284,11 +284,6 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   const PUSH_NESTED_STACK = 'PUSH NESTEDSTACK';
   const PUSH_NESTED_A = 'PUSH NESTEDA';
   const POP = 'POP';
-
-  /** Taps a Push/Pop button on the topmost stacked screen. */
-  async function tapTopmostButton(title: string): Promise<void> {
-    await tapTopmost(by.text(title));
-  }
 
   beforeAll(async () => {
     await device.reloadReactNative();

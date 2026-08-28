@@ -1,20 +1,19 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { NativeMatcher } from 'detox/detox';
 import {
   describeIfAndroid,
   dismissNextToast,
   expectNoToast,
+  expectTopmostButtons,
   expectTopmostVisible,
-  getTopmostMatch,
+  readTopmostText,
   selectSingleFeatureTestsScreen,
+  stackV5BackButton,
+  stackV5HeaderTitle,
   tapTopmost,
-  waitUntil,
+  tapTopmostButton,
+  waitForTopmostRoute,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
-  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
-} from '../../native-class-names';
 
 /**
  * Stack v5 `preventNativeDismiss` — a nested stack inside another stack. See
@@ -28,43 +27,10 @@ import {
  * back press would navigate out of the example app's own navigation.
  */
 
-// Matchers are built fresh on each call, never shared: on Android `atIndex`
-// rewrites a matcher in place (see `tapTopmost`).
-
-/**
- * The Stack v5 header's toolbar. Scoped to `MaterialToolbar` so it never
- * matches the example app's own v4 header, a `CustomToolbar` — which extends
- * `Toolbar` but not `MaterialToolbar`.
- */
-const stackV5ToolbarMatcher = (): NativeMatcher =>
-  by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
-
-/**
- * The header's back chevron. A covered screen keeps its toolbar but loses its
- * navigation icon, so while a headered screen is on top this resolves to that
- * screen's chevron alone. Absence is not reliable: under a headerless top
- * screen the covered screen's chevron is still there and still reads visible.
- */
-const stackV5BackButtonMatcher = (): NativeMatcher =>
-  by
-    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
-    .withAncestor(stackV5ToolbarMatcher());
-
-/** A native header title, which renders as a `MaterialToolbar` child. */
-const stackV5HeaderTitleMatcher = (title: string): NativeMatcher =>
-  by.text(title).withAncestor(stackV5ToolbarMatcher());
-
 /** Taps the back chevron of the topmost headered screen. */
 async function tapStackV5BackButton(): Promise<void> {
-  await tapTopmost(stackV5BackButtonMatcher());
+  await tapTopmost(stackV5BackButton());
 }
-
-// Covered screens stay attached on Android, so the widget matchers below
-// resolve to one element per stacked screen. Every read is normalized to the
-// last match: the topmost screen of the innermost stack.
-
-/** @see apps/src/tests/shared/components/stack-v5/StackRouteInformation.tsx */
-const ROUTE_KEY_TEST_ID = 'stack-route-key';
 
 /** Rendered by the `preventNativeDismiss` test screens' own info label. */
 const PREVENT_NATIVE_DISMISS_TEST_ID = 'prevent-native-dismiss-info';
@@ -88,61 +54,9 @@ const TOGGLE_PREVENT_NATIVE_DISMISS_LABEL = buttonLabel(
   'Toggle Prevent Native Dismiss',
 );
 
-async function readTopmostText(testID: string): Promise<string> {
-  const top = await getTopmostMatch(by.id(testID));
-  return (top.text ?? top.label ?? '').trim();
-}
-
-/** The `Key: ...` label of the topmost screen. */
-const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
-
 /** The `Prevent native dismiss: ...` label of the topmost screen. */
 const readTopmostPreventNativeDismissInfo = () =>
   readTopmostText(PREVENT_NATIVE_DISMISS_TEST_ID);
-
-/**
- * Matches the route key label of any screen on `routeName`. Keys are minted as
- * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
- * so this pins the route, not the instance.
- */
-const routeKeyPattern = (routeName: string) =>
-  new RegExp(`^Key: r-${routeName}-\\d+$`);
-
-/**
- * Waits until the topmost screen is `routeName` and returns its route key. The
- * key identifies the route *and* the instance, so one read settles continuity
- * (same key) or a push (new key). Polled rather than `waitFor(...)`, which
- * passes at once on a buried screen and so would not gate a pop.
- */
-async function waitForTopmostRoute(routeName: string): Promise<string> {
-  const pattern = routeKeyPattern(routeName);
-  let lastSeen = '<never read>';
-
-  await waitUntil(
-    async () => {
-      lastSeen = await readTopmostRouteKey();
-      return pattern.test(lastSeen);
-    },
-    {
-      message: () =>
-        `the topmost route to be "${routeName}"; topmost key was "${lastSeen}"`,
-    },
-  );
-
-  return lastSeen;
-}
-
-/** Taps a Push/Pop/Toggle button on the topmost stacked screen. */
-async function tapTopmostStackButton(label: string): Promise<void> {
-  await tapTopmost(by.text(label));
-}
-
-/** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
-async function expectTopmostStackButtons(labels: string[]): Promise<void> {
-  for (const label of labels) {
-    await expectTopmostVisible(() => by.text(label));
-  }
-}
 
 // Each preventing route pushes its own toast text, so the label identifies
 // which screen intercepted — the point of the layered-prevention steps.
@@ -202,32 +116,32 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
 
   it('should show Home as the root screen with no back chevron or Pop button', async () => {
     homeKey = await waitForTopmostRoute('Home');
-    await expectTopmostStackButtons([PUSH_A, PUSH_B, PUSH_NESTED_STACK]);
+    await expectTopmostButtons([PUSH_A, PUSH_B, PUSH_NESTED_STACK]);
     await expect(element(by.text(POP))).not.toExist();
-    await expect(element(stackV5BackButtonMatcher())).not.toExist();
+    await expect(element(stackV5BackButton())).not.toExist();
   });
 
   it('should push A with prevent native dismiss disabled', async () => {
-    await tapTopmostStackButton(PUSH_A);
+    await tapTopmostButton(PUSH_A);
 
     aKey = await waitForTopmostRoute('A');
     jestExpect(aKey).not.toBe(homeKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
-    await expectTopmostVisible(stackV5BackButtonMatcher);
-    await expectTopmostStackButtons([PUSH_A, PUSH_B, PUSH_NESTED_STACK, POP]);
+    await expectTopmostVisible(stackV5BackButton);
+    await expectTopmostButtons([PUSH_A, PUSH_B, PUSH_NESTED_STACK, POP]);
     // Neither Home nor A carries a Toggle, so absence is unambiguous here.
     await expect(element(by.text(TOGGLE))).not.toExist();
   });
 
   it('should push B with prevent native dismiss enabled', async () => {
-    await tapTopmostStackButton(PUSH_B);
+    await tapTopmostButton(PUSH_B);
 
     bKey = await waitForTopmostRoute('B');
     jestExpect(bKey).not.toBe(aKey);
     jestExpect(bKey).not.toBe(homeKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
-    await expectTopmostVisible(stackV5BackButtonMatcher);
-    await expectTopmostStackButtons([
+    await expectTopmostVisible(stackV5BackButton);
+    await expectTopmostButtons([
       PUSH_A,
       PUSH_B,
       PUSH_NESTED_STACK,
@@ -246,35 +160,28 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
 
   it('should pop B with the on-screen Pop button even while prevent is enabled', async () => {
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
     await expectNoToast();
   });
 
   it('should mount the nested stack showing its headerless root', async () => {
-    await tapTopmostStackButton(PUSH_NESTED_STACK);
+    await tapTopmostButton(PUSH_NESTED_STACK);
 
     nestedHomeKey = await waitForTopmostRoute('NestedHome');
     jestExpect(nestedHomeKey).not.toBe(aKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
-    await expectTopmostStackButtons([
-      PUSH_NESTED_A,
-      PUSH_NESTED_B,
-      POP,
-      TOGGLE,
-    ]);
+    await expectTopmostButtons([PUSH_NESTED_A, PUSH_NESTED_B, POP, TOGGLE]);
     // Neither the nested root nor the `NestedStack` host route configures a
     // header, so no toolbar carries NestedHome's title. That the nested root
     // shows *no* header at all cannot be asserted here — see
-    // `stackV5BackButtonMatcher` — and stays a manual, visual check.
-    await expect(
-      element(stackV5HeaderTitleMatcher('NestedHome')),
-    ).not.toExist();
+    // `stackV5BackButton` — and stays a manual, visual check.
+    await expect(element(stackV5HeaderTitle('NestedHome'))).not.toExist();
   });
 
   it('should flip the label to Disabled when toggling it on the nested root', async () => {
-    await tapTopmostStackButton(TOGGLE);
+    await tapTopmostButton(TOGGLE);
 
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
     // Left Disabled on purpose: the next-but-one step asserts a *fresh*
@@ -284,14 +191,14 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should exit the nested stack with the Pop button from its sole attached route', async () => {
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
     await expectNoToast();
   });
 
   it('should restore the default flag on a fresh nested root instance', async () => {
-    await tapTopmostStackButton(PUSH_NESTED_STACK);
+    await tapTopmostButton(PUSH_NESTED_STACK);
 
     const freshNestedHomeKey = await waitForTopmostRoute('NestedHome');
     jestExpect(freshNestedHomeKey).not.toBe(nestedHomeKey);
@@ -301,40 +208,35 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should push NestedA inside the nested stack with prevent disabled', async () => {
-    await tapTopmostStackButton(PUSH_NESTED_A);
+    await tapTopmostButton(PUSH_NESTED_A);
 
     nestedAKey = await waitForTopmostRoute('NestedA');
     jestExpect(nestedAKey).not.toBe(nestedHomeKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
-    await expectTopmostStackButtons([PUSH_NESTED_A, PUSH_NESTED_B, POP]);
+    await expectTopmostButtons([PUSH_NESTED_A, PUSH_NESTED_B, POP]);
     // Unlike its root, a nested non-root screen renders the nested stack's own
     // header — titled and with a back chevron.
-    await expect(element(stackV5HeaderTitleMatcher('NestedA'))).toBeVisible();
-    await expectTopmostVisible(stackV5BackButtonMatcher);
+    await expect(element(stackV5HeaderTitle('NestedA'))).toBeVisible();
+    await expectTopmostVisible(stackV5BackButton);
   });
 
   it('should pop NestedA back to the preserved nested root with the Pop button', async () => {
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('NestedHome', nestedHomeKey);
     await expectNoToast();
   });
 
   it('should push NestedB with prevent native dismiss enabled', async () => {
-    await tapTopmostStackButton(PUSH_NESTED_B);
+    await tapTopmostButton(PUSH_NESTED_B);
 
     nestedBKey = await waitForTopmostRoute('NestedB');
     jestExpect(nestedBKey).not.toBe(nestedHomeKey);
     jestExpect(nestedBKey).not.toBe(nestedAKey);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
-    await expect(element(stackV5HeaderTitleMatcher('NestedB'))).toBeVisible();
-    await expectTopmostVisible(stackV5BackButtonMatcher);
-    await expectTopmostStackButtons([
-      PUSH_NESTED_A,
-      PUSH_NESTED_B,
-      POP,
-      TOGGLE,
-    ]);
+    await expect(element(stackV5HeaderTitle('NestedB'))).toBeVisible();
+    await expectTopmostVisible(stackV5BackButton);
+    await expectTopmostButtons([PUSH_NESTED_A, PUSH_NESTED_B, POP, TOGGLE]);
   });
 
   it('should intercept the native header back button on NestedB while prevent is enabled', async () => {
@@ -360,9 +262,9 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
 
   it('should honor the latest flag value when toggled on NestedB', async () => {
     // Off, then straight back on — the press must see the latest value.
-    await tapTopmostStackButton(TOGGLE);
+    await tapTopmostButton(TOGGLE);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
-    await tapTopmostStackButton(TOGGLE);
+    await tapTopmostButton(TOGGLE);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
 
     await tapStackV5BackButton();
@@ -372,27 +274,27 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should pop out of the nested stack with the Pop button, one route at a time', async () => {
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('NestedHome', nestedHomeKey);
     await expectNoToast();
 
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
     await expectNoToast();
   });
 
   it('should push a preventing nested screen on top of a preventing outer screen', async () => {
-    await tapTopmostStackButton(PUSH_B);
+    await tapTopmostButton(PUSH_B);
     bKey = await waitForTopmostRoute('B');
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
 
-    await tapTopmostStackButton(PUSH_NESTED_STACK);
+    await tapTopmostButton(PUSH_NESTED_STACK);
     nestedHomeKey = await waitForTopmostRoute('NestedHome');
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
     jestExpect(nestedHomeKey).not.toBe(bKey);
-    await tapTopmostStackButton(PUSH_NESTED_B);
+    await tapTopmostButton(PUSH_NESTED_B);
     nestedBKey = await waitForTopmostRoute('NestedB');
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
   });
@@ -407,15 +309,15 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should return to B, not A, when the nested stack is popped', async () => {
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('NestedHome', nestedHomeKey);
     await expectNoToast();
 
-    await tapTopmostStackButton(TOGGLE);
+    await tapTopmostButton(TOGGLE);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
 
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('B', bKey);
     await expectNoToast();
@@ -429,7 +331,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should pop B back to A with the Pop button', async () => {
-    await tapTopmostStackButton(POP);
+    await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
     await expectNoToast();

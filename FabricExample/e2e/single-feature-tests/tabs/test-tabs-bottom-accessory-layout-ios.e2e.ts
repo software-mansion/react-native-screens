@@ -6,7 +6,7 @@ import {
   expectBottomAccessoryAboveTabBar,
   forceTapByLabeliOS,
   getBottomAccessoryAttributes,
-  getElementAttributes,
+  getSingleMatch,
   getTabBarAttributes,
   scrollUntilVisible,
   selectSingleFeatureTestsScreen,
@@ -291,11 +291,9 @@ describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
       'test-tabs-bottom-accessory-layout-ios',
     );
     await expect(element(by.id('config-scrollview'))).toBeVisible();
-    configScrollView = (await getElementAttributes({
-      by: 'id',
-      value: 'config-scrollview',
-      index: 0,
-    })) as IosElementAttributes;
+    configScrollView = (await getSingleMatch(
+      by.id('config-scrollview'),
+    )) as IosElementAttributes;
   });
 
   it('should display the Config tab content and initial accessory on load', async () => {

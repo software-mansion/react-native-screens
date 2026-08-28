@@ -4,16 +4,14 @@ import type { AndroidElementAttributes } from 'detox/detox';
 import {
   countMatches,
   describeIfAndroid,
-  getElementAttributes,
-  getMatches,
+  getFrame,
+  getSingleMatch,
   scrollUntilVisible,
   selectSingleFeatureTestsScreen,
+  stackV5AppBar,
+  stackV5Toolbar,
   waitUntil,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_ANDROID_APP_BAR_LAYOUT,
-  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
-} from '../../native-class-names';
 import type { TriState } from '@apps/tests/single-feature-tests/stack-v5/test-stack-lift-on-scroll-android';
 
 /**
@@ -41,36 +39,10 @@ const LIFT_PICKER = 'liftonscroll-picker';
 // lifted state has to be polled rather than read once.
 const LIFT_TIMEOUT_MS = 3000;
 
-// The legacy headers of the outer navigator build `CustomToolbar`, which extends
-// `Toolbar` but not `MaterialToolbar`, so this stays scoped to the Stack v5
-// header under test.
-const toolbar = by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
+const appBarAttributes = () =>
+  getSingleMatch(stackV5AppBar()) as Promise<AndroidElementAttributes>;
 
-// Every screen the outer navigator has stacked keeps its own `AppBarLayout` in
-// the hierarchy, so the bare class matches several. Only the Stack v5 header
-// wraps a `MaterialToolbar`.
-const appBar = by
-  .type(CLASS_NAME_ANDROID_APP_BAR_LAYOUT)
-  .withDescendant(toolbar);
-
-async function appBarAttributes(): Promise<AndroidElementAttributes> {
-  const matches = await getMatches(appBar);
-
-  // Guards against reading a sibling screen's app bar if the scoping above ever
-  // stops being unique.
-  jestExpect(matches).toHaveLength(1);
-
-  return matches[0] as AndroidElementAttributes;
-}
-
-async function contentFrame() {
-  const attributes = (await getElementAttributes({
-    by: 'id',
-    value: SCROLL_VIEW,
-  })) as AndroidElementAttributes;
-
-  return attributes.frame;
-}
+const contentFrame = () => getFrame(by.id(SCROLL_VIEW));
 
 async function appBarElevation(): Promise<number> {
   return (await appBarAttributes()).elevation;
@@ -219,9 +191,9 @@ async function selectLiftOnScroll(value: TriState) {
 }
 
 async function expectHeaderAttached() {
-  await waitFor(element(toolbar)).toBeVisible().withTimeout(3000);
+  await waitFor(element(stackV5Toolbar())).toBeVisible().withTimeout(3000);
   await expect(element(by.text(HEADER_TITLE))).toBeVisible();
-  jestExpect(await countMatches(appBar)).toBe(1);
+  jestExpect(await countMatches(stackV5AppBar())).toBe(1);
 }
 
 // A hidden or detached header is removed from the hierarchy, so its absence is
@@ -231,8 +203,8 @@ async function expectHeaderDetached() {
   await waitFor(element(by.id(SCROLL_VIEW)))
     .toBeVisible()
     .withTimeout(3000);
-  await expect(element(appBar)).not.toExist();
-  await expect(element(toolbar)).not.toExist();
+  await expect(element(stackV5AppBar())).not.toExist();
+  await expect(element(stackV5Toolbar())).not.toExist();
   // Implied by the toolbar being gone — the title is one of its children — but
   // asserted anyway: it is the part a reader of `scenario.md` actually checks
   // ("there is no header"), and it keeps holding if the title ever stops being

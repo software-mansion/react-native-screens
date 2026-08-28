@@ -7,9 +7,10 @@ import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
 import {
   createOverflowMenuHelpers,
   describeIfAndroid,
-  getMatches,
+  getSingleMatch,
   menuItemRow,
   MENU_ANIMATION_TIMEOUT_MS,
+  readText,
   rewindAndScrollUntilVisible,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
@@ -57,19 +58,8 @@ const actionBarButton = by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW);
 // children, so only the row reflects a disabled element.
 const menuRow = (title: RowTitle): NativeMatcher => menuItemRow(title);
 
-// Zero matches already throws inside `getMatches`, so only ambiguity is left.
-async function attributesOf(
-  matcher: NativeMatcher,
-): Promise<AndroidElementAttributes> {
-  const matches = await getMatches(matcher);
-  if (matches.length > 1) {
-    throw new Error(
-      `Matcher resolved to ${matches.length} elements, expected exactly one. ` +
-        'Narrow the matcher, or the view hierarchy changed.',
-    );
-  }
-  return matches[0] as AndroidElementAttributes;
-}
+const attributesOf = (matcher: NativeMatcher) =>
+  getSingleMatch(matcher) as Promise<AndroidElementAttributes>;
 
 // Targets sit either side of the current offset, hence the rewind.
 async function scrollIntoView(id: string) {
@@ -122,10 +112,7 @@ async function expectActionBarEnabled(enabled: boolean) {
   jestExpect((await attributesOf(actionBarButton)).enabled).toBe(enabled);
 }
 
-async function readLastEvent(): Promise<string> {
-  await scrollIntoView('last-event-text');
-  return (await attributesOf(by.id('last-event-text'))).text ?? '';
-}
+const readLastEvent = () => readText('last-event-text', SETTINGS_CONTROL);
 
 async function expectLastEvent(expected: string) {
   await scrollIntoView('last-event-text');

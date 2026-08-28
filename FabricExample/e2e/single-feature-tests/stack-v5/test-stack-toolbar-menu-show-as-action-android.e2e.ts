@@ -3,8 +3,11 @@ import {
   actionMenuItem,
   createOverflowMenuHelpers,
   describeIfAndroid,
+  expectIconActionItem,
   expectLastClicked as expectLastClickedText,
+  expectNoActionItem,
   expectOverflowMenuOrder,
+  expectTextActionItem,
   menuItemImage,
   openOverflowMenu,
   OVERFLOW_MENU_LABEL,
@@ -12,6 +15,7 @@ import {
   scrollToAndTap,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
+  TOOLBAR_UPDATE_TIMEOUT_MS,
 } from '../../e2e-utils';
 // Typed from the screen, so a rename there fails type-checking here.
 import type {
@@ -34,10 +38,6 @@ const HEADER_TITLE: HeaderTitle = 'Show As Action Test';
 // enough not to carry a short picker option row past the viewport.
 const SCROLL_STEP = { pixels: 300 };
 
-// A `showAsAction` change re-inflates the action menu, and a rotation does it
-// from a configuration change, so the toolbar can lag the assertion.
-const TOOLBAR_UPDATE_TIMEOUT = 3000;
-
 // Every title this scenario can put into the menu. Assertions check the full
 // set — expected present, all others absent — so an item that fails to move
 // between toolbar and overflow fails the test. `Record<MenuTitle, …>` makes a
@@ -54,11 +54,6 @@ const overflowRow = (title: MenuTitle) => overflowMenuText(title);
 // icon.
 const overflowRowImage = (title: MenuTitle) => menuItemImage(title);
 
-// `by.label` matches the action button in both its forms — icon-only (title as
-// content description) and text (title as text) — so the form is told apart by
-// the rendered text: AppCompat clears an icon-only button's text (`setText(null)`)
-// and shows the title only while no icon is set or WITH_TEXT is in effect.
-// @see androidx.appcompat.view.menu.ActionMenuItemView.updateTextButtonVisibility
 const actionItem = (title: MenuTitle) => element(actionMenuItem(title));
 
 const SCROLL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
@@ -128,7 +123,7 @@ const overflowButton = () => element(by.label(OVERFLOW_MENU_LABEL));
 async function expectNoOverflowMenu() {
   await waitFor(overflowButton())
     .not.toExist()
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
+    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
 }
 
 const { closeMenuIfOpen, withOverflowMenu, waitForMenuItem, tapMenuItem } =
@@ -164,41 +159,7 @@ async function expectMenuItems(
   });
 }
 
-/**
- * Promoted to the toolbar, rendering its icon in place of its title. Asserted
- * positively through the cleared text — on Android a negated matcher passes on
- * a missing view. Which icon it is stays manual (see the header comment).
- */
-async function expectIconActionItem(title: MenuTitle) {
-  await waitFor(actionItem(title))
-    .toBeVisible()
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-  await waitFor(actionItem(title))
-    .toHaveText('')
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-}
-
-/**
- * Promoted to the toolbar with its title as text — no icon set, or WITH_TEXT
- * put the title beside the icon. Whether an icon sits next to the text is not
- * assertable: it is a compound drawable of the same `TextView`, not a view.
- */
-async function expectTextActionItem(title: MenuTitle) {
-  await waitFor(actionItem(title))
-    .toBeVisible()
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-  await waitFor(actionItem(title))
-    .toHaveText(title)
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-}
-
-/** Not promoted: the button is in neither form in the toolbar. */
-async function expectNoActionItem(title: MenuTitle) {
-  await waitFor(actionItem(title))
-    .not.toExist()
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT);
-}
-
+// Which icon renders stays manual (see the header comment).
 async function expectNoActionItems() {
   for (const title of ALL_TITLES) {
     await expectNoActionItem(title);
