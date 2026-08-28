@@ -6,16 +6,20 @@ import android.util.Log
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
-import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 
 internal class FormSheetPresentationManager(
-    private val dialog: FormSheetDialog,
-    private val bottomSheetView: View?,
+    private val presentationFactory: () -> FormSheetPresentation,
     private val dimmingManager: FormSheetDimmingManager,
     private val onNativeDismiss: () -> Unit,
     private val onDismiss: () -> Unit,
 ) {
     internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
+
+    internal var presentation: FormSheetPresentation? = null
+        private set
+
+    private val bottomSheetView: View?
+        get() = presentation?.bottomSheetView
 
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false
@@ -25,12 +29,6 @@ internal class FormSheetPresentationManager(
 
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
-
-    internal fun setup() {
-        bottomSheetView?.let { view ->
-            dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
-        }
-    }
 
     internal fun requestProgrammaticStateUpdate(shouldBeOpen: Boolean) {
         if (shouldBeOpen) {
@@ -85,10 +83,13 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
+        val presentation = presentationFactory().also { presentation = it }
+        presentation.sheetBehavior?.let(dimmingManager::attachToBehavior)
+
         FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
-        dialog.setOnShowListener {
-            dialog.setOnShowListener(null)
+        presentation.dialog.setOnShowListener {
+            presentation.dialog.setOnShowListener(null)
 
             // Every sheet dims the surface inside the window below, attaching an overlay to the sheet
             // directly below in the stack, or to the DecorView when this sheet is the
@@ -97,7 +98,7 @@ internal class FormSheetPresentationManager(
 
             startEnterAnimation()
         }
-        dialog.show()
+        presentation.dialog.show()
     }
 
     private fun dismissIfNeeded() {
@@ -153,11 +154,11 @@ internal class FormSheetPresentationManager(
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
 
-        bottomSheetView?.let { syncBehaviorStateAfterExitAnimationComplete(it) }
         performDismiss()
     }
 
     private fun startEnterAnimation() {
+        val bottomSheetView = bottomSheetView
         if (bottomSheetView == null) {
             onPresentationComplete()
             return
@@ -186,6 +187,7 @@ internal class FormSheetPresentationManager(
     }
 
     private fun startExitAnimation() {
+        val bottomSheetView = bottomSheetView
         if (bottomSheetView == null) {
             performDismiss()
             return
@@ -205,7 +207,6 @@ internal class FormSheetPresentationManager(
                             dimmingManager.isTransitionAnimationRunning = false
 
                             if (currentSheetAnimator == this@apply) currentSheetAnimator = null
-                            syncBehaviorStateAfterExitAnimationComplete(bottomSheetView)
                             performDismiss()
                         }
                     },
@@ -217,7 +218,8 @@ internal class FormSheetPresentationManager(
     private fun performDismiss() {
         shouldSkipExitAnimation = false
         dimmingManager.detachDimming()
-        dialog.dismiss()
+        presentation?.destroy()
+        presentation = null
         onDismissComplete()
     }
 
@@ -251,27 +253,6 @@ internal class FormSheetPresentationManager(
         }
     }
 
-    /**
-     * Synchronizes the BottomSheetBehavior state with our custom exit animation.
-     *
-     * Since our custom ExitAnimator uses `translationY` for visual movement, the physical
-     * `top` of the view remains at the top of the screen. If we just call `state = STATE_HIDDEN`,
-     * Material will attempt to align the layout and enter `STATE_SETTLING`, leaving the state
-     * machine corrupted for the next open.
-     *
-     * To fix this, we manually push the physical `top` to the bottom of the screen.
-     * This makes the behavior skip the animation and synchronously switch to `STATE_HIDDEN`,
-     * properly cleaning up its internal state on dismissal.
-     */
-    private fun syncBehaviorStateAfterExitAnimationComplete(view: View) {
-        val behavior = BottomSheetBehavior.from(view)
-        val parent = view.parent as? View
-        val targetTop = parent?.height ?: view.height
-
-        view.offsetTopAndBottom(targetTop - view.top)
-        behavior.state = BottomSheetBehavior.STATE_HIDDEN
-    }
-
     internal fun destroy() {
         FormSheetStackRegistry.unregister(this)
         dimmingManager.detachDimming()
@@ -279,7 +260,8 @@ internal class FormSheetPresentationManager(
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
 
-        dialog.setOnShowListener(null)
+        presentation?.destroy()
+        presentation = null
 
         state = FormSheetPresentationState.DISMISSED
     }
