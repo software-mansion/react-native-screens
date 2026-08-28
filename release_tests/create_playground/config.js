@@ -254,7 +254,9 @@ function getConfig() {
   const run = config.run;
 
   const argvHasFlag = (...flags) =>
-    flags.some(flag => process.argv.includes(flag));
+    process.argv.some(arg =>
+      flags.some(flag => arg === flag || arg.startsWith(`${flag}=`)),
+    );
 
   const runOnlyFlags = [
     argvHasFlag('-v', '--variant') && '-v/--variant',
