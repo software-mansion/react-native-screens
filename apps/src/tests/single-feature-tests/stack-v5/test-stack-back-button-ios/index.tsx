@@ -222,30 +222,35 @@ function FirstScreen() {
         onChange={setNextConfig}
       />
       <Button title="Push Second" onPress={() => push('Second')} />
-      <Button title="Push Bare (no header config)" onPress={() => push('Bare')} />
+      <Button
+        title="Push Bare (no header config)"
+        onPress={() => push('Bare')}
+      />
       <Button title="Pop" onPress={() => pop(routeKey)} />
     </CenteredLayoutView>
   );
 }
 
 function BareScreen() {
-  const { routeKey, pop } = useStackNavigationContext();
+  const { routeKey, push, pop } = useStackNavigationContext();
 
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight80 }}>
       <StackRouteInformation routeName="Bare" />
       <Text style={styles.note}>
-        This screen has no header config. The back button must fall back to
-        system defaults, not retain configuration from a previously pushed
-        screen.
+        This screen has no header config, so the header is hidden. Push Second
+        on top and long-press its back button — the menu entries for the screens
+        below must not retain back button configuration from previously popped
+        screens.
       </Text>
+      <Button title="Push Second" onPress={() => push('Second')} />
       <Button title="Pop" onPress={() => pop(routeKey)} />
     </CenteredLayoutView>
   );
 }
 
 function SecondScreen() {
-  const { routeKey, pop } = useStackNavigationContext();
+  const { routeKey, push, pop } = useStackNavigationContext();
 
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
@@ -253,6 +258,10 @@ function SecondScreen() {
       <Text style={styles.note}>
         The back button reflects the "next screen" config chosen on First.
       </Text>
+      <Button
+        title="Push Bare (no header config)"
+        onPress={() => push('Bare')}
+      />
       <Button title="Pop" onPress={() => pop(routeKey)} />
     </CenteredLayoutView>
   );

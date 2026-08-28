@@ -54,10 +54,16 @@ compact state. This is confirmed native behavior.
 10. Under Next screen, tap `Pop` to pop the screen. Tap `title` to set "Custom title". Tap `backTitle` twice to set "Longer custom title". Tap `Push Second`.
   - A new screen is pushed
   - Screen title is "Custom title" and back button displays as "< Back"
-11. Tap the back button to pop. Tap `Push Bare (no header config)`.
-  - A new screen without a header config is pushed
-  - Back button displays as "< First" (system default), NOT the back title
-    configured for the previously pushed Second screen
+11. Tap the back button to pop. Under Next screen, tap `backTitle` until it
+    shows undefined. Tap `Push Bare (no header config)`.
+  - A new screen is pushed with the header hidden
+12. Tap `Push Second`.
+  - A new screen is pushed on top of Bare
+  - Back button displays as "< Back" (Bare has no title), NOT a back title
+    configured for the previously popped Second screen
+13. Long-press the back button to open the back menu.
+  - The entry for First displays "First", NOT the back title configured for
+    the previously popped Second screen
 
 ### iOS 26
 
@@ -82,7 +88,12 @@ compact state. This is confirmed native behavior.
 9. Under Next screen, tap `Pop` to pop the screen. Tap `backTitle` twice to set "Custom title". Tap `Push Second`.
   - A new screen is pushed
   - Back button displays as "< Custom title"
-10. Tap the back button to pop. Tap `Push Bare (no header config)`.
-  - A new screen without a header config is pushed
-  - Back button displays as "<" (system default), NOT "< Custom title"
-    configured for the previously pushed Second screen
+10. Tap the back button to pop. Under Next screen, tap `backTitle` until it
+    shows undefined. Tap `Push Bare (no header config)`.
+  - A new screen is pushed with the header hidden
+11. Tap `Push Second`.
+  - A new screen is pushed on top of Bare
+  - Back button displays as "<"
+12. Long-press the back button to open the back menu.
+  - The entry for First displays "First", NOT "Custom title" configured for
+    the previously popped Second screen
