@@ -59,7 +59,7 @@ function cloneScreensRef({
   try {
     cloneFromSource(remoteUrl);
   } catch {
-    fatal(`Version '${refType}:${target}' was not found on the network.`);
+    throw new Error(`Version '${refType}:${target}' was not found on the network.`);
   }
 }
 
