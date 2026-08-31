@@ -1,29 +1,28 @@
 const fs = require('fs');
 const path = require('path');
-const { EMPTY_EXAMPLE_APP } = require('../config');
+const { EMPTY_TEMPLATE } = require('../config');
 
 function copyExample(config, { runTask }) {
-  if (config['example-app'] === EMPTY_EXAMPLE_APP) {
-    console.log(`🔍 Selected empty example app. Skipping...\n`);
+  if (config.template === EMPTY_TEMPLATE) {
+    console.log(`🔍 Selected empty template. Skipping...\n`);
     return;
   }
 
   runTask(
-    'Copying example App file and src directory',
+    'Copying template App file and src directory',
     config.paths.log,
     () => {
-      const exampleDir = path.join(
-        config.paths.releaseTests,
-        'examples',
-        config['example-app'],
+      const templateDir = path.join(
+        config.paths.templates,
+        config.template,
       );
 
-      const sourceAppFile = path.join(exampleDir, 'App.tsx');
+      const sourceAppFile = path.join(templateDir, 'App.tsx');
       const targetAppFile = path.join(config.paths.app, 'App.tsx');
 
       fs.copyFileSync(sourceAppFile, targetAppFile);
 
-      const sourceSrcDir = path.join(exampleDir, 'src');
+      const sourceSrcDir = path.join(templateDir, 'src');
       const targetSrcDir = path.join(config.paths.app, 'src');
 
       if (fs.existsSync(sourceSrcDir)) {

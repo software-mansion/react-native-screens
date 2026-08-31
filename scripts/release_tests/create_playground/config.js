@@ -6,7 +6,7 @@ const { fatal } = require('./utils');
 const CURRENT_SCREENS_VERSION = 'current';
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
 const SCREENS_VERSION_HELP = `'${CURRENT_SCREENS_VERSION}', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'`;
-const EMPTY_EXAMPLE_APP = 'empty';
+const EMPTY_TEMPLATE = 'empty';
 
 function parseBooleanFlag(value) {
   if (typeof value === 'string') {
@@ -82,9 +82,9 @@ function getConfig() {
         short: 'o',
         default: false,
       },
-      'example-app': {
+      template: {
         type: 'string',
-        short: 'e',
+        short: 't',
         default: 'tabsAndStack',
       },
       platform: {
@@ -138,17 +138,17 @@ function getConfig() {
         -o, --from-origin                Take the screens version from the remote repository (origin)
                                          instead of the local git repository.
                                          Mutually exclusive with --screens-version '${CURRENT_SCREENS_VERSION}'.
-        -e, --example-app <app>          Name of the example folder to copy (default: 'tabsAndStack').
-                                         Copies 'App.tsx' from 'examples/<app>'. If a 'src' directory
-                                         exists, it will also be copied. Use '${EMPTY_EXAMPLE_APP}' to skip copying
-                                         and keep the default RN App.tsx.
+        -t, --template <name>            Name of the template folder to copy (default: 'tabsAndStack').
+                                         Copies 'App.tsx' from 'scripts/release_tests/create_playground/templates/<name>'. If a 'src'
+                                         directory exists, it will also be copied. Use '${EMPTY_TEMPLATE}' to skip
+                                         copying and keep the default RN App.tsx.
                                          Available: 'tabsAndStack' (Stack v5 from main export; RNS 5.x),
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x).
         -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
                                          Must start with a letter and contain only letters and digits.
         -h, --help                       Display this help message
 
-      Without --run: JS setup only (init, example, screens) — no pod install, no native compile,
+      Without --run: JS setup only (init, copy, screens) — no pod install, no native compile,
       no launch. Run flags (-v, -p, device flags) are not allowed.
 
       Run options (require --run):
@@ -184,7 +184,7 @@ function getConfig() {
         node scripts/release_tests/create_playground.js --run -p ios --ios-simulator "iPhone 16"
         node scripts/release_tests/create_playground.js --run -p ios --ios-device "Karol's iPhone"
         node scripts/release_tests/create_playground.js --run -p android --android-device "emulator-5554"
-        node scripts/release_tests/create_playground.js -s branch:4.26-stable --run -e tabsAndStack4.x
+        node scripts/release_tests/create_playground.js -s branch:4.26-stable --run -t tabsAndStack4.x
         node scripts/release_tests/create_playground.js -r 0.74.0 --run -v release
     `);
     process.exit(0);
@@ -277,19 +277,19 @@ function getConfig() {
 
   const screens = path.resolve(__dirname, '../../..');
   const releaseTests = path.join(screens, 'release_tests');
+  const templates = path.join(__dirname, 'templates');
   const appName = config['app-name'];
   const playground = path.join(releaseTests, 'playground');
 
-  if (config['example-app'] !== EMPTY_EXAMPLE_APP) {
-    const exampleAppFile = path.join(
-      releaseTests,
-      'examples',
-      config['example-app'],
+  if (config.template !== EMPTY_TEMPLATE) {
+    const templateAppFile = path.join(
+      templates,
+      config.template,
       'App.tsx',
     );
-    if (!fs.existsSync(exampleAppFile)) {
+    if (!fs.existsSync(templateAppFile)) {
       fatal(
-        `File ${exampleAppFile} not found. Please ensure the example exists.`,
+        `File ${templateAppFile} not found. Please ensure the template exists.`,
       );
     }
   }
@@ -310,6 +310,7 @@ function getConfig() {
     paths: {
       releaseTests,
       playground,
+      templates,
       screens,
       app: path.join(playground, appName),
       log: path.join(releaseTests, 'setup.log'),
@@ -319,4 +320,4 @@ function getConfig() {
 
 module.exports = getConfig;
 module.exports.CURRENT_SCREENS_VERSION = CURRENT_SCREENS_VERSION;
-module.exports.EMPTY_EXAMPLE_APP = EMPTY_EXAMPLE_APP;
+module.exports.EMPTY_TEMPLATE = EMPTY_TEMPLATE;

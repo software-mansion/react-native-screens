@@ -1,3 +1,4 @@
+const fs = require('fs');
 const getConfig = require('./config');
 const logger = require('./logger');
 const utils = require('./utils');
@@ -18,7 +19,7 @@ console.table({
   platform: config.platform,
   'app-name': config['app-name'],
   'from-origin': config['from-origin'],
-  'example-app': config['example-app'],
+  template: config.template,
   run: config.run,
   'ios-simulator': config['ios-simulator'] ?? '',
   'ios-device': config['ios-device'] ?? '',
@@ -27,6 +28,7 @@ console.table({
 });
 console.log('--------------------------------------------------');
 
+fs.mkdirSync(config.paths.releaseTests, { recursive: true });
 logger.initLog(config.paths.log);
 
 console.time('⏳ Total execution time');
