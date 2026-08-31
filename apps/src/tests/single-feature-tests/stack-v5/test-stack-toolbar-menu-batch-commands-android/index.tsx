@@ -123,19 +123,17 @@ function MainScreen() {
     });
   }, [setRouteOptions, routeKey, handleGroupChange]);
 
-  // A large image with a random seed each call, so every download is unique and
-  // uncached (even across app restarts) and the async load stays visibly slow.
-  // Requires network access. The icon is only visible while Apple is shown in
-  // the toolbar (overflow menu items don't render icons).
-  const nextPhotoIcon = useCallback((): PlatformIconAndroid => {
-    const seed = Math.floor(Math.random() * 1_000_000_000);
-    return {
+  // A bundled image (no network needed). Image icons are always resolved
+  // asynchronously on Android, so this still exercises the async path that the
+  // queue must serialize. The icon is only visible while Apple is shown in the
+  // toolbar (overflow menu items don't render icons).
+  const nextPhotoIcon = useCallback(
+    (): PlatformIconAndroid => ({
       type: 'imageSource',
-      imageSource: {
-        uri: `https://picsum.photos/seed/rns-${seed}/5000`,
-      },
-    };
-  }, []);
+      imageSource: require('@assets/trees.jpg'),
+    }),
+    [],
+  );
 
   // A guaranteed-to-fail image. The load never yields a drawable; the queue
   // must still complete the batch (icon cleared) rather than wait forever for a
@@ -206,11 +204,11 @@ function MainScreen() {
     ]);
   }, [nextPhotoIcon]);
 
-  // Case #5: two back-to-back commands on Apple. The first loads a slow remote
-  // image alongside checked:true; the second unchecks Apple synchronously. With
-  // the queue they are serialized, so the LAST event reflects the SECOND
-  // command (Apple absent). Without it, the first command's late download would
-  // land last and wrongly re-check Apple.
+  // Case #5: two back-to-back commands on Apple. The first loads an image
+  // asynchronously alongside checked:true; the second unchecks Apple
+  // synchronously. With the queue they are serialized, so the LAST event
+  // reflects the SECOND command (Apple absent). Without it, the first command
+  // would resolve after the second and wrongly re-check Apple.
   const runOrderingRace = useCallback(() => {
     const android = headerConfigRef.current?.android;
     android?.updateToolbarMenuElements([

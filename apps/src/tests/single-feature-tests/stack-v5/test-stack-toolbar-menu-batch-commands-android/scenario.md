@@ -20,7 +20,7 @@ Incomplete: covers steps 1–18.
 
 Not automated:
 
-- The appearance of a downloaded photo icon — Detox cannot read image bytes,
+- The appearance of the photo icon itself — Detox cannot read image bytes,
   so an icon is only asserted present or absent. Verify visually.
 - Same-instant atomicity of an image-and-check batch — only the final state is
   asserted. Verify visually that the icon and the check appear together.
@@ -28,7 +28,6 @@ Not automated:
 ## Prerequisites
 
 - Android emulator or device
-- Network access (the image-load cases download from https://picsum.photos)
 
 ## Note
 
@@ -43,8 +42,8 @@ Not automated:
   it is in the toolbar, and its checked state is only visible while it is in the
   overflow menu — several steps below move **Apple** between the two to check
   both.
-- The image cases download a large, uncached image, so the async load is
-  visibly delayed.
+- Image icons are loaded asynchronously, so the icon appears a moment after the
+  tap rather than instantly.
 
 ## Steps
 
@@ -110,8 +109,8 @@ Not automated:
 
 8. Tap **Batch: image + check (atomic)**.
 
-- [ ] After a short download, Apple's toolbar button shows the photo and, at the
-      same moment, 1 new event appears (counter → 7): newest ▶
+- [ ] Once the image has loaded, Apple's toolbar button shows the photo and, at
+      the same moment, 1 new event appears (counter → 7): newest ▶
       `fruits: ["apple","cherry"]`. The event does not appear before the image —
       the batch (Apple's icon and check, and Cherry's check) is held until the
       image loads, then applied together.
@@ -132,7 +131,8 @@ Not automated:
 11. Tap **Ordering race (last: Apple absent)**.
 
 - [ ] 2 new events (counter → 10): `fruits: ["apple"]` (the first command, whose
-      image loads slowly) then newest ▶ `fruits: []` (the second command).
+      image loads asynchronously) then newest ▶ `fruits: []` (the second
+      command).
 - [ ] The newest event and the overflow menu both show Apple unchecked — the
       second command is applied last even though the first command's image
       resolves later.
@@ -173,9 +173,9 @@ Not automated:
 17. Tap **Duplicate id: merge + last icon**.
 
 - [ ] The batch lists Apple twice — the first update checks it with an image
-      that fails to load, the second sets a photo (and no check). After the
-      downloads, Apple's toolbar button shows the **photo**: the later icon wins
-      over the failed one.
+      that fails to load, the second sets a photo (and no check). Once both
+      loads have settled, Apple's toolbar button shows the **photo**: the later
+      icon wins over the failed one.
 - [ ] 2 new events (counter → 15): `fruits: ["apple"]` then newest ▶
       `fruits: ["apple","cherry"]`. The first event shows Apple checked — the
       check from the first update is kept even though the second update set only
