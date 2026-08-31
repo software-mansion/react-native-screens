@@ -663,6 +663,9 @@ export const MENU_ANIMATION_TIMEOUT_MS = 5000;
 /** Probes an already-settled popup: by now it is either up or was never opened. */
 export const MENU_PRESENCE_TIMEOUT_MS = 250;
 
+/** Outlasts a popup's exit animation without paying the full animation timeout. */
+const MENU_DISMISS_PROBE_TIMEOUT_MS = 1000;
+
 /** The accessibility label AppCompat gives the overflow button. */
 export const OVERFLOW_MENU_LABEL = 'More options';
 
@@ -807,12 +810,16 @@ export function createOverflowMenuHelpers({
       .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
   };
 
-  /** `waitForScreen` reported rather than thrown — a stacked popup keeps it false. */
+  /** Reported rather than thrown — a stacked popup keeps it false. The short
+   * probe outlasts the exit animation without stalling stacked cleanup. */
   const isScreenAddressable = () =>
-    waitForScreen().then(
-      () => true,
-      () => false,
-    );
+    waitFor(element(by.id(scrollViewId)))
+      .toBeVisible()
+      .withTimeout(MENU_DISMISS_PROBE_TIMEOUT_MS)
+      .then(
+        () => true,
+        () => false,
+      );
 
   /**
    * Back only ever goes to an open popup: with no menu up the activity takes
