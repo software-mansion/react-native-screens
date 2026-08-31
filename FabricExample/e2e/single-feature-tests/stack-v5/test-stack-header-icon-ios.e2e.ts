@@ -2,13 +2,13 @@ import { device, expect, element, by } from 'detox';
 import {
   barButtonIcon,
   describeIfiOS,
+  headerTitle,
   menuRowIcon,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
-  CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
 
 // Number of rows in the header item menu that render an icon:
@@ -64,9 +64,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
   });
 
   it('should display the header with a star sfSymbol icon on the trailing item', async () => {
-    await expect(
-      element(by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Icons'))),
-    ).toExist();
+    await expect(element(headerTitle('Header Icons'))).toExist();
     await expect(barButtonIcon(ICON_IDS.sfSymbol)).toBeVisible();
   });
 

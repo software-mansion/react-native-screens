@@ -24,6 +24,7 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
+  CLASS_NAME_UI_LABEL,
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
   CLASS_NAME_UI_TAB_BAR,
 } from './native-class-names';
@@ -68,7 +69,8 @@ export const describeIfiPadOS26 =
 export type ScrollOptions = {
   /** Pixels per step. Smaller steps avoid overshooting a short row. */
   pixels?: number;
-  /** Swipe start, as a fraction of height. `NaN` leaves it to Detox. */
+  /** Swipe start, as a fraction of height. Keep it inside the view: on
+   * Android a `NaN`/0 start lands in the status bar and opens the shade. */
   startPercentage?: number;
   /** Scroll direction; `whileElement` only ever scrolls one way. */
   direction?: 'up' | 'down';
@@ -934,6 +936,11 @@ export function headerItem(
   );
 }
 
+/** The header title label. */
+export function headerTitle(title: string): NativeMatcher {
+  return by.type(CLASS_NAME_UI_LABEL).and(by.text(title));
+}
+
 /** A header item's icon, by icon id (SF Symbol name or asset path). */
 export function barButtonIcon(iconId: string) {
   return element(
@@ -1039,6 +1046,18 @@ export async function openContextMenu(
   } else {
     await anchor.tap();
   }
+  await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
+}
+
+/**
+ * Opens the menu attached to the header title. UIKit's title control fails
+ * Detox's visibility threshold, so the label is tapped by coordinates.
+ */
+export async function openHeaderTitleMenu(
+  title: string,
+  timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+) {
+  await tapWithinFrame(await getFrame(headerTitle(title)));
   await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
 }
 

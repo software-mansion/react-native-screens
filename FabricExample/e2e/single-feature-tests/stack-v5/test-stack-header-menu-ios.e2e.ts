@@ -1,21 +1,20 @@
 import { device, expect, element, by } from 'detox';
 import {
   checkmarkFor,
-  CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
   contextMenu,
   describeIfiOS,
   dismissContextMenu,
   dismissToast,
-  forceTapByLabeliOS,
+  headerTitle,
   headerItem,
   menuRow,
   menuRowIcon,
   openContextMenu,
+  openHeaderTitleMenu,
   scrollToAndTap,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { CLASS_NAME_UI_LABEL } from '../../native-class-names';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
@@ -23,16 +22,12 @@ const menuOneBarButton = headerItem('Menu 1', { control: true });
 
 const HEADER_TITLE = 'Header Menu';
 
-const headerTitle = element(
-  by.type(CLASS_NAME_UI_LABEL).and(by.text(HEADER_TITLE)),
-);
+const headerTitleLabel = element(headerTitle(HEADER_TITLE));
 
-// Small steps keep a short picker row from being scrolled past; the Detox
-// default start point is kept.
+// Small steps keep a short picker row from being scrolled past.
 const SCROLL = {
   scrollViewId: SCROLLVIEW_ID,
   pixels: 200,
-  startPercentage: NaN,
 };
 
 /**
@@ -51,17 +46,6 @@ async function openMenuOne() {
   await openContextMenu(menuOneBarButton);
 }
 
-/**
- * Opens the title menu. The control UIKit wraps the title in fails Detox's
- * visibility threshold, so the title label is tapped by coordinates.
- */
-async function openTitleMenu() {
-  await forceTapByLabeliOS(HEADER_TITLE);
-  await waitFor(contextMenu())
-    .toBeVisible()
-    .withTimeout(CONTEXT_MENU_ANIMATION_TIMEOUT_MS);
-}
-
 describeIfiOS('Stack Header Menu (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -72,7 +56,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
   });
 
   it('should display the header with a trailing item exposing a real menu', async () => {
-    await expect(headerTitle).toExist();
+    await expect(headerTitleLabel).toExist();
     await expect(menuOneBarButton).toBeVisible();
   });
 
@@ -177,7 +161,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
     it('should open a menu with both title actions when the header title is tapped', async () => {
       await dismissContextMenu();
 
-      await openTitleMenu();
+      await openHeaderTitleMenu(HEADER_TITLE);
 
       await expect(element(by.text('Title Action 1'))).toBeVisible();
       await expect(element(by.text('Title Action 2'))).toBeVisible();
@@ -191,7 +175,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
     });
 
     it('should dismiss the title menu and emit a toast after tapping "Title Action 2"', async () => {
-      await openTitleMenu();
+      await openHeaderTitleMenu(HEADER_TITLE);
       await element(by.text('Title Action 2')).tap();
       await dismissToast('1. Clicked "Title Action 2"');
 

@@ -2,6 +2,7 @@ import { device, expect, element, by } from 'detox';
 import {
   chevronFor,
   describeIfiOS,
+  headerTitle,
   dismissContextMenu,
   headerItem,
   menuRow,
@@ -13,7 +14,6 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
-  CLASS_NAME_UI_LABEL,
 } from '../../native-class-names';
 import { IosElementAttributes } from 'detox/detox';
 
@@ -60,9 +60,7 @@ describeIfiOS('Stack Header Menu Options (iOS)', () => {
   });
 
   it('should display the header with Options and Palette trailing items', async () => {
-    await expect(
-      element(by.type(CLASS_NAME_UI_LABEL).and(by.text('Menu Options'))),
-    ).toExist();
+    await expect(element(headerTitle('Menu Options'))).toExist();
     await expect(optionsMenuButton).toBeVisible();
     await expect(paletteMenuButton).toBeVisible();
   });

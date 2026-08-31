@@ -11,12 +11,10 @@ import {
 const SCROLLVIEW_ID = 'tab-bar-layout-direction-scrollview';
 const DIRECTION_PICKER_ID = 'tab-bar-layout-direction-picker';
 
-// Small steps keep a short picker row from being scrolled past; the Detox
-// default start point is kept.
+// Small steps keep a short picker row from being scrolled past.
 const SCROLL = {
   scrollViewId: SCROLLVIEW_ID,
   pixels: 100,
-  startPercentage: NaN,
 };
 
 async function scrollToDirectionPicker() {
