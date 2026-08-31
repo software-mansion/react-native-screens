@@ -65,7 +65,7 @@ internal class FormSheetKeyboardCoordinator(
                 return bounds
             }
 
-            // The end sheet position is known - move the sheet and let the animation progress 
+            // The end sheet position is known - move the sheet and let the animation progress
             // bring it to the new position.
             startTranslationY = (startTop - bottomSheetView.top).toFloat()
             bottomSheetView.translationY = startTranslationY
