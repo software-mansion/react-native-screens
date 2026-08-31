@@ -3,6 +3,7 @@
 #import "RNSContainer.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
+#import "RNSStackNavigationBar.h"
 #import "RNSStackOperation.h"
 #import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
@@ -15,7 +16,12 @@
 
 - (instancetype)init
 {
-  if (self = [super init]) {
+#if !TARGET_OS_TV
+  self = [super initWithNavigationBarClass:RNSStackNavigationBar.class toolbarClass:nil];
+#else // !TARGET_OS_TV
+  self = [super init];
+#endif // !TARGET_OS_TV
+  if (self != nil) {
     _navigationBarCoordinator = [RNSStackNavigationBarCoordinator new];
     [_navigationBarCoordinator initializeNavigationBarOfNavigationController:self];
     [self initState];

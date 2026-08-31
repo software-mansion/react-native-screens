@@ -2,8 +2,9 @@
 
 ## Details
 
-**Description:** Tests back button configuration and layout with respect to changing
-widths of elements in header. Back button props are configured on the screen
+**Description:** Tests back button configuration, layout with respect to changing
+widths of elements in header, and toggling the long-press navigation history menu.
+Back button props are configured on the screen
 that renders the back button, but the native configuration is performed on the screen below.
 
 **OS test creation version:** 26.4
@@ -34,9 +35,11 @@ iff `displayMode` is changed and next screen that has navigation bar visible is 
 It neither will break nor fix the broken one if the next screen doesn't have navigation bar.
 IOS 26 is not affected.
 
+Back button menu behaves similarly on both versions.
+
 ## Steps
 
-### iOS 18
+### `title` + `displayMode` (iOS 18)
 
 1. Launch the test screen.
 2. On the Home screen, click First.
@@ -72,7 +75,7 @@ IOS 26 is not affected.
   - The entry for First displays "First", NOT the back title configured for
     the previously popped Second screen
 
-### iOS 26
+### `title` + `displayMode` (iOS 26)
 
 1. Launch the test screen.
 2. On the Home screen, click First.
@@ -104,3 +107,15 @@ IOS 26 is not affected.
 12. Long-press the back button to open the back menu.
   - The entry for First displays "First", NOT "Custom title" configured for
     the previously popped Second screen
+
+### `menuEnabled` (both versions)
+
+1. Launch the test screen. Push First.
+2. Tap `backTitle` to set to "Custom title". Push Second. Long-press the back button.
+  - The navigation history menu appears with two items: "Home", "Custom title".
+3. Dismiss the menu. Pop back to First. Under Current screen, tap `menuEnabled` to set "false". Long-press the back button.
+  - The navigation history menu doesn't appear.
+4. Tap `trailingItemsCount` once to add a menu item. Long-press the item.
+  - The item menu shows, while long-pressing the back button is blocked.
+5. Under Next screen, tap `menuEnabled` to set false. Push Second. Long-press the back button.
+  - The navigation history menu doesn't appear.

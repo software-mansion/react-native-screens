@@ -31,6 +31,7 @@ export interface NativeProps extends ViewProps {
   // iOS-specific props
   backButtonTitle?: string | undefined;
   backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
+  backButtonMenuEnabled?: CT.WithDefault<boolean, true>;
 
   largeTitle?: string | undefined;
   largeSubtitle?: string | undefined;
