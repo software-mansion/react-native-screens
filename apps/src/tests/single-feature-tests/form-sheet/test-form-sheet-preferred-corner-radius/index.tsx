@@ -83,9 +83,11 @@ const styles = StyleSheet.create({
   buttonGroup: {
     gap: 12,
     alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   spacing: {
-    height: 32,
+    height: 12,
   },
 });
 
