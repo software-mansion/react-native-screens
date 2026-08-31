@@ -123,7 +123,7 @@ function getConfig() {
 
   if (config.help) {
     console.log(`
-      Usage: node create_playground.js [options]
+      Usage: node scripts/release_tests/create_playground.js [options]
 
       Setup options:
         -r, --rn-version <version>       React Native version to install (default: 'latest')
@@ -169,23 +169,23 @@ function getConfig() {
 
       Examples:
         # Setup only
-        node create_playground.js
-        node create_playground.js -s branch:main
-        node create_playground.js -s tag:4.16.0
-        node create_playground.js -s commit:8b939b9
-        node create_playground.js -s commit:8b939b9 -o
-        node create_playground.js -s branch:fix-bug -o
-        node create_playground.js -a MyPlayground
+        node scripts/release_tests/create_playground.js
+        node scripts/release_tests/create_playground.js -s branch:main
+        node scripts/release_tests/create_playground.js -s tag:4.16.0
+        node scripts/release_tests/create_playground.js -s commit:8b939b9
+        node scripts/release_tests/create_playground.js -s commit:8b939b9 -o
+        node scripts/release_tests/create_playground.js -s branch:fix-bug -o
+        node scripts/release_tests/create_playground.js -a MyPlayground
 
         # Setup + run
-        node create_playground.js --run
-        node create_playground.js --run -v release
-        node create_playground.js --run -p ios
-        node create_playground.js --run -p ios --ios-simulator "iPhone 16"
-        node create_playground.js --run -p ios --ios-device "Karol's iPhone"
-        node create_playground.js --run -p android --android-device "emulator-5554"
-        node create_playground.js -s branch:4.26-stable --run -e tabsAndStack4.x
-        node create_playground.js -r 0.74.0 --run -v release
+        node scripts/release_tests/create_playground.js --run
+        node scripts/release_tests/create_playground.js --run -v release
+        node scripts/release_tests/create_playground.js --run -p ios
+        node scripts/release_tests/create_playground.js --run -p ios --ios-simulator "iPhone 16"
+        node scripts/release_tests/create_playground.js --run -p ios --ios-device "Karol's iPhone"
+        node scripts/release_tests/create_playground.js --run -p android --android-device "emulator-5554"
+        node scripts/release_tests/create_playground.js -s branch:4.26-stable --run -e tabsAndStack4.x
+        node scripts/release_tests/create_playground.js -r 0.74.0 --run -v release
     `);
     process.exit(0);
   }
@@ -275,7 +275,8 @@ function getConfig() {
     );
   }
 
-  const releaseTests = path.resolve(__dirname, '..');
+  const screens = path.resolve(__dirname, '../../..');
+  const releaseTests = path.join(screens, 'release_tests');
   const appName = config['app-name'];
   const playground = path.join(releaseTests, 'playground');
 
@@ -309,7 +310,7 @@ function getConfig() {
     paths: {
       releaseTests,
       playground,
-      screens: path.resolve(releaseTests, '..'),
+      screens,
       app: path.join(playground, appName),
       log: path.join(releaseTests, 'setup.log'),
     },

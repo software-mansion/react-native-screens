@@ -17,5 +17,5 @@ Tabs + legacy V4 `ScreenStack` / `ScreenStackItem` from the main export. No expe
 ## Setup
 
 ```bash
-node release_tests/create_playground.js -s branch:4.26-stable -r 0.84.0 -o -e tabsAndStack4.x
+node scripts/release_tests/create_playground.js -s branch:4.26-stable -r 0.84.0 -o -e tabsAndStack4.x
 ```
