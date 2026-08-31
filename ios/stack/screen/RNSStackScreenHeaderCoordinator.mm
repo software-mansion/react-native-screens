@@ -15,10 +15,12 @@
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
 
+#if !TARGET_OS_TV
   // Navigation item of the screen below, onto which the back button
   // configuration has been applied. Kept so that the configuration can be
   // cleared when the owning screen is popped from the stack.
   __weak UINavigationItem *_Nullable _backButtonConfigTargetItem;
+#endif // !TARGET_OS_TV
 
   RNSStackHeaderMenuTrackerRegistry *_Nonnull _trackerRegistry;
 
@@ -315,9 +317,10 @@
 
 #if !TARGET_OS_TV
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
-#endif // !TARGET_OS_TV
 
   [self clearAppliedBackButtonConfig];
+#endif // !TARGET_OS_TV
+
   [self updateNavigationBarVisibilityAnimated:YES];
 }
 
@@ -432,15 +435,15 @@
 }
 #endif // !TARGET_OS_TV
 
+#if !TARGET_OS_TV
 - (void)clearAppliedBackButtonConfig
 {
-#if !TARGET_OS_TV
   UINavigationItem *targetItem = _backButtonConfigTargetItem;
   _backButtonConfigTargetItem = nil;
   targetItem.backButtonTitle = nil;
   targetItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
-#endif // !TARGET_OS_TV
 }
+#endif // !TARGET_OS_TV
 
 - (void)applyItemsWithTitleView:(nullable UIView *)titleView
                    subtitleView:(nullable UIView *)subtitleView

@@ -84,11 +84,13 @@
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
+#if !TARGET_OS_TV
     // The pop transition has completed. Clear the back button config this
     // screen has applied onto the screen below. UIKit seems to serialize
     // navigation transitions (undocumented, internal, but seems to work on 18 and 26),
     // so this runs before a queued push applies its own config.
     [_headerCoordinator clearAppliedBackButtonConfig];
+#endif // !TARGET_OS_TV
 
     if (_screenView.activityMode == RNSStackScreenActivityModeDetached) {
       [[self reactEventEmitter] emitOnDismiss];
