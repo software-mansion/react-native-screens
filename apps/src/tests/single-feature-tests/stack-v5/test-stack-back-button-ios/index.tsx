@@ -27,7 +27,7 @@ interface BackButtonConfig {
   title: string | undefined;
   backButtonTitle: string | undefined;
   displayMode: StackHeaderBackButtonDisplayModeIOS;
-  menuEnabled: boolean;
+  backButtonMenuEnabled: boolean;
   trailingItemsCount: number;
 }
 
@@ -35,7 +35,7 @@ const INITIAL_CONFIG: BackButtonConfig = {
   title: undefined,
   backButtonTitle: undefined,
   displayMode: 'default',
-  menuEnabled: true,
+  backButtonMenuEnabled: true,
   trailingItemsCount: 0,
 };
 
@@ -66,7 +66,7 @@ function buildHeaderConfig(
     ios: {
       backButtonTitle: config.backButtonTitle,
       backButtonDisplayMode: config.displayMode,
-      backButtonMenuEnabled: config.menuEnabled,
+      backButtonMenuEnabled: config.backButtonMenuEnabled,
       trailingItems: Array.from(
         { length: config.trailingItemsCount },
         (_, index) => ({
@@ -187,7 +187,7 @@ function BackButtonConfigSection(props: {
   const toggleMenuEnabled = () =>
     onChange(prev => ({
       ...prev,
-      menuEnabled: !prev.menuEnabled,
+      backButtonMenuEnabled: !prev.backButtonMenuEnabled,
     }));
 
   const cycleTrailingItemsCount = () =>
@@ -213,7 +213,7 @@ function BackButtonConfigSection(props: {
         onPress={cycleDisplayMode}
       />
       <Button
-        title={`menuEnabled: ${config.menuEnabled}`}
+        title={`menuEnabled: ${config.backButtonMenuEnabled}`}
         onPress={toggleMenuEnabled}
       />
       <Button
