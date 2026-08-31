@@ -530,17 +530,19 @@ class TabsContainer internal constructor(
     }
 
     private fun updateNavigationMenuStructure() {
-        if (bottomNavigationView.menu.size != tabsModel.size) {
-            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
-            bottomNavigationView.menu.clear()
+        val menu = bottomNavigationView.menu
+        val isMenuInSync =
+            menu.size == tabsModel.size &&
+                tabsModel.withIndex().all { (index, fragment) ->
+                    menu.getItem(index).itemId == fragment.menuItemId
+                }
+
+        if (isMenuInSync) {
+            return
         }
-        tabsModel.forEachIndexed { index, fragment ->
-            val menuItem =
-                bottomNavigationView.menu.getOrCreateMenuItemForFragmentAt(
-                    index,
-                    fragment.tabsScreen,
-                )
-            check(fragmentIndexForMenuItemId(menuItem.itemId) == index) { "[RNScreens] Illegal state: menu items are shuffled" }
+        menu.clear()
+        tabsModel.forEach { fragment ->
+            menu.getOrCreateMenuItemForFragment(fragment)
         }
     }
 
@@ -717,12 +719,10 @@ class TabsContainer internal constructor(
         appearanceCoordinator.updateTabAppearance(themedContext, this)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.getOrNull(fragmentIndexForMenuItemId(itemId))
+    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.find { it.menuItemId == itemId }
 
     private fun getMenuItemIdForFragment(tabsScreenFragment: TabsScreenFragment): Int? =
-        tabsModel.indexOfFirst { it === tabsScreenFragment }.takeIf { it != -1 }?.let {
-            menuItemIdForFragmentAtIndex(it)
-        }
+        tabsScreenFragment.menuItemId.takeIf { tabsModel.any { it === tabsScreenFragment } }
 
     private fun getSelectedTabsScreenFragmentId(): Int? =
         tabsModel
@@ -731,10 +731,9 @@ class TabsContainer internal constructor(
 
     private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
         tabsModel
-            .indexOfFirst { it.tabsScreen === tabsScreen }
-            .takeIf { it != -1 }
-            ?.let { index ->
-                bottomNavigationView.menu.findItem(menuItemIdForFragmentAtIndex(index))
+            .find { it.tabsScreen === tabsScreen }
+            ?.let { fragment ->
+                bottomNavigationView.menu.findItem(fragment.menuItemId)
             }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
