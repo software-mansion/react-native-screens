@@ -282,6 +282,8 @@ class ScreenStack(
                 screenWrappers
                     .asSequence()
                     .dropWhile { it !== visibleBottom } // ignore all screens beneath the visible bottom
+                    // dismissed screens are already removed above & preloaded ones must stay detached
+                    .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
                     .forEach { wrapper ->
                         // TODO: It should be enough to dispatch this on commit action once.
                         transaction.add(id, wrapper.fragment).runOnCommit {
