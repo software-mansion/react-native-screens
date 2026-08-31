@@ -108,7 +108,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). The sheet surface extends behind the navigation bar while the content sits above it. No visual jumps during the presentation animation.
+- [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). The sheet surface extends behind the navigation bar while the content sits above it.
 
 ---
 

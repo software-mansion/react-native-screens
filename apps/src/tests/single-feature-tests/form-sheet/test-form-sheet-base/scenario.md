@@ -111,7 +111,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Basic Functionality** screen.
 
-- [ ] The host screen shows the "Basic Functionality" title and the "Open FormSheet" button.
+- [ ] The host screen shows the "FormSheet Test" title and the "Open FormSheet" button.
 
 ---
 
@@ -120,7 +120,7 @@ TBD: Planned, but will be implemented separately.
 2. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lower detent (0.6) and the host screen is dimmed.
-- [ ] "FormSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet. Both are fully visible and tappable.
+- [ ] "FormSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet.
 
 ---
 
@@ -144,7 +144,7 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap "Open FormSheet", then swipe the sheet down past the lower detent.
 
-- [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
+- [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6.
 
 7. Tap "Open FormSheet", then use the system back gesture (or the back button).
 
