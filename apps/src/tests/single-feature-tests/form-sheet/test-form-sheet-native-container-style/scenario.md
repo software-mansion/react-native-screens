@@ -12,13 +12,13 @@ TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iPhone: device or simulator **with a home indicator** (e.g. iPhone 13 or newer), to verify the bottom safe area coverage.
+- iPhone: device or simulator.
 - iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
-- Android: phone device or emulator with a visible navigation bar (gesture or 3-button).
+- Android: phone device or emulator.
 
 ## Note
 
-- The React content of the sheet has no background of its own, so every visible sheet pixel comes from the native container color.
+- The React content of the sheet has no background of its own, so the background is sampled from the native container background color.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; there is no bottom safe area to cover, so the color simply fills the panel.
 - **Android:** the sheet container is laid out behind the navigation bar, so the native color extends to the bottom edge of the screen while the React content stays above the bar. Content height changes are applied immediately, without animation.
 

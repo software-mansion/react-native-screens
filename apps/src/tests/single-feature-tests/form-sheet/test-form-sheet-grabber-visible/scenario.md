@@ -18,8 +18,7 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- Both switches (host screen and inside the sheet) drive the same state, so they always show the same value.
-- **iOS:** the grabber is the system indicator drawn by `UISheetPresentationController`; the system may still hide it in some presentation contexts.
+- **iOS:** the grabber is the system indicator the system may still hide it in some presentation contexts.
 - **Android:** the grabber is Material's drag handle, rendered above the React content; toggling it changes the content position by the handle height.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the grabber is drawn at the top edge of the panel.
 

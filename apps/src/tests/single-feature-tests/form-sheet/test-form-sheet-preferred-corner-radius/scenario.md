@@ -20,7 +20,7 @@ TBD: Planned, but will be implemented separately.
 
 - **iOS 18:** the radius affects the **top** corners of the sheet. **iOS 26:** the radius affects **all** corners.
 - **iPad:** the sheet is presented as a floating panel, so the radius affects **all four** corners.
-- **Android:** rounded-corner clipping is applied only on API level 33+; the radius affects the **top** corners. Known limitation: updating the radius while the sheet is fully expanded to the top of the screen (1.0) makes the corners flat – Material enforces flat corners on the `EXPANDED` state transition and a JS prop update does not re-trigger the state. Change the radius at the 0.6 detent.
+- **Android:** rounded-corner clipping is applied only on API level 33+; the radius affects the **top** corners. Known limitation: updating the radius while the sheet is fully expanded to the top of the screen (1.0) makes the corners flat, change the radius at the 0.6 detent.
 
 ## Steps - iPhone
 

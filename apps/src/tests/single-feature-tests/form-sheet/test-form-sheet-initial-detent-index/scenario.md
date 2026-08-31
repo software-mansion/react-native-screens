@@ -19,7 +19,7 @@ TBD: Planned, but will be implemented separately.
 ## Note
 
 - `initialDetentIndex` is applied only when the sheet transitions from closed to open; changing it while the sheet is presented has no effect until the next presentation.
-- **Android:** the index maps to the Material states (`0` → collapsed, `1` → half-expanded, `'last'` → expanded). The content box is laid out to the largest detent and anchored to the top, so the "Opened at Initial Index" title and the buttons stay at the top of the sheet at every detent.
+- **Android:** the content box is laid out to the largest detent and anchored to the top, so the "Opened at Initial Index" title and the buttons stay at the top of the sheet at every detent.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
 ## Steps - iPhone
@@ -44,7 +44,7 @@ TBD: Planned, but will be implemented separately.
 
 4. Tap "Force Re-render (0)" inside the sheet.
 
-- [ ] The button's counter increments (a React render happened).
+- [ ] The button's counter increments.
 - [ ] The sheet stays at 0.6 – it does not snap back to the initial detent.
 
 5. Tap "Dismiss from JS" (or swipe the sheet down).

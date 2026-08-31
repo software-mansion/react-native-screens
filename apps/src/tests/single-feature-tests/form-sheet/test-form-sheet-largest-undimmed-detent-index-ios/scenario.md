@@ -17,7 +17,7 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- iOS only – Android ignores `largestUndimmedDetentIndex` for now.
+- iOS only - Android implementation is planned separately.
 - The "Increment Background Counter" button stays at the top of the host screen so it remains reachable above the sheet at every detent; the largest detent is 0.8 on purpose.
 - With the default `'none'` every detent is dimmed; a tap on the dimmed area dismisses the sheet instead of reaching the button underneath.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the host screen stays visible around the panel.

@@ -18,7 +18,6 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- "Quickly dismiss & present" sets `isOpen` to `false` and back to `true` after ~32 ms, i.e. while the dismissal animation is still running.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
 ## Steps - iPhone
@@ -39,7 +38,7 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Rapid toggling (stress test)
+### Rapid toggling
 
 3. Tap "Quickly dismiss & present".
 

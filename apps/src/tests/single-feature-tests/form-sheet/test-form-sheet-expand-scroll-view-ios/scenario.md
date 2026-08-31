@@ -17,7 +17,7 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- iOS only – Android ignores `prefersScrollingExpandsWhenScrolledToEdge` for now.
+- iOS only
 - The property only takes effect when scrolling starts exactly at the top edge of the `ScrollView` (content offset 0).
 - The list keeps its scroll position across dismiss/present – scroll back to the top before testing the edge behavior again.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.

@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify the dismiss events of the `FormSheet` component with detents `[0.6, 1.0]`. `onNativeDismiss` must fire when the user dismisses the sheet natively (swipe down, backdrop tap, and on Android the system back gesture); `onDismiss` must fire when the sheet is dismissed programmatically (`isOpen` set to `false`). The host screen keeps a timestamped event log.
+**Description:** Verify the dismiss events of the `FormSheet` component with detents `[0.6, 1.0]`. `onNativeDismiss` must fire when the user dismisses the sheet natively (swipe down, backdrop tap); `onDismiss` must fire when the sheet is dismissed programmatically (`isOpen` set to `false`). The host screen keeps a timestamped event log.
 
 **OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
@@ -18,7 +18,6 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- The scenario's `onNativeDismiss` handler also sets `isOpen` back to `false`; this JS-side sync must **not** produce an additional `onDismiss` entry.
 - Wait for the dismissal animation to finish before reading the log.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the backdrop is the dimmed area around the panel.
 

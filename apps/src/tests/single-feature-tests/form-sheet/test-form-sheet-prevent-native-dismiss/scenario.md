@@ -18,7 +18,6 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- The switch on the host screen defaults to **ON**; the instruction text inside the sheet changes with the switch value.
 - **Android:** a prevented attempt makes the sheet return to its last stable detent; the system back gesture/button is intercepted the same way as the swipe.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the backdrop is the dimmed area around the panel.
 

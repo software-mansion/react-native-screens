@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately (no animation yet).
+**Description:** Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
 
 **OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
@@ -18,9 +18,8 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- With `fitToContents` the React content box wraps its children on both platforms (there is no detent to lay the content out to), so the sheet height follows the content height.
 - **iOS:** the sheet has extra empty space at the bottom – the native bottom inset (home indicator area) is added below the content.
-- **Android:** when content is mounted/unmounted, the sheet updates its height immediately, without animation. Animating dynamic content size changes is planned separately.
+- **Android:** when content is mounted/unmounted, the sheet updates its height immediately, without animation. Animating dynamic content size changes should be investigated separately.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; `fitToContents` applies to the panel height.
 
 ## Steps - iPhone
