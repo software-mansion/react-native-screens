@@ -97,7 +97,7 @@ TBD: Planned, but will be implemented separately.
 5. Tap "Open FormSheet", wait for the panel to present, then tap "Dismiss from JS" inside the panel.
 
 - [ ] The panel dismisses.
-- [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
+- [ ] The log shows exactly one entry: `onDismiss`.
 
 ## Steps - Android
 

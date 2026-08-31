@@ -72,7 +72,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents as a centered floating panel with a fixed width and a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
+- [ ] The sheet presents as a centered floating panel with a fixed width and a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons).
 
 ---
 

@@ -70,7 +70,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Basic Functionality** screen.
 
-- [ ] The host screen shows the "Basic Functionality" title and the "Open FormSheet" button.
+- [ ] The host screen shows the "FormSheet Test" title and the "Open FormSheet" button.
 
 ---
 
@@ -103,7 +103,7 @@ TBD: Planned, but will be implemented separately.
 
 6. Tap "Open FormSheet", then swipe the panel down past the lower detent.
 
-- [ ] The panel dismisses natively. "Open FormSheet" is pressable again and opens the panel at 0.6 (the JS state was synced by `onNativeDismiss`).
+- [ ] The panel dismisses natively. "Open FormSheet" is pressable again and opens the panel at 0.6.
 
 ## Steps - Android
 
