@@ -30,7 +30,8 @@ open class ScreenContainer(
     private var isAttached = false
     private var needsUpdate = false
     private var isLayoutEnqueued = false
-    private val layoutCallback: Choreographer.FrameCallback =
+    // Still null while ViewGroup's constructor runs, and that constructor calls requestLayout().
+    private val layoutCallback: Choreographer.FrameCallback? =
         object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
@@ -74,7 +75,6 @@ open class ScreenContainer(
 
     override fun requestLayout() {
         super.requestLayout()
-        @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
         if (!isLayoutEnqueued && layoutCallback != null) {
             isLayoutEnqueued = true
             // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current

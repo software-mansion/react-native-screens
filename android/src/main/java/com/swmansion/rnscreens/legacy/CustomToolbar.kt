@@ -60,7 +60,8 @@ open class CustomToolbar(
         menu
     }
 
-    private val layoutCallback: Choreographer.FrameCallback =
+    // Still null while Toolbar's constructor runs, and that constructor calls requestLayout().
+    private val layoutCallback: Choreographer.FrameCallback? =
         object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
                 isLayoutEnqueued = false
@@ -89,7 +90,6 @@ open class CustomToolbar(
             // the position of each subview, even if Yoga has correctly set their width and height).
             // This is mostly the issue, when windowSoftInputMode is set to adjustPan in AndroidManifest.
             // Thus, we're manually calling the layout **after** the current layout.
-            @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
             if (!isLayoutEnqueued && layoutCallback != null) {
                 isLayoutEnqueued = true
                 // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current

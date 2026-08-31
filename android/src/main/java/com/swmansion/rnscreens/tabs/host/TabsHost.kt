@@ -31,7 +31,8 @@ class TabsHost(
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
-    private val layoutCoordinator: TabsHostLayoutCoordinator =
+    // Still null while FrameLayout's constructor runs, and that constructor calls requestLayout().
+    private val layoutCoordinator: TabsHostLayoutCoordinator? =
         TabsHostLayoutCoordinator(this, ::forceSubtreeMeasureAndLayoutPass)
 
     private var hasFirstLayoutWithInsets: Boolean = false
@@ -134,7 +135,6 @@ class TabsHost(
      * https://github.com/software-mansion/react-native-screens/pull/4161
      */
     private fun refreshLayout() {
-        @Suppress("SENSELESS_COMPARISON") // layoutCoordinator can be null here since this method can be called in init
         if (layoutCoordinator != null) {
             if (!hasFirstLayoutWithInsets) {
                 layoutCoordinator.postLayoutToMessageQueue()
