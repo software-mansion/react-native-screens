@@ -165,7 +165,7 @@ function NativeDismissScenario() {
       <ScreenStackItem
         screenId="home"
         style={StyleSheet.absoluteFill}
-        headerConfig={{ title: 'Test0000' }}>
+        headerConfig={{ title: 'Test4571' }}>
         <View style={styles.screen}>
           <Text style={styles.title}>Steps:</Text>
           <Text>1. Open transparent modal</Text>
