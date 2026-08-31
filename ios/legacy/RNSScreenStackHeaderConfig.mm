@@ -603,6 +603,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
           RNSSearchBar *searchBar = subview.subviews[0];
           searchBarPresent = true;
+          searchBar.controller.searchBar.semanticContentAttribute = config.direction;
           navitem.searchController = searchBar.controller;
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -778,7 +779,9 @@ RNS_IGNORE_SUPER_CALL_END
     if (navCtrl.traitCollection.layoutDirection != layoutDirection) {
       navCtrl.traitOverrides.layoutDirection = layoutDirection;
     }
-  } else {
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  {
     UIViewController *parentViewController = navCtrl.parentViewController;
     if (parentViewController != nil && navCtrl.traitCollection.layoutDirection != layoutDirection) {
       [parentViewController
@@ -786,18 +789,12 @@ RNS_IGNORE_SUPER_CALL_END
               forChildViewController:navCtrl];
     }
   }
-#else
-  UIViewController *parentViewController = navCtrl.parentViewController;
-  if (parentViewController != nil && navCtrl.traitCollection.layoutDirection != layoutDirection) {
-    [parentViewController
-        setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:layoutDirection]
-            forChildViewController:navCtrl];
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
 
   // Keep the explicit legacy value synchronized because stack gestures and animations inspect it directly.
   if (navCtrl.view.semanticContentAttribute != self.direction) {
     navCtrl.view.semanticContentAttribute = self.direction;
+  }
+  if (navCtrl.navigationBar.semanticContentAttribute != self.direction) {
     navCtrl.navigationBar.semanticContentAttribute = self.direction;
   }
 }
