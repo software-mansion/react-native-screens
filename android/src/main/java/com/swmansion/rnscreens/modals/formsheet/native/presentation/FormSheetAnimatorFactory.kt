@@ -44,7 +44,9 @@ internal class FormSheetAnimatorFactory(
         view: View,
         isInterrupting: Boolean = false,
     ): Animator {
-        val startY = if (isInterrupting) view.translationY else 0f
+        // Always leave from the current translation: besides an interrupted enter animation, the sheet
+        // may be mid-way through tracking the keyboard animation when the dismissal starts.
+        val startY = view.translationY
         val startAlpha = if (isInterrupting) dimmingManager.dimmingAlpha else dimmingManager.maxAlpha
 
         val slideAnimator =
