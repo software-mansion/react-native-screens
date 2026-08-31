@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.stack.header.config
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
+import android.view.Gravity
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
@@ -10,6 +11,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.common.ShadowStateProxy
+import com.swmansion.rnscreens.common.text.ReactTextAppearance
 import com.swmansion.rnscreens.helpers.IconResolution
 import com.swmansion.rnscreens.helpers.PropIconResolver
 import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
@@ -71,91 +73,127 @@ internal class StackHeaderConfig(
 
     // region Properties
 
-    override var type: StackHeaderType by Delegates.observable(StackHeaderType.SMALL) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-    }
+    override var type: StackHeaderType by invalidatingProperty(StackHeaderType.SMALL, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var title: String by Delegates.observable("") { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TITLE)
-    }
+    override var title: String by invalidatingProperty("", StackHeaderInvalidationFlags.TITLE)
         internal set
 
-    override var hidden: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-    }
+    override var subtitle: String by invalidatingProperty("", StackHeaderInvalidationFlags.TITLE)
         internal set
 
-    override var transparent: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-    }
+    // Requires header rebuild due to bug in Material implementation
+    override var maxLines: Int by invalidatingProperty(1, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var backButtonHidden: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var hidden: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var backButtonTintColorNormal: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var transparent: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.STRUCTURE)
         internal set
 
-    override var backButtonTintColorPressed: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonHidden: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var backButtonTintColorFocused: Int? by Delegates.observable(null) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonTintColorNormal: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var backButtonIcon: Drawable? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.BACK_BUTTON)
-    }
+    override var backButtonTintColorPressed: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var scrollFlagScroll: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var backButtonTintColorFocused: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var scrollFlagEnterAlways: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var backButtonIcon: Drawable? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACK_BUTTON)
         internal set
 
-    override var scrollFlagEnterAlwaysCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var overflowIconTintColorNormal: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var scrollFlagExitUntilCollapsed: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var overflowIconTintColorPressed: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var scrollFlagSnap: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.SCROLL_FLAGS)
-    }
+    override var overflowIconTintColorFocused: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
         internal set
 
-    override var liftOnScroll: Boolean by Delegates.observable(true) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
-    }
+    override var overflowIcon: Drawable? by invalidatingProperty(null, StackHeaderInvalidationFlags.OVERFLOW_ICON)
+        internal set
+
+    override var scrollFlagScroll: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
+        internal set
+
+    override var scrollFlagEnterAlways: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
+        internal set
+
+    override var scrollFlagEnterAlwaysCollapsed: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
+        internal set
+
+    override var scrollFlagExitUntilCollapsed: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
+        internal set
+
+    override var scrollFlagSnap: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.SCROLL_FLAGS)
+        internal set
+
+    override var liftOnScroll: Boolean by invalidatingProperty(true, StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
+        internal set
+
+    override var backgroundColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
+        internal set
+
+    override var scrolledBackgroundColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
+        internal set
+
+    override var statusBarScrimColor: Int? by invalidatingProperty(null, StackHeaderInvalidationFlags.BACKGROUND_COLORS)
         internal set
 
     override var toolbarMenu: StackHeaderToolbarMenuConfig
-        by Delegates.observable(StackHeaderToolbarMenuConfig(emptyList(), emptyList())) { _, old, new ->
-            if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
-        }
+        by invalidatingProperty(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), StackHeaderInvalidationFlags.TOOLBAR_MENU)
         internal set
 
-    override var toolbarMenuGroupDividerEnabled: Boolean by Delegates.observable(false) { _, old, new ->
-        if (old != new) invalidate(StackHeaderInvalidationFlags.TOOLBAR_MENU)
-    }
+    override var toolbarMenuGroupDividerEnabled: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TOOLBAR_MENU)
         internal set
+
+    override var titleCentered: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TITLE_POSITIONING)
+        internal set
+
+    override var subtitleCentered: Boolean by invalidatingProperty(false, StackHeaderInvalidationFlags.TITLE_POSITIONING)
+        internal set
+
+    override var expandedTitleHorizontalGravity: Int by invalidatingProperty(Gravity.START, StackHeaderInvalidationFlags.TITLE_POSITIONING)
+        internal set
+
+    override var expandedTitleVerticalGravity: Int by invalidatingProperty(Gravity.BOTTOM, StackHeaderInvalidationFlags.TITLE_POSITIONING)
+        internal set
+
+    override var collapsedTitleHorizontalGravity: Int by invalidatingProperty(Gravity.START, StackHeaderInvalidationFlags.TITLE_POSITIONING)
+        internal set
+
+    override var collapsedTitleVerticalGravity: Int by invalidatingProperty(
+        Gravity.CENTER_VERTICAL,
+        StackHeaderInvalidationFlags.TITLE_POSITIONING,
+    )
+        internal set
+
+    override var collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode
+        by invalidatingProperty(StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE, StackHeaderInvalidationFlags.STRUCTURE)
+        internal set
+
+    override var contentInsetStart: Float?
+        by invalidatingProperty(null, StackHeaderInvalidationFlags.CONTENT_INSETS)
+        internal set
+
+    override var contentInsetEnd: Float?
+        by invalidatingProperty(null, StackHeaderInvalidationFlags.CONTENT_INSETS)
+        internal set
+
+    override val titleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val subtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val expandedTitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val collapsedTitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val expandedSubtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+    override val collapsedSubtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
+
+    private fun invalidateTextAppearance() = invalidate(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
 
     override val isRTL: Boolean
         get() = layoutDirection == LayoutDirection.RTL
@@ -198,6 +236,34 @@ internal class StackHeaderConfig(
                 IconResolution.Unchanged -> Unit
                 is IconResolution.Resolved -> {
                     backButtonIcon = result.drawable
+                    if (!isInsideMountTransaction) {
+                        flushUpdates()
+                    }
+                }
+            }
+        }
+    }
+
+    // endregion
+
+    // region Overflow menu icon resolution
+
+    // Staging fields for overflow menu icon resolution — mirrors the back button icon.
+    // Resolution happens in resolveOverflowIconIfNeeded(), called from onAfterUpdateTransaction.
+    internal var overflowIconDrawableIconResourceName: String? = null
+    internal var overflowIconImageIconUri: String? = null
+    private val overflowIconResolver = PropIconResolver()
+
+    internal fun resolveOverflowIconIfNeeded() {
+        overflowIconResolver.resolve(
+            reactContext,
+            overflowIconDrawableIconResourceName,
+            overflowIconImageIconUri,
+        ) { result ->
+            when (result) {
+                IconResolution.Unchanged -> Unit
+                is IconResolution.Resolved -> {
+                    overflowIcon = result.drawable
                     if (!isInsideMountTransaction) {
                         flushUpdates()
                     }
@@ -266,24 +332,16 @@ internal class StackHeaderConfig(
 
     // region Subviews
 
-    override var backgroundSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var backgroundSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
-    override var leadingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var leadingSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
-    override var centerSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var centerSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
-    override var trailingSubview: StackHeaderSubview? by Delegates.observable(null) { _, old, new ->
-        if (old !== new) invalidate(StackHeaderInvalidationFlags.SUBVIEWS)
-    }
+    override var trailingSubview: StackHeaderSubview? by invalidatingProperty(null, StackHeaderInvalidationFlags.SUBVIEWS)
         private set
 
     override fun onStackHeaderSubviewChanged() {
@@ -464,6 +522,17 @@ internal class StackHeaderConfig(
         menuUpdateQueue.tearDown()
         invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
+    }
+
+    // endregion
+
+    // region Helpers
+
+    private fun <T> invalidatingProperty(
+        initialValue: T,
+        flag: StackHeaderInvalidationFlags,
+    ) = Delegates.observable(initialValue) { _, old, new ->
+        if (old != new) invalidate(flag)
     }
 
     // endregion

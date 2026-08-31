@@ -5,6 +5,12 @@ import {
   NativeMatcher,
 } from 'detox/detox';
 import isVersionEqualOrHigherThan from './helpers/isVersionEqualOrHigherThan';
+import {
+  CLASS_NAME_ANDROID_CHECK_BOX,
+  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
+  CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
+  CLASS_NAME_ANDROID_RADIO_BUTTON,
+} from './native-class-names';
 
 const { getIOSVersionNumber } = require('../../scripts/e2e/ios-devices.js');
 
@@ -37,6 +43,18 @@ export function isIOSVersionAtLeast(version: string): boolean {
     isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
   );
 }
+
+/**
+ * Suites for iOS 26+ only features (e.g. `bottomAccessory`, the header overflow
+ * button). `isIOSVersionAtLeast` is false on Android, so these stay iOS-only
+ * and additionally self-skip on iOS 18 and older.
+ */
+export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
+  ? describe
+  : describe.skip;
+
+export const describeIfiPadOS26 =
+  isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
 
 export type ScrollOptions = {
   /** Pixels per step. Smaller steps avoid overshooting a short row. */
@@ -159,6 +177,15 @@ export function pickerOptionId(pickerLabel: string, option: string): string {
 
 export type SettingsControlOptions = ScrollOptions & { scrollViewId: string };
 
+/** Rewinds, scrolls `id` into view and taps it. */
+export async function scrollToAndTap(
+  id: string,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+  await element(by.id(id)).tap();
+}
+
 type PickerSelection = {
   pickerId: string;
   /** The picker's `label` prop — option `testID`s are derived from it. */
@@ -186,24 +213,24 @@ export async function selectPickerOption(
     return;
   }
 
-  const scrollToAndTap = async (id: string) => {
-    await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
-    await element(by.id(id)).tap();
-  };
-
-  await scrollToAndTap(pickerId);
-  await scrollToAndTap(pickerOptionId(label, option));
-  await scrollToAndTap(pickerId);
+  const control = { scrollViewId, ...scroll };
+  await scrollToAndTap(pickerId, control);
+  await scrollToAndTap(pickerOptionId(label, option), control);
+  await scrollToAndTap(pickerId, control);
 
   await expect(element(by.id(pickerId))).toHaveText(expected);
 }
 
-/** `to` is the state expected afterwards — a swallowed tap fails here. */
+/** `to` is the state expected afterwards — a swallowed tap fails here. Omit
+ * `control` on screens whose switches sit outside any scroll view. */
 export async function toggleSettingsSwitch(
   { switchId, label, to }: { switchId: string; label: string; to: boolean },
-  { scrollViewId, ...scroll }: SettingsControlOptions,
+  control?: SettingsControlOptions,
 ) {
-  await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  if (control) {
+    const { scrollViewId, ...scroll } = control;
+    await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  }
   await element(by.id(switchId)).tap();
 
   await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
@@ -447,4 +474,178 @@ export async function waitUntil(
       typeof message === 'function' ? message() : message
     }`,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Android toolbar overflow menu (Stack v5 header)
+// ---------------------------------------------------------------------------
+
+/**
+ * Detox's idle sync does not cover popup window animations, so waits that
+ * straddle the overflow menu opening or dismissing must be explicit.
+ */
+export const MENU_ANIMATION_TIMEOUT_MS = 5000;
+
+/** Probes an already-settled popup: by now it is either up or was never opened. */
+export const MENU_PRESENCE_TIMEOUT_MS = 250;
+
+/** The accessibility label AppCompat gives the overflow button. */
+const OVERFLOW_MENU_LABEL = 'More options';
+
+export const overflowMenu = () =>
+  element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
+
+/**
+ * A multi-toggle group renders check boxes and a single-selection one radio
+ * buttons, so the class asserts the group type.
+ */
+export type ToggleWidget =
+  | typeof CLASS_NAME_ANDROID_CHECK_BOX
+  | typeof CLASS_NAME_ANDROID_RADIO_BUTTON;
+
+export function menuItemRow(title: string): NativeMatcher {
+  return by
+    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
+    .withDescendant(by.text(title));
+}
+
+export function menuItemToggle(
+  title: string,
+  widget: ToggleWidget,
+): NativeMatcher {
+  return by.type(widget).withAncestor(menuItemRow(title));
+}
+
+/**
+ * Asserts `title`'s row hosts a check box (a multi-toggle group) — the sibling
+ * widget is asserted absent so a mismatched group type fails loudly instead of
+ * matching nothing.
+ */
+export async function expectCheckBox(title: string, checked: boolean) {
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
+  ).not.toExist();
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
+  ).toHaveToggleValue(checked);
+}
+
+/** Asserts `title`'s row hosts a radio button (a single-selection group). */
+export async function expectRadioButton(title: string, checked: boolean) {
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
+  ).not.toExist();
+  await expect(
+    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
+  ).toHaveToggleValue(checked);
+}
+
+/** Resolves instead of throwing, so it can be used as a condition. */
+export async function isMenuOpen(): Promise<boolean> {
+  return waitFor(overflowMenu())
+    .toExist()
+    .withTimeout(MENU_PRESENCE_TIMEOUT_MS)
+    .then(
+      () => true,
+      () => false,
+    );
+}
+
+/** Waits for the popup itself, so a menu that never opened fails here rather
+ * than on a row assertion racing the open animation. */
+export async function openOverflowMenu() {
+  await element(by.label(OVERFLOW_MENU_LABEL)).tap();
+  await waitFor(overflowMenu())
+    .toBeVisible()
+    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+}
+
+export type OverflowMenuControl = {
+  /** The screen's scroll view — the anchor proving the popup is gone. */
+  scrollViewId: string;
+  /**
+   * Upper bound of Back presses while a popup is still up: one per popup of
+   * the deepest expected path. The default covers an overflow menu with one
+   * submenu level, plus margin to notice an unexpected extra popup.
+   */
+  maxMenuDepth?: number;
+};
+
+/**
+ * The helpers that depend on the screen behind the popup, bound to one spec's
+ * scroll view.
+ */
+export function createOverflowMenuHelpers({
+  scrollViewId,
+  maxMenuDepth = 3,
+}: OverflowMenuControl) {
+  /**
+   * Detox searches one window: while a popup holds focus nothing behind it is
+   * in the hierarchy, so the popup going away is not enough — the screen
+   * itself has to become addressable again.
+   */
+  const waitForScreen = async () => {
+    await waitFor(element(by.id(scrollViewId)))
+      .toBeVisible()
+      .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
+  };
+
+  /**
+   * Back only ever goes to an open popup: with no menu up the activity takes
+   * it and pops the test screen, failing every later case in a stateful
+   * suite. Submenus stack a popup per level, hence the loop.
+   */
+  const closeMenuIfOpen = async () => {
+    let pressCount = 0;
+
+    while (await isMenuOpen()) {
+      if (pressCount === maxMenuDepth) {
+        throw new Error(
+          `The overflow menu was still open after ${maxMenuDepth} Back presses.`,
+        );
+      }
+      await device.pressBack();
+      pressCount++;
+    }
+
+    if (pressCount > 0) {
+      await waitForScreen();
+    }
+  };
+
+  /**
+   * Closes the menu even on failure: a leaked popup is never a local problem —
+   * every later matcher would resolve against the popup window instead of the
+   * activity, failing the rest of the suite on views that are plainly there.
+   */
+  const closingMenuAfter = async (assertions: () => Promise<void>) => {
+    let assertionFailed = false;
+
+    try {
+      await assertions();
+    } catch (error) {
+      assertionFailed = true;
+      throw error;
+    } finally {
+      try {
+        await closeMenuIfOpen();
+      } catch (cleanupError) {
+        // A throw from `finally` would replace the error that actually failed.
+        if (!assertionFailed) {
+          throw cleanupError;
+        }
+      }
+    }
+  };
+
+  /**
+   * While the menu is open, Espresso resolves matchers against its window, so
+   * `assertions` can only address rows inside it.
+   */
+  const withOverflowMenu = async (assertions: () => Promise<void>) => {
+    await openOverflowMenu();
+    await closingMenuAfter(assertions);
+  };
+
+  return { waitForScreen, closeMenuIfOpen, closingMenuAfter, withOverflowMenu };
 }

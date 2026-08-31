@@ -6,13 +6,12 @@ import android.util.Log
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
-import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 
 internal class FormSheetPresentationManager(
     private val dialog: FormSheetDialog,
     private val bottomSheetView: View?,
-    private val dimmingManager: DimmingViewManager,
+    private val dimmingManager: FormSheetDimmingManager,
     private val onNativeDismiss: () -> Unit,
     private val onDismiss: () -> Unit,
 ) {
@@ -20,6 +19,7 @@ internal class FormSheetPresentationManager(
 
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false
+    private var shouldSkipExitAnimation = false
 
     private var dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
 
@@ -85,10 +85,16 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
+        FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
         dialog.setOnShowListener {
             dialog.setOnShowListener(null)
-            dimmingManager.onDialogShow()
+
+            // Every sheet dims the surface inside the window below, attaching an overlay to the sheet
+            // directly below in the stack, or to the DecorView when this sheet is the
+            // bottom-most one.
+            dimmingManager.attachDimming(FormSheetStackRegistry.sheetBelow(this)?.bottomSheetView)
+
             startEnterAnimation()
         }
         dialog.show()
@@ -100,6 +106,11 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        dismissSheetsAbove()
+        // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
+        // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
+        // torn down.
+        FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
         val isSheetHidden =
@@ -112,7 +123,38 @@ internal class FormSheetPresentationManager(
             return
         }
 
+        if (shouldSkipExitAnimation) {
+            performInstantDismiss()
+            return
+        }
+
         startExitAnimation()
+    }
+
+    // Dismissing a sheet from the middle of the stack should dismiss all sheets above it,
+    // mirroring the iOS presentation chain teardown. Sheets are dismissed top-down.
+    private fun dismissSheetsAbove() {
+        FormSheetStackRegistry.sheetsAbove(this).asReversed().forEach {
+            it.handleDismissFromCascade()
+        }
+    }
+
+    private fun handleDismissFromCascade() {
+        if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
+            return
+        }
+
+        shouldSkipExitAnimation = true
+        updatePresentationState(false, FormSheetDismissalOrigin.USER)
+    }
+
+    private fun performInstantDismiss() {
+        currentSheetAnimator?.removeAllListeners()
+        currentSheetAnimator?.cancel()
+        currentSheetAnimator = null
+
+        bottomSheetView?.let { syncBehaviorStateAfterExitAnimationComplete(it) }
+        performDismiss()
     }
 
     private fun startEnterAnimation() {
@@ -173,6 +215,8 @@ internal class FormSheetPresentationManager(
     }
 
     private fun performDismiss() {
+        shouldSkipExitAnimation = false
+        dimmingManager.detachDimming()
         dialog.dismiss()
         onDismissComplete()
     }
@@ -229,6 +273,9 @@ internal class FormSheetPresentationManager(
     }
 
     internal fun destroy() {
+        FormSheetStackRegistry.unregister(this)
+        dimmingManager.detachDimming()
+
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
 

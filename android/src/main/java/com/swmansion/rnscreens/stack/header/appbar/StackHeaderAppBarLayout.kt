@@ -2,14 +2,20 @@ package com.swmansion.rnscreens.stack.header.appbar
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.PaintDrawable
+import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.appcompat.widget.AppCompatTextView
+import android.view.WindowInsets
+import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.R
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.stack.header.config.StackHeaderCollapsedTitleGravityMode
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.utils.resolveDimensionAttr
 
@@ -17,6 +23,9 @@ internal sealed class StackHeaderAppBarLayout(
     context: Context,
 ) : AppBarLayout(context) {
     abstract val toolbar: MaterialToolbar
+
+    internal abstract val defaultContentInsetStart: Int
+    internal abstract val defaultContentInsetEnd: Int
 
     init {
         layoutParams =
@@ -38,11 +47,66 @@ internal sealed class StackHeaderAppBarLayout(
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
 
-        // We need to manually manage the title to handle leading subview's positioning.
-        internal var managedTitleView: AppCompatTextView? = null
+        override val defaultContentInsetStart: Int = toolbar.contentInsetStart
+        override val defaultContentInsetEnd: Int = toolbar.contentInsetEnd
+
+        // Setting text size and typeface separately (Toolbar exposes only a whole text appearance)
+        // needs the title/subtitle TextViews, and Toolbar has no getter for them. Material locates
+        // them by matching the current text (internal ToolbarUtils.getTitleTextView); we attempt
+        // the same, but since we don't have current text, we use distinct placeholders - they force
+        // both views into existence and tell them apart — and clear the text only after capturing
+        // the references. Toolbar keeps both instances for its lifetime (empty text only detaches
+        // them), so the references stay valid.
+        internal val titleTextView: TextView
+        internal val subtitleTextView: TextView
+
+        // Keeps the status bar strip in sync with the bar's effective color through
+        // the lift animation (same per-frame mixed color Material applies to the
+        // background). Detached when an explicit statusBarScrimColor is set.
+        private var statusBarScrimSyncEnabled = false
+        private val statusBarScrimSync =
+            object : LiftOnScrollProgressListener() {
+                override fun onUpdate(
+                    elevation: Float,
+                    backgroundColor: Int,
+                    progress: Float,
+                ) {
+                    statusBarForeground?.setTint(backgroundColor)
+                }
+            }
 
         init {
             addView(toolbar)
+
+            // PaintDrawable is not color-extractable, so AppBarLayout's built-in
+            // colorSurface-keyed strip tint sync can never activate and fight the
+            // listener above (or an explicit scrim color) — regardless of theme.
+            statusBarForeground = PaintDrawable().apply { setTint(Color.TRANSPARENT) }
+
+            toolbar.title = TITLE_PLACEHOLDER
+            toolbar.subtitle = SUBTITLE_PLACEHOLDER
+            titleTextView = toolbar.findTextViewWithText(TITLE_PLACEHOLDER)
+            subtitleTextView = toolbar.findTextViewWithText(SUBTITLE_PLACEHOLDER)
+            toolbar.title = ""
+            toolbar.subtitle = ""
+        }
+
+        internal fun setStatusBarScrimSyncEnabled(enabled: Boolean) {
+            if (statusBarScrimSyncEnabled == enabled) return
+            statusBarScrimSyncEnabled = enabled
+            if (enabled) {
+                addLiftOnScrollProgressListener(statusBarScrimSync)
+            } else {
+                removeLiftOnScrollProgressListener(statusBarScrimSync)
+            }
+        }
+
+        private fun MaterialToolbar.findTextViewWithText(text: String): TextView =
+            children.filterIsInstance<TextView>().first { it.text?.toString() == text }
+
+        private companion object {
+            private const val TITLE_PLACEHOLDER = "rns_title"
+            private const val SUBTITLE_PLACEHOLDER = "rns_subtitle"
         }
     }
 
@@ -50,6 +114,7 @@ internal sealed class StackHeaderAppBarLayout(
     internal class Collapsing(
         context: Context,
         val type: StackHeaderType,
+        collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode,
     ) : StackHeaderAppBarLayout(context) {
         override val toolbar =
             MaterialToolbar(context).apply {
@@ -64,25 +129,21 @@ internal sealed class StackHeaderAppBarLayout(
                         }
             }
 
+        override val defaultContentInsetStart: Int = toolbar.contentInsetStart
+        override val defaultContentInsetEnd: Int = toolbar.contentInsetEnd
+
+        // collapsedTitleGravityMode is a construction-time-only attr (no public setter), so both
+        // gravity modes are inflated from XML — differing only in that attribute — to stay 1:1.
         internal val collapsingToolbarLayout: CollapsingToolbarLayout =
-            run {
-                val (styleAttr, sizeAttr) =
-                    when (type) {
-                        StackHeaderType.MEDIUM ->
-                            Pair(R.attr.collapsingToolbarLayoutMediumStyle, R.attr.collapsingToolbarLayoutMediumSize)
-                        StackHeaderType.LARGE ->
-                            Pair(R.attr.collapsingToolbarLayoutLargeStyle, R.attr.collapsingToolbarLayoutLargeSize)
-                        else -> error("[RNScreens] Invalid header mode.")
-                    }
-                CollapsingToolbarLayout(context, null, styleAttr).apply {
-                    layoutParams =
-                        LayoutParams(
-                            MATCH_PARENT,
-                            resolveDimensionAttr(context, sizeAttr),
-                        )
-                    addView(toolbar)
-                }
-            }
+            (
+                LayoutInflater
+                    .from(context)
+                    .inflate(layoutResFor(type, collapsedTitleGravityMode), this, false)
+                    as CollapsingToolbarLayout
+            ).apply { addView(toolbar) }
+
+        private var trackedTopInset = 0
+        private var currentVerticalOffset = 0
 
         init {
             require(
@@ -92,6 +153,75 @@ internal sealed class StackHeaderAppBarLayout(
                 "[RNScreens] Collapsing StackHeaderAppBarLayout must be MEDIUM or LARGE type."
             }
             addView(collapsingToolbarLayout)
+
+            addOnOffsetChangedListener { _, verticalOffset ->
+                currentVerticalOffset = verticalOffset
+                updateContentScrimExclusion()
+            }
+        }
+
+        // Observed here because both AppBarLayout and CollapsingToolbarLayout
+        // install their own OnApplyWindowInsetsListener in their constructors —
+        // setting ours would silently replace Material's. Reads the same inset
+        // CTL uses for its status bar scrim bounds.
+        override fun dispatchApplyWindowInsets(insets: WindowInsets): WindowInsets {
+            @Suppress("DEPRECATION")
+            trackedTopInset =
+                if (fitsSystemWindows) {
+                    WindowInsetsCompat.toWindowInsetsCompat(insets, this).systemWindowInsetTop
+                } else {
+                    0
+                }
+            updateContentScrimExclusion()
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        /**
+         * While a status bar scrim is installed, the content scrim skips the
+         * status-bar strip that the status bar scrim paints alone. Otherwise,
+         * the two scrims stack there while fading (they share the same partial
+         * alpha), showing a darker band during the transition. The strip spans
+         * `[-verticalOffset, -verticalOffset + topInset]` in CTL coordinates,
+         * matching the status bar scrim bounds set in
+         * `CollapsingToolbarLayout.draw`.
+         */
+        internal fun updateContentScrimExclusion() {
+            val contentScrim =
+                collapsingToolbarLayout.contentScrim
+            check(contentScrim is StackHeaderContentScrimDrawable) {
+                "[RNScreens] Unexpected contentScrim class."
+            }
+
+            contentScrim.exclusionBottom =
+                if (collapsingToolbarLayout.statusBarScrim != null && trackedTopInset > 0) {
+                    trackedTopInset - currentVerticalOffset
+                } else {
+                    0
+                }
+        }
+
+        private companion object {
+            fun layoutResFor(
+                type: StackHeaderType,
+                mode: StackHeaderCollapsedTitleGravityMode,
+            ): Int =
+                when (type) {
+                    StackHeaderType.MEDIUM ->
+                        when (mode) {
+                            StackHeaderCollapsedTitleGravityMode.ENTIRE_SPACE ->
+                                com.swmansion.rnscreens.R.layout.rns_collapsing_toolbar_medium_entire_space
+                            StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE ->
+                                com.swmansion.rnscreens.R.layout.rns_collapsing_toolbar_medium_available_space
+                        }
+                    StackHeaderType.LARGE ->
+                        when (mode) {
+                            StackHeaderCollapsedTitleGravityMode.ENTIRE_SPACE ->
+                                com.swmansion.rnscreens.R.layout.rns_collapsing_toolbar_large_entire_space
+                            StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE ->
+                                com.swmansion.rnscreens.R.layout.rns_collapsing_toolbar_large_available_space
+                        }
+                    else -> error("[RNScreens] Invalid header mode.")
+                }
         }
     }
 
@@ -99,10 +229,12 @@ internal sealed class StackHeaderAppBarLayout(
         fun create(
             context: Context,
             type: StackHeaderType,
+            collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode,
         ): StackHeaderAppBarLayout =
             when (type) {
                 StackHeaderType.SMALL -> Small(context)
-                StackHeaderType.MEDIUM, StackHeaderType.LARGE -> Collapsing(context, type)
+                StackHeaderType.MEDIUM, StackHeaderType.LARGE ->
+                    Collapsing(context, type, collapsedTitleGravityMode)
             }
     }
 }

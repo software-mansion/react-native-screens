@@ -13,6 +13,14 @@ import type { UnsafeMixed } from '../codegenUtils';
 
 type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
+type StackHeaderTitleHorizontalGravityAndroid = 'start' | 'center' | 'end';
+
+type StackHeaderTitleVerticalGravityAndroid = 'top' | 'center' | 'bottom';
+
+type StackHeaderCollapsedTitleGravityModeAndroid =
+  | 'entireSpace'
+  | 'availableSpace';
+
 export type StackHeaderToolbarMenuItemPressEventAndroid = Readonly<{
   id: string;
 }>;
@@ -84,6 +92,8 @@ export type StackHeaderToolbarMenuElementAndroid =
 
 export interface NativeProps extends ViewProps {
   title?: string | undefined;
+  subtitle?: string | undefined;
+  maxLines?: CT.WithDefault<CT.Int32, 1>;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
   backButtonHidden?: CT.WithDefault<boolean, false>;
@@ -91,11 +101,75 @@ export interface NativeProps extends ViewProps {
   // Android-specific props
   type?: CT.WithDefault<StackHeaderTypeAndroid, 'small'>;
 
+  titleCentered?: CT.WithDefault<boolean, false>;
+  subtitleCentered?: CT.WithDefault<boolean, false>;
+
+  expandedTitleHorizontalGravity?: CT.WithDefault<
+    StackHeaderTitleHorizontalGravityAndroid,
+    'start'
+  >;
+  expandedTitleVerticalGravity?: CT.WithDefault<
+    StackHeaderTitleVerticalGravityAndroid,
+    'bottom'
+  >;
+  collapsedTitleHorizontalGravity?: CT.WithDefault<
+    StackHeaderTitleHorizontalGravityAndroid,
+    'start'
+  >;
+  collapsedTitleVerticalGravity?: CT.WithDefault<
+    StackHeaderTitleVerticalGravityAndroid,
+    'center'
+  >;
+  collapsedTitleGravityMode?: CT.WithDefault<
+    StackHeaderCollapsedTitleGravityModeAndroid,
+    'availableSpace'
+  >;
+
+  contentInsetStart?: CT.WithDefault<CT.Float, -1.0>;
+  contentInsetEnd?: CT.WithDefault<CT.Float, -1.0>;
+
+  titleColor?: ColorValue | undefined;
+  titleFontFamily?: string | undefined;
+  titleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  titleFontWeight?: string | undefined;
+  titleFontStyle?: string | undefined;
+  subtitleColor?: ColorValue | undefined;
+  subtitleFontFamily?: string | undefined;
+  subtitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  subtitleFontWeight?: string | undefined;
+  subtitleFontStyle?: string | undefined;
+  expandedTitleColor?: ColorValue | undefined;
+  expandedTitleFontFamily?: string | undefined;
+  expandedTitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  expandedTitleFontWeight?: string | undefined;
+  expandedTitleFontStyle?: string | undefined;
+  collapsedTitleColor?: ColorValue | undefined;
+  collapsedTitleFontFamily?: string | undefined;
+  collapsedTitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  collapsedTitleFontWeight?: string | undefined;
+  collapsedTitleFontStyle?: string | undefined;
+  expandedSubtitleColor?: ColorValue | undefined;
+  expandedSubtitleFontFamily?: string | undefined;
+  expandedSubtitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  expandedSubtitleFontWeight?: string | undefined;
+  expandedSubtitleFontStyle?: string | undefined;
+  collapsedSubtitleColor?: ColorValue | undefined;
+  collapsedSubtitleFontFamily?: string | undefined;
+  collapsedSubtitleFontSize?: CT.WithDefault<CT.Float, -1.0>;
+  collapsedSubtitleFontWeight?: string | undefined;
+  collapsedSubtitleFontStyle?: string | undefined;
+
   backButtonTintColorNormal?: ColorValue | undefined;
   backButtonTintColorPressed?: ColorValue | undefined;
   backButtonTintColorFocused?: ColorValue | undefined;
   backButtonDrawableIconResourceName?: string | undefined;
   backButtonImageIconResource?: ImageSource | undefined;
+
+  overflowIconTintColorNormal?: ColorValue | undefined;
+  overflowIconTintColorPressed?: ColorValue | undefined;
+  overflowIconTintColorFocused?: ColorValue | undefined;
+  overflowIconDrawableIconResourceName?: string | undefined;
+  overflowIconImageIconResource?: ImageSource | undefined;
 
   scrollFlagScroll?: CT.WithDefault<boolean, false>;
   scrollFlagEnterAlways?: CT.WithDefault<boolean, false>;
@@ -104,6 +178,10 @@ export interface NativeProps extends ViewProps {
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
   liftOnScroll?: CT.WithDefault<boolean, true>;
+
+  backgroundColor?: ColorValue | undefined;
+  scrolledBackgroundColor?: ColorValue | undefined;
+  statusBarScrimColor?: ColorValue | undefined;
 
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
   toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;

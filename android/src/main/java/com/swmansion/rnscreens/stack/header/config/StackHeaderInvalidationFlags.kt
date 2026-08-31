@@ -13,8 +13,13 @@ internal value class StackHeaderInvalidationFlags(
         val SCROLL_FLAGS = StackHeaderInvalidationFlags(1 shl 4)
         val TOOLBAR_MENU = StackHeaderInvalidationFlags(1 shl 5)
         val LIFT_ON_SCROLL = StackHeaderInvalidationFlags(1 shl 6)
-
-        val APPEARANCE = TITLE or BACK_BUTTON
+        val OVERFLOW_ICON = StackHeaderInvalidationFlags(1 shl 7)
+        val TITLE_POSITIONING = StackHeaderInvalidationFlags(1 shl 8)
+        val TITLE_APPEARANCE = StackHeaderInvalidationFlags(1 shl 9)
+        val CONTENT_INSETS = StackHeaderInvalidationFlags(1 shl 10)
+        val BACKGROUND_COLORS = StackHeaderInvalidationFlags(1 shl 11)
+        val APPEARANCE =
+            TITLE or BACK_BUTTON or OVERFLOW_ICON or TITLE_POSITIONING or TITLE_APPEARANCE or CONTENT_INSETS or BACKGROUND_COLORS
         val ALL = STRUCTURE or SUBVIEWS or APPEARANCE or SCROLL_FLAGS or TOOLBAR_MENU or LIFT_ON_SCROLL
     }
 

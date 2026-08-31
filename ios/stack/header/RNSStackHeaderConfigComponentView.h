@@ -5,6 +5,7 @@
 #import "RNSStackHeaderConfigDataProviding.h"
 #import "RNSStackHeaderEventsDelegate.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL largeTitleEnabled;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *titleMenu;
 @property (nonatomic, readonly) NSArray<id> *children;
+
+@property (nonatomic, weak, nullable) RNSStackScreenHeaderCoordinator *headerCoordinator;
 
 - (void)resetProps;
 

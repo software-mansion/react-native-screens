@@ -36,6 +36,17 @@
 
 #pragma mark - Public
 
+- (void)updateNavigationBarVisibilityAnimated:(BOOL)animated
+{
+  RNSStackNavigationController *navController = [self getNavigationController];
+  if (navController == nil || navController.topViewController != _screenController) {
+    return;
+  }
+
+  BOOL hidden = _configDataProvider == nil || _configDataProvider.hidden;
+  [navController.navigationBarCoordinator setHidden:hidden forNavigationController:navController animated:animated];
+}
+
 - (void)rebuild
 {
   if (_configDataProvider == nil) {
@@ -104,7 +115,7 @@
                   forController:controller];
 
   [self applyTitleMenuForController:controller];
-  [self applyNavigationBarProperties];
+  [self updateNavigationBarVisibilityAnimated:YES];
 }
 
 - (void)applyConfigProperties
@@ -114,7 +125,7 @@
   }
 
   [self applyConfigPropertiesForController:[self requireScreenController]];
-  [self applyNavigationBarProperties];
+  [self updateNavigationBarVisibilityAnimated:YES];
 }
 
 /**
@@ -266,6 +277,7 @@
   _configDataProvider = nil;
   _frameChangeDelegate = nil;
   _eventsDelegate = nil;
+  _imageLoader = nil;
 
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
@@ -300,10 +312,7 @@
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
 #endif // !TARGET_OS_TV
 
-  RNSStackNavigationController *navController = [self getNavigationController];
-  if (navController != nil) {
-    [navController.navigationBarCoordinator setHidden:NO forNavigationController:navController animated:YES];
-  }
+  [self updateNavigationBarVisibilityAnimated:YES];
 }
 
 /**
@@ -375,16 +384,6 @@
   RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
             @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
   return (RNSStackNavigationController *)navController;
-}
-
-- (void)applyNavigationBarProperties
-{
-  RNSStackNavigationController *navController = [self getNavigationController];
-  if (navController != nil) {
-    [navController.navigationBarCoordinator setHidden:_configDataProvider.hidden
-                              forNavigationController:navController
-                                             animated:YES];
-  }
 }
 
 - (void)applyConfigPropertiesForController:(RNSStackScreenController *)controller
@@ -470,6 +469,14 @@
                                                                     withFrameChangeDelegate:_frameChangeDelegate
                                                                    withHeaderEventsDelegate:_eventsDelegate
                                                                             withImageLoader:_imageLoader];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (item.identifier != nil) {
+      barButtonItem.identifier = item.identifier;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];

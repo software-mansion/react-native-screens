@@ -12,7 +12,6 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
-#import "RNSStackScreenHeaderCoordinator.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTConvert.h>
@@ -123,18 +122,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   if (self.window != nil) {
     [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
-    RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
-    coordinator.configDataProvider = self;
-    coordinator.frameChangeDelegate = self;
-    coordinator.eventsDelegate = self;
-    coordinator.imageLoader = self;
-    [coordinator rebuild];
-  } else {
-    RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
-    coordinator.configDataProvider = nil;
-    coordinator.frameChangeDelegate = nil;
-    coordinator.eventsDelegate = nil;
-    coordinator.imageLoader = nil;
+    [self.headerCoordinator rebuild];
   }
   [super didMoveToWindow];
 }
@@ -155,7 +143,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     ((RNSStackHeaderItemSpacerComponentView *)childComponentView).invalidationDelegate = self;
   }
 
-  [[self headerCoordinator] rebuild];
+  [self.headerCoordinator rebuild];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -169,7 +157,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   [_children removeObjectAtIndex:index];
-  [[self headerCoordinator] rebuild];
+  [self.headerCoordinator rebuild];
 }
 
 #pragma mark - RNSStackHeaderItemInvalidationDelegate
@@ -178,22 +166,21 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   if (itemId == nil) {
     RCTLogWarn(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
-    [[self headerCoordinator] rebuild];
+    [self.headerCoordinator rebuild];
     return;
   }
-  [[self headerCoordinator] rebuildItemWithId:itemId];
+  [self.headerCoordinator rebuildItemWithId:itemId];
 }
 
 - (void)headerItemMenuDidChangeWithId:(NSString *)itemId
 {
   if (itemId == nil) {
     RCTLogWarn(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
-    [[self headerCoordinator] rebuild];
+    [self.headerCoordinator rebuild];
     return;
   }
-  RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
-  [coordinator resetTrackerForItemWithId:itemId];
-  [coordinator reapplyMenuForItemWithId:itemId];
+  [self.headerCoordinator resetTrackerForItemWithId:itemId];
+  [self.headerCoordinator reapplyMenuForItemWithId:itemId];
 }
 
 /**
@@ -204,15 +191,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (itemId == nil) {
     RCTLogWarn(
         @"[RNScreens] headerItemMenuDidUpdateFromCommandWithId called with nil id, will run full header rebuild");
-    [[self headerCoordinator] rebuild];
+    [self.headerCoordinator rebuild];
     return;
   }
-  [[self headerCoordinator] reapplyMenuForItemWithId:itemId];
+  [self.headerCoordinator reapplyMenuForItemWithId:itemId];
 }
 
 - (void)headerItemSpacerDidInvalidate
 {
-  [[self headerCoordinator] rebuild];
+  [self.headerCoordinator rebuild];
 }
 
 #pragma mark - RNSStackHeaderEventsDelegate
@@ -295,11 +282,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
         (oldItemData.itemType == RNSMenuItemTypeAutomatic &&
          [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:menuItemId inMenu:locator.rootMenu] != nil);
     if (isToggle) {
-      [[self headerCoordinator] setToggleState:updateOptions.toggleState
-                              forMenuElementId:menuItemId
-                                 trackerItemId:locator.trackerItemId
-                                      rootMenu:locator.rootMenu
-                                    parentMenu:locator.searchResult.parentMenu];
+      [self.headerCoordinator setToggleState:updateOptions.toggleState
+                            forMenuElementId:menuItemId
+                               trackerItemId:locator.trackerItemId
+                                    rootMenu:locator.rootMenu
+                                  parentMenu:locator.searchResult.parentMenu];
     }
   }
 
@@ -318,7 +305,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                                     replacingChildWithId:menuItemId
                                              withElement:newItemData];
       }
-      [[self headerCoordinator] reapplyTitleMenu];
+      [self.headerCoordinator reapplyTitleMenu];
       break;
     case RNSMenuElementPositionOverflow:
       // TODO: handle overflow menu
@@ -366,7 +353,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                                     replacingChildWithId:menuElementId
                                              withElement:newMenuItem];
       }
-      [[self headerCoordinator] reapplyTitleMenu];
+      [self.headerCoordinator reapplyTitleMenu];
       break;
     case RNSMenuElementPositionOverflow:
       // TODO: handle overflow menu
@@ -452,14 +439,14 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   [super updateProps:props oldProps:oldProps];
 
-  [[self headerCoordinator] applyConfigProperties];
+  [self.headerCoordinator applyConfigProperties];
 
   if (titleMenuDidChange) {
     // title menu is a prop on the navigation item, not on one of the bar button items
     // thus it is not configured with matching RNSStackHeaderItemComponentView
     // but here directly
-    [[self headerCoordinator] resetTitleMenuTracker];
-    [[self headerCoordinator] reapplyTitleMenu];
+    [self.headerCoordinator resetTitleMenuTracker];
+    [self.headerCoordinator reapplyTitleMenu];
   }
 }
 
@@ -481,17 +468,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 }
 
 #pragma mark - Private
-
-- (nullable RNSStackScreenHeaderCoordinator *)headerCoordinator
-{
-  if (self.superview == nil) {
-    return nil;
-  }
-  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
-            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
-  RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
-  return screen.controller.headerCoordinator;
-}
 
 - (RNSStackNavigationController *)requireNavigationController
 {

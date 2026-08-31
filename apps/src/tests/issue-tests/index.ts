@@ -211,6 +211,7 @@ export { default as Test4357 } from './Test4357';
 export { default as Test4361 } from './Test4361';
 export { default as Test4423 } from './Test4423';
 export { default as Test4519 } from './Test4519';
+export { default as Test4571 } from './Test4571';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

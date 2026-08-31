@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.stack.header.config
 
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -99,6 +100,7 @@ internal open class StackHeaderConfigViewManager :
     override fun onAfterUpdateTransaction(view: StackHeaderConfig) {
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
+        view.resolveOverflowIconIfNeeded()
         view.resolveToolbarMenuItemIconsIfNeeded()
     }
 
@@ -126,6 +128,310 @@ internal open class StackHeaderConfigViewManager :
     ) {
         view.title = value ?: ""
     }
+
+    override fun setSubtitle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitle = value ?: ""
+    }
+
+    override fun setMaxLines(
+        view: StackHeaderConfig,
+        value: Int,
+    ) {
+        view.maxLines = value.coerceAtLeast(1)
+    }
+
+    override fun setTitleCentered(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.titleCentered = value
+    }
+
+    override fun setSubtitleCentered(
+        view: StackHeaderConfig,
+        value: Boolean,
+    ) {
+        view.subtitleCentered = value
+    }
+
+    override fun setExpandedTitleHorizontalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleHorizontalGravity = parseHorizontalGravity(value)
+    }
+
+    override fun setExpandedTitleVerticalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleVerticalGravity = parseVerticalGravity(value)
+    }
+
+    override fun setCollapsedTitleHorizontalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleHorizontalGravity = parseHorizontalGravity(value)
+    }
+
+    override fun setCollapsedTitleVerticalGravity(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleVerticalGravity = parseVerticalGravity(value)
+    }
+
+    override fun setCollapsedTitleGravityMode(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleGravityMode =
+            when (value) {
+                "entireSpace" -> StackHeaderCollapsedTitleGravityMode.ENTIRE_SPACE
+                "availableSpace" -> StackHeaderCollapsedTitleGravityMode.AVAILABLE_SPACE
+                else -> throw JSApplicationIllegalArgumentException(
+                    "[RNScreens] Invalid StackHeaderConfig collapsedTitleGravityMode: $value.",
+                )
+            }
+    }
+
+    // region Header spacing
+    // Spacing arrives as a float defaulting to -1 (unset); 0 is a valid, applied value.
+
+    override fun setContentInsetStart(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.contentInsetStart = value.takeIf { it >= 0f }
+    }
+
+    override fun setContentInsetEnd(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.contentInsetEnd = value.takeIf { it >= 0f }
+    }
+
+    // endregion
+
+    // region Text appearance
+    // Font size arrives as a float defaulting to -1 (unset); non-positive means "use default".
+
+    override fun setTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.titleAppearance.color = value
+    }
+
+    override fun setTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleAppearance.fontFamily = value
+    }
+
+    override fun setTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.titleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleAppearance.fontWeight = value
+    }
+
+    override fun setTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.titleAppearance.fontStyle = value
+    }
+
+    override fun setSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.subtitleAppearance.color = value
+    }
+
+    override fun setSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleAppearance.fontFamily = value
+    }
+
+    override fun setSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.subtitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleAppearance.fontWeight = value
+    }
+
+    override fun setSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.subtitleAppearance.fontStyle = value
+    }
+
+    override fun setExpandedTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.expandedTitleAppearance.color = value
+    }
+
+    override fun setExpandedTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleAppearance.fontFamily = value
+    }
+
+    override fun setExpandedTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.expandedTitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setExpandedTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleAppearance.fontWeight = value
+    }
+
+    override fun setExpandedTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedTitleAppearance.fontStyle = value
+    }
+
+    override fun setCollapsedTitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.collapsedTitleAppearance.color = value
+    }
+
+    override fun setCollapsedTitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleAppearance.fontFamily = value
+    }
+
+    override fun setCollapsedTitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.collapsedTitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setCollapsedTitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleAppearance.fontWeight = value
+    }
+
+    override fun setCollapsedTitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedTitleAppearance.fontStyle = value
+    }
+
+    override fun setExpandedSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.expandedSubtitleAppearance.color = value
+    }
+
+    override fun setExpandedSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleAppearance.fontFamily = value
+    }
+
+    override fun setExpandedSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.expandedSubtitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setExpandedSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleAppearance.fontWeight = value
+    }
+
+    override fun setExpandedSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.expandedSubtitleAppearance.fontStyle = value
+    }
+
+    override fun setCollapsedSubtitleColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.collapsedSubtitleAppearance.color = value
+    }
+
+    override fun setCollapsedSubtitleFontFamily(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleAppearance.fontFamily = value
+    }
+
+    override fun setCollapsedSubtitleFontSize(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.collapsedSubtitleAppearance.fontSize = value.takeIf { it > 0f }
+    }
+
+    override fun setCollapsedSubtitleFontWeight(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleAppearance.fontWeight = value
+    }
+
+    override fun setCollapsedSubtitleFontStyle(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.collapsedSubtitleAppearance.fontStyle = value
+    }
+
+    // endregion
 
     override fun setHidden(
         view: StackHeaderConfig,
@@ -183,6 +489,41 @@ internal open class StackHeaderConfigViewManager :
         view.backButtonImageIconUri = value?.getString("uri")
     }
 
+    override fun setOverflowIconTintColorNormal(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.overflowIconTintColorNormal = value
+    }
+
+    override fun setOverflowIconTintColorPressed(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.overflowIconTintColorPressed = value
+    }
+
+    override fun setOverflowIconTintColorFocused(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.overflowIconTintColorFocused = value
+    }
+
+    override fun setOverflowIconDrawableIconResourceName(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.overflowIconDrawableIconResourceName = value
+    }
+
+    override fun setOverflowIconImageIconResource(
+        view: StackHeaderConfig,
+        value: ReadableMap?,
+    ) {
+        view.overflowIconImageIconUri = value?.getString("uri")
+    }
+
     override fun setScrollFlagScroll(
         view: StackHeaderConfig,
         value: Boolean,
@@ -223,6 +564,27 @@ internal open class StackHeaderConfigViewManager :
         value: Boolean,
     ) {
         view.liftOnScroll = value
+    }
+
+    override fun setBackgroundColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backgroundColor = value
+    }
+
+    override fun setScrolledBackgroundColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.scrolledBackgroundColor = value
+    }
+
+    override fun setStatusBarScrimColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.statusBarScrimColor = value
     }
 
     override fun setToolbarMenuGroupDividerEnabled(
@@ -267,6 +629,26 @@ internal open class StackHeaderConfigViewManager :
         }
         view.dispatchMenuElementUpdates(parsed)
     }
+
+    private fun parseHorizontalGravity(value: String?): Int =
+        when (value) {
+            "start" -> Gravity.START
+            "center" -> Gravity.CENTER_HORIZONTAL
+            "end" -> Gravity.END
+            else -> throw JSApplicationIllegalArgumentException(
+                "[RNScreens] Invalid StackHeaderConfig title horizontal gravity: $value.",
+            )
+        }
+
+    private fun parseVerticalGravity(value: String?): Int =
+        when (value) {
+            "top" -> Gravity.TOP
+            "center" -> Gravity.CENTER_VERTICAL
+            "bottom" -> Gravity.BOTTOM
+            else -> throw JSApplicationIllegalArgumentException(
+                "[RNScreens] Invalid StackHeaderConfig title vertical gravity: $value.",
+            )
+        }
 
     companion object {
         private const val TAG = "StackHeaderConfigViewManager"

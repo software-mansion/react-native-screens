@@ -75,3 +75,6 @@ android/.settings
 # General rule for files explicitly marked as local
 *.local.*
 
+# Generated release-test playgrounds 
+/release_tests
+

@@ -10,9 +10,9 @@
 #import "RNSSplitScreenComponentView.h"
 #import "RNSSplitScreenController.h"
 
-static const NSInteger minNumberOfColumns = 2;
-static const NSInteger maxNumberOfColumns = 3;
-static const NSInteger maxNumberOfInspectors = 1;
+[[maybe_unused]] static const NSInteger minNumberOfColumns = 2;
+[[maybe_unused]] static const NSInteger maxNumberOfColumns = 3;
+[[maybe_unused]] static const NSInteger maxNumberOfInspectors = 1;
 
 @interface RNSSplitHostController () <UISplitViewControllerDelegate,
                                       RNSSplitNavigationControllerFrameOriginChangeDelegate>
