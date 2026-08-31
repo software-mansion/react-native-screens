@@ -1,4 +1,4 @@
-# Test Scenario: Stack Back Button
+# Test Scenario: Stack Back Button (Android)
 
 ## Details
 
@@ -31,10 +31,10 @@ Incomplete.
   **Ctrl+Tab** to move keyboard focus into the header toolbar.
 - To use the back button (step 22), run the screen **directly** by editing
   [apps/App.tsx](../../../../../App.tsx): import and render
-  `TestStackBackButton` as the root component instead of `Example`, e.g.:
+  `TestStackBackButtonAndroid` as the root component instead of `Example`, e.g.:
 
   ```tsx
-  import { TestStackBackButton as Example } from './src/tests/single-feature-tests';
+  import { TestStackBackButtonAndroid as Example } from './src/tests/single-feature-tests';
   ```
 
   With the v5 `StackContainer` at the root, the header back button pops the

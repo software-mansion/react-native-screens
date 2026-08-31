@@ -101,7 +101,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps {
   };
 }
 
-function TestStackBackButton() {
+function TestStackBackButtonAndroid() {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
   const updateConfig = useCallback(
@@ -232,4 +232,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(TestStackBackButton, scenarioDescription);
+export default createScenario(TestStackBackButtonAndroid, scenarioDescription);

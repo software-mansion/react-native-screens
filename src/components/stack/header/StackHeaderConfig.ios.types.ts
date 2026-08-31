@@ -272,7 +272,44 @@ export interface StackHeaderTitleCustomItemIOS {
   render: () => ReactElement;
 }
 
+/**
+ * @summary Controls how the back button title is displayed.
+ *
+ * @description
+ * - `default`: the system chooses the title depending on available space.
+ *   On iOS < 26 options include: custom title (defaults to previous screen title),
+ *   generic "Back", no title; on iOS >= 26 it's either custom title (if set) or no title.
+ * - `generic`: on iOS < 26, the system uses a generic "Back" title or no title;
+ *   on iOS >= 26 it's the same as `minimal`.
+ * - `minimal`: no title is displayed next to the back button chevron.
+ *
+ * @platform iOS
+ */
+export type StackHeaderBackButtonDisplayModeIOS =
+  | 'default'
+  | 'generic'
+  | 'minimal';
+
 export interface StackHeaderConfigPropsIOS {
+  /**
+   * @summary Title displayed next to the back button on this screen.
+   *
+   * @description
+   * Configured on the screen whose back button it applies to (the screen that
+   * is pushed on top). When unset, the system derives the back title from the
+   * previous screen's `title`.
+   *
+   * @platform iOS
+   */
+  backButtonTitle?: string | undefined;
+  /**
+   * @summary Controls how the back button title is displayed.
+   *
+   * @default 'default'
+   *
+   * @platform iOS
+   */
+  backButtonDisplayMode?: StackHeaderBackButtonDisplayModeIOS | undefined;
   /**
    * @summary Custom item to display as a subtitle.
    *

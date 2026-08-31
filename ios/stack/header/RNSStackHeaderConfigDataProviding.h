@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *largeTitle;
 @property (nonatomic, readonly, nullable) NSString *largeSubtitle;
 @property (nonatomic, readonly) BOOL largeTitleEnabled;
+@property (nonatomic, readonly, nullable) NSString *backButtonTitle;
+@property (nonatomic, readonly) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *titleMenu;
 
 /**

@@ -110,7 +110,7 @@
   }
 
   for (RNSPushOperation *op in _pendingPushOperations) {
-    UIViewController *controller = static_cast<UIViewController *>(op.stackScreen.controller);
+    RNSStackScreenController *controller = op.stackScreen.controller;
     [self pushViewController:controller animated:YES];
   }
 

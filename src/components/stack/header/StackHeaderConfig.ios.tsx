@@ -55,6 +55,8 @@ function StackHeaderConfig(
     largeTitle,
     largeSubtitle,
     largeTitleEnabled,
+    backButtonTitle,
+    backButtonDisplayMode,
   } = ios ?? {};
 
   const nativeRef =
@@ -151,6 +153,8 @@ function StackHeaderConfig(
       ref={nativeRef}
       {...restProps}
       collapsable={false}
+      backButtonTitle={backButtonTitle}
+      backButtonDisplayMode={backButtonDisplayMode}
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
