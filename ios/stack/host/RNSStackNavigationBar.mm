@@ -1,50 +1,78 @@
 #import "RNSStackNavigationBar.h"
-#import "RNSBackButtonMenuBlockerGestureRecognizer.h"
 #import "UINavigationBar+RNSUtility.h"
 
-@interface RNSStackNavigationBar () <UIGestureRecognizerDelegate>
-@end
+static void *const RNSBackButtonMenuEnabledKVOContext = (void *)&RNSBackButtonMenuEnabledKVOContext;
 
 @implementation RNSStackNavigationBar
 #if !TARGET_OS_TV
 {
-  RNSBackButtonMenuBlockerGestureRecognizer *_menuBlocker;
+  UIControl *_Nullable _observedBackButtonWrapper;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-  if (!(self = [super initWithFrame:frame])) {
-    return nil;
+  if (self = [super initWithFrame:frame]) {
+    _backButtonMenuEnabled = YES;
   }
-
-  _backButtonMenuEnabled = YES;
-  _menuBlocker = [RNSBackButtonMenuBlockerGestureRecognizer new];
-  _menuBlocker.delegate = self;
-  [self addGestureRecognizer:_menuBlocker];
-
   return self;
 }
 
-#pragma mark - UIGestureRecognizerDelegate
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+- (void)setBackButtonMenuEnabled:(BOOL)backButtonMenuEnabled
 {
-  if (gestureRecognizer != _menuBlocker || _backButtonMenuEnabled) {
-    return NO;
-  }
-  return [self isBackButtonMenuRecognizer:otherGestureRecognizer];
+  _backButtonMenuEnabled = backButtonMenuEnabled;
+  [self enforceBackButtonMenuState];
 }
 
-- (BOOL)isBackButtonMenuRecognizer:(UIGestureRecognizer *)recognizer
+- (void)layoutSubviews
 {
-  NSString *cls = NSStringFromClass(recognizer.class);
-  if (![cls isEqualToString:@"_UITouchDurationObservingGestureRecognizer"] &&
-      ![cls isEqualToString:@"_UISecondaryClickDriverGestureRecognizer"]) {
-    return NO;
-  }
+  [super layoutSubviews];
+  // The back button wrapper may have been replaced by this layout pass
+  [self enforceBackButtonMenuState];
+}
+
+- (void)enforceBackButtonMenuState
+{
   UIView *wrapperView = [self rnscreens_findBackButtonWrapperView];
-  return wrapperView != nil && recognizer.view == wrapperView;
+  if (wrapperView != _observedBackButtonWrapper) {
+    [_observedBackButtonWrapper removeObserver:self
+                                    forKeyPath:@"contextMenuInteractionEnabled"
+                                       context:RNSBackButtonMenuEnabledKVOContext];
+    _observedBackButtonWrapper = nil;
+
+    if ([wrapperView isKindOfClass:UIControl.class]) {
+      _observedBackButtonWrapper = (UIControl *)wrapperView;
+      [_observedBackButtonWrapper addObserver:self
+                                   forKeyPath:@"contextMenuInteractionEnabled"
+                                      options:NSKeyValueObservingOptionNew
+                                      context:RNSBackButtonMenuEnabledKVOContext];
+    }
+  }
+
+  _observedBackButtonWrapper.contextMenuInteractionEnabled = _backButtonMenuEnabled;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context
+{
+  if (context != RNSBackButtonMenuEnabledKVOContext) {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    return;
+  }
+
+  // UIKit re-asserts the interaction on every back button reconfigure
+  // - flip it back off immediately.
+  if (!_backButtonMenuEnabled && [change[NSKeyValueChangeNewKey] boolValue] && object == _observedBackButtonWrapper) {
+    _observedBackButtonWrapper.contextMenuInteractionEnabled = NO;
+  }
+}
+
+- (void)dealloc
+{
+  [_observedBackButtonWrapper removeObserver:self
+                                  forKeyPath:@"contextMenuInteractionEnabled"
+                                     context:RNSBackButtonMenuEnabledKVOContext];
 }
 
 #endif // !TARGET_OS_TV

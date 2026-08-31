@@ -311,12 +311,14 @@ export interface StackHeaderConfigPropsIOS {
    */
   backButtonDisplayMode?: StackHeaderBackButtonDisplayModeIOS | undefined;
   /**
-   * @summary Whether the back button shows the navigation history menu on long press.
+   * @summary Whether the back button shows the navigation history menu.
    *
    * @description
    * Configured on the screen whose back button it applies to (the screen that
-   * is pushed on top). When `false`, long-pressing the back button does not
-   * show the navigation history menu; tapping it still pops the screen.
+   * is pushed on top). When `false`, the navigation history menu is not shown
+   * on either of the gestures that normally open it: long-pressing the back
+   * button and secondary-clicking it (trackpad / mouse right click); tapping
+   * it still pops the screen.
    *
    * @default true
    *
