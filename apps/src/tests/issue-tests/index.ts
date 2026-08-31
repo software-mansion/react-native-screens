@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-export { default as Test0000 } from './Test0000';
 export { default as Test42 } from './Test42'; // [E2E skipped]: can't check orientation, unclear problem description
 export { default as Test111 } from './Test111'; // [E2E skipped]: can't check flickering
 export { default as Test263 } from './Test263'; // [E2E skipped]: example differs from PR, even if changed the problem still occurs
@@ -211,6 +210,7 @@ export { default as Test4351 } from './Test4351';
 export { default as Test4357 } from './Test4357';
 export { default as Test4361 } from './Test4361';
 export { default as Test4423 } from './Test4423';
+export { default as Test4571 } from './Test4571';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
