@@ -50,15 +50,19 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet settles at 0.4 and the card updates back to `0`.
 
-6. Drag the sheet up to 0.7, then release it without reaching 1.0.
+6. Drag the sheet up until it settles at the middle detent (0.7) again.
 
-- [ ] The card shows `1` – an aborted drag that settles back at the same detent does not produce a different index.
+- [ ] The sheet settles at 0.7 and the card updates to `1`.
+
+7. Drag the sheet a short way up towards the maximum detent (1.0) and release it before it passes the halfway point.
+
+- [ ] The sheet settles back at 0.7 and the card still shows `1` – an aborted drag that settles at the current detent does not produce a new index.
 
 ---
 
 ### Dismissal
 
-7. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent).
+8. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent).
 
 - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
 
@@ -126,14 +130,18 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet settles at 0.4 and the card updates back to `0`.
 
-6. Drag the sheet up to 0.7, then release it without reaching 1.0.
+6. Drag the sheet up until it settles at the middle detent (0.7) again.
 
-- [ ] The card shows `1` – an aborted drag that settles back at the same detent does not produce a different index.
+- [ ] The sheet settles at 0.7 and the card updates to `1`.
+
+7. Drag the sheet a short way up towards the maximum detent (1.0) and release it before it passes the halfway point.
+
+- [ ] The sheet settles back at 0.7 and the card still shows `1` – an aborted drag that settles at the current detent does not produce a new index.
 
 ---
 
 ### Dismissal
 
-7. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent, or use the system back gesture).
+8. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent, or use the system back gesture).
 
 - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
