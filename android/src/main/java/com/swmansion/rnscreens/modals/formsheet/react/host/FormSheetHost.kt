@@ -6,8 +6,12 @@ import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.common.ShadowStateProxy
+import com.swmansion.rnscreens.helpers.FragmentManagerHelper
+import com.swmansion.rnscreens.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialogManager
+import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetPresentationObserver
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
+import java.lang.ref.WeakReference
 
 class FormSheetHost(
     val reactContext: ThemedReactContext,
@@ -44,8 +48,125 @@ class FormSheetHost(
             contentView = sheetContentView,
         )
 
+    private val contentFragment = FormSheetContentFragment(sheetContentView)
+
+    private var isPresented = false
+
+    private val presentationObserver =
+        object : FormSheetPresentationObserver {
+            override fun onPresentationStarted() {
+                isPresented = true
+                takePrimaryNavigationIfNeeded()
+            }
+
+            override fun onDismissalCompleted() {
+                isPresented = false
+                restorePrimaryNavigationIfNeeded()
+            }
+        }
+
     init {
         sheetContentView.contentSizeChangeDelegate = dialogManager.contentSizeChangeDelegate
+        sheetContentView.contentFragment = contentFragment
+        dialogManager.presentationObserver = presentationObserver
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        attachContentFragmentIfNeeded()
+    }
+
+    private fun attachContentFragmentIfNeeded() {
+        if (contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager =
+            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
+                "[RNScreens] Nullish fragment manager - can't attach FormSheet content fragment"
+            }
+
+        fragmentManager
+            .createTransactionWithReordering()
+            .add(contentFragment, null)
+            .commitNowAllowingStateLoss()
+
+        if (isPresented) {
+            takePrimaryNavigationIfNeeded()
+        }
+
+        dialogManager.nestedBackCoordinator.attachNestedContent(contentFragment)
+    }
+
+    // FragmentManager enables back stack handling of a nested FragmentManager only when the parent
+    // fragment is the primary navigation fragment, so the content fragment takes that role for as
+    // long as the sheet is considered as presented (PRESENTING -> PRESENTED -> DISMISSING -> DISMISSED).
+    private fun takePrimaryNavigationIfNeeded() {
+        if (!contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager = contentFragment.parentFragmentManager
+        if (fragmentManager.primaryNavigationFragment === contentFragment) {
+            return
+        }
+
+        contentFragment.primaryNavigationFragmentToRestore =
+            fragmentManager.primaryNavigationFragment?.let { WeakReference(it) }
+        fragmentManager
+            .createTransactionWithReordering()
+            .setPrimaryNavigationFragment(contentFragment)
+            .commitNowAllowingStateLoss()
+        dialogManager.nestedBackCoordinator.invalidate()
+    }
+
+    private fun restorePrimaryNavigationIfNeeded() {
+        if (!contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager = contentFragment.parentFragmentManager
+        if (fragmentManager.isDestroyed) {
+            return
+        }
+
+        val fragmentToRestore = contentFragment.primaryNavigationFragmentToRestore
+        contentFragment.primaryNavigationFragmentToRestore = null
+
+        // A sheet presented above this one would restore this content fragment on its own dismissal.
+        // This sheet is gone by then, so the one above takes over its restore target instead.
+        fragmentManager.fragments
+            .filterIsInstance<FormSheetContentFragment>()
+            .filter { it.primaryNavigationFragmentToRestore?.get() === contentFragment }
+            .forEach { it.primaryNavigationFragmentToRestore = fragmentToRestore }
+
+        if (fragmentManager.primaryNavigationFragment !== contentFragment) {
+            return
+        }
+
+        fragmentManager
+            .createTransactionWithReordering()
+            .setPrimaryNavigationFragment(fragmentToRestore?.get()?.takeIf { it.isAdded })
+            .commitNowAllowingStateLoss()
+        dialogManager.nestedBackCoordinator.invalidate()
+    }
+
+    private fun detachContentFragmentIfNeeded() {
+        if (!contentFragment.isAdded) {
+            return
+        }
+
+        val fragmentManager = contentFragment.parentFragmentManager
+        if (fragmentManager.isDestroyed) {
+            return
+        }
+
+        dialogManager.nestedBackCoordinator.detachNestedContent()
+        restorePrimaryNavigationIfNeeded()
+        fragmentManager
+            .createTransactionWithReordering()
+            .remove(contentFragment)
+            .commitNowAllowingStateLoss()
     }
 
     internal fun mountReactSubviewAt(
@@ -127,6 +248,7 @@ class FormSheetHost(
     }
 
     internal fun destroy() {
+        detachContentFragmentIfNeeded()
         dialogManager.destroy()
     }
 }

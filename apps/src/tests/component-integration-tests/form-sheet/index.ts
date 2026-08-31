@@ -1,7 +1,7 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
-import TestFormSheetWithNestedStackV5 from './test-form-sheet-stack-v5-nesting-stack-v5-in-form-sheet-ios';
+import TestFormSheetWithNestedStackV5 from './test-form-sheet-stack-v5-nesting-stack-v5-in-form-sheet';
 
-export { default as TestFormSheetWithNestedStackV5 } from './test-form-sheet-stack-v5-nesting-stack-v5-in-form-sheet-ios';
+export { default as TestFormSheetWithNestedStackV5 } from './test-form-sheet-stack-v5-nesting-stack-v5-in-form-sheet';
 
 const scenarios = { TestFormSheetWithNestedStackV5 };
 

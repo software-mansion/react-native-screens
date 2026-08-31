@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
@@ -17,6 +18,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.common.FragmentProviding
 import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeProvider
@@ -29,8 +31,13 @@ class FormSheetContentView(
 ) : ReactViewGroup(context),
     RootView,
     UIManagerListener,
-    ViewTreeObserver.OnPreDrawListener {
+    ViewTreeObserver.OnPreDrawListener,
+    FragmentProviding {
     internal var contentSizeChangeDelegate: FormSheetContentSizeChangeDelegate? = null
+
+    internal var contentFragment: FormSheetContentFragment? = null
+
+    override fun getAssociatedFragment(): Fragment? = contentFragment?.takeIf { it.isAdded }
 
     private val themedReactContext: ThemedReactContext
         get() = context as ThemedReactContext

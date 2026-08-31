@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.findViewTreeOnBackPressedDispatcherOwner
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.swmansion.rnscreens.common.container.Container
@@ -205,7 +206,7 @@ internal class StackContainer(
         screen: StackScreen,
         canNavigateBack: Boolean,
     ): StackScreenFragment =
-        StackScreenFragment(screen, canNavigateBack).also {
+        StackScreenFragment(screen, canNavigateBack, findViewTreeOnBackPressedDispatcherOwner()).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
