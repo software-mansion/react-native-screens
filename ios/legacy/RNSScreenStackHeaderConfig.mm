@@ -604,16 +604,6 @@ RNS_IGNORE_SUPER_CALL_END
           RNSSearchBar *searchBar = subview.subviews[0];
           searchBarPresent = true;
           navitem.searchController = searchBar.controller;
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
-          if (@available(iOS 17.0, *)) {
-            if (config.direction == UISemanticContentAttributeForceRightToLeft) {
-              // Overriding the navigation controller's layout direction makes UIKit drop the default search icon.
-              // Keep the search field's existing left-to-right content layout while the navigation bar is mirrored.
-              searchBar.controller.searchBar.searchTextField.semanticContentAttribute =
-                  UISemanticContentAttributeForceLeftToRight;
-            }
-          }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
           if (@available(iOS 16.0, *)) {
@@ -788,18 +778,24 @@ RNS_IGNORE_SUPER_CALL_END
     if (navCtrl.traitCollection.layoutDirection != layoutDirection) {
       navCtrl.traitOverrides.layoutDirection = layoutDirection;
     }
-    return;
+  } else {
+    UIViewController *parentViewController = navCtrl.parentViewController;
+    if (parentViewController != nil && navCtrl.traitCollection.layoutDirection != layoutDirection) {
+      [parentViewController
+          setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:layoutDirection]
+              forChildViewController:navCtrl];
+    }
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
-
+#else
   UIViewController *parentViewController = navCtrl.parentViewController;
   if (parentViewController != nil && navCtrl.traitCollection.layoutDirection != layoutDirection) {
     [parentViewController
         setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:layoutDirection]
             forChildViewController:navCtrl];
   }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
 
-  // Keep the explicit legacy value synchronized because stack gestures and animations inspect it before traits.
+  // Keep the explicit legacy value synchronized because stack gestures and animations inspect it directly.
   if (navCtrl.view.semanticContentAttribute != self.direction) {
     navCtrl.view.semanticContentAttribute = self.direction;
     navCtrl.navigationBar.semanticContentAttribute = self.direction;
