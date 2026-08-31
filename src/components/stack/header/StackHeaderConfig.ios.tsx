@@ -156,7 +156,7 @@ function StackHeaderConfig(
       collapsable={false}
       backButtonTitle={backButtonTitle}
       backButtonDisplayMode={backButtonDisplayMode}
-      backButtonMenuEnabled={backButtonMenuEnabled ?? true}
+      backButtonMenuEnabled={backButtonMenuEnabled}
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}

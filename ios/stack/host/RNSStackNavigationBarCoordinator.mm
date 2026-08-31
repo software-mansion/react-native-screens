@@ -1,4 +1,5 @@
 #import "RNSStackNavigationBarCoordinator.h"
+#import "RNSLog.h"
 #import "RNSStackNavigationBar.h"
 
 @implementation RNSStackNavigationBarCoordinator
@@ -15,6 +16,8 @@
 {
   if ([navigationController.navigationBar isKindOfClass:RNSStackNavigationBar.class]) {
     static_cast<RNSStackNavigationBar *>(navigationController.navigationBar).backButtonMenuEnabled = enabled;
+  } else {
+    RNSLog(@"An instance of RNSStackNavigationBar is expected for navigation bar implementation");
   }
 }
 #endif // !TARGET_OS_TV

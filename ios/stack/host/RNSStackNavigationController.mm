@@ -18,7 +18,7 @@
 {
 #if !TARGET_OS_TV
   self = [super initWithNavigationBarClass:RNSStackNavigationBar.class toolbarClass:nil];
-#else
+#else // !TARGET_OS_TV
   self = [super init];
 #endif // !TARGET_OS_TV
   if (self != nil) {
