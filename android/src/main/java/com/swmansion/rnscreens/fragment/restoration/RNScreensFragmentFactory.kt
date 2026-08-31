@@ -1,11 +1,14 @@
 package com.swmansion.rnscreens.fragment.restoration
 
-class RNScreensFragmentFactory : androidx.fragment.app.FragmentFactory() {
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
+
+class RNScreensFragmentFactory : FragmentFactory() {
     override fun instantiate(
         classLoader: ClassLoader,
         className: String,
-    ): androidx.fragment.app.Fragment =
-        if (className.startsWith(com.swmansion.rnscreens.BuildConfig.LIBRARY_PACKAGE_NAME)) {
+    ): Fragment =
+        if (RNScreensNonRestorableFragment::class.java.isAssignableFrom(loadFragmentClass(classLoader, className))) {
             AutoRemovingFragment()
         } else {
             super.instantiate(classLoader, className)
