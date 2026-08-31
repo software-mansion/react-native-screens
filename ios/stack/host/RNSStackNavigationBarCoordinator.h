@@ -10,11 +10,13 @@ NS_ASSUME_NONNULL_BEGIN
     forNavigationController:(UINavigationController *)navigationController
                    animated:(BOOL)animated;
 
+#if !TARGET_OS_TV
 /**
  * Enables or disables the back button's long-press navigation history menu.
- * Takes effect only when the navigation bar is an RNSStackNavigationBar; no-op on tvOS.
+ * Takes effect only when the navigation bar is an RNSStackNavigationBar.
  */
 - (void)setBackButtonMenuEnabled:(BOOL)enabled forNavigationController:(UINavigationController *)navigationController;
+#endif // !TARGET_OS_TV
 
 - (void)initializeNavigationBarOfNavigationController:(UINavigationController *)navigationController;
 

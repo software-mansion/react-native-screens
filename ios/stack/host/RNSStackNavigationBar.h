@@ -12,12 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSStackNavigationBar : UINavigationBar
 
+#if !TARGET_OS_TV
 /**
  * When NO, the back button's navigation history menu (long press and pointer
  * secondary click) is suppressed. Tapping the back button is unaffected.
- * No-op on tvOS.
  */
 @property (nonatomic) BOOL backButtonMenuEnabled;
+#endif // !TARGET_OS_TV
 
 @end
 

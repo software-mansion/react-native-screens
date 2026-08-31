@@ -10,14 +10,14 @@
   [navigationController setNavigationBarHidden:hidden animated:animated];
 }
 
+#if !TARGET_OS_TV
 - (void)setBackButtonMenuEnabled:(BOOL)enabled forNavigationController:(UINavigationController *)navigationController
 {
-#if !TARGET_OS_TV
   if ([navigationController.navigationBar isKindOfClass:RNSStackNavigationBar.class]) {
     static_cast<RNSStackNavigationBar *>(navigationController.navigationBar).backButtonMenuEnabled = enabled;
   }
-#endif // !TARGET_OS_TV
 }
+#endif // !TARGET_OS_TV
 
 - (void)initializeNavigationBarOfNavigationController:(UINavigationController *)navigationController
 {
