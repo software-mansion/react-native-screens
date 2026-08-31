@@ -78,10 +78,10 @@ internal class FormSheetBehaviorController(
      * behind the status bar, where Material pads insets for us.
      * @param contentHeightForFitToContents - the exact height of the content, e.g. React content calculated by Yoga.
      * Used exclusively when the sheet is in `fitToContents` mode.
-     * @param nativeContainerPaddingBottom - the bottom system inset. In `fitToContents` mode, this is added to the
-     * BottomSheet's height to extend its background behind the system bars, while the inner content remains within
-     * the safe area. For fractional detents it is subtracted from the collapsed peek height, which Material resolves
-     * above the inset, so the lowest detent lands at its fraction of [sheetAvailableSpace] like the other ones.
+     * @param nativeContainerPaddingBottom - the bottom system inset (navigation bar or keyboard). In `fitToContents` mode,
+     * this is added to the BottomSheet's height to extend its background behind the system bars / keyboard, while the inner
+     * content remains within the safe area. For fractional detents it is subtracted from the collapsed peek height, which 
+     * Material resolves above the inset, so the lowest detent lands at its fraction of [sheetAvailableSpace] like the other ones.
      * @param initialDetentIndex - the index of the detent the sheet should snap to while opening.
      * @param applyInitialDetent - whether the sheet should forcefully snap to the initial detent state.
      * This should typically be `true` only when the sheet transitions from closed to open.
