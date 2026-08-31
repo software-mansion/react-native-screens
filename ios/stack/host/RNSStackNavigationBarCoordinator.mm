@@ -1,5 +1,5 @@
 #import "RNSStackNavigationBarCoordinator.h"
-#import "RNSLog.h"
+#import <React/RCTAssert.h>
 #import "RNSStackNavigationBar.h"
 
 @implementation RNSStackNavigationBarCoordinator
@@ -14,11 +14,9 @@
 #if !TARGET_OS_TV
 - (void)setBackButtonMenuEnabled:(BOOL)enabled forNavigationController:(UINavigationController *)navigationController
 {
-  if ([navigationController.navigationBar isKindOfClass:RNSStackNavigationBar.class]) {
-    static_cast<RNSStackNavigationBar *>(navigationController.navigationBar).backButtonMenuEnabled = enabled;
-  } else {
-    RNSLog(@"An instance of RNSStackNavigationBar is expected for navigation bar implementation");
-  }
+  RCTAssert([navigationController.navigationBar isKindOfClass:RNSStackNavigationBar.class],
+            @"An instance of RNSStackNavigationBar is expected for navigation bar implementation");
+  static_cast<RNSStackNavigationBar *>(navigationController.navigationBar).backButtonMenuEnabled = enabled;
 }
 #endif // !TARGET_OS_TV
 
