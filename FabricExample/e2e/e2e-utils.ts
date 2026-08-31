@@ -74,15 +74,8 @@ export type ScrollOptions = {
   direction?: 'up' | 'down';
 };
 
-/** A `testID`, or any matcher for targets that carry no `testID`. */
-export type ScrollTarget = string | NativeMatcher;
-
-function toMatcher(target: ScrollTarget): NativeMatcher {
-  return typeof target === 'string' ? by.id(target) : target;
-}
-
 export async function scrollUntilVisible(
-  target: ScrollTarget,
+  id: string,
   scrollViewId: string,
   {
     pixels = 600,
@@ -90,20 +83,24 @@ export async function scrollUntilVisible(
     direction = 'down',
   }: ScrollOptions = {},
 ) {
-  await waitFor(element(toMatcher(target)))
+  await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
     .scroll(pixels, direction, Number.NaN, startPercentage);
 }
 
-/** Rewinds to the top first — `whileElement` only scrolls one way. */
+/**
+ * Rewinds to the top first — `whileElement` only scrolls one way. Down only:
+ * rewinding to the top makes an upward scan pointless, so `direction` is
+ * rejected at the type level.
+ */
 export async function rewindAndScrollUntilVisible(
-  target: ScrollTarget,
+  id: string,
   scrollViewId: string,
-  options: ScrollOptions = {},
+  options: Omit<ScrollOptions, 'direction'> = {},
 ) {
   await element(by.id(scrollViewId)).scrollTo('top');
-  await scrollUntilVisible(target, scrollViewId, options);
+  await scrollUntilVisible(id, scrollViewId, options);
 }
 
 export async function selectIssueTestScreen(screenName: string) {
