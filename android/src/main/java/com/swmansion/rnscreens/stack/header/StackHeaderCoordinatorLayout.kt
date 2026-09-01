@@ -338,7 +338,11 @@ internal class StackHeaderCoordinatorLayout(
                 else -> R.style.Theme_Material3Expressive_DayNight_NoActionBar
             },
         )
-        if (uiNightMode == appliedUiNightMode) return
+
+        if (uiNightMode == appliedUiNightMode) {
+            return
+        }
+
         appliedUiNightMode = uiNightMode
         currentProvider?.let {
             // A rebuild is forced because MaterialToolbar snapshots its theme at construction:
