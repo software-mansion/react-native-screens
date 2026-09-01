@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - The list keeps its scroll position across dismiss/present – scroll back to the top before testing the edge behavior again.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -69,51 +69,3 @@ TBD: Planned, but will be implemented separately.
 9. Tap "Dismiss from JS" (or swipe down on the header).
 
 - [ ] The sheet dismisses and "Open FormSheet" is pressable again.
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Expand On Scroll To Edge (iOS)** screen.
-
-- [ ] The host screen shows "Expands on scroll: ON", a switch (on) and the "Open FormSheet" button.
-
----
-
-### Expansion enabled (default)
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel at the lower detent (0.5). The "Drag Here to Expand" header and the scrollable list ("List Item 1", "List Item 2", …) are visible.
-
-3. Swipe up on the list.
-
-- [ ] The panel grows to the largest detent (1.0) first (width unchanged); the list does not scroll until the panel has finished expanding.
-
-4. Swipe up on the list again.
-
-- [ ] The list scrolls normally and reveals further items; "Dismiss from JS" is reachable at the end of the list.
-
-5. Tap "Dismiss from JS" (or swipe down on the header).
-
-- [ ] The panel dismisses.
-
----
-
-### Expansion disabled
-
-6. Flip the switch so the host screen reads "Expands on scroll: OFF", then tap "Open FormSheet".
-
-- [ ] The panel presents at the lower detent (0.5).
-
-7. Make sure the list is scrolled to the very top, then swipe up on the list.
-
-- [ ] The list scrolls normally and reveals further items. The panel **does not** grow – it stays at 0.5.
-
-8. Drag the "Drag Here to Expand" header up.
-
-- [ ] The panel grows to the largest detent (1.0) – manual dragging outside the list still works.
-
-9. Tap "Dismiss from JS" (or swipe down on the header).
-
-- [ ] The panel dismisses and "Open FormSheet" is pressable again.

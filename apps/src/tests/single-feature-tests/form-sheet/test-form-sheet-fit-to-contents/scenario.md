@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - **Android:** when content is mounted/unmounted, the sheet updates its height immediately, without animation. Animating dynamic content size changes should be investigated separately.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; `fitToContents` applies to the panel height.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -37,6 +37,7 @@ TBD: Planned, but will be implemented separately.
 2. Tap "Open FormSheet".
 
 - [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons) plus the empty bottom inset area. No visual jumps during the presentation animation.
+- [ ] iPad: the panel height matches the content exactly – there is no bottom inset area below it.
 
 ---
 
@@ -57,42 +58,6 @@ TBD: Planned, but will be implemented separately.
 5. Tap "Dismiss from JS" (or swipe the sheet down).
 
 - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Fit To Contents** screen.
-
-- [ ] The host screen shows the "Open FormSheet" button.
-
----
-
-### Presentation
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel with a fixed width and a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons).
-
----
-
-### Dynamic height
-
-3. Tap "Expand Content" inside the panel.
-
-- [ ] The extra text box appears and the panel grows vertically to fully accommodate it, with a smooth animation and no visual glitches; the width stays fixed. The button now reads "Collapse Content".
-
-4. Tap "Collapse Content".
-
-- [ ] The extra text box disappears and the panel shrinks back to its original height, with a smooth animation.
-
----
-
-### Dismissal
-
-5. Tap "Dismiss from JS" (or swipe the panel down).
-
-- [ ] The panel dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
 
 ## Steps - Android
 

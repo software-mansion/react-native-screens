@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; there is no bottom safe area to cover, so the color simply fills the panel.
 - **Android:** the sheet container is laid out behind the navigation bar, so the native color extends to the bottom edge of the screen while the React content stays above the bar. Content height changes are applied immediately, without animation.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -37,6 +37,7 @@ TBD: Planned, but will be implemented separately.
 2. Tap "Open FormSheet".
 
 - [ ] The sheet presents with a height matching its content. The navy background fills the whole sheet, including the area under the home indicator – no default-colored gap in the bottom safe area.
+- [ ] iPad: the navy background fills the floating panel up to its rounded corners – there is no bottom safe-area strip to cover.
 
 ---
 
@@ -56,51 +57,11 @@ TBD: Planned, but will be implemented separately.
 
 5. Tap the "PURPLE" chip, then "Open FormSheet".
 
-- [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet, including the bottom safe area, exactly like navy did.
+- [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet (on iPhone including the bottom safe area), exactly like navy did.
 
 6. Swipe the sheet down.
 
 - [ ] The sheet dismisses and "Open FormSheet" is pressable again.
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Native Container Style** screen.
-
-- [ ] The host screen shows the "Select Native Background Color:" chips with "NAVY" selected, and the "Open FormSheet" button.
-
----
-
-### Default color
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel with a height matching its content. The navy background fills the whole panel up to its rounded corners.
-
----
-
-### Layout stability
-
-3. Tap "Expand Content" inside the panel.
-
-- [ ] The panel grows vertically to accommodate the extra text box with a smooth animation; the width stays fixed. The navy background covers the new bounds throughout – no flashes or white gaps.
-
-4. Tap "Dismiss from JS".
-
-- [ ] The panel dismisses.
-
----
-
-### Changing the color
-
-5. Tap the "PURPLE" chip, then "Open FormSheet".
-
-- [ ] "PURPLE" is highlighted before opening. The panel presents with a purple background that fills the whole panel, exactly like navy did.
-
-6. Swipe the panel down.
-
-- [ ] The panel dismisses and "Open FormSheet" is pressable again.
 
 ## Steps - Android
 

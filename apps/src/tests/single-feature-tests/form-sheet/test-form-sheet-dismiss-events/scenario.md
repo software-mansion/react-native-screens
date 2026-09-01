@@ -21,7 +21,7 @@ TBD: Planned, but will be implemented separately.
 - Wait for the dismissal animation to finish before reading the log.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the backdrop is the dimmed area around the panel.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -42,7 +42,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Native dismissal – backdrop
 
-3. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area above the sheet).
+3. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area outside the sheet).
 
 - [ ] The sheet dismisses.
 - [ ] The log shows exactly one new entry: `onNativeDismiss`.
@@ -59,45 +59,6 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet dismisses.
 - [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Dismiss Events** screen.
-
-- [ ] The host screen shows the "Open FormSheet" and "Clear Logs" buttons and an empty "Event Logs" panel ("No events recorded yet.").
-
----
-
-### Native dismissal – swipe
-
-2. Tap "Open FormSheet", wait for the panel to present, then swipe it down past the lower detent.
-
-- [ ] The panel dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
-
----
-
-### Native dismissal – backdrop
-
-3. Tap "Open FormSheet", wait for the panel to present, then tap the backdrop (the dimmed area around the panel).
-
-- [ ] The panel dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
-
----
-
-### Programmatic dismissal
-
-4. Tap "Clear Logs".
-
-- [ ] The log is empty again.
-
-5. Tap "Open FormSheet", wait for the panel to present, then tap "Dismiss from JS" inside the panel.
-
-- [ ] The panel dismisses.
-- [ ] The log shows exactly one entry: `onDismiss`.
 
 ## Steps - Android
 

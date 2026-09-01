@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - **iPad:** the sheet is presented as a floating panel, so the radius affects **all four** corners.
 - **Android:** rounded-corner clipping is applied only on API level 33+; the radius affects the **top** corners. Known limitation: updating the radius while the sheet is fully expanded to the top of the screen (1.0) makes the corners flat, change the radius at the 0.6 detent.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -36,7 +36,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.6). The top corners (iOS 18) or all corners (iOS 26) have the standard, system-default rounding. The title inside reads "Current Radius: systemDefault".
+- [ ] The sheet presents at the lower detent (0.6). The top corners (iPhone on iOS 18) or all four corners (iPhone on iOS 26, iPad) have the standard, system-default rounding. The title inside reads "Current Radius: systemDefault".
 
 ---
 
@@ -65,50 +65,6 @@ TBD: Planned, but will be implemented separately.
 7. Tap "Dismiss from JS" (or swipe the sheet down).
 
 - [ ] The sheet dismisses and the host screen shows the last selected radius; "Open FormSheet" is pressable again.
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Corner Radius** screen.
-
-- [ ] The host screen shows "Current Radius: systemDefault" and the "Open FormSheet" button.
-
----
-
-### System default
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel at the lower detent (0.6). All four corners have the standard, system-default rounding. The title inside reads "Current Radius: systemDefault".
-
----
-
-### Dynamic updates
-
-3. Tap "Sharp (0)" inside the panel.
-
-- [ ] All four corners become sharp immediately, without re-presenting the panel. The title reads "Current Radius: 0".
-
-4. Tap "Small (10)".
-
-- [ ] All four corners get a slight rounding; the title reads "Current Radius: 10".
-
-5. Tap "Large (50)".
-
-- [ ] All four corners get a deep rounding; the title reads "Current Radius: 50".
-
-6. Tap "System default".
-
-- [ ] All four corners return to the system-default rounding; the title reads "Current Radius: systemDefault".
-
----
-
-### Dismissal
-
-7. Tap "Dismiss from JS" (or swipe the panel down).
-
-- [ ] The panel dismisses and the host screen shows the last selected radius; "Open FormSheet" is pressable again.
 
 ## Steps - Android
 

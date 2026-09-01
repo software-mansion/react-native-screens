@@ -20,7 +20,7 @@ TBD: Planned, but will be implemented separately.
 
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -59,46 +59,6 @@ TBD: Planned, but will be implemented separately.
 6. Tap "Open FormSheet".
 
 - [ ] The sheet presents again normally – the native state stayed in sync with JS.
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Presentation State** screen.
-
-- [ ] The host screen shows the "Open FormSheet" button.
-
----
-
-### Presentation
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel at the lower detent (0.6) with the "FormSheet content" title and the "Quickly dismiss & present" button.
-
----
-
-### Rapid toggling (stress test)
-
-3. Tap "Quickly dismiss & present".
-
-- [ ] The panel starts its dismissal animation and, as soon as it finishes, presents again automatically. The final state is a single presented panel at 0.6; no flicker, no leftover dimming, no second panel.
-
-4. Tap "Quickly dismiss & present" three more times in a row, waiting for the panel to come back each time.
-
-- [ ] Every cycle ends with exactly one presented panel.
-
----
-
-### Final dismissal
-
-5. Swipe the panel down past the lower detent.
-
-- [ ] The panel dismisses and the host screen is undimmed.
-
-6. Tap "Open FormSheet".
-
-- [ ] The panel presents again normally – the native state stayed in sync with JS.
 
 ## Steps - Android
 

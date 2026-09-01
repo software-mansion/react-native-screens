@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - **Android:** the grabber is Material's drag handle, rendered above the React content; toggling it changes the content position by the handle height.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the grabber is drawn at the top edge of the panel.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -71,56 +71,6 @@ TBD: Planned, but will be implemented separately.
 9. Flip it to **on** once more and tap "Dismiss from JS".
 
 - [ ] The sheet dismisses. The switch on the host screen reflects the last value set inside the sheet (on).
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Grabber Visibility** screen.
-
-- [ ] The host screen shows the "prefersGrabberVisible" switch (off) and the "Open FormSheet" button.
-
----
-
-### Grabber hidden (default)
-
-2. Tap "Open FormSheet" without touching the switch.
-
-- [ ] The sheet presents as a centered floating panel at the lower detent (0.6). No grabber indicator is shown at the top of the panel. The switch inside the panel is off.
-
-3. Swipe the panel down to dismiss it.
-
-- [ ] The panel dismisses; "Open FormSheet" is pressable again.
-
----
-
-### Toggling from the host screen
-
-4. Flip the switch on the host screen to **on**, then tap "Open FormSheet".
-
-- [ ] The panel presents at 0.6 with a grabber indicator at its top edge. The switch inside the panel is on.
-
-5. Swipe the panel down, flip the host switch back to **off**, then tap "Open FormSheet".
-
-- [ ] The panel presents with no grabber indicator.
-
-6. Swipe the panel down.
-
----
-
-### Toggling from inside the sheet
-
-7. Tap "Open FormSheet", then flip the switch inside the panel to **on**.
-
-- [ ] The grabber indicator appears at the top edge of the panel without the panel being dismissed or re-presented.
-
-8. Flip the switch inside the panel back to **off**.
-
-- [ ] The grabber indicator disappears, again without any re-presentation.
-
-9. Flip it to **on** once more and tap "Dismiss from JS".
-
-- [ ] The panel dismisses. The switch on the host screen reflects the last value set inside the panel (on).
 
 ## Steps - Android
 

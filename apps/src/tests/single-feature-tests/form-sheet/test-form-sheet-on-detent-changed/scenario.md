@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - **Android:** the event is emitted when the Material sheet settles in a state (collapsed → `0`, half-expanded → `1`, expanded → `2`), not while dragging. The content box is laid out to the largest detent and anchored to the top, so the card moves together with the sheet.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -65,42 +65,6 @@ TBD: Planned, but will be implemented separately.
 8. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent).
 
 - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Detent Changed Event** screen.
-
-- [ ] The host screen shows the "Open FormSheet" button.
-
----
-
-### Track detent changes
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel at the lowest detent (0.4). The "Active Index" card inside the panel shows `0`.
-
-3. Drag the panel up until it settles at the middle detent (0.7).
-
-- [ ] The panel settles at 0.7 (width unchanged) and the card updates to `1`.
-
-4. Drag the panel up to the maximum detent (1.0).
-
-- [ ] The panel grows to the maximum available height and the card updates to `2`.
-
-5. Drag the panel down until it settles at the lowest detent (0.4).
-
-- [ ] The panel settles at 0.4 and the card updates back to `0`.
-
----
-
-### Dismissal
-
-6. Tap "Dismiss from JS" (or swipe the panel down past the lowest detent).
-
-- [ ] The panel dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
 
 ## Steps - Android
 

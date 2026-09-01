@@ -23,7 +23,7 @@ TBD: Planned, but will be implemented separately.
   - **Android:** the content box is laid out once to the _largest_ detent (minus system bars). At lower detents the sheet reveals only the top part of that box, which is why the content is anchored to the top – it stays visible at every detent and moves together with the sheet.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iPhone
+## Steps - iOS
 
 ### Baseline
 
@@ -63,47 +63,6 @@ TBD: Planned, but will be implemented separately.
 6. Tap "Open FormSheet", then swipe the sheet down past the lower detent.
 
 - [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
-
-## Steps - iPad
-
-### Baseline
-
-1. Launch the app and navigate to the **Basic Functionality** screen.
-
-- [ ] The host screen shows the "FormSheet Test" title and the "Open FormSheet" button.
-
----
-
-### Presentation & layout
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents as a centered floating panel at the lower detent (0.6) and the host screen is dimmed. The panel has a fixed width and is horizontally centered.
-- [ ] "FormSheet content" and "Dismiss from JS" are centered both vertically and horizontally within the panel.
-
----
-
-### Detent adaptation
-
-3. Drag the panel up to the largest detent (1.0).
-
-- [ ] The panel grows vertically to the maximum available height (respecting the top inset) while its width stays fixed. The content re-centers within the taller panel.
-
-4. Drag the panel back down to the lower detent (0.6).
-
-- [ ] The panel settles at 0.6 and the content re-centers again. Nothing is clipped.
-
----
-
-### Dismissal
-
-5. Tap "Dismiss from JS".
-
-- [ ] The panel dismisses with an animation. The host screen is undimmed and "Open FormSheet" is pressable again.
-
-6. Tap "Open FormSheet", then swipe the panel down past the lower detent.
-
-- [ ] The panel dismisses natively. "Open FormSheet" is pressable again and opens the panel at 0.6.
 
 ## Steps - Android
 
