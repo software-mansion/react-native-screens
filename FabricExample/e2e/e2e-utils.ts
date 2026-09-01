@@ -31,8 +31,10 @@ import {
 
 const { getIOSVersionNumber } = require('../../scripts/e2e/ios-devices.js');
 
-/** Default for waits Detox's idle sync already mostly covers. */
-export const DEFAULT_TIMEOUT_MS = 3000;
+// ---------------------------------------------------------------------------
+// Platform and OS-version gates
+// → structure PR: framework/platform.ts
+// ---------------------------------------------------------------------------
 
 export const describeIfiOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
@@ -66,284 +68,56 @@ export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
 export const describeIfiPadOS26 =
   isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
 
-export type ScrollOptions = {
-  /** Pixels per step. Smaller steps avoid overshooting a short row. */
-  pixels?: number;
-  /** Swipe start, as a fraction of height. Keep it inside the view: on
-   * Android a `NaN`/0 start lands in the status bar and opens the shade. */
-  startPercentage?: number;
-  /** Scroll direction; `whileElement` only ever scrolls one way. */
-  direction?: 'up' | 'down';
-};
+// ---------------------------------------------------------------------------
+// Generic polling
+// → structure PR: framework/wait.ts
+// ---------------------------------------------------------------------------
 
-export async function scrollUntilVisible(
-  id: string,
-  scrollViewId: string,
-  {
-    pixels = 600,
-    startPercentage = 0.85,
-    direction = 'down',
-  }: ScrollOptions = {},
-) {
-  await waitFor(element(by.id(id)))
-    .toBeVisible()
-    .whileElement(by.id(scrollViewId))
-    .scroll(pixels, direction, Number.NaN, startPercentage);
-}
+/** Default for waits Detox's idle sync already mostly covers. */
+export const DEFAULT_TIMEOUT_MS = 3000;
 
-/**
- * Rewinds to the top first — `whileElement` only scrolls one way. Down only:
- * rewinding to the top makes an upward scan pointless, so `direction` is
- * rejected at the type level.
- */
-export async function rewindAndScrollUntilVisible(
-  id: string,
-  scrollViewId: string,
-  options: Omit<ScrollOptions, 'direction'> = {},
-) {
-  await element(by.id(scrollViewId)).scrollTo('top');
-  await scrollUntilVisible(id, scrollViewId, options);
-}
-
-export async function selectIssueTestScreen(screenName: string) {
-  await scrollUntilVisible(
-    'root-screen-issue-tests',
-    'root-screen-examples-scrollview',
-  );
-  await element(by.id('root-screen-issue-tests')).tap();
-
-  await waitFor(element(by.id('issue-tests-scrollview'))).toBeVisible();
-
-  if (device.getPlatform() === 'android') {
-    await element(by.label('Search')).tap();
-
-    // Only way found to reach the search input: matching by type
-    // (androidx.appcompat.widget.SearchView.SearchAutoComplete) fails even
-    // though it shows up in Detox's view hierarchy.
-    await element(by.text('')).replaceText(screenName);
-  } else if (device.getPlatform() === 'ios') {
-    await element(by.traits(['searchField'])).typeText(screenName);
-  }
-
-  await expect(element(by.id(`issue-tests-${screenName}`))).toBeVisible();
-  await element(by.id(`issue-tests-${screenName}`)).tap();
-}
-
-/** Root → `section` list → `scenarioGroup` list → `screenKey`. */
-async function selectTestsScreen(
-  section: 'single-feature-tests' | 'component-integration-tests',
-  scenarioGroup: string,
-  screenKey: string,
-) {
-  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
-  const sectionScrollView = `${section}-scrollview`;
-  const groupScrollView = `${scenarioGroupId}-scenarios-scrollview`;
-
-  await scrollToAndTapInList(
-    `root-screen-${section}`,
-    'root-screen-examples-scrollview',
-  );
-  await waitFor(element(by.id(sectionScrollView)))
-    .toBeVisible()
-    .withTimeout(DEFAULT_TIMEOUT_MS);
-
-  await scrollToAndTapInList(
-    `${section}-${scenarioGroupId}`,
-    sectionScrollView,
-  );
-  await waitFor(element(by.id(groupScrollView)))
-    .toBeVisible()
-    .withTimeout(DEFAULT_TIMEOUT_MS);
-
-  await scrollToAndTapInList(screenKey, groupScrollView);
-}
-
-async function scrollToAndTapInList(id: string, scrollViewId: string) {
-  await scrollUntilVisible(id, scrollViewId);
-  await element(by.id(id)).tap();
-}
-
-export const selectSingleFeatureTestsScreen = (
-  scenarioGroup: string,
-  screenKey: string,
-) => selectTestsScreen('single-feature-tests', scenarioGroup, screenKey);
-
-export const selectComponentIntegrationTestsScreen = (
-  scenarioGroup: string,
-  screenKey: string,
-) => selectTestsScreen('component-integration-tests', scenarioGroup, screenKey);
-
-/** @see apps/src/shared/SettingsPicker.tsx — derives option `testID`s. */
-export function pickerOptionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
-}
-
-export type SettingsControlOptions = ScrollOptions & { scrollViewId: string };
-
-/** Rewinds, scrolls `id` into view and taps it. */
-export async function scrollToAndTap(
-  id: string,
-  { scrollViewId, ...scroll }: SettingsControlOptions,
-) {
-  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
-  await element(by.id(id)).tap();
-}
-
-type PickerSelection = {
-  pickerId: string;
-  /** The picker's `label` prop — option `testID`s are derived from it. */
-  label: string;
-  option: string;
+type WaitUntilOptions = {
+  /** How long to keep polling before failing, in milliseconds. */
+  timeout?: number;
+  /** Delay between two `predicate` calls, in milliseconds. */
+  interval?: number;
+  /** What was awaited, appended to the timeout error. A function can build it
+   * from whatever the last `predicate` call observed. */
+  message: string | (() => string);
 };
 
 /**
- * Sets a picker to `option` and closes it (open option rows collide with the
- * `by.text` popup matchers). No-op when it already shows `option`. Omit
- * `control` for pickers outside a scroll view — they are tapped in place.
+ * Polls `predicate` until `true` or `timeout`. Prefer Detox's `waitFor`; use
+ * this only for conditions it cannot express, e.g. match counts.
  */
-export async function selectPickerOption(
-  { pickerId, label, option }: PickerSelection,
-  control?: SettingsControlOptions,
-) {
-  const expected = `${label}: ${option}`;
+export async function waitUntil(
+  predicate: () => Promise<boolean>,
+  { timeout = DEFAULT_TIMEOUT_MS, interval = 100, message }: WaitUntilOptions,
+): Promise<void> {
+  const deadline = Date.now() + timeout;
 
-  // Already set. Asserted collapsed: one left open by an earlier failure would
-  // collide with later `by.text` matchers.
-  if (textOf(await getTopmostMatch(by.id(pickerId))) === expected) {
-    await expect(element(by.id(pickerOptionId(label, option)))).not.toExist();
-    return;
-  }
-
-  const tap = async (id: string) => {
-    if (control) {
-      await scrollToAndTap(id, control);
-    } else {
-      await element(by.id(id)).tap();
+  while (Date.now() <= deadline) {
+    if (await predicate()) {
+      return;
     }
-  };
-
-  await tap(pickerId);
-  await tap(pickerOptionId(label, option));
-  await tap(pickerId);
-
-  await expectPickerValue(pickerId, expected);
-}
-
-/** The value is an RN `Text`: `text` on Android, `label` on iOS. */
-async function expectPickerValue(pickerId: string, expected: string) {
-  if (device.getPlatform() === 'ios') {
-    await expect(element(by.id(pickerId))).toHaveLabel(expected);
-  } else {
-    await expect(element(by.id(pickerId))).toHaveText(expected);
+    await new Promise(resolve => setTimeout(resolve, interval));
   }
-}
 
-/** `to` is the state expected afterwards — a swallowed tap fails here. Omit
- * `control` on screens whose switches sit outside any scroll view. */
-type SwitchToggle = {
-  switchId: string;
-  /** The switch's `label` prop. */
-  label: string;
-  /** The state expected after the tap. */
-  to: boolean;
-};
-
-export async function toggleSettingsSwitch(
-  { switchId, label, to }: SwitchToggle,
-  control?: SettingsControlOptions,
-) {
-  if (control) {
-    const { scrollViewId, ...scroll } = control;
-    await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
-  }
-  await element(by.id(switchId)).tap();
-
-  await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
-}
-
-/** Asserts the toolbar-menu screens' `Last clicked: <id>` line. */
-export async function expectLastClicked(
-  id: string,
-  { scrollViewId, ...scroll }: SettingsControlOptions,
-) {
-  await rewindAndScrollUntilVisible('last-clicked-text', scrollViewId, scroll);
-  await expect(element(by.id('last-clicked-text'))).toHaveText(
-    `Last clicked: ${id}`,
+  throw new Error(
+    `waitUntil timed out after ${timeout}ms: ${
+      typeof message === 'function' ? message() : message
+    }`,
   );
 }
+
+// ---------------------------------------------------------------------------
+// Element matches and attributes
+// → structure PR: framework/matchers.ts
+// ---------------------------------------------------------------------------
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 
 type Frame = ElementAttributes['frame'];
-
-/** Coordinate tap at (`xFraction`, 1/2) of `frame`, bypassing visibility checks. */
-async function tapWithinFrame({ x, y, width, height }: Frame, xFraction = 0.5) {
-  await device.tap({ x: x + width * xFraction, y: y + height / 2 });
-}
-
-/** Coordinate tap (iOS) — bypasses Detox's visibility check. */
-export async function forceTapByLabeliOS(testLabel: string) {
-  await tapWithinFrame(
-    await getFrame(by.label(testLabel), `label "${testLabel}"`),
-  );
-}
-
-export async function forceSelectTabByLabel(label: string) {
-  if (device.getPlatform() === 'ios') {
-    await forceTapByLabeliOS(label);
-  } else {
-    await element(by.label(label)).tap();
-  }
-}
-
-// ---------------------------------------------------------------------------
-// iOS 26 tab bar bottom accessory
-// ---------------------------------------------------------------------------
-
-/**
- * The first match — UIKit can keep more than one host view / tab bar in the
- * hierarchy (an accessory mid-transition, a sidebar and tab bar pair on iPad).
- */
-async function getFirstMatch(matcher: NativeMatcher) {
-  return (await getMatches(matcher))[0] as IosElementAttributes;
-}
-
-/** The accessory host view. */
-export const getBottomAccessoryAttributes = () =>
-  getFirstMatch(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY));
-
-/** The `UITabBar`. */
-export const getTabBarAttributes = () =>
-  getFirstMatch(by.type(CLASS_NAME_UI_TAB_BAR));
-
-/** Asserts the accessory sits above the tab bar (iPhone "extended" layout). */
-export async function expectBottomAccessoryAboveTabBar() {
-  const bottomAccessory = await getBottomAccessoryAttributes();
-  const tabBar = await getTabBarAttributes();
-  jestExpect(tabBar.frame.y).toBeGreaterThan(
-    bottomAccessory.frame.y + bottomAccessory.frame.height,
-  );
-}
-
-export async function dismissToast(message: string) {
-  await waitFor(element(by.label(message)))
-    .toBeVisible()
-    .withTimeout(DEFAULT_TIMEOUT_MS);
-  await element(by.label(message)).tap();
-}
-
-/** Dismisses the head of the toast queue — always `1.` if each is dismissed. */
-export async function dismissNextToast(message: string) {
-  await dismissToast(`1. ${message}`);
-}
-
-/**
- * Detox matches a regex against the *whole* string — without the trailing `.*`
- * this matches nothing and always passes.
- */
-export async function expectNoToast() {
-  await expect(element(by.label(/\d+\. .*/))).not.toExist();
-}
 
 type MatchOptions = {
   /**
@@ -423,13 +197,60 @@ export async function readTopmostText(testID: string): Promise<string> {
   return textOf(await getTopmostMatch(by.id(testID)));
 }
 
-/** Scrolls `id` into view and returns its text (`''` when unset). */
-export async function readText(
+// ---------------------------------------------------------------------------
+// Scrolling and tapping
+// → structure PR: framework/gestures.ts
+// ---------------------------------------------------------------------------
+
+export type ScrollOptions = {
+  /** Pixels per step. Smaller steps avoid overshooting a short row. */
+  pixels?: number;
+  /** Swipe start, as a fraction of height. Keep it inside the view: on
+   * Android a `NaN`/0 start lands in the status bar and opens the shade. */
+  startPercentage?: number;
+  /** Scroll direction; `whileElement` only ever scrolls one way. */
+  direction?: 'up' | 'down';
+};
+
+export async function scrollUntilVisible(
   id: string,
-  { scrollViewId, ...scroll }: SettingsControlOptions,
-): Promise<string> {
-  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
-  return textOf(await getSingleMatch(by.id(id), `id "${id}"`));
+  scrollViewId: string,
+  {
+    pixels = 600,
+    startPercentage = 0.85,
+    direction = 'down',
+  }: ScrollOptions = {},
+) {
+  await waitFor(element(by.id(id)))
+    .toBeVisible()
+    .whileElement(by.id(scrollViewId))
+    .scroll(pixels, direction, Number.NaN, startPercentage);
+}
+
+/**
+ * Rewinds to the top first — `whileElement` only scrolls one way. Down only:
+ * rewinding to the top makes an upward scan pointless, so `direction` is
+ * rejected at the type level.
+ */
+export async function rewindAndScrollUntilVisible(
+  id: string,
+  scrollViewId: string,
+  options: Omit<ScrollOptions, 'direction'> = {},
+) {
+  await element(by.id(scrollViewId)).scrollTo('top');
+  await scrollUntilVisible(id, scrollViewId, options);
+}
+
+/** Coordinate tap at (`xFraction`, 1/2) of `frame`, bypassing visibility checks. */
+async function tapWithinFrame({ x, y, width, height }: Frame, xFraction = 0.5) {
+  await device.tap({ x: x + width * xFraction, y: y + height / 2 });
+}
+
+/** Coordinate tap (iOS) — bypasses Detox's visibility check. */
+export async function forceTapByLabeliOS(testLabel: string) {
+  await tapWithinFrame(
+    await getFrame(by.label(testLabel), `label "${testLabel}"`),
+  );
 }
 
 /** Taps the last match (topmost stacked screen). Pass a fresh matcher: `atIndex` mutates it on Android. */
@@ -437,62 +258,6 @@ export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
   await element(matcher)
     .atIndex((await countMatches(matcher)) - 1)
     .tap();
-}
-
-// ---------------------------------------------------------------------------
-// Stack v5 test screens: route information (Android, covered screens attached)
-// ---------------------------------------------------------------------------
-
-/** @see apps/src/tests/shared/components/stack-v5/StackRouteInformation.tsx */
-const ROUTE_KEY_TEST_ID = 'stack-route-key';
-
-/** The `Key: ...` label of the topmost screen. */
-const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
-
-/**
- * Waits for the `Name: <routeName>` label to be visible. Only where that
- * label is unique in the hierarchy — iOS (covered screens are detached) or an
- * Android stack that never holds two screens of one route; otherwise use
- * `waitForTopmostRoute`, which reads the topmost copy.
- */
-export async function waitForRouteName(routeName: string): Promise<void> {
-  await waitFor(element(by.text(`Name: ${routeName}`)))
-    .toBeVisible()
-    .withTimeout(DEFAULT_TIMEOUT_MS);
-}
-
-/**
- * Matches the route key label of any screen on `routeName`. Keys are minted as
- * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
- * so this pins the route, not the instance.
- */
-const routeKeyPattern = (routeName: string) =>
-  new RegExp(`^Key: r-${escapeRegExp(routeName)}-\\d+$`);
-
-const escapeRegExp = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/**
- * Waits until the topmost screen is `routeName` and returns its route key,
- * which pins the instance too (same key: preserved; new key: pushed). Polled:
- * `toBeVisible()` passes on a buried screen, so `waitFor` would not gate a pop.
- */
-export async function waitForTopmostRoute(routeName: string): Promise<string> {
-  const pattern = routeKeyPattern(routeName);
-  let lastSeen = '<never read>';
-
-  await waitUntil(
-    async () => {
-      lastSeen = await readTopmostRouteKey();
-      return pattern.test(lastSeen);
-    },
-    {
-      message: () =>
-        `the topmost route to be "${routeName}"; topmost key was "${lastSeen}"`,
-    },
-  );
-
-  return lastSeen;
 }
 
 /**
@@ -503,12 +268,10 @@ export async function tapTopmostButton(title: string): Promise<void> {
   await tapTopmost(by.text(title));
 }
 
-/** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
-export async function expectTopmostButtons(titles: string[]): Promise<void> {
-  for (const title of titles) {
-    await expectTopmostVisible(() => by.text(title));
-  }
-}
+// ---------------------------------------------------------------------------
+// Shared assertions
+// → structure PR: framework/assertions.ts
+// ---------------------------------------------------------------------------
 
 /** Only "no match yet" (Espresso / iOS wording) and "not visible yet" retry. */
 function isTransientMatchError(error: unknown): boolean {
@@ -554,45 +317,57 @@ export async function expectTopmostVisible(
   );
 }
 
-type WaitUntilOptions = {
-  /** How long to keep polling before failing, in milliseconds. */
-  timeout?: number;
-  /** Delay between two `predicate` calls, in milliseconds. */
-  interval?: number;
-  /** What was awaited, appended to the timeout error. A function can build it
-   * from whatever the last `predicate` call observed. */
-  message: string | (() => string);
-};
+/** Asserts the Push/Pop/Toggle buttons present on the topmost screen. */
+export async function expectTopmostButtons(titles: string[]): Promise<void> {
+  for (const title of titles) {
+    await expectTopmostVisible(() => by.text(title));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tab bar (incl. the iOS 26 bottom accessory)
+// → structure PR: framework/tab-bar.ts
+// ---------------------------------------------------------------------------
+
+export async function forceSelectTabByLabel(label: string) {
+  if (device.getPlatform() === 'ios') {
+    await forceTapByLabeliOS(label);
+  } else {
+    await element(by.label(label)).tap();
+  }
+}
 
 /**
- * Polls `predicate` until `true` or `timeout`. Prefer Detox's `waitFor`; use
- * this only for conditions it cannot express, e.g. match counts.
+ * The first match — UIKit can keep more than one host view / tab bar in the
+ * hierarchy (an accessory mid-transition, a sidebar and tab bar pair on iPad).
  */
-export async function waitUntil(
-  predicate: () => Promise<boolean>,
-  { timeout = DEFAULT_TIMEOUT_MS, interval = 100, message }: WaitUntilOptions,
-): Promise<void> {
-  const deadline = Date.now() + timeout;
+async function getFirstMatch(matcher: NativeMatcher) {
+  return (await getMatches(matcher))[0] as IosElementAttributes;
+}
 
-  while (Date.now() <= deadline) {
-    if (await predicate()) {
-      return;
-    }
-    await new Promise(resolve => setTimeout(resolve, interval));
-  }
+/** The accessory host view. */
+export const getBottomAccessoryAttributes = () =>
+  getFirstMatch(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY));
 
-  throw new Error(
-    `waitUntil timed out after ${timeout}ms: ${
-      typeof message === 'function' ? message() : message
-    }`,
+/** The `UITabBar`. */
+export const getTabBarAttributes = () =>
+  getFirstMatch(by.type(CLASS_NAME_UI_TAB_BAR));
+
+/** Asserts the accessory sits above the tab bar (iPhone "extended" layout). */
+export async function expectBottomAccessoryAboveTabBar() {
+  const bottomAccessory = await getBottomAccessoryAttributes();
+  const tabBar = await getTabBarAttributes();
+  jestExpect(tabBar.frame.y).toBeGreaterThan(
+    bottomAccessory.frame.y + bottomAccessory.frame.height,
   );
 }
 
 // ---------------------------------------------------------------------------
-// Android Stack v5 header (toolbar) matchers
-// ---------------------------------------------------------------------------
+// Android Stack v5 header (toolbar): matchers and action items
+// → structure PR: framework/stack-header-android.ts
 //
 // Factories: on Android `atIndex` rewrites a matcher in place (see `tapTopmost`).
+// ---------------------------------------------------------------------------
 
 /**
  * The Stack v5 header's toolbar. Scoped to `MaterialToolbar` so it never
@@ -623,6 +398,14 @@ export const stackV5BackButton = (): NativeMatcher =>
 /** A native header title, which renders as a `MaterialToolbar` child. */
 export const stackV5HeaderTitle = (title: string): NativeMatcher =>
   by.text(title).withAncestor(stackV5Toolbar());
+
+/**
+ * A toolbar action button, matched by label in both forms; icon-only buttons
+ * have empty text, text buttons show `title`.
+ */
+export function actionMenuItem(title: string): NativeMatcher {
+  return by.label(title).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
+}
 
 /**
  * A `showAsAction` change re-inflates the action menu, and a rotation does it
@@ -666,6 +449,7 @@ export async function expectNoActionItem(title: string) {
 
 // ---------------------------------------------------------------------------
 // Android toolbar overflow menu (Stack v5 header)
+// → structure PR: framework/toolbar-menu-android.ts
 // ---------------------------------------------------------------------------
 
 /**
@@ -733,14 +517,6 @@ export function overflowMenuRow(): NativeMatcher {
   return by
     .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
     .withAncestor(overflowMenuMatcher());
-}
-
-/**
- * A toolbar action button, matched by label in both forms; icon-only buttons
- * have empty text, text buttons show `title`.
- */
-export function actionMenuItem(title: string): NativeMatcher {
-  return by.label(title).and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
 }
 
 /** Asserts the open popup lists `titles` top to bottom in this order. */
@@ -922,6 +698,7 @@ export function createOverflowMenuHelpers({
 
 // ---------------------------------------------------------------------------
 // iOS Stack v5 header items (UIBarButtonItem)
+// → structure PR: framework/context-menu-ios.ts (or its own header-items-ios.ts)
 // ---------------------------------------------------------------------------
 
 export type HeaderItemOptions = {
@@ -962,6 +739,7 @@ export function barButtonIcon(iconId: string) {
 
 // ---------------------------------------------------------------------------
 // iOS context menu (UIMenu presented from a header item or the title)
+// → structure PR: framework/context-menu-ios.ts
 // ---------------------------------------------------------------------------
 
 /**
@@ -1088,4 +866,272 @@ export async function dismissContextMenu(
     CONTEXT_MENU_DISMISS_X_FRACTION,
   );
   await waitFor(contextMenu()).not.toExist().withTimeout(timeout);
+}
+
+// ---------------------------------------------------------------------------
+// Example app navigation to test screens
+// → structure PR: app/test-screen-navigation.ts
+// ---------------------------------------------------------------------------
+
+export async function selectIssueTestScreen(screenName: string) {
+  await scrollUntilVisible(
+    'root-screen-issue-tests',
+    'root-screen-examples-scrollview',
+  );
+  await element(by.id('root-screen-issue-tests')).tap();
+
+  await waitFor(element(by.id('issue-tests-scrollview'))).toBeVisible();
+
+  if (device.getPlatform() === 'android') {
+    await element(by.label('Search')).tap();
+
+    // Only way found to reach the search input: matching by type
+    // (androidx.appcompat.widget.SearchView.SearchAutoComplete) fails even
+    // though it shows up in Detox's view hierarchy.
+    await element(by.text('')).replaceText(screenName);
+  } else if (device.getPlatform() === 'ios') {
+    await element(by.traits(['searchField'])).typeText(screenName);
+  }
+
+  await expect(element(by.id(`issue-tests-${screenName}`))).toBeVisible();
+  await element(by.id(`issue-tests-${screenName}`)).tap();
+}
+
+/** Root → `section` list → `scenarioGroup` list → `screenKey`. */
+async function selectTestsScreen(
+  section: 'single-feature-tests' | 'component-integration-tests',
+  scenarioGroup: string,
+  screenKey: string,
+) {
+  const scenarioGroupId = scenarioGroup.replace(/\s/g, '');
+  const sectionScrollView = `${section}-scrollview`;
+  const groupScrollView = `${scenarioGroupId}-scenarios-scrollview`;
+
+  await scrollToAndTapInList(
+    `root-screen-${section}`,
+    'root-screen-examples-scrollview',
+  );
+  await waitFor(element(by.id(sectionScrollView)))
+    .toBeVisible()
+    .withTimeout(DEFAULT_TIMEOUT_MS);
+
+  await scrollToAndTapInList(
+    `${section}-${scenarioGroupId}`,
+    sectionScrollView,
+  );
+  await waitFor(element(by.id(groupScrollView)))
+    .toBeVisible()
+    .withTimeout(DEFAULT_TIMEOUT_MS);
+
+  await scrollToAndTapInList(screenKey, groupScrollView);
+}
+
+async function scrollToAndTapInList(id: string, scrollViewId: string) {
+  await scrollUntilVisible(id, scrollViewId);
+  await element(by.id(id)).tap();
+}
+
+export const selectSingleFeatureTestsScreen = (
+  scenarioGroup: string,
+  screenKey: string,
+) => selectTestsScreen('single-feature-tests', scenarioGroup, screenKey);
+
+export const selectComponentIntegrationTestsScreen = (
+  scenarioGroup: string,
+  screenKey: string,
+) => selectTestsScreen('component-integration-tests', scenarioGroup, screenKey);
+
+// ---------------------------------------------------------------------------
+// Test-screen settings controls and readouts
+// → structure PR: app/settings-controls.ts
+// ---------------------------------------------------------------------------
+
+/** @see apps/src/shared/SettingsPicker.tsx — derives option `testID`s. */
+export function pickerOptionId(pickerLabel: string, option: string): string {
+  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
+}
+
+export type SettingsControlOptions = ScrollOptions & { scrollViewId: string };
+
+/** Rewinds, scrolls `id` into view and taps it. */
+export async function scrollToAndTap(
+  id: string,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+  await element(by.id(id)).tap();
+}
+
+type PickerSelection = {
+  pickerId: string;
+  /** The picker's `label` prop — option `testID`s are derived from it. */
+  label: string;
+  option: string;
+};
+
+/**
+ * Sets a picker to `option` and closes it (open option rows collide with the
+ * `by.text` popup matchers). No-op when it already shows `option`. Omit
+ * `control` for pickers outside a scroll view — they are tapped in place.
+ */
+export async function selectPickerOption(
+  { pickerId, label, option }: PickerSelection,
+  control?: SettingsControlOptions,
+) {
+  const expected = `${label}: ${option}`;
+
+  // Already set. Asserted collapsed: one left open by an earlier failure would
+  // collide with later `by.text` matchers.
+  if (textOf(await getTopmostMatch(by.id(pickerId))) === expected) {
+    await expect(element(by.id(pickerOptionId(label, option)))).not.toExist();
+    return;
+  }
+
+  const tap = async (id: string) => {
+    if (control) {
+      await scrollToAndTap(id, control);
+    } else {
+      await element(by.id(id)).tap();
+    }
+  };
+
+  await tap(pickerId);
+  await tap(pickerOptionId(label, option));
+  await tap(pickerId);
+
+  await expectPickerValue(pickerId, expected);
+}
+
+/** The value is an RN `Text`: `text` on Android, `label` on iOS. */
+async function expectPickerValue(pickerId: string, expected: string) {
+  if (device.getPlatform() === 'ios') {
+    await expect(element(by.id(pickerId))).toHaveLabel(expected);
+  } else {
+    await expect(element(by.id(pickerId))).toHaveText(expected);
+  }
+}
+
+/** `to` is the state expected afterwards — a swallowed tap fails here. Omit
+ * `control` on screens whose switches sit outside any scroll view. */
+type SwitchToggle = {
+  switchId: string;
+  /** The switch's `label` prop. */
+  label: string;
+  /** The state expected after the tap. */
+  to: boolean;
+};
+
+export async function toggleSettingsSwitch(
+  { switchId, label, to }: SwitchToggle,
+  control?: SettingsControlOptions,
+) {
+  if (control) {
+    const { scrollViewId, ...scroll } = control;
+    await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+  }
+  await element(by.id(switchId)).tap();
+
+  await expect(element(by.text(`${label}: ${to}`))).toBeVisible();
+}
+
+/** Scrolls `id` into view and returns its text (`''` when unset). */
+export async function readText(
+  id: string,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+): Promise<string> {
+  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+  return textOf(await getSingleMatch(by.id(id), `id "${id}"`));
+}
+
+/** Asserts the toolbar-menu screens' `Last clicked: <id>` line. */
+export async function expectLastClicked(
+  id: string,
+  { scrollViewId, ...scroll }: SettingsControlOptions,
+) {
+  await rewindAndScrollUntilVisible('last-clicked-text', scrollViewId, scroll);
+  await expect(element(by.id('last-clicked-text'))).toHaveText(
+    `Last clicked: ${id}`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Toast queue
+// → structure PR: app/toast.ts
+// ---------------------------------------------------------------------------
+
+export async function dismissToast(message: string) {
+  await waitFor(element(by.label(message)))
+    .toBeVisible()
+    .withTimeout(DEFAULT_TIMEOUT_MS);
+  await element(by.label(message)).tap();
+}
+
+/** Dismisses the head of the toast queue — always `1.` if each is dismissed. */
+export async function dismissNextToast(message: string) {
+  await dismissToast(`1. ${message}`);
+}
+
+/**
+ * Detox matches a regex against the *whole* string — without the trailing `.*`
+ * this matches nothing and always passes.
+ */
+export async function expectNoToast() {
+  await expect(element(by.label(/\d+\. .*/))).not.toExist();
+}
+
+// ---------------------------------------------------------------------------
+// Stack v5 test screens: route information
+// → structure PR: app/stack-route.ts (not in the guide yet)
+// ---------------------------------------------------------------------------
+
+/** @see apps/src/tests/shared/components/stack-v5/StackRouteInformation.tsx */
+const ROUTE_KEY_TEST_ID = 'stack-route-key';
+
+/** The `Key: ...` label of the topmost screen. */
+const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
+
+/**
+ * Matches the route key label of any screen on `routeName`. Keys are minted as
+ * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
+ * so this pins the route, not the instance.
+ */
+const routeKeyPattern = (routeName: string) =>
+  new RegExp(`^Key: r-${escapeRegExp(routeName)}-\\d+$`);
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Waits for the `Name: <routeName>` label to be visible. Only where that
+ * label is unique in the hierarchy — iOS (covered screens are detached) or an
+ * Android stack that never holds two screens of one route; otherwise use
+ * `waitForTopmostRoute`, which reads the topmost copy.
+ */
+export async function waitForRouteName(routeName: string): Promise<void> {
+  await waitFor(element(by.text(`Name: ${routeName}`)))
+    .toBeVisible()
+    .withTimeout(DEFAULT_TIMEOUT_MS);
+}
+
+/**
+ * Waits until the topmost screen is `routeName` and returns its route key,
+ * which pins the instance too (same key: preserved; new key: pushed). Polled:
+ * `toBeVisible()` passes on a buried screen, so `waitFor` would not gate a pop.
+ */
+export async function waitForTopmostRoute(routeName: string): Promise<string> {
+  const pattern = routeKeyPattern(routeName);
+  let lastSeen = '<never read>';
+
+  await waitUntil(
+    async () => {
+      lastSeen = await readTopmostRouteKey();
+      return pattern.test(lastSeen);
+    },
+    {
+      message: () =>
+        `the topmost route to be "${routeName}"; topmost key was "${lastSeen}"`,
+    },
+  );
+
+  return lastSeen;
 }
