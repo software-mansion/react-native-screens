@@ -102,6 +102,8 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 - [ ] The icon swaps from the outline image to the filled image. Both renders use the original PNG
   colors - the host `tabBarTintColor` (green) have NO effect on the selected icon.
+- [ ] Title of selected tab is **green**.
+- [ ] Unselected titles stay in the system theme color.
 - [ ] On iOS 18 the unselected icon renders in **blue**.
 - [ ] On iOS 26 the unselected icon renders in the system theme color.
 

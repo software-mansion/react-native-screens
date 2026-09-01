@@ -99,7 +99,10 @@ is always at the scroll edge, so UIKit derives `scrollEdgeAppearance` from
 4. Disable **standardAppearance** and enable **scrollEdgeAppearance**.
 
 - [ ] The tab bar shows a semi-transparent dark purple background with a bright purple shadow line.
-- [ ] The system default blur applied (making the background look light gray).
+- [ ] The system default blur applied.
+- [ ] The final appearance is a light gray, milky tab bar with a bright purple
+      shadow line — a blend of the `scrollEdgeAppearance` configuration and the
+      system default blur.
 
 ---
 
@@ -110,11 +113,16 @@ is always at the scroll edge, so UIKit derives `scrollEdgeAppearance` from
 - [ ] Both appearances are set.
 - [ ] The tab bar shows a semi-transparent dark purple background and a bright purple shadow line from `scrollEdgeAppearance`.
 - [ ] System default blur is applied as `tabBarBlurEffect` is not set.
+- [ ] The tab bar looks the same as in step 4: a light gray, milky bar with a
+      bright purple shadow line.
 
 6. Disable both toggles to restore default state before moving to Tab2.
 
-- [ ] The tab bar returns to the UIKit system default
-  appearance (no custom color or shadow).
+- [ ] The tab bar returns to the UIKit default: no custom color or
+      shadow, and the view's green background is visible through the tab bar
+      area.
+- [ ] Titles of unselected tab bar items are darker green; the selected tab
+      title is the default blue.
 
 ---
 
