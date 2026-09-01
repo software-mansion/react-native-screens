@@ -24,6 +24,7 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
+import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewFinder
@@ -778,6 +779,10 @@ class TabsContainer internal constructor(
         // We assume here that the selectedTab actually corresponds to whats in FragmentManager
         return selectedTab.tabsScreen.findContentScrollView()
     }
+
+    // Only the active item is consulted - a preventing screen inside an inactive tab
+    // does not veto the dismissal.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = selectedTab.tabsScreen.wantsToPreventStackNativeDismiss()
 
     // endregion
 

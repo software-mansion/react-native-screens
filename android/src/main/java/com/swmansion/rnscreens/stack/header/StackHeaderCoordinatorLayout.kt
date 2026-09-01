@@ -7,10 +7,8 @@ import android.os.Parcelable
 import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.facebook.react.bridge.ReactContext
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
@@ -35,6 +33,7 @@ internal class StackHeaderCoordinatorLayout(
     context: Context,
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
+    private val backPressHandler: StackHeaderBackPressHandler,
 ) : CoordinatorLayout(context),
     ColorSchemeProviding {
     // region Config attach / detach
@@ -140,10 +139,7 @@ internal class StackHeaderCoordinatorLayout(
     private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private val onNavigationIconClick: () -> Unit = {
-        val activity =
-            (stackScreen.context as? ReactContext)?.currentActivity
-                as? OnBackPressedDispatcherOwner
-        activity?.onBackPressedDispatcher?.onBackPressed()
+        backPressHandler.handleHeaderBackButtonPress(stackScreen)
     }
 
     private fun processUpdate(
@@ -247,9 +243,11 @@ internal class StackHeaderCoordinatorLayout(
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
-    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
+    override fun addColorSchemeListener(listener: ColorSchemeListener) =
+        colorSchemeCoordinator.addColorSchemeListener(listener)
 
-    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) =
+        colorSchemeCoordinator.removeColorSchemeListener(listener)
 
     // No onConfigurationChanged override is needed: this view never sets its own colorScheme,
     // so resolution always delegates to the parent provider, which does handle system changes.
