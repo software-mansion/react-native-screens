@@ -26,7 +26,6 @@ const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 const SCROLL_STEP = { pixels: 300 };
 const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
-const EVENT_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 // Generous on purpose: a slow image download must not read as a failed batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
@@ -51,7 +50,7 @@ const { closeMenuIfOpen, withOverflowMenu } = createOverflowMenuHelpers({
   scrollViewId: SCROLLVIEW_ID,
 });
 
-async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
+async function expectEventCount(n: number, timeoutMs = DEFAULT_TIMEOUT_MS) {
   await scrollIntoView('events-count-text');
   await waitFor(element(by.id('events-count-text')))
     .toHaveText(`Events received: ${n}`)
