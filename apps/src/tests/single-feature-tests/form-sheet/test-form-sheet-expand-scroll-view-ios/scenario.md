@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - The list keeps its scroll position across dismiss/present – scroll back to the top before testing the edge behavior again.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iOS
+## Steps
 
 ### Baseline
 

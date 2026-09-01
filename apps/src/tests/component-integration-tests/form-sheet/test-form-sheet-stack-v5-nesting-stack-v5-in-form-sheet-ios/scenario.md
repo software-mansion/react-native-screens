@@ -21,7 +21,7 @@ TBD: Planned, but will be implemented separately.
 - The nested stack fills the sheet with `flex: 1`; each screen paints its own background (Home – light blue, A – light yellow), so the covered area is what shows how the sheet sizes its content.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iOS
+## Steps
 
 ### Baseline
 

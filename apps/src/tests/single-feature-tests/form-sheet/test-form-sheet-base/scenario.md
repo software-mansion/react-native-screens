@@ -23,7 +23,7 @@ TBD: Planned, but will be implemented separately.
   - **Android:** the content box is laid out once to the _largest_ detent (minus system bars). At lower detents the sheet reveals only the top part of that box, which is why the content is anchored to the top – it stays visible at every detent and moves together with the sheet.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iOS
+## Steps
 
 ### Baseline
 
@@ -38,7 +38,8 @@ TBD: Planned, but will be implemented separately.
 2. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lower detent (0.6) and the host screen is dimmed.
-- [ ] "FormSheet content" and "Dismiss from JS" are centered both vertically and horizontally within the sheet.
+- [ ] iOS: "FormSheet content" and "Dismiss from JS" are centered both vertically and horizontally within the sheet.
+- [ ] Android: "FormSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet.
 
 ---
 
@@ -46,11 +47,15 @@ TBD: Planned, but will be implemented separately.
 
 3. Drag the sheet up to the largest detent (1.0).
 
-- [ ] The sheet expands to the maximum available height (respecting the top inset). The content re-centers within the taller sheet.
+- [ ] The sheet expands to the maximum available height (respecting the top inset).
+- [ ] iOS: the content re-centers within the taller sheet.
+- [ ] Android: the content stays anchored to the top of the sheet and moves together with it.
 
 4. Drag the sheet back down to the lower detent (0.6).
 
-- [ ] The sheet settles at 0.6 and the content re-centers again. Nothing is clipped.
+- [ ] The sheet settles at 0.6. Nothing is clipped.
+- [ ] iOS: the content re-centers again.
+- [ ] Android: the content moves down with the sheet, still anchored to its top.
 
 ---
 
@@ -64,46 +69,9 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
 
-## Steps - Android
+## Steps - Android only
 
-### Baseline
-
-1. Launch the app and navigate to the **Basic Functionality** screen.
-
-- [ ] The host screen shows the "FormSheet Test" title and the "Open FormSheet" button.
-
----
-
-### Presentation & layout
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents at the lower detent (0.6) and the host screen is dimmed.
-- [ ] "FormSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet.
-
----
-
-### Detent adaptation
-
-3. Drag the sheet up to the largest detent (1.0).
-
-- [ ] The sheet expands to the maximum available height (below the status bar). The content stays anchored to the top of the sheet and moves together with it – no re-layout, flicker or jumps during the drag.
-
-4. Drag the sheet back down to the lower detent (0.6).
-
-- [ ] The sheet settles at 0.6 and the content moves down with it, still anchored to the top of the sheet.
-
----
-
-### Dismissal
-
-5. Tap "Dismiss from JS".
-
-- [ ] The sheet dismisses with an animation. The host screen is undimmed and "Open FormSheet" is pressable again.
-
-6. Tap "Open FormSheet", then swipe the sheet down past the lower detent.
-
-- [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6.
+### System back
 
 7. Tap "Open FormSheet", then use the system back gesture (or the back button).
 

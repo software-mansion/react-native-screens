@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; there is no bottom safe area to cover, so the color simply fills the panel.
 - **Android:** the sheet container is laid out behind the navigation bar, so the native color extends to the bottom edge of the screen while the React content stays above the bar. Content height changes are applied immediately, without animation.
 
-## Steps - iOS
+## Steps
 
 ### Baseline
 
@@ -36,8 +36,10 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents with a height matching its content. The navy background fills the whole sheet, including the area under the home indicator – no default-colored gap in the bottom safe area.
-- [ ] iPad: the navy background fills the floating panel up to its rounded corners – there is no bottom safe-area strip to cover.
+- [ ] The sheet presents with a height matching its content. The navy background fills the whole sheet – no default-colored gap anywhere.
+- [ ] iPhone: the navy background also covers the area under the home indicator (the bottom safe area).
+- [ ] iPad: the navy background fills the sheet up to its rounded corners – there is no bottom safe-area strip to cover.
+- [ ] Android: the navy background extends behind the navigation bar to the bottom edge of the screen.
 
 ---
 
@@ -45,7 +47,9 @@ TBD: Planned, but will be implemented separately.
 
 3. Tap "Expand Content" inside the sheet.
 
-- [ ] The sheet grows to accommodate the extra text box with a smooth animation. The navy background covers the new bounds throughout – no flashes or white gaps.
+- [ ] The sheet grows to accommodate the extra text box. The navy background covers the new bounds throughout – no flashes or white gaps.
+- [ ] iOS: the height change is animated smoothly.
+- [ ] Android: the sheet snaps to the taller height immediately (no animation).
 
 4. Tap "Dismiss from JS".
 
@@ -57,48 +61,8 @@ TBD: Planned, but will be implemented separately.
 
 5. Tap the "PURPLE" chip, then "Open FormSheet".
 
-- [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet (on iPhone including the bottom safe area), exactly like navy did.
+- [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet (including the bottom safe area on iPhone and the navigation bar area on Android), exactly like navy did.
 
 6. Swipe the sheet down.
-
-- [ ] The sheet dismisses and "Open FormSheet" is pressable again.
-
-## Steps - Android
-
-### Baseline
-
-1. Launch the app and navigate to the **Native Container Style** screen.
-
-- [ ] The host screen shows the "Select Native Background Color:" chips with "NAVY" selected, and the "Open FormSheet" button.
-
----
-
-### Default color
-
-2. Tap "Open FormSheet".
-
-- [ ] The sheet presents with a height matching its content and the host screen is dimmed. The navy background fills the whole sheet and extends behind the navigation bar to the bottom edge of the screen – no default-colored gap.
-
----
-
-### Layout stability
-
-3. Tap "Expand Content" inside the sheet.
-
-- [ ] The sheet snaps to the taller height immediately (no animation). The navy background covers the new bounds – no flashes or white gaps.
-
-4. Tap "Dismiss from JS".
-
-- [ ] The sheet dismisses.
-
----
-
-### Changing the color
-
-5. Tap the "PURPLE" chip, then "Open FormSheet".
-
-- [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet down to the bottom edge of the screen, exactly like navy did.
-
-6. Swipe the sheet down (or use the system back gesture).
 
 - [ ] The sheet dismisses and "Open FormSheet" is pressable again.

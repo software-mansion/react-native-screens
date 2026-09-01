@@ -22,7 +22,7 @@ TBD: Planned, but will be implemented separately.
 - With the default `'none'` every detent is dimmed; a tap on the dimmed area dismisses the sheet instead of reaching the button underneath.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; the host screen stays visible around the panel.
 
-## Steps - iOS
+## Steps
 
 ### Baseline
 
