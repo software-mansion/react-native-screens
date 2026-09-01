@@ -36,7 +36,6 @@ Not covered:
 
 - On Android, validate only the background color for Tab1 (empty badge) and Tab4 (emoji) - their text color cannot be observed.
 
-
 `badgeValue`:
 
 - On Android the maximum badge string length rendered verbatim is 4

@@ -132,7 +132,7 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
       NestedBlue** / **Push NestedRed** / **Pop** buttons. The push is
       animated with the same quality as the outer stack.
 
-10.  On **NestedHome**, tap **Push NestedBlue**, then on **NestedBlue** tap
+10. On **NestedHome**, tap **Push NestedBlue**, then on **NestedBlue** tap
     **Push NestedRed**.
 
 - [ ] Each push inside the **nested** stack slides in smoothly, with visible  
