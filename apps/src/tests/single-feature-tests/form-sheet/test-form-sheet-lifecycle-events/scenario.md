@@ -59,9 +59,9 @@ TBD: Planned, but will be implemented separately.
 - [ ] The sheet dismisses.
 - [ ] The log contains exactly four entries, in this order: `onWillAppear`, `onDidAppear`, `onWillDisappear`, `onDidDisappear`.
 
-## Steps - Android only
+---
 
-### Native dismissal – system back
+### Android only - system back native dismissal
 
 6. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button) and wait for the animation to finish.
 

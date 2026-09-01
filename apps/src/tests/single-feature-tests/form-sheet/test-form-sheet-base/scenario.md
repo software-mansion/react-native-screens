@@ -69,9 +69,9 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
 
-## Steps - Android only
+---
 
-### System back
+### Android only - System back
 
 7. Tap "Open FormSheet", then use the system back gesture (or the back button).
 

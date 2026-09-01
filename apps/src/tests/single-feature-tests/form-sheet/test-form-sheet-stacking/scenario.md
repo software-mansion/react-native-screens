@@ -106,9 +106,9 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] Both sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
 
-## Steps - Android only
+---
 
-### System back
+### Android only - System back
 
 16. Tap "Open First FormSheet", then "Open Second FormSheet", then use the system back gesture (or the back button).
 

@@ -73,9 +73,9 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet dismisses; no alert is shown. "Open FormSheet" is pressable again.
 
-## Steps - Android only
+---
 
-### System back
+### Android only - System back
 
 11. Flip the switch back so the host screen reads "Prevent Native Dismiss: ON", tap "Open FormSheet", then use the system back gesture (or the back button).
 

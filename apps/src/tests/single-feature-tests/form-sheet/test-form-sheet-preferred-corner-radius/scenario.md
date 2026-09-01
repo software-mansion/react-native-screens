@@ -66,9 +66,9 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet dismisses and the host screen shows the last selected radius; "Open FormSheet" is pressable again.
 
-## Steps - Android only
+---
 
-### Known limitation at 1.0
+### Android only - Known limitation at 1.0 detent
 
 8. Tap "Open FormSheet", drag the sheet up to the largest detent (1.0), then tap "Large (50)".
 
