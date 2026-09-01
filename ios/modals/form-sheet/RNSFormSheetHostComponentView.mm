@@ -246,9 +246,9 @@ namespace react = facebook::react;
       // because UIKit destroys the presentationController after the modal is dismissed.
       [_controller setNeedsAppearanceUpdate];
       [_controller setNeedsBehaviorUpdate];
-      // Reset the initial-detent applied flag when reopening so the
-      // configured initialDetentIndex can be applied again.
-      [_controller setNeedsInitialDetentReset];
+      // Request the configured initialDetentIndex to be selected
+      // again on the fresh presentation controller.
+      [_controller setNeedsInitialDetentUpdate];
     }
   }
 
