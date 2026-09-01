@@ -1,48 +1,62 @@
-# Test Scenario: Presentation state
+# Test Scenario: Presentation State
 
 ## Details
 
-**Description:** Verify the presentation state machine. This test ensures that when the React Native state rapidly toggles between `false` and `true` the native layer correctly queues the presentation changes and prevents state desynchronization.
+**Description:** Verify the presentation state machine of the `FormSheet` component with detents `[0.6, 1.0]`. When `isOpen` rapidly toggles from `true` to `false` and back to `true` (within one frame or two), the native layer must queue the transitions – finish the dismissal, then present again – and end up in sync with the JS state, without a stuck or duplicated sheet.
 
-**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
-Other: Planned, but will be implemented separately.
+TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone
-- Android emulator
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
+- Android: phone device or emulator.
 
-## Steps - iPhone
+## Note
+
+- **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
+- **Android:** the content box is laid out to the largest detent and anchored to the top of the sheet.
+
+## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the **Presentation state** screen.
+1. Launch the app and navigate to the **Presentation State** screen.
 
-- [ ] Content with the button "Open FormSheet" is shown.
-
----
-
-### Initialization
-
-2. Tap the "Open FormSheet" button.
-
-- [ ] The FormSheet opens smoothly and displays its content.
+- [ ] The host screen shows the "Open FormSheet" button.
 
 ---
 
-### Rapid State Toggling (Stress Test)
+### Presentation
 
-3. Tap the "Quickly dismiss & present" button.
+2. Tap "Open FormSheet".
 
-- [ ] The FormSheet should begin the dismissal animation. As soon as the dismissal animation finishes, the FormSheet should immediately automatically re-present itself. The final state should be opened FormSheet.
+- [ ] The sheet presents at the lower detent (0.6) with the "FormSheet content" title and the "Quickly dismiss & present" button.
 
 ---
 
-### Final Dismissal Verification
+### Rapid toggling
 
-4. Grab the top edge of the FormSheet and swipe down completely to natively dismiss it.
+3. Tap "Quickly dismiss & present".
 
-- [ ] The FormSheet dismisses and returns the user to the underlying main screen. The native state is synchronized, and tapping "Open FormSheet" again works correctly.
+- [ ] The sheet starts its dismissal animation and, as soon as it finishes, presents again automatically. The final state is a single presented sheet at 0.6; no flicker, no leftover dimming, no second sheet.
+
+4. Tap "Quickly dismiss & present" three more times in a row, waiting for the sheet to come back each time.
+
+- [ ] Every cycle ends with exactly one presented sheet.
+
+---
+
+### Final dismissal
+
+5. Swipe the sheet down past the lower detent.
+
+- [ ] The sheet dismisses and the host screen is undimmed.
+
+6. Tap "Open FormSheet".
+
+- [ ] The sheet presents again normally – the native state stayed in sync with JS.

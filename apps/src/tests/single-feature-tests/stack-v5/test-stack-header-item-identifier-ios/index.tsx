@@ -149,13 +149,7 @@ function Screen(props: { routeName: string }) {
         ),
       },
     }),
-    [
-      routeName,
-      identifiersEnabled,
-      separatorsEnabled,
-      customViewsEnabled,
-      screenIndex,
-    ],
+    [routeName, identifiersEnabled, separatorsEnabled, customViewsEnabled, screenIndex],
   );
 
   useLayoutEffect(() => {

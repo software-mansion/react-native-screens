@@ -205,9 +205,9 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
 
     it('applies the icon and the check together only once the image has loaded', async () => {
       await tapById('batch-image-check-button');
-      await expectEventCount(7, IMAGE_LOAD_TIMEOUT_MS);
-      await expectNewestEntry('fruits', ['apple', 'cherry']);
       await expectAppleInToolbarWithIcon();
+      await expectEventCount(7);
+      await expectNewestEntry('fruits', ['apple', 'cherry']);
     });
 
     it('moves Apple back to the overflow menu, checked, with no new event', async () => {

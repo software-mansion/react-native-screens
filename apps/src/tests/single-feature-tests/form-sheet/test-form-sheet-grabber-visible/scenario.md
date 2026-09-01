@@ -1,10 +1,10 @@
-# Test Scenario: Sheet Grabber Visibility
+# Test Scenario: Grabber Visibility
 
 ## Details
 
-**Description:** Verify that the `prefersGrabberVisible` prop of the `FormSheet` component correctly controls the visibility of the grabber indicator at the top of the sheet. This test covers toggling the prop both before the sheet is presented (from the underlying screen) and while the sheet is already presented (from inside the sheet).
+**Description:** Verify that the `prefersGrabberVisible` property of the `FormSheet` component controls the grabber indicator at the top of the sheet. This test covers toggling the property before the sheet is presented (from the host screen) and while the sheet is presented (from inside the sheet).
 
-**OS test creation version:** iOS: 18.6 and 26.4, Android: API Level 36.
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
@@ -12,65 +12,65 @@ TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone
-- Android emulator
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
+- Android: phone device or emulator.
+
+## Note
+
+- **iOS:** the grabber is the system indicator the system may still hide it in some presentation contexts.
+- **Android:** the grabber is Material's drag handle, rendered above the React content; toggling it changes the content position by the handle height.
+- **iPad:** the sheet is presented as a centered floating panel with a fixed width; the grabber is drawn at the top edge of the panel.
 
 ## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the **Grabber visibility** screen.
+1. Launch the app and navigate to the **Grabber Visibility** screen.
 
-- [ ] Content with the "prefersGrabberVisible" toggle (switched off by default) and the "Open FormSheet" button is shown.
-
----
-
-### Initial state - grabber hidden
-
-2. Without flipping the toggle, tap the "Open FormSheet" button.
-
-- [ ] The FormSheet opens at the initial lower detent (0.6). No grabber indicator is shown at the top of the sheet.
-
-3. Dismiss the FormSheet by swiping it down.
-
-- [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen.
+- [ ] The host screen shows the "prefersGrabberVisible" switch (off) and the "Open FormSheet" button.
 
 ---
 
-### Toggling visibility from outside the FormSheet
+### Grabber hidden (default)
 
-4. Flip the "prefersGrabberVisible" toggle on the main screen to **on**.
+2. Tap "Open FormSheet" without touching the switch.
 
-5. Tap the "Open FormSheet" button.
+- [ ] The sheet presents at the lower detent (0.6). No grabber indicator is shown at the top of the sheet. The switch inside the sheet is off.
 
-- [ ] The FormSheet opens at the initial lower detent (0.6). A grabber indicator is visible at the top of the sheet.
+3. Swipe the sheet down to dismiss it.
 
-6. Dismiss the FormSheet by swiping it down.
-
-7. Flip the "prefersGrabberVisible" toggle on the main screen back to **off**.
-
-8. Tap the "Open FormSheet" button.
-
-- [ ] The FormSheet opens with no grabber indicator visible at the top of the sheet.
-
-9. Dismiss the FormSheet by swiping it down.
+- [ ] The sheet dismisses; "Open FormSheet" is pressable again.
 
 ---
 
-### Toggling visibility from inside the FormSheet
+### Toggling from the host screen
 
-10. Tap the "Open FormSheet" button.
+4. Flip the switch on the host screen to **on**, then tap "Open FormSheet".
 
-- [ ] The FormSheet opens with no grabber indicator visible at the top of the sheet. The "prefersGrabberVisible" toggle inside the sheet is switched off and reflects the same state as the toggle on the main screen.
+- [ ] The sheet presents at 0.6 with a grabber at its top. The switch inside the sheet is on.
+- [ ] Android: the content sits below the drag handle.
 
-11. Flip the "prefersGrabberVisible" toggle inside the FormSheet to **on**.
+5. Swipe the sheet down, flip the host switch back to **off**, then tap "Open FormSheet".
 
-- [ ] The grabber indicator appears at the top of the sheet without dismissing or re-presenting the sheet.
+- [ ] The sheet presents with no grabber.
 
-12. Flip the "prefersGrabberVisible" toggle inside the FormSheet back to **off**.
+6. Swipe the sheet down.
 
-- [ ] The grabber indicator disappears from the top of the sheet without dismissing or re-presenting the sheet.
+---
 
-13. Tap the "Dismiss from JS" button.
+### Toggling from inside the sheet
 
-- [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen. The "prefersGrabberVisible" toggle on the main screen reflects the last value set inside the sheet (off).
+7. Tap "Open FormSheet", then flip the switch inside the sheet to **on**.
+
+- [ ] The grabber appears at the top of the sheet without the sheet being dismissed or re-presented.
+- [ ] Android: the content shifts down by the grabber height.
+
+8. Flip the switch inside the sheet back to **off**.
+
+- [ ] The grabber disappears, again without any re-presentation.
+- [ ] Android: the content shifts back up.
+
+9. Flip it to **on** once more and tap "Dismiss from JS".
+
+- [ ] The sheet dismisses. The switch on the host screen reflects the last value set inside the sheet (on).

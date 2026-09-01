@@ -29,6 +29,16 @@ internal class FormSheetDimensionsCoordinator(
 
         bottomSheetView?.let { view ->
             disableMaterialInsetsAnimationCallback(view)
+            // The dialog is recreated every time it's shown, so its decor initially has no height.
+            // We need to rely on the first layout pass, because other paths (e.g. window insets)
+            // rarely change between presentations.
+            applyDimensionsAfterFirstLayout(view)
+        }
+    }
+
+    private fun applyDimensionsAfterFirstLayout(view: FrameLayout) {
+        view.doOnLayout {
+            updateNativeContainerHeight()
         }
     }
 

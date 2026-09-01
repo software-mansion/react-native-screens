@@ -10,4 +10,7 @@ typedef NS_OPTIONS(NSUInteger, RNSFormSheetUpdateFlags) {
   RNSFormSheetUpdateFlagsAppearance = 1 << 1,
   // The sheet's behavioral layout (detents, scrolling config) needs to be re-applied.
   RNSFormSheetUpdateFlagsBehavior = 1 << 2,
+  // The sheet's selected detent needs to be (re)set to the configured `initialDetentIndex`.
+  // Requested once per presentation cycle, since UIKit recreates the presentation controller on every present.
+  RNSFormSheetUpdateFlagsInitialDetent = 1 << 3,
 };

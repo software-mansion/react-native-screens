@@ -12,6 +12,8 @@ import type {
 } from './StackHeaderItemIOSNativeComponent';
 import { UnsafeMixed } from '../codegenUtils';
 
+type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
+
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
 
 export type MenuSelectionChangeEvent = Readonly<{
@@ -27,6 +29,10 @@ export interface NativeProps extends ViewProps {
   backButtonHidden?: CT.WithDefault<boolean, false>;
 
   // iOS-specific props
+  backButtonTitle?: string | undefined;
+  backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
+  backButtonMenuEnabled?: CT.WithDefault<boolean, true>;
+
   largeTitle?: string | undefined;
   largeSubtitle?: string | undefined;
   largeTitleEnabled?: CT.WithDefault<boolean, false>;

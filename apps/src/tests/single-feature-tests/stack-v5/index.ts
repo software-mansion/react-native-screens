@@ -12,7 +12,8 @@ import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
 import TestStackSubviewsIOS from './test-stack-subviews-ios';
 import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
 import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
-import TestStackBackButton from './test-stack-back-button-android';
+import TestStackBackButtonIOS from './test-stack-back-button-ios';
+import TestStackBackButtonAndroid from './test-stack-back-button-android';
 import TestStackOverflowIcon from './test-stack-overflow-icon-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
 import TestStackToolbarMenuDisabled from './test-stack-toolbar-menu-disabled-android';
@@ -48,7 +49,8 @@ export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios'
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
 export { default as TestStackHeaderSubviewOnPressIOS } from './test-stack-header-subview-onpress-ios';
-export { default as TestStackBackButton } from './test-stack-back-button-android';
+export { default as TestStackBackButtonIOS } from './test-stack-back-button-ios';
+export { default as TestStackBackButtonAndroid } from './test-stack-back-button-android';
 export { default as TestStackOverflowIcon } from './test-stack-overflow-icon-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
 export { default as TestStackToolbarMenuDisabled } from './test-stack-toolbar-menu-disabled-android';
@@ -79,7 +81,8 @@ const scenarios = {
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,
-  TestStackBackButton,
+  TestStackBackButtonIOS,
+  TestStackBackButtonAndroid,
   TestStackOverflowIcon,
   TestStackToolbarMenuCommands,
   TestStackToolbarMenuDisabled,
