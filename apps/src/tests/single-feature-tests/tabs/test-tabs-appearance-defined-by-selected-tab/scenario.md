@@ -211,7 +211,7 @@ text on a green background.
 - [ ] Tab1 becomes selected (label changes to "Tab1").
 - [ ] The tab bar background reverts to dark navy, item colors
   revert to the Tab1 configuration, and the active indicator
-  reverts to green.
+  reverts to the light green shared with the selected title.
 - [ ] The result is identical to tapping Tab1 in the native tab bar.
 
 ---

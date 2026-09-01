@@ -98,11 +98,10 @@ is always at the scroll edge, so UIKit derives `scrollEdgeAppearance` from
 
 4. Disable **standardAppearance** and enable **scrollEdgeAppearance**.
 
-- [ ] The final appearance is a light gray, milky tab bar with a bright purple
-      shadow line — a blend of the `scrollEdgeAppearance` configuration and the
-      system default blur.
-- [ ] The tab bar shows a semi-transparent dark purple background with a bright purple shadow line.
-- [ ] The system default blur applied.
+- [ ] `scrollEdgeAppearance` is configured with a semi-transparent dark purple
+      background and a bright purple shadow line; with the system default blur
+      applied over it, the tab bar renders as a light gray, milky bar with a
+      bright purple shadow line.
 
 ---
 
@@ -110,11 +109,13 @@ is always at the scroll edge, so UIKit derives `scrollEdgeAppearance` from
 
 5. Enable **standardAppearance** (both toggles now true).
 
-- [ ] The tab bar looks the same as in step 4: a light gray, milky bar with a
-      bright purple shadow line.
-- [ ] Both appearances are set.
-- [ ] The tab bar shows a semi-transparent dark purple background and a bright purple shadow line from `scrollEdgeAppearance`.
-- [ ] System default blur is applied as `tabBarBlurEffect` is not set.
+- [ ] Both appearances are set, but the tab bar looks the same as in step 4:
+      the semi-transparent dark purple `scrollEdgeAppearance` background with the
+      system default blur (`tabBarBlurEffect` is not set) renders as a light
+      gray, milky bar with a bright purple shadow line.
+- [ ] `standardAppearance` has no visible effect — Tab1 has no `ScrollView`, so
+      it is always at the scroll edge and `scrollEdgeAppearance` wins (no dark
+      navy background, no red shadow line).
 
 6. Disable both toggles to restore default state before moving to Tab2.
 
