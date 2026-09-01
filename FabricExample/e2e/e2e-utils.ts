@@ -450,6 +450,18 @@ const ROUTE_KEY_TEST_ID = 'stack-route-key';
 const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
 
 /**
+ * Waits for the `Name: <routeName>` label to be visible. Only where that
+ * label is unique in the hierarchy — iOS (covered screens are detached) or an
+ * Android stack that never holds two screens of one route; otherwise use
+ * `waitForTopmostRoute`, which reads the topmost copy.
+ */
+export async function waitForRouteName(routeName: string): Promise<void> {
+  await waitFor(element(by.text(`Name: ${routeName}`)))
+    .toBeVisible()
+    .withTimeout(DEFAULT_TIMEOUT_MS);
+}
+
+/**
  * Matches the route key label of any screen on `routeName`. Keys are minted as
  * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
  * so this pins the route, not the instance.
