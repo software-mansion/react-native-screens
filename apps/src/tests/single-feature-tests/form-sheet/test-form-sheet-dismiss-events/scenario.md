@@ -106,4 +106,4 @@ TBD: Planned, but will be implemented separately.
 6. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet.
 
 - [ ] The sheet dismisses.
-- [ ] The log shows exactly one entry: `onDismiss`.
+- [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
