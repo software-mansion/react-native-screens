@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.modals.formsheet.native.core
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -33,6 +34,12 @@ internal class FormSheetDialog(
 
     internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
 
+    /**
+     * Installed next to Material's content once the dialog is created. Reports the height the sheet
+     * is measured against so the sheet metrics can be resolved before the sheet itself is measured.
+     */
+    internal val availableHeightProvider = FormSheetAvailableHeightProvider(context)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,6 +47,7 @@ internal class FormSheetDialog(
         disableNativeWindowAnimation(window)
 
         setupBottomSheetHeight()
+        installAvailableHeightProvider()
     }
 
     override fun onAttachedToWindow() {
@@ -80,5 +88,28 @@ internal class FormSheetDialog(
     private fun setupBottomSheetHeight() {
         val bottomSheetView = findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
         bottomSheetView?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+    }
+
+    private fun installAvailableHeightProvider() {
+        if (availableHeightProvider.parent != null) {
+            return
+        }
+
+        val contentParent = findViewById<ViewGroup>(android.R.id.content)
+        if (contentParent == null) {
+            Log.e(TAG, "[RNScreens] Window content view not found; the sheet dimensions won't be resolved.")
+            return
+        }
+
+        // FrameLayout measures its children in order, so the provider reports the height before Material's container
+        contentParent.addView(
+            availableHeightProvider,
+            0,
+            FrameLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT),
+        )
+    }
+
+    companion object {
+        private const val TAG = "FormSheetDialog"
     }
 }
