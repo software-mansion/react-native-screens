@@ -1,4 +1,4 @@
-# Test Scenario: Stack v5 In FormSheet (iOS)
+# Test Scenario: Nested Stack v5 In FormSheet (iOS)
 
 ## Details
 
@@ -25,7 +25,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Stack v5 In FormSheet (iOS)** screen.
+1. Launch the app and navigate to the **Nested Stack v5 In FormSheet (iOS)** screen.
 
 - [ ] The host screen shows the "Open FormSheet" button.
 
@@ -69,7 +69,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Baseline
 
-1. Launch the app and navigate to the **Stack v5 In FormSheet (iOS)** screen.
+1. Launch the app and navigate to the **Nested Stack v5 In FormSheet (iOS)** screen.
 
 - [ ] The host screen shows the "Open FormSheet" button.
 
