@@ -126,7 +126,7 @@ Not automated:
 
 9. Tap **Batch: image + check (atomic)**.
 
-- [ ] After a short download, Apple's toolbar button shows the photo and, at
+- [ ] After the image loads, Apple's toolbar button shows the photo and, at
       the same moment, 1 new event appears (counter → 7): newest ▶
       `fruits: ["apple","cherry"]`. The event does not appear before the image —
       the batch (Apple's icon and check, and Cherry's check) is held until the
