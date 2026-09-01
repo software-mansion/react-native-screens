@@ -5,8 +5,8 @@ import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
+import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetAvailableHeightProvider
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer
-import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetCoordinatorHost
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
@@ -17,7 +17,7 @@ internal class FormSheetDimensionsCoordinator(
     private val bottomSheetView: FrameLayout?,
     private val behaviorController: FormSheetBehaviorController?,
 ) : FormSheetContentSizeChangeDelegate,
-    FormSheetCoordinatorHost.OnAvailableHeightMeasuredListener {
+    FormSheetAvailableHeightProvider.OnAvailableHeightMeasuredListener {
     private var lastTopInset = 0
     private var lastBottomInset = 0
     private var currentDetents: FormSheetDetents? = null
@@ -32,7 +32,7 @@ internal class FormSheetDimensionsCoordinator(
     private var isGeometryDirty: Boolean = false
 
     internal fun setup() {
-        dialog.coordinatorHost.availableHeightListener = this
+        dialog.availableHeightProvider.availableHeightListener = this
         setupWindowInsetsListener()
 
         bottomSheetView?.let { view ->
@@ -87,10 +87,12 @@ internal class FormSheetDimensionsCoordinator(
         invalidateGeometry()
     }
 
-    // Schedules a measure pass; the metrics are resolved from there. No-op while the dialog
+    // Schedules a measure pass; the metrics are resolved from there. The provider is a sibling of the sheet
+    // subtree, not an ancestor, so it has to be asked for a re-measure explicitly. No-op while the dialog
     // is not shown - the first traversal after `show()` measures everything anyway.
     private fun invalidateGeometry() {
         isGeometryDirty = true
+        dialog.availableHeightProvider.requestLayout()
         container.requestLayout()
     }
 
@@ -110,8 +112,8 @@ internal class FormSheetDimensionsCoordinator(
      * during the drag gesture. By calculating and enforcing a static height that explicitly subtracts
      * the system insets, we completely bypass these redundant layout passes.
      *
-     * Runs inside the measure pass of the coordinator's host, i.e. before the sheet and the container
-     * are measured, so the values applied here are picked up by the very same traversal.
+     * Runs inside the measure pass of `FormSheetAvailableHeightProvider`, i.e. before Material's container, the sheet and
+     * our container are measured, so the values applied here are picked up by the very same traversal.
      */
     private fun resolveGeometry(sheetAvailableSpace: Int) {
         currentDetents?.let { detents ->
@@ -154,7 +156,7 @@ internal class FormSheetDimensionsCoordinator(
             ).bottom
 
     internal fun destroy() {
-        dialog.coordinatorHost.availableHeightListener = null
+        dialog.availableHeightProvider.availableHeightListener = null
         ViewCompat.setOnApplyWindowInsetsListener(container, null)
     }
 }

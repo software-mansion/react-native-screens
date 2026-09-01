@@ -35,10 +35,10 @@ internal class FormSheetDialog(
     internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
 
     /**
-     * Wraps Material's `CoordinatorLayout` once the dialog is created. Reports the height the sheet
+     * Installed next to Material's content once the dialog is created. Reports the height the sheet
      * is measured against so the sheet metrics can be resolved before the sheet itself is measured.
      */
-    internal val coordinatorHost = FormSheetCoordinatorHost(context)
+    internal val availableHeightProvider = FormSheetAvailableHeightProvider(context)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ internal class FormSheetDialog(
         disableNativeWindowAnimation(window)
 
         setupBottomSheetHeight()
-        installCoordinatorHost()
+        installAvailableHeightProvider()
     }
 
     override fun onAttachedToWindow() {
@@ -90,25 +90,23 @@ internal class FormSheetDialog(
         bottomSheetView?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
     }
 
-    private fun installCoordinatorHost() {
-        val coordinator = findViewById<View>(com.google.android.material.R.id.coordinator)
-        val parent = coordinator?.parent as? ViewGroup
-        if (coordinator == null || parent == null) {
-            Log.e(TAG, "[RNScreens] Material coordinator not found; the sheet dimensions won't be resolved.")
-            return
-        }
-        if (parent === coordinatorHost) {
+    private fun installAvailableHeightProvider() {
+        if (availableHeightProvider.parent != null) {
             return
         }
 
-        val index = parent.indexOfChild(coordinator)
-        val layoutParams = coordinator.layoutParams
-        parent.removeViewAt(index)
-        coordinatorHost.addView(
-            coordinator,
-            FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT),
+        val contentParent = findViewById<ViewGroup>(android.R.id.content)
+        if (contentParent == null) {
+            Log.e(TAG, "[RNScreens] Window content view not found; the sheet dimensions won't be resolved.")
+            return
+        }
+
+        // FrameLayout measures its children in order, so the provider reports the height before Material's container
+        contentParent.addView(
+            availableHeightProvider,
+            0,
+            FrameLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT),
         )
-        parent.addView(coordinatorHost, index, layoutParams)
     }
 
     companion object {

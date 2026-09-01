@@ -70,7 +70,7 @@ internal class FormSheetBehaviorController(
 
     /**
      * Expected to be called from the measure pass, before the sheet is measured (see
-     * `FormSheetCoordinatorHost`), so the metrics below are consumed by the ongoing traversal.
+     * `FormSheetAvailableHeightProvider`), so the metrics below are consumed by the ongoing traversal.
      *
      * @param detents - parsed detents configuration.
      * @param sheetAvailableSpace - the full window height that detent fractions are measured against.
