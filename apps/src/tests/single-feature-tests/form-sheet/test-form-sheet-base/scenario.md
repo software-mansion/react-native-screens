@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify the core present / resize / dismiss flow of a standalone `FormSheet` with two detents (`[0.6, 1.0]`) and how its React content is laid out on each platform. The sheet content is a box that fills the sheet; on iOS its children are vertically centered (the box follows the current detent), on Android they are anchored to the top (the box is laid out to the largest detent).
+**Description:** Verify the core present / resize / dismiss flow of `FormSheet` with two detents (`[0.6, 1.0]`) and how its React content is laid out on each platform. The sheet content is a box that fills the sheet; on iOS its children are vertically centered (the box follows the current detent), on Android they are anchored to the top (the box is laid out to the largest detent).
 
 **OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 

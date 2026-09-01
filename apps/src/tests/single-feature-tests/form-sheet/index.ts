@@ -53,7 +53,7 @@ const scenarios = {
 
 const FormSheetScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'FormSheet',
-  details: 'Single feature tests for the standalone FormSheet component',
+  details: 'Single feature tests for FormSheet',
   scenarios,
 };
 
