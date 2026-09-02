@@ -47,11 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#if defined(__cplusplus)
 @interface RNSScreenStackManager : RCTViewManager
-#else
-@interface RNSScreenStackManager : NSObject
-#endif // __cplusplus
 
 @end
 

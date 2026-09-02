@@ -1,18 +1,12 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
-#endif // __cplusplus
 #import "RNSLegacyEnums.h"
 
-#if defined(__cplusplus)
 namespace react = facebook::react;
-#endif // __cplusplus
 
 @interface RNSConvert : NSObject
-
-#if defined(__cplusplus)
 
 + (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigDirection)direction;
@@ -70,8 +64,6 @@ namespace react = facebook::react;
 + (RNSScrollEdgeEffect)RNSScrollEdgeEffectFromScreenTopScrollEdgeEffectCppEquivalent:
     (react::RNSScreenTopScrollEdgeEffect)edgeEffect;
 + (id)idFromFollyDynamic:(const folly::dynamic &)dyn;
-
-#endif // __cplusplus
 
 /// This method fails (by assertion) when `blurEffect == RNSBlurEffectStyleNone` or `blurEffect ==
 /// RNSBlurEffectStyleSystemDefault` which have no counter parts in the UIKit types.

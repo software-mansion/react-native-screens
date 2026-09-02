@@ -11,9 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__cplusplus)
 @class RCTImageLoader;
-#endif // defined(__cplusplus)
 
 /**
  * Component view. Lifecycle is managed by React Native.
@@ -76,9 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsHostComponentView ()
 
-#if defined(__cplusplus)
 - (nullable RCTImageLoader *)reactImageLoader;
-#endif // defined(__cplusplus)
 
 @end
 

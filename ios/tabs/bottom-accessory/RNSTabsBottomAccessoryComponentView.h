@@ -4,9 +4,7 @@
 #import "RNSTabsBottomAccessoryEventEmitter.h"
 #import "RNSTabsHostComponentView.h"
 
-#if defined(__cplusplus)
 #import <rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
-#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -56,16 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#pragma mark - Hidden from Swift
-
-#if defined(__cplusplus)
-
 @interface RNSTabsBottomAccessoryComponentView ()
 
 - (facebook::react::RNSTabsBottomAccessoryShadowNode::ConcreteState::Shared)state;
 
 @end
-
-#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END

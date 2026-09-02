@@ -1,6 +1,5 @@
 #pragma once
 
-#if defined(__cplusplus)
 #import <React/RCTImageSource.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -121,5 +120,3 @@ RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitS
 
 #import "RNSConversions-ScrollViewMarker.h"
 #import "RNSConversions-Stack.h"
-
-#endif // defined(__cplusplus)

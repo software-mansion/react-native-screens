@@ -36,10 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#pragma mark - Hidden from Swift
-
-#if defined(__cplusplus)
-
 #import <rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
 
 @interface RNSStackHeaderConfigComponentView ()
@@ -47,5 +43,3 @@ NS_ASSUME_NONNULL_END
 - (facebook::react::RNSStackHeaderConfigShadowNode::ConcreteState::Shared)state;
 
 @end
-
-#endif // defined(__cplusplus)

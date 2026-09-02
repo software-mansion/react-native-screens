@@ -7,12 +7,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-// Hide C++ symbols from C compiler used when building Swift module
-#if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
 namespace react = facebook::react;
-#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,17 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark - Hidden from Swift
-
-#if defined(__cplusplus)
-
 @interface RNSTabsBottomAccessoryEventEmitter ()
 
 - (void)updateEventEmitter:(const std::shared_ptr<const react::RNSTabsBottomAccessoryEventEmitter> &)emitter;
 
 @end
-
-#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
 

@@ -1,9 +1,7 @@
 #pragma once
 
-#if defined(__cplusplus)
 #import <React/RCTConvert.h>
 #import <React/RCTViewManager.h>
-#endif // __cplusplus
 #import "RNSLegacyEnums.h"
 #import "RNSReactBaseView.h"
 
@@ -48,11 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#if defined(__cplusplus)
 @interface RNSScreenStackHeaderSubviewManager : RCTViewManager
-#else
-@interface RNSScreenStackHeaderSubviewManager : NSObject
-#endif // __cplusplus
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 

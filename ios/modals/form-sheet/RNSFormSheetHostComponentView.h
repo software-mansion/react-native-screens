@@ -2,9 +2,7 @@
 
 #import "RNSReactBaseView.h"
 
-#if defined(__cplusplus)
 #import <vector>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,9 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetHostComponentView ()
 
-#if defined(__cplusplus)
 - (const std::vector<double> &)detents;
-#endif
 
 @property (nonatomic, readonly) BOOL isOpen;
 @property (nonatomic, readonly) BOOL prefersGrabberVisible;

@@ -2,22 +2,15 @@
 
 #import <UIKit/UIKit.h>
 
-#if defined(__cplusplus)
 #import <React/RCTComponent.h>
 #import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#endif
 
 #import "RNSDefines.h"
 #import "RNSLegacyEnums.h"
 
-@interface RNSSearchBar :
-#if defined(__cplusplus)
-    RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
-#else
-    UIView <UISearchBarDelegate>
-#endif
+@interface RNSSearchBar : RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
 
 @property (nonatomic) BOOL hideWhenScrolling;
 @property (nonatomic) RNSSearchBarPlacement placement;
@@ -32,10 +25,6 @@
 
 @end
 
-#if defined(__cplusplus)
 @interface RNSSearchBarManager : RCTViewManager
-#else
-@interface RNSSearchBarManager : NSObject
-#endif
 
 @end

@@ -2,9 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-#if defined(__cplusplus)
 #import <vector>
-#endif
 
 @protocol RNSFormSheetBehaviorProvider;
 
@@ -20,12 +18,12 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
 @interface RNSFormSheetDetentResolver : NSObject
 
-#if !TARGET_OS_TV && defined(__cplusplus)
+#if !TARGET_OS_TV
 
 + (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsWithBehaviorProvider:
     (id<RNSFormSheetBehaviorProvider>)provider;
 
-#endif // !TARGET_OS_TV && __cplusplus
+#endif // !TARGET_OS_TV
 
 #if !TARGET_OS_TV
 
@@ -39,12 +37,12 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 
 #endif // !TARGET_OS_TV
 
-#if !TARGET_OS_TV && defined(__cplusplus)
+#if !TARGET_OS_TV
 
 + (NSInteger)detentIndexFromDetentIdentifier:(nullable UISheetPresentationControllerDetentIdentifier)identifier
                                forRawDetents:(const std::vector<double> &)detents;
 
-#endif // !TARGET_OS_TV && __cplusplus
+#endif // !TARGET_OS_TV
 
 @end
 

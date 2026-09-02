@@ -1,7 +1,5 @@
 #pragma once
 
-#if defined(__cplusplus)
-
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
@@ -22,5 +20,3 @@ RNSScrollEdgeEffect RNSScrollEdgeEffectFromSVMBottomEdgeEffect(
     react::RNSScrollViewMarkerBottomScrollEdgeEffect edgeEffect);
 
 }; // namespace rnscreens::conversion
-
-#endif // defined(__cplusplus)

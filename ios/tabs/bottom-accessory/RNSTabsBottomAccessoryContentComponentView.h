@@ -8,11 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSTabsBottomAccessoryContentComponentView : RNSReactBaseView
 
-#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && defined(__cplusplus)
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 @property (nonatomic, readonly) RNSTabsBottomAccessoryEnvironment environment;
 
-#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE && defined(__cplusplus)
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 @end
 
 NS_ASSUME_NONNULL_END
