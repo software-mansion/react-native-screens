@@ -92,6 +92,19 @@ export interface SupportsMenuIOS {
    * @platform iOS
    */
   menu?: StackHeaderMenuIOS | undefined;
+  /**
+   * @summary Menu definition substituting the item when it is displayed in a menu.
+   *
+   * @description
+   * When the system moves the item into a menu (e.g. the navigation bar
+   * overflow menu), this menu is displayed in its place. Useful for custom items
+   * ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS doesn't display in the overflow menu otherwise.
+   *
+   * @platform iOS
+   *
+   * @supported iOS 16 and higher
+   */
+  menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
 
 export interface SupportsIdentifierIOS {

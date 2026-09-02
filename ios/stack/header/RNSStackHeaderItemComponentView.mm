@@ -49,6 +49,7 @@ namespace react = facebook::react;
   [self setTitleProp:nil];
   [self setIconProp:nil];
   [self setMenuProp:nil];
+  [self setMenuRepresentationProp:nil];
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
@@ -70,6 +71,12 @@ namespace react = facebook::react;
 {
   _menuProp = menuProp;
   _menu = menuProp;
+}
+
+- (void)setMenuRepresentationProp:(RNSStackHeaderMenuData *)menuRepresentationProp
+{
+  _menuRepresentationProp = menuRepresentationProp;
+  _menuRepresentation = menuRepresentationProp;
 }
 
 - (void)emitOnPress
@@ -212,6 +219,15 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.menu != newItemProps.menu) {
     [self setMenuProp:[RNSStackHeaderMenuMapper
                           menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)]];
+    menuDidChange = YES;
+  }
+
+  if (oldItemProps.menuRepresentation != newItemProps.menuRepresentation) {
+    [self setMenuRepresentationProp:[RNSStackHeaderMenuMapper
+                                        menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                               newItemProps.menuRepresentation)]];
+    // menu representation is applied together with the menu & shares its toggle state tracker,
+    // so it follows the same invalidation path
     menuDidChange = YES;
   }
 
