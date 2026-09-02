@@ -9,6 +9,8 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+import com.fabricexample.nestedscroll.NestedScrollInteropTestPackage
+import com.fabricexample.nestedscroll.NestedScrollInteropTestProbe
 
 class MainApplication : Application(), ReactApplication {
 
@@ -17,14 +19,14 @@ class MainApplication : Application(), ReactApplication {
       context = applicationContext,
       packageList =
         PackageList(this).packages.apply {
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // add(MyReactNativePackage())
+          add(NestedScrollInteropTestPackage())
         },
     )
   }
 
   override fun onCreate() {
     super.onCreate()
+    NestedScrollInteropTestProbe.install()
     loadReactNative(this)
   }
 }

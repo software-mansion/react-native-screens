@@ -9,11 +9,11 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.bridge.ReactContext
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.common.nestedscroll.ScreenNestedScrollCoordinatorLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
@@ -36,7 +36,7 @@ internal class StackHeaderCoordinatorLayout(
     context: Context,
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
-) : CoordinatorLayout(context) {
+) : ScreenNestedScrollCoordinatorLayout(context, stackScreen) {
     // region Config attach / detach
 
     private var currentProvider: StackHeaderConfigurationProviding? = null
