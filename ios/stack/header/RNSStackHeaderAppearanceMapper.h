@@ -15,14 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable UINavigationBarAppearance *)appearanceFromDictionary:(nullable NSDictionary *)appearanceDict;
 
 /**
- * Maps appearance props to a UINavigationBarAppearance object derived from `baseAppearance`.
+ * Maps scroll edge appearance props to a standalone UINavigationBarAppearance object.
  *
- * The result inherits from `baseAppearance` and uses a transparent background, mirroring
- * how UIKit resolves a nil scroll edge appearance from the standard one. Entries in
- * `appearanceDict` override the inherited attributes.
+ * Returns nil for an empty dictionary — the navigation item's scroll edge appearance
+ * should then stay nil, so that UIKit's native resolution applies: the item's (or bar's)
+ * standard appearance with a transparent background. When a dictionary is provided, the
+ * result is built on the same transparent-background base with the given attributes on
+ * top; it intentionally does NOT inherit attributes from the standard appearance,
+ * mirroring how UIKit treats an explicitly assigned scroll edge appearance object as a
+ * complete description.
  */
-+ (nullable UINavigationBarAppearance *)appearanceFromDictionary:(nullable NSDictionary *)appearanceDict
-                                                  inheritingFrom:(nullable UINavigationBarAppearance *)baseAppearance;
++ (nullable UINavigationBarAppearance *)scrollEdgeAppearanceFromDictionary:(nullable NSDictionary *)appearanceDict;
 
 @end
 

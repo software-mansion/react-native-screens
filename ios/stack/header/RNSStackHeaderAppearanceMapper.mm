@@ -17,20 +17,18 @@
   return appearance;
 }
 
-+ (nullable UINavigationBarAppearance *)appearanceFromDictionary:(nullable NSDictionary *)appearanceDict
-                                                  inheritingFrom:(nullable UINavigationBarAppearance *)baseAppearance
++ (nullable UINavigationBarAppearance *)scrollEdgeAppearanceFromDictionary:(nullable NSDictionary *)appearanceDict
 {
-  if (appearanceDict.count == 0 && baseAppearance == nil) {
+  if (appearanceDict.count == 0) {
     return nil;
   }
 
-  UINavigationBarAppearance *appearance = baseAppearance != nil
-      ? [[UINavigationBarAppearance alloc] initWithBarAppearance:baseAppearance]
-      : [UINavigationBarAppearance new];
+  UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
-  // UIKit resolves a nil scroll edge appearance to the standard one with a transparent
-  // background; configureWithTransparentBackground resets only the background & shadow
-  // properties, keeping the inherited text attributes.
+  // A nil navigationItem.scrollEdgeAppearance natively resolves to the item's (or bar's)
+  // standard appearance with a transparent background. Start the explicit scroll edge
+  // appearance from the same transparent base so that a text-only appearance prop does
+  // not suddenly bring back the default bar background at the scroll edge.
   [appearance configureWithTransparentBackground];
 
   [self applyTextAttributesFromDictionary:appearanceDict toAppearance:appearance];

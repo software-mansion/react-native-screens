@@ -10,9 +10,10 @@ apply to both the regular and the large subtitle (UIKit derives the large
 subtitle appearance from `subtitleTextAttributes`).
 The two appearance objects are configured independently and can be toggled off 
 so they are not passed at all. The scenario checks that a default appearance
-renders identically to no appearance, `scrollEdgeAppearance` attributes deriving from
-`standardAppearance` if not defined, restoring props to their defaults at runtime,
-and `PlatformColor` resolution.
+renders identically to no appearance, that with `scrollEdgeAppearance` unset
+UIKit natively derives the scroll-edge look from `standardAppearance` (a set
+`scrollEdgeAppearance` is standalone and does not inherit its attributes),
+restoring props to their defaults at runtime, and `PlatformColor` resolution.
 
 **OS test creation version:** iOS 26
 
@@ -40,19 +41,19 @@ TBD.
 
 1. Launch the app and navigate to the **Stack Header Title Appearance (iOS)** screen.
 2. Enable `standardAppearance`. Under title, select `red` for `color`.
-  - Title is red, font family, size (!), weight, style remain default
+  - When fully scrolled to top, nothing changes
+  - When scrolled down, title is red, font family, size (!), weight, style remain default
 3. Under title select 30 for `fontSize`, Times New Roman for `fontFamily`, 900 for `fontWeight`,
    italic for `fontStyle`. Under subtitle select blue for `color`, 12 for `fontSize`,
    Courier New for `fontFamily`, 400 for `fontWeight`, normal for `fontStyle`.
-  - Updated configuration is visible on both title and subtitle
+  - When fully scrolled to top, nothing changes
+  - When scrolled down, updated configuration is visible on both title and subtitle
 4. Set `largeTitleEnabled`.
   - No configuration is applied to large title. Large subtitle has the same configuration as subtitle.
 5. Select the same options for `largeTitle` as for `subtitle`.
   - Updated configuration for large title is visible and matches large subtitle.
-6. Scroll the content all the way to the top.
-  - The text keeps the configuration from `standardAppearance`.
-7. Unset `largeTitleEnabled`. Enable `scrollEdgeAppearance`. Select all the same options
+6. Unset `largeTitleEnabled`. Enable `scrollEdgeAppearance`. Select all the same options
    as in 3. but swap `title` and `subtitle` options. Scroll to top.
   - Upon scrolling to the edge, configurations swap but are otherwise identical.
-8. Set large title `color` to `platform`.
+7. Set large title `color` to `platform`.
   - Large title color is updated to a shade of green.

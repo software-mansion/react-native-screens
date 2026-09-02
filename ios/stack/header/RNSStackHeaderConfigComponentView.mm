@@ -44,9 +44,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
   RCTImageLoader *_imageLoader;
-  // Scroll edge appearance inherits from the standard one, so the raw prop
-  // is kept around to rebuild the appearance when either prop changes.
-  NSDictionary *_Nullable _scrollEdgeAppearanceDict;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -77,7 +74,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _titleMenu = nil;
   _standardAppearance = nil;
   _scrollEdgeAppearance = nil;
-  _scrollEdgeAppearanceDict = nil;
 }
 
 - (NSArray<id> *)children
@@ -459,23 +455,14 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _backButtonMenuEnabled = newHeaderProps.backButtonMenuEnabled;
   }
 
-  BOOL standardAppearanceDidChange = oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance;
-  BOOL scrollEdgeAppearanceDidChange = oldHeaderProps.scrollEdgeAppearance != newHeaderProps.scrollEdgeAppearance;
-
-  if (standardAppearanceDidChange) {
+  if (oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance) {
     _standardAppearance = [RNSStackHeaderAppearanceMapper
         appearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.standardAppearance]];
   }
 
-  if (scrollEdgeAppearanceDidChange) {
-    _scrollEdgeAppearanceDict = [self dictionaryFromAppearanceProp:newHeaderProps.scrollEdgeAppearance];
-  }
-
-  if (standardAppearanceDidChange || scrollEdgeAppearanceDidChange) {
-    // Scroll edge appearance inherits from the standard one, so it must be
-    // rebuilt when either prop changes.
-    _scrollEdgeAppearance = [RNSStackHeaderAppearanceMapper appearanceFromDictionary:_scrollEdgeAppearanceDict
-                                                                      inheritingFrom:_standardAppearance];
+  if (oldHeaderProps.scrollEdgeAppearance != newHeaderProps.scrollEdgeAppearance) {
+    _scrollEdgeAppearance = [RNSStackHeaderAppearanceMapper
+        scrollEdgeAppearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.scrollEdgeAppearance]];
   }
 
   if (oldHeaderProps.titleMenu != newHeaderProps.titleMenu) {

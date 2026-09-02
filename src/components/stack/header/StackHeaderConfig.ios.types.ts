@@ -560,10 +560,9 @@ export interface StackHeaderConfigPropsIOS {
    * @summary Appearance of the header when the edge of scrollable content
    * is aligned with the edge of the header.
    *
-   * @description The scroll edge appearance is derived from `standardAppearance`,
-   * inheriting its text attributes over a transparent background - matching how UIKit
-   * resolves an unset scroll edge appearance. Attributes defined here override the
-   * inherited ones.
+   * @description If unset, derives the configuration from `standardAppearance`,
+   * otherwise becomes a standalone definition. In both cases it keeps transparent
+   * background by default (iOS <18).
    *
    * @platform ios
    */
