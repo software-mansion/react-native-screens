@@ -77,6 +77,8 @@ Assumption:
 
 9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
+- [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
+
 ---
 
 ### Keyboard tab — simple check

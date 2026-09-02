@@ -34,8 +34,7 @@ Not covered:
 
 ## Note
 
-- On Android: Text color properties cannot be observed on Tab1 (empty badge) and Tab4 (icon).
-Validate background color only for these tabs.
+- On Android, validate only the background color for Tab1 (empty badge) and Tab4 (emoji) - their text color cannot be observed.
 
 `badgeValue`:
 
@@ -76,6 +75,8 @@ color to partially break and incorrectly inherit the selected state's background
 - [ ] Tab2: on iOS 26 badge reads **12345...**; on iOS 18 **23456789** is visible.
 - [ ] Tab3's badge reads **NEW!**.
 - [ ] Tab4's badge reads **⚠️**.
+- [ ] All four badges use the iOS system default appearance — red background,
+      white text — because the selected Tab1 defines no badge colors.
 
 ---
 
@@ -154,6 +155,8 @@ normal (purple), also Tab2 badge is affected and its badge color is partially bl
 maximum and is truncated by the system).
 - [ ] Tab3's badge reads **NEW!**.
 - [ ] Tab4's badge reads **⚠️**.
+- [ ] All badges use the Android system default appearance — red background,
+      white text; the Tab1 dot is red.
 
 ---
 
@@ -161,7 +164,7 @@ maximum and is truncated by the system).
 
 2. Confirm Tab1 is active. Observe the Tab1 badge in the tab bar.
 
-- [ ] Selected tab: Badge shows as a small dot.
+- [ ] Selected tab: Badge shows as a small **red** dot.
 - [ ] Unselected tabs: The badge renders with the Android system default: red background with white text.
 
 ---
