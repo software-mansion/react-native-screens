@@ -7,6 +7,7 @@ import androidx.core.graphics.drawable.toDrawable
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
+import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.common.colorscheme.ColorScheme
@@ -31,9 +32,8 @@ class TabsHost(
     UIManagerListener {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
-    // Still null while FrameLayout's constructor runs, and that constructor calls requestLayout().
-    private val layoutCoordinator: TabsHostLayoutCoordinator? =
-        TabsHostLayoutCoordinator(this, ::forceSubtreeMeasureAndLayoutPass)
+    private var hasPostLayoutPending = false
+    private var hasChoreographerLayoutPending = false
 
     private var hasFirstLayoutWithInsets: Boolean = false
 
@@ -135,12 +135,47 @@ class TabsHost(
      * https://github.com/software-mansion/react-native-screens/pull/4161
      */
     private fun refreshLayout() {
-        if (layoutCoordinator != null) {
-            if (!hasFirstLayoutWithInsets) {
-                layoutCoordinator.postLayoutToMessageQueue()
-            } else {
-                layoutCoordinator.postLayoutToReactChoreographer()
-            }
+        if (!hasFirstLayoutWithInsets) {
+            postLayoutToMessageQueue()
+        } else {
+            postLayoutToReactChoreographer()
+        }
+    }
+
+    /**
+     * Schedules the layout via `Handler.post`, executing it through the standard message queue. If a layout
+     * traversal is already scheduled or ongoing, this runs after it. Because it runs after the current
+     * traversal's `dispatchOnPreDraw`, the forced layout stays out of the TransitionManager's `endValues`,
+     * suppressing the `ChangeBounds` animator and the content jump during initial inset application. Used
+     * until insets are propagated.
+     * See [refreshLayout] and https://github.com/software-mansion/react-native-screens/pull/4161.
+     */
+    private fun postLayoutToMessageQueue() {
+        if (hasPostLayoutPending) {
+            return
+        }
+        hasPostLayoutPending = true
+        post {
+            hasPostLayoutPending = false
+            forceSubtreeMeasureAndLayoutPass()
+        }
+    }
+
+    /**
+     * Schedules the layout via `ReactChoreographer`'s `NATIVE_ANIMATED_MODULE` queue, which synchronizes with
+     * vsync and guarantees execution JUST BEFORE the upcoming traversal. The forced layout therefore mutates
+     * the view bounds BEFORE `TransitionManager` captures its `endValues` in `onPreDraw`, so `ChangeBounds`
+     * animators are created for tab switches. Used after insets are propagated.
+     * See [refreshLayout] and https://github.com/software-mansion/react-native-screens/pull/4161.
+     */
+    private fun postLayoutToReactChoreographer() {
+        if (hasChoreographerLayoutPending) {
+            return
+        }
+        hasChoreographerLayoutPending = true
+        ReactChoreographer.getInstance().postFrameCallback(ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE) {
+            hasChoreographerLayoutPending = false
+            forceSubtreeMeasureAndLayoutPass()
         }
     }
 
@@ -156,6 +191,9 @@ class TabsHost(
         return true
     }
 
+    /**
+     * Runs during ViewGroup's constructor too, so it must not read anything initialized after super().
+     */
     override fun requestLayout() {
         super.requestLayout()
         refreshLayout()
