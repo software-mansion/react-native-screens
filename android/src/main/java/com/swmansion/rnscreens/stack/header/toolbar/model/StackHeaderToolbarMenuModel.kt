@@ -13,7 +13,6 @@ internal class StackHeaderToolbarMenuModel private constructor(
     val reverseIdMap: Map<Int, String>,
     val forwardGroupIdMap: Map<String, Int>,
     val groupMetadata: StackHeaderToolbarMenuGroupMetadata,
-    val iconSourcesById: Map<String, StackHeaderToolbarMenuItemIconSource>,
 ) {
     companion object {
         val EMPTY = from(StackHeaderToolbarMenuConfig(emptyList(), emptyList()))
@@ -42,17 +41,16 @@ internal class StackHeaderToolbarMenuModel private constructor(
 
             return StackHeaderToolbarMenuModel(
                 config = config,
-                elementById = elementById,
-                forwardIdMap = forwardIdMap,
-                reverseIdMap = reverseIdMap,
-                forwardGroupIdMap = forwardGroupIdMap,
+                elementById = elementById.toMap(),
+                forwardIdMap = forwardIdMap.toMap(),
+                reverseIdMap = reverseIdMap.toMap(),
+                forwardGroupIdMap = forwardGroupIdMap.toMap(),
                 groupMetadata =
                     StackHeaderToolbarMenuGroupMetadata(
-                        itemGroupMap,
-                        groupSingleSelection,
+                        itemGroupMap.toMap(),
+                        groupSingleSelection.toMap(),
                         groupMemberItems.mapValues { it.value.toList() },
                     ),
-                iconSourcesById = elementById.mapValues { it.value.item.iconSource },
             )
         }
     }

@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.stack.header.toolbar
 
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.view.MenuItem
 import com.google.android.material.appbar.MaterialToolbar
 import com.swmansion.rnscreens.helpers.IconResolution
 import com.swmansion.rnscreens.helpers.PropIconResolver
@@ -25,12 +26,6 @@ import java.lang.ref.WeakReference
  * controller; an attached toolbar is merely a projection of it, rebuilt from
  * scratch at every [attach]. Checked-state semantics run on the state, so
  * updates behave identically whether a toolbar is attached or not.
- *
- * Collaborators: [StackHeaderToolbarMenuMapper] parses React props/commands
- * into the model types; StackHeaderConfig adapts React specifics (icon
- * loading, event emission, invalidation) and feeds this controller — the
- * single entry point for every menu mutation; [StackHeaderToolbarMenuApplicator]
- * writes onto the android Menu.
  */
 internal class StackHeaderToolbarMenuController(
     private val iconResolver: StackHeaderToolbarMenuIconResolver,
@@ -65,8 +60,8 @@ internal class StackHeaderToolbarMenuController(
         model = StackHeaderToolbarMenuModel.from(menu)
 
         commandOverrides.clear()
-        propIcons.keys.retainAll(model.forwardIdMap.keys)
-        propIconResolvers.keys.retainAll(model.iconSourcesById.keys)
+        propIcons.keys.retainAll(model.elementById.keys)
+        propIconResolvers.keys.retainAll(model.elementById.keys)
         groupSelections =
             model.groupMetadata.groupMemberItems
                 .mapValues { (_, members) ->
@@ -143,13 +138,13 @@ internal class StackHeaderToolbarMenuController(
 
         for (update in updates) {
             val id = update.id
-            if (id !in model.forwardIdMap) {
+            if (id !in model.elementById) {
                 Log.w(TAG, "[RNScreens] Ignoring toolbar menu update for unknown item id '$id'.")
                 continue
             }
 
             if (!update.options.isEmpty) {
-                commandOverrides.merge(id, update.options) { older, newer -> older.mergedWith(newer) }
+                commandOverrides[id] = commandOverrides[id]?.mergedWith(update.options) ?: update.options
             }
 
             update.checked?.let { checked ->
@@ -183,21 +178,28 @@ internal class StackHeaderToolbarMenuController(
      * only, later async ones also apply to the live toolbar in place.
      */
     private fun resolvePropIcons() {
-        model.iconSourcesById.forEach { (id, source) ->
-            propIconResolvers
-                .getOrPut(id) {
-                    PropIconResolver { name, uri, onComplete ->
-                        iconResolver.resolve(
-                            StackHeaderToolbarMenuItemIconSource(name, uri),
-                            onComplete,
-                        )
+        model.elementById.forEach { (id, element) ->
+            val source = element.item.iconSource
+            // An escaping exception would leave the menu dirty forever, with
+            // in-place application suspended until the next [attach].
+            try {
+                propIconResolvers
+                    .getOrPut(id) {
+                        PropIconResolver { name, uri, onComplete ->
+                            iconResolver.resolve(
+                                StackHeaderToolbarMenuItemIconSource(name, uri),
+                                onComplete,
+                            )
+                        }
+                    }.resolve(source.drawableIconResourceName, source.imageIconUri) { result ->
+                        when (result) {
+                            IconResolution.Unchanged -> Unit
+                            is IconResolution.Resolved -> setItemIcon(id, result.drawable)
+                        }
                     }
-                }.resolve(source.drawableIconResourceName, source.imageIconUri) { result ->
-                    when (result) {
-                        IconResolution.Unchanged -> Unit
-                        is IconResolution.Resolved -> setItemIcon(id, result.drawable)
-                    }
-                }
+            } catch (e: Exception) {
+                Log.e(TAG, "[RNScreens] Failed to resolve the icon of toolbar menu item '$id'.", e)
+            }
         }
     }
 
@@ -210,7 +212,7 @@ internal class StackHeaderToolbarMenuController(
         id: String,
         icon: Drawable?,
     ) {
-        if (id !in model.forwardIdMap) {
+        if (id !in model.elementById) {
             return
         }
         val previous = if (icon != null) propIcons.put(id, icon) else propIcons.remove(id)
@@ -224,6 +226,10 @@ internal class StackHeaderToolbarMenuController(
             model.forwardIdMap,
             id,
             StackHeaderToolbarMenuElementOptions(
+                // Action-item classification runs when showAsAction is set and
+                // setting an icon alone does not re-run it, so it must
+                // accompany the icon.
+                showAsAction = effective.showAsAction,
                 icon = effective.icon,
                 iconTintColorNormal = effective.iconTintColorNormal,
                 iconTintColorPressed = effective.iconTintColorPressed,
@@ -274,17 +280,29 @@ internal class StackHeaderToolbarMenuController(
         groupId: String,
     ) {
         val selected = groupSelections[groupId].orEmpty()
+
+        // setChecked(false) on an item of an exclusive group checks it instead
+        // of clearing it, so only the selected member is written and the native
+        // sibling-uncheck does the rest. Such a group is never cleared.
+        if (model.groupMetadata.groupSingleSelection[groupId] == true) {
+            val selectedId = selected.singleOrNull() ?: return
+            menuItemFor(toolbar, selectedId)?.isChecked = true
+            return
+        }
+
         for (memberId in model.groupMetadata.groupMemberItems[groupId].orEmpty()) {
-            val item = model.forwardIdMap[memberId]?.let { toolbar.menu.findItem(it) } ?: continue
+            val item = menuItemFor(toolbar, memberId) ?: continue
             val shouldBeChecked = memberId in selected
             if (item.isChecked != shouldBeChecked) {
-                // For a single-selection group setChecked(true) also fires the
-                // native sibling-uncheck; later iterations then find the target
-                // state already applied and no-op.
                 item.isChecked = shouldBeChecked
             }
         }
     }
+
+    private fun menuItemFor(
+        toolbar: MaterialToolbar,
+        id: String,
+    ): MenuItem? = model.forwardIdMap[id]?.let { toolbar.menu.findItem(it) }
 
     // endregion
 
@@ -364,9 +382,11 @@ internal class StackHeaderToolbarMenuController(
 
     /**
      * The live item already reflects effective state, so applying the delta
-     * keeps it there. Two fields need widening: tint colors resolve as one
+     * keeps it there. Three fields need widening: tint colors resolve as one
      * complete ColorStateList, so touching any tint slot (or the icon, whose
-     * application re-tints) requires all four; and a submenu header set to
+     * application re-tints) requires all four; `showAsAction` must accompany a
+     * new icon, because action-item classification runs when it is set and
+     * setting an icon alone does not re-run it; and a submenu header set to
      * follow the title (`menuTitle: Reset`) must be re-resolved when the title
      * changes.
      */
@@ -384,6 +404,9 @@ internal class StackHeaderToolbarMenuController(
                     iconTintColorFocused = effective.iconTintColorFocused,
                     iconTintColorDisabled = effective.iconTintColorDisabled,
                 )
+            if (delta.icon != null) {
+                resolved = resolved.copy(showAsAction = effective.showAsAction)
+            }
         }
         if (delta.title != null &&
             delta.menuTitle == null &&

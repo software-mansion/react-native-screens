@@ -23,6 +23,7 @@ import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuContro
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuDelegate
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuIconResolver
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -216,10 +217,7 @@ internal class StackHeaderConfig(
     // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
-    private val backButtonIconResolver =
-        PropIconResolver { name, uri, onComplete ->
-            resolveImage(reactContext, name, uri, onComplete)
-        }
+    private val backButtonIconResolver = createPropIconResolver(reactContext)
 
     internal fun resolveBackButtonIconIfNeeded() {
         backButtonIconResolver.resolve(
@@ -246,10 +244,7 @@ internal class StackHeaderConfig(
     // Resolution happens in resolveOverflowIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var overflowIconDrawableIconResourceName: String? = null
     internal var overflowIconImageIconUri: String? = null
-    private val overflowIconResolver =
-        PropIconResolver { name, uri, onComplete ->
-            resolveImage(reactContext, name, uri, onComplete)
-        }
+    private val overflowIconResolver = createPropIconResolver(reactContext)
 
     internal fun resolveOverflowIconIfNeeded() {
         overflowIconResolver.resolve(
@@ -273,14 +268,8 @@ internal class StackHeaderConfig(
     // region Toolbar menu
 
     override val toolbarMenuController =
-        StackHeaderToolbarMenuController(iconResolver = { iconSource, onResolved ->
-            resolveImage(
-                reactContext,
-                iconSource.drawableIconResourceName,
-                iconSource.imageIconUri,
-                onResolved,
-            )
-        }).also { it.delegate = WeakReference(this) }
+        StackHeaderToolbarMenuController(createMenuIconResolver(reactContext))
+            .also { it.delegate = WeakReference(this) }
 
     internal fun setToolbarMenuFromProps(menu: StackHeaderToolbarMenuConfig) {
         if (toolbarMenuController.setMenu(menu)) {
@@ -462,4 +451,23 @@ internal class StackHeaderConfig(
     }
 
     // endregion
+
+    // Built outside the instance scope on purpose: a lambda capturing this view
+    // would be retained by every icon load still in flight.
+    private companion object {
+        fun createPropIconResolver(context: ThemedReactContext) =
+            PropIconResolver { name, uri, onComplete ->
+                resolveImage(context, name, uri, onComplete)
+            }
+
+        fun createMenuIconResolver(context: ThemedReactContext) =
+            StackHeaderToolbarMenuIconResolver { iconSource, onResolved ->
+                resolveImage(
+                    context,
+                    iconSource.drawableIconResourceName,
+                    iconSource.imageIconUri,
+                    onResolved,
+                )
+            }
+    }
 }
