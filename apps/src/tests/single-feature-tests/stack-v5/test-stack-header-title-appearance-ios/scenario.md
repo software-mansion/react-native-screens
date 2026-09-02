@@ -40,20 +40,34 @@ TBD.
 ## Steps
 
 1. Launch the app and navigate to the **Stack Header Title Appearance (iOS)** screen.
+
 2. Enable `standardAppearance`. Under title, select `red` for `color`.
-  - When fully scrolled to top, nothing changes
-  - When scrolled down, title is red, font family, size (!), weight, style remain default
+
+  - [ ] When fully scrolled to top, nothing changes
+  
+  - [ ] When scrolled down, title is red, font family, size (!), weight, style remain default
+  
 3. Under title select 30 for `fontSize`, Times New Roman for `fontFamily`, 900 for `fontWeight`,
    italic for `fontStyle`. Under subtitle select blue for `color`, 12 for `fontSize`,
    Courier New for `fontFamily`, 400 for `fontWeight`, normal for `fontStyle`.
-  - When fully scrolled to top, nothing changes
-  - When scrolled down, updated configuration is visible on both title and subtitle
+
+  - [ ] When fully scrolled to top, nothing changes
+  
+  - [ ] When scrolled down, updated configuration is visible on both title and subtitle
+  
 4. Set `largeTitleEnabled`.
-  - No configuration is applied to large title. Large subtitle has the same configuration as subtitle.
+
+  - [ ] No configuration is applied to large title. Large subtitle has the same configuration as subtitle.
+  
 5. Select the same options for `largeTitle` as for `subtitle`.
-  - Updated configuration for large title is visible and matches large subtitle.
+
+  - [ ] Updated configuration for large title is visible and matches large subtitle.
+  
 6. Unset `largeTitleEnabled`. Enable `scrollEdgeAppearance`. Select all the same options
    as in 3. but swap `title` and `subtitle` options. Scroll to top.
-  - Upon scrolling to the edge, configurations swap but are otherwise identical.
+
+  - [ ] Upon scrolling to the edge, configurations swap but are otherwise identical.
+  
 7. Set large title `color` to `platform`.
-  - Large title color is updated to a shade of green.
+
+  - [ ] Large title color is updated to a shade of green.
