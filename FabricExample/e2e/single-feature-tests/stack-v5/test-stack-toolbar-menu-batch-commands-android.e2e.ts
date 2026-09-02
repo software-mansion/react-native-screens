@@ -26,8 +26,9 @@ const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 const SCROLL_STEP = { pixels: 300 };
 const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
-// Generous on purpose: a slow image download must not read as a failed batch.
-const IMAGE_LOAD_TIMEOUT_MS = 90000;
+// Generous on purpose: the failing-image cases wait on a network error, and a
+// slow one must not read as a stuck batch.
+const IMAGE_LOAD_TIMEOUT_MS = 30000;
 
 const APPLE = 'Apple';
 
@@ -35,7 +36,8 @@ async function expectAppleNotInToolbar() {
   await expect(element(actionMenuItem(APPLE))).not.toExist();
 }
 
-const expectAppleInToolbarWithIcon = () => expectIconActionItem(APPLE);
+const expectAppleInToolbarWithIcon = () =>
+  expectIconActionItem(APPLE, IMAGE_LOAD_TIMEOUT_MS);
 const expectAppleInToolbarWithoutIcon = () => expectTextActionItem(APPLE);
 
 async function scrollIntoView(id: string) {

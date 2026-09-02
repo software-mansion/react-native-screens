@@ -5,6 +5,7 @@ import {
   countMatches,
   DEFAULT_TIMEOUT_MS,
   describeIfAndroid,
+  expectTopmostVisible,
   getFrame,
   getSingleMatch,
   scrollUntilVisible,
@@ -195,7 +196,7 @@ async function selectLiftOnScroll(value: TriState) {
 }
 
 async function expectHeaderAttached() {
-  await waitFor(element(stackV5Toolbar())).toBeVisible().withTimeout(3000);
+  await expectTopmostVisible(stackV5Toolbar);
   await expect(element(by.text(HEADER_TITLE))).toBeVisible();
   jestExpect(await countMatches(stackV5AppBar())).toBe(1);
 }

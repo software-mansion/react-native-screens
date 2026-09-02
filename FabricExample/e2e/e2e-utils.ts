@@ -416,22 +416,27 @@ export const TOOLBAR_UPDATE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 /**
  * Asserts `title`'s action button is up and renders `text`. Asserted
  * positively — on Android a negated matcher passes on a missing view.
+ * `timeoutMs` covers waits longer than a re-inflation, e.g. an image load.
  */
-async function expectActionItemText(title: string, text: string) {
+async function expectActionItemText(
+  title: string,
+  text: string,
+  timeoutMs = TOOLBAR_UPDATE_TIMEOUT_MS,
+) {
   await waitFor(element(actionMenuItem(title)))
     .toBeVisible()
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+    .withTimeout(timeoutMs);
   await waitFor(element(actionMenuItem(title)))
     .toHaveText(text)
-    .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
+    .withTimeout(timeoutMs);
 }
 
 /**
  * Asserts `title` is promoted to the toolbar as an icon-only button, whose
  * text AppCompat clears. Which icon it is cannot be asserted through Detox.
  */
-export const expectIconActionItem = (title: string) =>
-  expectActionItemText(title, '');
+export const expectIconActionItem = (title: string, timeoutMs?: number) =>
+  expectActionItemText(title, '', timeoutMs);
 
 /**
  * Asserts `title` is promoted to the toolbar as a text button (no icon, or
@@ -654,7 +659,12 @@ export function createOverflowMenuHelpers({
         await closeMenuIfOpen();
       } catch (cleanupError) {
         // A throw from `finally` would replace the error that actually failed.
-        if (!assertionFailed) {
+        if (assertionFailed) {
+          console.warn(
+            'Cleanup failed after a failed assertion:',
+            cleanupError,
+          );
+        } else {
           throw cleanupError;
         }
       }

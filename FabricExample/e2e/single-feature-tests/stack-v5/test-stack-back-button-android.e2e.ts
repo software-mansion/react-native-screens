@@ -41,7 +41,7 @@ async function expectNoBackButton() {
 // settle race would otherwise read as "the back button is missing". The count
 // names the ambiguity a second stacked toolbar's icon would cause.
 async function expectSingleVisibleBackButton() {
-  await waitFor(element(stackV5BackButton())).toBeVisible().withTimeout(3000);
+  await expectTopmostVisible(stackV5BackButton);
   jestExpect(await countMatches(stackV5BackButton())).toBe(1);
 }
 
