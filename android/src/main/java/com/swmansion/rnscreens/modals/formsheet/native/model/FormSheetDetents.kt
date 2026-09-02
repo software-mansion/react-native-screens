@@ -1,5 +1,7 @@
 package com.swmansion.rnscreens.modals.formsheet.native.model
 
+import kotlin.math.roundToInt
+
 internal class FormSheetDetents(
     rawDetents: List<Double>,
 ) {
@@ -34,7 +36,7 @@ internal class FormSheetDetents(
     private fun heightAt(
         index: Int,
         containerHeight: Int,
-    ): Int = (heightFractionAt(index) * containerHeight).toInt()
+    ): Int = (heightFractionAt(index) * containerHeight).roundToInt()
 
     private fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
 
