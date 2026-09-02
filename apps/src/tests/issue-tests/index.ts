@@ -233,3 +233,4 @@ export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
 export { default as TestStackNesting } from './TestStackNesting';
 export { default as TestScreenFooterKeyboardInsets } from './TestScreenFooterKeyboardInsets';
+export { default as TestNestedStackPreventSystemBack } from './TestNestedStackPreventSystemBack'; // [E2E skipped]: manual repro - preventNativeDismiss stops intercepting system back after the activity is stopped/restarted (backgrounding); needs direct App.tsx launch (#1459)
