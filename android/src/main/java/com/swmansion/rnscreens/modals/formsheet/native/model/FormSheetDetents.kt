@@ -36,7 +36,18 @@ internal class FormSheetDetents(
         containerHeight: Int,
     ): Int = (heightFractionAt(index) * containerHeight).toInt()
 
-    internal fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
+    private fun firstHeight(containerHeight: Int): Int = heightAt(0, containerHeight)
+
+    /**
+     * Height handed to Material as `peekHeight`. Material treats the peek height as the content height above
+     * the bottom system inset and adds that inset back (`BottomSheetBehavior.calculatePeekHeight`), while every
+     * other metric (`maxHeight`, `halfExpandedRatio`) describes the sheet down to the screen edge. The inset is
+     * subtracted here so the lowest detent is resolved against the same reference as the other ones.
+     */
+    internal fun peekHeight(
+        containerHeight: Int,
+        bottomInset: Int,
+    ): Int = (firstHeight(containerHeight) - bottomInset).coerceAtLeast(0)
 
     internal fun maxAllowedHeight(containerHeight: Int): Int = heightAt(count - 1, containerHeight)
 
@@ -59,7 +70,7 @@ internal class FormSheetDetents(
 
     internal fun halfExpandedRatio(): Float {
         check(count == MAX_DETENTS) { "[RNScreens] Exactly $MAX_DETENTS detents are required for halfExpandedRatio." }
-        return (heightFractionAt(1) / heightFractionAt(2)).toFloat()
+        return heightFractionAt(1).toFloat()
     }
 
     internal fun expandedOffsetFromTop(
@@ -67,7 +78,7 @@ internal class FormSheetDetents(
         topInset: Int = 0,
     ): Int {
         check(count == MAX_DETENTS) { "[RNScreens] Exactly $MAX_DETENTS detents are required for expandedOffsetFromTop." }
-        return ((1 - heightFractionAt(2)) * containerHeight).toInt() + topInset
+        return largestDetentTopOffset(containerHeight) + topInset
     }
 
     // Distance from the top of the window to the top of the largest detent's surface.
