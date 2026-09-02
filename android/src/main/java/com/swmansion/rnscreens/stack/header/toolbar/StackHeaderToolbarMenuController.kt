@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.stack.header.toolbar
 import android.graphics.drawable.Drawable
 import android.util.Log
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.helpers.IconResolution
+import com.swmansion.rnscreens.helpers.PropIconResolver
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource
@@ -26,12 +28,12 @@ import java.lang.ref.WeakReference
  *
  * Collaborators: [StackHeaderToolbarMenuMapper] parses React props/commands
  * into the model types; StackHeaderConfig adapts React specifics (icon
- * resolution, event emission, invalidation) and feeds this controller — the
+ * loading, event emission, invalidation) and feeds this controller — the
  * single entry point for every menu mutation; [StackHeaderToolbarMenuApplicator]
  * writes onto the android Menu.
  */
 internal class StackHeaderToolbarMenuController(
-    iconResolver: StackHeaderToolbarMenuIconResolver,
+    private val iconResolver: StackHeaderToolbarMenuIconResolver,
 ) {
     internal var delegate: WeakReference<StackHeaderToolbarMenuDelegate>? = null
 
@@ -64,6 +66,7 @@ internal class StackHeaderToolbarMenuController(
 
         commandOverrides.clear()
         propIcons.keys.retainAll(model.forwardIdMap.keys)
+        propIconResolvers.keys.retainAll(model.iconSourcesById.keys)
         groupSelections =
             model.groupMetadata.groupMemberItems
                 .mapValues { (_, members) ->
@@ -79,6 +82,7 @@ internal class StackHeaderToolbarMenuController(
         updateQueue.clearPending()
 
         modelDirty = true
+        resolvePropIcons()
         return true
     }
 
@@ -91,15 +95,14 @@ internal class StackHeaderToolbarMenuController(
         return true
     }
 
-    internal val iconSourcesById: Map<String, StackHeaderToolbarMenuItemIconSource>
-        get() = model.iconSourcesById
-
     // endregion
 
     // region State
 
-    // Resolved icons of prop-declared items, fed asynchronously by the owner.
+    // Resolved icons of prop-declared items, and the stateful per-item
+    // resolvers behind them; both pruned in [setMenu].
     private val propIcons = mutableMapOf<String, Drawable>()
+    private val propIconResolvers = mutableMapOf<String, PropIconResolver>()
 
     // Accumulated imperative element updates, merged field-wise (newer
     // non-null wins). `checked` never reaches here — it travels on the update
@@ -169,12 +172,41 @@ internal class StackHeaderToolbarMenuController(
         changedGroups.forEach(::emitGroupSelection)
     }
 
+    // endregion
+
+    // region Prop icons
+
+    /**
+     * Re-resolves every prop-declared icon source; called on a menu change —
+     * the only time sources can change. Results flow through [setItemIcon]:
+     * while the menu is dirty (until the next [attach]) they land in state
+     * only, later async ones also apply to the live toolbar in place.
+     */
+    private fun resolvePropIcons() {
+        model.iconSourcesById.forEach { (id, source) ->
+            propIconResolvers
+                .getOrPut(id) {
+                    PropIconResolver { name, uri, onComplete ->
+                        iconResolver.resolve(
+                            StackHeaderToolbarMenuItemIconSource(name, uri),
+                            onComplete,
+                        )
+                    }
+                }.resolve(source.drawableIconResourceName, source.imageIconUri) { result ->
+                    when (result) {
+                        IconResolution.Unchanged -> Unit
+                        is IconResolution.Resolved -> setItemIcon(id, result.drawable)
+                    }
+                }
+        }
+    }
+
     /**
      * Sets or clears the resolved icon of a prop-declared item, in place —
      * never rebuilds the menu and never touches command state. An icon set via
      * a view command takes precedence until the next real menu change.
      */
-    internal fun setItemIcon(
+    private fun setItemIcon(
         id: String,
         icon: Drawable?,
     ) {

@@ -22,7 +22,6 @@ import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewType
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuController
 import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuDelegate
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
-import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -217,11 +216,13 @@ internal class StackHeaderConfig(
     // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
-    private val backButtonIconResolver = PropIconResolver()
+    private val backButtonIconResolver =
+        PropIconResolver { name, uri, onComplete ->
+            resolveImage(reactContext, name, uri, onComplete)
+        }
 
     internal fun resolveBackButtonIconIfNeeded() {
         backButtonIconResolver.resolve(
-            reactContext,
             backButtonDrawableIconResourceName,
             backButtonImageIconUri,
         ) { result ->
@@ -245,11 +246,13 @@ internal class StackHeaderConfig(
     // Resolution happens in resolveOverflowIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var overflowIconDrawableIconResourceName: String? = null
     internal var overflowIconImageIconUri: String? = null
-    private val overflowIconResolver = PropIconResolver()
+    private val overflowIconResolver =
+        PropIconResolver { name, uri, onComplete ->
+            resolveImage(reactContext, name, uri, onComplete)
+        }
 
     internal fun resolveOverflowIconIfNeeded() {
         overflowIconResolver.resolve(
-            reactContext,
             overflowIconDrawableIconResourceName,
             overflowIconImageIconUri,
         ) { result ->
@@ -269,20 +272,14 @@ internal class StackHeaderConfig(
 
     // region Toolbar menu
 
-    // The command-icon resolver uses the always-completing resolveImage rather
-    // than the stateful PropIconResolver: the queue requires exactly-once
-    // completion (a drop-stale guard could stall it) and already guarantees
-    // ordering across commands. A failed or empty source resolves to null ->
-    // Reset (the icon is cleared) rather than stalling the queue.
     override val toolbarMenuController =
         StackHeaderToolbarMenuController(iconResolver = { iconSource, onResolved ->
             resolveImage(
                 reactContext,
                 iconSource.drawableIconResourceName,
                 iconSource.imageIconUri,
-            ) { drawable ->
-                onResolved(StackHeaderToolbarFieldUpdate.from(drawable))
-            }
+                onResolved,
+            )
         }).also { it.delegate = WeakReference(this) }
 
     internal fun setToolbarMenuFromProps(menu: StackHeaderToolbarMenuConfig) {
@@ -299,50 +296,6 @@ internal class StackHeaderConfig(
 
     internal fun dispatchMenuElementUpdates(updates: List<StackHeaderToolbarMenuElementRawUpdate>) {
         toolbarMenuController.enqueueElementUpdates(updates)
-    }
-
-    private var toolbarMenuItemIconResolvers = mapOf<String, PropIconResolver>()
-
-    // Last resolved icon per menu item id, from the `toolbarMenu` prop path only
-    // (resolveToolbarMenuItemIconsIfNeeded). Command (`updateToolbarMenuElements`)
-    // icons live in the controller's command overrides and are intentionally NOT
-    // stored here.
-    private var toolbarMenuItemIcons = mapOf<String, Drawable?>()
-
-    internal fun resolveToolbarMenuItemIconsIfNeeded() {
-        val iconSources = toolbarMenuController.iconSourcesById
-        val nextResolvers = mutableMapOf<String, PropIconResolver>()
-
-        iconSources.forEach { (id, source) ->
-            val resolver = toolbarMenuItemIconResolvers[id] ?: PropIconResolver()
-            nextResolvers[id] = resolver
-
-            resolver.resolve(
-                context = reactContext,
-                drawableIconResourceName = source.drawableIconResourceName,
-                imageIconUri = source.imageIconUri,
-            ) { result ->
-                val icon =
-                    when (result) {
-                        IconResolution.Unchanged -> toolbarMenuItemIcons[id]
-                        is IconResolution.Resolved -> {
-                            // An async resolve may outlive a menu change that
-                            // removed the item; never re-add a pruned id.
-                            if (id in toolbarMenuController.iconSourcesById) {
-                                toolbarMenuItemIcons = toolbarMenuItemIcons + (id to result.drawable)
-                            }
-                            result.drawable
-                        }
-                    }
-
-                // Applied in place by the controller; no menu rebuild and no
-                // invalidation, so nothing to flush.
-                toolbarMenuController.setItemIcon(id, icon)
-            }
-        }
-
-        toolbarMenuItemIconResolvers = nextResolvers
-        toolbarMenuItemIcons = toolbarMenuItemIcons.filterKeys { it in iconSources }
     }
 
     // StackHeaderToolbarMenuDelegate -> JS events

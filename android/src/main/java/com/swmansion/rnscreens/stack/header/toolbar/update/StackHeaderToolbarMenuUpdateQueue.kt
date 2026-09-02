@@ -102,7 +102,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                     onElementResolved(index, update.options)
                 } else {
                     iconResolver.resolve(iconSource) { icon ->
-                        onElementResolved(index, update.options.copy(icon = icon))
+                        onElementResolved(index, update.options.copy(icon = StackHeaderToolbarFieldUpdate.from(icon)))
                     }
                 }
             }

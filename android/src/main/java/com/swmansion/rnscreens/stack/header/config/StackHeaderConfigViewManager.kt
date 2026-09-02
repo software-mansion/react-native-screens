@@ -101,7 +101,6 @@ internal open class StackHeaderConfigViewManager :
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
         view.resolveOverflowIconIfNeeded()
-        view.resolveToolbarMenuItemIconsIfNeeded()
     }
 
     override fun onDropViewInstance(view: StackHeaderConfig) {
