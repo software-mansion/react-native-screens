@@ -16,6 +16,7 @@ import TestFormSheetOrientationChange from './test-form-sheet-orientation-change
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius';
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss';
+import TestFormSheetScrollView from './test-form-sheet-scroll-view';
 import TestFormSheetStacking from './test-form-sheet-stacking';
 
 // Scenario entry-point components — each scenario's default export re-exported
@@ -34,6 +35,7 @@ export { default as TestFormSheetOrientationChange } from './test-form-sheet-ori
 export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius';
 export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
 export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss';
+export { default as TestFormSheetScrollView } from './test-form-sheet-scroll-view';
 export { default as TestFormSheetStacking } from './test-form-sheet-stacking';
 
 const scenarios = {
@@ -51,6 +53,7 @@ const scenarios = {
   TestFormSheetPreferredCornerRadius,
   TestFormSheetPresentationState,
   TestFormSheetPreventNativeDismiss,
+  TestFormSheetScrollView,
   TestFormSheetStacking,
 };
 
