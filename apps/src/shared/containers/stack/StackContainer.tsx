@@ -23,7 +23,8 @@ import {
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
 import { useElementsByName } from '../shared/use-elements-by-name';
 
-export function StackContainer({ routeConfigs }: StackContainerProps) {
+export function StackContainer(props: StackContainerProps) {
+  const { routeConfigs, ...restProps } = props;
   useSanitizeRouteConfigs(routeConfigs);
 
   const elementsByName = useElementsByName(routeConfigs);
@@ -63,7 +64,7 @@ export function StackContainer({ routeConfigs }: StackContainerProps) {
   );
 
   return (
-    <Stack.Host ref={hostRef}>
+    <Stack.Host ref={hostRef} {...restProps}>
       {stackNavState.stack.map(
         ({
           options: { headerConfig, headerConfigRef, ...options } = {},
