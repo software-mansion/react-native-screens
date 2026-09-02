@@ -19,10 +19,6 @@ std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *b
 
 UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString);
 
-std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
-
-UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
-
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 API_AVAILABLE(ios(26.0))
