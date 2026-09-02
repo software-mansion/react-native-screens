@@ -4,14 +4,14 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-template <>
-RNSStackScreenActivityMode convert(react::RNSStackScreenActivityMode mode)
+RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
+    react::RNSStackScreenActivityMode mode)
 {
   return static_cast<RNSStackScreenActivityMode>(mode);
 }
 
-template <>
-RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement)
+RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
+    react::RNSStackHeaderItemIOSPlacement placement)
 {
   switch (placement) {
     case react::RNSStackHeaderItemIOSPlacement::Leading:
@@ -27,8 +27,8 @@ RNSHeaderItemPlacement convert(react::RNSStackHeaderItemIOSPlacement placement)
   }
 }
 
-template <>
-RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement placement)
+RNSHeaderItemSpacerPlacement RNSHeaderItemSpacerPlacementFromReactRNSStackHeaderItemSpacerIOSPlacement(
+    react::RNSStackHeaderItemSpacerIOSPlacement placement)
 {
   switch (placement) {
     case react::RNSStackHeaderItemSpacerIOSPlacement::Leading:
@@ -38,8 +38,9 @@ RNSHeaderItemSpacerPlacement convert(react::RNSStackHeaderItemSpacerIOSPlacement
   }
 }
 
-template <>
-UINavigationItemBackButtonDisplayMode convert(react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode)
+UINavigationItemBackButtonDisplayMode 
+UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+    react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode)
 {
   switch (displayMode) {
     case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Default:

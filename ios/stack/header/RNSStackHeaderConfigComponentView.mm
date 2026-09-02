@@ -1,5 +1,6 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions.h"
+#import "RNSConversions-Stack.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
@@ -440,7 +441,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   if (oldHeaderProps.backButtonDisplayMode != newHeaderProps.backButtonDisplayMode) {
     _backButtonDisplayMode =
-        rnscreens::conversion::convert<UINavigationItemBackButtonDisplayMode>(newHeaderProps.backButtonDisplayMode);
+        rnscreens::conversion::UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+            newHeaderProps.backButtonDisplayMode);
   }
 
   if (oldHeaderProps.backButtonMenuEnabled != newHeaderProps.backButtonMenuEnabled) {

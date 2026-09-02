@@ -3,7 +3,7 @@
 #import <React/RCTImageLoader.h>
 #import <React/RCTLog.h>
 #import "RCTConvert+RNSTabs.h"
-#import "RNSConversions.h"
+#import "RNSConversions-Tabs.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSTabBarController.h"
 #import "RNSTabsHostComponentView.h"

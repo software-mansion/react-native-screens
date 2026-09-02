@@ -2,7 +2,7 @@
 #import <React/RCTAssert.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <rnscreens/RNSSplitScreenComponentDescriptor.h>
-#import "RNSConversions.h"
+#import "RNSConversions-SplitView.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitScreenController.h"
 

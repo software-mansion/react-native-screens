@@ -1,9 +1,10 @@
-#import <React/RCTConversions.h>
+#import "RNSConversions-Tabs.h"
+#import <React/RCTLog.h>
 #import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
-#import "RNSConversions.h"
-#import "RNSDefines.h"
 
 namespace rnscreens::conversion {
+
+namespace react = facebook::react;
 
 UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurEffectStyle> &maybeStyle)
 {

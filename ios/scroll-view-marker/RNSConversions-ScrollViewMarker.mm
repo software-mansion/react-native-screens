@@ -1,8 +1,5 @@
 #import "RNSConversions-ScrollViewMarker.h"
-
 #import <React/RCTLog.h>
-
-namespace react = facebook::react;
 
 #define SWITCH_EDGE_EFFECT(X)                              \
   switch (edgeEffect) {                                    \
@@ -28,6 +25,8 @@ namespace react = facebook::react;
   }
 
 namespace rnscreens::conversion {
+
+namespace react = facebook::react;
 
 EDGE_EFFECT_CONV_FUNC_IMPL(Left);
 EDGE_EFFECT_CONV_FUNC_IMPL(Top);

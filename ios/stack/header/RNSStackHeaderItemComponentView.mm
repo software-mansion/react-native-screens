@@ -193,7 +193,8 @@ RNS_IGNORE_SUPER_CALL_END
     if (_didSetHeaderItemPlacement) {
       RCTLogWarn(@"[RNScreens] Changing header item placement at runtime is not supported");
     } else {
-      _placement = rnscreens::conversion::convert<RNSHeaderItemPlacement>(newItemProps.placement);
+      _placement =
+          rnscreens::conversion::RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(newItemProps.placement);
     }
   }
   _didSetHeaderItemPlacement = YES;
