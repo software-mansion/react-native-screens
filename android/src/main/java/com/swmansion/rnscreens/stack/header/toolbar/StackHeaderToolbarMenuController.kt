@@ -194,7 +194,7 @@ internal class StackHeaderToolbarMenuController(
                     }.resolve(source.drawableIconResourceName, source.imageIconUri) { result ->
                         when (result) {
                             IconResolution.Unchanged -> Unit
-                            is IconResolution.Resolved -> setItemIcon(id, result.drawable)
+                            is IconResolution.Resolved -> setItemIcon(id, source, result.drawable)
                         }
                     }
             } catch (e: Exception) {
@@ -210,9 +210,13 @@ internal class StackHeaderToolbarMenuController(
      */
     private fun setItemIcon(
         id: String,
+        source: StackHeaderToolbarMenuItemIconSource,
         icon: Drawable?,
     ) {
-        if (id !in model.elementById) {
+        // Pruning a resolver in [setMenu] does not cancel its in-flight load,
+        // and the orphan's latest-wins guard still matches the source it was
+        // asked for, so a result must be matched against the current model.
+        if (model.elementById[id]?.item?.iconSource != source) {
             return
         }
         val previous = if (icon != null) propIcons.put(id, icon) else propIcons.remove(id)
