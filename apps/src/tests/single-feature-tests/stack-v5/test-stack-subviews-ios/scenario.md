@@ -22,6 +22,7 @@ stay manual.
 ## Note
 
 - "Position of items on device matches element tree" means that the DevTools overlay the item highlight with correct position and size. Alternatively, this could be checked by pressing and moving the cursor over the button to see if the whole visible area works, not triggering onPressOut immediately
+- `hidesSharedBackground` is available in iOS 26 and above
 
 ### Known Issues/Important Observations
 
@@ -93,6 +94,14 @@ stay manual.
   - [ ] Prompt text shows above the title and the navigation bar grows in height.
   
   - [ ] Position of items on device matches element tree.
+  
+## hidesSharedBackground (iOS 26)
+  
+1. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
+
+2. Enable `hidesSharedBackground`. Repeat steps 4 - 10 on iPhone.
+
+  - [ ] No change in the behavior
 
 ## Steps on iPad
 

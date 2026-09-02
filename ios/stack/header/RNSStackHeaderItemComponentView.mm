@@ -52,6 +52,7 @@ namespace react = facebook::react;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
+  _hidesSharedBackground = NO;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -217,6 +218,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.respondsToOnPress != newItemProps.respondsToOnPress) {
     _respondsToOnPress = newItemProps.respondsToOnPress;
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.hidesSharedBackground != newItemProps.hidesSharedBackground) {
+    _hidesSharedBackground = newItemProps.hidesSharedBackground;
     needsUpdate = YES;
   }
 
