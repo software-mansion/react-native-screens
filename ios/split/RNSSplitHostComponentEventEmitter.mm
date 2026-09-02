@@ -1,7 +1,7 @@
 #import "RNSSplitHostComponentEventEmitter.h"
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
-#import "RNSConversions.h"
+#import "RNSConversions-SplitView.h"
 
 @implementation RNSSplitHostComponentEventEmitter {
   std::shared_ptr<const react::RNSSplitHostEventEmitter> _reactEventEmitter;

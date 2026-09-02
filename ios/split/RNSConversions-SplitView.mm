@@ -1,6 +1,9 @@
-#import "RNSConversions.h"
+#import "RNSConversions-SplitView.h"
+#import <React/RCTLog.h>
 
 namespace rnscreens::conversion {
+
+namespace react = facebook::react;
 
 #pragma mark SplitHost props
 
