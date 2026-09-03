@@ -57,9 +57,12 @@ internal interface StackHeaderConfigurationProviding {
 
     val isRTL: Boolean
 
-    val invalidationFlags: StackHeaderInvalidationFlags
-
-    fun clearInvalidationFlags(flags: StackHeaderInvalidationFlags)
+    /**
+     * `true` while more updates may still arrive in the current batch (for a
+     * React-owned config: inside a mount transaction). Observers should hold
+     * their flush until the batch ends ([StackHeaderConfigurationObserver.onFlushRequested]).
+     */
+    val isUpdatePending: Boolean
 
     fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?)
 }
