@@ -36,7 +36,7 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.5). The "Drag Here" header and the beginning of the list ("List Item 1", "List Item 2", …) are visible. The host reads "Detent: 0".
+- [ ] The sheet presents at the lower detent (0.5). The "Drag Here" header and the beginning of the list ("List Item 1", "List Item 2", …) are visible.
 
 3. Slowly swipe up on the list with a long gesture (from the bottom of the screen to the top).
 
@@ -52,7 +52,7 @@ TBD: Planned, but will be implemented separately.
 
 6. Scroll the list to its very top, then swipe down on the list.
 
-- [ ] The sheet collapses to the lower detent (0.5) – on Android within the same gesture as soon as the list reaches its top edge. The list stays at its top and the host reads "Detent: 0".
+- [ ] The sheet collapses to the lower detent (0.5) – on Android within the same gesture as soon as the list reaches its top edge. The list stays at its top.
 
 7. Swipe down on the list again (list at its top, sheet at 0.5).
 
