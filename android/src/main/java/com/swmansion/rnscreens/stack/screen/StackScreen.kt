@@ -16,6 +16,7 @@ import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.host.StackHost
+import com.swmansion.rnscreens.stack.host.invalidateAncestorStackContainersSystemBackVetoState
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -35,7 +36,9 @@ class StackScreen(
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
+            // The owning stack container (and the ones above it) may answer differently now.
+            // Before this view is attached the walk finds nothing - the container recomputes on push.
+            invalidateAncestorStackContainersSystemBackVetoState(this)
         }
     }
 
@@ -137,11 +140,6 @@ class StackScreen(
     // endregion
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
-
-    /**
-     * Use this to set/unset the observer.
-     */
-    internal var preventNativeDismissChangeObserver: PreventNativeDismissChangeObserver? = null
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set

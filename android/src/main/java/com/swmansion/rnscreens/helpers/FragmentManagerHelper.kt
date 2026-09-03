@@ -1,17 +1,34 @@
 package com.swmansion.rnscreens.helpers
 
+import android.annotation.SuppressLint
 import android.content.ContextWrapper
 import android.view.ViewGroup
 import android.view.ViewParent
+import androidx.activity.OnBackPressedDispatcher
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.ReactRootView
 import com.swmansion.rnscreens.common.FragmentProviding
 
+/**
+ * A FragmentManager together with the LifecycleOwner it registers its own back callback with
+ * (the parent fragment for a child FragmentManager, the host for the root one) and the activity
+ * dispatcher that callback lives on. Anything that wants to be ordered right after that callback
+ * in the dispatcher must register with the very same owner.
+ */
+internal class FragmentManagerWithOwner(
+    val fragmentManager: FragmentManager,
+    val lifecycleOwner: LifecycleOwner,
+    val onBackPressedDispatcher: OnBackPressedDispatcher,
+)
+
 object FragmentManagerHelper {
-    fun findFragmentManagerForView(view: ViewGroup): FragmentManager? {
+    fun findFragmentManagerForView(view: ViewGroup): FragmentManager = findFragmentManagerWithOwnerForView(view).fragmentManager
+
+    internal fun findFragmentManagerWithOwnerForView(view: ViewGroup): FragmentManagerWithOwner {
         var parent: ViewParent = view
 
         // We traverse view hierarchy up until we find fragment providing parent or a root view
@@ -24,9 +41,11 @@ object FragmentManagerHelper {
         // If parent adheres to FragmentProviding interface it means we are inside a nested fragment structure.
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is FragmentProviding) {
-            return checkNotNull(parent.getAssociatedFragment()) {
-                "[RNScreens] Parent fragment providing view $parent returned nullish fragment"
-            }.childFragmentManager
+            val fragment =
+                checkNotNull(parent.getAssociatedFragment()) {
+                    "[RNScreens] Parent fragment providing view $parent returned nullish fragment"
+                }
+            return withOwnerForFragment(fragment)
         } else {
             // we expect top level view to be of type ReactRootView, this isn't really necessary but in
             // order to find root view we test if parent is null. This could potentially happen also when
@@ -36,11 +55,11 @@ object FragmentManagerHelper {
             check(
                 parent is ReactRootView,
             ) { "[RNScreens] Expected parent to be a ReactRootView, instead found: ${parent::class.java.name}" }
-            return resolveFragmentManagerForReactRootView(parent)
+            return resolveForReactRootView(parent)
         }
     }
 
-    private fun resolveFragmentManagerForReactRootView(rootView: ReactRootView): FragmentManager? {
+    private fun resolveForReactRootView(rootView: ReactRootView): FragmentManagerWithOwner {
         var context = rootView.context
 
         // ReactRootView is expected to be initialized with the main React Activity as a context but
@@ -60,7 +79,7 @@ object FragmentManagerHelper {
         // must be treated separately.
         return if (context.supportFragmentManager.fragments.isEmpty()) {
             // We are in standard React Native application w/o custom native navigation based on fragments.
-            context.supportFragmentManager
+            withOwnerForRootFragmentManager(context)
         } else {
             // We are in some custom setup & we want to use the closest fragment manager in hierarchy.
             // `findFragment` method throws IllegalStateException when it fails to resolve appropriate
@@ -68,11 +87,33 @@ object FragmentManagerHelper {
             // but some custom fragments are still used. Such use case seems highly unlikely
             // so, as for now we fallback to activity's FragmentManager in hope for the best.
             try {
-                FragmentManager.findFragment<Fragment>(rootView).childFragmentManager
+                withOwnerForFragment(FragmentManager.findFragment<Fragment>(rootView))
             } catch (ex: IllegalStateException) {
-                context.supportFragmentManager
+                withOwnerForRootFragmentManager(context)
             }
         }
+    }
+
+    // A child FragmentManager registers its back callback with its parent fragment as the owner.
+    private fun withOwnerForFragment(fragment: Fragment): FragmentManagerWithOwner =
+        FragmentManagerWithOwner(
+            fragment.childFragmentManager,
+            fragment,
+            fragment.requireActivity().onBackPressedDispatcher,
+        )
+
+    // The root FragmentManager registers its back callback with its host (FragmentActivity.HostCallbacks),
+    // whose lifecycle is started right BEFORE the fragments are. The activity's own lifecycle is started
+    // AFTER every fragment, so an activity-owned callback would always land behind every nested
+    // FragmentManager's callback in the dispatcher - never use the activity as the owner here.
+    @SuppressLint("RestrictedApi") // FragmentManager.getHost() is @RestrictTo(LIBRARY); there is no public accessor for this owner.
+    private fun withOwnerForRootFragmentManager(activity: FragmentActivity): FragmentManagerWithOwner {
+        val fragmentManager = activity.supportFragmentManager
+        val owner =
+            checkNotNull(fragmentManager.host as? LifecycleOwner) {
+                "[RNScreens] Root FragmentManager host is not a LifecycleOwner"
+            }
+        return FragmentManagerWithOwner(fragmentManager, owner, activity.onBackPressedDispatcher)
     }
 }
 
