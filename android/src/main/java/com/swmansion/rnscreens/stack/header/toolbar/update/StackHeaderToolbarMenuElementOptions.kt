@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.stack.header.toolbar.update
 
 import android.graphics.drawable.Drawable
-import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemConfig
+import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemShowAsAction
 
 /**
@@ -58,22 +58,27 @@ internal data class StackHeaderToolbarMenuElementOptions(
 }
 
 /**
- * The item's declared configuration as absolute options — every field is
+ * The element's declared configuration as absolute options — every field is
  * Set/Reset, never "leave unchanged". The icon slot is always Reset: parsed
  * configs carry no Drawables; resolved icons overlay this at application time.
+ * [StackHeaderToolbarMenuElementOptions.menuTitle] stays "unchanged" for a
+ * plain item, which has no submenu header to write.
  */
-internal fun StackHeaderToolbarMenuItemConfig.toOptions() =
+internal fun StackHeaderToolbarMenuElementConfig.toOptions() =
     StackHeaderToolbarMenuElementOptions(
-        title = StackHeaderToolbarFieldUpdate.from(title),
-        titleCondensed = StackHeaderToolbarFieldUpdate.from(titleCondensed),
-        tooltipText = StackHeaderToolbarFieldUpdate.from(tooltipText),
-        accessibilityLabel = StackHeaderToolbarFieldUpdate.from(accessibilityLabel),
-        hidden = hidden,
-        disabled = disabled,
-        showAsAction = showAsAction,
+        title = StackHeaderToolbarFieldUpdate.from(item.title),
+        titleCondensed = StackHeaderToolbarFieldUpdate.from(item.titleCondensed),
+        tooltipText = StackHeaderToolbarFieldUpdate.from(item.tooltipText),
+        accessibilityLabel = StackHeaderToolbarFieldUpdate.from(item.accessibilityLabel),
+        hidden = item.hidden,
+        disabled = item.disabled,
+        showAsAction = item.showAsAction,
         icon = StackHeaderToolbarFieldUpdate.Reset,
-        iconTintColorNormal = StackHeaderToolbarFieldUpdate.from(iconTintColorNormal),
-        iconTintColorPressed = StackHeaderToolbarFieldUpdate.from(iconTintColorPressed),
-        iconTintColorFocused = StackHeaderToolbarFieldUpdate.from(iconTintColorFocused),
-        iconTintColorDisabled = StackHeaderToolbarFieldUpdate.from(iconTintColorDisabled),
+        iconTintColorNormal = StackHeaderToolbarFieldUpdate.from(item.iconTintColorNormal),
+        iconTintColorPressed = StackHeaderToolbarFieldUpdate.from(item.iconTintColorPressed),
+        iconTintColorFocused = StackHeaderToolbarFieldUpdate.from(item.iconTintColorFocused),
+        iconTintColorDisabled = StackHeaderToolbarFieldUpdate.from(item.iconTintColorDisabled),
+        menuTitle =
+            (this as? StackHeaderToolbarMenuElementConfig.Submenu)
+                ?.let { StackHeaderToolbarFieldUpdate.from(it.menuTitle) },
     )

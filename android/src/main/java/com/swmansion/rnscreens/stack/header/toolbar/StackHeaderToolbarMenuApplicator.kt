@@ -68,9 +68,6 @@ internal object StackHeaderToolbarMenuApplicator {
                 }
                 is StackHeaderToolbarMenuElementConfig.Submenu -> {
                     val subMenu = menu.addSubMenu(groupIntId, itemId, index, null)
-                    // Config header first, so an imperative menuTitle in the
-                    // element's options can override it.
-                    element.menuTitle?.let { subMenu.setHeaderTitle(it) }
                     applyMenuElementOptions(toolbar, subMenu.item, optionsForItem(element.item.id))
                     addElements(toolbar, subMenu, element.menu, forwardIdMap, forwardGroupIdMap, optionsForItem)
                 }

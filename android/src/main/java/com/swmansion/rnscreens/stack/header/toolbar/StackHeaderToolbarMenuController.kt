@@ -374,11 +374,7 @@ internal class StackHeaderToolbarMenuController(
     // region Effective values
 
     private fun effectiveOptions(id: String): StackHeaderToolbarMenuElementOptions {
-        val base =
-            model.elementById
-                .getValue(id)
-                .item
-                .toOptions()
+        val base = model.elementById.getValue(id).toOptions()
         val withPropIcon =
             propIcons[id]?.let { base.copy(icon = StackHeaderToolbarFieldUpdate.Set(it)) } ?: base
         return commandOverrides[id]?.let(withPropIcon::mergedWith) ?: withPropIcon
@@ -390,9 +386,10 @@ internal class StackHeaderToolbarMenuController(
      * complete ColorStateList, so touching any tint slot (or the icon, whose
      * application re-tints) requires all four; `showAsAction` must accompany a
      * new icon, because action-item classification runs when it is set and
-     * setting an icon alone does not re-run it; and a submenu header set to
-     * follow the title (`menuTitle: Reset`) must be re-resolved when the title
-     * changes.
+     * setting an icon alone does not re-run it; and a submenu header must be
+     * re-asserted on every title change, because `MenuItem.setTitle`
+     * propagates into it and would leave it following the title until the
+     * next rebuild projected the effective `menuTitle` back.
      */
     private fun widenWithCoupledFields(
         id: String,
@@ -414,10 +411,9 @@ internal class StackHeaderToolbarMenuController(
         }
         if (delta.title != null &&
             delta.menuTitle == null &&
-            model.elementById[id] is StackHeaderToolbarMenuElementConfig.Submenu &&
-            commandOverrides[id]?.menuTitle == StackHeaderToolbarFieldUpdate.Reset
+            model.elementById[id] is StackHeaderToolbarMenuElementConfig.Submenu
         ) {
-            resolved = resolved.copy(menuTitle = StackHeaderToolbarFieldUpdate.Reset)
+            resolved = resolved.copy(menuTitle = effectiveOptions(id).menuTitle)
         }
         return resolved
     }

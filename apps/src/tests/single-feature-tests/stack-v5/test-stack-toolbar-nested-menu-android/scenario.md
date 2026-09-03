@@ -44,6 +44,10 @@ it renders.
   no `menuTitle`, so their submenu headers fall back to `title`.
   When both `menuTitle` and `title` are undefined, no submenu
   header is shown.
+- `menuTitle` is independent of `title`: changing `title`, through
+  props or a view command, never replaces a `menuTitle` that is
+  set. It only moves the header where the header is following
+  `title` because no `menuTitle` is in effect.
 
 ## Steps
 
@@ -138,7 +142,9 @@ it renders.
 
 - [ ] In the overflow menu, the submenu previously labeled
       "Submenu A" now reads "Title X". Its children are unchanged
-      ("Title X" from step 10 and "Sub A.2").
+      ("Title X" from step 10 and "Sub A.2"), and its submenu
+      header still reads "Header A" — the `menuTitle` prop is
+      untouched by a `title` change.
 
 15. Set target id = `submenu-1`, title = `no change`,
     hidden = `true`. Tap **Send Command**.
@@ -150,7 +156,7 @@ it renders.
     hidden = `false`. Tap **Send Command**.
 
 - [ ] The submenu reappears with the title "Title X" (preserved
-      from step 14).
+      from step 14) and the submenu header "Header A".
 
 ---
 
@@ -161,7 +167,8 @@ it renders.
     Tap **Send Command**.
 
 - [ ] Open the submenu (still labeled "Title X" from step 14):
-      the submenu header now reads "Header X".
+      the submenu header now reads "Header X" instead of
+      "Header A".
 
 18. Set target id = `submenu-1`, menuTitle = `undefined`,
     title = `no change`, hidden = `no change`.

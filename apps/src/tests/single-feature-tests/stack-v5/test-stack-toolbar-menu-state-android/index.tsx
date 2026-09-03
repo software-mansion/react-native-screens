@@ -37,32 +37,33 @@ const ALL_IDS = [
   'sortAsc',
   'sortDesc',
   'plain',
+  'submenu',
+  'nested',
 ] as const;
 type AllIds = (typeof ALL_IDS)[number];
 
+// Annotated rather than `as const`: the union comes from the library, so the
+// annotation is what checks these are real values, not a duplicate of it.
 const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'medium', 'large'];
 const HOST_COLOR_SCHEMES: StackHostColorScheme[] = ['inherit', 'light', 'dark'];
-const MAX_LINES: MaxLinesOption[] = ['1', '2'];
 
-type MaxLinesOption = '1' | '2';
-type CmdCheckedOption = 'no change' | 'true' | 'false';
-type CmdTitleOption = 'no change' | 'Changed' | 'undefined';
-type CmdHiddenOption = 'no change' | 'true' | 'false' | 'undefined';
-type CmdIconOption = 'no change' | 'search' | 'undefined';
+const MAX_LINES = ['1', '2'] as const;
+type MaxLinesOption = (typeof MAX_LINES)[number];
 
-const CMD_CHECKED_OPTIONS: CmdCheckedOption[] = ['no change', 'true', 'false'];
-const CMD_TITLE_OPTIONS: CmdTitleOption[] = [
-  'no change',
-  'Changed',
-  'undefined',
-];
-const CMD_HIDDEN_OPTIONS: CmdHiddenOption[] = [
-  'no change',
-  'true',
-  'false',
-  'undefined',
-];
-const CMD_ICON_OPTIONS: CmdIconOption[] = ['no change', 'search', 'undefined'];
+const CMD_CHECKED_OPTIONS = ['no change', 'true', 'false'] as const;
+type CmdCheckedOption = (typeof CMD_CHECKED_OPTIONS)[number];
+
+const CMD_TITLE_OPTIONS = ['no change', 'Changed', 'undefined'] as const;
+type CmdTitleOption = (typeof CMD_TITLE_OPTIONS)[number];
+
+const CMD_HIDDEN_OPTIONS = ['no change', 'true', 'false', 'undefined'] as const;
+type CmdHiddenOption = (typeof CMD_HIDDEN_OPTIONS)[number];
+
+const CMD_ICON_OPTIONS = ['no change', 'search', 'undefined'] as const;
+type CmdIconOption = (typeof CMD_ICON_OPTIONS)[number];
+
+const CMD_MENU_TITLE_OPTIONS = ['no change', 'Header X', 'undefined'] as const;
+type CmdMenuTitleOption = (typeof CMD_MENU_TITLE_OPTIONS)[number];
 
 // Deliberately different from the `action` item's prop icon, so which of the
 // two is on screen is unambiguous.
@@ -139,6 +140,20 @@ function buildMenu(
         title: `Plain v${menuVersion}`,
         onPress: () => onItemPress('plain'),
       },
+      {
+        type: 'menu',
+        id: 'submenu',
+        title: 'More',
+        menuTitle: 'More options',
+        children: [
+          {
+            type: 'menuItem',
+            id: 'nested',
+            title: 'Nested',
+            onPress: () => onItemPress('nested'),
+          },
+        ],
+      },
     ],
   };
 }
@@ -196,6 +211,8 @@ function MainScreen() {
   const [cmdTitle, setCmdTitle] = useState<CmdTitleOption>('no change');
   const [cmdHidden, setCmdHidden] = useState<CmdHiddenOption>('no change');
   const [cmdIcon, setCmdIcon] = useState<CmdIconOption>('no change');
+  const [cmdMenuTitle, setCmdMenuTitle] =
+    useState<CmdMenuTitleOption>('no change');
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
   const { setRouteOptions, routeKey } = useStackNavigationContext();
@@ -255,12 +272,15 @@ function MainScreen() {
       ...(cmdIcon !== 'no change' && {
         icon: cmdIcon === 'undefined' ? undefined : COMMAND_ICON,
       }),
+      ...(cmdMenuTitle !== 'no change' && {
+        menuTitle: cmdMenuTitle === 'undefined' ? undefined : cmdMenuTitle,
+      }),
     };
     headerConfigRef.current?.android?.updateToolbarMenuElements({
       id: cmdTargetId,
       options,
     });
-  }, [cmdTargetId, cmdChecked, cmdTitle, cmdHidden, cmdIcon]);
+  }, [cmdTargetId, cmdChecked, cmdTitle, cmdHidden, cmdIcon, cmdMenuTitle]);
 
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
@@ -288,7 +308,7 @@ function MainScreen() {
         <SettingsPicker<MaxLinesOption>
           label="maxLines"
           value={maxLines}
-          items={MAX_LINES}
+          items={[...MAX_LINES]}
           onValueChange={setMaxLines}
           testID="max-lines-picker"
         />
@@ -331,30 +351,37 @@ function MainScreen() {
         <SettingsPicker<CmdCheckedOption>
           label="checked"
           value={cmdChecked}
-          items={CMD_CHECKED_OPTIONS}
+          items={[...CMD_CHECKED_OPTIONS]}
           onValueChange={setCmdChecked}
           testID="cmd-checked-picker"
         />
         <SettingsPicker<CmdTitleOption>
           label="title"
           value={cmdTitle}
-          items={CMD_TITLE_OPTIONS}
+          items={[...CMD_TITLE_OPTIONS]}
           onValueChange={setCmdTitle}
           testID="cmd-title-picker"
         />
         <SettingsPicker<CmdHiddenOption>
           label="hidden"
           value={cmdHidden}
-          items={CMD_HIDDEN_OPTIONS}
+          items={[...CMD_HIDDEN_OPTIONS]}
           onValueChange={setCmdHidden}
           testID="cmd-hidden-picker"
         />
         <SettingsPicker<CmdIconOption>
           label="icon"
           value={cmdIcon}
-          items={CMD_ICON_OPTIONS}
+          items={[...CMD_ICON_OPTIONS]}
           onValueChange={setCmdIcon}
           testID="cmd-icon-picker"
+        />
+        <SettingsPicker<CmdMenuTitleOption>
+          label="menuTitle"
+          value={cmdMenuTitle}
+          items={[...CMD_MENU_TITLE_OPTIONS]}
+          onValueChange={setCmdMenuTitle}
+          testID="cmd-menutitle-picker"
         />
         <Button
           title="Send Command"
