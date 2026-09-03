@@ -95,11 +95,11 @@ TBD: Planned, but will be implemented separately.
 
 3. Tap "Top input".
 
-- [ ] The keyboard slides in and the sheet moves up by the keyboard height, following the keyboard animation – no jump before or after it. "Top input" is focused and visible. On Android, the "Bottom input" and "Dismiss from JS" are moved to the visible area.
+- [ ] The keyboard slides in and the sheet moves up by the keyboard height, following the keyboard animation – no jump before or after it. "Top input" is focused and visible. "Bottom input" and "Dismiss from JS" are moved to the visible area.
 
 4. Press the system back button (or use the back gesture).
 
-- [ ] The keyboard hides and the sheet moves back down together with it, settling at the lower detent (0.6). The sheet stays presented. On Android, the "Bottom input" and "Dismiss from JS" are moved outside the visible area.
+- [ ] The keyboard hides and the sheet moves back down together with it, settling at the lower detent (0.6). The sheet stays presented. "Bottom input" and "Dismiss from JS" are moved outside the visible area.
 
 ---
 
