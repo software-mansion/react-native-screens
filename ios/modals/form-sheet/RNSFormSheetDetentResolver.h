@@ -23,10 +23,6 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 + (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsWithBehaviorProvider:
     (id<RNSFormSheetBehaviorProvider>)provider;
 
-#endif // !TARGET_OS_TV
-
-#if !TARGET_OS_TV
-
 + (nullable UISheetPresentationControllerDetentIdentifier)initialDetentIdentifierForDetents:
                                                               (NSArray<UISheetPresentationControllerDetent *> *)detents
                                                                            atRequestedIndex:(NSInteger)requestedIndex;
@@ -34,10 +30,6 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 + (nullable UISheetPresentationControllerDetentIdentifier)
     largestUndimmedDetentIdentifierForDetents:(NSArray<UISheetPresentationControllerDetent *> *)detents
                              atRequestedIndex:(NSInteger)requestedIndex;
-
-#endif // !TARGET_OS_TV
-
-#if !TARGET_OS_TV
 
 + (NSInteger)detentIndexFromDetentIdentifier:(nullable UISheetPresentationControllerDetentIdentifier)identifier
                                forRawDetents:(const std::vector<double> &)detents;
