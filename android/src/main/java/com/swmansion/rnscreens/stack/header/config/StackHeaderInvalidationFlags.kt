@@ -18,18 +18,14 @@ internal value class StackHeaderInvalidationFlags(
         val TITLE_APPEARANCE = StackHeaderInvalidationFlags(1 shl 9)
         val CONTENT_INSETS = StackHeaderInvalidationFlags(1 shl 10)
         val BACKGROUND_COLORS = StackHeaderInvalidationFlags(1 shl 11)
-        val APPEARANCE =
-            TITLE or BACK_BUTTON or OVERFLOW_ICON or TITLE_POSITIONING or TITLE_APPEARANCE or CONTENT_INSETS or BACKGROUND_COLORS
-        val ALL = STRUCTURE or SUBVIEWS or APPEARANCE or SCROLL_FLAGS or TOOLBAR_MENU or LIFT_ON_SCROLL
+        val ALL =
+            STRUCTURE or SUBVIEWS or TITLE or BACK_BUTTON or SCROLL_FLAGS or TOOLBAR_MENU or LIFT_ON_SCROLL or
+                OVERFLOW_ICON or TITLE_POSITIONING or TITLE_APPEARANCE or CONTENT_INSETS or BACKGROUND_COLORS
     }
 
     infix fun or(other: StackHeaderInvalidationFlags) = StackHeaderInvalidationFlags(raw or other.raw)
 
     fun containsAny(flags: StackHeaderInvalidationFlags) = flags.raw != 0 && (raw and flags.raw) != 0
-
-    fun clearing(flags: StackHeaderInvalidationFlags) = StackHeaderInvalidationFlags(raw and flags.raw.inv())
-
-    val isNotEmpty get() = raw != 0
 
     val isEmpty get() = raw == 0
 

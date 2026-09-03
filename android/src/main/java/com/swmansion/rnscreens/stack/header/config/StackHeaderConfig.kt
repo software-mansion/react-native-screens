@@ -51,22 +51,8 @@ internal class StackHeaderConfig(
         configObserver = observer
     }
 
-    override var invalidationFlags = StackHeaderInvalidationFlags.ALL
-
-    override fun clearInvalidationFlags(flags: StackHeaderInvalidationFlags) {
-        invalidationFlags = invalidationFlags.clearing(flags)
-    }
-
     private fun invalidate(flags: StackHeaderInvalidationFlags) {
-        invalidationFlags = invalidationFlags or flags
-    }
-
-    private fun flushUpdates() {
-        if (configObserver == null || invalidationFlags.isEmpty) {
-            return
-        }
-
-        configObserver?.onConfigChanged(this)
+        configObserver?.onInvalidated(flags)
     }
 
     // endregion
@@ -203,9 +189,6 @@ internal class StackHeaderConfig(
      */
     internal fun onContentScrollViewChanged() {
         invalidate(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
-        if (!isInsideMountTransaction) {
-            flushUpdates()
-        }
     }
 
     // endregion
@@ -226,12 +209,7 @@ internal class StackHeaderConfig(
         ) { result ->
             when (result) {
                 IconResolution.Unchanged -> Unit
-                is IconResolution.Resolved -> {
-                    backButtonIcon = result.drawable
-                    if (!isInsideMountTransaction) {
-                        flushUpdates()
-                    }
-                }
+                is IconResolution.Resolved -> backButtonIcon = result.drawable
             }
         }
     }
@@ -253,12 +231,7 @@ internal class StackHeaderConfig(
         ) { result ->
             when (result) {
                 IconResolution.Unchanged -> Unit
-                is IconResolution.Resolved -> {
-                    overflowIcon = result.drawable
-                    if (!isInsideMountTransaction) {
-                        flushUpdates()
-                    }
-                }
+                is IconResolution.Resolved -> overflowIcon = result.drawable
             }
         }
     }
@@ -411,13 +384,16 @@ internal class StackHeaderConfig(
 
     private var isInsideMountTransaction = false
 
+    override val isUpdatePending: Boolean
+        get() = isInsideMountTransaction
+
     override fun willMountItems(uiManager: UIManager) {
         isInsideMountTransaction = true
     }
 
     override fun didMountItems(uiManager: UIManager) {
         isInsideMountTransaction = false
-        flushUpdates()
+        configObserver?.onFlushRequested()
     }
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
@@ -435,7 +411,6 @@ internal class StackHeaderConfig(
             .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
         toolbarMenuController.tearDown()
-        invalidationFlags = StackHeaderInvalidationFlags.NONE
         configObserver = null
     }
 
