@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #if defined(__cplusplus)
 #import <react/renderer/core/State.h>

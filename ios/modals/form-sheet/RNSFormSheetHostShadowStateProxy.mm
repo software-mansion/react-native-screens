@@ -1,8 +1,8 @@
 #import "RNSFormSheetHostShadowStateProxy.h"
 
 #import <React/RCTConversions.h>
-#import <rnscreens/RNSFormSheetHostShadowNode.h>
-#import <rnscreens/RNSFormSheetHostState.h>
+#import <react/renderer/components/rnscreens/RNSFormSheetHostShadowNode.h>
+#import <react/renderer/components/rnscreens/RNSFormSheetHostState.h>
 
 namespace react = facebook::react;
 

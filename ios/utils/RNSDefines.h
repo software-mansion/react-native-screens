@@ -1,5 +1,8 @@
 #pragma once
 
+#import <Availability.h>
+#import <TargetConditionals.h>
+
 #pragma mark - Compiler utility
 
 #define RNS_IGNORE_SUPER_CALL_BEGIN \

@@ -9,8 +9,8 @@
 
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import <rnscreens/RNSSafeAreaViewComponentDescriptor.h>
-#import <rnscreens/RNSSafeAreaViewState.h>
+#import <react/renderer/components/rnscreens/RNSSafeAreaViewComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSSafeAreaViewState.h>
 
 namespace react = facebook::react;
 

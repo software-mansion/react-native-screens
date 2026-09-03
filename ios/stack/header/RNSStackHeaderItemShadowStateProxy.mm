@@ -2,7 +2,7 @@
 #import "RNSStackHeaderItemComponentView.h"
 
 #import <React/RCTConversions.h>
-#import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 namespace react = facebook::react;
 
