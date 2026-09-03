@@ -94,6 +94,7 @@ function SmallHorizontalItem() {
 interface Config {
   enabled: boolean;
   hidden: boolean;
+  promptEnabled: boolean;
   largeTitleEnabled: boolean;
   largeTitle: LargeTitleOption;
   largeSubtitle: LargeSubtitleOption;
@@ -123,6 +124,7 @@ function resolveTitle(
 const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
+  promptEnabled: false,
   largeTitleEnabled: false,
   largeTitle: 'none',
   largeSubtitle: 'none',
@@ -206,6 +208,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     subtitle: resolveTitle(config.subtitle),
     hidden: config.hidden,
     ios: {
+      prompt: config.promptEnabled ? 'Header prompt' : undefined,
       largeTitleEnabled: config.largeTitleEnabled,
       largeTitle: resolveTitle(config.largeTitle),
       largeSubtitle: resolveTitle(config.largeSubtitle),
@@ -279,6 +282,11 @@ function ConfigScreen() {
         label="hidden"
         value={config.hidden}
         onValueChange={v => updateConfig('hidden', v)}
+      />
+      <SettingsSwitch
+        label="prompt"
+        value={config.promptEnabled}
+        onValueChange={v => updateConfig('promptEnabled', v)}
       />
       <SettingsSwitch
         label="large header enabled"
