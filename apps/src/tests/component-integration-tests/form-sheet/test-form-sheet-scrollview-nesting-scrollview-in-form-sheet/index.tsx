@@ -24,6 +24,7 @@ function TestFormSheetScrollView() {
 
   const handleClose = () => {
     setIsOpen(false);
+    setDetentIndex(null);
   };
 
   return (
