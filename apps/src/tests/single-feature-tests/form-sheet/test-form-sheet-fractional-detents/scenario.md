@@ -21,7 +21,7 @@ TBD: Planned, but will be implemented separately.
 ## Note
 
 - **Android guides:** the host screen draws a thin horizontal line for every detent of the selected preset, at the detent's fraction of the host height measured from the bottom edge of the screen. A resting sheet must align its top edge – the top edge of the red header strip – with the guide of its current detent. This holds for every detent, including the lowest one. Because the sheet is translucent, the guides of the lower detents stay visible through the sheet body.
-- **Android, `1.0` detent:** the sheet itself starts at the very top of the screen, but the content box is padded below the status bar, so the red header strip sits just under the status bar. There is no guide for `1.0` (it would be the top edge of the screen).
+- **Android, `1.0` detent:** the sheet itself starts at the very top of the screen, but the top edge of the red header strip starts immediately below the bottom edge of the status bar; it does not overlap or extend behind the status bar. There is no guide for `1.0` (it would be the top edge of the screen).
 - **iOS:** Fractions are resolved against the sheet's maximum height (the screen below the status bar), so relative checks apply: the visible height must grow with the detent value, `1.0` reaches the top just below the status bar, and every detent must be distinct and reachable. The content box follows the current detent, so the red footer strip is visible at the bottom of the sheet at every detent.
 - The sheet always opens at the lowest detent of the selected preset. There is no dismiss button inside the sheet: dismiss it by swiping it down past the lowest detent or by tapping the dimmed area above it.
 
