@@ -18,6 +18,7 @@ Partial: Covers all manual scenario steps except the **Menu representation** sec
 
 - For now, menus don't appear on items with custom views
 - Menu representation section requires iOS >= 16
+- On iOS 18, items don't go into overflow by default, UIKit attempts to pack them all into header, test `menuRepresentation` on iOS 26+
 
 ## Steps on iPhone
 
@@ -53,7 +54,7 @@ Partial: Covers all manual scenario steps except the **Menu representation** sec
   - [ ] The title should transform into a menu with two actions
   - [ ] Clicking either actions should display a toast
 
-### Menu representation
+### Menu representation (iOS 26+)
 
 1. Relaunch the app and navigate to the **Stack Header Menu (iOS)** screen.
 2. Toggle `menuRepresentation`
