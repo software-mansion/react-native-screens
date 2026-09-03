@@ -1,7 +1,9 @@
 import React from 'react';
 import { enableFreeze } from 'react-native-screens';
 
-import Example from './Example';
+// TEMP: swapped for prompt-prop verification, restore before commit
+// import Example from './Example';
+import { TestStackSubviewsIOS as Example } from './src/tests/single-feature-tests';
 
 // import { TestTabsSimpleNav as Example } from './src/tests/single-feature-tests';
 // import { TestTabsInStackStableEnterTransition as Example } from './src/tests/component-integration-tests';

@@ -55,6 +55,7 @@ function StackHeaderConfig(
     largeTitle,
     largeSubtitle,
     largeTitleEnabled,
+    prompt,
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
@@ -160,6 +161,7 @@ function StackHeaderConfig(
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
+      prompt={prompt}
       titleMenu={resolvedTitleMenu}
       style={styles.config}
       onMenuItemPress={handleMenuItemPress}

@@ -37,6 +37,8 @@ export interface NativeProps extends ViewProps {
   largeSubtitle?: string | undefined;
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 
+  prompt?: string | undefined;
+
   titleMenu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 
   onMenuItemPress?: CT.DirectEventHandler<MenuItemPressEvent> | undefined;

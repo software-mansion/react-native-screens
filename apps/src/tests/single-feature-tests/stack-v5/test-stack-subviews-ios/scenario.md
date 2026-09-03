@@ -81,11 +81,18 @@ stay manual.
 12. Set title to `long` and `largeTitle` to `short`. Scroll to reveal large title.
 
   - [ ] on iOS 18, largeTitle should be long
+  
   - [ ] on iOS 26, largeTitle should be short
 
 13. Set `largeTitle` to `none`.
 
   - [ ] on iOS 26, largeTitle should be long
+
+14. Enable `prompt`. Verify layout.
+
+  - [ ] Prompt text shows above the title and the navigation bar grows in height.
+  
+  - [ ] Position of items on device matches element tree.
 
 ## Steps on iPad
 
