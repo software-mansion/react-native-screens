@@ -23,7 +23,7 @@ RNSHeaderItemSpacerPlacement
 RNSHeaderItemSpacerPlacementFromReactRNSStackHeaderItemSpacerIOSPlacement(
     react::RNSStackHeaderItemSpacerIOSPlacement placement);
 
-UINavigationItemBackButtonDisplayMode 
+UINavigationItemBackButtonDisplayMode
 UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
     react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode);
 
