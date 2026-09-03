@@ -1,8 +1,8 @@
 #pragma once
 
+#import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
-#import "RNSReactBaseView.h"
 
 #import <React/RCTFabricComponentsPlugins.h>
 
@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^OnLayoutCallback)(CGRect frame);
 
-@interface RNSScreenFooter : RNSReactBaseView
+@interface RNSScreenFooter : RCTViewComponentView
 
 @property (nonatomic, copy, nullable) OnLayoutCallback onLayout;
 

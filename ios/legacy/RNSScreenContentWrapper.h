@@ -1,9 +1,9 @@
 #pragma once
 
+#import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
 #import "RNSDefines.h"
-#import "RNSReactBaseView.h"
 
 #import <React/RCTFabricComponentsPlugins.h>
 
@@ -26,7 +26,7 @@ typedef struct {
   UIView *contentContainerView;
 } RNSScrollViewSearchResult;
 
-@interface RNSScreenContentWrapper : RNSReactBaseView
+@interface RNSScreenContentWrapper : RCTViewComponentView
 
 @property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
 

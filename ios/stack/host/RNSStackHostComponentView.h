@@ -1,11 +1,11 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 #import "RNSStackScreenComponentView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHostComponentView : RNSReactBaseView
+@interface RNSStackHostComponentView : RCTViewComponentView
 
 @end
 

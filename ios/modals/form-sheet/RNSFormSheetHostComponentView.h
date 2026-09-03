@@ -1,12 +1,12 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 
 #import <vector>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSFormSheetHostComponentView : RNSReactBaseView
+@interface RNSFormSheetHostComponentView : RCTViewComponentView
 
 @end
 

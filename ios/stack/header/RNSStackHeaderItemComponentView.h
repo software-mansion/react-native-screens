@@ -1,6 +1,6 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemInvalidationDelegate.h"
 #import "RNSViewFrameChangeDelegate.h"
@@ -8,7 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHeaderItemComponentView
-    : RNSReactBaseView <RNSStackHeaderItemDataProviding, RNSViewFrameChangeDelegate>
+    : RCTViewComponentView <RNSStackHeaderItemDataProviding, RNSViewFrameChangeDelegate>
 
 @property (nonatomic, readonly) RNSHeaderItemPlacement placement;
 @property (nonatomic, readonly, nullable) NSString *itemId;

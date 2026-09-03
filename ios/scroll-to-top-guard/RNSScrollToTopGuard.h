@@ -1,6 +1,6 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
  * the system "scroll to top" navigation-bar interaction exists (iPadOS 26+, iPhone iOS 27+), so
  * that tapping the wrapped content does not scroll the underlying scroll view to top.
  */
-@interface RNSScrollToTopGuard : RNSReactBaseView
+@interface RNSScrollToTopGuard : RCTViewComponentView
 
 @end
 

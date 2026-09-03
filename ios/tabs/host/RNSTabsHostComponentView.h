@@ -1,8 +1,8 @@
 #pragma once
 
+#import <React/RCTViewComponentView.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
-#import "RNSReactBaseView.h"
 #import "RNSScreenContainer.h"
 #import "RNSTabsHostEventEmitter.h"
 #import "RNSTabsNavigationState.h"
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate, RNSTabsNavigationStateObserver>
+@interface RNSTabsHostComponentView : RCTViewComponentView <RNSScreenContainerDelegate, RNSTabsNavigationStateObserver>
 
 @property (nonatomic, nonnull, strong, readonly) RNSTabBarController *controller;
 

@@ -1,12 +1,12 @@
 #pragma once
 
+#import <React/RCTViewComponentView.h>
 #import "RNSDefines.h"
 #import "RNSEnums.h"
-#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSTabsBottomAccessoryContentComponentView : RNSReactBaseView
+@interface RNSTabsBottomAccessoryContentComponentView : RCTViewComponentView
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 

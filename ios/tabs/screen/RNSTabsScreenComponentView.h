@@ -1,8 +1,8 @@
 #pragma once
 
 #import <React/RCTImageSource.h>
+#import <React/RCTViewComponentView.h>
 #import "RNSEnums.h"
-#import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
+@interface RNSTabsScreenComponentView : RCTViewComponentView <RNSSafeAreaProviding>
 
 /**
  * View controller responsible for managing tab represented by this component view.

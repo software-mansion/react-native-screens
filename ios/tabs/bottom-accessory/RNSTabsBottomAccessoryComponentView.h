@@ -1,6 +1,6 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 #import "RNSTabsBottomAccessoryEventEmitter.h"
 #import "RNSTabsHostComponentView.h"
 
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-@interface RNSTabsBottomAccessoryComponentView : RNSReactBaseView
+@interface RNSTabsBottomAccessoryComponentView : RCTViewComponentView
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #import <React/RCTConvert.h>
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
@@ -12,7 +12,7 @@
 
 @end
 
-@interface RNSScreenStackHeaderConfig : RNSReactBaseView
+@interface RNSScreenStackHeaderConfig : RCTViewComponentView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
 

@@ -1,13 +1,13 @@
 #pragma once
 
 #import <React/RCTConvert.h>
+#import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
 #import "RNSLegacyEnums.h"
-#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScreenStackHeaderSubview : RNSReactBaseView
+@interface RNSScreenStackHeaderSubview : RCTViewComponentView
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;

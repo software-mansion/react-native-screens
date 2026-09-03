@@ -1,7 +1,7 @@
 #pragma once
 
+#import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
-#import "RNSReactBaseView.h"
 
 namespace react = facebook::react;
 
@@ -13,7 +13,7 @@ namespace react = facebook::react;
 
 @end
 
-@interface RNSFullWindowOverlay : RNSReactBaseView
+@interface RNSFullWindowOverlay : RCTViewComponentView
 
 @property (nonatomic) BOOL accessibilityContainerViewIsModal;
 

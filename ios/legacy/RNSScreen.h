@@ -14,7 +14,7 @@
 #import "RNSOrientationProviding.h"
 #endif // !TARGET_OS_TV
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 
 namespace react = facebook::react;
 
@@ -53,10 +53,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenStackHeaderConfig;
 
-@interface RNSScreenView : RNSReactBaseView <RNSScreenContentWrapperDelegate,
-                                             RNSScrollViewBehaviorOverriding,
-                                             RNSSafeAreaProviding,
-                                             RNSScrollEdgeEffectProviding>
+@interface RNSScreenView : RCTViewComponentView <RNSScreenContentWrapperDelegate,
+                                                 RNSScrollViewBehaviorOverriding,
+                                                 RNSSafeAreaProviding,
+                                                 RNSScrollEdgeEffectProviding>
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property
