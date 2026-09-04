@@ -4,9 +4,15 @@
 #import <rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitHostComponentView.h"
+#import "RNSSplitHostController.h"
 #import "RNSSplitScreenController.h"
 
 namespace react = facebook::react;
+
+// TODO(@t0maboro): Temporary frame-reporting logic for stack-backed columns. Unify this with
+// RNSSplitNavigationControllerFrameObserver.
+static void *RNSSplitScreenProvidedViewFrameContext = &RNSSplitScreenProvidedViewFrameContext;
 
 @implementation RNSSplitScreenComponentView {
   RNSSplitScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
@@ -14,6 +20,9 @@ namespace react = facebook::react;
   RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
+
+  __weak UIView<RNSNavigationControllerProviding> *_Nullable _navigationControllerProvider;
+  __weak UIView *_Nullable _observedProvidedView;
 }
 
 - (RNSSplitScreenController *)controller
@@ -94,6 +103,95 @@ namespace react = facebook::react;
   [_viewsForFrameCorrection removeObject:view];
 }
 
+- (void)dealloc
+{
+  [self stopObservingProvidedView];
+}
+
+#pragma mark - Nested container
+
+- (nullable UIView<RNSNavigationControllerProviding> *)navigationControllerProvider
+{
+  return _navigationControllerProvider;
+}
+
+- (void)takeOverNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)provider
+{
+  RCTAssert(_navigationControllerProvider == nil && self.subviews.count == 0,
+            @"[RNScreens] A component providing a navigation controller must be the only child of a Split column");
+
+  _navigationControllerProvider = provider;
+  provider.navigationControllerPlacedByParent = YES;
+  [self startObservingProvidedView:provider.navigationController];
+
+  [self requestSplitHostControllerUpdateIfNeeded];
+}
+
+- (void)releaseNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)provider
+{
+  RCTAssert(provider == _navigationControllerProvider,
+            @"[RNScreens] Attempt to release a provider which is not the column's one");
+
+  [self stopObservingProvidedView];
+  provider.navigationControllerPlacedByParent = NO;
+  _navigationControllerProvider = nil;
+
+  [self requestSplitHostControllerUpdateIfNeeded];
+}
+
+- (void)requestSplitHostControllerUpdateIfNeeded
+{
+  if (self.splitHost != nil) {
+    [self.splitHost.splitHostController setNeedsUpdateOfChildViewControllers];
+  }
+}
+
+// TODO(@t0maboro): Temporary frame-reporting logic for stack-backed columns. Unify this with
+// RNSSplitNavigationControllerFrameObserver.
+- (void)startObservingProvidedView:(UIViewController *)controller
+{
+  [self stopObservingProvidedView];
+
+  // Loaded here so that the very first frame set by UISplitViewController is observed.
+  [controller loadViewIfNeeded];
+  UIView *view = controller.view;
+  [view addObserver:self
+         forKeyPath:@"frame"
+            options:NSKeyValueObservingOptionNew
+            context:RNSSplitScreenProvidedViewFrameContext];
+  _observedProvidedView = view;
+}
+
+- (void)stopObservingProvidedView
+{
+  [_observedProvidedView removeObserver:self forKeyPath:@"frame" context:RNSSplitScreenProvidedViewFrameContext];
+  _observedProvidedView = nil;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context
+{
+  if (context != RNSSplitScreenProvidedViewFrameContext) {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    return;
+  }
+  [self updateShadowStateFromProvidedView];
+}
+
+- (void)updateShadowStateFromProvidedView
+{
+  UIView *providedView = _observedProvidedView;
+  if (providedView.window == nil || self.splitHost == nil) {
+    return;
+  }
+
+  UIView *ancestorView = self.splitHost.splitHostController.view;
+  CGRect frame = [providedView convertRect:providedView.bounds toView:ancestorView];
+  [_shadowStateProxy updateShadowStateWithFrame:frame];
+}
+
 #pragma mark - Layout
 
 /**
@@ -158,6 +256,27 @@ namespace react = facebook::react;
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if ([childComponentView conformsToProtocol:@protocol(RNSNavigationControllerProviding)]) {
+    [self takeOverNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)childComponentView];
+    return;
+  }
+
+  RCTAssert(_navigationControllerProvider == nil,
+            @"[RNScreens] A column backed by a provided navigation controller cannot have other children");
+  [super mountChildComponentView:childComponentView index:index];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if (childComponentView == (UIView *)_navigationControllerProvider) {
+    [self releaseNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)childComponentView];
+    return;
+  }
+  [super unmountChildComponentView:childComponentView index:index];
 }
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
