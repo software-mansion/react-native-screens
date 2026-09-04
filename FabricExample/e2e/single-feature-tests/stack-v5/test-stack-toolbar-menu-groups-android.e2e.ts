@@ -11,6 +11,7 @@ import {
   menuItemRow,
   menuItemToggle,
   openOverflowMenu,
+  overflowMenuText,
   scrollToAndTap,
   selectPickerOption,
   selectSingleFeatureTestsScreen,
@@ -136,38 +137,33 @@ async function sendCommand({ id, checked, title, hidden }: CommandSpec) {
  * A submenu replaces its parent on phones and stacks on it on tablets, so at
  * most two popups are ever up — the default `maxMenuDepth` covers that.
  */
-const { waitForScreen, closeMenuIfOpen, closingMenuAfter, withOverflowMenu } =
+const { closeMenuIfOpen, closingMenuAfter, withOverflowMenu, tapMenuItem } =
   createOverflowMenuHelpers({ scrollViewId: SCROLLVIEW_ID });
-
-async function tapMenuItem(title: string) {
-  await element(by.text(title)).tap();
-}
 
 /** The only submenu row no case hides or renames. */
 const SUBMENU_ANCHOR_TITLE = 'Info';
 
+/**
+ * Opens the submenu via "More". Unlike a leaf tap, this opens a popup instead
+ * of closing one, so it can't use the shared `tapMenuItem`'s "gone after tap"
+ * assertion — it waits for the submenu's own content instead.
+ */
 async function openSubmenu() {
-  await tapMenuItem('More');
+  await element(overflowMenuText('More')).tap();
   await waitFor(element(menuItemRow(SUBMENU_ANCHOR_TITLE)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
 
-/** A leaf tap dismisses the menu; the toast it emits is on the screen behind. */
-async function tapLeafItem(title: string) {
-  await tapMenuItem(title);
-  await waitForScreen();
-}
-
 async function tapOverflowItem(title: string) {
   await openOverflowMenu();
-  await tapLeafItem(title);
+  await tapMenuItem(title);
 }
 
 async function tapSubmenuItem(title: string) {
   await openOverflowMenu();
   await openSubmenu();
-  await tapLeafItem(title);
+  await tapMenuItem(title);
 }
 
 /**
