@@ -28,7 +28,7 @@ const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
 // Generous on purpose: the failing-image cases wait on a network error, and a
 // slow one must not read as a stuck batch.
-const IMAGE_LOAD_TIMEOUT_MS = 30000;
+const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
 const APPLE = 'Apple';
 
