@@ -253,6 +253,7 @@ internal class StackHeaderCoordinatorLayout(
         onMaybeHeaderLayoutChanged()
     }
 
+    // If the content scroll view can scroll further up, we consider it scrolled.
     private fun isContentScrolled() = stackScreen.findContentScrollView()?.canScrollVertically(-1) == true
 
     // endregion
