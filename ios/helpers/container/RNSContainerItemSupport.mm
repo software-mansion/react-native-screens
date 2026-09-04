@@ -41,7 +41,7 @@
   }
 
   // Heuristic.
-  return [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:rootView];
+  return [RNSScrollViewFinder findContentScrollViewWithDelegatingToProvider:rootView];
 }
 
 @end
