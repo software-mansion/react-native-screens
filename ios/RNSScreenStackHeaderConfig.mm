@@ -24,6 +24,8 @@
 #import "RNSSearchBar.h"
 #import "UINavigationBar+RNSUtility.h"
 
+#include <cmath>
+
 namespace react = facebook::react;
 
 static const NSNumber *const DEFAULT_TITLE_FONT_SIZE = @17;
@@ -216,12 +218,20 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (barWidth > 0) {
     for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
-      const CGFloat width = CGRectGetWidth(subview.bounds);
-      const BOOL hasValidWidth = width > 1 && width < barWidth * 0.4;
+      const BOOL isLeftSubview = subview.type == RNSScreenStackHeaderSubviewTypeLeft;
+      const BOOL isRightSubview = subview.type == RNSScreenStackHeaderSubviewTypeRight;
+      if (!isLeftSubview && !isRightSubview) {
+        continue;
+      }
 
-      if (hasValidWidth && subview.type == RNSScreenStackHeaderSubviewTypeLeft) {
+      UIView *itemView = [subview getUIBarButtonItem].customView;
+      const CGFloat width = CGRectGetWidth(itemView.bounds);
+      const BOOL hasValidWidth =
+          itemView != nil && [itemView isDescendantOfView:navigationBar] && std::isfinite(width) && width > 1;
+
+      if (hasValidWidth && isLeftSubview) {
         reservedLeadingWidth += width;
-      } else if (hasValidWidth && subview.type == RNSScreenStackHeaderSubviewTypeRight) {
+      } else if (hasValidWidth && isRightSubview) {
         reservedTrailingWidth += width;
       }
     }
