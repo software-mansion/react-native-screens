@@ -425,6 +425,16 @@ export interface StackHeaderConfigPropsIOS {
    * @supported iOS 26 and higher
    */
   largeSubtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
+  /**
+   * @summary A single line of text displayed at the top of the navigation bar,
+   * above the title.
+   *
+   * @description
+   * Setting this prop increases the height of the navigation bar.
+   *
+   * @platform iOS
+   */
+  prompt?: string | undefined;
 }
 
 export interface StackHeaderConfigCommandsIOS {

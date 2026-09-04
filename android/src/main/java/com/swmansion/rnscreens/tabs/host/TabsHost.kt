@@ -161,6 +161,16 @@ class TabsHost(
         refreshLayout()
     }
 
+    // On window configuration changes ViewRootImpl calls forceLayout() recursively on every view
+    // in the hierarchy, bypassing requestLayout(). React views never lay out their children during
+    // framework traversals, so nothing would clear the force-layout flags in our subtree — and once
+    // they are set, any subsequent requestLayout() from a descendant short-circuits before reaching
+    // the override above, permanently disabling the manual pass. Schedule it from here as well.
+    override fun forceLayout() {
+        super.forceLayout()
+        refreshLayout()
+    }
+
     private fun forceSubtreeMeasureAndLayoutPass() {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),

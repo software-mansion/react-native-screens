@@ -335,6 +335,7 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if !TARGET_OS_TV
+  navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
 
   [self clearAppliedBackButtonConfig];
@@ -424,6 +425,14 @@
   navItem.title = _configDataProvider.title;
 
 #if !TARGET_OS_TV
+  NSString *prompt = _configDataProvider.prompt;
+  if (navItem.prompt != prompt && ![navItem.prompt isEqualToString:prompt]) {
+    navItem.prompt = prompt;
+    // UIKit does not resize an already visible navigation bar when the prompt
+    // of its navigation item changes - request layout explicitly.
+    [controller.navigationController.view setNeedsLayout];
+  }
+
   [self applyBackButtonConfigForController:controller];
 #endif // !TARGET_OS_TV
 

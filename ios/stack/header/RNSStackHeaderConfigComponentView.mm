@@ -66,6 +66,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeTitle = nil;
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
+  _prompt = nil;
   _backButtonTitle = nil;
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
@@ -432,6 +433,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   if (oldHeaderProps.largeTitleEnabled != newHeaderProps.largeTitleEnabled) {
     _largeTitleEnabled = newHeaderProps.largeTitleEnabled;
+  }
+
+  if (oldHeaderProps.prompt != newHeaderProps.prompt) {
+    _prompt = RCTNSStringFromStringNilIfEmpty(newHeaderProps.prompt);
   }
 
   if (oldHeaderProps.backButtonTitle != newHeaderProps.backButtonTitle) {
