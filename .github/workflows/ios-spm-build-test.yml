@@ -79,13 +79,9 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: npm install "$GITHUB_WORKSPACE"/react-native-screens-*.tgz
 
-      - name: Scaffold Package.swift for autolinked dependencies
+      - name: Scaffold dependencies and migrate app to Swift Package Manager
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native spm scaffold
-
-      - name: Migrate app to Swift Package Manager
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native spm add --deintegrate --yes
+        run: npx react-native spm scaffold --deintegrate --yes
 
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
