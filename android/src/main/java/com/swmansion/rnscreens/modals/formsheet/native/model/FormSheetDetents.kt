@@ -47,8 +47,9 @@ internal class FormSheetDetents(
     ): Int {
         /*
          * We add the `bottomInset` to the `contentHeight` so that the Material BottomSheet
-         * is laid out behind the system navigation bar. The sheet's container covers the insets,
-         * while the RN content is strictly constrained to `contentHeight`.
+         * is laid out behind the system navigation bar or the keyboard (the sheet grows by
+         * the keyboard height and gets pushed above it, following iOS approach). The sheet's
+         * container covers the insets, while the RN content is strictly constrained to `contentHeight`.
          */
         if (contentHeight <= 0) {
             // Avoid collapsing the sheet before the React content has been laid out and measured.
@@ -89,7 +90,8 @@ internal class FormSheetDetents(
             if (contentHeight <= 0) {
                 return (containerHeight - topInset - bottomInset).coerceAtLeast(0)
             }
-            return contentHeight.coerceAtMost(containerHeight)
+            // Content taller than the safe area is aligned with it.
+            return contentHeight.coerceAtMost((containerHeight - topInset - bottomInset).coerceAtLeast(0))
         }
 
         // Bottom inset is always fully subtracted because the sheet is in its dedicated window and it's

@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.doOnLayout
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetAvailableHeightProvider
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
@@ -14,12 +13,12 @@ import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 internal class FormSheetDimensionsCoordinator(
     private val dialog: FormSheetDialog,
     private val container: FormSheetContainer,
-    private val bottomSheetView: FrameLayout?,
     private val behaviorController: FormSheetBehaviorController?,
 ) : FormSheetContentSizeChangeDelegate,
     FormSheetAvailableHeightProvider.OnAvailableHeightMeasuredListener {
     private var lastTopInset = 0
     private var lastBottomInset = 0
+    private var lastImeInset = 0
     private var currentDetents: FormSheetDetents? = null
     private var currentInitialDetentIndex: Int = 0
     private var shouldApplyInitialDetent: Boolean = false
@@ -34,38 +33,20 @@ internal class FormSheetDimensionsCoordinator(
     internal fun setup() {
         dialog.availableHeightProvider.availableHeightListener = this
         setupWindowInsetsListener()
-
-        bottomSheetView?.let { view ->
-            disableMaterialInsetsAnimationCallback(view)
-        }
     }
 
     private fun setupWindowInsetsListener() {
         ViewCompat.setOnApplyWindowInsetsListener(container) { _, insets ->
             val topInset = getTopInset(insets)
             val bottomInset = getBottomInset(insets)
-            if (topInset != lastTopInset || bottomInset != lastBottomInset) {
+            val imeInset = getImeInset(insets)
+            if (topInset != lastTopInset || bottomInset != lastBottomInset || imeInset != lastImeInset) {
                 lastTopInset = topInset
                 lastBottomInset = bottomInset
+                lastImeInset = imeInset
                 invalidateGeometry()
             }
             insets
-        }
-    }
-
-    /**
-     * BottomSheetBehavior registers an internal `WindowInsetsAnimationCallback` on the
-     * sheet view during its first `onLayoutChild`. That callback drives `translationY` to follow
-     * animated inset changes, what interferes with our slide-in custom animation.
-     *
-     * We manage insets ourselves by setting a fixed height for FormSheetContainer, so we can
-     * clear the Material's callback to remove the conflict entirely.
-     *
-     * This method must run after the first layout pass.
-     */
-    private fun disableMaterialInsetsAnimationCallback(view: FrameLayout) {
-        view.doOnLayout {
-            ViewCompat.setWindowInsetsAnimationCallback(it, null)
         }
     }
 
@@ -116,12 +97,14 @@ internal class FormSheetDimensionsCoordinator(
      * our container are measured, so the values applied here are picked up by the very same traversal.
      */
     private fun resolveGeometry(sheetAvailableSpace: Int) {
+        val bottomInset = effectiveBottomInset
+
         currentDetents?.let { detents ->
             behaviorController?.updateSheetBehavior(
                 detents = detents,
                 sheetAvailableSpace = sheetAvailableSpace,
                 contentHeightForFitToContents = currentContentHeight,
-                nativeContainerPaddingBottom = lastBottomInset,
+                nativeContainerPaddingBottom = bottomInset,
                 initialDetentIndex = currentInitialDetentIndex,
                 applyInitialDetent = shouldApplyInitialDetent,
             )
@@ -129,8 +112,8 @@ internal class FormSheetDimensionsCoordinator(
         }
 
         val sheetContainerHeight =
-            currentDetents?.sheetContainerHeight(sheetAvailableSpace, lastTopInset, lastBottomInset, currentContentHeight)
-                ?: (sheetAvailableSpace - lastTopInset - lastBottomInset).coerceAtLeast(0)
+            currentDetents?.sheetContainerHeight(sheetAvailableSpace, lastTopInset, bottomInset, currentContentHeight)
+                ?: (sheetAvailableSpace - lastTopInset - bottomInset).coerceAtLeast(0)
 
         val layoutParams =
             container.layoutParams
@@ -142,6 +125,11 @@ internal class FormSheetDimensionsCoordinator(
             container.layoutParams = layoutParams
         }
     }
+
+    private val effectiveBottomInset: Int
+        get() = maxOf(lastBottomInset, lastImeInset)
+
+    private fun getImeInset(insetsCompat: WindowInsetsCompat): Int = insetsCompat.getInsets(WindowInsetsCompat.Type.ime()).bottom
 
     private fun getTopInset(insetsCompat: WindowInsetsCompat): Int =
         insetsCompat
