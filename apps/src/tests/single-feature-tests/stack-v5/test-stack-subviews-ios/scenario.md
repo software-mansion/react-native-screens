@@ -99,7 +99,11 @@ stay manual.
   
 1. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
 
-2. Enable `hidesSharedBackground`. Repeat steps 4 - 10 on iPhone.
+2. Enable `hidesSharedBackground`.
+
+  - [ ] Glass bubble is gone on all items. They may shift slightly (few pixels).
+
+3. Repeat main steps 4 - 10 on iPhone.
 
   - [ ] No change in the behavior
 
