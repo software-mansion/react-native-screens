@@ -395,9 +395,10 @@ internal class StackHeaderToolbarMenuController(
         id: String,
         delta: StackHeaderToolbarMenuElementOptions,
     ): StackHeaderToolbarMenuElementOptions {
+        val effective = effectiveOptions(id)
         var resolved = delta
+
         if (delta.icon != null || delta.requiresIconTintColorUpdate) {
-            val effective = effectiveOptions(id)
             resolved =
                 resolved.copy(
                     iconTintColorNormal = effective.iconTintColorNormal,
@@ -409,12 +410,14 @@ internal class StackHeaderToolbarMenuController(
                 resolved = resolved.copy(showAsAction = effective.showAsAction)
             }
         }
+
         if (delta.title != null &&
             delta.menuTitle == null &&
             model.elementById[id] is StackHeaderToolbarMenuElementConfig.Submenu
         ) {
-            resolved = resolved.copy(menuTitle = effectiveOptions(id).menuTitle)
+            resolved = resolved.copy(menuTitle = effective.menuTitle)
         }
+
         return resolved
     }
 
