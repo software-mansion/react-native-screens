@@ -1,4 +1,5 @@
 #import "RNSConversions-Stack.h"
+#import "RNSDefines.h"
 
 namespace rnscreens::conversion {
 
@@ -24,6 +25,23 @@ RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlace
       return RNSHeaderItemPlacementSubtitle;
     case react::RNSStackHeaderItemIOSPlacement::LargeSubtitle:
       return RNSHeaderItemPlacementLargeSubtitle;
+  }
+}
+
+UIBarButtonItemStyle UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(
+    react::RNSStackHeaderItemIOSVariant variant)
+{
+  switch (variant) {
+    case react::RNSStackHeaderItemIOSVariant::Plain:
+      return UIBarButtonItemStylePlain;
+    case react::RNSStackHeaderItemIOSVariant::Prominent:
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+      if (@available(iOS 26.0, *)) {
+        return UIBarButtonItemStyleProminent;
+      }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+      // Bold text look, closest counterpart of prominent style before iOS 26
+      return UIBarButtonItemStyleDone;
   }
 }
 
