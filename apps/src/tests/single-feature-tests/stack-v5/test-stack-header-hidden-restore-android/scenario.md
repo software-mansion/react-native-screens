@@ -42,7 +42,9 @@ TBD: Planned, but will be implemented separately.
   (its pinned height equals its full height), which is why the small-header
   step turns that flag off.
 - When `medium/large` header with `scrollFlagExitUntilCollapsed: false` is
-  re-shown, its status bar scrim flashes (it fades in). This is a known issue.
+  re-shown, its status bar scrim flashes (it fades in). This is a known
+  issue, see
+  https://github.com/software-mansion/react-native-screens-labs/issues/1782.
 
 ## Steps
 
@@ -98,8 +100,9 @@ TBD: Planned, but will be implemented separately.
 
 7. Set **type** back to `large` and scroll the content back to the top.
 
-- [ ] The header is expanded again (a type change resets the offset when the
-      content is at the top).
+- [ ] The header stays fully collapsed across the type change - the header is
+      live, so its own collapse state is re-asserted - and expands only once
+      the content is back at the top.
 
 ---
 
@@ -133,7 +136,8 @@ scrolled, toggle **hidden** on and off.
       the toolbar, and the full height returns only once the content reaches
       the top.
 - [ ] After the second hide/re-show the re-entered toolbar is dropped: the
-      header is fully collapsed again, with only the content scrim visible.
+      header is fully collapsed again, scrolled entirely off screen, leaving
+      only the status bar scrim behind the status bar.
 
 12. All scroll-flag switches off.
 
@@ -187,5 +191,5 @@ scrolled, toggle **hidden** on and off.
 
 18. Navigate back to _Home_.
 
-- [ ] The _Home_ header still matches its state from step 15's cleanup
-      (expanded, `large`), unaffected by the _Details_ round trip.
+- [ ] The _Home_ header still matches its state from step 16 (expanded,
+      `large`), unaffected by the _Details_ round trip.
