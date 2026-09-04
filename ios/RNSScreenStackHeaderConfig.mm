@@ -205,11 +205,39 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+  const NSDirectionalEdgeInsets insets = [self computeEdgeInsetsOfNavigationBar:navigationBar];
   [self updateShadowStateWithSize:navigationBar.frame.size
-                       edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
+                       edgeInsets:insets
                       frameOrigin:navBarFrameInScreenView.origin];
+
+  const CGFloat barWidth = CGRectGetWidth(navigationBar.bounds);
+  CGFloat reservedLeadingWidth = insets.leading;
+  CGFloat reservedTrailingWidth = insets.trailing;
+
+  if (barWidth > 0) {
+    for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+      const CGFloat width = CGRectGetWidth(subview.bounds);
+      const BOOL hasValidWidth = width > 1 && width < barWidth * 0.4;
+
+      if (hasValidWidth && subview.type == RNSScreenStackHeaderSubviewTypeLeft) {
+        reservedLeadingWidth += width;
+      } else if (hasValidWidth && subview.type == RNSScreenStackHeaderSubviewTypeRight) {
+        reservedTrailingWidth += width;
+      }
+    }
+  }
+
+  const CGFloat titleWidth = MAX(0, barWidth - reservedLeadingWidth - reservedTrailingWidth);
   for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
-    [subview updateShadowStateInContextOfAncestorView:navigationBar];
+    const BOOL isTitleSubview =
+        subview.type == RNSScreenStackHeaderSubviewTypeCenter || subview.type == RNSScreenStackHeaderSubviewTypeTitle;
+    if (barWidth > 0 && isTitleSubview) {
+      CGRect frame = [subview convertRect:subview.bounds toView:navigationBar];
+      frame.size.width = titleWidth;
+      [subview updateShadowStateWithFrame:frame];
+    } else {
+      [subview updateShadowStateInContextOfAncestorView:navigationBar];
+    }
   }
 }
 

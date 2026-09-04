@@ -28,6 +28,9 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewShadowNode final
 
 #pragma mark - Custom interface
   void applyFrameCorrections();
+#if !defined(ANDROID)
+  void constrainMaxWidth(Float width);
+#endif // !ANDROID
 };
 
 } // namespace facebook::react
