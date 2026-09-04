@@ -10,8 +10,6 @@ namespace react = facebook::react;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSSplitScreenComponentView;
-
 /**
  * @class RNSSplitScreenShadowStateProxy
  * @brief Manages communication between native UIView layout and associated React Native ShadowNode state.
@@ -20,44 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
  * back to the Shadow Tree via RNSSplitScreenShadowNode.
  */
 @interface RNSSplitScreenShadowStateProxy : NSObject
-
-/**
- * @brief Triggers a shadow state update for the given SplitScreen component.
- *
- * Internally uses the component’s frame in UIWindow coordinates to update the Shadow Tree state.
- *
- * @param screenComponentView An instance of RNSSplitScreenComponentView whose state should be updated.
- */
-- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView;
-
-/**
- * @brief Triggers a shadow state update for the given SplitScreen component in the context of a given ancestor
- * view.
- *
- * Converts the split view screen's local frame to coordinates of the specified ancestor view
- * before applying the update to the Shadow Tree. If the ancestor haven't been defined frame is calculated relatively to
- * the UIWindow.
- *
- * @param screenComponentView An instance of RNSSplitScreenComponentView whose state should be updated.
- * @param ancestorView An optional UIView in whose coordinate space the frame should be computed.
- */
-- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
-             inContextOfAncestorView:(UIView *_Nullable)ancestorView;
-
-/**
- * @brief Send an update to ShadowNode state with given frame if needed.
- *
- * Converts the frame to coordinates of the specified ancestor view,
- * before applying the update to the Shadow Tree.
- *
- * @param screenComponentView an instance of RNSSplitScreenComponentView whose state should be updated,
- * @param frame frame to update the shadow state with; it must be in coordinate system of `screenComponentView`,
- * @param ancestorView coordinate-system provider view, relative to which the frame should be converted before sending
- * the update.
- */
-- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
-                           withFrame:(CGRect)frame
-             inContextOfAncestorView:(nonnull UIView *)ancestorView;
 
 /**
  * @brief Send an update to ShadowNode state with given layout metrics.
