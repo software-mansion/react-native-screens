@@ -603,6 +603,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
           RNSSearchBar *searchBar = subview.subviews[0];
           searchBarPresent = true;
+          searchBar.controller.searchBar.semanticContentAttribute = config.direction;
           navitem.searchController = searchBar.controller;
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -764,21 +765,37 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
 {
-  if ((self.direction == UISemanticContentAttributeForceLeftToRight ||
-       self.direction == UISemanticContentAttributeForceRightToLeft) &&
-      // iOS 12 cancels swipe gesture when direction is changed. See #1091
-      navCtrl.view.semanticContentAttribute != self.direction) {
-    // This is needed for swipe back gesture direction
-    navCtrl.view.semanticContentAttribute = self.direction;
+  if (self.direction != UISemanticContentAttributeForceLeftToRight &&
+      self.direction != UISemanticContentAttributeForceRightToLeft) {
+    return;
+  }
 
-    // This is responsible for the direction of the navigationBar and its contents
+  UITraitEnvironmentLayoutDirection layoutDirection = self.direction == UISemanticContentAttributeForceRightToLeft
+      ? UITraitEnvironmentLayoutDirectionRightToLeft
+      : UITraitEnvironmentLayoutDirectionLeftToRight;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    if (navCtrl.traitCollection.layoutDirection != layoutDirection) {
+      navCtrl.traitOverrides.layoutDirection = layoutDirection;
+    }
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  {
+    UIViewController *parentViewController = navCtrl.parentViewController;
+    if (parentViewController != nil && navCtrl.traitCollection.layoutDirection != layoutDirection) {
+      [parentViewController
+          setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:layoutDirection]
+              forChildViewController:navCtrl];
+    }
+  }
+
+  // Keep the explicit legacy value synchronized because stack gestures and animations inspect it directly.
+  if (navCtrl.view.semanticContentAttribute != self.direction) {
+    navCtrl.view.semanticContentAttribute = self.direction;
+  }
+  if (navCtrl.navigationBar.semanticContentAttribute != self.direction) {
     navCtrl.navigationBar.semanticContentAttribute = self.direction;
-    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
-        setSemanticContentAttribute:self.direction];
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
-        setSemanticContentAttribute:self.direction];
-    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
-        setSemanticContentAttribute:self.direction];
   }
 }
 
