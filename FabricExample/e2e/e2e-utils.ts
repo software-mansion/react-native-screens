@@ -1082,11 +1082,17 @@ export async function dismissNextToast(message: string) {
 }
 
 /**
- * Detox matches a regex against the *whole* string — without the trailing `.*`
- * this matches nothing and always passes.
+ * Asserts no toast is on screen. Passing `message` pins the check to the
+ * queue head (`1.`) — every caller here dismisses its own toasts first, so an
+ * unexpected one always lands there, same as `dismissNextToast`. Omitting it
+ * falls back to Detox matching a regex against the whole string, so any
+ * position and text counts as a toast; dropping that wildcard suffix would
+ * match nothing and always pass.
  */
-export async function expectNoToast() {
-  await expect(element(by.label(/\d+\. .*/))).not.toExist();
+export async function expectNoToast(message?: string) {
+  const matcher =
+    message === undefined ? by.label(/\d+\. .*/) : by.label(`1. ${message}`);
+  await expect(element(matcher)).not.toExist();
 }
 
 // ---------------------------------------------------------------------------
@@ -1100,6 +1106,9 @@ const ROUTE_KEY_TEST_ID = 'stack-route-key';
 /** The `Key: ...` label of the topmost screen. */
 const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
 
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 /**
  * Matches the route key label of any screen on `routeName`. Keys are minted as
  * `r-<routeName>-<id>` with an increasing id (`generateRouteKeyForRouteName`),
@@ -1107,9 +1116,6 @@ const readTopmostRouteKey = () => readTopmostText(ROUTE_KEY_TEST_ID);
  */
 const routeKeyPattern = (routeName: string) =>
   new RegExp(`^Key: r-${escapeRegExp(routeName)}-\\d+$`);
-
-const escapeRegExp = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * Waits for the `Name: <routeName>` label to be visible. Only where that

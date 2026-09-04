@@ -124,11 +124,11 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
     await tapTopmostButton(POP);
 
     jestExpect(await waitForTopmostRoute('A')).toBe(aKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_MESSAGE);
     await tapTopmostButton(POP);
 
     jestExpect(await waitForTopmostRoute('Home')).toBe(homeKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_MESSAGE);
   });
 
   it('should flip the label when toggling prevent native dismiss at runtime', async () => {

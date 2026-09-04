@@ -278,7 +278,7 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
 
   it('should not emit when re-selecting the checked single-selection item', async () => {
     await tapOverflowItem('Large');
-    await expectNoToast();
+    await expectNoToast('size: ["large"]');
 
     await withOverflowMenu(async () => {
       await expectRadioButton('Large', true);
@@ -415,7 +415,7 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     await dismissNextToast('size: ["medium"]');
 
     await sendCommand({ id: 'medium', checked: 'false' });
-    await expectNoToast();
+    await expectNoToast('size: ["medium"]');
     await withOverflowMenu(async () => {
       await expectRadioButton('Medium', true);
     });

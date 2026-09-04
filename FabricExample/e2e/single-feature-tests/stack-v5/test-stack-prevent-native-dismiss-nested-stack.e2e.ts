@@ -61,6 +61,7 @@ const readTopmostPreventNativeDismissInfo = () =>
 // Each preventing route pushes its own toast text, so the label identifies
 // which screen intercepted — the point of the layered-prevention steps.
 const TOAST_FROM_B = 'Native dismiss prevented - B';
+const TOAST_FROM_NESTED_HOME = 'Native dismiss prevented - NestedHome';
 const TOAST_FROM_NESTED_B = 'Native dismiss prevented - NestedB';
 
 describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
@@ -94,7 +95,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
    */
   async function expectSoleToast(message: string): Promise<void> {
     await dismissNextToast(message);
-    await expectNoToast();
+    await expectNoToast(message);
   }
 
   beforeAll(async () => {
@@ -163,7 +164,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_B);
   });
 
   it('should mount the nested stack showing its headerless root', async () => {
@@ -194,7 +195,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_NESTED_HOME);
   });
 
   it('should restore the default flag on a fresh nested root instance', async () => {
@@ -277,12 +278,12 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapTopmostButton(POP);
 
     await expectStillOn('NestedHome', nestedHomeKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_NESTED_B);
 
     await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_NESTED_HOME);
   });
 
   it('should push a preventing nested screen on top of a preventing outer screen', async () => {
@@ -312,7 +313,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapTopmostButton(POP);
 
     await expectStillOn('NestedHome', nestedHomeKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_NESTED_B);
 
     await tapTopmostButton(TOGGLE);
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_DISABLED);
@@ -320,7 +321,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapTopmostButton(POP);
 
     await expectStillOn('B', bKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_NESTED_HOME);
   });
 
   it('should resume intercepting on B once it is the topmost screen again', async () => {
@@ -334,6 +335,6 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapTopmostButton(POP);
 
     await expectStillOn('A', aKey);
-    await expectNoToast();
+    await expectNoToast(TOAST_FROM_B);
   });
 });
