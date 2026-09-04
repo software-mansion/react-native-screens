@@ -336,7 +336,7 @@ internal class StackContainer(
         // only the top item is asked - screens below the top get no vote at this level.
         val vetoingItem = topScreen.wantsToPreventStackNativeDismiss()
         if (vetoingItem != null) {
-            emitNativeDismissPrevented(vetoingItem)
+            onNativeDismissPrevented(vetoingItem)
             return
         }
 
@@ -382,7 +382,7 @@ internal class StackContainer(
         override fun handleOnBackPressed() {
             val vetoingItem = findSystemBackVetoingItem()
             if (vetoingItem != null) {
-                emitNativeDismissPrevented(vetoingItem)
+                onNativeDismissPrevented(vetoingItem)
                 return
             }
             // Enabled state went stale (e.g. the top screen was popped from JS while a predictive
@@ -427,7 +427,7 @@ internal class StackContainer(
         invalidateAncestorStackContainersSystemBackVetoState(this)
     }
 
-    private fun emitNativeDismissPrevented(vetoingItem: ContainerItem) {
+    private fun onNativeDismissPrevented(vetoingItem: ContainerItem) {
         // Only a StackScreen can veto - TabsScreen has no own flag and only forwards.
         val vetoingScreen = vetoingItem as? StackScreen
         if (vetoingScreen != null) {
