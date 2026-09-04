@@ -34,13 +34,18 @@ TBD: Planned, but will be implemented separately.
   offset, and leave it on otherwise so the default configuration is the one
   under test.
 - Known limitation: a change that forces a header rebuild while the tab is
-  detached (`type`, `hidden`, subviews, or a color scheme switch) re-asserts
-  only the _fully_ collapsed resting state on reattach. A partially collapsed
-  header returns expanded in that case. Delta-only changes (e.g. the title)
-  keep the exact offset.
+  detached (`type`, subviews, or a color scheme switch) re-asserts only the
+  _fully_ collapsed resting state on reattach. A partially collapsed header
+  returns expanded in that case. Delta-only changes (e.g. the title) keep the
+  exact offset.
+- Re-showing a hidden header comes back **fully collapsed** when the content
+  is scrolled away from the top and **expanded** otherwise. This scenario
+  only checks that the rule also holds when the toggles land on tab reattach;
+  the full rule (scroll-flag variants, partial offsets, hidden-from-mount) is
+  covered by the `test-stack-header-hidden-restore-android` SFT.
 - Toolbar menu selections live in native state owned by the configuration, so
   they survive the round trip.
-- Known issue: popping in the nested stack (step 19) finishes the activity,
+- Known issue: popping in the nested stack (step 20) finishes the activity,
   because `TabsContainer` does not set the primary navigation fragment. Until
   that lands, treat the step as blocked rather than failed.
 
@@ -157,27 +162,33 @@ TBD: Planned, but will be implemented separately.
 - [ ] The _Home_ screen has no header at all, and its content starts below the
       status bar (the `SafeAreaView` top edge takes over from the header).
 
-17. Switch to the _Other_ tab, toggle **hidden** off and **trailing subview**
-    off, and switch back.
+17. Make sure the _Home_ content is scrolled to the top. Switch to the _Other_
+    tab, toggle **hidden** off and **trailing subview** off, and switch back.
 
-- [ ] The header is back, **expanded**, with the _T_ subview gone, and the
-      content no longer carries the top inset. A header that was actually
-      removed always comes back expanded - the collapse memory is dropped
-      together with the app bar. (Toggling **hidden** on and off again without
-      visiting _Stack_ in between never removes the header, so in that case the
-      collapse state is kept.)
+- [ ] The header is back, **expanded** (the content was at the top - see the
+      re-show rule in **Note**), with the _T_ subview gone, and the content no
+      longer carries the top inset. (Toggling **hidden** on and off again
+      without visiting _Stack_ in between never removes the header, so the
+      exact collapse state would be kept in that case.)
 - [ ] Scrolling collapses and expands the header as before.
+
+18. Scroll the content down a little. Switch to the _Other_ tab, toggle
+    **hidden** on, visit _Stack_ (no header), return to _Other_, toggle
+    **hidden** off, and switch back to _Stack_.
+
+- [ ] The header comes back **fully collapsed** - the re-show rule (see
+      **Note**) also applies when the un-hide lands on tab reattach.
 
 ---
 
 ### Pushed screen
 
-18. On the _Stack_ tab, tap **Push Details**. Switch to the _Other_ tab and
+19. On the _Stack_ tab, tap **Push Details**. Switch to the _Other_ tab and
     back.
 
 - [ ] The _Details_ header is present after the round trip.
 
-19. Navigate back to _Home_.
+20. Navigate back to _Home_.
 
 - [ ] The _Home_ header is present with the current title and the offset it had
       before the push. (See the known issue in **Note**.)
@@ -186,12 +197,12 @@ TBD: Planned, but will be implemented separately.
 
 ### With a color scheme override
 
-20. Set **StackHost color scheme** to the opposite of the current device scheme
+21. Set **StackHost color scheme** to the opposite of the current device scheme
     (e.g. `dark` on a light device).
 
 - [ ] The header re-themes to the selected scheme.
 
-21. Scroll the header to a _full_ collapse. While on the _Other_ tab, change the
+22. Scroll the header to a _full_ collapse. While on the _Other_ tab, change the
     override (e.g. back to `inherit`), then switch back to _Stack_.
 
 - [ ] The header shows up already using the new scheme and is still fully
