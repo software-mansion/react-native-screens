@@ -19,6 +19,13 @@ internal class StackScreenFragment(
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
     /**
+     * Retained across fragment view destruction (e.g. tab switches detaching the fragment), so that
+     * the app bar scroll offset and the built header survive reattachment. FragmentManager removes
+     * the view from its container before `onDestroyView`, so `onCreateView` can return it as-is.
+     */
+    private var headerCoordinatorLayout: StackHeaderCoordinatorLayout? = null
+
+    /**
      * This holds the screen strongly for now. Beware of retain cycle.
      *
      * Since each StackScreenFragment owns a PreventNativeDismissCallback & adds it to the
@@ -48,7 +55,12 @@ internal class StackScreenFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = StackHeaderCoordinatorLayout(requireContext(), stackScreen, canNavigateBack)
+    ): View {
+        headerCoordinatorLayout?.let { return it }
+
+        return StackHeaderCoordinatorLayout(requireContext(), stackScreen, canNavigateBack)
+            .also { headerCoordinatorLayout = it }
+    }
 
     override fun onViewCreated(
         view: View,
@@ -59,17 +71,14 @@ internal class StackScreenFragment(
     }
 
     override fun onDestroyView() {
-        val coordinatorLayout = view
-        check(coordinatorLayout is StackHeaderCoordinatorLayout) {
-            "[RNScreens] Unexpected fragment view type: $view"
-        }
-        coordinatorLayout.tearDown()
         super.onDestroyView()
         screenLifecycleEventEmitter = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        headerCoordinatorLayout?.tearDown()
+        headerCoordinatorLayout = null
         stackScreen.onDismiss()
         teardownPreventNativeDismissCallback()
     }
