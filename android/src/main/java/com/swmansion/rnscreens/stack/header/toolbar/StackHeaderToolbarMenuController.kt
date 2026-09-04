@@ -143,20 +143,22 @@ internal class StackHeaderToolbarMenuController(
                 continue
             }
 
-            if (!update.options.isEmpty) {
-                commandOverrides[id] = commandOverrides[id]?.mergedWith(update.options) ?: update.options
+            val options = applicableOptions(id, update.options)
+
+            if (!options.isEmpty) {
+                commandOverrides[id] = commandOverrides[id]?.mergedWith(options) ?: options
             }
 
             update.checked?.let { checked ->
                 applyCheckedInState(id, checked)?.let(changedGroups::add)
             }
 
-            if (toolbar != null && !update.options.isEmpty) {
+            if (toolbar != null && !options.isEmpty) {
                 StackHeaderToolbarMenuApplicator.updateToolbarMenuElement(
                     toolbar,
                     model.forwardIdMap,
                     id,
-                    widenWithCoupledFields(id, update.options),
+                    widenWithCoupledFields(id, options),
                 )
             }
         }
@@ -165,6 +167,23 @@ internal class StackHeaderToolbarMenuController(
             changedGroups.forEach { applySelectionToToolbar(toolbar, it) }
         }
         changedGroups.forEach(::emitGroupSelection)
+    }
+
+    /**
+     * Drops options the target element cannot accept. They would otherwise be
+     * recorded in [commandOverrides], which outlive every rebuild, and be
+     * re-applied — and re-warned about — by each of them.
+     */
+    private fun applicableOptions(
+        id: String,
+        options: StackHeaderToolbarMenuElementOptions,
+    ): StackHeaderToolbarMenuElementOptions {
+        val targetsSubmenu = model.elementById[id] is StackHeaderToolbarMenuElementConfig.Submenu
+        if (options.menuTitle == null || targetsSubmenu) {
+            return options
+        }
+        Log.w(TAG, "[RNScreens] Ignoring menuTitle of '$id': the target is not a submenu.")
+        return options.copy(menuTitle = null)
     }
 
     // endregion

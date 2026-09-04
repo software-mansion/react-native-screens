@@ -12,7 +12,6 @@ import com.swmansion.rnscreens.stack.header.getResizedDrawable
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuGroupConfig
-import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuModel
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
@@ -64,7 +63,6 @@ internal object StackHeaderToolbarMenuApplicator {
                 is StackHeaderToolbarMenuElementConfig.MenuItem -> {
                     val menuItem = menu.add(groupIntId, itemId, index, null)
                     applyMenuElementOptions(toolbar, menuItem, optionsForItem(element.item.id))
-                    applyCheckability(menuItem, element.item)
                 }
                 is StackHeaderToolbarMenuElementConfig.Submenu -> {
                     val subMenu = menu.addSubMenu(groupIntId, itemId, index, null)
@@ -76,6 +74,9 @@ internal object StackHeaderToolbarMenuApplicator {
         configureGroupCheckability(menu, menuConfig.groups, forwardGroupIdMap)
     }
 
+    // Group membership is the only source of checkability (configs are validated
+    // up front, see StackHeaderToolbarMenuModel); checked state belongs to the
+    // controller, which projects it right after the rebuild.
     private fun configureGroupCheckability(
         menu: Menu,
         groups: List<StackHeaderToolbarMenuGroupConfig>,
@@ -84,18 +85,6 @@ internal object StackHeaderToolbarMenuApplicator {
         for (group in groups) {
             val groupIntId = forwardGroupIdMap[group.groupId] ?: continue
             menu.setGroupCheckable(groupIntId, true, group.singleSelection)
-        }
-    }
-
-    private fun applyCheckability(
-        menuItem: MenuItem,
-        itemConfig: StackHeaderToolbarMenuItemConfig,
-    ) {
-        // Configs are validated up front (see StackHeaderToolbarMenuModel), so
-        // checkability reduces to group membership.
-        if (itemConfig.groupId != null) {
-            menuItem.isCheckable = true
-            menuItem.isChecked = itemConfig.initialToggleState
         }
     }
 
