@@ -102,9 +102,11 @@ class TabsContainer internal constructor(
 
     internal var rejectStaleNavigationStateUpdates: Boolean = false
 
+    private val selectedTabOrNull: TabsScreenFragment?
+        get() = navState.takeIf { it.isNotEmpty() }?.let { getFragmentForScreenKey(it.selectedScreenKey) }
+
     internal val selectedTab: TabsScreenFragment
-        get() =
-            checkNotNull(getFragmentForScreenKey(navState.selectedScreenKey)) { "[RNScreens] No selected tab present" }
+        get() = checkNotNull(selectedTabOrNull) { "[RNScreens] No selected tab present" }
 
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
@@ -255,10 +257,7 @@ class TabsContainer internal constructor(
     }
 
     internal fun setupFragmentManager() {
-        fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }
+        fragmentManager = FragmentManagerHelper.findFragmentManagerForView(this)
     }
 
     internal fun teardownFragmentManager() {
@@ -781,8 +780,10 @@ class TabsContainer internal constructor(
     }
 
     // Only the active item is consulted - a preventing screen inside an inactive tab
-    // does not veto the dismissal.
-    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = selectedTab.tabsScreen.wantsToPreventStackNativeDismiss()
+    // does not veto the dismissal. Reached through ancestor invalidation walks as well,
+    // possibly before the first tab is selected or after the selected tab was removed,
+    // hence the null-safe lookup.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = selectedTabOrNull?.tabsScreen?.wantsToPreventStackNativeDismiss()
 
     // endregion
 

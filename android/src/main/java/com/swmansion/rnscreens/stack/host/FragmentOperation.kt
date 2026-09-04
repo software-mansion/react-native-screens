@@ -56,16 +56,3 @@ internal class FlushNowOp : FragmentOperation() {
         executor.executeFlushOp(fragmentManager, this)
     }
 }
-
-internal class OnCommitCallbackOp(
-    val onCommitCallback: Runnable,
-    val allowStateLoss: Boolean = true,
-    val flushSync: Boolean = false,
-) : FragmentOperation() {
-    override fun execute(
-        fragmentManager: FragmentManager,
-        executor: FragmentOperationExecutor,
-    ) {
-        executor.executeOnCommitCallbackOp(fragmentManager, this)
-    }
-}
