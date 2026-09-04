@@ -1,6 +1,7 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
+#import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
@@ -71,6 +72,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
   _titleMenu = nil;
+  _standardAppearance = nil;
+  _scrollEdgeAppearance = nil;
 }
 
 - (NSArray<id> *)children
@@ -452,6 +455,16 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _backButtonMenuEnabled = newHeaderProps.backButtonMenuEnabled;
   }
 
+  if (oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance) {
+    _standardAppearance = [RNSStackHeaderAppearanceMapper
+        appearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.standardAppearance]];
+  }
+
+  if (oldHeaderProps.scrollEdgeAppearance != newHeaderProps.scrollEdgeAppearance) {
+    _scrollEdgeAppearance = [RNSStackHeaderAppearanceMapper
+        scrollEdgeAppearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.scrollEdgeAppearance]];
+  }
+
   if (oldHeaderProps.titleMenu != newHeaderProps.titleMenu) {
     _titleMenu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newHeaderProps.titleMenu)];
@@ -489,6 +502,26 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 }
 
 #pragma mark - Private
+
+- (nullable NSDictionary *)dictionaryFromAppearanceProp:(const folly::dynamic &)appearanceProp
+{
+  if (appearanceProp.type() != folly::dynamic::OBJECT) {
+    return nil;
+  }
+
+  return rnscreens::conversion::RNSConvertFollyDynamicToId(appearanceProp);
+}
+
+- (nullable RNSStackScreenHeaderCoordinator *)headerCoordinator
+{
+  if (self.superview == nil) {
+    return nil;
+  }
+  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
+            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
+  RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
+  return screen.controller.headerCoordinator;
+}
 
 - (RNSStackNavigationController *)requireNavigationController
 {

@@ -40,6 +40,7 @@ export type {
   // iOS
   StackHeaderBackButtonDisplayModeIOS,
   StackHeaderConfigPropsIOS,
+  StackHeaderAppearanceIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderTitleCustomItemIOS,

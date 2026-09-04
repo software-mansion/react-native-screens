@@ -315,6 +315,8 @@
 
   navItem.title = nil;
   navItem.titleView = nil;
+  navItem.standardAppearance = nil;
+  navItem.scrollEdgeAppearance = nil;
   [navItem setLeftBarButtonItems:@[] animated:YES];
   [navItem setRightBarButtonItems:@[] animated:YES];
 
@@ -423,6 +425,8 @@
   UINavigationItem *navItem = controller.navigationItem;
 
   navItem.title = _configDataProvider.title;
+  navItem.standardAppearance = _configDataProvider.standardAppearance;
+  navItem.scrollEdgeAppearance = _configDataProvider.scrollEdgeAppearance;
 
 #if !TARGET_OS_TV
   NSString *prompt = _configDataProvider.prompt;
