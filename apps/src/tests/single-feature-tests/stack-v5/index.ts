@@ -30,6 +30,7 @@ import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updat
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
 import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
 import TestStackHeaderItemVisibilityPriorityIOS from './test-stack-header-item-visibility-priority-ios';
+import TestStackHeaderItemAppearanceIOS from './test-stack-header-item-appearance-ios';
 import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
 import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
 import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
@@ -53,6 +54,7 @@ export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
 export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
 export { default as TestStackHeaderItemVisibilityPriorityIOS } from './test-stack-header-item-visibility-priority-ios';
+export { default as TestStackHeaderItemAppearanceIOS } from './test-stack-header-item-appearance-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
@@ -93,6 +95,7 @@ const scenarios = {
   TestStackHeaderIconIOS,
   TestStackHeaderItemIdentifierIOS,
   TestStackHeaderItemVisibilityPriorityIOS,
+  TestStackHeaderItemAppearanceIOS,
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,

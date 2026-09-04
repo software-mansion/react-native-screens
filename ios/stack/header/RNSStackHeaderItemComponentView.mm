@@ -52,6 +52,7 @@ namespace react = facebook::react;
   [self setMenuRepresentationProp:nil];
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
+  _disabled = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
   _visibilityPriority = RNSHeaderItemVisibilityPriorityStandard;
@@ -243,6 +244,11 @@ RNS_IGNORE_SUPER_CALL_END
     // menu representation is applied together with the menu & shares its toggle state tracker,
     // so it follows the same invalidation path
     menuDidChange = YES;
+  }
+
+  if (oldItemProps.disabled != newItemProps.disabled) {
+    _disabled = newItemProps.disabled;
+    needsUpdate = YES;
   }
 
   if (oldItemProps.respondsToOnPress != newItemProps.respondsToOnPress) {

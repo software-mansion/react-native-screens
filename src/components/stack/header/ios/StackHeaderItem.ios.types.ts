@@ -21,5 +21,6 @@ export type StackHeaderItemProps = {
   render?: (() => ReactElement) | undefined;
   menu?: StackHeaderMenuIOS | undefined;
   menuRepresentation?: StackHeaderMenuIOS | undefined;
+  disabled?: boolean | undefined;
   onPress?: (() => void) | undefined;
 };
