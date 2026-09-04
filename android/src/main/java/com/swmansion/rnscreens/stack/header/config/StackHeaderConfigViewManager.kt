@@ -101,7 +101,6 @@ internal open class StackHeaderConfigViewManager :
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
         view.resolveOverflowIconIfNeeded()
-        view.resolveToolbarMenuItemIconsIfNeeded()
     }
 
     override fun onDropViewInstance(view: StackHeaderConfig) {
@@ -591,16 +590,14 @@ internal open class StackHeaderConfigViewManager :
         view: StackHeaderConfig,
         value: Boolean,
     ) {
-        view.toolbarMenuGroupDividerEnabled = value
+        view.setToolbarMenuGroupDividerEnabledFromProps(value)
     }
 
     override fun setToolbarMenu(
         view: StackHeaderConfig,
         value: Dynamic,
     ) {
-        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(view.context, value)
-        view.toolbarMenu = menu
-        view.toolbarMenuItemIconSourceMap = iconSources
+        view.setToolbarMenuFromProps(StackHeaderToolbarMenuMapper.parseMenu(view.context, value))
     }
 
     override fun updateToolbarMenuElements(
@@ -619,13 +616,7 @@ internal open class StackHeaderConfigViewManager :
                 Log.w(TAG, "[RNScreens] Skipping toolbar menu update at index $i: missing 'id'.")
                 continue
             }
-            parsed.add(
-                StackHeaderToolbarMenuElementRawUpdate(
-                    id,
-                    StackHeaderToolbarMenuMapper.parseMenuElementOptions(view.context, map),
-                    StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
-                ),
-            )
+            parsed.add(StackHeaderToolbarMenuMapper.parseElementRawUpdate(view.context, id, map))
         }
         view.dispatchMenuElementUpdates(parsed)
     }

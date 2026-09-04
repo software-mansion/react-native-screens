@@ -95,13 +95,6 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * @summary Title of the menu element.
    *
-   * @remarks
-   * If `title` is changed for the element of type `menu` by using the
-   * `updateToolbarMenuElements` view command, the menu title (`menuTitle`)
-   * will also be changed to the new title (unless the new title is set to
-   * `undefined`). In order to keep the custom menu title, you should also
-   * include `menuTitle` in the view command.
-   *
    * @platform android
    */
   title?: string | undefined;
@@ -209,6 +202,9 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * The icon will be visible only if the menu element is shown in the
    * Toolbar.
    *
+   * An icon set via the `updateToolbarMenuElements` view command takes
+   * precedence over this one until the next `toolbarMenu` change.
+   *
    * @platform android
    */
   icon?: PlatformIconAndroid | undefined;
@@ -312,6 +308,10 @@ export interface StackHeaderToolbarMenuItemAndroid
    * The initial state does not trigger `onSelectionChange` on
    * the group at mount time.
    *
+   * A `toolbarMenu` prop change restores the selection to this value.
+   * Neither that restore nor a native header rebuild triggers
+   * `onSelectionChange`.
+   *
    * @default false
    * @platform android
    */
@@ -405,10 +405,8 @@ export interface StackHeaderToolbarMenuAndroid
    * `title`, which controls the label shown in the parent menu's item row.
    *
    * @remarks
-   * If `title` is changed by using the `updateToolbarMenuElements` view
-   * command, the menu title will also be changed to the new title (unless the
-   * new title is set to `undefined`). In order to keep the custom menu title,
-   * you should also include `menuTitle` in the view command.
+   * When left unset, the header falls back to `title`; when both are unset,
+   * the popup shows no header.
    *
    * @platform android
    */
@@ -437,7 +435,8 @@ export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
    *
    * @description
    * Only applies to `type: 'menu'` elements. Ignored if the target is a regular
-   * menu item.
+   * menu item. Setting it to `undefined` drops the `menuTitle` prop as well,
+   * leaving the header to fall back to `title`.
    *
    * @platform android
    */
@@ -479,12 +478,18 @@ export interface StackHeaderConfigCommandsAndroid {
    * overtaken by an earlier one whose icon happened to load late.
    *
    * @remarks
-   * Updates are applied to the live toolbar: they take effect only while the
-   * header is shown, and are discarded whenever the menu is rebuilt from the
-   * `toolbarMenu` prop — whether by a prop change, a structural change such
-   * as hiding and re-showing the header, or an effective color scheme change.
-   * They persist across unrelated re-renders. An update whose `id` is not in
-   * the current menu is ignored.
+   * Updates persist for the lifetime of the current `toolbarMenu`
+   * configuration: they survive every native header rebuild — an effective
+   * color scheme change, a header `type`, `maxLines` or
+   * `collapsedTitleGravityMode` change, hiding and re-showing the header,
+   * reattaching the screen (e.g. switching tabs) — and unrelated re-renders.
+   * Updates sent while the header is hidden are recorded — and emit their
+   * selection events — as usual, and take effect when the header is next
+   * shown. Only a `toolbarMenu` prop change resets them, dropping the
+   * batches still queued as well (see its docs). An update whose `id` is not
+   * in the current menu is ignored. An `icon` set via this command takes
+   * precedence over the icon declared in `toolbarMenu` until the next
+   * `toolbarMenu` change.
    *
    * @param updates A single update object or an array of updates.
    */
@@ -508,6 +513,9 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * M3 Expressive headers aren't currently supported (there is no stable
    * `MDC-Android` version yet).
+   *
+   * Changing this prop at runtime rebuilds the header. Toolbar menu state
+   * survives the rebuild — see `updateToolbarMenuElements`.
    *
    * @see {@link https://m3.material.io/components/app-bars/overview|Material Design 3: App bars}
    *
@@ -831,8 +839,19 @@ export interface StackHeaderConfigPropsAndroid {
    * want to change some property in runtime, use `updateToolbarMenuElements`
    * view command.
    *
-   * Changing this prop in runtime will result in full toolbar menu rebuild.
-   * Any prior changes applied via `updateToolbarMenuElements` will be lost.
+   * Changing this prop at runtime rebuilds the toolbar menu and resets all
+   * of its runtime state: checkbox/radio selections return to their
+   * `initialToggleState` and every change applied via
+   * `updateToolbarMenuElements` is discarded, including batches still
+   * waiting in the queue (e.g. for an icon download). Any real change
+   * counts, even one only swapping an item's icon; re-sending an identical
+   * menu is a no-op and preserves the state.
+   *
+   * An invalid menu is rejected — for example duplicate item or group ids, a
+   * `groupId` that is not declared at the same menu level, or more than one
+   * `initialToggleState` in a single-selection group. The menu is validated
+   * when the prop is set, and a rejected menu leaves the previous one in
+   * effect.
    *
    * @platform android
    */

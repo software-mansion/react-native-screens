@@ -39,8 +39,11 @@ Not automated:
   there is room — on a phone this means it appears in **landscape** and is
   hidden in **portrait**. An item with text but **no icon** always shows
   its text.
-- Changing any **Props** control rebuilds the whole menu and discards any
-  prior `updateToolbarMenuElements` state.
+- Every **Props** control on this screen rewrites `toolbarMenu`, so
+  changing one is a real menu change: it rebuilds the whole menu and
+  discards any prior `updateToolbarMenuElements` state. Re-sending a
+  deep-equal menu is a no-op, and no other kind of header rebuild resets
+  the state.
 
 ## Steps
 

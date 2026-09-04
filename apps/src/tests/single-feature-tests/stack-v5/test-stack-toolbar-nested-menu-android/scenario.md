@@ -8,9 +8,9 @@ correctly as expandable groups in the overflow menu, that `onPress`
 fires with the correct id for items at every nesting level (including
 deeply nested submenus), that imperative `updateToolbarMenuElements`
 commands work on both leaf items inside submenus and on submenu
-containers themselves (including `menuTitle` changes), and that any
-props update rebuilds the entire menu tree — discarding all prior
-command-applied state at every level.
+containers themselves (including `menuTitle` changes), and that a real
+`toolbarMenu` prop change rebuilds the entire menu tree — discarding all
+prior command-applied state at every level.
 
 **OS test creation version:** Android: API Level 36
 
@@ -35,12 +35,19 @@ it renders.
   `onPress`.
 - `updateToolbarMenuElements` targets elements by `id`. It works
   on both leaf items and submenu containers at any nesting depth.
+- Only a **real** `toolbarMenu` change resets command state. Re-sending a
+  deep-equal menu is a no-op, and no other kind of header rebuild resets
+  it.
 - `menuTitle` controls the header text shown above submenu items
   when the submenu is opened. Only `submenu-1` has `menuTitle`
   set by default ("Header A"). `submenu-2` and `deep-menu` have
   no `menuTitle`, so their submenu headers fall back to `title`.
   When both `menuTitle` and `title` are undefined, no submenu
   header is shown.
+- `menuTitle` is independent of `title`: changing `title`, through
+  props or a view command, never replaces a `menuTitle` that is
+  set. It only moves the header where the header is following
+  `title` because no `menuTitle` is in effect.
 
 ## Steps
 
@@ -135,7 +142,9 @@ it renders.
 
 - [ ] In the overflow menu, the submenu previously labeled
       "Submenu A" now reads "Title X". Its children are unchanged
-      ("Title X" from step 10 and "Sub A.2").
+      ("Title X" from step 10 and "Sub A.2"), and its submenu
+      header still reads "Header A" — the `menuTitle` prop is
+      untouched by a `title` change.
 
 15. Set target id = `submenu-1`, title = `no change`,
     hidden = `true`. Tap **Send Command**.
@@ -147,7 +156,7 @@ it renders.
     hidden = `false`. Tap **Send Command**.
 
 - [ ] The submenu reappears with the title "Title X" (preserved
-      from step 14).
+      from step 14) and the submenu header "Header A".
 
 ---
 
@@ -158,7 +167,8 @@ it renders.
     Tap **Send Command**.
 
 - [ ] Open the submenu (still labeled "Title X" from step 14):
-      the submenu header now reads "Header X".
+      the submenu header now reads "Header X" instead of
+      "Header A".
 
 18. Set target id = `submenu-1`, menuTitle = `undefined`,
     title = `no change`, hidden = `no change`.
@@ -177,13 +187,13 @@ it renders.
 
 ---
 
-### Props update drops all command state
+### Props change drops all command state
 
 20. In **Menu Structure — Props**, toggle the "add extra item to
     submenu-1" switch ON.
 
 - [ ] Open "Submenu A" (which reverts to its prop-configured
-      title "Submenu A" because the props update rebuilt the
+      title "Submenu A" because the props change rebuilt the
       menu). The submenu header reads "Header A" (restored from
       props). It now shows three items: "Sub A.1" (reverted from
       "Title X"), "Sub A.2", and "Sub A.3". All command state is
@@ -191,7 +201,7 @@ it renders.
 
 ---
 
-### Props update — structural changes
+### Props change — structural changes
 
 21. Toggle the "add extra item to submenu-1" switch OFF.
 

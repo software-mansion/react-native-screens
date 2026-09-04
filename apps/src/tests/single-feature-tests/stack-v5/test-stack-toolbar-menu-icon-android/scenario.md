@@ -5,8 +5,9 @@
 **Description:** Tests the `icon` and state-aware `iconTintColor*` props on
 Android toolbar menu items. Covers both the props flow (via `toolbarMenu`
 prop) and the imperative command flow (via `updateToolbarMenuElements`). The
-props flow rebuilds all items from scratch on every update and discards all
-prior command state on all items simultaneously. The command flow merges changes
+props flow rebuilds all items from scratch on every **real** `toolbarMenu`
+change and discards all prior command state on all items simultaneously; a
+deep-equal re-send is a no-op. The command flow merges changes
 onto individual items: absent fields preserve the current value; fields set to
 `default` reset to the regular default (not to the last value received from
 props); changes to one item never touch others.
@@ -36,6 +37,14 @@ hardware keyboard focus, neither of which Detox supports.
 - `imageSource` uses `search_black.png` (black icon, transparent background).
   `drawableResource` uses `sym_call_missed` (native white-and-red colors).
   Applying any tint color completely overrides the icon's native colors.
+- Icons declared in `toolbarMenu` are applied to the toolbar in place. An
+  icon finishing its load does not rebuild the menu, so it never discards
+  command state.
+- An `icon` set via `updateToolbarMenuElements` takes precedence over the one
+  declared in `toolbarMenu` until the next real menu change, and a prop icon
+  that resolves later does not override it. Every icon on this screen is a
+  bundled resource that resolves synchronously — see `test-stack-color-scheme`
+  section D for the asynchronous case.
 - **Native platform limitation:** if `iconTintColorNormal` is left at its
   default (undefined) but any other state tint (`Pressed`, `Focused`,
   `Disabled`) is explicitly set, the icon becomes invisible in the normal state.
@@ -295,17 +304,18 @@ hardware keyboard focus, neither of which Detox supports.
 
 ---
 
-### Commands — props update resets all command state
+### Commands — props change resets all command state
 
 35. At this point all three items have command overrides applied (icon and/or
     tint changes from steps 19–34). In **Menu Items — Props**, change Slot 1
     `tintColorNormal` from `default` to `purple` and then immediately back to
     `default`.
 
-- [ ] Both prop changes trigger a full menu rebuild. All command-applied
-      overrides (icon and tint changes) are discarded for all three items
-      simultaneously. Items 1, 2, and 3 all revert to their props-configured
-      state: `search_black.png`, no tint.
+- [ ] Both prop changes are real `toolbarMenu` changes, so each triggers a
+      full menu rebuild. All command-applied overrides (icon and tint
+      changes) are discarded for all three items simultaneously. Items 1, 2,
+      and 3 all revert to their props-configured state: `search_black.png`,
+      no tint.
 
 ---
 

@@ -9,13 +9,6 @@ internal interface StackHeaderDelegate {
         contentOffsetY: Int,
     )
 
-    fun onMenuItemClicked(id: String)
-
-    fun onGroupSelectionChanged(
-        groupId: String,
-        selectedIds: List<String>,
-    )
-
     fun onSubviewOriginChanged(
         type: StackHeaderSubviewType,
         x: Int,

@@ -6,8 +6,9 @@
 that it takes precedence over the system and React Native appearance
 settings, and that the whole header — background, title, subtitle, toolbar
 menu, default icons, ripples and the overflow popup — re-themes on every
-source path, without losing content scroll position or a fully collapsed
-header.
+source path, without losing content scroll position, a fully collapsed
+header, or toolbar menu state (selections and imperative
+`updateToolbarMenuElements` results survive header rebuilds).
 
 **OS test creation version:** Android: API Level 37.
 
@@ -36,18 +37,18 @@ has changed in response to a style update.
 - There are three sources of the color scheme, in ascending order of
   precedence: system, React Native `Appearance`, `StackHost` prop. The last
   two are changed with the pickers rendered on every screen of this test.
-- An effective color scheme change rebuilds the header natively. The
-  following are expected results of that, not bugs:
-  - **KI-1 (menu state):** checkbox/radio selections and the results of
-    imperative `updateToolbarMenuElements` calls are discarded — the same
-    semantics as a `toolbarMenu` prop change. Icons declared in props,
-    including already resolved remote ones, survive.
-  - **KI-2 (collapse):** a fully collapsed header stays collapsed; any
+- An effective color scheme change rebuilds the header natively. Toolbar
+  menu state (checkbox/radio selections and the results of imperative
+  `updateToolbarMenuElements` calls) survives such rebuilds; only a real
+  `toolbarMenu` prop change resets it. The following is an expected result
+  of the rebuild, not a bug:
+  - **KI-1 (collapse):** a fully collapsed header stays collapsed; any
     other offset resets to expanded. Content scroll position is kept in
     both cases.
 - The **trees** icon action item is a bundled photo and is deliberately
-  palette-independent — it must look the same in both schemes. It is there
-  to show which icons survive a rebuild (KI-1), not to test tinting.
+  palette-independent — it must look the same in both schemes. It is the
+  prop-declared baseline icon; the imperative remote icon replacing it
+  marks the command state that must survive rebuilds.
 - Section **B** is executed three times, once per color scheme source. The
   remaining sections are executed once, with any source.
 
@@ -150,27 +151,60 @@ exercises.
 
 ---
 
-### D. Toolbar menu state across a color scheme change
+### D. Toolbar menu state across header rebuilds
 
 13. In the overflow menu check **Filter B** and select **Sort descending**,
     close the menu, then tap **Load remote icon (imperative)** and wait for
     the trees icon to be replaced by the downloaded image.
 
-- [ ] The **Last selection** line reflects last group selection change and the
-      icon action item shows the remote image.
+- [ ] The **Last selection** line reflects the last group selection change
+      and the icon action item shows the remote image.
+- [ ] The icon changes in place — the header does not visibly rebuild or
+      flash.
 
 14. Change the color scheme, then open the overflow menu.
 
+- [ ] **Filter A**, **Filter B** and **Sort descending** are still selected
+      — selections survive the rebuild.
+- [ ] The icon action item still shows the remote image — imperative
+      updates survive the rebuild too.
+
+15. Change the header type (e.g. `small` → `medium`), then open the
+    overflow menu.
+
+- [ ] Same state as in step 14. A header type change also re-sends a
+      deep-equal `toolbarMenu` prop — identical props must not reset the
+      state.
+
+16. Tap **Change toolbarMenu prop**, then open the overflow menu.
+
+- [ ] The **Text** action item shows the new versioned title.
 - [ ] Selections are back to the initial config — **Filter A**, **Sort
-      ascending** (KI-1).
-- [ ] The icon action item shows the bundled trees image again — the
-      imperative update is discarded while the prop icon survives (KI-1).
+      ascending** — and the icon action item shows the bundled trees image
+      again. A real `toolbarMenu` prop change resets all imperative state.
+
+17. Tap **Hide header**.
+
+- [ ] The header disappears and the content moves to the top of the screen.
+
+18. With the header hidden, tap **Load remote icon (imperative)**, then
+    **Check Filter B (imperative)**.
+
+- [ ] The **Last selection** line updates to the filters group containing
+      both **filterA** and **filterB** — the selection event fires while
+      the header is hidden.
+
+19. Tap **Show header**, then open the overflow menu.
+
+- [ ] **Filter A** and **Filter B** are checked and the icon action item
+      shows the remote image — updates sent while the header was hidden
+      apply on the next build.
 
 ---
 
 ### E. Keyboard
 
-15. Open the keyboard via the TextInput on the Config screen.
+20. Open the keyboard via the TextInput on the Config screen.
 <!--- (or Cmd+K on iOS simulator) -->
 
 <!--- [ ] iOS: Keyboard appearance matches the currently active color scheme

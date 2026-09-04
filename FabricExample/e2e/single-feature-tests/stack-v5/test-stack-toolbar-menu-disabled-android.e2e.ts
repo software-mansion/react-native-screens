@@ -301,9 +301,10 @@ async function sendCommand(options: {
 //
 // That is load-bearing for the command steps. Step 21 re-enables the
 // `action-bar` step 18 disabled and step 22 clears the `submenu` override step
-// 19 applied; command state does not survive a reload, so resetting would leave
-// both acting on an already-enabled element and passing without testing
-// anything. The props blocks (2–17) each toggle their own switch back off.
+// 19 applied; a reload rebuilds the JS tree and so drops command state, and
+// resetting would leave both acting on an already-enabled element and passing
+// without testing anything. The props blocks (2–17) each toggle their own
+// switch back off.
 describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
