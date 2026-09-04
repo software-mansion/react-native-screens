@@ -64,8 +64,13 @@ internal class StackHeaderCoordinatorLayout(
 
         if (provider != null) {
             provider.setConfigurationObserver(configObserver)
-            processUpdate(provider)
+            // A freshly adopted config is fully dirty by construction: this
+            // coordinator has applied nothing of it yet, regardless of what a
+            // previous (destroyed) coordinator consumed.
+            invalidate(StackHeaderInvalidationFlags.ALL)
+            flushPendingUpdates()
         } else {
+            pendingFlags = StackHeaderInvalidationFlags.NONE
             removeHeader()
         }
     }
@@ -76,7 +81,12 @@ internal class StackHeaderCoordinatorLayout(
 
     private val configObserver =
         object : StackHeaderConfigurationObserver {
-            override fun onConfigChanged(config: StackHeaderConfigurationProviding) = processUpdate(config)
+            override fun onInvalidated(flags: StackHeaderInvalidationFlags) {
+                invalidate(flags)
+                flushPendingUpdates()
+            }
+
+            override fun onFlushRequested() = flushPendingUpdates()
         }
 
     // endregion
@@ -111,9 +121,9 @@ internal class StackHeaderCoordinatorLayout(
         StackHeaderFrameSynchronizer.sync(appBar, provider, delegate)
     }
 
-    // Tracks whether the app bar is currently scrolled to its fully collapsed offset. Used to work
-    // around a Material offset bug when the title/subtitle changes at runtime — see
-    // StackHeaderApplicator.applyTitleAndSubtitle. This should be equivalent to Material's
+    // Tracks whether the app bar is currently scrolled to its fully collapsed offset, so
+    // processUpdate can preserve the collapsed resting state across header updates (rebuilds and
+    // re-measures start expanded). This should be equivalent to Material's
     // `collapsingTitleHelper.getExpansionFraction() == 1f` condition.
     private var isAppBarFullyCollapsed = false
 
@@ -146,69 +156,74 @@ internal class StackHeaderCoordinatorLayout(
         activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
-    private fun processUpdate(
-        provider: StackHeaderConfigurationProviding,
-        forcedFlags: StackHeaderInvalidationFlags = StackHeaderInvalidationFlags.NONE,
-    ) {
-        val effectiveFlags = provider.invalidationFlags or forcedFlags
-        val needsRebuild = effectiveFlags.needsRebuild
+    private var pendingFlags = StackHeaderInvalidationFlags.NONE
+
+    private fun invalidate(flags: StackHeaderInvalidationFlags) {
+        pendingFlags = pendingFlags or flags
+    }
+
+    private fun flushPendingUpdates() {
+        val provider = currentProvider ?: return
+        if (pendingFlags.isEmpty) return
+        // Hold the flush while more updates may arrive in the current batch; the batch end
+        // triggers onFlushRequested.
+        if (provider.isUpdatePending) return
+        // While detached from window, only accumulate: onAttachedToWindow flushes once, after the
+        // color scheme is resolved, so the header is built under the right theme.
+        if (!isAttachedToWindow) return
+        processUpdate(provider)
+    }
+
+    private fun processUpdate(provider: StackHeaderConfigurationProviding) {
+        val flags = pendingFlags
+        pendingFlags = StackHeaderInvalidationFlags.NONE
+
+        val needsRebuild = flags.needsRebuild
+        val wasFullyCollapsed = isAppBarFullyCollapsed
+
         if (needsRebuild) {
-            resetHeader()
             if (provider.hidden) {
-                removeContentBehavior()
-                requestLayout()
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.ALL)
+                removeHeader()
                 return
             }
 
+            resetHeader()
             val appBar = applicator.rebuild(this, provider)
             appBarLayout = appBar
             attachAppBarListeners(appBar)
-
-            // If config needs to be rebuilt, all other flags must be invalidated as well.
-            provider.clearInvalidationFlags(
-                StackHeaderInvalidationFlags.STRUCTURE or StackHeaderInvalidationFlags.SUBVIEWS,
-            )
         }
 
         val appBar = appBarLayout
         if (appBar != null) {
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
-                applicator.applyTitleAndSubtitle(appBar, provider, isAppBarFullyCollapsed)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE)
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.TITLE)) {
+                applicator.applyTitleAndSubtitle(appBar, provider)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.TITLE_APPEARANCE)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.TITLE_APPEARANCE)) {
                 applicator.applyTitleAndSubtitleAppearance(appBar, provider)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.TITLE_POSITIONING)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.TITLE_POSITIONING)) {
                 applicator.applyTitlePositioning(appBar, provider)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TITLE_POSITIONING)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.CONTENT_INSETS)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.CONTENT_INSETS)) {
                 applicator.applyContentInsets(appBar, provider)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.CONTENT_INSETS)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.BACK_BUTTON)) {
                 applicator.applyBackButton(appBar.toolbar, provider, canNavigateBack, onNavigationIconClick)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.BACK_BUTTON)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.SCROLL_FLAGS)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.SCROLL_FLAGS)) {
                 applicator.applyScrollFlags(appBar, provider)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.SCROLL_FLAGS)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.BACKGROUND_COLORS)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.BACKGROUND_COLORS)) {
                 applicator.applyBackgroundColors(appBar, provider)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.BACKGROUND_COLORS)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)) {
                 // Lift-on-scroll is disabled in transparent mode: there is no content
                 // scrolling behavior installed and the app bar overlays the content.
                 applicator.applyLiftOnScroll(
@@ -216,17 +231,23 @@ internal class StackHeaderCoordinatorLayout(
                     enabled = provider.liftOnScroll && !provider.transparent,
                     targetScrollView = stackScreen.findContentScrollView(),
                 )
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.TOOLBAR_MENU)) {
                 provider.toolbarMenuController.attach(appBar.toolbar)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.TOOLBAR_MENU)
             }
 
-            if (needsRebuild || effectiveFlags.containsAny(StackHeaderInvalidationFlags.OVERFLOW_ICON)) {
+            if (needsRebuild || flags.containsAny(StackHeaderInvalidationFlags.OVERFLOW_ICON)) {
                 applicator.applyOverflowIcon(appBar.toolbar, provider)
-                provider.clearInvalidationFlags(StackHeaderInvalidationFlags.OVERFLOW_ICON)
+            }
+
+            // A rebuilt or re-measured app bar starts expanded; re-assert the fully-collapsed
+            // resting state so a scrolled-down screen doesn't jump. A pending action, so it wins
+            // over applyScrollFlags' expand snap, and it resolves against the new configuration —
+            // degrading to expanded when the header can no longer collapse. Fractional offsets
+            // reset to expanded.
+            if (wasFullyCollapsed) {
+                appBar.setExpanded(false, false)
             }
         }
 
@@ -256,7 +277,14 @@ internal class StackHeaderCoordinatorLayout(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        // Resolve the color scheme before flushing, so a deferred first build happens under the
+        // pinned theme (a scheme change inside setup() flushes by itself; the trailing flush then
+        // no-ops).
         colorSchemeCoordinator.setup(this) { applyUiNightMode(it) }
+        // AppBarLayout clears its liftOnScrollTargetView on window detach and never re-resolves
+        // it; re-apply on every attach.
+        invalidate(StackHeaderInvalidationFlags.LIFT_ON_SCROLL)
+        flushPendingUpdates()
     }
 
     override fun onDetachedFromWindow() {
@@ -278,18 +306,11 @@ internal class StackHeaderCoordinatorLayout(
         }
 
         appliedUiNightMode = uiNightMode
-        currentProvider?.let {
-            // A rebuild is forced because MaterialToolbar snapshots its theme at construction:
-            // ripples, the overflow popup and menu item views resolve from that frozen copy, so
-            // only view recreation refreshes them.
-            val wasFullyCollapsed = isAppBarFullyCollapsed
-            processUpdate(it, forcedFlags = StackHeaderInvalidationFlags.STRUCTURE)
-            // The rebuilt app bar starts expanded; restore the fully-collapsed resting state
-            // so a scrolled-down screen doesn't jump. Fractional offsets reset.
-            if (wasFullyCollapsed) {
-                appBarLayout?.setExpanded(false, false)
-            }
-        }
+        // A rebuild is needed because MaterialToolbar snapshots its theme at construction:
+        // ripples, the overflow popup and menu item views resolve from that frozen copy, so
+        // only view recreation refreshes them.
+        invalidate(StackHeaderInvalidationFlags.STRUCTURE)
+        flushPendingUpdates()
     }
 
     // endregion
@@ -302,13 +323,12 @@ internal class StackHeaderCoordinatorLayout(
             removeView(it)
         }
         appBarLayout = null
-        // A rebuilt header starts fully expanded; drop any stale collapsed state from the old one.
-        isAppBarFullyCollapsed = false
         currentProvider?.toolbarMenuController?.detach()
     }
 
     private fun removeHeader() {
         resetHeader()
+        isAppBarFullyCollapsed = false
         removeContentBehavior()
         requestLayout()
     }
@@ -387,6 +407,7 @@ internal class StackHeaderCoordinatorLayout(
     internal fun tearDown() {
         colorSchemeCoordinator.teardown()
 
+        pendingFlags = StackHeaderInvalidationFlags.NONE
         removeHeader()
 
         stackScreenWrapper.removeView(stackScreen)
