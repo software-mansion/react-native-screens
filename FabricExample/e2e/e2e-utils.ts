@@ -473,7 +473,7 @@ const MENU_DISMISS_PROBE_TIMEOUT_MS = 1000;
 export const OVERFLOW_MENU_LABEL = 'More options';
 
 /** The popup hosting the overflow menu (or, once opened, a submenu). */
-export const overflowMenuMatcher = (): NativeMatcher =>
+const overflowMenuMatcher = (): NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW);
 
 export const overflowMenu = () => element(overflowMenuMatcher());
