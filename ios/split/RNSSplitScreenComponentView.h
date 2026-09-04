@@ -1,6 +1,7 @@
 #pragma once
 
 #import "RNSEnums.h"
+#import "RNSNavigationControllerProviding.h"
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
@@ -22,6 +23,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nonnull) RNSSplitScreenController *controller;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitHostComponentView *splitHost;
+
+@end
+
+#pragma mark - Nested container
+
+/**
+ * A column whose **only** child conforms to `RNSNavigationControllerProviding` is backed by the provided navigation
+ * controller instead of `controller`; neither the column view nor the child's view enter the UIKit hierarchy.
+ */
+@interface RNSSplitScreenComponentView ()
+
+@property (nonatomic, weak, readonly, nullable) UIView<RNSNavigationControllerProviding> *navigationControllerProvider;
 
 @end
 
