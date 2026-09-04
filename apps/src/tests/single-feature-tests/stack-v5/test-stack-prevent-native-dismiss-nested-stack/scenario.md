@@ -89,6 +89,14 @@ Manual only (not automated):
   once (e.g. **B**, then **NestedStack** → **NestedHome**), only the current
   top screen intercepts native dismissal; ancestors further down are not
   reached until the current screen stops intercepting.
+- The two dismissal triggers resolve interception differently, though in this
+  scenario the observable outcomes coincide. The **system back / gesture-back**
+  goes through the activity-level back dispatcher, where the top screen's
+  callback intercepts. The **header back chevron** is resolved within the
+  pressed header's own stack container: any screen the pop would natively
+  dismiss - the container's top screen, or (for a screen hosting a nested
+  stack) any screen of that nested subtree, consulted deepest-first - can veto
+  the pop, and the vetoing screen fires `onNativeDismissPrevented`.
 
 ## Steps
 

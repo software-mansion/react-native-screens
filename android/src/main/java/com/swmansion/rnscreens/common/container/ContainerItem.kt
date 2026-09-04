@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.common.container
 
 import android.view.ViewGroup
 
-internal interface ContainerItem {
+interface ContainerItem {
     // region Nested Container handling
 
     /**
@@ -25,6 +25,18 @@ internal interface ContainerItem {
      * @return Content scroll view associated with this container item.
      */
     fun findContentScrollView(): ViewGroup?
+
+    // endregion
+
+    // region Native dismissal
+
+    /**
+     * Asked when this item (screen) is about to be natively dismissed together
+     * with its subtree. The nested container (if any) is consulted first; its
+     * non-null answer wins, otherwise the item answers for itself, returning
+     * itself when it vetoes the dismissal or null otherwise.
+     */
+    fun wantsToPreventStackNativeDismiss(): ContainerItem?
 
     // endregion
 }
