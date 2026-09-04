@@ -4,9 +4,14 @@
 #import <rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
+#import "RNSSplitScreenShadowStateProxy.h"
 
 namespace react = facebook::react;
+
+@interface RNSSplitScreenComponentView () <RNSSplitScreenControllerDelegate>
+@end
 
 @implementation RNSSplitScreenComponentView {
   RNSSplitScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
@@ -49,6 +54,7 @@ namespace react = facebook::react;
 {
   _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
   _controller.view = self;
+  _controller.delegate = self;
 }
 
 - (void)didMoveToWindow
@@ -108,20 +114,31 @@ namespace react = facebook::react;
   [super layoutSubviews];
 }
 
-#pragma mark - ShadowTreeState
+#pragma mark - RNSSplitScreenControllerDelegate
 
-- (nonnull RNSSplitScreenShadowStateProxy *)shadowStateProxy
+- (void)splitScreenController:(RNSSplitScreenController *)controller didChangeColumnFrame:(CGRect)frame
 {
-  RCTAssert(_shadowStateProxy != nil, @"[RNScreens] Attempt to access uninitialized _shadowStateProxy");
-  return _shadowStateProxy;
+  [_shadowStateProxy updateShadowStateWithFrame:frame];
 }
 
-#pragma mark - Events
-
-- (nonnull RNSSplitScreenComponentEventEmitter *)reactEventEmitter
+- (void)splitScreenControllerWillAppear:(RNSSplitScreenController *)controller
 {
-  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
-  return _reactEventEmitter;
+  [_reactEventEmitter emitOnWillAppear];
+}
+
+- (void)splitScreenControllerDidAppear:(RNSSplitScreenController *)controller
+{
+  [_reactEventEmitter emitOnDidAppear];
+}
+
+- (void)splitScreenControllerWillDisappear:(RNSSplitScreenController *)controller
+{
+  [_reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)splitScreenControllerDidDisappear:(RNSSplitScreenController *)controller
+{
+  [_reactEventEmitter emitOnDidDisappear];
 }
 
 #pragma mark - RNSSafeAreaProviding
