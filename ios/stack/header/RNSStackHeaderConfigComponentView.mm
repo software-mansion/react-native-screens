@@ -1,6 +1,6 @@
 #import "RNSStackHeaderConfigComponentView.h"
-#import "RNSConversions.h"
 #import "RNSConversions-Stack.h"
+#import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
@@ -21,8 +21,8 @@
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <react/utils/ManagedObjectWrapper.h>
 #import <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
+#import <react/utils/ManagedObjectWrapper.h>
 
 namespace react = facebook::react;
 
@@ -448,8 +448,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   if (oldHeaderProps.backButtonDisplayMode != newHeaderProps.backButtonDisplayMode) {
-    _backButtonDisplayMode =
-        rnscreens::conversion::UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+    _backButtonDisplayMode = rnscreens::conversion::
+        UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
             newHeaderProps.backButtonDisplayMode);
   }
 

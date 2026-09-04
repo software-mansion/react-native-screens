@@ -3,8 +3,7 @@
 ## Details
 
 **Description:** This test focuses on the appearance of regular header items:
-regular, disabled, prominent and prominent disabled (prominent variants not
-implemented yet — items "3" and "4" currently render as regular / disabled).
+regular, disabled, prominent and prominent disabled.
 
 **OS test creation version:** iOS 26.4, iPadOS 26.4
 
@@ -26,10 +25,18 @@ TBD
 
 - [ ] Item "2" is grayed out (disabled)
 
-- [ ] Item "3" is displayed as a regular, enabled item (prominent style not implemented yet)
+- [ ] Item "3" is displayed as a prominent item (tinted background; bold on iOS < 26)
 
-- [ ] Item "4" is grayed out (disabled; prominent style not implemented yet)
+- [ ] Item "4" is displayed as a prominent item and grayed out (disabled)
 
-2. Tap items "2" and "4"
+2. Tap items "1" and "3"
 
-- [ ] Disabled items do not react to touches (no highlight)
+- [ ] A toast appears for each tap
+
+3. Tap items "2" and "4"
+
+- [ ] Disabled items do not react to touches (no highlight, no toast)
+
+4. Tap "Push to overflow", then open the overflow menu
+
+- [ ] Items "1"-"4" are moved to the overflow menu
