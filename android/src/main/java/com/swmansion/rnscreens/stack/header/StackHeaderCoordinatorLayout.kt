@@ -123,8 +123,9 @@ internal class StackHeaderCoordinatorLayout(
     // Tracks whether the app bar is currently scrolled to its fully collapsed offset, so
     // processUpdate can preserve the collapsed resting state across header updates (rebuilds and
     // re-measures start expanded). This should be equivalent to Material's
-    // `collapsingTitleHelper.getExpansionFraction() == 1f` condition.
-    private var isAppBarFullyCollapsed = false
+    // `collapsingTitleHelper.getExpansionFraction() == 1f` condition. `null` means unknown: no
+    // offset has been observed since the header was last removed.
+    private var isAppBarFullyCollapsed: Boolean? = null
 
     private fun evaluateCollapseState(
         appBar: AppBarLayout,
@@ -238,17 +239,21 @@ internal class StackHeaderCoordinatorLayout(
             }
 
             // A rebuilt or re-measured app bar starts expanded; re-assert the fully-collapsed
-            // resting state so a scrolled-down screen doesn't jump. A pending action, so it wins
+            // resting state so a scrolled-down screen doesn't jump. When the state is unknown
+            // (the header was removed — hidden, config detach), infer it from the content:
+            // scrolled content implies the bar was collapsed. A pending action, so it wins
             // over applyScrollFlags' expand snap, and it resolves against the new configuration —
             // degrading to expanded when the header can no longer collapse. Fractional offsets
             // reset to expanded.
-            if (wasFullyCollapsed) {
+            if (wasFullyCollapsed ?: isContentScrolled()) {
                 appBar.setExpanded(false, false)
             }
         }
 
         onMaybeHeaderLayoutChanged()
     }
+
+    private fun isContentScrolled() = stackScreen.findContentScrollView()?.canScrollVertically(-1) == true
 
     // endregion
 
@@ -324,7 +329,7 @@ internal class StackHeaderCoordinatorLayout(
 
     private fun removeHeader() {
         resetHeader()
-        isAppBarFullyCollapsed = false
+        isAppBarFullyCollapsed = null
         removeContentBehavior()
         requestLayout()
     }
