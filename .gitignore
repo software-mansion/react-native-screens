@@ -5,6 +5,9 @@
 # Xcode
 #
 build/
+.build/
+.swiftpm/
+Package.resolved
 *.pbxuser
 !default.pbxuser
 *.mode1v3

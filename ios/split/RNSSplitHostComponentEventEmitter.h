@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 // Hide C++ symbols from C compiler used when building Swift module
 #if defined(__cplusplus)

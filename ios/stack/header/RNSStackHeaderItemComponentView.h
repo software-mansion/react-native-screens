@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_END
 
 #if defined(__cplusplus)
 
-#import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 @interface RNSStackHeaderItemComponentView ()
 

@@ -20,7 +20,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/utils/ManagedObjectWrapper.h>
-#import <rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
 
 namespace react = facebook::react;
 
