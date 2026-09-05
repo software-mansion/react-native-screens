@@ -2,9 +2,10 @@ package com.swmansion.rnscreens.modals.formsheet.native.presentation
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetAppearanceCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetBehaviorController
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetDimensionsCoordinator
@@ -17,6 +18,7 @@ import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 internal class FormSheetPresentation(
     themedContext: Context,
     private val container: FormSheetContainer,
+    private val dimmingManager: FormSheetDimmingManager,
     private val callbacks: Callbacks,
 ) {
     internal interface Callbacks {
@@ -25,6 +27,8 @@ internal class FormSheetPresentation(
         fun onNativeDismissAllowed()
 
         fun onNativeDismissPrevented()
+
+        fun resolveWindowBelow(): Window?
     }
 
     internal val dialog =
@@ -37,9 +41,6 @@ internal class FormSheetPresentation(
         }
 
     internal val bottomSheetView: FrameLayout? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-
-    internal val sheetBehavior: BottomSheetBehavior<FrameLayout>?
-        get() = bottomSheetView?.let { BottomSheetBehavior.from(it) }
 
     private val behaviorController =
         bottomSheetView?.let {
@@ -67,7 +68,19 @@ internal class FormSheetPresentation(
             onDismissPrevented = callbacks::onNativeDismissPrevented,
         )
 
+    // On an undimmed sheet, the backdrop tap should be forwarded to the window
+    // below.
+    private val backdropTouchForwarder =
+        dialog.findViewById<View>(com.google.android.material.R.id.touch_outside)?.let { backdropView ->
+            FormSheetBackdropTouchForwarder(
+                backdropView = backdropView,
+                isBackdropDimmed = { dimmingManager.isDimmed },
+                resolveWindowBelow = callbacks::resolveWindowBelow,
+            )
+        }
+
     init {
+        backdropTouchForwarder?.setup()
         nativeDismissCoordinator.setup()
         appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
@@ -83,10 +96,16 @@ internal class FormSheetPresentation(
         contentHeight: Int,
     ) {
         onContentHeightChanged(contentHeight)
+        val detents = resolveDetents(config.detents)
         dimensionsCoordinator.updateFormSheetDimensions(
-            resolveDetents(config.detents),
+            detents,
             config.initialDetentIndex,
             applyInitialDetent = true,
+        )
+        dimmingManager.updateDimmingProfile(
+            detents = detents,
+            largestUndimmedDetentIndex = config.largestUndimmedDetentIndex,
+            initialDetentIndex = config.initialDetentIndex,
         )
         container.setGrabberVisible(config.prefersGrabberVisible)
         appearanceCoordinator.updateCornerRadius(config.preferredCornerRadius)
@@ -98,10 +117,27 @@ internal class FormSheetPresentation(
         oldConfig: FormSheetConfig,
         newConfig: FormSheetConfig,
     ) {
-        if (oldConfig.detents != newConfig.detents) {
-            dimensionsCoordinator.updateFormSheetDimensions(
-                resolveDetents(newConfig.detents),
-                newConfig.initialDetentIndex,
+        val dimensionsChanged = oldConfig.detents != newConfig.detents
+        val largestUndimmedDetentIndexChanged =
+            oldConfig.largestUndimmedDetentIndex !=
+                newConfig.largestUndimmedDetentIndex
+
+        if (dimensionsChanged || largestUndimmedDetentIndexChanged) {
+            val detents = resolveDetents(newConfig.detents)
+
+            if (dimensionsChanged) {
+                dimensionsCoordinator.updateFormSheetDimensions(
+                    detents,
+                    newConfig.initialDetentIndex,
+                )
+            }
+
+            // The dimming profile depends on the detents geometry, so it's refreshed after the
+            // dimensions update.
+            dimmingManager.updateDimmingProfile(
+                detents = detents,
+                largestUndimmedDetentIndex = newConfig.largestUndimmedDetentIndex,
+                initialDetentIndex = newConfig.initialDetentIndex,
             )
         }
 
@@ -124,6 +160,7 @@ internal class FormSheetPresentation(
 
     internal fun destroy() {
         behaviorController?.destroy()
+        backdropTouchForwarder?.destroy()
         nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
 

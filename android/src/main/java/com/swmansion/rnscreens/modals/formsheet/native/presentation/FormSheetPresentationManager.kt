@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.util.Log
 import android.view.View
+import android.view.Window
 import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
@@ -21,6 +22,16 @@ internal class FormSheetPresentationManager(
 
     private val bottomSheetView: View?
         get() = currentPresentation?.bottomSheetView
+
+    private var dismissalWindowBelow: Window? = null
+
+    internal fun windowBelow(): Window? =
+        dismissalWindowBelow
+            ?: FormSheetStackRegistry
+                .sheetBelow(this)
+                ?.currentPresentation
+                ?.dialog
+                ?.window
 
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false
@@ -85,7 +96,7 @@ internal class FormSheetPresentationManager(
 
         state = FormSheetPresentationState.PRESENTING
         val presentation = presentationFactory().also { currentPresentation = it }
-        presentation.sheetBehavior?.let(dimmingManager::attachToBehavior)
+        presentation.bottomSheetView?.let(dimmingManager::attachToSheet)
 
         FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
@@ -109,6 +120,12 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        dismissalWindowBelow =
+            FormSheetStackRegistry
+                .sheetBelow(this)
+                ?.currentPresentation
+                ?.dialog
+                ?.window
         dismissSheetsAbove()
         // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
         // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
@@ -238,6 +255,7 @@ internal class FormSheetPresentationManager(
     private fun performDismiss() {
         shouldSkipExitAnimation = false
         dimmingManager.detachDimming()
+        dimmingManager.detachFromSheet()
         currentPresentation?.destroy()
         currentPresentation = null
         onDismissComplete()
@@ -267,6 +285,7 @@ internal class FormSheetPresentationManager(
                     )
             }
             dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
+            dismissalWindowBelow = null
 
             // ensure state hasn't updated during dismissal
             resolvePresentationState()
@@ -275,7 +294,9 @@ internal class FormSheetPresentationManager(
 
     internal fun destroy() {
         FormSheetStackRegistry.unregister(this)
+        dismissalWindowBelow = null
         dimmingManager.detachDimming()
+        dimmingManager.detachFromSheet()
 
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null

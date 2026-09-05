@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   sheetContent: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.NavyLight40,
     padding: 24,
     justifyContent: Platform.OS === 'ios' ? 'center' : 'flex-start',
     alignItems: 'center',
