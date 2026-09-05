@@ -74,6 +74,7 @@ export interface NativeProps extends ViewProps {
   title?: string | undefined;
   icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
+  menuRepresentation?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
   respondsToOnPress?: CT.WithDefault<boolean, false>;
   onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;
 }
