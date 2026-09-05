@@ -116,7 +116,8 @@ namespace react = facebook::react;
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
 
   if (oldComponentProps.activityMode != newComponentProps.activityMode) {
-    _activityMode = rnscreens::conversion::convert<RNSStackScreenActivityMode>(newComponentProps.activityMode);
+    _activityMode = rnscreens::conversion::RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
+        newComponentProps.activityMode);
     _hasUpdatedActivityMode = YES;
   }
 
