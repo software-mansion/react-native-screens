@@ -1,18 +1,20 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import type { NativeMatcher } from 'detox/detox';
 import {
+  actionMenuItem,
   createOverflowMenuHelpers,
   describeIfAndroid,
   expectCheckBox,
+  expectIconActionItem,
   expectRadioButton,
-  getElementAttributes,
+  expectTextActionItem,
   menuItemRow,
+  DEFAULT_TIMEOUT_MS,
+  readText,
   rewindAndScrollUntilVisible,
   scrollToAndTap,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '../../native-class-names';
 
 // Stateful walkthrough of scenario.md: the menu's checked state is cumulative
 // and the screen has no full reset, so each case starts where the previous one
@@ -22,54 +24,35 @@ import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '../../native-class-nam
 const SCROLLVIEW_ID = 'toolbar-menu-batch-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 const SCROLL_STEP = { pixels: 300 };
+const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP };
 
-const EVENT_TIMEOUT_MS = 3000;
 // Generous on purpose: the failing-image cases wait on a network error, and a
 // slow one must not read as a stuck batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
-// `by.label` matches the button in both its icon-only (title as content
-// description) and text form; the form is told apart by the rendered text.
-const appleToolbarButton: NativeMatcher = by
-  .label('Apple')
-  .and(by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW));
+const APPLE = 'Apple';
 
 async function expectAppleNotInToolbar() {
-  await expect(element(appleToolbarButton)).not.toExist();
+  await expect(element(actionMenuItem(APPLE))).not.toExist();
 }
 
-// Asserted positively: on Android a negated matcher passes on a missing view.
-async function expectAppleInToolbarWithIcon() {
-  await expect(element(appleToolbarButton)).toBeVisible();
-  // AppCompat clears an icon-only action button's text (`setText(null)`).
-  await waitFor(element(appleToolbarButton))
-    .toHaveText('')
-    .withTimeout(IMAGE_LOAD_TIMEOUT_MS);
-}
-
-async function expectAppleInToolbarWithoutIcon() {
-  await expect(element(appleToolbarButton)).toBeVisible();
-  await expect(element(appleToolbarButton)).toHaveText('Apple');
-}
+const expectAppleInToolbarWithIcon = () =>
+  expectIconActionItem(APPLE, IMAGE_LOAD_TIMEOUT_MS);
+const expectAppleInToolbarWithoutIcon = () => expectTextActionItem(APPLE);
 
 async function scrollIntoView(id: string) {
   await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
 }
 
 async function tapById(id: string) {
-  await scrollToAndTap(id, { scrollViewId: SCROLLVIEW_ID, ...SCROLL_STEP });
+  await scrollToAndTap(id, SETTINGS_CONTROL);
 }
 
 const { closeMenuIfOpen, withOverflowMenu } = createOverflowMenuHelpers({
   scrollViewId: SCROLLVIEW_ID,
 });
 
-async function readText(id: string): Promise<string> {
-  await scrollIntoView(id);
-  return (await getElementAttributes({ by: 'id', value: id })).text ?? '';
-}
-
-async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
+async function expectEventCount(n: number, timeoutMs = DEFAULT_TIMEOUT_MS) {
   await scrollIntoView('events-count-text');
   await waitFor(element(by.id('events-count-text')))
     .toHaveText(`Events received: ${n}`)
@@ -77,7 +60,7 @@ async function expectEventCount(n: number, timeoutMs = EVENT_TIMEOUT_MS) {
 }
 
 async function expectEventCountUnchanged(action: () => Promise<void>) {
-  const before = await readText('events-count-text');
+  const before = await readText('events-count-text', SETTINGS_CONTROL);
   jestExpect(before).toMatch(/^Events received: \d+$/);
   await action();
   await scrollIntoView('events-count-text');
@@ -104,7 +87,7 @@ function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
 
 // Compares ids sorted — order-insensitive, duplicates still fail.
 async function expectLogEntry(index: number, groupId: string, ids: string[]) {
-  const raw = await readText(`event-log-entry-${index}`);
+  const raw = await readText(`event-log-entry-${index}`, SETTINGS_CONTROL);
   const entry = parseLogEntry(raw);
   jestExpect(entry.groupId).toBe(groupId);
   jestExpect([...entry.ids].sort()).toEqual([...ids].sort());

@@ -1,20 +1,19 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  barButtonIcon,
+  describeIfiOS,
+  headerTitle,
+  menuRowIcon,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
-  CLASS_NAME_UI_LABEL,
-  CLASS_NAME_UI_MODERN_BAR_BUTTON,
 } from '../../native-class-names';
 
 // Number of rows in the header item menu that render an icon:
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
 const MENU_ROW_COUNT = 4;
-
-// The icon of the header bar button item, addressed by its icon id (SF Symbol
-// name or asset path).
-const barButtonIcon = (iconId: string) =>
-  element(by.id(iconId).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)));
 
 // `imageSource` and `templateSource` ids are the bundled paths of the `require`d
 // asset files — renaming or moving those assets requires updating them here.
@@ -27,7 +26,7 @@ const ICON_IDS = {
 
 // The icon of a single menu row, addressed by its icon id and its position in
 // the menu.
-const menuRowIcon = (iconId: string, index: number) =>
+const menuRowIconAt = (iconId: string, index: number) =>
   element(
     by
       .id(iconId)
@@ -40,32 +39,18 @@ const expectAllMenuRowIconsToBeVisible = async (
   rowCount: number = MENU_ROW_COUNT,
 ) => {
   for (let index = 0; index < rowCount; index++) {
-    await expect(menuRowIcon(iconId, index)).toBeVisible();
+    await expect(menuRowIconAt(iconId, index)).toBeVisible();
   }
 };
 
 // Titles of the rows inside the nested submenu.
 const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
 
-// The icon of a single submenu row, addressed by its icon id and the row's own
-// title rather than by position: the parent menu's cells use the same class and
-// stay in the hierarchy while the submenu is open, so an index-based matcher
-// would happily match a parent row instead.
-const submenuRowIcon = (iconId: string, rowTitle: string) =>
-  element(
-    by
-      .id(iconId)
-      .withAncestor(
-        by
-          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-          .and(by.label(rowTitle)),
-      ),
-  );
-
-// Asserts that every submenu row renders the icon carrying `iconId`.
+// Asserts every submenu row renders `iconId`. Addressed by title, not index:
+// the parent menu's cells stay attached while the submenu is open.
 const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {
   for (const rowTitle of SUBMENU_ROWS) {
-    await expect(submenuRowIcon(iconId, rowTitle)).toBeVisible();
+    await expect(menuRowIcon(iconId, rowTitle)).toBeVisible();
   }
 };
 
@@ -79,9 +64,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
   });
 
   it('should display the header with a star sfSymbol icon on the trailing item', async () => {
-    await expect(
-      element(by.type(CLASS_NAME_UI_LABEL).and(by.text('Header Icons'))),
-    ).toExist();
+    await expect(element(headerTitle('Header Icons'))).toExist();
     await expect(barButtonIcon(ICON_IDS.sfSymbol)).toBeVisible();
   });
 

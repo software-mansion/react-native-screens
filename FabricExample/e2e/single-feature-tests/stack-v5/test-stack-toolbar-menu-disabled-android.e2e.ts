@@ -5,16 +5,20 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
 import {
+  createOverflowMenuHelpers,
   describeIfAndroid,
-  getMatches,
+  getSingleMatch,
+  menuItemRow,
+  MENU_ANIMATION_TIMEOUT_MS,
+  readText,
   rewindAndScrollUntilVisible,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
+  toggleSettingsSwitch,
 } from '../../e2e-utils';
 import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
-  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
-  CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
 } from '../../native-class-names';
 // Typed from the screen, so a rename there fails type-checking here.
 import type {
@@ -29,13 +33,8 @@ import type {
 const SCROLLVIEW_ID = 'toolbar-menu-disabled-scrollview';
 const HEADER_TITLE: HeaderTitle = 'Toolbar Menu Disabled Test';
 
-// Detox's idle sync does not cover popup animations, so waits that straddle a
-// menu opening or dismissing must be explicit. An upper bound — only
-// `isScreenAddressable`, which is expected to time out, pays it in full.
-const MENU_ANIMATION_TIMEOUT_MS = 5000;
-
-// Probes a settled popup, not an animation: it is either up or never opened.
-const MENU_PRESENCE_TIMEOUT_MS = 250;
+// Small steps keep short switch rows from being scrolled past.
+const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, pixels: 300 };
 
 // Rendered as `${label}: ${value}`. `ItemLabels` checks keys and exact strings.
 const SWITCH_LABELS: ItemLabels = {
@@ -57,58 +56,24 @@ const actionBarButton = by.type(CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW);
 
 // The row, not its title `TextView`: `View.setEnabled` does not propagate to
 // children, so only the row reflects a disabled element.
-function menuRow(title: RowTitle): NativeMatcher {
-  return by
-    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
-    .withDescendant(by.text(title));
-}
+const popupRow = (title: RowTitle): NativeMatcher => menuItemRow(title);
 
-// Zero matches already throws inside `getMatches`, so only ambiguity is left.
-async function attributesOf(
-  matcher: NativeMatcher,
-): Promise<AndroidElementAttributes> {
-  const matches = await getMatches(matcher);
-  if (matches.length > 1) {
-    throw new Error(
-      `Matcher resolved to ${matches.length} elements, expected exactly one. ` +
-        'Narrow the matcher, or the view hierarchy changed.',
-    );
-  }
-  return matches[0] as AndroidElementAttributes;
-}
+const attributesOf = (matcher: NativeMatcher, description?: string) =>
+  getSingleMatch(matcher, description) as Promise<AndroidElementAttributes>;
 
-// Targets sit either side of the current offset, hence the rewind; the small
-// step keeps short switch rows from being scrolled past.
+// Targets sit either side of the current offset, hence the rewind.
 async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, { pixels: 300 });
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SETTINGS_CONTROL);
 }
 
-// Detox searches one window: while a popup holds focus nothing behind it is in
-// the hierarchy, so the screen itself has to become addressable again.
-async function waitForScreen() {
-  await waitFor(element(by.id(SCROLLVIEW_ID)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
-}
-
-// `waitForScreen` reported rather than thrown — stacked popups keep it false.
-async function isScreenAddressable(): Promise<boolean> {
-  return waitForScreen().then(
-    () => true,
-    () => false,
-  );
-}
-
-// Waits for the popup, not a row: bodies that tap first would race the animation.
-async function openMenu() {
-  await element(by.label('More options')).tap();
-  await waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
-}
+// A submenu opens on top of the overflow menu, so at most two popups stack.
+const { withOverflowMenu } = createOverflowMenuHelpers({
+  scrollViewId: SCROLLVIEW_ID,
+  maxMenuDepth: 2,
+});
 
 async function waitForMenuRow(title: RowTitle) {
-  await waitFor(element(menuRow(title)))
+  await waitFor(element(popupRow(title)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
@@ -116,7 +81,7 @@ async function waitForMenuRow(title: RowTitle) {
 // Only where it is expected to open; a disabled **More** has nothing to wait for.
 async function openSubmenu() {
   await waitForMenuRow('More');
-  await element(menuRow('More')).tap();
+  await element(popupRow('More')).tap();
   await waitForMenuRow('Sub Item');
 }
 
@@ -126,85 +91,32 @@ async function openSubmenu() {
 // would pass before a submenu that did open is up.
 async function expectSubmenuStayedClosed() {
   await expectRowEnabled('More', false);
-  await expect(element(menuRow('Sub Item'))).not.toExist();
-}
-
-async function isMenuOpen(): Promise<boolean> {
-  return waitFor(element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)))
-    .toExist()
-    .withTimeout(MENU_PRESENCE_TIMEOUT_MS)
-    .then(
-      () => true,
-      () => false,
-    );
-}
-
-// A submenu opens on top of the overflow menu, so at most two popups stack.
-const MAX_STACKED_MENUS = 2;
-
-// Presses Back only while a popup is up, or the press pops the test screen.
-// Submenus stack, hence the loop.
-async function closeMenus() {
-  for (let attempt = 0; attempt < MAX_STACKED_MENUS; attempt++) {
-    if (!(await isMenuOpen())) {
-      break;
-    }
-    await device.pressBack();
-
-    // A dismissed popup lingers while animating out, so re-probing would read it
-    // as a second stacked menu. Waiting for the screen settles that instead.
-    if (await isScreenAddressable()) {
-      return;
-    }
-  }
-  await waitForScreen();
-}
-
-// Runs `body` with the menu open, closing it afterwards even when an assertion
-// throws — a popup left covering the screen would fail every later step.
-async function withMenu(body: () => Promise<void>) {
-  await openMenu();
-
-  try {
-    await body();
-  } catch (error) {
-    // Swallowed only here, so a failing cleanup cannot replace the assertion
-    // that failed. Logged, because it leaves the popup up and the *next* test
-    // then fails with no trace in its own output.
-    await closeMenus().catch(cleanupError => {
-      console.warn(
-        'closeMenus failed while cleaning up after a failed assertion:',
-        cleanupError,
-      );
-    });
-    throw error;
-  }
-
-  await closeMenus();
+  await expect(element(popupRow('Sub Item'))).not.toExist();
 }
 
 async function expectRowEnabled(title: RowTitle, enabled: boolean) {
   await waitForMenuRow(title);
-  jestExpect((await attributesOf(menuRow(title))).enabled).toBe(enabled);
+  jestExpect(
+    (await attributesOf(popupRow(title), `row "${title}"`)).enabled,
+  ).toBe(enabled);
 }
 
 // The checkbox AppCompat inflates carries the toggle state in `value`.
 async function expectRowChecked(title: RowTitle, checked: boolean) {
   await waitForMenuRow(title);
   const attributes = await attributesOf(
-    by.type(CLASS_NAME_ANDROID_CHECK_BOX).withAncestor(menuRow(title)),
+    by.type(CLASS_NAME_ANDROID_CHECK_BOX).withAncestor(popupRow(title)),
   );
   jestExpect(attributes.value).toBe(checked);
 }
 
 async function expectActionBarEnabled(enabled: boolean) {
-  jestExpect((await attributesOf(actionBarButton)).enabled).toBe(enabled);
+  jestExpect(
+    (await attributesOf(actionBarButton, 'the toolbar action button')).enabled,
+  ).toBe(enabled);
 }
 
-async function readLastEvent(): Promise<string> {
-  await scrollIntoView('last-event-text');
-  return (await attributesOf(by.id('last-event-text'))).text ?? '';
-}
+const readLastEvent = () => readText('last-event-text', SETTINGS_CONTROL);
 
 async function expectLastEvent(expected: string) {
   await scrollIntoView('last-event-text');
@@ -241,48 +153,20 @@ async function expectLastSelection(groupId: string, ids: string[]) {
 // The switch only toggles, so `disabled` is the state expected afterwards — a
 // swallowed tap fails here instead of as a wrong-menu assertion steps later.
 async function setDisabledViaProps(id: ElementId, disabled: boolean) {
-  const switchId = `disable-${id}-switch`;
-  await scrollIntoView(switchId);
-  await element(by.id(switchId)).tap();
-
-  await expect(
-    element(by.text(`disable ${SWITCH_LABELS[id]}: ${disabled}`)),
-  ).toBeVisible();
-}
-
-// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
-// @see apps/src/shared/SettingsPicker.tsx
-function optionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
+  await toggleSettingsSwitch(
+    {
+      switchId: `disable-${id}-switch`,
+      label: `disable ${SWITCH_LABELS[id]}`,
+      to: disabled,
+    },
+    SETTINGS_CONTROL,
+  );
 }
 
 // Closing the picker again matters: its option rows stay in the hierarchy and
 // would collide with the `by.text` matchers used for the toolbar menu items.
-async function selectOption(
-  pickerId: string,
-  pickerLabel: string,
-  option: string,
-) {
-  const expected = `${pickerLabel}: ${option}`;
-  await scrollIntoView(pickerId);
-
-  // Pickers keep their value, so re-picking one costs three taps and three
-  // scroll rewinds for nothing. Reading the closed label avoids a probe that
-  // would have to time out.
-  if ((await attributesOf(by.id(pickerId))).text === expected) {
-    return;
-  }
-
-  await element(by.id(pickerId)).tap();
-
-  const rowId = optionId(pickerLabel, option);
-  await scrollIntoView(rowId);
-  await element(by.id(rowId)).tap();
-
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  await expect(element(by.id(pickerId))).toHaveText(expected);
+async function selectOption(pickerId: string, label: string, option: string) {
+  await selectPickerOption({ pickerId, label, option }, SETTINGS_CONTROL);
 }
 
 async function sendCommand(options: {
@@ -323,7 +207,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
     });
 
     it('lists every overflow element as enabled, with opt-a checked', async () => {
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('Action Overflow', true);
         await expectRowEnabled('Option A', true);
         await expectRowEnabled('Option B', true);
@@ -359,25 +243,25 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   describe('props — disabled action item, overflow', () => {
     it('marks the overflow row disabled', async () => {
       await setDisabledViaProps('action-overflow', true);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('Action Overflow', false);
       });
     });
 
     it('leaves Last Event unchanged when the disabled overflow row is tapped', async () => {
       await expectLastEventUnchanged(async () => {
-        await withMenu(async () => {
+        await withOverflowMenu(async () => {
           await waitForMenuRow('Action Overflow');
-          await element(menuRow('Action Overflow')).tap();
+          await element(popupRow('Action Overflow')).tap();
         });
       });
     });
 
     it('sets Last Event to "Pressed: action-overflow" when the re-enabled overflow row is tapped', async () => {
       await setDisabledViaProps('action-overflow', false);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('Action Overflow', true);
-        await element(menuRow('Action Overflow')).tap();
+        await element(popupRow('Action Overflow')).tap();
       });
       await expectLastEvent('Pressed: action-overflow');
     });
@@ -386,7 +270,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   describe('props — disabled checkable items', () => {
     it('disables opt-a while keeping its initial checked state', async () => {
       await setDisabledViaProps('opt-a', true);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('Option A', false);
         await expectRowChecked('Option A', true);
       });
@@ -394,9 +278,9 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
 
     it('leaves Last Event unchanged when the disabled checked item is tapped', async () => {
       await expectLastEventUnchanged(async () => {
-        await withMenu(async () => {
+        await withOverflowMenu(async () => {
           await waitForMenuRow('Option A');
-          await element(menuRow('Option A')).tap();
+          await element(popupRow('Option A')).tap();
           await expectRowChecked('Option A', true);
         });
       });
@@ -404,7 +288,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
 
     it('disables opt-b while keeping its initial unchecked state', async () => {
       await setDisabledViaProps('opt-b', true);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('Option B', false);
         await expectRowChecked('Option B', false);
       });
@@ -412,9 +296,9 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
 
     it('leaves Last Event unchanged when the disabled unchecked item is tapped', async () => {
       await expectLastEventUnchanged(async () => {
-        await withMenu(async () => {
+        await withOverflowMenu(async () => {
           await waitForMenuRow('Option B');
-          await element(menuRow('Option B')).tap();
+          await element(popupRow('Option B')).tap();
           await expectRowChecked('Option B', false);
         });
       });
@@ -424,7 +308,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await setDisabledViaProps('opt-a', false);
       await setDisabledViaProps('opt-b', false);
 
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('Option A', true);
         await expectRowEnabled('Option B', true);
         await expectRowChecked('Option A', true);
@@ -433,17 +317,17 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
     });
 
     it('reports both opt-a and opt-b in the "options" selection when opt-b is checked', async () => {
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await waitForMenuRow('Option B');
-        await element(menuRow('Option B')).tap();
+        await element(popupRow('Option B')).tap();
       });
       await expectLastSelection('options', ['opt-a', 'opt-b']);
     });
 
     it('drops opt-a from the selection when opt-a is unchecked', async () => {
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await waitForMenuRow('Option A');
-        await element(menuRow('Option A')).tap();
+        await element(popupRow('Option A')).tap();
       });
       await expectLastSelection('options', ['opt-b']);
     });
@@ -453,7 +337,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
       await setDisabledViaProps('action-bar', true);
       await setDisabledViaProps('action-bar', false);
 
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowChecked('Option A', true);
         await expectRowChecked('Option B', false);
       });
@@ -463,16 +347,16 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   describe('props — disabled submenu', () => {
     it('disables the submenu row and does not open it when tapped', async () => {
       await setDisabledViaProps('submenu', true);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('More', false);
-        await element(menuRow('More')).tap();
+        await element(popupRow('More')).tap();
         await expectSubmenuStayedClosed();
       });
     });
 
     it('opens the submenu once it is re-enabled', async () => {
       await setDisabledViaProps('submenu', false);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('More', true);
         await openSubmenu();
       });
@@ -482,7 +366,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   describe('props — disabled item inside a submenu', () => {
     it('disables the sub item', async () => {
       await setDisabledViaProps('sub-item', true);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await openSubmenu();
         await expectRowEnabled('Sub Item', false);
       });
@@ -490,19 +374,19 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
 
     it('leaves Last Event unchanged when the disabled sub item is tapped', async () => {
       await expectLastEventUnchanged(async () => {
-        await withMenu(async () => {
+        await withOverflowMenu(async () => {
           await openSubmenu();
-          await element(menuRow('Sub Item')).tap();
+          await element(popupRow('Sub Item')).tap();
         });
       });
     });
 
     it('sets Last Event to "Pressed: sub-item" when the re-enabled sub item is tapped', async () => {
       await setDisabledViaProps('sub-item', false);
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await openSubmenu();
         await expectRowEnabled('Sub Item', true);
-        await element(menuRow('Sub Item')).tap();
+        await element(popupRow('Sub Item')).tap();
       });
       await expectLastEvent('Pressed: sub-item');
     });
@@ -520,9 +404,9 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
 
     it('disables the submenu so it can no longer be opened', async () => {
       await sendCommand({ target: 'submenu', disabled: 'true' });
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('More', false);
-        await element(menuRow('More')).tap();
+        await element(popupRow('More')).tap();
         await expectSubmenuStayedClosed();
       });
     });
@@ -530,10 +414,10 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
     it('disables a checked item without clearing its check or updating Last Event', async () => {
       await sendCommand({ target: 'opt-a', disabled: 'true' });
       await expectLastEventUnchanged(async () => {
-        await withMenu(async () => {
+        await withOverflowMenu(async () => {
           await expectRowEnabled('Option A', false);
           await expectRowChecked('Option A', true);
-          await element(menuRow('Option A')).tap();
+          await element(popupRow('Option A')).tap();
           await expectRowChecked('Option A', true);
         });
       });
@@ -553,7 +437,7 @@ describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   describe('commands — three-state reset via `undefined`', () => {
     it('clears the disabled override and falls back to the default', async () => {
       await sendCommand({ target: 'submenu', disabled: 'undefined' });
-      await withMenu(async () => {
+      await withOverflowMenu(async () => {
         await expectRowEnabled('More', true);
         await openSubmenu();
       });
