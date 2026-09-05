@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.legacy
 
 import android.content.Context
 import android.content.ContextWrapper
-import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -30,17 +29,6 @@ open class ScreenContainer(
     private var isAttached = false
     private var needsUpdate = false
     private var isLayoutEnqueued = false
-    private val layoutCallback: Choreographer.FrameCallback =
-        object : Choreographer.FrameCallback {
-            override fun doFrame(frameTimeNanos: Long) {
-                isLayoutEnqueued = false
-                measure(
-                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
-                )
-                layout(left, top, right, bottom)
-            }
-        }
     private var parentScreenWrapper: ScreenFragmentWrapper? = null
 
     override fun onLayout(
@@ -72,20 +60,30 @@ open class ScreenContainer(
         super.removeView(view)
     }
 
+    /**
+     * Runs during ViewGroup's constructor too, so it must not read anything initialized after super().
+     */
     override fun requestLayout() {
         super.requestLayout()
-        @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
-        if (!isLayoutEnqueued && layoutCallback != null) {
+        if (!isLayoutEnqueued) {
             isLayoutEnqueued = true
             // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
             // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
             ReactChoreographer
                 .getInstance()
-                .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-                    layoutCallback,
-                )
+                .postFrameCallback(ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE) {
+                    isLayoutEnqueued = false
+                    forceSubtreeMeasureAndLayoutPass()
+                }
         }
+    }
+
+    private fun forceSubtreeMeasureAndLayoutPass() {
+        measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+        )
+        layout(left, top, right, bottom)
     }
 
     val isNested: Boolean
