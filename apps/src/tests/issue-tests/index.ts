@@ -210,6 +210,7 @@ export { default as Test4351 } from './Test4351';
 export { default as Test4357 } from './Test4357';
 export { default as Test4361 } from './Test4361';
 export { default as Test4423 } from './Test4423';
+export { default as Test4479 } from './Test4479';
 export { default as Test4519 } from './Test4519';
 export { default as Test4571 } from './Test4571';
 export { default as TestScreenAnimation } from './TestScreenAnimation';

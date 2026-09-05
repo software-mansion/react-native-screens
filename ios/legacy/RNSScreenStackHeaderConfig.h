@@ -99,6 +99,16 @@ NS_ASSUME_NONNULL_END
  */
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
 
+/**
+ * Applies this config again if the last application landed on a navigation bar that did not belong
+ * to any window. Does nothing otherwise.
+ *
+ * Some of the navigation item styling is realized by UIKit only for a navigation bar inside a
+ * window, so an application performed before the bar is attached is incomplete and has to be
+ * repeated. Call this once the owning screen is known to be in the view hierarchy.
+ */
+- (void)updateViewControllerIfAppliedOutsideWindow;
+
 @end
 
 #pragma mark - Experimental
