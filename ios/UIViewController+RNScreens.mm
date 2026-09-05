@@ -74,6 +74,10 @@
   dispatch_once(&once_token, ^{
     Class uiVCClass = [UIViewController class];
 
+    if([[[NSProcessInfo processInfo] environment][@"XCODE_RUNNING_FOR_PREVIEWS"] isEqual:@"1"]) {
+      return;
+    }
+
     method_exchangeImplementations(
         class_getInstanceMethod(uiVCClass, @selector(childViewControllerForStatusBarStyle)),
         class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensChildViewControllerForStatusBarStyle)));
