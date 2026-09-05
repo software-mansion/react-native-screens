@@ -7,9 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__cplusplus)
 @class RCTImageLoader;
-#endif // defined(__cplusplus)
 
 /**
  * Responsible for creating & applying appearance to the tab bar.
@@ -19,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabBarAppearanceCoordinator : NSObject
 
-#if defined(__cplusplus)
 /**
  * Applies the tab bar appearance props to the tab bar and respective tab bar items, basing on information contained in
  * provided params.
@@ -31,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
            withHostComponentView:(nullable RNSTabsHostComponentView *)hostComponentView
             tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
                      imageLoader:(nullable RCTImageLoader *)imageLoader;
-#endif // defined(__cplusplus)
 
 /**
  * Configures UITabBarAppearance object using appearance props provided in the param.

@@ -1,11 +1,11 @@
 #pragma once
 
+#import <React/RCTViewComponentView.h>
 #import "RNSFormSheetContentWrapperDelegate.h"
-#import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSFormSheetContentWrapperComponentView : RNSReactBaseView
+@interface RNSFormSheetContentWrapperComponentView : RCTViewComponentView
 
 @property (nonatomic, weak, nullable) id<RNSFormSheetContentWrapperDelegate> delegate;
 

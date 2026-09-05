@@ -1,10 +1,8 @@
 #pragma once
 
-#if defined(__cplusplus)
 #import <React/RCTImageSource.h>
-#endif // defined(__cplusplus)
+#import <React/RCTViewComponentView.h>
 #import "RNSEnums.h"
-#import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 #import "RNSTabsScreenEventEmitter.h"
@@ -18,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Component view with react managed lifecycle. This view serves as root view in hierarchy
  * of a particular tab.
  */
-@interface RNSTabsScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
+@interface RNSTabsScreenComponentView : RCTViewComponentView <RNSSafeAreaProviding>
 
 /**
  * View controller responsible for managing tab represented by this component view.
@@ -47,14 +45,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) RNSTabsIconType iconType;
 
-#if defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *iconImageSource;
-#endif // defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) NSString *iconResourceName;
 
-#if defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) RCTImageSource *selectedIconImageSource;
-#endif // defined(__cplusplus)
 @property (nonatomic, strong, readonly, nullable) NSString *selectedIconResourceName;
 
 @property (nonatomic, strong, readonly, nullable) UITabBarAppearance *standardAppearance;

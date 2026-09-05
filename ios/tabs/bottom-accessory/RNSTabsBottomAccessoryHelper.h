@@ -40,8 +40,6 @@ API_AVAILABLE(ios(26.0))
 
 #pragma mark - Content view switching workaround
 
-#if defined(__cplusplus)
-
 /**
  * Due to *synchronous* events not being actually *synchronous*, we are unable to handle layout modifications
  * in reaction to environment change (e.g. subviews being mounted/unmounted; changes to size/origin are synchronous
@@ -66,8 +64,6 @@ API_AVAILABLE(ios(26.0))
 - (void)handleContentViewVisibilityForEnvironmentIfNeeded;
 
 @end
-
-#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
 

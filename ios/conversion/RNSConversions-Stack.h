@@ -1,7 +1,5 @@
 #pragma once
 
-#if defined(__cplusplus)
-
 #import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSHeaderItemPlacement.h"
@@ -33,5 +31,3 @@ UINavigationItemBackButtonDisplayMode convert(
     react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode);
 
 }; // namespace rnscreens::conversion
-
-#endif // defined(__cplusplus)

@@ -1,9 +1,7 @@
 #pragma once
 
-#if defined(__cplusplus)
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
-#endif // __cplusplus
 
 #import "RNSLegacyEnums.h"
 #import "RNSSafeAreaProviding.h"
@@ -16,15 +14,12 @@
 #import "RNSOrientationProviding.h"
 #endif // !TARGET_OS_TV
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 
-#if defined(__cplusplus)
 namespace react = facebook::react;
-#endif // __cplusplus
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if defined(__cplusplus)
 @interface RCTConvert (RNSScreen)
 
 #if !TARGET_OS_TV
@@ -34,7 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @end
-#endif
 
 @class RNSScreenView;
 
@@ -59,10 +53,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenStackHeaderConfig;
 
-@interface RNSScreenView : RNSReactBaseView <RNSScreenContentWrapperDelegate,
-                                             RNSScrollViewBehaviorOverriding,
-                                             RNSSafeAreaProviding,
-                                             RNSScrollEdgeEffectProviding>
+@interface RNSScreenView : RCTViewComponentView <RNSScreenContentWrapperDelegate,
+                                                 RNSScrollViewBehaviorOverriding,
+                                                 RNSSafeAreaProviding,
+                                                 RNSScrollEdgeEffectProviding>
 
 /**
  * This is value of the prop as passed by the user. To get effective value see derived property
@@ -122,10 +116,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
-#if defined(__cplusplus)
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
-#endif // __cplusplus
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 @property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
@@ -183,11 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIViewController *)parentViewController;
 @end
 
-#if defined(__cplusplus)
 @interface RNSScreenManager : RCTViewManager
-#else
-@interface RNSScreenManager : NSObject
-#endif // __cplusplus
 
 @end
 

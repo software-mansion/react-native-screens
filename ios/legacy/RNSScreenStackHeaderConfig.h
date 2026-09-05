@@ -1,9 +1,7 @@
 #pragma once
 
-#if defined(__cplusplus)
 #import <React/RCTConvert.h>
-#endif // __cplusplus
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
@@ -14,7 +12,7 @@
 
 @end
 
-@interface RNSScreenStackHeaderConfig : RNSReactBaseView
+@interface RNSScreenStackHeaderConfig : RCTViewComponentView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
 
@@ -111,10 +109,6 @@ NS_ASSUME_NONNULL_END
 
 #pragma mark - View Manager
 
-#if defined(__cplusplus)
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
-#else
-@interface RNSScreenStackHeaderConfigManager : NSObject
-#endif // __cplusplus
 
 @end

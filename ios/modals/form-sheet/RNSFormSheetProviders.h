@@ -2,9 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-#ifdef __cplusplus
 #include <vector>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,9 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSFormSheetBehaviorProvider <NSObject>
 
-#ifdef __cplusplus
 - (const std::vector<double> &)detents;
-#endif
 - (NSInteger)initialDetentIndex;
 - (BOOL)prefersScrollingExpandsWhenScrolledToEdge;
 - (BOOL)preventNativeDismiss;

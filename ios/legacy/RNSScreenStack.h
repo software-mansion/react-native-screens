@@ -1,6 +1,6 @@
 #pragma once
 
-#import "RNSReactBaseView.h"
+#import <React/RCTViewComponentView.h>
 #import "RNSScreenContainer.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenStackView : RNSReactBaseView <RNSScreenContainerDelegate>
+@interface RNSScreenStackView : RCTViewComponentView <RNSScreenContainerDelegate>
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
@@ -47,11 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#if defined(__cplusplus)
 @interface RNSScreenStackManager : RCTViewManager
-#else
-@interface RNSScreenStackManager : NSObject
-#endif // __cplusplus
 
 @end
 

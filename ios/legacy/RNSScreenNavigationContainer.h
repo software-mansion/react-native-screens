@@ -1,8 +1,6 @@
 #pragma once
 
-#if defined(__cplusplus)
 #import <React/RCTViewManager.h>
-#endif // __cplusplus
 
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
