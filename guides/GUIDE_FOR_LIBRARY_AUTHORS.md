@@ -192,6 +192,15 @@ exception for iPad devices, where it resolves to [UIInterfaceOrientationMaskAll]
 
 Defaults to `default` on iOS.
 
+> [!NOTE]
+> iOS only: when `screenOrientation` is **not set at all** and the
+> `featureFlags.experiment.iosOrientationInheritanceFixEnabled` flag is enabled
+> (the default), a legacy (Stack v4) screen defers to its parent screen's
+> orientation instead of forcing `UIInterfaceOrientationMaskAllButUpsideDown`,
+> ultimately falling back to the orientations declared in `Info.plist`. Setting
+> `screenOrientation` to `default` explicitly keeps the previous behavior. See
+> [#4408](https://github.com/software-mansion/react-native-screens/pull/4408).
+
 ### `sheetAllowedDetents`
 
 Describes heights where a sheet can rest.
@@ -663,6 +672,7 @@ menu?: {
     | {
       label?: string;
       type: 'submenu';
+      subtitle?: string; // Subtitle of the submenu, displayed below its label - https://developer.apple.com/documentation/uikit/uimenuelement/subtitle?language=objc
       icon?: PlatformIconIOSSfSymbol;
       displayInline?: boolean; // Whether to display submenu inline - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayinline
       destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/destructive
@@ -810,6 +820,14 @@ Customize the weight of the font to be used for the title.
 This prop has been **deprecated** due to [edge-to-edge enforcement starting from Android SDK 35](https://developer.android.com/about/versions/15/behavior-changes-15#ux). Setting it has no effect as native code related to this prop has been removed. Kept only for backward compatibility. Will be removed in next major release.
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
+
+### `disableTopInsetApplication` (Android only)
+
+When set to `true` on the outermost stack with a **visible** header, disables top inset handling for that header and the entire subtree.
+
+This prop only takes effect on the outermost visible header in the hierarchy. Setting it on an inner stack has no additional impact because a parent stack has already made the decision (whether inset should be applied or not).
+
+Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
 
 ### `translucent`
 

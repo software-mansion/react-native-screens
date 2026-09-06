@@ -4,43 +4,41 @@ import { TabBarControllerMode } from 'react-native-screens';
 import ConfigWrapperContext, {
   type Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 import {
   TabsContainer,
-  type TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
-import { CenteredLayoutView } from '../../shared/CenteredLayoutView';
+  type TabRouteConfig,
+} from '@apps/shared/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Text } from 'react-native';
-import { Button } from '../../shared';
+import { Button } from '@apps/shared';
 
 function makeTab(
   title: string,
   controllerMode: TabBarControllerMode,
   setControllerMode: (mode: TabBarControllerMode) => void,
 ) {
-  return function Tab() {
-    return (
-      <CenteredLayoutView>
-        <Text>{title}</Text>
-        <Button
-          title={`Change mode (currently ${controllerMode})`}
-          onPress={() => {
-            switch (controllerMode) {
-              case 'automatic':
-                setControllerMode('tabBar');
-                break;
-              case 'tabBar':
-                setControllerMode('tabSidebar');
-                break;
-              default:
-                setControllerMode('automatic');
-                break;
-            }
-          }}
-        />
-      </CenteredLayoutView>
-    );
-  };
+  return (
+    <CenteredLayoutView>
+      <Text>{title}</Text>
+      <Button
+        title={`Change mode (currently ${controllerMode})`}
+        onPress={() => {
+          switch (controllerMode) {
+            case 'automatic':
+              setControllerMode('tabBar');
+              break;
+            case 'tabBar':
+              setControllerMode('tabSidebar');
+              break;
+            default:
+              setControllerMode('automatic');
+              break;
+          }
+        }}
+      />
+    </CenteredLayoutView>
+  );
 }
 
 function App() {
@@ -51,10 +49,11 @@ function App() {
   const [controllerMode, setControllerMode] =
     useState<TabBarControllerMode>('automatic');
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
+      name: 'Tab1',
+      element: makeTab('Tab 1', controllerMode, setControllerMode),
       options: {
-        screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
           icon: {
@@ -69,11 +68,11 @@ function App() {
           },
         },
       },
-      component: makeTab('Tab 1', controllerMode, setControllerMode),
     },
     {
+      name: 'Tab2',
+      element: makeTab('Tab 2', controllerMode, setControllerMode),
       options: {
-        screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {
           icon: {
@@ -88,7 +87,6 @@ function App() {
           },
         },
       },
-      component: makeTab('Tab 2', controllerMode, setControllerMode),
     },
   ];
 
@@ -99,7 +97,7 @@ function App() {
         setConfig,
       }}>
       <TabsContainer
-        tabConfigs={TAB_CONFIGS}
+        routeConfigs={TAB_CONFIGS}
         ios={{
           tabBarControllerMode: controllerMode,
         }}

@@ -1,10 +1,21 @@
 #import "RNSTabsScreenViewController.h"
+#import "RNSContainer.h"
+#import "RNSContainerItemSupport.h"
 #import "RNSLog.h"
-#import "RNSScrollViewFinder.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
 
-@implementation RNSTabsScreenViewController
+@implementation RNSTabsScreenViewController {
+  RNSContainerItemSupport *_Nonnull _containerItemSupport;
+}
+
+- (instancetype)init
+{
+  if (self = [super init]) {
+    _containerItemSupport = [RNSContainerItemSupport new];
+  }
+  return self;
+}
 
 - (nullable RNSTabBarController *)findTabBarController
 {
@@ -14,18 +25,6 @@
 - (nullable RNSTabsScreenComponentView *)tabScreenComponentView
 {
   return static_cast<RNSTabsScreenComponentView *>(self.view);
-}
-
-- (void)tabScreenFocusHasChanged
-{
-  RNSLog(
-      @"TabScreen [%ld] changed focus: %d",
-      self.tabScreenComponentView.tag,
-      self.tabScreenComponentView.isSelectedScreen);
-
-  // The focus of owned tab has been updated from react. We tell the parent controller that it should update the
-  // container.
-  [[self findTabBarController] setNeedsUpdateOfSelectedTab:true];
 }
 
 - (void)tabItemAppearanceHasChanged
@@ -40,21 +39,25 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+  [super viewWillAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillAppear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+  [super viewDidAppear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+  [super viewWillDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnWillDisappear];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+  [super viewDidDisappear:animated];
   [self.tabScreenComponentView.reactEventEmitter emitOnDidDisappear];
 }
 
@@ -67,10 +70,9 @@
   }
 
   // Can be UINavigationController in case of MoreNavigationController
-  RCTAssert(
-      [parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
-      @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
-      parent.class);
+  RCTAssert([parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
+            @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
+            parent.class);
 
   if ([parent isKindOfClass:UINavigationController.class]) {
     // Hide the navigation bar for the more controller
@@ -79,8 +81,8 @@
 
   RNSTabBarController *tabBarCtrl = [self findTabBarController];
 
-  RCTAssert(
-      tabBarCtrl != nil, @"[RNScreens] nullish tabBarCtrl after TabScreenViewController has been added to parent");
+  RCTAssert(tabBarCtrl != nil,
+            @"[RNScreens] nullish tabBarCtrl after TabScreenViewController has been added to parent");
 
   [tabBarCtrl setNeedsUpdateOfTabBarAppearance:true];
   [tabBarCtrl updateTabBarAppearanceIfNeeded];
@@ -106,12 +108,34 @@
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
   } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView *scrollView =
-        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[self tabScreenComponentView]];
-    return [scrollView rnscreens_scrollToTop];
+    return [[self findContentScrollView] rnscreens_scrollToTop];
   }
 
   return false;
+}
+
+#pragma mark - RNSContainerItem
+
+- (void)registerNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport registerNestedContainer:container];
+}
+
+- (void)unregisterNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport unregisterNestedContainer:container];
+}
+
+- (nullable id<RNSContainer>)resolveNestedContainer
+{
+  return [_containerItemSupport resolveNestedContainer];
+}
+
+- (nullable UIScrollView *)findContentScrollView
+{
+  return [_containerItemSupport
+      findContentScrollViewWithCachedScrollView:[self.tabScreenComponentView cachedContentScrollView]
+                                  heuristicRoot:self.tabScreenComponentView];
 }
 
 #if !TARGET_OS_TV
@@ -131,5 +155,19 @@
 }
 
 #endif // !TARGET_OS_TV
+
+@end
+
+@implementation RNSTabsScreenViewController (TabsScreenPropsForwarding)
+
+- (nullable NSString *)getScreenKeyOrNull
+{
+  return self.tabScreenComponentView.screenKey;
+}
+
+- (BOOL)isPreventNativeSelectionEnabled
+{
+  return self.tabScreenComponentView.preventNativeSelection;
+}
 
 @end

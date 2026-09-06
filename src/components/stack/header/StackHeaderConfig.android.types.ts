@@ -1,0 +1,1329 @@
+import type { ReactElement } from 'react';
+import type { ColorValue, TextStyle } from 'react-native';
+import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
+import type { PlatformIconAndroid } from '../../shared/types';
+
+export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
+
+export type StackHeaderTitleHorizontalGravityAndroid =
+  | 'start'
+  | 'center'
+  | 'end';
+
+export type StackHeaderTitleVerticalGravityAndroid =
+  | 'top'
+  | 'center'
+  | 'bottom';
+
+export type StackHeaderCollapsedTitleGravityModeAndroid =
+  | 'entireSpace'
+  | 'availableSpace';
+
+export type StackHeaderBackgroundSubviewCollapseModeAndroid =
+  StackHeaderSubviewCollapseModeAndroid;
+
+export interface StackHeaderToolbarSubviewAndroid {
+  /**
+   * @summary Render callback for the React element placed in this toolbar slot.
+   *
+   * @description
+   * The subview is sized by React Native's layout engine but positioned by the
+   * platform native layout. Each subview is placed independently — subviews do
+   * not participate in a shared flex layout and cannot influence each other's
+   * sizing.
+   *
+   * @remarks
+   * Intrinsic sizing and explicit dimensions work as expected. Avoid
+   * parent-relative sizing (e.g. `flex: 1`) on the root element — it will
+   * produce incorrect dimensions. Flex layout within a root that has a known
+   * size works as expected.
+   *
+   * @platform android
+   */
+  render: () => ReactElement;
+}
+
+export interface StackHeaderBackgroundSubviewAndroid {
+  /**
+   * @summary Controls how the background subview behaves when the app bar
+   * collapses.
+   *
+   * @description
+   * The following values are available:
+   * - `off` - the subview scrolls away with the app bar,
+   * - `parallax` - the subview scrolls at a slower rate, creating a parallax
+   *   effect.
+   *
+   * @remarks
+   * `pin` is not currently supported because the background subview is
+   * stretched to match the entire `AppBarLayout`, which causes pinned content
+   * to move immediately rather than staying fixed. Support for `pin` collapse
+   * mode might be added in the future.
+   *
+   * @default off
+   *
+   * @platform android
+   */
+  collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
+  /**
+   * @summary Render callback for the React element used as the header
+   * background.
+   *
+   * @remarks
+   * The subview is stretched to match the header (`AppBarLayout`) dimensions,
+   * so parent-relative sizing (e.g. `flex: 1`) works correctly.
+   *
+   * @platform android
+   */
+  render: () => ReactElement;
+}
+
+export type StackHeaderToolbarMenuItemShowAsActionAndroid =
+  | 'always'
+  | 'alwaysWithText'
+  | 'ifRoom'
+  | 'ifRoomWithText'
+  | 'never';
+
+export interface StackHeaderToolbarMenuItemBaseAndroid {
+  /**
+   * @summary Unique identifier of the menu element.
+   *
+   * @platform android
+   */
+  id: string;
+  /**
+   * @summary Title of the menu element.
+   *
+   * @platform android
+   */
+  title?: string | undefined;
+  /**
+   * @summary Shorter title used for the menu element when it is displayed as
+   * a button in the Toolbar.
+   *
+   * @description
+   * When the element is shown in the Toolbar with a text label, this
+   * condensed title is used instead of `title`. The full `title` is still
+   * used everywhere else (the overflow menu and submenus).
+   *
+   * @platform android
+   */
+  titleCondensed?: string | undefined;
+  /**
+   * @summary Tooltip shown on long-press (or pointer hover) of the menu
+   * element when it is displayed as a button in the Toolbar.
+   *
+   * @remarks
+   * Applies only to elements shown as a button in the Toolbar; it has no
+   * effect on elements placed in the overflow menu.
+   *
+   * @platform android
+   */
+  tooltipText?: string | undefined;
+  /**
+   * @summary Sets the accessibility label (content description) for the menu
+   * element.
+   *
+   * @remarks
+   * When `undefined`, Android uses the `title` for the accessibility label when
+   * the item is placed in the toolbar. There is no default accessibility label
+   * for items inside overflow menu/submenus.
+   *
+   * Due to native platform limitations, it's not possible to provide `testID`
+   * for menu items inside overflow menu/submenus. If possible, use
+   * `accessibilityLabel` instead.
+   *
+   * @platform android
+   */
+  accessibilityLabel?: string | undefined;
+  /**
+   * @summary Specifies if the menu element should be hidden.
+   *
+   * @default false
+   * @platform android
+   */
+  hidden?: boolean | undefined;
+  /**
+   * @summary Specifies if the menu element should be disabled.
+   *
+   * @default false
+   * @platform android
+   */
+  disabled?: boolean | undefined;
+  /**
+   * @summary Specifies whether the element should be displayed as a button in
+   * the Toolbar.
+   *
+   * @description
+   * The following values are available:
+   * - `always` - always displays the element as a button in the Toolbar,
+   * - `alwaysWithText` - always displays the element as a button in the
+   *   Toolbar, forcing the text label to be visible even if an icon is
+   *   provided,
+   * - `ifRoom` - displays the element as a button in the Toolbar only if the
+   *   system determines there is sufficient space,
+   * - `ifRoomWithText` - displays the element as a button in the Toolbar if
+   *   the system determines there is sufficient space, forcing the text label
+   *   to be visible even if an icon is provided,
+   * - `never` - never displays the element as a button in the Toolbar; it
+   *   will be placed in the overflow menu instead.
+   *
+   * @remarks
+   * This prop only affects top-level menu elements. Items inside
+   * submenus are always displayed in the popup and ignore this
+   * setting.
+   *
+   * Due to native limitations, the width limit for the `ifRoom`
+   * options is determined during the initial render and will not
+   * adapt to subsequent layout or orientation changes.
+   *
+   * @default never
+   * @platform android
+   */
+  showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
+  /**
+   * @summary Specifies the icon for the menu element.
+   *
+   * @description
+   * Supported values:
+   * - `{ type: 'imageSource', imageSource }`
+   *   Uses an image from the provided resource.
+   *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResource` type.
+   *
+   * - `{ type: 'drawableResource', name }`
+   *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *
+   * @remarks
+   * The icon will be visible only if the menu element is shown in the
+   * Toolbar.
+   *
+   * An icon set via the `updateToolbarMenuElements` view command takes
+   * precedence over this one until the next `toolbarMenu` change.
+   *
+   * @platform android
+   */
+  icon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu element icon.
+   *
+   * @platform android
+   */
+  iconTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu element icon when
+   * it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  iconTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu element icon when
+   * it is focused (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  iconTintColorFocused?: ColorValue | undefined;
+  /**
+   * @summary Specifies the tint color to apply to the menu element icon when
+   * it is disabled.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you should also
+   * provide `iconTintColorNormal`. Otherwise, the icon will become
+   * transparent when the item is not disabled.
+   *
+   * @platform android
+   */
+  iconTintColorDisabled?: ColorValue | undefined;
+}
+
+export type StackHeaderToolbarMenuItemTypeAndroid =
+  | 'action'
+  | 'toggle'
+  | 'automatic';
+
+export interface StackHeaderToolbarMenuItemAndroid
+  extends StackHeaderToolbarMenuItemBaseAndroid {
+  /**
+   * @summary Marks this object as a menu item.
+   *
+   * @platform android
+   */
+  type: 'menuItem';
+  /**
+   * @summary Assigns this item to a group.
+   *
+   * @description
+   * Groups enable selection behavior (single-selection / radio, or
+   * multi-toggle). A group is scoped to the menu level it is defined
+   * in — groups cannot span submenus.
+   *
+   * Required when `itemType` is `toggle`. Cannot be set when
+   * `itemType` is `action`.
+   *
+   * @platform android
+   */
+  groupId?: string | undefined;
+  /**
+   * @summary Controls how the item behaves when clicked.
+   *
+   * @description
+   * The following values are available:
+   * - `action` - the item fires `onPress` without any toggle state,
+   * - `toggle` - the item is checkable; requires `groupId`,
+   * - `automatic` - the item becomes checkable if it has a `groupId`,
+   *   otherwise it behaves as an action.
+   *
+   * @remarks
+   * If `toggle` menu item is shown in the toolbar by setting `showAsAction`
+   * prop to value other than `never`, there is no visual indication of the item
+   * toggle state.
+   *
+   * @default automatic
+   * @platform android
+   */
+  itemType?: StackHeaderToolbarMenuItemTypeAndroid | undefined;
+  /**
+   * @summary Initial checked state for toggle items.
+   *
+   * @description
+   * Only meaningful when effective `itemType` is `toggle`.
+   *
+   * @remarks
+   * The initial state does not trigger `onSelectionChange` on
+   * the group at mount time.
+   *
+   * A `toolbarMenu` prop change restores the selection to this value.
+   * Neither that restore nor a native header rebuild triggers
+   * `onSelectionChange`.
+   *
+   * @default false
+   * @platform android
+   */
+  initialToggleState?: boolean | undefined;
+  /**
+   * @summary Callback invoked when the menu item is pressed.
+   *
+   * @remarks
+   * Not called for items that behave as toggles (items with a
+   * `groupId` or `itemType: 'toggle'`). For those items, use
+   * `onSelectionChange` on the group instead.
+   *
+   * @platform android
+   */
+  onPress?: (() => void) | undefined;
+}
+
+export interface StackHeaderToolbarMenuGroupAndroid {
+  /**
+   * @summary Unique identifier of the group.
+   *
+   * @description
+   * Groups enable selection behavior (single-selection / radio, or
+   * multi-toggle). A group is scoped to the menu level it is defined
+   * in — groups cannot span submenus.
+   *
+   * Group identifier must be unique across the entire menu tree.
+   *
+   * @platform android
+   */
+  groupId: string;
+  /**
+   * @summary Determines the type of selection in the group.
+   *
+   * @description
+   * When `true`, only one item in the group can be selected
+   * at a time (radio behavior). When `false`, items toggle
+   * independently (checkbox behavior).
+   *
+   * @default false
+   * @platform android
+   */
+  singleSelection?: boolean | undefined;
+  /**
+   * @summary Callback invoked when the selection within the group
+   * changes. Receives the list of currently selected item IDs.
+   *
+   * @platform android
+   */
+  onSelectionChange?: (selectedMenuElementIds: string[]) => void;
+}
+
+export interface StackHeaderToolbarMenuBaseAndroid {
+  /**
+   * @summary Group definitions for items in this menu level.
+   *
+   * @description
+   * Groups enable selection behavior (single or multi-toggle) for
+   * items that share the same `groupId`. A group is scoped to the
+   * menu level it is defined in — groups cannot span submenus.
+   *
+   * @platform android
+   */
+  groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
+  /**
+   * @summary Menu elements displayed in the toolbar menu.
+   *
+   * @platform android
+   */
+  children?: StackHeaderToolbarMenuElementAndroid[];
+}
+
+export interface StackHeaderToolbarMenuAndroid
+  extends StackHeaderToolbarMenuItemBaseAndroid,
+    StackHeaderToolbarMenuBaseAndroid {
+  /**
+   * @summary Marks this object as a submenu.
+   *
+   * @remarks
+   * Android's `MenuItem` interface claims that nesting submenus isn't supported
+   * but Material's implementation handles it correctly.
+   *
+   * @platform android
+   */
+  type: 'menu';
+  /**
+   * @summary Header title displayed at the top of the submenu popup.
+   *
+   * @description
+   * Maps to Android's `SubMenu.setHeaderTitle()`. This is distinct from
+   * `title`, which controls the label shown in the parent menu's item row.
+   *
+   * @remarks
+   * When left unset, the header falls back to `title`; when both are unset,
+   * the popup shows no header.
+   *
+   * @platform android
+   */
+  menuTitle?: string | undefined;
+}
+
+export type StackHeaderToolbarMenuElementAndroid =
+  | StackHeaderToolbarMenuItemAndroid
+  | StackHeaderToolbarMenuAndroid;
+
+export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
+  Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
+> & {
+  /**
+   * @summary Sets the checked state of the menu item.
+   *
+   * @description
+   * In single-selection groups, setting `checked: true`
+   * automatically unchecks other group members.
+   *
+   * @platform android
+   */
+  checked?: boolean | undefined;
+  /**
+   * @summary Sets the header title of a submenu popup.
+   *
+   * @description
+   * Only applies to `type: 'menu'` elements. Ignored if the target is a regular
+   * menu item. Setting it to `undefined` drops the `menuTitle` prop as well,
+   * leaving the header to fall back to `title`.
+   *
+   * @platform android
+   */
+  menuTitle?: string | undefined;
+};
+
+export interface StackHeaderToolbarMenuElementUpdateAndroid {
+  /**
+   * @summary The ID of the menu element to update.
+   *
+   * @platform android
+   */
+  id: string;
+  /**
+   * @summary Options to apply to the menu element.
+   *
+   * @platform android
+   */
+  options: StackHeaderToolbarMenuElementOptionsAndroid;
+}
+
+export interface StackHeaderConfigCommandsAndroid {
+  /**
+   * @summary Applies one or more updates to the toolbar menu in a single batch.
+   *
+   * @description
+   * Accepts a single update or an array of them; each targets a menu element
+   * by `id` and applies its `options`. The call is queued and applied as one
+   * atomic batch:
+   * - if any update carries an `icon` that loads asynchronously, the whole
+   *   batch waits for every icon before applying (updates are never applied
+   *   partially);
+   * - updates apply in array order, so an `id` may repeat and later values
+   *   win field by field;
+   * - once applied, each affected group emits at most one, coalesced
+   *   `onToolbarMenuGroupSelectionChange`.
+   *
+   * Batches run in call order on a serial FIFO queue, so a later call is never
+   * overtaken by an earlier one whose icon happened to load late.
+   *
+   * @remarks
+   * Updates persist for the lifetime of the current `toolbarMenu`
+   * configuration: they survive every native header rebuild — an effective
+   * color scheme change, a header `type`, `maxLines` or
+   * `collapsedTitleGravityMode` change, hiding and re-showing the header,
+   * reattaching the screen (e.g. switching tabs) — and unrelated re-renders.
+   * Updates sent while the header is hidden are recorded — and emit their
+   * selection events — as usual, and take effect when the header is next
+   * shown. Only a `toolbarMenu` prop change resets them, dropping the
+   * batches still queued as well (see its docs). An update whose `id` is not
+   * in the current menu is ignored. An `icon` set via this command takes
+   * precedence over the icon declared in `toolbarMenu` until the next
+   * `toolbarMenu` change.
+   *
+   * @param updates A single update object or an array of updates.
+   */
+  updateToolbarMenuElements: (
+    updates:
+      | StackHeaderToolbarMenuElementUpdateAndroid
+      | StackHeaderToolbarMenuElementUpdateAndroid[],
+  ) => void;
+}
+
+export interface StackHeaderConfigPropsAndroid {
+  /**
+   * @summary Specifies the type of the Material 3 app bar.
+   *
+   * @description
+   * The following values are available:
+   * - `small` - small app bar with fixed title,
+   * - `medium` - medium app bar with collapsing title,
+   * - `large` - large app bar with collapsing title.
+   *
+   * @remarks
+   * M3 Expressive headers aren't currently supported (there is no stable
+   * `MDC-Android` version yet).
+   *
+   * Changing this prop at runtime rebuilds the header. Toolbar menu state
+   * survives the rebuild — see `updateToolbarMenuElements`.
+   *
+   * @see {@link https://m3.material.io/components/app-bars/overview|Material Design 3: App bars}
+   *
+   * @default small
+   *
+   * @platform android
+   */
+  type?: StackHeaderTypeAndroid | undefined;
+  /**
+   * @summary Custom view rendered behind the header content.
+   *
+   * @platform android
+   */
+  backgroundSubview?: StackHeaderBackgroundSubviewAndroid | undefined;
+  /**
+   * @summary Custom view placed in the leading (start) slot of the toolbar.
+   *
+   * @platform android
+   */
+  leadingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
+  /**
+   * @summary Custom view placed in the center slot of the toolbar.
+   *
+   * @platform android
+   */
+  centerSubview?: StackHeaderToolbarSubviewAndroid | undefined;
+  /**
+   * @summary Custom view placed in the trailing (end) slot of the toolbar.
+   *
+   * @platform android
+   */
+  trailingSubview?: StackHeaderToolbarSubviewAndroid | undefined;
+  /**
+   * @summary Tint color applied to the back button icon in its normal state.
+   *
+   * @description
+   * When `undefined`, the default tint color is used. This applies to the
+   * native back arrow and `drawableResource` icons that have an associated
+   * tint. For `imageSource` icons, no tint is applied by default.
+   *
+   * @platform android
+   */
+  backButtonTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the back button icon when it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  backButtonTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the back button icon when it is focused
+   * (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  backButtonTintColorFocused?: ColorValue | undefined;
+  /**
+   * @summary Custom icon for the back button.
+   *
+   * @description
+   * When `undefined`, the native back arrow (`homeAsUpIndicator`) is used.
+   *
+   * Supported values:
+   * - `{ type: 'imageSource', imageSource }`
+   *   Uses an image from the provided resource.
+   *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResource` type.
+   *
+   * - `{ type: 'drawableResource', name }`
+   *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *
+   * @platform android
+   */
+  backButtonIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Custom icon for the overflow menu button (the three-dots button
+   * that opens the toolbar menu's overflow popup).
+   *
+   * @description
+   * When `undefined`, the Material 3 Expressive default overflow icon is used.
+   *
+   * Supported values:
+   * - `{ type: 'imageSource', imageSource }`
+   *   Uses an image from the provided resource.
+   *
+   *   Remarks: `imageSource` type doesn't support SVGs on Android.
+   *   For loading SVGs use `drawableResource` type.
+   *
+   * - `{ type: 'drawableResource', name }`
+   *   Uses a drawable resource with the given name.
+   *
+   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *
+   * @platform android
+   */
+  overflowIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon in its normal state.
+   *
+   * @description
+   * When `undefined`, the default tint (the Material theme's menu icon color)
+   * is used. This applies to the default overflow icon and `drawableResource`
+   * icons that have an associated tint. For `imageSource` icons, no tint is
+   * applied by default.
+   *
+   * @platform android
+   */
+  overflowIconTintColorNormal?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon when it is pressed.
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  overflowIconTintColorPressed?: ColorValue | undefined;
+  /**
+   * @summary Tint color applied to the overflow menu icon when it is focused
+   * (e.g. by keyboard navigation).
+   *
+   * @remarks
+   * Due to native platform limitations, if you set this prop, you must also
+   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
+   * transparent.
+   *
+   * @platform android
+   */
+  overflowIconTintColorFocused?: ColorValue | undefined;
+  /**
+   * @summary Whether the header reacts to nested scroll. Required for any
+   * other `scrollFlag*` prop to take effect.
+   *
+   * @description
+   * When `undefined`, falls back to the type-specific default:
+   * - `small` -> `false`
+   * - `medium` / `large` -> `true`
+   *
+   * @remarks
+   * Changing any `scrollFlag*` at runtime forces the header back to
+   * its fully expanded state, which produces a visible snap. Treat these
+   * props as a static configuration.
+   *
+   * @platform android
+   */
+  scrollFlagScroll?: boolean | undefined;
+  /**
+   * @summary When enabled, the header re-expands as soon as the user scrolls
+   * back toward the top of the content, regardless of the ScrollView's current
+   * scroll position. Without this flag, the header only begins expanding once
+   * the list has reached the top of its content. Requires `scrollFlagScroll`.
+   *
+   * @description
+   * When `undefined`, falls back to the type-specific default (`false` for
+   * all types).
+   *
+   * @platform android
+   */
+  scrollFlagEnterAlways?: boolean | undefined;
+  /**
+   * @summary Modifies `scrollFlagEnterAlways` so that the initial re-entry
+   * stops at the header's collapsed height (the toolbar); the remainder
+   * expands only after the ScrollView reaches the top of its content. Requires
+   * `scrollFlagEnterAlways`.
+   *
+   * @description
+   * When `undefined`, falls back to the type-specific default (`false` for
+   * all types).
+   *
+   * @remarks
+   * This flag does not have any effect for `small` header.
+   *
+   * @platform android
+   */
+  scrollFlagEnterAlwaysCollapsed?: boolean | undefined;
+  /**
+   * @summary When enabled, the header collapses only until its minimum height
+   * (the toolbar) remains pinned at the top. Without this flag, the entire
+   * header scrolls off the screen. Requires `scrollFlagScroll`.
+   *
+   * @description
+   * When `undefined`, falls back to the type-specific default:
+   * - `small` -> `false`
+   * - `medium` / `large` -> `true`
+   *
+   * @remarks
+   * Setting this flag for `small` header is equivalent to disabling
+   * `scrollFlagScroll`.
+   *
+   * Even when this flag is disabled, a strip with the height of the system top
+   * inset (status bar and display cutout) remains visible at the top.
+   *
+   * @platform android
+   */
+  scrollFlagExitUntilCollapsed?: boolean | undefined;
+  /**
+   * @summary When enabled, the header snaps to its nearest edge (fully
+   * expanded, or fully collapsed as defined by `scrollFlagExitUntilCollapsed`)
+   * after a scroll gesture ends, instead of resting partway. Requires
+   * `scrollFlagScroll`.
+   *
+   * @description
+   * When `undefined`, falls back to the type-specific default:
+   * - `small` -> `false`
+   * - `medium` / `large` -> `true`
+   *
+   * @platform android
+   */
+  scrollFlagSnap?: boolean | undefined;
+  /**
+   * @summary Whether the app bar lifts (applies a tonal/elevation shift) when
+   * content is scrolled beneath it.
+   *
+   * @description
+   * For reliable behavior the content scroll view should be designated with a
+   * `ScrollViewMarker`. Without it, the app bar cannot always locate the scroll
+   * view, which can cause the lifted state to flicker while scrolling.
+   *
+   * @remarks
+   * Applies to the `small` header only. For `medium` and `large` headers the
+   * Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
+   * installs its own content scrim and disables the app bar's lift-on-scroll,
+   * so this prop has no effect there. The collapsed appearance of those headers
+   * is instead controlled by that content scrim — see
+   * {@link scrolledBackgroundColor}.
+   *
+   * Has no effect while the header is `transparent` (there is no scrolling
+   * content behavior installed in that mode).
+   *
+   * @default true
+   *
+   * @platform android
+   */
+  liftOnScroll?: boolean | undefined;
+  /**
+   * @summary Background color of the header.
+   *
+   * @description
+   * Applies to all header types. For `medium` / `large` headers this is the
+   * color of the expanded state — the collapsed state color is controlled by
+   * {@link scrolledBackgroundColor}.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  backgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Background color of the header when content is scrolled beneath
+   * it.
+   *
+   * @description
+   * For the `small` header, this is the lift-on-scroll target color: when
+   * content is scrolled beneath the app bar, the background animates from
+   * {@link backgroundColor} to this color. Requires {@link liftOnScroll}.
+   *
+   * For `medium` / `large` headers, this is the color of the content scrim
+   * that fades in as the header collapses. The scrim is drawn above the
+   * header background (and the `backgroundSubview`, if any) but below the
+   * toolbar content.
+   *
+   * @remarks
+   * A translucent color is composited over the header background instead of
+   * replacing it.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  scrolledBackgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Color of the scrim drawn in the status-bar area, masking header
+   * content that scrolls under the status bar in edge-to-edge apps.
+   *
+   * @description
+   * For the `small` header, the scrim is a constant strip pinned to the top of
+   * the window, drawn above the toolbar content. When not provided, the strip
+   * follows the header's effective background color: {@link backgroundColor} at
+   * rest, animating together with the lift-on-scroll transition towards
+   * {@link scrolledBackgroundColor}. An explicit color is applied statically,
+   * without tracking.
+   *
+   * For `medium` / `large` headers, the scrim fades in and out together with
+   * the content scrim as the header collapses. When not provided, it matches
+   * the content scrim color ({@link scrolledBackgroundColor}).
+   *
+   * Set to `'transparent'` to disable the scrim entirely.
+   *
+   * @remarks
+   * The default scrim is installed only when the color it follows resolves to
+   * a fully opaque color; translucent headers stay see-through. An explicit
+   * translucent color is honored and composites over the header background in
+   * the status-bar area (for `medium` / `large` headers the content scrim is
+   * excluded from that area while a scrim is installed, so the two scrims
+   * never stack).
+   *
+   * @platform android
+   */
+  statusBarScrimColor?: ColorValue | undefined;
+  /**
+   * @summary Toolbar menu configuration.
+   *
+   * @description
+   * This prop serves as initial configuration of the toolbar menu. If you
+   * want to change some property in runtime, use `updateToolbarMenuElements`
+   * view command.
+   *
+   * Changing this prop at runtime rebuilds the toolbar menu and resets all
+   * of its runtime state: checkbox/radio selections return to their
+   * `initialToggleState` and every change applied via
+   * `updateToolbarMenuElements` is discarded, including batches still
+   * waiting in the queue (e.g. for an icon download). Any real change
+   * counts, even one only swapping an item's icon; re-sending an identical
+   * menu is a no-op and preserves the state.
+   *
+   * An invalid menu is rejected — for example duplicate item or group ids, a
+   * `groupId` that is not declared at the same menu level, or more than one
+   * `initialToggleState` in a single-selection group. The menu is validated
+   * when the prop is set, and a rejected menu leaves the previous one in
+   * effect.
+   *
+   * @platform android
+   */
+  toolbarMenu?: StackHeaderToolbarMenuBaseAndroid | undefined;
+  /**
+   * @summary Enables visual dividers between menu groups.
+   *
+   * @remarks
+   * Requires API 28 (Android 9). On earlier versions, the value of this prop is
+   * ignored.
+   *
+   * @default false
+   * @platform android
+   * @supported API 28 or higher
+   */
+  toolbarMenuGroupDividerEnabled?: boolean | undefined;
+  /**
+   * @summary Horizontally centers the title within the app bar.
+   *
+   * @remarks
+   * Applies to the `small` header only; ignored for `medium` / `large` (use
+   * `expandedTitleHorizontalGravity` / `collapsedTitleHorizontalGravity`
+   * instead). The title is centered independently of the subtitle. Combining
+   * a centered title with left and/or center subviews is not recommended — they
+   * may overlap or be laid out incorrectly.
+   *
+   * @default false
+   * @platform android
+   */
+  titleCentered?: boolean | undefined;
+  /**
+   * @summary Horizontally centers the subtitle within the app bar.
+   *
+   * @remarks
+   * Applies to the `small` header only. The subtitle is centered independently
+   * of the title. See {@link titleCentered}.
+   *
+   * @default false
+   * @platform android
+   */
+  subtitleCentered?: boolean | undefined;
+  /**
+   * @summary Horizontal alignment of the title (and subtitle) in the expanded
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small` (use
+   * `titleCentered` instead). The subtitle always follows the title's
+   * alignment.
+   *
+   * @default start
+   * @platform android
+   */
+  expandedTitleHorizontalGravity?:
+    | StackHeaderTitleHorizontalGravityAndroid
+    | undefined;
+  /**
+   * @summary Vertical alignment of the title (and subtitle) in the expanded
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`.
+   *
+   * @default bottom
+   * @platform android
+   */
+  expandedTitleVerticalGravity?:
+    | StackHeaderTitleVerticalGravityAndroid
+    | undefined;
+  /**
+   * @summary Horizontal alignment of the title (and subtitle) in the collapsed
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`. The
+   * subtitle always follows the title's alignment. `center` is further affected
+   * by `collapsedTitleGravityMode`.
+   *
+   * @default start
+   * @platform android
+   */
+  collapsedTitleHorizontalGravity?:
+    | StackHeaderTitleHorizontalGravityAndroid
+    | undefined;
+  /**
+   * @summary Vertical alignment of the title (and subtitle) in the collapsed
+   * state.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`.
+   *
+   * @default center
+   * @platform android
+   */
+  collapsedTitleVerticalGravity?:
+    | StackHeaderTitleVerticalGravityAndroid
+    | undefined;
+  /**
+   * @summary Anchor used when resolving the collapsed title's horizontal
+   * gravity.
+   *
+   * @description
+   * The following values are available:
+   * - `availableSpace` - gravity is computed over the space left after the
+   *   navigation icon, menu and subviews are laid out,
+   * - `entireSpace` - gravity is computed over the whole app bar, so a centered
+   *   title is centered relative to the app bar and pushed aside only if it
+   *   would overlap another view.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only and affects only the collapsed
+   * state; it is only visually meaningful with
+   * `collapsedTitleHorizontalGravity: 'center'`.
+   *
+   * Because the underlying Material field is set at construction time, changing
+   * this prop rebuilds the header.
+   *
+   * If the header is laid out during a screen transition, due to a native bug,
+   * the title and the subtitle might be laid out incorrectly when `entireSpace`
+   * gravity mode is used.
+   *
+   * @default availableSpace
+   * @platform android
+   */
+  collapsedTitleGravityMode?:
+    | StackHeaderCollapsedTitleGravityModeAndroid
+    | undefined;
+  /**
+   * @summary Maximum number of lines for the expanded title and subtitle.
+   *
+   * @description
+   * A single shared value: the same limit applies to both the expanded title
+   * and the expanded subtitle. Text exceeding the limit is ellipsized.
+   *
+   * @remarks
+   * Applies to `medium` / `large` headers only; ignored for `small`. The
+   * collapsed title is always a single line regardless of this value.
+   *
+   * A value less than `1` is invalid and falls back to `1`.
+   *
+   * Changing this value at runtime rebuilds the header. This is required due to
+   * a native platform limitation.
+   *
+   * @default 1
+   * @platform android
+   */
+  maxLines?: number | undefined;
+  /**
+   * @summary Start inset of the toolbar.
+   *
+   * @description
+   * The inset is a minimum: the navigation icon is positioned before it is
+   * applied and is not bounded by it, so the content area starts at whichever
+   * reaches further from the edge — the navigation icon's trailing edge or this
+   * inset. A back button usually wins, which makes this prop inert while one is
+   * visible.
+   *
+   * @remarks
+   * Applies to all header types. On `medium` / `large` it affects the collapsed
+   * title only.
+   *
+   * By default, native platform applies non-zero inset which makes centered
+   * collapsed title look off-center when `collapsedTitleGravityMode:
+   * 'availableSpace'` is used.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetStart?: number | undefined;
+  /**
+   * @summary End inset of the toolbar content area.
+   *
+   * @remarks
+   * The end-side counterpart of `contentInsetStart`. Applies to all header
+   * types. Like its start-side counterpart it is a minimum, so it is inert
+   * while the toolbar menu shows items that already reach further in.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  contentInsetEnd?: number | undefined;
+  /**
+   * @summary Color of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the title text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  titleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the subtitle text. Applies to `small`
+   * header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the subtitle text. Applies to `small` header only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the expanded title text. Applies to `medium` and
+   * `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the expanded title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the expanded title text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the expanded title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the expanded title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the collapsed title text. Applies to `medium` and
+   * `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the collapsed title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the collapsed title text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the collapsed title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the collapsed title text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the expanded subtitle text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the expanded subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  expandedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Color of the collapsed subtitle text. Applies to `medium`
+   * and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleColor?: ColorValue | undefined;
+  /**
+   * @summary Font family of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Font size (SP) of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Font weight of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Font style of the collapsed subtitle text. Applies to
+   * `medium` and `large` headers only.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  collapsedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
+}

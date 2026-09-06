@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 interface Props {
   children?: ReactNode;
-  space?: number
+  space?: number;
 }
 
 export const Spacer = ({ children, space }: Props): React.JSX.Element => (

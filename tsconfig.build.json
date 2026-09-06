@@ -1,4 +1,7 @@
 {
   "extends": "./tsconfig",
+  "compilerOptions": {
+    "rootDir": "./src"
+  },
   "exclude": ["FabricExample", "TVOSExample"]
 }

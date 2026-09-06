@@ -4,9 +4,7 @@
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#if RCT_NEW_ARCH_ENABLED
 #import <rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
-#endif // RCT_NEW_ARCH_ENABLED
 
 namespace react = facebook::react;
 
@@ -21,11 +19,7 @@ namespace react = facebook::react;
   RNSTabsBottomAccessoryEventEmitter *_Nonnull _reactEventEmitter;
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   RNSTabsHostComponentView *__weak _Nullable _tabsHostView;
-#if RCT_NEW_ARCH_ENABLED
   react::RNSTabsBottomAccessoryShadowNode::ConcreteState::Shared _state;
-#else // RCT_NEW_ARCH_ENABLED
-  __weak RCTBridge *_bridge;
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -36,25 +30,11 @@ namespace react = facebook::react;
   return self;
 }
 
-#if !RCT_NEW_ARCH_ENABLED
-
-- (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge
-{
-  if (self = [self initWithFrame:frame]) {
-    _bridge = bridge;
-  }
-  return self;
-}
-
-- (RCTBridge *)bridge
-{
-  return _bridge;
-}
-
-#endif // !RCT_NEW_ARCH_ENABLED
-
 - (void)initState
 {
+  static const auto defaultProps = std::make_shared<const react::RNSTabsBottomAccessoryProps>();
+  _props = defaultProps;
+
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   if (@available(iOS 26, *)) {
     _helper = [[RNSTabsBottomAccessoryHelper alloc] initWithBottomAccessoryView:self];
@@ -74,13 +54,11 @@ namespace react = facebook::react;
   if (self.window != nil) {
     [_helper registerForAccessoryFrameChanges];
   } else {
-    [self invalidate];
+    [_helper unregisterForAccessoryFrameChanges];
   }
 }
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
-
-#if RCT_NEW_ARCH_ENABLED
 
 #pragma mark - RCTViewComponentViewProtocol
 
@@ -125,28 +103,6 @@ namespace react = facebook::react;
   return _state;
 }
 
-#else // RCT_NEW_ARCH_ENABLED
-
-#pragma mark - LEGACY architecture implementation
-
-#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
-
-- (void)setOnEnvironmentChange:(RCTDirectEventBlock)onEnvironmentChange
-{
-  [self.reactEventEmitter setOnEnvironmentChange:onEnvironmentChange];
-}
-
-#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
-
-#pragma mark - RCTInvalidating
-
-- (void)invalidate
-{
-  [self invalidateImpl];
-}
-
-#endif // RCT_NEW_ARCH_ENABLED
-
 - (void)invalidateImpl
 {
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
@@ -157,9 +113,7 @@ namespace react = facebook::react;
   _shadowStateProxy = nil;
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#if RCT_NEW_ARCH_ENABLED
   _state.reset();
-#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark - React events
@@ -174,14 +128,21 @@ namespace react = facebook::react;
 
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
+#pragma mark - Dynamic frameworks support
+
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
+#ifdef RCT_DYNAMIC_FRAMEWORKS
++ (void)load
+{
+  [super load];
+}
+#endif // RCT_DYNAMIC_FRAMEWORKS
+
 @end
 
-#if RCT_NEW_ARCH_ENABLED
 #pragma mark - View class exposure
 
 Class<RCTComponentViewProtocol> RNSTabsBottomAccessoryCls(void)
 {
   return RNSTabsBottomAccessoryComponentView.class;
 }
-
-#endif // RCT_NEW_ARCH_ENABLED

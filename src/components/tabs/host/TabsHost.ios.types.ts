@@ -1,6 +1,25 @@
 import type { ReactNode } from 'react';
 import type { TabsBottomAccessoryEnvironment } from '../bottom-accessory/TabsBottomAccessory.types';
-import type { ColorValue } from 'react-native';
+import type { ColorValue, NativeSyntheticEvent } from 'react-native';
+
+/**
+ * @summary Payload of the event emitted when the user taps the "More" tab bar item.
+ *
+ * @description
+ * This event fires when the user taps the system-generated "More" tab bar item.
+ * It does NOT fire when a tab is selected from within the More list — that triggers
+ * the normal `onTabSelected` event instead.
+ *
+ * The payload carries the navigation state that was active at the moment the "More" tab was tapped.
+ *
+ * @platform ios
+ */
+export type MoreTabSelectedEvent = {
+  /** Screen key of the tab that was active when "More" was tapped. */
+  selectedScreenKey: string;
+  /** Provenance of the navigation state when "More" was tapped. */
+  provenance: number;
+};
 
 export type TabsBottomAccessoryComponentFactory = (
   environment: TabsBottomAccessoryEnvironment,
@@ -26,7 +45,7 @@ export interface TabsHostPropsIOS {
    *
    * @platform ios
    */
-  tabBarTintColor?: ColorValue;
+  tabBarTintColor?: ColorValue | undefined;
   /**
    * @summary Specifies the minimize behavior for the tab bar.
    *
@@ -49,7 +68,7 @@ export interface TabsHostPropsIOS {
    * @platform ios
    * @supported iOS 26 or higher
    */
-  tabBarMinimizeBehavior?: TabBarMinimizeBehavior;
+  tabBarMinimizeBehavior?: TabBarMinimizeBehavior | undefined;
   /**
    * @summary Specifies component used as bottom accessory.
    *
@@ -64,22 +83,27 @@ export interface TabsHostPropsIOS {
    *
    * If this prop is `undefined`, the bottom accessory will not be rendered.
    *
-   * On legacy architecture (Paper) and on new architecture (Fabric) with RN < 0.82,
-   * implementation uses DisplayLink which might result in the size of bottom
-   * accessory being updated with a delay.
-   *
-   * Starting from RN 0.82, this issue is mitigated but in order to allow accessory
-   * rendering based on environment, component is rendered 2 times for both `regular`
-   * and `inline` environments at the same time. Environment determines which component
-   * is visible at given moment. This might require implementing a solution to share
-   * state between both rendered components (e.g. usage of context).
+   * In order to allow accessory rendering based on environment, the component is
+   * rendered 2 times for both `regular` and `inline` environments at the same time.
+   * Environment determines which component is visible at given moment. This might
+   * require implementing a solution to share state between both rendered components
+   * (e.g. usage of context).
    *
    * Available starting from iOS 26.
    *
    * @platform iOS
    * @supported iOS 26 or higher
    */
-  bottomAccessory?: TabsBottomAccessoryComponentFactory;
+  bottomAccessory?: TabsBottomAccessoryComponentFactory | undefined;
+  /**
+   * @summary Hides the bottom accessory with animation.
+   *
+   * @default false
+   *
+   * @platform iOS
+   * @supported iOS 26 or higher
+   */
+  bottomAccessoryHidden?: boolean | undefined;
   /**
    * @summary Specifies the display mode for the tab bar.
    *
@@ -100,5 +124,21 @@ export interface TabsHostPropsIOS {
    * @platform ios
    * @supported iOS 18 or higher
    */
-  tabBarControllerMode?: TabBarControllerMode;
+  tabBarControllerMode?: TabBarControllerMode | undefined;
+  /**
+   * @summary
+   * A callback that gets invoked when the user taps the "More" tab bar item.
+   *
+   * @description
+   * This event fires when the user taps the system-generated "More" tab bar item.
+   * It does NOT fire when a tab is selected from within the More list — that triggers
+   * the normal `onTabSelected` event instead.
+   *
+   * @see {@link MoreTabSelectedEvent}
+   *
+   * @platform ios
+   */
+  onMoreTabSelected?:
+    | ((event: NativeSyntheticEvent<MoreTabSelectedEvent>) => void)
+    | undefined;
 }

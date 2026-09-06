@@ -1,9 +1,13 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
 
-export const SplitWithNativeStackBase = ({ splitBaseConfig }: { splitBaseConfig: SplitBaseConfig }) => {
+export const SplitWithNativeStackBase = ({
+  splitBaseConfig,
+}: {
+  splitBaseConfig: SplitBaseConfig;
+}) => {
   return (
     <Split.Host {...splitBaseConfig}>
       <Split.Column>
@@ -17,4 +21,4 @@ export const SplitWithNativeStackBase = ({ splitBaseConfig }: { splitBaseConfig:
       </Split.Column>
     </Split.Host>
   );
-}
+};

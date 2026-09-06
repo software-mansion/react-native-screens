@@ -1,16 +1,19 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
 type StackParamList = {
-  Home: undefined,
-  FormSheet: undefined,
-}
+  Home: undefined;
+  FormSheet: undefined;
+};
 
 type RouteProps = {
   navigation: NativeStackNavigationProp<StackParamList>;
-}
+};
 
 const Stack = createNativeStackNavigator();
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ColorValue, View } from 'react-native';
-import Colors from './styling/Colors';
+import { Colors } from './styling';
 
 interface Props {
   color?: ColorValue;
@@ -13,5 +13,8 @@ export const Square = ({
   color = Colors.primary,
   testID,
 }: Props): React.JSX.Element => (
-  <View style={{ width: size, height: size, backgroundColor: color }} testID={testID} />
+  <View
+    style={{ width: size, height: size, backgroundColor: color }}
+    testID={testID}
+  />
 );

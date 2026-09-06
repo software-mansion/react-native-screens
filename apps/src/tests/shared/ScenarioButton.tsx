@@ -7,6 +7,9 @@ export function ScenarioButton(props: {
   title: string;
   details?: string;
   platformsHint?: ('ios' | 'android')[];
+  smokeTest?: boolean;
+  e2eCoverage?: 'full' | 'incomplete' | 'tbd';
+  testID?: string;
 }) {
   const navigation = useNavigation<any>();
   const hasAndroid =
@@ -17,15 +20,20 @@ export function ScenarioButton(props: {
 
   return (
     <TouchableOpacity
+      testID={props.testID}
       style={styles.button}
       onPress={() => navigation.navigate(props.route)}>
       <View style={styles.descriptionContainer}>
         <Text style={styles.text}>{props.title}</Text>
         {props.details && <Text style={styles.details}>{props.details}</Text>}
       </View>
-      <View style={styles.platformsContainer}>
+      <View style={styles.hintsContainer}>
         {hasIOS && <Text style={styles.ios}>i</Text>}
         {hasAndroid && <Text style={styles.android}>a</Text>}
+        {props.smokeTest && <Text style={styles.smokeTest}>s</Text>}
+        {props.e2eCoverage === 'full' && (
+          <Text style={styles.e2eFull}>e2e</Text>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -50,7 +58,7 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     flex: 1,
   },
-  platformsContainer: {
+  hintsContainer: {
     flexDirection: 'row',
   },
   ios: {
@@ -64,5 +72,17 @@ const styles = StyleSheet.create({
     padding: 4,
     fontWeight: '900',
     color: 'green',
+  },
+  smokeTest: {
+    fontSize: 18,
+    padding: 4,
+    fontWeight: '900',
+    color: 'orange',
+  },
+  e2eFull: {
+    fontSize: 18,
+    padding: 4,
+    fontWeight: '900',
+    color: 'purple',
   },
 });

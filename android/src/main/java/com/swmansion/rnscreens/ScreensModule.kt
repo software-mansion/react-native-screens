@@ -9,7 +9,9 @@ import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
-import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.legacy.ScreenFragment
+import com.swmansion.rnscreens.legacy.ScreenStack
+import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
 @ReactModule(name = ScreensModule.NAME)
@@ -41,33 +43,24 @@ class ScreensModule(
 
     override fun invalidate() {
         super.invalidate()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            proxy?.invalidateNative()
-            proxy = null
-
-            reactContext.removeLifecycleEventListener(this)
-        }
+        proxy?.invalidateNative()
+        proxy = null
+        reactContext.removeLifecycleEventListener(this)
         nativeUninstall()
     }
 
     override fun initialize() {
         super.initialize()
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            proxy = NativeProxy()
-
-            reactContext.addLifecycleEventListener(this)
-
-            setupFabric()
-        }
+        proxy = NativeProxy()
+        reactContext.addLifecycleEventListener(this)
+        setupFabric()
     }
 
     private fun setupFabric() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            val fabricUIManager =
-                UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
-            proxy?.apply {
-                nativeAddMutationsListener(fabricUIManager)
-            }
+        val fabricUIManager =
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+        proxy?.apply {
+            nativeAddMutationsListener(fabricUIManager)
         }
     }
 
@@ -148,18 +141,14 @@ class ScreensModule(
     // LifecycleEventListener
 
     override fun onHostResume() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            setupFabric()
-        }
+        setupFabric()
     }
 
     override fun onHostPause() = Unit
 
     override fun onHostDestroy() {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            proxy?.apply {
-                cleanupExpiredMountingCoordinators()
-            }
+        proxy?.apply {
+            cleanupExpiredMountingCoordinators()
         }
     }
 

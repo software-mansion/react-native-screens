@@ -4,7 +4,7 @@ import {
   TabsSAVExampleConfig,
   useTabsSAVExampleContext,
 } from './TabsSAVExampleContext';
-import { SettingsPicker, SettingsSwitch } from '../../../../shared';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import Info from '../shared/Info';
 
 export default function ConfigTab() {

@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import {
-  TabsContainer,
-  TabConfiguration,
-} from '../../../../shared/gamma/containers/tabs/TabsContainer';
+import { TabsContainer, TabRouteConfig } from '@apps/shared/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 import ConfigColumnTab from './ConfigColumnTab';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
@@ -15,12 +12,18 @@ export default function ConfigColumn({
 }: {
   configColumnIndex: 1 | 2 | 3 | 4;
 }) {
-  const TAB_CONFIGS: TabConfiguration[] = ([1, 2, 3, 4] as (1 | 2 | 3 | 4)[])
+  const TAB_CONFIGS: TabRouteConfig[] = ([1, 2, 3, 4] as (1 | 2 | 3 | 4)[])
     .filter(index => index !== configColumnIndex)
     .map(index => {
-      const configuration: TabConfiguration = {
+      const configuration: TabRouteConfig = {
+        name: 'column' + index,
+        element: (
+          <ConfigColumnTab
+            index={index}
+            configColumnIndex={configColumnIndex}
+          />
+        ),
         options: {
-          screenKey: 'column' + index,
           title: 'Column ' + index,
           ios: {
             icon: {
@@ -29,7 +32,6 @@ export default function ConfigColumn({
             },
           },
         },
-        component: () => ConfigColumnTab({ index, configColumnIndex }),
       };
 
       return configuration;
@@ -46,7 +48,7 @@ export default function ConfigColumn({
           config: tabsConfig,
           setConfig: setTabsConfig,
         }}>
-        <TabsContainer tabConfigs={TAB_CONFIGS} />
+        <TabsContainer routeConfigs={TAB_CONFIGS} />
       </ConfigWrapperContext.Provider>
     </SafeAreaView>
   );

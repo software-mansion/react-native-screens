@@ -2,10 +2,10 @@ import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 import { ScrollEdgeEffect } from 'react-native-screens';
 
 export interface ScrollEdgeEffects {
-  bottom: ScrollEdgeEffect,
-  top: ScrollEdgeEffect,
-  left: ScrollEdgeEffect,
-  right: ScrollEdgeEffect,
+  bottom: ScrollEdgeEffect;
+  top: ScrollEdgeEffect;
+  left: ScrollEdgeEffect;
+  right: ScrollEdgeEffect;
 }
 
 export interface ScrollEdgeEffectsConfigContext {
@@ -16,7 +16,7 @@ export interface ScrollEdgeEffectsConfigContext {
 export const ScrollEdgeEffectsConfigContext =
   createContext<ScrollEdgeEffectsConfigContext | null>(null);
 
-export const SCROLL_EDGE_EFFECT_DEFAULTS: ScrollEdgeEffects= {
+export const SCROLL_EDGE_EFFECT_DEFAULTS: ScrollEdgeEffects = {
   bottom: 'automatic',
   top: 'automatic',
   left: 'automatic',

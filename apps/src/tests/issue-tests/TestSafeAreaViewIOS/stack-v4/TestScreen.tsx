@@ -15,8 +15,8 @@ export default function TestScreen({ navigation }: StackNavigationProp) {
       headerSearchBarOptions:
         config.headerSearchBar !== 'disabled'
           ? {
-            placement: config.headerSearchBar,
-          }
+              placement: config.headerSearchBar,
+            }
           : undefined,
     });
   }, [config, navigation]);

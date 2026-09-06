@@ -1,11 +1,8 @@
-import {
-  TabsContainer,
-  TabConfiguration,
-} from '../../../../shared/gamma/containers/tabs/TabsContainer';
+import { TabsContainer, TabRouteConfig } from '@apps/shared/containers/tabs';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../../../shared/gamma/containers/tabs/ConfigWrapperContext';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
 import React from 'react';
 import { useState } from 'react';
 import TestTab from './TestTab';
@@ -15,10 +12,11 @@ import ConfigTab from './ConfigTab';
 export default function TabsComponent() {
   const { config } = useTabsSAVExampleContext();
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
+      name: 'config',
+      element: <ConfigTab />,
       options: {
-        screenKey: 'config',
         title: 'Config',
         ios: {
           icon: {
@@ -27,11 +25,11 @@ export default function TabsComponent() {
           },
         },
       },
-      component: ConfigTab,
     },
     {
+      name: 'test',
+      element: <TestTab />,
       options: {
-        screenKey: 'test',
         title: 'Test',
         ios: {
           icon: {
@@ -43,14 +41,13 @@ export default function TabsComponent() {
               ? config.tabBarItemSystemItem
               : undefined,
         },
-      },
-      component: TestTab,
-      safeAreaConfiguration: {
-        edges: {
-          top: config.safeAreaTopEdge,
-          bottom: config.safeAreaBottomEdge,
-          left: config.safeAreaLeftEdge,
-          right: config.safeAreaRightEdge,
+        safeAreaConfiguration: {
+          edges: {
+            top: config.safeAreaTopEdge,
+            bottom: config.safeAreaBottomEdge,
+            left: config.safeAreaLeftEdge,
+            right: config.safeAreaRightEdge,
+          },
         },
       },
     },
@@ -67,7 +64,7 @@ export default function TabsComponent() {
         setConfig: setTabsConfig,
       }}>
       <TabsContainer
-        tabConfigs={TAB_CONFIGS}
+        routeConfigs={TAB_CONFIGS}
         ios={{
           tabBarMinimizeBehavior: config.tabBarMinimizeBehavior,
         }}

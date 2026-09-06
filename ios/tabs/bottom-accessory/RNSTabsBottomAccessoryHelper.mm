@@ -4,20 +4,20 @@
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #import <React/RCTAssert.h>
-#import <cxxreact/ReactNativeVersion.h>
 
 namespace react = facebook::react;
 
+static void *RNSTabsBottomAccessoryNativeWrapperViewContext = &RNSTabsBottomAccessoryNativeWrapperViewContext;
+static void *RNSTabsBottomAccessoryContentViewHiddenContext = &RNSTabsBottomAccessoryContentViewHiddenContext;
+
 @implementation RNSTabsBottomAccessoryHelper {
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
+  UIView *__weak _observedNativeWrapperView;
 
-#if REACT_NATIVE_VERSION_MINOR < 82
-  BOOL _initialStateUpdateSent;
-  CADisplayLink *_displayLink;
-#else // REACT_NATIVE_VERSION_MINOR < 82
-  RNSTabsBottomAccessoryContentComponentView *__weak _regularContentView;
-  RNSTabsBottomAccessoryContentComponentView *__weak _inlineContentView;
-#endif // REACT_NATIVE_VERSION_MINOR < 82
+  RNSTabsBottomAccessoryContentComponentView *_regularContentView;
+  RNSTabsBottomAccessoryContentComponentView *_inlineContentView;
+
+  BOOL _isAdjustingContentViewVisibility;
 
   id<UITraitChangeRegistration> _traitChangeRegistration;
 }
@@ -35,18 +35,13 @@ namespace react = facebook::react;
 
 - (void)initState
 {
-#if REACT_NATIVE_VERSION_MINOR < 82
-  _initialStateUpdateSent = NO;
-  _displayLink = nil;
-#else // REACT_NATIVE_VERSION_MINOR < 82
+  _observedNativeWrapperView = nil;
   _regularContentView = nil;
   _inlineContentView = nil;
-#endif // REACT_NATIVE_VERSION_MINOR < 82
+  _isAdjustingContentViewVisibility = NO;
 }
 
 #pragma mark - Content view switching workaround
-
-#if REACT_NATIVE_VERSION_MINOR >= 82
 
 - (BOOL)isContentViewSwitchingWorkaroundActive
 {
@@ -58,11 +53,11 @@ namespace react = facebook::react;
 {
   switch (environment) {
     case RNSTabsBottomAccessoryEnvironmentRegular:
-      _regularContentView = contentView;
+      [self replaceContentView:&_regularContentView with:contentView];
       break;
 
     case RNSTabsBottomAccessoryEnvironmentInline:
-      _inlineContentView = contentView;
+      [self replaceContentView:&_inlineContentView with:contentView];
       break;
 
     default:
@@ -78,19 +73,54 @@ namespace react = facebook::react;
     return;
   }
 
+  _isAdjustingContentViewVisibility = YES;
+
   switch (self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment) {
     case UITabAccessoryEnvironmentInline:
-      _regularContentView.layer.opacity = 0.0;
-      _inlineContentView.layer.opacity = 1.0;
+      _regularContentView.hidden = YES;
+      _inlineContentView.hidden = NO;
       break;
     default:
-      _regularContentView.layer.opacity = 1.0;
-      _inlineContentView.layer.opacity = 0.0;
+      _regularContentView.hidden = NO;
+      _inlineContentView.hidden = YES;
       break;
   }
+
+  _isAdjustingContentViewVisibility = NO;
 }
 
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
+#pragma mark - Observing content view hidden changes
+
+- (void)unregisterForContentViewHiddenChanges:(RNSTabsBottomAccessoryContentComponentView *__strong *)observedView
+{
+  RNSTabsBottomAccessoryContentComponentView *currentlyObserved = *observedView;
+  if (currentlyObserved == nil) {
+    return;
+  }
+
+  [currentlyObserved removeObserver:self forKeyPath:@"hidden" context:RNSTabsBottomAccessoryContentViewHiddenContext];
+  *observedView = nil;
+}
+
+- (void)replaceContentView:(RNSTabsBottomAccessoryContentComponentView *__strong *)slot
+                      with:(nullable RNSTabsBottomAccessoryContentComponentView *)newView
+{
+  if (*slot == newView) {
+    return;
+  }
+
+  // Detach the observer from the previous view first; this also clears the slot.
+  [self unregisterForContentViewHiddenChanges:slot];
+
+  if (newView != nil) {
+    [newView addObserver:self
+              forKeyPath:@"hidden"
+                 options:NSKeyValueObservingOptionNew
+                 context:RNSTabsBottomAccessoryContentViewHiddenContext];
+  }
+
+  *slot = newView;
+}
 
 #pragma mark - Observing environment changes
 
@@ -102,17 +132,38 @@ namespace react = facebook::react;
                     UITabAccessoryEnvironment environment =
                         self->_bottomAccessoryView.traitCollection.tabAccessoryEnvironment;
                     [self->_bottomAccessoryView.reactEventEmitter emitOnEnvironmentChangeIfNeeded:environment];
-#if REACT_NATIVE_VERSION_MINOR >= 82
                     [self handleContentViewVisibilityForEnvironmentIfNeeded];
-#endif // REACT_NATIVE_VERSION_MINOR >= 82
                   }];
 }
 
 #pragma mark - Observing frame changes
 
+- (void)unregisterForAccessoryFrameChanges
+{
+  UIView *observedNativeWrapperView = _observedNativeWrapperView;
+  if (observedNativeWrapperView == nil) {
+    return;
+  }
+
+  [observedNativeWrapperView removeObserver:self
+                                 forKeyPath:@"center"
+                                    context:RNSTabsBottomAccessoryNativeWrapperViewContext];
+  _observedNativeWrapperView = nil;
+}
+
 - (void)registerForAccessoryFrameChanges
 {
-  [self.nativeWrapperView addObserver:self forKeyPath:@"center" options:NSKeyValueObservingOptionInitial context:nil];
+  UIView *nativeWrapperView = self.nativeWrapperView;
+  if (_observedNativeWrapperView == nativeWrapperView) {
+    return;
+  }
+
+  [self unregisterForAccessoryFrameChanges];
+  [nativeWrapperView addObserver:self
+                      forKeyPath:@"center"
+                         options:NSKeyValueObservingOptionInitial
+                         context:RNSTabsBottomAccessoryNativeWrapperViewContext];
+  _observedNativeWrapperView = nativeWrapperView;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -120,71 +171,30 @@ namespace react = facebook::react;
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-  [self notifyWrapperViewFrameHasChanged];
+  if (context == RNSTabsBottomAccessoryNativeWrapperViewContext) {
+    [self notifyWrapperViewFrameHasChanged];
+  } else if (context == RNSTabsBottomAccessoryContentViewHiddenContext) {
+    if (!_isAdjustingContentViewVisibility) {
+      [self handleContentViewVisibilityForEnvironmentIfNeeded];
+    }
+  } else {
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+  }
 }
 
 - (UIView *)nativeWrapperView
 {
-  RCTAssert(
-      _bottomAccessoryView.superview.superview != nil,
-      @"[RNScreens] RNSTabsBottomAccessoryComponentView must be the set as bottom accessory.");
+  RCTAssert(_bottomAccessoryView.superview.superview != nil,
+            @"[RNScreens] RNSTabsBottomAccessoryComponentView must be the set as bottom accessory.");
   return _bottomAccessoryView.superview.superview;
 }
 
 - (void)notifyWrapperViewFrameHasChanged
 {
-#if REACT_NATIVE_VERSION_MINOR < 82
-  // Make sure that bottom accessory's size is sent to ShadowNode as soon as possible.
-  // We set origin to (0,0) because initially self.nativeWrapperView's origin is incorrect.
-  // We want the enable the display link as well so that it takes over later with correct origin.
-  if (!_initialStateUpdateSent) {
-    CGRect frame = CGRectMake(0, 0, self.nativeWrapperView.frame.size.width, self.nativeWrapperView.frame.size.height);
-    [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:frame];
-    _initialStateUpdateSent = YES;
-  }
-
-  if (_displayLink == nil) {
-    [self setupDisplayLink];
-  }
-#else // REACT_NATIVE_VERSION_MINOR < 82
   // We use self.nativeWrapperView because it has both the size and the origin
   // that we want to send to the ShadowNode.
   [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:self.nativeWrapperView.frame];
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
-
-#if REACT_NATIVE_VERSION_MINOR < 82
-- (void)setupDisplayLink
-{
-  _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
-  [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-}
-
-- (void)handleDisplayLink:(CADisplayLink *)sender
-{
-  // We use self.nativeWrapperView because it has both the size and the origin
-  // that we want to send to the ShadowNode.
-  CGRect presentationFrame = self.nativeWrapperView.layer.presentationLayer.frame;
-  if (CGRectEqualToRect(presentationFrame, CGRectZero)) {
-    return;
-  }
-
-  [_bottomAccessoryView.shadowStateProxy updateShadowStateWithFrame:presentationFrame];
-
-  // self.nativeWrapperView.frame is set to final value at the beginning of the transition.
-  // When frame from presentation layer matches self.nativeWrapperView.frame, it indicates that
-  // the transition is over and we can disable the display link.
-  if (CGRectEqualToRect(presentationFrame, self.nativeWrapperView.frame)) {
-    [self invalidateDisplayLink];
-  }
-}
-
-- (void)invalidateDisplayLink
-{
-  [_displayLink invalidate];
-  _displayLink = nil;
-}
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 
 #pragma mark - Invalidation
 
@@ -192,16 +202,10 @@ namespace react = facebook::react;
 {
   [_bottomAccessoryView unregisterForTraitChanges:_traitChangeRegistration];
   _traitChangeRegistration = nil;
-  // Using nativeWrapperView directly here to avoid failing RCTAssert in self.nativeWrapperView.
-  // If we're called from didMoveToWindow, it's not a problem, but I'm not sure if this will always be the case.
-  [_bottomAccessoryView.superview.superview removeObserver:self forKeyPath:@"center"];
+  [self unregisterForAccessoryFrameChanges];
+  [self unregisterForContentViewHiddenChanges:&_regularContentView];
+  [self unregisterForContentViewHiddenChanges:&_inlineContentView];
   _bottomAccessoryView = nil;
-#if REACT_NATIVE_VERSION_MINOR < 82
-  [self invalidateDisplayLink];
-#else // REACT_NATIVE_VERSION_MINOR < 82
-  _regularContentView = nil;
-  _inlineContentView = nil;
-#endif // REACT_NATIVE_VERSION_MINOR < 82
 }
 
 @end

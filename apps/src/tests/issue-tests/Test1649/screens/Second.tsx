@@ -1,22 +1,14 @@
 import * as React from 'react';
-import {
-  Button,
-  ButtonProps,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Button, ButtonProps, StyleSheet, View } from 'react-native';
 
 import { NavPropObj } from '../types';
 import GestureHandlerButton from '../components/GestureHandlerButton';
 
 function BorderedButton({ title, onPress }: ButtonProps) {
   return (
-      <View style={[styles.buttonContainer]}>
-        <Button
-          title={title}
-          onPress={onPress}
-        />
-      </View>
+    <View style={[styles.buttonContainer]}>
+      <Button title={title} onPress={onPress} />
+    </View>
   );
 }
 
@@ -49,7 +41,7 @@ export default function Second({ navigation }: NavPropObj) {
       />
       <BorderedButton
         title="PopTo First"
-        onPress={() => navigation.popTo("First")}
+        onPress={() => navigation.popTo('First')}
       />
       <GestureHandlerButton />
     </View>
@@ -60,6 +52,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderTopColor: 'black',
     borderTopWidth: 1,
-  }
+  },
 });
-

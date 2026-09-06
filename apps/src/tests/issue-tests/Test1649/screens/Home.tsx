@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  Button,
-  View,
-} from 'react-native';
+import { Button, View } from 'react-native';
 
 import { NavPropObj } from '../types';
 
@@ -28,4 +25,3 @@ export default function Home({ navigation }: NavPropObj) {
     </View>
   );
 }
-

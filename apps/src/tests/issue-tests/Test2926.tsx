@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, Text, View, ScrollView } from 'react-native';
-import { ListItem, SettingsSwitch } from '../../shared';
+import { ListItem, SettingsSwitch } from '@apps/shared';
 
 type StackRouteParamList = {
   Home: undefined;

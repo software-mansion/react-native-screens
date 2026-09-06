@@ -1,7 +1,5 @@
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
 
-#if RCT_NEW_ARCH_ENABLED
-
 #import <React/RCTImageLoader.h>
 #import <react/utils/ManagedObjectWrapper.h>
 
@@ -19,5 +17,3 @@
 }
 
 @end
-
-#endif // RCT_NEW_ARCH_ENABLED

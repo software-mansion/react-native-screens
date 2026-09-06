@@ -22,37 +22,46 @@
 
 .container {
   position: relative;
-  margin-top: 107px;
+  margin-top: 122px;
 }
 
 footer {
-  margin-top: -107px;
+  margin-top: -108px;
 }
 
 @media (max-width: 996px) {
   .container {
-    margin-top: 122px;
+    margin-top: 138px;
   }
   footer {
-    margin-top: -122px;
+    margin-top: -138px;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 916px) {
   .container {
-    margin-top: 147px;
+    margin-top: 164px;
   }
   footer {
-    margin-top: -147px;
+    margin-top: -164px;
   }
 }
 
-@media (max-width: 375px) {
+@media (max-width: 505px) {
   .container {
-    margin-top: 173px;
+    margin-top: 189px;
   }
   footer {
-    margin-top: -173px;
+    margin-top: -189px;
+  }
+}
+
+@media (max-width: 344px) {
+  .container {
+    margin-top: 215px;
+  }
+  footer {
+    margin-top: -215px;
   }
 }
 

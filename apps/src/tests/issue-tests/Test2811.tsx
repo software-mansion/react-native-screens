@@ -1,5 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
 
@@ -14,7 +17,6 @@ type StackRouteNavProps = {
 const Stack = createNativeStackNavigator<StackRouteParamList>();
 
 function Home({ navigation }: StackRouteNavProps) {
-
   React.useEffect(() => {
     const timerHandle = setTimeout(() => {
       navigation.setOptions({
@@ -43,7 +45,14 @@ function Home({ navigation }: StackRouteNavProps) {
 function HeaderSubview({ size }: { size?: number }) {
   const finalSize = size ?? 20;
   return (
-    <View style={{ backgroundColor: 'crimson', width: finalSize, height: finalSize, maxHeight: finalSize }} />
+    <View
+      style={{
+        backgroundColor: 'crimson',
+        width: finalSize,
+        height: finalSize,
+        maxHeight: finalSize,
+      }}
+    />
   );
 }
 
@@ -51,9 +60,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} options={{
-          //headerRight: () => <HeaderSubview size={20} />,
-        }} />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={
+            {
+              //headerRight: () => <HeaderSubview size={20} />,
+            }
+          }
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

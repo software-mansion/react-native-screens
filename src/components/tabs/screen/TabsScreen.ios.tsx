@@ -20,12 +20,9 @@ import type {
   TabsScreenItemStateAppearanceIOS,
 } from './TabsScreen.ios.types';
 import type { TabsScreenProps } from './TabsScreen.types';
-import type { PlatformIconIOS } from '../../../types';
+import type { PlatformIconIOS } from '../../shared/types';
 import { useTabsScreen } from './useTabsScreen';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function TabsScreen(props: TabsScreenProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -40,7 +37,6 @@ function TabsScreen(props: TabsScreenProps) {
     onWillAppear,
     onWillDisappear,
     children,
-    isFocused = false,
     style,
     ...filteredBaseProps
   } = baseProps;
@@ -52,7 +48,6 @@ function TabsScreen(props: TabsScreenProps) {
       onDidDisappear,
       onWillAppear,
       onWillDisappear,
-      isFocused,
       screenKey: filteredBaseProps.screenKey,
     });
 
@@ -62,7 +57,6 @@ function TabsScreen(props: TabsScreenProps) {
     <TabsScreenIOSNativeComponent
       collapsable={false}
       style={[style, styles.fillParent]}
-      isFocused={isFocused}
       // @ts-ignore - This is debug only anyway
       ref={componentNodeRef}
       {...lifecycleCallbacks}
@@ -76,10 +70,6 @@ function TabsScreen(props: TabsScreenProps) {
       scrollEdgeAppearance={mapAppearanceToNativeProp(
         ios?.scrollEdgeAppearance,
       )}
-      bottomScrollEdgeEffect={ios?.scrollEdgeEffects?.bottom}
-      leftScrollEdgeEffect={ios?.scrollEdgeEffects?.left}
-      rightScrollEdgeEffect={ios?.scrollEdgeEffects?.right}
-      topScrollEdgeEffect={ios?.scrollEdgeEffects?.top}
       userInterfaceStyle={ios?.experimental_userInterfaceStyle}
       systemItem={ios?.systemItem}
       overrideScrollViewContentInsetAdjustmentBehavior={
@@ -159,13 +149,13 @@ function parseIconsToNativeProps(
   icon: PlatformIconIOS | undefined,
   selectedIcon: PlatformIconIOS | undefined,
 ): {
-  imageIconResource?: ImageResolvedAssetSource;
-  drawableIconResourceName?: string;
-  iconType?: IconType;
-  iconImageSource?: ImageSourcePropType;
-  iconResourceName?: string;
-  selectedIconImageSource?: ImageSourcePropType;
-  selectedIconResourceName?: string;
+  imageIconResource?: ImageResolvedAssetSource | undefined;
+  drawableIconResourceName?: string | undefined;
+  iconType?: IconType | undefined;
+  iconImageSource?: ImageSourcePropType | undefined;
+  iconResourceName?: string | undefined;
+  selectedIconImageSource?: ImageSourcePropType | undefined;
+  selectedIconResourceName?: string | undefined;
 } {
   const parsedIcon = parseIconToNativeProps(icon);
   const parsedSelectedIcon = parseIconToNativeProps(selectedIcon);
@@ -195,9 +185,9 @@ function parseIconsToNativeProps(
 }
 
 function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
-  iconType?: IconType;
-  iconImageSource?: ImageSourcePropType;
-  iconResourceName?: string;
+  iconType?: IconType | undefined;
+  iconImageSource?: ImageSourcePropType | undefined;
+  iconResourceName?: string | undefined;
 } {
   if (!icon) {
     return {};

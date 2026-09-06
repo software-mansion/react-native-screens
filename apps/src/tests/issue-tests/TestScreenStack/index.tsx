@@ -4,7 +4,7 @@ import {
   StackContainer,
   StackRouteConfig,
   useStackNavigationContext,
-} from '../../../shared/gamma/containers/stack';
+} from '@apps/shared/containers/stack';
 import { Button, Text, View } from 'react-native';
 
 function TemplateScreen() {
@@ -26,13 +26,11 @@ function TemplateScreen() {
 const ROUTE_CONFIGS: StackRouteConfig[] = [
   {
     name: 'A',
-    Component: TemplateScreen,
-    options: {},
+    element: <TemplateScreen />,
   },
   {
     name: 'B',
-    Component: TemplateScreen,
-    options: {},
+    element: <TemplateScreen />,
   },
 ];
 

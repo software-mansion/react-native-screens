@@ -50,7 +50,10 @@ function FormSheet({ navigation }: StackNavigationProp) {
   return (
     <View>
       <Button title="Go back" onPress={() => navigation.goBack()} />
-      <Button title="Toggle automatic toggling" onPress={() => setIntervalEnabled(old => !old)} />
+      <Button
+        title="Toggle automatic toggling"
+        onPress={() => setIntervalEnabled(old => !old)}
+      />
       <View
         style={{
           height: 200,

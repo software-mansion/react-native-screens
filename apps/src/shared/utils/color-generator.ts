@@ -1,4 +1,4 @@
-import Colors from '../styling/Colors';
+import { Colors } from '../styling';
 
 let GLOBAL_NEXT_COLOR_ID = 0;
 

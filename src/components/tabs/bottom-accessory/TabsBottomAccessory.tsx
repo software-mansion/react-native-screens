@@ -3,9 +3,6 @@ import TabsBottomAccessoryNativeComponent from '../../../fabric/tabs/TabsBottomA
 import { TabsBottomAccessoryProps } from './TabsBottomAccessory.types';
 import { StyleSheet } from 'react-native';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 export default function TabsBottomAccessory(props: TabsBottomAccessoryProps) {
   return (
     <TabsBottomAccessoryNativeComponent

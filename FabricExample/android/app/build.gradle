@@ -2,6 +2,21 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+def isCIEnabled() {
+    return ["1", "true"].contains(System.getenv("CI")?.toLowerCase())
+}
+
+def isRNRepoEnabled() {
+    // return false // Uncomment to disable RNRepo even in CI
+    return System.getenv("DISABLE_RNREPO") == null
+}
+
+// Use RNRepo in CI builds. 
+// Set DISABLE_RNREPO to any value to disable RNRepo.
+if (isCIEnabled() && isRNRepoEnabled()) {
+    apply plugin: "org.rnrepo.tools.prebuilds-plugin"
+}
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -72,10 +87,6 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
-def isGammaEnabled() {
-    return project.hasProperty("rnsGammaEnabled") && project.rnsGammaEnabled == "true"
-}
-
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -88,7 +99,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         testBuildType System.getProperty('testBuildType', 'release') // Detox
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
     }
@@ -115,7 +125,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 
             // Detox-specific additions to pro-guard
             proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"

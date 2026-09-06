@@ -5,26 +5,49 @@ import {
   NavigationIndependentTree,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ScenarioButton } from '../shared/ScenarioButton';
+import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 
 import OrientationScenarioGroup from './orientation';
 import ScrollViewScenarioGroup from './scroll-view';
-import ScenarioSelectionScreen from '../shared/ScenarioScreen';
+import FormSheetScenarioGroup from './form-sheet';
+import TabsInStackV5ScenarioGroup from './tabs-stack-v5';
+import SvmScenarioGroup from './scroll-view-marker';
+import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
+
+export * from './orientation';
+export * from './scroll-view';
+export * from './form-sheet';
+export * from './tabs-stack-v5';
+export * from './scroll-view-marker';
 
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
   ScrollView: ScrollViewScenarioGroup,
+  FormSheet: FormSheetScenarioGroup,
+  TabsInStackV5: TabsInStackV5ScenarioGroup,
+  ScrollViewMarker: SvmScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
   Home: undefined;
 };
 
-function HomeScreen() {
+export function HomeScreen() {
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      testID="component-integration-tests-scrollview">
       {Object.entries(COMPONENT_SCENARIOS).map(([key, scenarioGroup]) => (
-        <ScenarioButton key={key} title={scenarioGroup.name} route={key} />
+        <ScenarioButton
+          key={key}
+          title={scenarioGroup.name}
+          route={key}
+          details={scenarioGroup.details}
+          testID={`component-integration-tests-${scenarioGroup.name.replace(
+            /\s/g,
+            '',
+          )}`}
+        />
       ))}
     </ScrollView>
   );

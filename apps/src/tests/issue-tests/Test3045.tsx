@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import { Button, ScrollView, Text } from 'react-native';
 
 type StackRouteParamList = {
@@ -15,23 +18,38 @@ type NavigationProp<ParamList extends ParamListBase> = {
 
 type StackNavigationProp = NavigationProp<StackRouteParamList>;
 
-function First({navigation}: StackNavigationProp) {
-  return <ScrollView contentInsetAdjustmentBehavior='automatic'>
-    <Button onPress={() => navigation.navigate("Second")} title='Second'/>
-    <Button onPress={() => navigation.preload("Second")} title='Preload Second'/>
-    <Button onPress={() => navigation.preload("Third")} title='Preload Third'/>
-  </ScrollView>
+function First({ navigation }: StackNavigationProp) {
+  return (
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <Button onPress={() => navigation.navigate('Second')} title="Second" />
+      <Button
+        onPress={() => navigation.preload('Second')}
+        title="Preload Second"
+      />
+      <Button
+        onPress={() => navigation.preload('Third')}
+        title="Preload Third"
+      />
+    </ScrollView>
+  );
 }
 
-function Second({navigation}: StackNavigationProp) {
-  return <ScrollView contentInsetAdjustmentBehavior='automatic'>
-    <Button onPress={() => navigation.navigate("Third")} title='Third'/>
-    <Button onPress={() => {navigation.preload("Third")}} title='Preload Third'/>
-  </ScrollView>
+function Second({ navigation }: StackNavigationProp) {
+  return (
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <Button onPress={() => navigation.navigate('Third')} title="Third" />
+      <Button
+        onPress={() => {
+          navigation.preload('Third');
+        }}
+        title="Preload Third"
+      />
+    </ScrollView>
+  );
 }
 
 function Third() {
-  return <Text>Bonjour</Text>
+  return <Text>Bonjour</Text>;
 }
 
 const Stack = createNativeStackNavigator<StackRouteParamList>();
@@ -45,7 +63,7 @@ export default function App() {
           component={First}
           options={{
             gestureEnabled: true,
-            animation: "slide_from_right"
+            animation: 'slide_from_right',
           }}
         />
         <Stack.Screen
@@ -53,14 +71,14 @@ export default function App() {
           component={Second}
           options={{
             gestureEnabled: true,
-            animation: "slide_from_right"
+            animation: 'slide_from_right',
           }}
         />
         <Stack.Screen
           name="Third"
           component={Third}
           options={{
-            gestureEnabled: false
+            gestureEnabled: false,
           }}
         />
       </Stack.Navigator>

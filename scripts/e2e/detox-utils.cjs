@@ -39,13 +39,13 @@ const testButlerApkPath = isRunningCI
  *
  * * `RNS_IOS_VERSION` env var can be specified to request particular iOS version
  * for the given simulator. Note that required SDK & simulators must be installed.
- * Example: RNS_IOS_VERSION="iOS 26.1"
+ * Example: RNS_IOS_VERSION="26.1"
  *
  * * Remember:
  * Device versions are assigned to iOS versions.
  * That means running a version that has never been available
  * on a given device will result in an error.
- * Example: `RNS_IOS_VERSION="iOS 18.6" RNS_APPLE_SIM_NAME="iPhone 17 Pro" yarn test-e2e-ios` will fail
+ * Example: `RNS_IOS_VERSION="18.6" RNS_APPLE_SIM_NAME="iPhone 17 Pro" yarn test-e2e-ios` will fail
  * as iPhone 17 Pro was released with iOS 26
  *
  * @param {string} applicationName name (FabricExample)

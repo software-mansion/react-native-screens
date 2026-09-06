@@ -1,11 +1,9 @@
 import * as React from 'react';
 
-import { NavPropObj } from "../types";
+import { NavPropObj } from '../types';
 import { Button, TextInput, View } from 'react-native';
 
-export default function Third({
-  navigation,
-}: NavPropObj) {
+export default function Third({ navigation }: NavPropObj) {
   const [color, _] = React.useState('firebrick');
 
   return (
@@ -33,9 +31,8 @@ export default function Third({
       />
       <Button
         title="Go back to second screen"
-        onPress={() => navigation.popTo("Second")}
+        onPress={() => navigation.popTo('Second')}
       />
     </View>
   );
 }
-

@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSContainerItem.h"
 #import "RNSTabsScreenComponentView.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
 
@@ -10,18 +11,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSTabsScreenViewController : UIViewController
+@interface RNSTabsScreenViewController : UIViewController <RNSContainerItem
 #if !TARGET_OS_TV
-                                         <RNSOrientationProviding>
+                                                           ,
+                                                           RNSOrientationProviding
 #endif // !TARGET_OS_TV
+                                                           >
 
 @property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
-
-/**
- * Tell the controller that the tab screen it owns has got its react-props-focus changed.
- */
-- (void)tabScreenFocusHasChanged;
 
 /**
  * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.
@@ -50,6 +48,14 @@ NS_ASSUME_NONNULL_BEGIN
  * already changed (to other delegate or nil), this method does nothing.
  */
 - (void)clearTabsSpecialEffectsDelegateIfNeeded:(nonnull id<RNSTabsSpecialEffectsSupporting>)delegate;
+
+@end
+
+@interface RNSTabsScreenViewController (TabsScreenPropsForwarding)
+
+- (nullable NSString *)getScreenKeyOrNull;
+
+- (BOOL)isPreventNativeSelectionEnabled;
 
 @end
 

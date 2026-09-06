@@ -28,6 +28,10 @@ API_AVAILABLE(ios(26.0))
  */
 - (void)registerForAccessoryFrameChanges;
 /**
+ * Removes the KVO registration set up by `registerForAccessoryFrameChanges`.
+ */
+- (void)unregisterForAccessoryFrameChanges;
+/**
  * Invalidates observers, display link (if it is used); resets internal properties.
  */
 - (void)invalidate;
@@ -36,7 +40,7 @@ API_AVAILABLE(ios(26.0))
 
 #pragma mark - Content view switching workaround
 
-#if defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
+#if defined(__cplusplus)
 
 /**
  * Due to *synchronous* events not being actually *synchronous*, we are unable to handle layout modifications
@@ -44,7 +48,7 @@ API_AVAILABLE(ios(26.0))
  * thanks to synchronous state updates and work correctly).
  * In order to mitigate this, we introduced a workaround approach: 2 views are rendered all the time on top of each
  * other. One is for `regular` environment and the second one is for `inline` environment. When environment changes, we
- * swap which view is actually visible by changing opacity.
+ * swap which view is actually visible by toggling `hidden`.
  */
 @interface RNSTabsBottomAccessoryHelper ()
 
@@ -56,14 +60,14 @@ API_AVAILABLE(ios(26.0))
         forEnvironment:(RNSTabsBottomAccessoryEnvironment)environment;
 
 /**
- * If `contentView` is set for both environments, sets opacity according to current tab accessory `environent`.
+ * If `contentView` is set for both environments, toggles `hidden` according to current tab accessory `environment`.
  * Otherwise, it is a no-op.
  */
 - (void)handleContentViewVisibilityForEnvironmentIfNeeded;
 
 @end
 
-#endif // defined(__cplusplus) && REACT_NATIVE_VERSION_MINOR >= 82
+#endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_END
 

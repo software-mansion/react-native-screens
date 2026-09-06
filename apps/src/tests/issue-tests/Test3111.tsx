@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, View, Text, ScrollView } from 'react-native';
-import PressableWithFeedback from '../../shared/PressableWithFeedback';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 type RouteParamList = {
   Main: undefined;

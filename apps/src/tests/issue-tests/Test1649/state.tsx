@@ -11,13 +11,23 @@ export const sheetInitialOptions: SheetOptions = {
   sheetCornerRadius: 24,
   sheetExpandsWhenScrolledToEdge: true,
   sheetInitialDetent: 0,
-}
+};
 
-export const allowedDetentsAtom = jotai.atom<AllowedDetentsType>(sheetInitialOptions.sheetAllowedDetents);
-export const largestUndimmedDetentAtom = jotai.atom<number>(sheetInitialOptions.sheetLargestUndimmedDetent);
-export const grabberVisibleAtom = jotai.atom(sheetInitialOptions.sheetGrabberVisible);
-export const cornerRadiusAtom = jotai.atom(sheetInitialOptions.sheetCornerRadius);
-export const expandsWhenScrolledToEdgeAtom = jotai.atom(sheetInitialOptions.sheetExpandsWhenScrolledToEdge);
+export const allowedDetentsAtom = jotai.atom<AllowedDetentsType>(
+  sheetInitialOptions.sheetAllowedDetents,
+);
+export const largestUndimmedDetentAtom = jotai.atom<number>(
+  sheetInitialOptions.sheetLargestUndimmedDetent,
+);
+export const grabberVisibleAtom = jotai.atom(
+  sheetInitialOptions.sheetGrabberVisible,
+);
+export const cornerRadiusAtom = jotai.atom(
+  sheetInitialOptions.sheetCornerRadius,
+);
+export const expandsWhenScrolledToEdgeAtom = jotai.atom(
+  sheetInitialOptions.sheetExpandsWhenScrolledToEdge,
+);
 
 export const sheetOptionsAtom = jotai.atom(get => ({
   sheetAllowedDetents: get(allowedDetentsAtom),
@@ -27,7 +37,8 @@ export const sheetOptionsAtom = jotai.atom(get => ({
   sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
 }));
 
-export const selectedDetentIndexAtom = jotai.atom(sheetInitialOptions.sheetInitialDetent);
+export const selectedDetentIndexAtom = jotai.atom(
+  sheetInitialOptions.sheetInitialDetent,
+);
 
 export const isAdditionalContentVisibleAtom = jotai.atom(false);
-

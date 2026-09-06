@@ -1,0 +1,18 @@
+import React from 'react';
+import type {
+  TabRouteOptions,
+  SetTabOptionsMethod,
+  SelectTabMethod,
+} from '../TabsContainer.types';
+
+export type TabsNavigationContextPayload = {
+  routeKey: string;
+  routeOptions: TabRouteOptions;
+  setRouteOptions: SetTabOptionsMethod;
+  selectTab: SelectTabMethod;
+  isSelected: boolean;
+  shouldRenderContents: boolean;
+};
+
+export const TabsNavigationContext =
+  React.createContext<TabsNavigationContextPayload | null>(null);

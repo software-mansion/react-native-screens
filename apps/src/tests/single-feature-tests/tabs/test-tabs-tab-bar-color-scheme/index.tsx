@@ -1,0 +1,138 @@
+import {
+  Appearance,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
+import React, { useEffect } from 'react';
+import { SettingsPicker } from '@apps/shared';
+import type { TabsHostColorScheme } from 'react-native-screens';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '@apps/shared/containers/tabs';
+
+function ConfigScreen() {
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+  const [reactColorScheme, setReactColorScheme] =
+    React.useState<Appearance.ColorSchemeOverride>('auto');
+
+  useEffect(() => {
+    Appearance.setColorScheme(reactColorScheme);
+  }, [reactColorScheme]);
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <View style={styles.section}>
+        <Text style={styles.text}>
+          There are 3 sources of color scheme, in ascending order of precedence:
+          system, React Native and our property on TabsHost.
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.heading}>System color scheme</Text>
+        <Text style={styles.text}>
+          Switch system color scheme via quick settings in notification drawer
+          (Android/iOS) or Cmd+Shift+A (iOS simulator).
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.heading}>React Native's color scheme</Text>
+        <SettingsPicker<Appearance.ColorSchemeOverride>
+          label={'colorScheme'}
+          value={reactColorScheme}
+          onValueChange={function (
+            value: Appearance.ColorSchemeOverride,
+          ): void {
+            setReactColorScheme(value);
+          }}
+          items={['auto', 'light', 'dark']}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.heading}>TabsHost color scheme</Text>
+        <SettingsPicker<NonNullable<TabsHostColorScheme>>
+          label={'colorScheme'}
+          value={hostConfig.colorScheme ?? 'inherit'}
+          onValueChange={value => updateHostConfig({ colorScheme: value })}
+          items={['inherit', 'light', 'dark']}
+        />
+      </View>
+    </ScrollView>
+  );
+}
+
+function TestScreen() {
+  return (
+    <View style={styles.containerCenter}>
+      <TextInput placeholder="Type something..." />
+    </View>
+  );
+}
+
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Config',
+    element: <ConfigScreen />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Config',
+      safeAreaConfiguration: {
+        edges: {
+          bottom: true,
+        },
+      },
+    },
+  },
+  {
+    name: 'Keyboard',
+    element: <TestScreen />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Keyboard',
+    },
+  },
+];
+
+function TestTabsTabBarColorScheme() {
+  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  containerCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    padding: 20,
+    paddingTop: Platform.OS === 'android' ? 60 : undefined,
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: 'rgb(0, 122, 255)',
+  },
+  section: {
+    marginBottom: 10,
+  },
+  text: {
+    color: 'gray',
+  },
+});
+
+export default createScenario(TestTabsTabBarColorScheme, scenarioDescription);

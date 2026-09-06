@@ -1,8 +1,8 @@
 import React from 'react';
-import { Split } from 'react-native-screens/experimental';
+import { Split } from 'react-native-screens';
 import { NativeStackNavigatorComponent } from '../helpers';
 import { SplitBaseConfig } from '../helpers/types';
-import Colors from '../../../../shared/styling/Colors';
+import { Colors } from '@apps/shared/styling';
 
 export const SplitWithNativeStackHeaderStyles = ({
   splitBaseConfig,

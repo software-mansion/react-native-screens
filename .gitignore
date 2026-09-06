@@ -66,3 +66,15 @@ android/.settings
 
 # e2e
 *Example/artifacts
+
+# AI assistant configuration (local only)
+/CLAUDE.local.md
+/.claude/
+/.agents
+
+# General rule for files explicitly marked as local
+*.local.*
+
+# Generated release-test playgrounds 
+/release_tests
+

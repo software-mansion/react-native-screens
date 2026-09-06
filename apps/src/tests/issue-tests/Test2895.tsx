@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import { Button, StyleSheet, View } from 'react-native';
-import { ThemedText, ThemedTextInput } from '../../shared';
+import { ThemedText, ThemedTextInput } from '@apps/shared';
 
 type StackRouteParamList = {
   Home: undefined;

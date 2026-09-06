@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
-import {
-  Button,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Button, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 import { Screen, ScreenStack } from 'react-native-screens';
 
@@ -46,7 +40,7 @@ function AppMain(): React.JSX.Element {
     setInterval(() => {
       i++;
       setNum(i);
-    }, 2)
+    }, 2);
   }, []);
 
   /*
@@ -85,9 +79,13 @@ function AppMain(): React.JSX.Element {
         <Section title="Orientation"> {num} </Section>
 
         <Section title="Extra computation">
-          To better show off the problem, you can add extra computation to the JS thread, so that the commits
-          are likely further apart from each other.
-          <Button title="Add extra computation to the JS thread" onPress={floodJsThread} />
+          To better show off the problem, you can add extra computation to the
+          JS thread, so that the commits are likely further apart from each
+          other.
+          <Button
+            title="Add extra computation to the JS thread"
+            onPress={floodJsThread}
+          />
         </Section>
       </View>
     </View>

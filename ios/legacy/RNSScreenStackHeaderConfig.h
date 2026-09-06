@@ -1,0 +1,120 @@
+#pragma once
+
+#if defined(__cplusplus)
+#import <React/RCTConvert.h>
+#endif // __cplusplus
+#import "RNSReactBaseView.h"
+#import "RNSScreen.h"
+#import "RNSScreenStackHeaderSubview.h"
+#import "RNSSearchBar.h"
+
+@interface NSString (RNSStringUtil)
+
++ (BOOL)rnscreens_isBlankOrNull:(nullable NSString *)string;
+
+@end
+
+@interface RNSScreenStackHeaderConfig : RNSReactBaseView
+
+@property (nonatomic, weak) RNSScreenView *screenView;
+
+@property (nonatomic) BOOL show;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) NSString *titleFontFamily;
+@property (nonatomic, retain) NSNumber *titleFontSize;
+@property (nonatomic, retain) NSString *titleFontWeight;
+@property (nonatomic, retain) UIColor *titleColor;
+@property (nonatomic, retain) NSString *backTitle;
+@property (nonatomic, retain) NSString *backTitleFontFamily;
+@property (nonatomic, retain) NSNumber *backTitleFontSize;
+@property (nonatomic, getter=isBackTitleVisible) BOOL backTitleVisible;
+@property (nonatomic, retain) UIColor *backgroundColor;
+@property (nonatomic, retain) UIColor *color;
+@property (nonatomic) BOOL largeTitle;
+@property (nonatomic, retain) NSString *largeTitleFontFamily;
+@property (nonatomic, retain) NSNumber *largeTitleFontSize;
+@property (nonatomic, retain) NSString *largeTitleFontWeight;
+@property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
+@property (nonatomic) BOOL largeTitleHideShadow;
+@property (nonatomic, retain) UIColor *largeTitleColor;
+@property (nonatomic) BOOL hideBackButton;
+@property (nonatomic) BOOL disableBackButtonMenu;
+@property (nonatomic) BOOL hideShadow;
+@property (nonatomic) BOOL translucent;
+@property (nonatomic) BOOL backButtonInCustomView;
+@property (nonatomic) UISemanticContentAttribute direction;
+@property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
+@property (nonatomic) RNSBlurEffectStyle blurEffect;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
+@property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
+
+NS_ASSUME_NONNULL_END
+
++ (void)willShowViewController:(nonnull UIViewController *)vc
+                      animated:(BOOL)animated
+                    withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
+
+/**
+ * Returns true iff subview of given `type` is present.
+ *
+ *  **Please note that the subviews are not mounted under the header config in HostTree**
+ * This method should serve only to check whether given subview type has been rendered.
+ */
+- (BOOL)hasSubviewOfType:(RNSScreenStackHeaderSubviewType)type;
+
+/**
+ * Returns `true` iff subview of type `left` is present.
+ *
+ *  **Please note that the subviews are not mounted under the header config in HostTree**
+ * This method should serve only to check whether given subview type has been rendered.
+ */
+- (BOOL)hasSubviewLeft;
+
+/**
+ * Returns `YES` when `self.show == YES`, `NO` otherwise.
+ */
+- (BOOL)shouldHeaderBeVisible;
+
+/**
+ * Returns `true` iff the applying this header config instance to a view controller will
+ * result in visible back button if feasible.
+ */
+- (BOOL)shouldBackButtonBeVisibleInNavigationBar:(nullable UINavigationBar *)navBar;
+
+/**
+ * Allows to send information with size to the corresponding node in shadow tree.
+ * This method updates state of header config shadow node only.
+ */
+- (void)updateShadowStateWithSize:(CGSize)size
+                       edgeInsets:(NSDirectionalEdgeInsets)edgeInsets
+                      frameOrigin:(CGPoint)frameOrigin;
+
+/**
+ * Updates state of header config shadow node and all subview shadow nodes in context of given UINavigationBar.
+ * When `navBar == nil` this method does nothing.
+ */
+- (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
+
+@end
+
+#pragma mark - Experimental
+
+@interface RNSScreenStackHeaderConfig ()
+
+@property (nonatomic) UIUserInterfaceStyle userInterfaceStyle;
+
+@end
+
+#pragma mark - View Manager
+
+#if defined(__cplusplus)
+@interface RNSScreenStackHeaderConfigManager : RCTViewManager
+#else
+@interface RNSScreenStackHeaderConfigManager : NSObject
+#endif // __cplusplus
+
+@end

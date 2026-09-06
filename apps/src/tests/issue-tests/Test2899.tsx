@@ -1,9 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { styles } from '../../shared/styles';
+import { styles } from '@apps/shared/styles';
 import { View } from 'react-native';
-import { Rectangle } from '../../shared/Rectangle';
+import { Rectangle } from '@apps/shared/Rectangle';
 
 const Stack = createNativeStackNavigator();
 

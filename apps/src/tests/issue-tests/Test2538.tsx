@@ -1,5 +1,8 @@
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
 
@@ -7,7 +10,7 @@ const Stack = createNativeStackNavigator();
 
 type RouteNavProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-}
+};
 
 function Home({ navigation }: RouteNavProps) {
   return (

@@ -12,12 +12,9 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import ConfigWrapperContext, {
   Configuration,
   DEFAULT_GLOBAL_CONFIGURATION,
-} from '../../shared/gamma/containers/tabs/ConfigWrapperContext';
-import {
-  TabsContainer,
-  TabConfiguration,
-} from '../../shared/gamma/containers/tabs/TabsContainer';
-import Colors from '../../shared/styling/Colors';
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
+import { TabsContainer, TabRouteConfig } from '@apps/shared/containers/tabs';
+import { Colors } from '@apps/shared/styling';
 
 type RouteParamList = {
   Screen1: undefined;
@@ -66,10 +63,11 @@ function Screen2(stackNavProp: StackNavigationProp) {
     DEFAULT_GLOBAL_CONFIGURATION,
   );
 
-  const TAB_CONFIGS: TabConfiguration[] = [
+  const TAB_CONFIGS: TabRouteConfig[] = [
     {
+      name: 'Tab1',
+      element: <TabScreen {...stackNavProp} />,
       options: {
-        screenKey: 'Tab1',
         title: 'Tab 1',
         ios: {
           icon: {
@@ -79,11 +77,11 @@ function Screen2(stackNavProp: StackNavigationProp) {
           experimental_userInterfaceStyle: 'light',
         },
       },
-      component: () => TabScreen(stackNavProp),
     },
     {
+      name: 'Tab2',
+      element: <TabScreen {...stackNavProp} />,
       options: {
-        screenKey: 'Tab2',
         title: 'Tab 2',
         ios: {
           icon: {
@@ -92,7 +90,6 @@ function Screen2(stackNavProp: StackNavigationProp) {
           },
         },
       },
-      component: () => TabScreen(stackNavProp),
     },
   ];
 
@@ -102,7 +99,7 @@ function Screen2(stackNavProp: StackNavigationProp) {
         config,
         setConfig,
       }}>
-      <TabsContainer tabConfigs={TAB_CONFIGS} />
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
     </ConfigWrapperContext.Provider>
   );
 }

@@ -11,11 +11,10 @@ type TabsScreenPlatformNativeComponentProps =
 
 interface TabsScreenConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  onDidAppear?: TabsScreenEventHandler<EmptyObject>;
-  onDidDisappear?: TabsScreenEventHandler<EmptyObject>;
-  onWillAppear?: TabsScreenEventHandler<EmptyObject>;
-  onWillDisappear?: TabsScreenEventHandler<EmptyObject>;
-  isFocused?: boolean;
+  onDidAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onDidDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onWillAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onWillDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
   screenKey: string;
 }
 
@@ -27,7 +26,6 @@ export function useTabsScreen<
   onDidDisappear,
   onWillAppear,
   onWillDisappear,
-  isFocused = false,
   screenKey,
 }: TabsScreenConfig<T>) {
   const componentNodeHandle = React.useRef<number>(-1);
@@ -84,7 +82,7 @@ export function useTabsScreen<
   RNSLog.log(
     `TabsScreen [${
       componentNodeHandle.current ?? -1
-    }] render; screenKey: ${screenKey}, isFocused: ${isFocused}`,
+    }] render; screenKey: ${screenKey}`,
   );
 
   return {
