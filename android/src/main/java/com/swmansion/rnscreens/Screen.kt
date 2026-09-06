@@ -73,6 +73,8 @@ class Screen(
     var screenId: String? = null
     var isStatusBarAnimated: Boolean? = null
     var isBeingRemoved = false
+    private var isEndingRemovalTransition = false
+    private val removalTransitionViews = ArrayList<Pair<ViewGroup, View>>()
 
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
@@ -597,24 +599,20 @@ class Screen(
     }
 
     fun endRemovalTransition() {
-        if (!isBeingRemoved) {
+        if (!isBeingRemoved || isEndingRemovalTransition) {
             return
         }
-        isBeingRemoved = false
-        endTransitionRecursive(this)
-    }
-
-    private fun endTransitionRecursive(parent: ViewGroup) {
-        parent.children.forEach { childView ->
-            parent.endViewTransition(childView)
-
-            if (childView is ScreenStackHeaderConfig) {
-                endTransitionRecursive(childView.toolbar)
+        isEndingRemovalTransition = true
+        // Detach callbacks can synchronously re-enter transition cleanup.
+        val viewsToFinish = removalTransitionViews.toList()
+        removalTransitionViews.clear()
+        try {
+            for ((parent, child) in viewsToFinish.asReversed()) {
+                parent.endViewTransition(child)
             }
-
-            if (childView is ViewGroup) {
-                endTransitionRecursive(childView)
-            }
+        } finally {
+            isBeingRemoved = false
+            isEndingRemovalTransition = false
         }
     }
 
@@ -632,7 +630,10 @@ class Screen(
                     // TODO: find a better way to handle this scenario
                     it.addView(View(context), i)
                 } else {
-                    child?.let { view -> it.startViewTransition(view) }
+                    child?.let { view ->
+                        it.startViewTransition(view)
+                        removalTransitionViews.add(it to view)
+                    }
                 }
 
                 if (child is ScreenStackHeaderConfig) {

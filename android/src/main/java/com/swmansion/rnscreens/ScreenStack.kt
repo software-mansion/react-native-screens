@@ -76,6 +76,10 @@ class ScreenStack(
     }
 
     override fun endViewTransition(view: View) {
+        // Finish descendants before Android detaches the fragment's root view.
+        if (view is ScreensCoordinatorLayout) {
+            view.fragment.screen.endRemovalTransition()
+        }
         super.endViewTransition(view)
 
         disappearingTransitioningChildren.remove(view)
