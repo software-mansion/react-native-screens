@@ -7,7 +7,7 @@ import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
-import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -170,6 +170,18 @@ class ScreenStackHeaderConfig(
     private val screen: Screen?
         get() = parent as? Screen
 
+    // A nested header can still be attached while an ancestor screen is exiting.
+    private fun isInRemovalTransition(): Boolean {
+        var ancestor: ViewParent? = parent
+        while (ancestor != null) {
+            if (ancestor is Screen && ancestor.isBeingRemoved) {
+                return true
+            }
+            ancestor = ancestor.parent
+        }
+        return false
+    }
+
     private val screenStack: ScreenStack?
         get() = screen?.container as? ScreenStack
 
@@ -189,7 +201,7 @@ class ScreenStackHeaderConfig(
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
 
-        if (!isAttachedToWindow || !isTop || isDestroyed) {
+        if (!isAttachedToWindow || !isTop || isDestroyed || isInRemovalTransition()) {
             return
         }
 
@@ -339,7 +351,6 @@ class ScreenStackHeaderConfig(
                 else -> {}
             }
             view.layoutParams = params
-            (view.parent as? ViewGroup)?.removeView(view)
             toolbar.addView(view)
             i++
         }
@@ -348,7 +359,7 @@ class ScreenStackHeaderConfig(
     }
 
     private fun maybeUpdate() {
-        if (parent != null && !isDestroyed && screen?.isBeingRemoved == false) {
+        if (parent != null) {
             onUpdate()
         }
     }
