@@ -6,6 +6,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <React/RCTSurfaceView.h>
 #import <React/UIView+React.h>
+#import <objc/runtime.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -25,6 +26,54 @@
 #import "integrations/RNSDismissibleModalProtocol.h"
 
 namespace react = facebook::react;
+
+#if TARGET_OS_IOS
+static void *RNSRTLLargeTitleCounterTransformKey = &RNSRTLLargeTitleCounterTransformKey;
+
+static BOOL RNSViewContainsLabelWithText(UIView *view, NSString *text)
+{
+  if ([view isKindOfClass:UILabel.class] && [((UILabel *)view).text isEqualToString:text]) {
+    return YES;
+  }
+
+  for (UIView *subview in view.subviews) {
+    if (RNSViewContainsLabelWithText(subview, text)) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+
+static BOOL RNSScrollViewHasMirroredContentSubview(UIScrollView *scrollView)
+{
+  for (UIView *subview in scrollView.subviews) {
+    if (subview.transform.a < 0 &&
+        ![objc_getAssociatedObject(subview, RNSRTLLargeTitleCounterTransformKey) boolValue]) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+
+static void RNSSetRTLLargeTitleCounterTransform(UIView *view, BOOL enabled)
+{
+  BOOL wasCounterTransformed = [objc_getAssociatedObject(view, RNSRTLLargeTitleCounterTransformKey) boolValue];
+
+  if (enabled) {
+    if (view.transform.a >= 0) {
+      view.transform = CGAffineTransformScale(view.transform, -1, 1);
+      objc_setAssociatedObject(view, RNSRTLLargeTitleCounterTransformKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+  } else if (wasCounterTransformed) {
+    if (view.transform.a < 0) {
+      view.transform = CGAffineTransformScale(view.transform, -1, 1);
+    }
+    objc_setAssociatedObject(view, RNSRTLLargeTitleCounterTransformKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  }
+}
+#endif // TARGET_OS_IOS
 
 @interface RNSScreenStackView () <UINavigationControllerDelegate,
                                   UIAdaptivePresentationControllerDelegate,
@@ -61,6 +110,7 @@ namespace react = facebook::react;
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
+    [self maybeCorrectRTLLargeTitleInScrollView:screenController];
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
         (screenController.presentedViewController != nil &&
          ![screenController.presentedViewController isBeingDismissed]);
@@ -76,6 +126,30 @@ namespace react = facebook::react;
 
     [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
   }
+}
+
+- (void)maybeCorrectRTLLargeTitleInScrollView:(RNSScreen *)screenController
+{
+#if TARGET_OS_IOS
+  if (@available(iOS 26.0, *)) {
+    // On iOS 26, UIKit can move the large-title view into React Native's mirrored RTL scroll view.
+    // React content receives a counter-transform, but the UIKit-owned title does not.
+    UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:screenController.view];
+    if (scrollView == nil) {
+      return;
+    }
+
+    RNSScreenStackHeaderConfig *headerConfig = screenController.screenView.findHeaderConfig;
+    NSString *title = screenController.navigationItem.title;
+    BOOL shouldCounterTransform = headerConfig.largeTitle && title.length > 0 && scrollView.transform.a < 0 &&
+        RNSScrollViewHasMirroredContentSubview(scrollView);
+
+    for (UIView *subview in scrollView.subviews) {
+      BOOL isLargeTitleView = title.length > 0 && RNSViewContainsLabelWithText(subview, title);
+      RNSSetRTLLargeTitleCounterTransform(subview, shouldCounterTransform && isLargeTitleView);
+    }
+  }
+#endif // TARGET_OS_IOS
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
