@@ -315,6 +315,11 @@ internal class StackContainer(
             .asReversed()
             .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
 
+    // Fires synchronously inside the FragmentManager transaction that changes the primary
+    // navigation fragment, before any state move. Flipping an OnBackPressedCallback's enabled
+    // flag there is what FragmentManager itself does for its own callback.
+    override fun onOwnerPrimaryNavigationFragmentChanged() = recomputeSystemBackVetoState()
+
     // endregion
 
     // region Header back button
@@ -373,11 +378,23 @@ internal class StackContainer(
      * something to pop beats a shallower veto. Enabled state is recomputed eagerly, because predictive
      * back selects the callback when the gesture starts.
      *
+     * Ordering alone is not enough, though: the last enabled callback must also belong to the active
+     * navigation branch. Lower stack screens stay resumed with their views attached, so a container
+     * nested in a covered screen would otherwise keep vetoing pops of the screens above it. Hence
+     * `isEnabled` is additionally gated on the owner fragment being on the primary-navigation path,
+     * the same `isPrimaryNavigation(parent)` rule FragmentManager applies to its own callback. The
+     * gate is re-evaluated on attach and whenever the owner reports a primary-navigation change
+     * (see [onOwnerPrimaryNavigationFragmentChanged]).
+     *
      * Known limitation: a container re-attached while its owner is already started and its fragments
      * survive in the FragmentManager lands after its own nested FragmentManagers until the next
      * stop/start cycle (rare: Fabric remove+insert of an existing view, clipped subviews).
      */
     private var systemBackVetoCallback: SystemBackVetoCallback? = null
+
+    // The fragment whose child FragmentManager this container drives, null for the root container.
+    // Its primary-navigation status decides whether this container is on the active branch.
+    private var ownerFragment: Fragment? = null
 
     private inner class SystemBackVetoCallback(
         private val dispatcher: OnBackPressedDispatcher,
@@ -400,6 +417,7 @@ internal class StackContainer(
 
     private fun setupSystemBackVetoCallback(fmWithOwner: FragmentManagerWithOwner) {
         check(systemBackVetoCallback == null) { "[RNScreens] System back veto callback is already registered" }
+        ownerFragment = fmWithOwner.lifecycleOwner as? Fragment
         systemBackVetoCallback =
             SystemBackVetoCallback(fmWithOwner.onBackPressedDispatcher).also {
                 fmWithOwner.onBackPressedDispatcher.addCallback(fmWithOwner.lifecycleOwner, it)
@@ -409,23 +427,43 @@ internal class StackContainer(
     private fun teardownSystemBackVetoCallback() {
         systemBackVetoCallback?.remove()
         systemBackVetoCallback = null
+        ownerFragment = null
     }
 
     // System back pops this container's top screen (together with its subtree), therefore only
-    // the top item is asked - the same rule as for the header chevron.
-    private fun findSystemBackVetoingItem(): ContainerItem? =
-        stackModel.lastOrNull()?.stackScreen?.wantsToPreventStackNativeDismiss()
+    // the top item is asked - the same rule as for the header chevron. Unlike the chevron path there
+    // is no `size <= 1` guard on purpose: a lone root screen with the flag vetoes too, which for the
+    // app's root stack blocks the activity from finishing and reports `onNativeDismissPrevented`.
+    private fun findSystemBackVetoingItem(): ContainerItem? = stackModel.lastOrNull()?.stackScreen?.wantsToPreventStackNativeDismiss()
+
+    /**
+     * Mirrors FragmentManager's `isPrimaryNavigation(parent)`: every fragment from the owner up to
+     * the root has to be the primary navigation fragment of its FragmentManager. Stacks set it on
+     * push (FragmentManager restores the previous one on pop), tabs on selection. A fragment that
+     * is not added is never primary; checking that first keeps `parentFragmentManager` from throwing.
+     */
+    private fun isOwnerOnPrimaryNavigationPath(): Boolean {
+        var fragment = ownerFragment
+        while (fragment != null) {
+            if (!fragment.isAdded || fragment.parentFragmentManager.primaryNavigationFragment !== fragment) {
+                return false
+            }
+            fragment = fragment.parentFragment
+        }
+        return true
+    }
 
     /**
      * Recomputes this container's veto state. Call whenever the top item's answer to
-     * `wantsToPreventStackNativeDismiss` might have changed. No-op while detached.
+     * `wantsToPreventStackNativeDismiss` or the owner's primary-navigation status might have
+     * changed. No-op while detached.
      */
     internal fun recomputeSystemBackVetoState() {
-        systemBackVetoCallback?.isEnabled = findSystemBackVetoingItem() != null
+        systemBackVetoCallback?.isEnabled = isOwnerOnPrimaryNavigationPath() && findSystemBackVetoingItem() != null
     }
 
     // This container and every StackContainer above it - their answers depend on this subtree.
-    private fun invalidateSystemBackVetoState() {
+    internal fun invalidateSystemBackVetoState() {
         recomputeSystemBackVetoState()
         invalidateAncestorStackContainersSystemBackVetoState(this)
     }

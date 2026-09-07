@@ -16,7 +16,6 @@ import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.host.StackHost
-import com.swmansion.rnscreens.stack.host.invalidateAncestorStackContainersSystemBackVetoState
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -36,9 +35,11 @@ class StackScreen(
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            // The owning stack container (and the ones above it) may answer differently now.
-            // Before this view is attached the walk finds nothing - the container recomputes on push.
-            invalidateAncestorStackContainersSystemBackVetoState(this)
+            // The owning stack container (and the ones above it) may answer differently now. Routed
+            // through the host rather than the view parents: until the fragment view exists this
+            // screen has no parent at all, while the host knows its container from the start. Before
+            // the screen is mounted into a host the push itself recomputes.
+            stackHost.get()?.container?.invalidateSystemBackVetoState()
         }
     }
 

@@ -66,6 +66,14 @@ internal class StackScreenFragment(
         stackScreen.onDismiss()
     }
 
+    override fun onPrimaryNavigationFragmentChanged(isPrimaryNavigationFragment: Boolean) {
+        super.onPrimaryNavigationFragmentChanged(isPrimaryNavigationFragment)
+        // Delivered only when this fragment's own status changed; FragmentManager recurses into the
+        // child FragmentManager by itself. The container nested in this screen, if it exists yet,
+        // has to re-evaluate its system back veto.
+        stackScreen.resolveNestedContainer()?.onOwnerPrimaryNavigationFragmentChanged()
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         delegate.get()?.onFragmentConfigurationChanged(newConfig)

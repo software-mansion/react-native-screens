@@ -803,6 +803,10 @@ class TabsContainer internal constructor(
     // hence the null-safe lookup.
     override fun wantsToPreventStackNativeDismiss(): ContainerItem? = selectedTabOrNull?.tabsScreen?.wantsToPreventStackNativeDismiss()
 
+    // Nothing to do: the tabs container takes no part in system back handling itself. Stacks nested
+    // in the selected tab are reached by FragmentManager's own recursion (see TabsScreenFragment).
+    override fun onOwnerPrimaryNavigationFragmentChanged() = Unit
+
     // endregion
 
     companion object {

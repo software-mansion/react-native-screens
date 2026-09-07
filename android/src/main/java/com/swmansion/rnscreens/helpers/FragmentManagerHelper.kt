@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.helpers
 
 import android.annotation.SuppressLint
 import android.content.ContextWrapper
+import android.util.Log
 import android.view.ViewGroup
 import android.view.ViewParent
 import androidx.activity.OnBackPressedDispatcher
@@ -105,16 +106,23 @@ object FragmentManagerHelper {
     // The root FragmentManager registers its back callback with its host (FragmentActivity.HostCallbacks),
     // whose lifecycle is started right BEFORE the fragments are. The activity's own lifecycle is started
     // AFTER every fragment, so an activity-owned callback would always land behind every nested
-    // FragmentManager's callback in the dispatcher - never use the activity as the owner here.
+    // FragmentManager's callback in the dispatcher - the activity is only a degraded fallback here.
     @SuppressLint("RestrictedApi") // FragmentManager.getHost() is @RestrictTo(LIBRARY); there is no public accessor for this owner.
     private fun withOwnerForRootFragmentManager(activity: FragmentActivity): FragmentManagerWithOwner {
         val fragmentManager = activity.supportFragmentManager
         val owner =
-            checkNotNull(fragmentManager.host as? LifecycleOwner) {
-                "[RNScreens] Root FragmentManager host is not a LifecycleOwner"
-            }
+            fragmentManager.host as? LifecycleOwner
+                ?: activity.also {
+                    Log.w(
+                        TAG,
+                        "[RNScreens] Root FragmentManager host is not a LifecycleOwner - falling back to the activity. " +
+                            "Nested stacks may over-block system back after an activity restart.",
+                    )
+                }
         return FragmentManagerWithOwner(fragmentManager, owner, activity.onBackPressedDispatcher)
     }
+
+    private const val TAG = "FragmentManagerHelper"
 }
 
 internal fun FragmentManager.createTransactionWithReordering(): FragmentTransaction = this.beginTransaction().setReorderingAllowed(true)
