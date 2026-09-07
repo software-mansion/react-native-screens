@@ -3,31 +3,50 @@
 #import <UIKit/UIKit.h>
 #import "RNSOrientationProviding.h"
 #import "RNSReactMountingTransactionObserving.h"
+#import "RNSSplitHostProviders.h"
 
-@class RNSSplitHostComponentView;
+@class RNSSplitHostController;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/**
+ * @protocol RNSSplitHostControllerEventsDelegate
+ * @brief Receives UISplitViewController lifecycle notifications from the Split host controller.
+ */
+@protocol RNSSplitHostControllerEventsDelegate <NSObject>
+
+- (void)splitHostControllerDidCollapse:(RNSSplitHostController *)controller;
+- (void)splitHostControllerDidExpand:(RNSSplitHostController *)controller;
+- (void)splitHostController:(RNSSplitHostController *)controller
+    willChangeDisplayModeFrom:(UISplitViewControllerDisplayMode)fromDisplayMode
+                           to:(UISplitViewControllerDisplayMode)toDisplayMode;
+- (void)splitHostControllerDidHideInspector:(RNSSplitHostController *)controller;
+
+@end
 
 /**
  * @class RNSSplitHostController
  * @brief A controller associated with the RN native component representing Split host.
  *
- * Manages a collection of RNSSplitScreenComponentView instances,
- * synchronizes appearance settings with props, observes component lifecycle, and emits events.
+ * Installs the column controllers, synchronizes appearance settings with the configuration exposed by the providers,
+ * observes the UISplitViewController lifecycle and reports it to the delegate.
  */
 @interface RNSSplitHostController
     : UISplitViewController <RNSReactMountingTransactionObserving, RNSOrientationProviding>
+
+@property (nonatomic, weak, nullable) id<RNSSplitHostControllerEventsDelegate> eventsDelegate;
+@property (nonatomic, weak, nullable) id<RNSSplitHostAppearanceProvider> appearanceProvider;
+@property (nonatomic, weak, nullable) id<RNSSplitHostBehaviorProvider> behaviorProvider;
+@property (nonatomic, weak, nullable) id<RNSSplitHostColumnsProvider> columnsProvider;
 
 /**
  * @brief Initializes the Split host controller with provided style.
  *
  * The style for the Split component can be passed only in the initialization method and cannot be changed dynamically.
  *
- * @param splitHostComponentView The view managed by this controller.
  * @param numberOfColumns Expected number of visible columns.
  */
-- (instancetype)initWithSplitHostComponentView:(RNSSplitHostComponentView *)splitHostComponentView
-                               numberOfColumns:(NSInteger)numberOfColumns;
+- (instancetype)initWithNumberOfColumns:(NSInteger)numberOfColumns;
 
 #pragma mark - Signals
 
