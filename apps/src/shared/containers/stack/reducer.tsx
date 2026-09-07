@@ -346,7 +346,7 @@ function applyEffect(
 }
 
 export type StackContainerStateInitArg = {
-  routeConfigs: StackRouteConfig[];
+  routeConfigs: readonly StackRouteConfig[];
   initialRouteNames?: string[] | undefined;
 };
 

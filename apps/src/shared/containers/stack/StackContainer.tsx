@@ -23,7 +23,9 @@ import {
 import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
 import { useElementsByName } from '../shared/use-elements-by-name';
 
-export function StackContainer(props: StackContainerProps) {
+export function StackContainer<
+  const TRouteConfigs extends readonly StackRouteConfig[],
+>(props: StackContainerProps<TRouteConfigs>) {
   const { routeConfigs, initialRouteNames, ...restProps } = props;
   useSanitizeRouteConfigs(routeConfigs);
 
@@ -112,7 +114,7 @@ export function StackContainer(props: StackContainerProps) {
 }
 
 function useSanitizeRouteConfigs(
-  routeConfigs?: StackRouteConfig[] | undefined | null,
+  routeConfigs?: readonly StackRouteConfig[] | undefined | null,
 ) {
   if (!routeConfigs || routeConfigs.length === 0) {
     throw new Error('[Stack] There must be at least one route configured');

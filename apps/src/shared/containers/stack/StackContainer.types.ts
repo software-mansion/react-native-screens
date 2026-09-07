@@ -5,6 +5,7 @@ import {
   StackHeaderConfigRef,
   StackHostProps,
 } from 'react-native-screens';
+import type { RouteNameFromConfigs } from '../shared/route-name';
 
 /// Route definition
 
@@ -33,8 +34,10 @@ export type StackRoute = Omit<StackRouteConfig, 'element'> & {
 
 /// StackContainer props
 
-export type StackContainerProps = Omit<StackHostProps, 'children' | 'ref'> & {
-  routeConfigs: StackRouteConfig[];
+export type StackContainerProps<
+  TRouteConfigs extends readonly StackRouteConfig[] = StackRouteConfig[],
+> = Omit<StackHostProps, 'children' | 'ref'> & {
+  routeConfigs: TRouteConfigs;
   /**
    * @summary
    * Names of the routes that should be pushed onto the stack initially.
@@ -47,7 +50,9 @@ export type StackContainerProps = Omit<StackHostProps, 'children' | 'ref'> & {
    *
    * Defaults to the first route config if not provided.
    */
-  initialRouteNames?: string[] | undefined;
+  initialRouteNames?:
+    | NoInfer<RouteNameFromConfigs<TRouteConfigs>>[]
+    | undefined;
 };
 
 export type PushActionMethod = (routeName: string) => void;
@@ -141,7 +146,7 @@ export type NavigationActionSetRouteOptions = {
 };
 
 export type NavigationActionContext = {
-  routeConfigs: StackRouteConfig[];
+  routeConfigs: readonly StackRouteConfig[];
 };
 
 export type BatchableNavigationAction =
