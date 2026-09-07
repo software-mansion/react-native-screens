@@ -48,10 +48,10 @@ internal class StackScreenFragment(
         allowEnterTransitionOverlap = true
         allowReturnTransitionOverlap = true
 
-        enterTransition = Slide(Gravity.RIGHT)
-        exitTransition = Slide(Gravity.LEFT)
-        returnTransition = Slide(Gravity.RIGHT)
-        reenterTransition = Slide(Gravity.LEFT)
+        enterTransition = Slide(Gravity.END)
+        exitTransition = Slide(Gravity.START)
+        returnTransition = Slide(Gravity.END)
+        reenterTransition = Slide(Gravity.START)
     }
 
     override fun onCreateView(

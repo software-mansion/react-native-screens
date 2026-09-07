@@ -55,8 +55,6 @@ internal interface StackHeaderConfigurationProviding {
     val expandedSubtitleAppearance: TextAppearance
     val collapsedSubtitleAppearance: TextAppearance
 
-    val isRTL: Boolean
-
     /**
      * `true` while more updates may still arrive in the current batch (for a
      * React-owned config: inside a mount transaction). Observers should hold
