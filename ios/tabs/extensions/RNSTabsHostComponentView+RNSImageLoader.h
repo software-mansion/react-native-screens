@@ -3,7 +3,7 @@
 #import "RNSTabsHostComponentView.h"
 
 #if defined(__cplusplus)
-#import "RNSTabsHostShadowNode.h"
+#import <react/renderer/components/rnscreens/RNSTabsHostShadowNode.h>
 #endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN

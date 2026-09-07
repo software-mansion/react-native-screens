@@ -32,9 +32,6 @@ let headerSearchPaths: [String] = [
     "ios/utils",
     "ios/utils/extensions",
     "common/cpp",
-    "common/cpp/react/renderer/components/rnscreens",
-    "common/cpp/react/renderer/components/rnscreens/legacy",
-    "common/cpp/react/renderer/components/rnscreens/legacy/utils",
     "cpp/legacy",
 ]
 
