@@ -68,7 +68,8 @@ class TabsContainer internal constructor(
             val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
 
             if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
+                val screenStack =
+                    ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
@@ -214,9 +215,11 @@ class TabsContainer internal constructor(
         }
     }
 
-    fun addNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean = observerRegistry.add(observer)
+    fun addNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean =
+        observerRegistry.add(observer)
 
-    fun removeNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean = observerRegistry.remove(observer)
+    fun removeNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean =
+        observerRegistry.remove(observer)
 
     // endregion
 
@@ -387,13 +390,16 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+    override fun getInterfaceInsets(): EdgeInsets =
+        EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
-    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
+    override fun addColorSchemeListener(listener: ColorSchemeListener) =
+        colorSchemeCoordinator.addColorSchemeListener(listener)
 
-    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) =
+        colorSchemeCoordinator.removeColorSchemeListener(listener)
 
     // endregion
 
@@ -424,7 +430,7 @@ class TabsContainer internal constructor(
     override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
         tabsModel.find {
             it.tabsScreen ===
-                tabsScreen
+                    tabsScreen
         }
 
     override fun onFragmentConfigurationChange(
@@ -493,7 +499,10 @@ class TabsContainer internal constructor(
 
     private fun performSelectedTabUpdate() {
         if (pendingStateUpdateRequest == null) {
-            RNSLog.w(TAG, "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update")
+            RNSLog.w(
+                TAG,
+                "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update"
+            )
             return
         }
 
@@ -517,7 +526,10 @@ class TabsContainer internal constructor(
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
             isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
-            bottomNavigationView.setSelectedItemIdWithActionOrigin(nextSelectedMenuItemId, stateUpdateRequest.actionOrigin)
+            bottomNavigationView.setSelectedItemIdWithActionOrigin(
+                nextSelectedMenuItemId,
+                stateUpdateRequest.actionOrigin
+            )
             isInExternalOperationContext = false
         } else {
             observerRegistry.emitOnNavigationStateUpdateRejected(
@@ -534,9 +546,9 @@ class TabsContainer internal constructor(
         val menu = bottomNavigationView.menu
         val isMenuInSync =
             menu.size == tabsModel.size &&
-                tabsModel.withIndex().all { (index, fragment) ->
-                    menu.getItem(index).itemId == fragment.menuItemId
-                }
+                    tabsModel.withIndex().all { (index, fragment) ->
+                        menu.getItem(index).itemId == fragment.menuItemId
+                    }
 
         if (isMenuInSync) {
             return
@@ -576,7 +588,10 @@ class TabsContainer internal constructor(
         }
 
         progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
-        applyNextSelectedFragmentToFragmentManagerSync(currentSelectedFragment, nextSelectedFragment)
+        applyNextSelectedFragmentToFragmentManagerSync(
+            currentSelectedFragment,
+            nextSelectedFragment
+        )
         return true
     }
 
@@ -646,7 +661,8 @@ class TabsContainer internal constructor(
             return false
         }
 
-        val stateChanged = updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
+        val stateChanged =
+            updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
 
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
@@ -691,7 +707,8 @@ class TabsContainer internal constructor(
 
         // We expect at most a single fragment added (detached fragments are not returned from
         // FragmentManager.getFragments call) and it being the currently selected tab.
-        val isInUpToDateState = currentFragments.size == 1 && currentFragments.first() === selectedTab
+        val isInUpToDateState =
+            currentFragments.size == 1 && currentFragments.first() === selectedTab
         if (isInUpToDateState) {
             return
         } else if (currentFragments.isEmpty()) {
@@ -720,7 +737,8 @@ class TabsContainer internal constructor(
         appearanceCoordinator.updateTabAppearance(themedContext, this)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.find { it.menuItemId == itemId }
+    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? =
+        tabsModel.find { it.menuItemId == itemId }
 
     private fun getMenuItemIdForFragment(tabsScreenFragment: TabsScreenFragment): Int? =
         tabsScreenFragment.menuItemId.takeIf { tabsModel.any { it === tabsScreenFragment } }
@@ -737,7 +755,8 @@ class TabsContainer internal constructor(
                 bottomNavigationView.menu.findItem(fragment.menuItemId)
             }
 
-    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
+    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? =
+        tabsModel.find { it.requireScreenKey == screenKey }
 
     private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
         checkNotNull(getFragmentForScreenKey(screenKey)) {
@@ -796,7 +815,8 @@ internal class TabsContainerInvalidationFlags(
     var isNavigationMenuAppearanceInvalidated: Boolean = false,
     var isNavigationMenuStructureInvalidated: Boolean = false,
 ) {
-    internal fun any(): Boolean = isSelectedTabInvalidated || isNavigationMenuAppearanceInvalidated || isNavigationMenuStructureInvalidated
+    internal fun any(): Boolean =
+        isSelectedTabInvalidated || isNavigationMenuAppearanceInvalidated || isNavigationMenuStructureInvalidated
 
     internal fun invalidateAll() {
         isSelectedTabInvalidated = true

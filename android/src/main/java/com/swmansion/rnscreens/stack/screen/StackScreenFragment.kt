@@ -19,8 +19,6 @@ internal class StackScreenFragment(
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
     backPressHandler: StackHeaderBackPressHandler,
 ) : Fragment() {
-    // Weakly held so that a fragment retained by FragmentManager past container teardown
-    // does not keep the container view subtree alive.
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler> = WeakReference(backPressHandler)
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
