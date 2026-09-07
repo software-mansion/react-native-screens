@@ -2,7 +2,6 @@ package com.swmansion.rnscreens.stack.header.config
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
-import android.util.LayoutDirection
 import android.view.Gravity
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
@@ -160,9 +159,6 @@ internal class StackHeaderConfig(
     override val collapsedSubtitleAppearance = ReactTextAppearance(reactContext.assets, ::invalidateTextAppearance)
 
     private fun invalidateTextAppearance() = invalidate(StackHeaderInvalidationFlags.TITLE_APPEARANCE)
-
-    override val isRTL: Boolean
-        get() = layoutDirection == LayoutDirection.RTL
 
     // endregion
 
