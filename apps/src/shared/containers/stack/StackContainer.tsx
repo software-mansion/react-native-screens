@@ -24,7 +24,7 @@ import { useParentNavigationEffect } from './hooks/useParentNavigationEffect';
 import { useElementsByName } from '../shared/use-elements-by-name';
 
 export function StackContainer(props: StackContainerProps) {
-  const { routeConfigs, ...restProps } = props;
+  const { routeConfigs, initialRouteNames, ...restProps } = props;
   useSanitizeRouteConfigs(routeConfigs);
 
   const elementsByName = useElementsByName(routeConfigs);
@@ -34,7 +34,7 @@ export function StackContainer(props: StackContainerProps) {
     React.Dispatch<NavigationAction>,
   ] = React.useReducer(
     navigationStateReducerWithLogging,
-    routeConfigs,
+    { routeConfigs, initialRouteNames },
     determineInitialNavigationState,
   );
 

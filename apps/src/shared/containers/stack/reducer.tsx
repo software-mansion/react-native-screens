@@ -345,12 +345,36 @@ function applyEffect(
   return effects.concat(newEffect);
 }
 
+export type StackContainerStateInitArg = {
+  routeConfigs: StackRouteConfig[];
+  initialRouteNames?: string[] | undefined;
+};
+
 export function determineInitialNavigationState(
-  routeConfigs: StackRouteConfig[],
+  arg: StackContainerStateInitArg,
 ): StackNavigationState {
-  const firstRoute = createRouteFromConfig(routeConfigs[0], 'attached');
+  const { routeConfigs, initialRouteNames } = arg;
+
+  const routeNames = initialRouteNames ?? [routeConfigs[0].name];
+
+  if (routeNames.length === 0) {
+    throw new Error(
+      '[Stack] initialRouteNames must contain at least one route name',
+    );
+  }
+
+  const stack = routeNames.map(routeName => {
+    const routeConfig = routeConfigs.find(config => config.name === routeName);
+    if (routeConfig == null) {
+      throw new Error(
+        `[Stack] initialRouteNames entry "${routeName}" does not match any route config name`,
+      );
+    }
+    return createRouteFromConfig(routeConfig, 'attached');
+  });
+
   return {
-    stack: [firstRoute],
+    stack,
     effects: [],
   };
 }

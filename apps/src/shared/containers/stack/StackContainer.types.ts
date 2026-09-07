@@ -35,6 +35,19 @@ export type StackRoute = Omit<StackRouteConfig, 'element'> & {
 
 export type StackContainerProps = Omit<StackHostProps, 'children' | 'ref'> & {
   routeConfigs: StackRouteConfig[];
+  /**
+   * @summary
+   * Names of the routes that should be pushed onto the stack initially.
+   * They are pushed from left to right, so the last one ends up on top.
+   *
+   * Every name must match one of the `routeConfigs` names. Unlike
+   * `routeConfigs` names, the entries here do not have to be unique —
+   * a repeated name results in another independent route instance,
+   * exactly as if it was pushed at runtime.
+   *
+   * Defaults to the first route config if not provided.
+   */
+  initialRouteNames?: string[] | undefined;
 };
 
 export type PushActionMethod = (routeName: string) => void;

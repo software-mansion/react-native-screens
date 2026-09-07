@@ -17,6 +17,8 @@ import { StackRouteConfigContext } from './contexts/StackRouteConfigContext';
 export function StackContainerWithDynamicRouteConfigs(
   props: StackContainerProps,
 ) {
+  const { initialRouteNames } = props;
+
   const [routeConfigs, setRouteConfigs] = React.useState(props.routeConfigs);
 
   const updateRouteConfigWithOptions = React.useCallback(
@@ -48,7 +50,10 @@ export function StackContainerWithDynamicRouteConfigs(
         routeConfigs,
         updateRouteConfigWithOptions,
       }}>
-      <StackContainer routeConfigs={routeConfigs} />
+      <StackContainer
+        routeConfigs={routeConfigs}
+        initialRouteNames={initialRouteNames}
+      />
     </StackRouteConfigContext>
   );
 }
