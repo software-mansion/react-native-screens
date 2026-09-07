@@ -43,8 +43,7 @@ internal class StackContainer(
     /**
      * Will crash in case parent does not implement StackContainerParent interface.
      */
-    private fun containerParentOrNull(): StackContainerParent? =
-        this.parent as StackContainerParent?
+    private fun containerParentOrNull(): StackContainerParent? = this.parent as StackContainerParent?
 
     private val parentContainerRegistry = ParentContainerItemRegistry()
 
@@ -71,11 +70,9 @@ internal class StackContainer(
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
-    override fun addColorSchemeListener(listener: ColorSchemeListener) =
-        colorSchemeCoordinator.addColorSchemeListener(listener)
+    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
 
-    override fun removeColorSchemeListener(listener: ColorSchemeListener) =
-        colorSchemeCoordinator.removeColorSchemeListener(listener)
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
 
     // endregion
 
@@ -335,7 +332,8 @@ internal class StackContainer(
     // hosting this container is popped) - every item gets a vote, back-to-front, so
     // the deepest preventing screen wins.
     override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
-        stackModel.asReversed()
+        stackModel
+            .asReversed()
             .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
 
     // endregion
@@ -353,7 +351,7 @@ internal class StackContainer(
         if (topScreen !== pressedScreen || stackModel.size <= 1) {
             Log.w(
                 TAG,
-                "[RNScreens] Ignoring header back button press for non-top screen ${pressedScreen.screenKey}"
+                "[RNScreens] Ignoring header back button press for non-top screen ${pressedScreen.screenKey}",
             )
             return
         }
@@ -369,7 +367,7 @@ internal class StackContainer(
             } else {
                 Log.w(
                     TAG,
-                    "[RNScreens] Unexpected vetoing item type: ${vetoingItem.javaClass.simpleName}"
+                    "[RNScreens] Unexpected vetoing item type: ${vetoingItem.javaClass.simpleName}",
                 )
             }
             return
@@ -383,7 +381,7 @@ internal class StackContainer(
             // key MUST BE present, otherwise the navigation action will be delegated to child primary navigation
             // fragment.
             checkNotNull(pressedScreen.screenKey) { "[RNScreens] Screen key is required" },
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
+            FragmentManager.POP_BACK_STACK_INCLUSIVE,
         )
     }
 

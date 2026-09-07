@@ -243,11 +243,9 @@ internal class StackHeaderCoordinatorLayout(
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
-    override fun addColorSchemeListener(listener: ColorSchemeListener) =
-        colorSchemeCoordinator.addColorSchemeListener(listener)
+    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
 
-    override fun removeColorSchemeListener(listener: ColorSchemeListener) =
-        colorSchemeCoordinator.removeColorSchemeListener(listener)
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
 
     // No onConfigurationChanged override is needed: this view never sets its own colorScheme,
     // so resolution always delegates to the parent provider, which does handle system changes.
