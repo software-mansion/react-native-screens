@@ -88,11 +88,22 @@ namespace react = facebook::react;
 - (void)updateMenuElementWithId:(NSString *)elementId
                     withElement:(id<RNSStackHeaderMenuElement>)newElement
                      parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+           inMenuRepresentation:(BOOL)inMenuRepresentation
 {
-  if (parentMenu == nil) {
-    _menu = (RNSStackHeaderMenuData *)newElement;
+  if (inMenuRepresentation) {
+    if (parentMenu == nil) {
+      _menuRepresentation = (RNSStackHeaderMenuData *)newElement;
+    } else {
+      _menuRepresentation = [RNSStackHeaderMenuCoordinator menu:_menuRepresentation
+                                           replacingChildWithId:elementId
+                                                    withElement:newElement];
+    }
   } else {
-    _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
+    if (parentMenu == nil) {
+      _menu = (RNSStackHeaderMenuData *)newElement;
+    } else {
+      _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
+    }
   }
   [_invalidationDelegate headerItemMenuDidUpdateFromCommandWithId:_itemId];
 }

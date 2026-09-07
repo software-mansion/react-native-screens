@@ -18,6 +18,8 @@ Incomplete: Covers all manual scenario steps except the **Menu representation** 
 
 - For now, menus don't appear on items with custom views
 - Menu representation section requires iOS >= 16
+- There is a bug present when you send change item command, and change the number of items
+  before displaying the menu, then the checkmark doesn't change despite the toast showing.
 
 ## Steps on iPhone
 
@@ -64,11 +66,12 @@ Incomplete: Covers all manual scenario steps except the **Menu representation** 
   - [ ] Custom items are present and represented in the same way as regular items
 5. Open Repr 1
   - [ ] It contains three radio items, Repr 1 Radio 1 is selected by default
-6. Click Repr 1 Radio 2
-  - [ ] A toast "Repr 1 selected "repr-radio-1-2"" is displayed
-  - [ ] When reopened, Repr 1 Radio 2 is checked and Radio 1 is not
-7. Open Repr 0
-  - [ ] It contains three radio items, Repr 0 Radio 1 is selected by default
+6. Click Repr 0 Radio 2
+  - [ ] A toast "Repr 0 selected "repr-radio-0-2"" is displayed
+  - [ ] When reopened, Repr 0 Radio 2 is checked and Radio 1 is not
+6. Under `setMenuItemOptions`, select "repr-radio-1-3", `title`: "New Title", `toggleState`: "true". Click "Send setMenuItemOptions". Open Repr 1.
+  - [ ] It contains three radio items: "Repr 1 Radio 1", "Repr 1 Radio 2", "New Title"
+  - [ ] "New Title" item is selected
 
 ### setMenuItemOptions view command
 

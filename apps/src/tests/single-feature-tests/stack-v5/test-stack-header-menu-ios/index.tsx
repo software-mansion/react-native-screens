@@ -32,12 +32,21 @@ const ACTION_IDS = [
   'radio-1-1',
   'radio-1-2',
   'radio-1-3',
+  'repr-radio-1-1',
+  'repr-radio-1-2',
+  'repr-radio-1-3',
   'title-action-1',
   'title-action-2',
 ] as const;
 type ActionId = (typeof ACTION_IDS)[number];
 
-const MENU_IDS = ['menu-1', 'submenu-1', 'subsubmenu-1', 'title-menu'] as const;
+const MENU_IDS = [
+  'menu-1',
+  'submenu-1',
+  'subsubmenu-1',
+  'repr-menu-1',
+  'title-menu',
+] as const;
 type MenuId = (typeof MENU_IDS)[number];
 
 const TITLE_OPTIONS = [
@@ -106,7 +115,7 @@ function buildMenuRepresentation(
 ): StackHeaderMenuIOS {
   return {
     type: 'menu',
-    id: `repr-${index}`,
+    id: `repr-menu-${index}`,
     title: `Repr ${index}`,
     singleSelection: true,
     onSelectionChange: selection =>
