@@ -73,7 +73,7 @@ internal class StackHeaderApplicator(
         // Make sure that we receive insets, necessary when changing header mode in runtime.
         appBar.requestApplyInsets()
         populateAppBar(appBar, config)
-        maybeApplyRTLCollapsingToolbarLayoutWorkaround(coordinatorLayout, config, appBar)
+        maybeApplyRTLCollapsingToolbarLayoutWorkaround(coordinatorLayout, appBar)
         appBar.toolbar.requestLayout()
 
         return appBar
@@ -603,14 +603,13 @@ internal class StackHeaderApplicator(
 
     private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,
-        config: StackHeaderConfigurationProviding,
         appBar: StackHeaderAppBarLayout,
     ) {
         // For collapsing headers, CTL lazily adds a MATCH_PARENT dummy view to the Toolbar
         // during the first onMeasure (ensureToolbar). We need our subviews at higher indices
         // than the dummy view so they get positioned first in RTL layout. Forcing a measure
         // triggers the dummy view creation.
-        if (appBar is StackHeaderAppBarLayout.Collapsing && config.isRTL) {
+        if (appBar is StackHeaderAppBarLayout.Collapsing && coordinatorLayout.isRTL) {
             appBar.measure(
                 View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
