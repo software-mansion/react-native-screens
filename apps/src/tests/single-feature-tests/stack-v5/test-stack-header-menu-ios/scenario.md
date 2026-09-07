@@ -8,11 +8,11 @@
 
 ## E2E test
 
-Partial: Covers all manual scenario steps except the **Menu representation** section.
+Incomplete: Covers all manual scenario steps except the **Menu representation** section.
 
 ## Prerequisites
 
-- iOS / iPadOS emulator
+- iOS simulator or device
 
 ## Note
 
@@ -53,22 +53,22 @@ Partial: Covers all manual scenario steps except the **Menu representation** sec
   - [ ] The title should transform into a menu with two actions
   - [ ] Clicking either actions should display a toast
 
-### Menu representation
+### Menu representation (iOS 26)
 
 1. Relaunch the app and navigate to the **Stack Header Menu (iOS)** screen.
 2. Toggle `menuRepresentation`
 3. Click `Toggle trailing items count` to get 4 items present
   - [ ] Two items moved to overflow menu
 4. Open the overflow menu
-  - [ ] Overflowed items appear as **Repr #** submenus
-  - [ ] Custom items are represented in the same way
+  - [ ] Overflowed regular items appear as **Repr #** submenus
+  - [ ] Custom items are present and represented in the same way as regular items
 5. Open Repr 1
   - [ ] It contains three radio items, Repr 1 Radio 1 is selected by default
 6. Click Repr 1 Radio 2
   - [ ] A toast "Repr 1 selected "repr-radio-1-2"" is displayed
   - [ ] When reopened, Repr 1 Radio 2 is checked and Radio 1 is not
-7. Open Repr 2
-  - [ ] It contains three radio items, Repr 2 Radio 1 is selected by default
+7. Open Repr 0
+  - [ ] It contains three radio items, Repr 0 Radio 1 is selected by default
 
 ### setMenuItemOptions view command
 
