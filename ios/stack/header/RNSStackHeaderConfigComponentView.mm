@@ -304,7 +304,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       [static_cast<RNSStackHeaderItemComponentView *>(locator.headerItem)
           updateMenuElementWithId:menuItemId
                       withElement:newItemData
-                       parentMenu:locator.searchResult.parentMenu];
+                       parentMenu:locator.searchResult.parentMenu
+             inMenuRepresentation:locator.inMenuRepresentation];
       break;
     case RNSMenuElementPositionTitle:
       if (locator.searchResult.parentMenu != nil) {
@@ -350,7 +351,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
       [static_cast<RNSStackHeaderItemComponentView *>(locator.headerItem)
           updateMenuElementWithId:menuElementId
                       withElement:newMenuItem
-                       parentMenu:locator.searchResult.parentMenu];
+                       parentMenu:locator.searchResult.parentMenu
+             inMenuRepresentation:locator.inMenuRepresentation];
       break;
     case RNSMenuElementPositionTitle:
       if (locator.searchResult.parentMenu == nil) {
