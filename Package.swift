@@ -49,6 +49,12 @@ let package = Package(
         .library(name: "RNScreens", targets: ["RNScreens"]),
     ],
     dependencies: [
+        // Resolved from the autolinker symlink `<app>/ios/build/generated/autolinking/libs/RNScreens`,
+        // not from node_modules: `../../../../xcframeworks` -> `<app>/ios/build/xcframeworks`,
+        // `../../../ios` -> `<app>/ios/build/generated/ios`. Same layout `npx react-native spm scaffold` emits.
+        // Making this self-contained (remote RN package URL + shipping our own codegen output) is blocked
+        // on RN publishing a remote SPM package and would require `codegenConfig.includesGeneratedCode`, see:
+        // https://github.com/react/react-native/blob/v0.87.1/packages/react-native/scripts/spm/__docs__/spm-header-paths-contract.md#hand-authored-community-library-contract
         .package(name: "ReactNative", path: "../../../../xcframeworks"),
         .package(name: "React-GeneratedCode", path: "../../../ios"),
     ],
