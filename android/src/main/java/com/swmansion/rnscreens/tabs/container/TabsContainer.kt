@@ -589,6 +589,10 @@ class TabsContainer internal constructor(
         return true
     }
 
+    // The selected tab becomes the primary navigation fragment, exactly like a stack's top screen.
+    // FragmentManager enables the back callbacks of a child FragmentManager only while its parent
+    // fragment is on the primary navigation path, so without this no stack nested in a tab could
+    // ever pop on system back, and the stack's own system back veto is gated by the same rule.
     private fun applyInitialStateToFragmentManagerSync(nextSelectedFragment: TabsScreenFragment) {
         requireFragmentManager
             .createTransactionWithReordering()
@@ -598,6 +602,7 @@ class TabsContainer internal constructor(
                     it.detach(fragment)
                 }
                 it.attach(nextSelectedFragment)
+                it.setPrimaryNavigationFragment(nextSelectedFragment)
             }.commitNowAllowingStateLoss()
     }
 
@@ -610,6 +615,7 @@ class TabsContainer internal constructor(
             .let {
                 it.detach(currSelectedFragment)
                 it.attach(nextSelectedFragment)
+                it.setPrimaryNavigationFragment(nextSelectedFragment)
             }.commitNowAllowingStateLoss()
     }
 
