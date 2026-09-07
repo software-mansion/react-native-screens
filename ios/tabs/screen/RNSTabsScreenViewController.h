@@ -11,15 +11,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSTabsScreenViewController : UIViewController <RNSContainerItem
+@interface RNSTabsScreenViewController : UIViewController <
+                                             RNSContainerItem
 #if !TARGET_OS_TV
-                                                           ,
-                                                           RNSOrientationProviding
+                                             ,
+                                             RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                                                           >
+                                             >
 
 @property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
+
+@property (nonatomic, readonly) BOOL hasAppeared;
 
 /**
  * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.

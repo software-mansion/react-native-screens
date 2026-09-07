@@ -69,6 +69,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
+  _deferTransitionUntilFirstStateUpdate = NO;
   _badgeValue = nil;
   _title = nil;
   _isTitleUndefined = YES;
@@ -350,6 +351,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.preventNativeSelection != oldComponentProps.preventNativeSelection) {
     _preventNativeSelection = newComponentProps.preventNativeSelection;
+  }
+
+  if (newComponentProps.deferTransitionUntilFirstStateUpdate !=
+      oldComponentProps.deferTransitionUntilFirstStateUpdate) {
+    _deferTransitionUntilFirstStateUpdate = newComponentProps.deferTransitionUntilFirstStateUpdate;
   }
 
   if (newComponentProps.overrideScrollViewContentInsetAdjustmentBehavior !=

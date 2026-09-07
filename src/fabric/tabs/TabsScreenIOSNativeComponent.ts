@@ -120,6 +120,7 @@ export interface NativeProps extends ViewProps {
   // Control
   screenKey: string;
   preventNativeSelection?: CT.WithDefault<boolean, false>;
+  deferTransitionUntilFirstStateUpdate?: CT.WithDefault<boolean, false>;
 
   // General
   title?: string | undefined | null;
