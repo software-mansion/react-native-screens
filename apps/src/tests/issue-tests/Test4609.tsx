@@ -64,7 +64,7 @@ function StackTab() {
   return (
     <StackContainer
       routeConfigs={STACK_ROUTE_CONFIGS}
-      initialRouteNames={['A', 'B', 'C', 'A', 'B', 'D']}
+      initialRouteNames={['A', 'B', 'C', 'A', 'B', 'C']}
     />
   );
 }
