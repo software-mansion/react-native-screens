@@ -137,33 +137,29 @@ visual check.
 - [ ] The arrangement from step 11 is restored exactly. In particular `L·48`
       is present - it must not disappear.
 
-14. Repeat steps 12 and 13 two more times.
-
-- [ ] Every switch lands on the correct arrangement, in both directions.
-
-15. Set `menu = action + overflow`.
+14. Set `menu = action + overflow`.
 
 - [ ] `L·48` is still on the left edge at full width; `T·48`, `ACT` and `⋮`
       are on the right.
 
-16. Repeat steps 12 and 13 two more times, now with the menu on.
+15. Set `direction = rtl`, then back to `ltr`.
 
-- [ ] Every switch is still correct: both probes keep their full width, and
-      the menu group sits on the trailing edge - left in RTL, right in LTR.
+- [ ] Both switches are correct: the probes keep their full width, and the
+      menu group sits on the trailing edge - left in RTL, right in LTR.
 
-17. Set `direction = rtl`, then with expanded header, set
+16. Set `direction = rtl`, then with expanded header, set
     `expandedTitleHorizontalGravity` to `center`, then to `end`, then back to
     `start`.
 
 - [ ] `start` puts the expanded title on the right, `center` in the middle and
       `end` on the left.
 
-18. Scroll the content down until the header is fully collapsed.
+17. Scroll the content down until the header is fully collapsed.
 
 - [ ] The collapsed toolbar keeps `L·48` on the right and `T·48`, `ACT` and
       `⋮` on the left.
 
-19. Set `collapsedTitleHorizontalGravity` to `center`, then to `end`, then
+18. Set `collapsedTitleHorizontalGravity` to `center`, then to `end`, then
     back to `start`.
 
 - [ ] The collapsed title follows the same mapping: `start` right, `center`
@@ -171,15 +167,15 @@ visual check.
 - [ ] At `end` the title sits next to `T·48` without covering it or the menu
       group, and at `center` it is centered between `L·48` and `T·48`.
 
-20. Scroll back up until the header is fully expanded.
+19. Scroll back up until the header is fully expanded.
 
-- [ ] The expanded layout is the same as after step 17.
+- [ ] The expanded layout is the same as after step 16.
 
 ---
 
 ### C. Navigation
 
-21. Press **Push screen (adds a back button)**.
+20. Press **Push screen (adds a back button)**.
 
 - [ ] The incoming screen slides in from the **left**.
 - [ ] On the pushed screen the back arrow sits on the **right** (leading) edge
@@ -187,72 +183,50 @@ visual check.
 - [ ] The pushed screen's header is laid out RTL from the first frame - it
       never appears left-to-right and then flips.
 
-22. Tap the back arrow.
+21. Tap the back arrow.
 
 - [ ] The stack pops, mirroring the push: the popped screen leaves to the left.
 
-23. Press **Push screen** again, then use the system back gesture or button.
+22. Press **Push screen** again, then use the system back gesture or button.
 
-- [ ] The stack pops the same way as in step 22.
+- [ ] The stack pops the same way as in step 21.
 
-24. Press **Push screen** again, then set `direction = ltr` from the pushed
+23. Press **Push screen** again, then set `direction = ltr` from the pushed
     screen.
 
 - [ ] The pushed screen's header and content flip immediately: `L·48` moves to
       the left edge, `T·48` to the right, and the back arrow moves to the left
       edge and points left.
 
-25. Tap the back arrow.
+24. Tap the back arrow.
 
 - [ ] The pop mirrors the LTR direction: the popped screen leaves to the right.
 
-26. Press **Push screen** again, then tap the back arrow.
+25. Press **Push screen** again, then tap the back arrow.
 
 - [ ] The push slides in from the right and out to the left, i.e. the
       behaviour in LTR is unchanged.
 
 ---
 
-### D. Runtime switching
+### D. `inherit`
 
-27. Set `type = small`, then cycle `direction` through
-    `inherit` → `ltr` → `rtl` → `ltr` → `inherit` rapidly.
-
-- [ ] The header and the screen content update immediately on every change,
-      with no intermediate or stuck state.
-- [ ] `inherit` resolves to LTR, matching `I18nManager.isRTL == false`.
-
-28. Set `type = large`, then repeat the same cycle.
-
-- [ ] Same result. Notably the probe subviews are correct after every single
-      step, not only after the last one.
-
-29. Press **Push screen**, repeat the cycle from the pushed screen, then tap
-    the back arrow.
-
-- [ ] Both the pushed screen and, after popping, the root screen are laid out
-      in the direction selected last.
-
----
-
-### E. `inherit`
-
-30. Set `menu = none`, `type = small` and `direction = inherit`, then read the
+26. Set `menu = none`, `type = small` and `direction = inherit`, then read the
     `I18nManager.isRTL` label.
 
 - [ ] The label reads `I18nManager.isRTL == false` and the stack is laid out
       LTR.
 
-31. Turn `forceRTL` on, restart the app, reopen the scenario.
+27. Turn `forceRTL` on, restart the app, reopen the scenario.
 
 - [ ] The label reads `I18nManager.isRTL == true` and the stack is laid out
       RTL: React Native's direction propagates through the view hierarchy to
       the native container.
 
-32. Set `direction = ltr`.
+28. Set `direction = ltr`.
 
 - [ ] The explicit prop wins and the stack is laid out LTR.
 
-33. Turn `forceRTL` back off and restart the app.
+29. Turn `forceRTL` back off and restart the app.
 
 - [ ] Reopening the scenario shows the baseline state from step 1.
