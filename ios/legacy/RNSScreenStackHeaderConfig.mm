@@ -1,10 +1,12 @@
 #import "RNSScreenStackHeaderConfig.h"
+#import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageComponentView.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
@@ -13,8 +15,8 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <react/utils/ManagedObjectWrapper.h>
 #import <react/renderer/components/rnscreens/legacy/RNSScreenStackHeaderConfigComponentDescriptor.h>
+#import <react/utils/ManagedObjectWrapper.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #import "RNSBackBarButtonItem.h"
 #import "RNSBarButtonItem.h"

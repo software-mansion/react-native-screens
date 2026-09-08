@@ -1,4 +1,5 @@
 #import <React/RCTConversions.h>
+#import <React/RCTLog.h>
 #import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
 #import "RNSConversions.h"
 #import "RNSDefines.h"

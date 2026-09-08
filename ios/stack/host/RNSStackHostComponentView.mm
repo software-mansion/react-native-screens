@@ -1,5 +1,6 @@
 #import "RNSStackHostComponentView.h"
 
+#import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>

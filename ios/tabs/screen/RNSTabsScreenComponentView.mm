@@ -9,6 +9,7 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarController.h"
 
+#import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #import <React/RCTImageSource.h>
 #import <React/RCTLog.h>

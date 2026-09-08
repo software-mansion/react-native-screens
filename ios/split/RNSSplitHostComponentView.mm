@@ -1,5 +1,6 @@
 #import "RNSSplitHostComponentView.h"
 #import <React/RCTAssert.h>
+#import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
