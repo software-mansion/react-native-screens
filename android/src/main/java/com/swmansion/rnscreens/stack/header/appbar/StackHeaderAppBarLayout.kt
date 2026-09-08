@@ -117,7 +117,7 @@ internal sealed class StackHeaderAppBarLayout(
         collapsedTitleGravityMode: StackHeaderCollapsedTitleGravityMode,
     ) : StackHeaderAppBarLayout(context) {
         override val toolbar =
-            MaterialToolbar(context).apply {
+            StackHeaderToolbar(context).apply {
                 elevation = 0f
                 layoutParams =
                     CollapsingToolbarLayout
