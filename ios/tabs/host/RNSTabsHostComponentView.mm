@@ -11,7 +11,7 @@
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
 
 #import "RNSContainerHelpers.h"
-#import "RNSConversions.h"
+#import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"

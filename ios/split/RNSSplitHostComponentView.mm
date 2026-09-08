@@ -6,7 +6,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RNSContainerHelpers.h"
-#import "RNSConversions.h"
+#import "RNSConversions-SplitView.h"
 #import "RNSDefines.h"
 #import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
