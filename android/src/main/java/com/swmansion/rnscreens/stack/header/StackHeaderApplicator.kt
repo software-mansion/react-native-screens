@@ -35,7 +35,6 @@ import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderContentScrimDrawable
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
-import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.dpToPx
 import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
@@ -73,7 +72,6 @@ internal class StackHeaderApplicator(
         // Make sure that we receive insets, necessary when changing header mode in runtime.
         appBar.requestApplyInsets()
         populateAppBar(appBar, config)
-        maybeApplyRTLCollapsingToolbarLayoutWorkaround(coordinatorLayout, appBar)
         appBar.toolbar.requestLayout()
 
         return appBar
@@ -600,45 +598,6 @@ internal class StackHeaderApplicator(
     // colorControlNormal auto-tint.
     private fun resolveDefaultOverflowIcon(toolbar: MaterialToolbar): Drawable? =
         AppCompatImageView(toolbar.context, null, androidx.appcompat.R.attr.actionOverflowButtonStyle).drawable
-
-    private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
-        coordinatorLayout: StackHeaderCoordinatorLayout,
-        appBar: StackHeaderAppBarLayout,
-    ) {
-        // For collapsing headers, CTL lazily adds a MATCH_PARENT dummy view to the Toolbar
-        // during the first onMeasure (ensureToolbar). We need our subviews at higher indices
-        // than the dummy view so they get positioned first in RTL layout. Forcing a measure
-        // triggers the dummy view creation.
-        if (appBar is StackHeaderAppBarLayout.Collapsing && coordinatorLayout.isRTL) {
-            appBar.measure(
-                View.MeasureSpec.makeMeasureSpec(coordinatorLayout.width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            )
-            moveDummyViewToFront(appBar.toolbar)
-        }
-    }
-
-    /**
-     * CollapsingToolbarLayout adds a MATCH_PARENT dummy view to the Toolbar for title bounds
-     * tracking. In RTL, the Toolbar iterates custom views in reverse child order — so the
-     * dummy view (if last) gets processed first and consumes the entire layout cursor.
-     * Moving it to index 0 ensures our subviews are processed first.
-     *
-     * See https://github.com/material-components/material-components-android/issues/1867.
-     */
-    private fun moveDummyViewToFront(toolbar: Toolbar) {
-        for (i in 0 until toolbar.childCount) {
-            val child = toolbar.getChildAt(i)
-            // Assumes only StackHeaderSubview children exist in Collapsing toolbar besides
-            // the CTL dummy view.
-            if (child !is StackHeaderSubview) {
-                val lp = child.layoutParams
-                toolbar.removeViewAt(i)
-                toolbar.addView(child, 0, lp)
-                return
-            }
-        }
-    }
 
     private fun buildTintList(
         normal: Int?,

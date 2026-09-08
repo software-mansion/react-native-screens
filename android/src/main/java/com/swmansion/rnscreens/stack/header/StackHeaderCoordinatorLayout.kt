@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Parcelable
-import android.util.LayoutDirection
 import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
@@ -138,31 +137,6 @@ internal class StackHeaderCoordinatorLayout(
 
     // endregion
 
-    // region Layout direction
-
-    // Inherited from the host component (React Native drives it through the `direction` style).
-    internal val isRTL: Boolean
-        get() = layoutDirection == LayoutDirection.RTL
-
-    // Direction the header was last built against. In RTL, workaround is necessary
-    // for collapsing header (see
-    // [StackHeaderApplicator.maybeApplyRTLCollapsingToolbarLayoutWorkaround]).
-    // We track the applied direction because the workaround requires a rebuild.
-    private var builtLayoutDirection: Int? = null
-
-    override fun onRtlPropertiesChanged(layoutDirection: Int) {
-        super.onRtlPropertiesChanged(layoutDirection)
-
-        if (builtLayoutDirection == null || builtLayoutDirection == layoutDirection) {
-            return
-        }
-
-        invalidate(StackHeaderInvalidationFlags.STRUCTURE)
-        flushPendingUpdates()
-    }
-
-    // endregion
-
     // region Header updates
 
     private val wrappedContext =
@@ -213,7 +187,6 @@ internal class StackHeaderCoordinatorLayout(
             resetHeader()
             val appBar = applicator.rebuild(this, provider)
             appBarLayout = appBar
-            builtLayoutDirection = layoutDirection
             attachAppBarListeners(appBar)
         }
 
@@ -358,7 +331,6 @@ internal class StackHeaderCoordinatorLayout(
     private fun removeHeader() {
         resetHeader()
         isAppBarFullyCollapsed = null
-        builtLayoutDirection = null
         removeContentBehavior()
         requestLayout()
     }
