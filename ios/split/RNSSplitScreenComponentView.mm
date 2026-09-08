@@ -1,7 +1,7 @@
 #import "RNSSplitScreenComponentView.h"
 #import <React/RCTAssert.h>
 #import <React/RCTSurfaceTouchHandler.h>
-#import <rnscreens/RNSSplitScreenComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitScreenController.h"

@@ -5,7 +5,7 @@
 #import "RNSTabsHostComponentView.h"
 
 #if defined(__cplusplus)
-#import <rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
 #endif // defined(__cplusplus)
 
 NS_ASSUME_NONNULL_BEGIN

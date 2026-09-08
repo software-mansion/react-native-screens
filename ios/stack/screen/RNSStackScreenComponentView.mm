@@ -5,7 +5,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSStackScreenComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
 #import "RNSScrollViewMarkerComponentView.h"

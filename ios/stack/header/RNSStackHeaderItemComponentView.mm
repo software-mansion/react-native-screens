@@ -13,7 +13,7 @@
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 namespace react = facebook::react;
 

@@ -9,7 +9,7 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSFullWindowOverlayComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/legacy/RNSFullWindowOverlayComponentDescriptor.h>
 
 @implementation RNSFullWindowOverlayContainer
 

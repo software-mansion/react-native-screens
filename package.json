@@ -48,6 +48,7 @@
     "cpp/",
     "windows/",
     "RNScreens.podspec",
+    "Package.swift",
     "react-native.config.js",
     "README.md",
     "!**/__tests__",

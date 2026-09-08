@@ -14,7 +14,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSScreenComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/legacy/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
