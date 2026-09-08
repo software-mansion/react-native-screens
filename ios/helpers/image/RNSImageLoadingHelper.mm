@@ -1,4 +1,6 @@
 #import "RNSImageLoadingHelper.h"
+#import <React/RCTAssert.h>
+#import <React/RCTUtils.h>
 #import "RCTImageSource+AccessHiddenMembers.h"
 
 @implementation RNSImageLoadingHelper

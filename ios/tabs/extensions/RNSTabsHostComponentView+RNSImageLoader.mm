@@ -1,6 +1,7 @@
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
 
 #import <React/RCTImageLoader.h>
+#import <React/RCTLog.h>
 #import <react/utils/ManagedObjectWrapper.h>
 
 @implementation RNSTabsHostComponentView (RNSImageLoader)

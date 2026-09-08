@@ -1,4 +1,6 @@
 #import "RNSScreenWindowTraits.h"
+#import <React/RCTLog.h>
+#import <React/RCTUtils.h>
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
 

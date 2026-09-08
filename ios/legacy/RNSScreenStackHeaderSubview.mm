@@ -7,8 +7,10 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTLog.h>
 
 #import <react/renderer/components/rnscreens/legacy/RNSScreenStackHeaderSubviewComponentDescriptor.h>
 

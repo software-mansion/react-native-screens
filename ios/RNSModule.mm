@@ -3,6 +3,7 @@
 #import <React/RCTBridge+Private.h>
 #endif // RNS_USE_CXXBRIDGE
 #import <React/RCTBridge.h>
+#import <React/RCTLog.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
 #import "RNSScreenStack.h"

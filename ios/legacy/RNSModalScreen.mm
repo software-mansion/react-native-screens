@@ -1,6 +1,7 @@
 #import "RNSModalScreen.h"
 
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTUtils.h>
 #import <react/renderer/components/rnscreens/legacy/RNSModalScreenComponentDescriptor.h>
 
 @implementation RNSModalScreen

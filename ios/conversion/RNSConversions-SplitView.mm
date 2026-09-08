@@ -1,3 +1,4 @@
+#import <React/RCTLog.h>
 #import "RNSConversions.h"
 
 namespace rnscreens::conversion {

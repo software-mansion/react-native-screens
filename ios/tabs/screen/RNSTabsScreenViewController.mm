@@ -1,4 +1,5 @@
 #import "RNSTabsScreenViewController.h"
+#import <React/RCTAssert.h>
 #import "RNSContainer.h"
 #import "RNSContainerItemSupport.h"
 #import "RNSLog.h"
