@@ -25,6 +25,9 @@ TBD
    After toggling any style preset, double tap Use text items.
 2. menu overflow doesn't appear on iOS 18 by default, some steps won't work
 
+`tintColor` is an item property, not part of the appearance — it updates at
+runtime on both iOS 26 and 27.
+
 ## Steps on iPhone (Pro Max versions)
 
 All style presets are enabled by default, so the very first step verifies the
@@ -93,3 +96,22 @@ whole configuration as applied at attach time (no runtime changes involved).
 9. Toggle off "Push to overflow"
 
     - [ ] Items "1"-"4" are back in the header
+
+10. Enable "Tint items (red)"
+
+    - [ ] Item "1" symbol is tinted red
+    
+    - [ ] Item "3" background is tinted red
+    
+    - [ ] Disabled items keep the system disabled look
+    
+    - [ ] The tint applies immediately on both iOS 26 and 27
+
+11. Enable "Use text items" again, keeping the tint on
+
+    - [ ] The "aa" label prioritizes the appearance styles over tint color
+
+    - [ ] The "cc" bubble stays tinted red while the label colors keep
+          following the appearance styles
+    
+    - [ ] Disable "Tint items (red)" — the bubble returns to the default tint
