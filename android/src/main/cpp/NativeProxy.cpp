@@ -2,6 +2,7 @@
 #include <react/fabric/Binding.h>
 #include <react/renderer/scheduler/Scheduler.h>
 
+#include <memory>
 #include <string>
 
 #include "NativeProxy.h"
@@ -10,6 +11,19 @@ using namespace facebook;
 using namespace react;
 
 namespace rnscreens {
+
+namespace {
+// Keep this listener process-lifetime to avoid races during initialization,
+// when nativeAddMutationsListener() can be called concurrently from different
+// threads. A function-local static initializes thread-safely, and an immortal
+// instance suits core's delegate list, which is append-only. For more details:
+// https://github.com/software-mansion/react-native-screens/pull/4413
+const std::shared_ptr<RNSScreenRemovalListener> &removalListener() {
+  static const std::shared_ptr<RNSScreenRemovalListener> instance =
+      std::make_shared<RNSScreenRemovalListener>();
+  return instance;
+}
+} // namespace
 
 NativeProxy::NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis)
     : javaPart_(jni::make_global(jThis)) {}
@@ -32,13 +46,18 @@ void NativeProxy::nativeAddMutationsListener(
   auto uiManager =
       fabricUIManager->getBinding()->getScheduler()->getUIManager();
 
-  if (!screenRemovalListener_) {
-    screenRemovalListener_ =
-        std::make_shared<RNSScreenRemovalListener>([this](int tag) {
+  {
+    // Capture a copy of the global ref, never `this`: the listener outlives
+    // this NativeProxy, and the old live read of javaPart_ at call time raced
+    // invalidateNative(). installMutex_ keeps the copy from racing the
+    // invalidation write and keeps the stored token matching the last install.
+    std::lock_guard<std::mutex> lock(installMutex_);
+    removalListenerToken_ =
+        removalListener()->setListener([javaPart = javaPart_](int tag) {
           static const auto method =
-              javaPart_->getClass()->getMethod<void(jint)>(
+              javaPart->getClass()->getMethod<void(jint)>(
                   "notifyScreenRemoved");
-          method(javaPart_, tag);
+          method(javaPart, tag);
         });
   }
 
@@ -79,7 +98,7 @@ void NativeProxy::addMountingCoordinatorIfNeeded(
       });
 
   if (!wasRegistered) {
-    coordinator->setMountingOverrideDelegate(screenRemovalListener_);
+    coordinator->setMountingOverrideDelegate(removalListener());
     coordinatorsWithMountingOverrides_.push_back(coordinator);
   }
 }
@@ -90,6 +109,11 @@ jni::local_ref<NativeProxy::jhybriddata> NativeProxy::initHybrid(
 }
 
 void NativeProxy::invalidateNative() {
+  // Disarm before the hybrid is collected; also releases the captured global
+  // ref so the Java NativeProxy stays collectable. Serialized with the install
+  // path so the token is never stale and javaPart_ is not nulled mid-capture.
+  std::lock_guard<std::mutex> lock(installMutex_);
+  removalListener()->clearListener(removalListenerToken_);
   javaPart_ = nullptr;
 }
 

@@ -20,7 +20,7 @@ add_compile_options(
   -Wno-dollar-in-identifier-extension
 )
 
-file(GLOB LIB_CUSTOM_SRCS CONFIGURE_DEPENDS *.cpp ${LIB_COMMON_COMPONENTS_DIR}/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/utils/*.cpp)
+file(GLOB LIB_CUSTOM_SRCS CONFIGURE_DEPENDS *.cpp ${LIB_COMMON_COMPONENTS_DIR}/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/legacy/*.cpp ${LIB_COMMON_COMPONENTS_DIR}/legacy/utils/*.cpp)
 file(GLOB LIB_CODEGEN_SRCS CONFIGURE_DEPENDS ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}/*.cpp)
 
 add_library(
@@ -39,34 +39,12 @@ target_include_directories(
   ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}
 )
 
-if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 76)
-  target_link_libraries(
-    ${LIB_TARGET_NAME}
-    ReactAndroid::reactnative
-    ReactAndroid::jsi
-    fbjni::fbjni
-  )
-else()
-  target_link_libraries(
-    ${LIB_TARGET_NAME}
-    fbjni
-    folly_runtime
-    glog
-    jsi
-    react_codegen_rncore
-    react_debug
-    react_nativemodule_core
-    react_render_core
-    react_render_debug
-    react_render_graphics
-    react_render_mapbuffer
-    react_render_componentregistry
-    react_utils
-    rrc_view
-    turbomodulejsijni
-    yoga
-  )
-endif()
+target_link_libraries(
+  ${LIB_TARGET_NAME}
+  ReactAndroid::reactnative
+  ReactAndroid::jsi
+  fbjni::fbjni
+)
 
 if(ReactAndroid_VERSION_MINOR GREATER_EQUAL 80)
   target_compile_reactnative_options(${LIB_TARGET_NAME} PRIVATE)
@@ -87,4 +65,3 @@ target_include_directories(
  PUBLIC
  ${CMAKE_CURRENT_SOURCE_DIR}
 )
-

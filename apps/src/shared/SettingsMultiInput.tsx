@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Pressable, StyleSheet, TextInput } from 'react-native';
-import Colors from './styling/Colors';
+import { Colors } from './styling';
 
 type Props = {
   label: string;
@@ -36,7 +36,6 @@ export function SettingsMultiInput({
     </Pressable>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

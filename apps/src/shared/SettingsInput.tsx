@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { ThemedText, ThemedView, ThemedTextInput } from '.';
-import Colors from './styling/Colors';
+import { Colors } from './styling';
 
 type Props = {
   label: string;

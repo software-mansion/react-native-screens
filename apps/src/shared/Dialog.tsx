@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Colors from './styling/Colors';
+import { Colors } from './styling';
 
 export const Dialog = (): React.JSX.Element => {
   const navigation = useNavigation();

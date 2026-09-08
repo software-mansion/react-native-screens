@@ -1,0 +1,117 @@
+import type { ScenarioGroup } from '@apps/tests/shared/helpers';
+
+// Scenario objects (default exports) — carry metadata, used to build the
+// scenario group consumed by the selection menu.
+import TestStackPreventNativeDismissSingleStack from './test-stack-prevent-native-dismiss-single-stack';
+import TestStackPreventNativeDismissNestedStack from './test-stack-prevent-native-dismiss-nested-stack';
+import TestStackLifecycleEvents from './test-stack-lifecycle-events';
+import TestStackAnimationAndroid from './test-stack-animation-android';
+import TestStackSimpleNav from './test-stack-simple-nav';
+import TestStackSubviewsAndroid from './test-stack-subviews-android';
+import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
+import TestStackSubviewsIOS from './test-stack-subviews-ios';
+import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
+import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
+import TestStackBackButtonIOS from './test-stack-back-button-ios';
+import TestStackBackButtonAndroid from './test-stack-back-button-android';
+import TestStackOverflowIcon from './test-stack-overflow-icon-android';
+import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
+import TestStackToolbarMenuDisabled from './test-stack-toolbar-menu-disabled-android';
+import TestStackToolbarMenuShowAsAction from './test-stack-toolbar-menu-show-as-action-android';
+import TestStackToolbarMenuTitle from './test-stack-toolbar-menu-title-android';
+import TestStackToolbarMenuIcon from './test-stack-toolbar-menu-icon-android';
+import TestStackToolbarMenuGroups from './test-stack-toolbar-menu-groups-android';
+import TestStackToolbarNestedMenu from './test-stack-toolbar-nested-menu-android';
+import TestStackToolbarMenuBatchCommands from './test-stack-toolbar-menu-batch-commands-android';
+import TestStackToolbarMenuA11y from './test-stack-toolbar-menu-a11y-android';
+import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
+import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
+import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
+import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
+import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
+import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
+import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
+import TestStackHeaderBackground from './test-stack-header-background-android';
+import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-android';
+import TestStackColorScheme from './test-stack-color-scheme';
+import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
+
+// Scenario entry-point components — each scenario's default export re-exported
+// under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
+export { default as TestStackPreventNativeDismissSingleStack } from './test-stack-prevent-native-dismiss-single-stack';
+export { default as TestStackPreventNativeDismissNestedStack } from './test-stack-prevent-native-dismiss-nested-stack';
+export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-events';
+export { default as TestStackAnimationAndroid } from './test-stack-animation-android';
+export { default as TestStackSimpleNav } from './test-stack-simple-nav';
+export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
+export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
+export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
+export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
+export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
+export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
+export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
+export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
+export { default as TestStackHeaderSubviewOnPressIOS } from './test-stack-header-subview-onpress-ios';
+export { default as TestStackBackButtonIOS } from './test-stack-back-button-ios';
+export { default as TestStackBackButtonAndroid } from './test-stack-back-button-android';
+export { default as TestStackOverflowIcon } from './test-stack-overflow-icon-android';
+export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
+export { default as TestStackToolbarMenuDisabled } from './test-stack-toolbar-menu-disabled-android';
+export { default as TestStackToolbarMenuGroups } from './test-stack-toolbar-menu-groups-android';
+export { default as TestStackToolbarMenuShowAsAction } from './test-stack-toolbar-menu-show-as-action-android';
+export { default as TestStackToolbarMenuTitle } from './test-stack-toolbar-menu-title-android';
+export { default as TestStackToolbarMenuIcon } from './test-stack-toolbar-menu-icon-android';
+export { default as TestStackToolbarNestedMenu } from './test-stack-toolbar-nested-menu-android';
+export { default as TestStackToolbarMenuBatchCommands } from './test-stack-toolbar-menu-batch-commands-android';
+export { default as TestStackToolbarMenuA11y } from './test-stack-toolbar-menu-a11y-android';
+export { default as TestStackHeaderTitleAppearanceAndroid } from './test-stack-header-title-appearance-android';
+export { default as TestStackHeaderTitleAppearanceIOS } from './test-stack-header-title-appearance-ios';
+export { default as TestStackHeaderContentInsets } from './test-stack-header-content-insets-android';
+export { default as TestStackHeaderBackground } from './test-stack-header-background-android';
+export { default as TestStackHeaderStatusBarScrim } from './test-stack-header-status-bar-scrim-android';
+export { default as TestStackColorScheme } from './test-stack-color-scheme';
+export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
+
+const scenarios = {
+  TestStackPreventNativeDismissSingleStack,
+  TestStackPreventNativeDismissNestedStack,
+  TestStackLifecycleEvents,
+  TestStackAnimationAndroid,
+  TestStackSimpleNav,
+  TestStackSubviewsAndroid,
+  TestStackLiftOnScrollAndroid,
+  TestStackSubviewsIOS,
+  TestStackHeaderMenuIOS,
+  TestStackHeaderIconIOS,
+  TestStackHeaderItemIdentifierIOS,
+  TestStackHeaderSubviewOnPress,
+  TestStackHeaderSelectiveUpdates,
+  TestStackHeaderMenuOptionsIOS,
+  TestStackBackButtonIOS,
+  TestStackBackButtonAndroid,
+  TestStackOverflowIcon,
+  TestStackToolbarMenuCommands,
+  TestStackToolbarMenuDisabled,
+  TestStackToolbarMenuGroups,
+  TestStackToolbarMenuShowAsAction,
+  TestStackToolbarMenuTitle,
+  TestStackToolbarMenuIcon,
+  TestStackToolbarNestedMenu,
+  TestStackToolbarMenuBatchCommands,
+  TestStackToolbarMenuA11y,
+  TestStackHeaderTitleAppearanceAndroid,
+  TestStackHeaderTitleAppearanceIOS,
+  TestStackToolbarMenuState,
+  TestStackHeaderContentInsets,
+  TestStackHeaderBackground,
+  TestStackHeaderStatusBarScrim,
+  TestStackColorScheme,
+};
+
+const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
+  name: 'Stack v5',
+  details: 'Single feature tests for new stack implementation',
+  scenarios,
+};
+
+export default StackScenarioGroup;

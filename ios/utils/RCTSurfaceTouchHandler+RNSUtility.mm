@@ -1,4 +1,3 @@
-#ifdef RCT_NEW_ARCH_ENABLED
 #import "RCTSurfaceTouchHandler+RNSUtility.h"
 
 @implementation RCTSurfaceTouchHandler (RNSUtility)
@@ -11,4 +10,3 @@
 }
 
 @end
-#endif // RCT_NEW_ARCH_ENABLED

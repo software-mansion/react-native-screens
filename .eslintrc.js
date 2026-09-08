@@ -18,8 +18,6 @@ module.exports = {
     ],
     'import/ignore': [
       'node_modules/react-native/index\\.js$',
-      'react-native/Libraries/Utilities/codegenNativeComponent.*',
-      'react-native/Libraries/Types/CodegenTypes.*',
     ],
     'import/resolver': {
       node: {

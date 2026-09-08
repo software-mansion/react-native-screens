@@ -1,0 +1,95 @@
+import React from 'react';
+
+import { enableFreeze } from 'react-native-screens';
+import ConfigWrapperContext, {
+  type Configuration,
+  DEFAULT_GLOBAL_CONFIGURATION,
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
+import {
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import { Text } from 'react-native';
+import { Colors } from '@apps/shared/styling';
+
+enableFreeze(true);
+
+const ICON = require('@assets/variableIcons/globe_oversized.png');
+
+function makeTab(title: string) {
+  return (
+    <CenteredLayoutView style={{ backgroundColor: Colors.PurpleLight60 }}>
+      <Text>{title}</Text>
+    </CenteredLayoutView>
+  );
+}
+
+const TAB_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    element: makeTab('Tab 1'),
+    options: {
+      title: 'Tab 1',
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+      android: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab2',
+    element: makeTab('Tab 2'),
+    options: {
+      title: 'Tab 2',
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+      android: {
+        icon: {
+          type: 'imageSource',
+          imageSource: ICON,
+        },
+      },
+    },
+  },
+  {
+    name: 'Tab3',
+    element: makeTab('Tab 3'),
+    options: {
+      title: 'Tab 3',
+      ios: {
+        systemItem: 'search',
+      },
+    },
+  },
+];
+
+function App() {
+  const [config, setConfig] = React.useState<Configuration>(
+    DEFAULT_GLOBAL_CONFIGURATION,
+  );
+
+  return (
+    <ConfigWrapperContext.Provider
+      value={{
+        config,
+        setConfig,
+      }}>
+      <TabsContainer routeConfigs={TAB_CONFIGS} />
+    </ConfigWrapperContext.Provider>
+  );
+}
+
+export default App;

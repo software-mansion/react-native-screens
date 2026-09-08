@@ -1,0 +1,11 @@
+import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+
+export const scenarioDescription: ScenarioDescription = {
+  name: 'Tab Bar General Appearance',
+  key: 'test-tabs-general-appearance-android',
+  details:
+    'Tests Android tab bar appearance: default system rendering, tab bar background color, label visibility, ripple effect, and active indicator.',
+  platforms: ['android'],
+  e2eCoverage: 'incomplete',
+  smokeTest: false,
+};

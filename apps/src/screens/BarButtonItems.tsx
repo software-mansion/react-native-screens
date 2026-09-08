@@ -16,6 +16,7 @@ const Stack = createNativeStackNavigator();
 const demoScreens = [
   { name: 'PlainButtonDemo', title: 'Plain Button' },
   { name: 'IconButtonDemo', title: 'Icon Button' },
+  { name: 'XcassetIconButtonDemo', title: 'Xcasset Icon Button' },
   { name: 'SystemIconButtonDemo', title: 'System Icon Button' },
   { name: 'MenuButtonDemo', title: 'Menu Button' },
   { name: 'BadgeButtonDemo', title: 'Badge Button' },
@@ -63,6 +64,7 @@ const DemoScreenContent = () => (
 
 const PlainButtonDemo = DemoScreenContent;
 const IconButtonDemo = DemoScreenContent;
+const XcassetIconButtonDemo = DemoScreenContent;
 const MenuButtonDemo = DemoScreenContent;
 const BadgeButtonDemo = DemoScreenContent;
 const DisabledButtonDemo = DemoScreenContent;
@@ -118,12 +120,30 @@ export default function BarButtonItemsExample() {
               type: 'button',
               icon: {
                 type: 'image',
-                source: require('../../assets/variableIcons/icon_fill.png'),
+                source: require('@assets/variableIcons/icon_fill.png'),
                 tinted: false,
               },
               tintColor: 'red',
               label: 'Title',
               onPress: () => Alert.alert('Icon pressed'),
+            },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="XcassetIconButtonDemo"
+        component={XcassetIconButtonDemo}
+        options={{
+          title: 'Icon Button',
+          unstable_headerRightItems: () => [
+            {
+              type: 'button',
+              icon: {
+                type: 'xcasset',
+                name: 'custom-icon-fill',
+              },
+              label: 'Xcasset',
+              onPress: () => Alert.alert('Icon Xcasset pressed'),
             },
           ],
         }}
@@ -271,7 +291,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
@@ -281,7 +301,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: true,
@@ -291,7 +311,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               onPress: () => Alert.alert('Icon with sharesBackground pressed'),
               sharesBackground: false,
@@ -301,7 +321,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               hidesSharedBackground: true,
               onPress: () =>
@@ -336,7 +356,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               onPress: () => Alert.alert('First icon pressed'),
             },
@@ -349,7 +369,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_white.png'),
+                source: require('@assets/search_white.png'),
               },
               onPress: () => Alert.alert('Second icon pressed'),
             },
@@ -373,7 +393,7 @@ export default function BarButtonItemsExample() {
               label: 'Title',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               onPress: () => Alert.alert('Tinted icon pressed'),
             },
@@ -397,7 +417,7 @@ export default function BarButtonItemsExample() {
               label: 'DoneIcon',
               icon: {
                 type: 'image',
-                source: require('../../assets/search_black.png'),
+                source: require('@assets/search_black.png'),
               },
               variant: 'done',
               onPress: () => Alert.alert('Done icon pressed'),
@@ -414,17 +434,38 @@ export default function BarButtonItemsExample() {
             {
               type: 'menu',
               label: 'Menu',
+              tintColor: 'red',
               menu: {
                 label: 'Context menu',
                 items: [
                   {
                     label: 'Action 1',
-                    icon: { type: 'sfSymbol', name: 'star' },
+                    icon: { type: 'xcasset', name: 'custom-icon-fill' },
                     type: 'action',
                     state: 'on',
                     destructive: true,
                     discoverabilityLabel: 'Favorite',
                     onPress: () => Alert.alert('Action 1 pressed'),
+                  },
+                  {
+                    label: 'Image Source',
+                    icon: {
+                      type: 'imageSource',
+                      imageSource: require('@assets/search_black.png'),
+                    },
+                    type: 'action',
+                    destructive: true,
+                    onPress: () => Alert.alert('Image Source pressed'),
+                  },
+                  {
+                    label: 'Template Source',
+                    icon: {
+                      type: 'templateSource',
+                      templateSource: require('@assets/search_black.png'),
+                    },
+                    destructive: true,
+                    type: 'action',
+                    onPress: () => Alert.alert('Template Source pressed'),
                   },
                   {
                     label: 'Action 2',
@@ -434,6 +475,26 @@ export default function BarButtonItemsExample() {
                     disabled: true,
                     discoverabilityLabel: 'Disabled Action',
                     onPress: () => Alert.alert('Action 2 pressed'),
+                  },
+                  {
+                    label: 'Image Submenu',
+                    displayInline: true,
+                    icon: {
+                      type: 'imageSource',
+                      imageSource: require('@assets/search_black.png'),
+                    },
+                    type: 'submenu',
+                    items: [
+                      {
+                        label: 'Sub Image Action',
+                        type: 'action',
+                        icon: {
+                          type: 'templateSource',
+                          templateSource: require('@assets/search_black.png'),
+                        },
+                        onPress: () => Alert.alert('Sub Image Action pressed'),
+                      },
+                    ],
                   },
                   {
                     label: 'Submenu',
@@ -451,6 +512,7 @@ export default function BarButtonItemsExample() {
                         destructive: true,
                         keepsMenuPresented: true,
                         discoverabilityLabel: 'Sub Action 1',
+                        icon: { type: 'xcasset', name: 'custom-icon-fill' },
                       },
                       {
                         label: 'Sub Action 2',

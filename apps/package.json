@@ -1,0 +1,25 @@
+{
+  "name": "@rnscreens/apps",
+  "version": "0.0.0",
+  "private": true,
+  "peerDependencies": {
+    "@react-navigation/bottom-tabs": "*",
+    "@react-navigation/core": "*",
+    "@react-navigation/drawer": "*",
+    "@react-navigation/elements": "*",
+    "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
+    "@react-navigation/routers": "*",
+    "@react-navigation/stack": "*",
+    "jotai": "*",
+    "nanoid": "*",
+    "react": "*",
+    "react-native": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-reanimated": "*",
+    "react-native-restart": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-screens": "*",
+    "react-native-worklets": "*"
+  }
+}

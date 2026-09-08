@@ -1,20 +1,35 @@
 buildscript {
     ext {
-        buildToolsVersion = "36.0.0"
+        buildToolsVersion = "37.0.0"
         minSdkVersion = 25
-        compileSdkVersion = 36
+        compileSdkVersion = 37
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.20"
+        kotlinVersion = "2.3.21"
     }
     repositories {
         google()
         mavenCentral()
     }
+    // RNRepo plugin classpath for CI builds (plugin applied in app/build.gradle).
+    // To disable RNRepo support, set DISABLE_RNREPO environment variable to ANY value.
+    def rnrepoClasspath = {
+        def rnrepoDir = new File(
+            providers.exec {
+                workingDir(rootDir)
+                commandLine("node", "--print", "require.resolve('@rnrepo/build-tools/package.json')")
+            }.standardOutput.asText.get().trim()
+        ).getParentFile().absolutePath
+        return fileTree(dir: "${rnrepoDir}/gradle-plugin/build/libs", include: ["prebuilds-plugin.jar"])
+    }
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // TODO: Can be removed when RN ships Kotlin >= 2.3.0
+        // Pin KGP explicitly, because the version-less classpath entry resolves to the
+        // version pinned by RN's gradle-plugin.
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath rnrepoClasspath()
     }
 }
 

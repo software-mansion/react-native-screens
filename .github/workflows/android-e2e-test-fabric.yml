@@ -1,5 +1,18 @@
 name: Test Android e2e - new architecture
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/android-e2e-test-fabric.yml'
+      - 'package.json'
+      - 'android/**'
+      - 'common/**'
+      - 'FabricExample/**'
+      - 'src/**'
+  push:
+    branches:
+      - main
   workflow_dispatch:
 jobs:
   test:
@@ -8,6 +21,7 @@ jobs:
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
+      AVD_PROFILE: pixel_7
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -72,7 +86,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}
+          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -80,7 +94,7 @@ jobs:
         with:
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_2
+          profile: ${{ env.AVD_PROFILE }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
@@ -96,7 +110,7 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: ${{ env.API_LEVEL }}
           target: default
-          profile: pixel_2
+          profile: ${{ env.AVD_PROFILE }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false

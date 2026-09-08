@@ -2,6 +2,21 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+def isCIEnabled() {
+    return ["1", "true"].contains(System.getenv("CI")?.toLowerCase())
+}
+
+def isRNRepoEnabled() {
+    // return false // Uncomment to disable RNRepo even in CI
+    return System.getenv("DISABLE_RNREPO") == null
+}
+
+// Use RNRepo in CI builds. 
+// Set DISABLE_RNREPO to any value to disable RNRepo.
+if (isCIEnabled() && isRNRepoEnabled()) {
+    apply plugin: "org.rnrepo.tools.prebuilds-plugin"
+}
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -19,9 +34,9 @@ react {
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
-    //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
+    //   skip the bundling of the JS bundle and the assets. Default is "debug", "debugOptimized".
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
+    // debuggableVariants = ["liteDebug", "liteDebugOptimized", "prodDebug", "prodDebugOptimized"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -110,7 +125,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
 
             // Detox-specific additions to pro-guard
             proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
@@ -125,7 +140,7 @@ dependencies {
         // https://github.com/wix/Detox/issues/2848
         exclude group: 'com.google.android.material'
     }
-    implementation "androidx.appcompat:appcompat:1.6.1" // Detox
+    implementation "androidx.appcompat:appcompat:1.7.1" // Detox
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")

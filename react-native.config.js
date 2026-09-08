@@ -1,4 +1,7 @@
 module.exports = {
+  spm: {
+    name: 'RNScreens',
+  },
   dependency: {
     platforms: {
       android: {
@@ -14,8 +17,12 @@ module.exports = {
           "RNSScreenFooterComponentDescriptor",
           "RNSScreenContentWrapperComponentDescriptor",
           'RNSModalScreenComponentDescriptor',
-          'RNSBottomTabsComponentDescriptor',
-          'RNSSafeAreaViewComponentDescriptor'
+          'RNSTabsHostComponentDescriptor',
+          'RNSSafeAreaViewComponentDescriptor',
+          'RNSStackScreenComponentDescriptor',
+          'RNSStackHeaderConfigComponentDescriptor',
+          'RNSStackHeaderSubviewComponentDescriptor',
+          'RNSFormSheetHostComponentDescriptor'
         ],
         cmakeListsPath: "../android/src/main/jni/CMakeLists.txt"
       },

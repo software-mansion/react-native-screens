@@ -7,10 +7,27 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
-import com.swmansion.rnscreens.gamma.tabs.TabScreenViewManager
-import com.swmansion.rnscreens.gamma.tabs.TabsHostViewManager
+import com.swmansion.rnscreens.legacy.InsetsObserverProxy
+import com.swmansion.rnscreens.legacy.ModalScreenViewManager
+import com.swmansion.rnscreens.legacy.ScreenContainerViewManager
+import com.swmansion.rnscreens.legacy.ScreenContentWrapperManager
+import com.swmansion.rnscreens.legacy.ScreenFooterManager
+import com.swmansion.rnscreens.legacy.ScreenStackHeaderConfigViewManager
+import com.swmansion.rnscreens.legacy.ScreenStackHeaderSubviewManager
+import com.swmansion.rnscreens.legacy.ScreenStackViewManager
+import com.swmansion.rnscreens.legacy.ScreenViewManager
+import com.swmansion.rnscreens.legacy.SearchBarManager
+import com.swmansion.rnscreens.legacy.utils.ScreenDummyLayoutHelper
+import com.swmansion.rnscreens.modals.formsheet.react.contentwrapper.FormSheetContentWrapperViewManager
+import com.swmansion.rnscreens.modals.formsheet.react.host.FormSheetHostViewManager
 import com.swmansion.rnscreens.safearea.SafeAreaViewManager
-import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
+import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarkerViewManager
+import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigViewManager
+import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewViewManager
+import com.swmansion.rnscreens.stack.host.StackHostViewManager
+import com.swmansion.rnscreens.stack.screen.StackScreenViewManager
+import com.swmansion.rnscreens.tabs.host.TabsHostViewManager
+import com.swmansion.rnscreens.tabs.screen.TabsScreenViewManager
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
 // public class RNScreensPackage implements TurboReactPackage {
@@ -30,9 +47,7 @@ class RNScreensPackage : BaseReactPackage() {
         // installing its C++ bindings - so we are safe in terms of creating this helper
         // before RN starts creating shadow nodes.
         // See https://github.com/software-mansion/react-native-screens/pull/2169
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
-        }
+        screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
 
         // Proxy needs to register for lifecycle events in order to unregister itself
         // on activity restarts.
@@ -49,8 +64,15 @@ class RNScreensPackage : BaseReactPackage() {
             ScreenFooterManager(),
             ScreenContentWrapperManager(),
             TabsHostViewManager(),
-            TabScreenViewManager(),
+            TabsScreenViewManager(),
             SafeAreaViewManager(),
+            StackHostViewManager(),
+            StackScreenViewManager(),
+            ScrollViewMarkerViewManager(),
+            StackHeaderConfigViewManager(),
+            StackHeaderSubviewViewManager(),
+            FormSheetHostViewManager(),
+            FormSheetContentWrapperViewManager(),
         )
     }
 
@@ -67,7 +89,6 @@ class RNScreensPackage : BaseReactPackage() {
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider =
         ReactModuleInfoProvider {
             val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-            val isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
             moduleInfos[ScreensModule.NAME] =
                 ReactModuleInfo(
                     ScreensModule.NAME,
@@ -76,7 +97,7 @@ class RNScreensPackage : BaseReactPackage() {
                     false, // needsEagerInit
                     true, // hasConstants
                     false, // isCxxModule
-                    isTurboModule,
+                    true, // isTurboModule
                 )
             moduleInfos
         }

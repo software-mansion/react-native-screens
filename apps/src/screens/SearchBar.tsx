@@ -14,7 +14,7 @@ import {
   ThemedText,
   ToastProvider,
   useToast,
-} from '../shared';
+} from '@apps/shared';
 
 type StackParamList = {
   Main: undefined;

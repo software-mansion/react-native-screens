@@ -108,7 +108,7 @@ Defaults to `false`.
 
 Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
 Depending on values set, it will blur the scrolling content below certain UI elements (e.g. header items, search bar) for the specified edge of the ScrollView.
-When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around, the ScrollView will use only the innermost one's config.
+When set in nested containers, i.e. Stack inside Tabs, or the other way around, the ScrollView will use only the innermost one's config.
 
 Edge effects can be configured for each edge separately. The following values are currently supported:
 
@@ -180,7 +180,8 @@ Allows for the customization of the type of animation to use when this screen re
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
-- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
+- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc), with
+exception for iPad devices, where it resolves to [UIInterfaceOrientationMaskAll](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/all?language=objc). On Android, this lets the system decide the best orientation.
 - `all`
 - `portrait`
 - `portrait_up`
@@ -190,6 +191,15 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
+> [!NOTE]
+> iOS only: when `screenOrientation` is **not set at all** and the
+> `featureFlags.experiment.iosOrientationInheritanceFixEnabled` flag is enabled
+> (the default), a legacy (Stack v4) screen defers to its parent screen's
+> orientation instead of forcing `UIInterfaceOrientationMaskAllButUpsideDown`,
+> ultimately falling back to the orientations declared in `Info.plist`. Setting
+> `screenOrientation` to `default` explicitly keeps the previous behavior. See
+> [#4408](https://github.com/software-mansion/react-native-screens/pull/4408).
 
 ### `sheetAllowedDetents`
 
@@ -259,6 +269,16 @@ When set to `true`, the sheet will extend to the physical edges of the stack, al
 When set to `false`, the sheet's layout will be constrained by the inset from the top and the detent ratios will then be measured relative to the adjusted height (excluding the top inset). This means that sheetAllowedDetents will result in different sheet heights depending on this prop.
 
 Defaults to `false`.
+
+### `sheetDefaultResizeAnimationEnabled` (Android only)
+
+Whether the default native animation should be used when the sheet's with `fitToContents` content size changes.
+
+When set to `true`, the sheet uses internal logic to synchronize size updates and translation animations during entry, exit, or content updates. This ensures a smooth transition for standard, static content mounting/unmounting.
+
+When set to `false`, the internal animation and translation logic is ignored. This allows the sheet to adjust its size dynamically based on the current dimensions of the content provided by the developer, allowing implementing custom resizing animations.
+
+Defaults to `true`.
 
 ### `stackAnimation`
 
@@ -652,6 +672,7 @@ menu?: {
     | {
       label?: string;
       type: 'submenu';
+      subtitle?: string; // Subtitle of the submenu, displayed below its label - https://developer.apple.com/documentation/uikit/uimenuelement/subtitle?language=objc
       icon?: PlatformIconIOSSfSymbol;
       displayInline?: boolean; // Whether to display submenu inline - https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/displayinline
       destructive?: boolean; // Attribute indicating destructive style. Read more: https://developer.apple.com/documentation/uikit/uimenu/options-swift.struct/destructive
@@ -800,6 +821,14 @@ This prop has been **deprecated** due to [edge-to-edge enforcement starting from
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
+### `disableTopInsetApplication` (Android only)
+
+When set to `true` on the outermost stack with a **visible** header, disables top inset handling for that header and the entire subtree.
+
+This prop only takes effect on the outermost visible header in the hierarchy. Setting it on an inner stack has no additional impact because a parent stack has already made the decision (whether inset should be applied or not).
+
+Has no effect when `androidLegacyTopInsetBehavior` feature flag is enabled.
+
 ### `translucent`
 
 When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
@@ -843,16 +872,12 @@ In order for your native view on iOS to be notified when its parent navigation c
 }
 ```
 
-You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/software-mansion/react-native-screens/blob/main/Example/ios/ScreensExample/RNSSampleLifecycleAwareView.m) for more details.
-
 ## Navigation lifecycle on Android
 
 On Android, you can use [LifecycleObserver](https://developer.android.com/reference/android/arch/lifecycle/LifecycleObserver) interface which is a part of Android compat library to make your view handle lifecycle events.
-Check [LifecycleAwareView.java](https://github.com/software-mansion/react-native-screens/blob/main/Example/android/app/src/main/java/com/swmansion/rnscreens/example/LifecycleAwareView.java) from our example app for more details on that.
 
 In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/software-mansion/react-native-screens/blob/main/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
 Remember to call [`LifecycleHelper.unregister`](https://github.com/software-mansion/react-native-screens/blob/main/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
-Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/software-mansion/react-native-screens/blob/main/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
 
 ## Android hardware back button
 

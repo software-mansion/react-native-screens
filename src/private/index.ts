@@ -1,10 +1,11 @@
 // Types
-export * from './types';
+export type * from './types';
 
 // Logging
-export {
-  internalEnableDetailedBottomTabsLogging,
-  bottomTabsDebugLog,
-} from './logging';
+export { RNSLog } from './logging';
+
+// Hooks
+
+export { useRenderDebugInfo } from './hooks/useRenderDebugInfo';
 
 // Components

@@ -1,0 +1,109 @@
+import React, { useState } from 'react';
+
+import { TabBarControllerMode } from 'react-native-screens';
+import ConfigWrapperContext, {
+  type Configuration,
+  DEFAULT_GLOBAL_CONFIGURATION,
+} from '@apps/shared/containers/tabs/ConfigWrapperContext';
+import {
+  TabsContainer,
+  type TabRouteConfig,
+} from '@apps/shared/containers/tabs';
+import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
+import { Text } from 'react-native';
+import { Button } from '@apps/shared';
+
+function makeTab(
+  title: string,
+  controllerMode: TabBarControllerMode,
+  setControllerMode: (mode: TabBarControllerMode) => void,
+) {
+  return (
+    <CenteredLayoutView>
+      <Text>{title}</Text>
+      <Button
+        title={`Change mode (currently ${controllerMode})`}
+        onPress={() => {
+          switch (controllerMode) {
+            case 'automatic':
+              setControllerMode('tabBar');
+              break;
+            case 'tabBar':
+              setControllerMode('tabSidebar');
+              break;
+            default:
+              setControllerMode('automatic');
+              break;
+          }
+        }}
+      />
+    </CenteredLayoutView>
+  );
+}
+
+function App() {
+  const [config, setConfig] = React.useState<Configuration>(
+    DEFAULT_GLOBAL_CONFIGURATION,
+  );
+
+  const [controllerMode, setControllerMode] =
+    useState<TabBarControllerMode>('automatic');
+
+  const TAB_CONFIGS: TabRouteConfig[] = [
+    {
+      name: 'Tab1',
+      element: makeTab('Tab 1', controllerMode, setControllerMode),
+      options: {
+        title: 'Tab 1',
+        ios: {
+          icon: {
+            type: 'sfSymbol',
+            name: 'sun.max',
+          },
+        },
+        android: {
+          icon: {
+            type: 'drawableResource',
+            name: 'sunny',
+          },
+        },
+      },
+    },
+    {
+      name: 'Tab2',
+      element: makeTab('Tab 2', controllerMode, setControllerMode),
+      options: {
+        title: 'Tab 2',
+        ios: {
+          icon: {
+            type: 'sfSymbol',
+            name: 'snow',
+          },
+        },
+        android: {
+          icon: {
+            type: 'drawableResource',
+            name: 'mode_cool',
+          },
+        },
+      },
+    },
+  ];
+
+  return (
+    <ConfigWrapperContext.Provider
+      value={{
+        config,
+        setConfig,
+      }}>
+      <TabsContainer
+        routeConfigs={TAB_CONFIGS}
+        ios={{
+          tabBarControllerMode: controllerMode,
+        }}
+      />
+    </ConfigWrapperContext.Provider>
+  );
+}
+
+export default App;

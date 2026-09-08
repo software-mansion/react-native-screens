@@ -1,5 +1,9 @@
 <img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
 
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-1?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-1&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-2?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-2&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-react-native-screens-3?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-react-native-screens-3&n=1)
+
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
 ## Fabric
@@ -121,6 +125,9 @@ Here's a table with summary of supported `react-native` versions:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.26.0+         | 0.84.0+              |
+| 4.25.0+         | 0.82.0+              |
+| 4.19.0+         | 0.81.0+              |
 | 4.14.0+         | 0.79.0+              |
 | 4.5.0+          | 0.77.0+              |
 | 4.0.0+          | 0.76.0+              |
@@ -129,15 +136,19 @@ Here's a table with summary of supported `react-native` versions:
 
 Paper is the legacy rendering system. 
 
-Here's a table with summary of supported `react-native` versions with old architecture turned on:
+> [!caution]
+> Since version 4.25.0 of this library, it no longer supports the legacy architecture.
+
+Here's a table with summary of supported `react-native` versions with the legacy architecture turned on:
 
 | library version | react-native version |
 | --------------- | -------------------- |
+| 4.25.0+         | NOT SUPPORTED        |
+| 4.19.0+         | 0.80.0+              |
 | 4.14.0+         | 0.79.0+              |
 | 4.9.0+          | 0.76.0+              |
 | 4.5.0+          | 0.74.0+              |
 | 4.0.0+          | 0.72.0+              |
-
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -198,7 +209,7 @@ To take advantage of the native stack navigator primitive for React Navigation t
 
 ## `FullWindowOverlay`
 
-Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/Test1096.tsx
+Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/apps/src/tests/issue-tests/Test1096.tsx
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
@@ -242,14 +253,6 @@ There are many ways to contribute to this project. See [CONTRIBUTING](https://gi
 ## License
 
 React native screens library is licensed under [The MIT License](LICENSE).
-
-## Credits
-
-This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io), and [Software Mansion](https://swmansion.com).
-
-[![shopify](https://avatars1.githubusercontent.com/u/8085?v=3&s=100 'Shopify.com')](https://shopify.com)
-[![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 'Expo.io')](https://expo.io)
-[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-reanimated-github 'Software Mansion')](https://swmansion.com)
 
 ## React Native Screens is created by Software Mansion
 
