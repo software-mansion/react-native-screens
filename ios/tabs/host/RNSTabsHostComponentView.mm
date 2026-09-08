@@ -7,11 +7,11 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSTabsHostComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
 #import "RNSTabsHostComponentView+RNSImageLoader.h"
 
 #import "RNSContainerHelpers.h"
-#import "RNSConversions.h"
+#import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"

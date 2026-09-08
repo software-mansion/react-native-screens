@@ -15,6 +15,13 @@
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
 
+#if !TARGET_OS_TV
+  // Navigation item of the screen below, onto which the back button
+  // configuration has been applied. Kept so that the configuration can be
+  // cleared when the owning screen is popped from the stack.
+  __weak UINavigationItem *_Nullable _backButtonConfigTargetItem;
+#endif // !TARGET_OS_TV
+
   RNSStackHeaderMenuTrackerRegistry *_Nonnull _trackerRegistry;
 
   NSMutableArray<UIBarButtonItem *> *_Nonnull _leadingBarButtonItems;
@@ -35,6 +42,17 @@
 }
 
 #pragma mark - Public
+
+- (void)updateNavigationBarVisibilityAnimated:(BOOL)animated
+{
+  RNSStackNavigationController *navController = [self getNavigationController];
+  if (navController == nil || navController.topViewController != _screenController) {
+    return;
+  }
+
+  BOOL hidden = _configDataProvider == nil || _configDataProvider.hidden;
+  [navController.navigationBarCoordinator setHidden:hidden forNavigationController:navController animated:animated];
+}
 
 - (void)rebuild
 {
@@ -104,7 +122,10 @@
                   forController:controller];
 
   [self applyTitleMenuForController:controller];
-  [self applyNavigationBarProperties];
+  [self updateNavigationBarVisibilityAnimated:YES];
+#if !TARGET_OS_TV
+  [self updateBackButtonMenuEnabled];
+#endif // !TARGET_OS_TV
 }
 
 - (void)applyConfigProperties
@@ -114,8 +135,24 @@
   }
 
   [self applyConfigPropertiesForController:[self requireScreenController]];
-  [self applyNavigationBarProperties];
+  [self updateNavigationBarVisibilityAnimated:YES];
+#if !TARGET_OS_TV
+  [self updateBackButtonMenuEnabled];
+#endif // !TARGET_OS_TV
 }
+
+#if !TARGET_OS_TV
+- (void)updateBackButtonMenuEnabled
+{
+  RNSStackNavigationController *navController = [self getNavigationController];
+  if (navController == nil || navController.topViewController != _screenController) {
+    return;
+  }
+
+  BOOL enabled = _configDataProvider == nil || _configDataProvider.backButtonMenuEnabled;
+  [navController.navigationBarCoordinator setBackButtonMenuEnabled:enabled forNavigationController:navController];
+}
+#endif // !TARGET_OS_TV
 
 /**
  Rebuilds an existing item: sets all props and applies the menu config.
@@ -266,6 +303,7 @@
   _configDataProvider = nil;
   _frameChangeDelegate = nil;
   _eventsDelegate = nil;
+  _imageLoader = nil;
 
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
@@ -277,6 +315,8 @@
 
   navItem.title = nil;
   navItem.titleView = nil;
+  navItem.standardAppearance = nil;
+  navItem.scrollEdgeAppearance = nil;
   [navItem setLeftBarButtonItems:@[] animated:YES];
   [navItem setRightBarButtonItems:@[] animated:YES];
 
@@ -297,13 +337,16 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if !TARGET_OS_TV
+  navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+
+  [self clearAppliedBackButtonConfig];
 #endif // !TARGET_OS_TV
 
-  RNSStackNavigationController *navController = [self getNavigationController];
-  if (navController != nil) {
-    [navController.navigationBarCoordinator setHidden:NO forNavigationController:navController animated:YES];
-  }
+  [self updateNavigationBarVisibilityAnimated:YES];
+#if !TARGET_OS_TV
+  [self updateBackButtonMenuEnabled];
+#endif // !TARGET_OS_TV
 }
 
 /**
@@ -377,21 +420,25 @@
   return (RNSStackNavigationController *)navController;
 }
 
-- (void)applyNavigationBarProperties
-{
-  RNSStackNavigationController *navController = [self getNavigationController];
-  if (navController != nil) {
-    [navController.navigationBarCoordinator setHidden:_configDataProvider.hidden
-                              forNavigationController:navController
-                                             animated:YES];
-  }
-}
-
 - (void)applyConfigPropertiesForController:(RNSStackScreenController *)controller
 {
   UINavigationItem *navItem = controller.navigationItem;
 
   navItem.title = _configDataProvider.title;
+  navItem.standardAppearance = _configDataProvider.standardAppearance;
+  navItem.scrollEdgeAppearance = _configDataProvider.scrollEdgeAppearance;
+
+#if !TARGET_OS_TV
+  NSString *prompt = _configDataProvider.prompt;
+  if (navItem.prompt != prompt && ![navItem.prompt isEqualToString:prompt]) {
+    navItem.prompt = prompt;
+    // UIKit does not resize an already visible navigation bar when the prompt
+    // of its navigation item changes - request layout explicitly.
+    [controller.navigationController.view setNeedsLayout];
+  }
+
+  [self applyBackButtonConfigForController:controller];
+#endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
@@ -406,6 +453,32 @@
                                                                         : UINavigationItemLargeTitleDisplayModeNever;
 #endif // !TARGET_OS_TV
 }
+
+#if !TARGET_OS_TV
+- (void)applyBackButtonConfigForController:(RNSStackScreenController *)controller
+{
+  NSArray<UIViewController *> *viewControllers = controller.navigationController.viewControllers;
+  NSUInteger index = [viewControllers indexOfObject:controller];
+  if (index == NSNotFound || index == 0) {
+    return;
+  }
+
+  UINavigationItem *prevItem = viewControllers[index - 1].navigationItem;
+  _backButtonConfigTargetItem = prevItem;
+  prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
+  prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
+}
+#endif // !TARGET_OS_TV
+
+#if !TARGET_OS_TV
+- (void)clearAppliedBackButtonConfig
+{
+  UINavigationItem *targetItem = _backButtonConfigTargetItem;
+  _backButtonConfigTargetItem = nil;
+  targetItem.backButtonTitle = nil;
+  targetItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+}
+#endif // !TARGET_OS_TV
 
 - (void)applyItemsWithTitleView:(nullable UIView *)titleView
                    subtitleView:(nullable UIView *)subtitleView
@@ -476,6 +549,7 @@
     if (item.identifier != nil) {
       barButtonItem.identifier = item.identifier;
     }
+    barButtonItem.hidesSharedBackground = item.hidesSharedBackground;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 

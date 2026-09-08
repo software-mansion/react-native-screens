@@ -24,7 +24,8 @@ const HEADER_TITLE = 'Toolbar Menu Batch Commands Test';
 const SCROLL_STEP = { pixels: 300 };
 
 const EVENT_TIMEOUT_MS = 3000;
-// Generous on purpose: a slow image download must not read as a failed batch.
+// Generous on purpose: the failing-image cases wait on a network error, and a
+// slow one must not read as a stuck batch.
 const IMAGE_LOAD_TIMEOUT_MS = 90000;
 
 // `by.label` matches the button in both its icon-only (title as content
@@ -41,7 +42,9 @@ async function expectAppleNotInToolbar() {
 async function expectAppleInToolbarWithIcon() {
   await expect(element(appleToolbarButton)).toBeVisible();
   // AppCompat clears an icon-only action button's text (`setText(null)`).
-  await expect(element(appleToolbarButton)).toHaveText('');
+  await waitFor(element(appleToolbarButton))
+    .toHaveText('')
+    .withTimeout(IMAGE_LOAD_TIMEOUT_MS);
 }
 
 async function expectAppleInToolbarWithoutIcon() {
@@ -220,9 +223,9 @@ describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
 
     it('applies the icon and the check together only once the image has loaded', async () => {
       await tapById('batch-image-check-button');
-      await expectEventCount(7, IMAGE_LOAD_TIMEOUT_MS);
-      await expectNewestEntry('fruits', ['apple', 'cherry']);
       await expectAppleInToolbarWithIcon();
+      await expectEventCount(7);
+      await expectNewestEntry('fruits', ['apple', 'cherry']);
     });
 
     it('moves Apple back to the overflow menu, checked, with no new event', async () => {

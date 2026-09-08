@@ -4,33 +4,32 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.util.Log
 import android.view.View
+import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
-import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
-import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 
 internal class FormSheetPresentationManager(
-    private val dialog: FormSheetDialog,
-    private val bottomSheetView: View?,
-    private val dimmingManager: DimmingViewManager,
+    private val presentationFactory: () -> FormSheetPresentation,
+    private val dimmingManager: FormSheetDimmingManager,
     private val onNativeDismiss: () -> Unit,
     private val onDismiss: () -> Unit,
 ) {
     internal var appearanceEventEmitter: ViewAppearanceEventEmitter? = null
 
+    internal var currentPresentation: FormSheetPresentation? = null
+        private set
+
+    private val bottomSheetView: View?
+        get() = currentPresentation?.bottomSheetView
+
     private var state = FormSheetPresentationState.DISMISSED
     private var shouldBeOpen = false
+    private var shouldSkipExitAnimation = false
 
     private var dismissalOrigin = FormSheetDismissalOrigin.UNSPECIFIED
 
     private val animatorFactory = FormSheetAnimatorFactory(dimmingManager)
     private var currentSheetAnimator: Animator? = null
-
-    internal fun setup() {
-        bottomSheetView?.let { view ->
-            dimmingManager.attachToBehavior(BottomSheetBehavior.from(view))
-        }
-    }
 
     internal fun requestProgrammaticStateUpdate(shouldBeOpen: Boolean) {
         if (shouldBeOpen) {
@@ -85,13 +84,23 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.PRESENTING
+        val presentation = presentationFactory().also { currentPresentation = it }
+        presentation.sheetBehavior?.let(dimmingManager::attachToBehavior)
+
+        FormSheetStackRegistry.register(this)
         appearanceEventEmitter?.emitOnWillAppear()
-        dialog.setOnShowListener {
-            dialog.setOnShowListener(null)
-            dimmingManager.onDialogShow()
+        presentation.bottomSheetView?.let(::keepOffscreenUntilEnterAnimation)
+        presentation.dialog.setOnShowListener {
+            presentation.dialog.setOnShowListener(null)
+
+            // Every sheet dims the surface inside the window below, attaching an overlay to the sheet
+            // directly below in the stack, or to the DecorView when this sheet is the
+            // bottom-most one.
+            dimmingManager.attachDimming(FormSheetStackRegistry.sheetBelow(this)?.bottomSheetView)
+
             startEnterAnimation()
         }
-        dialog.show()
+        presentation.dialog.show()
     }
 
     private fun dismissIfNeeded() {
@@ -100,6 +109,11 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        dismissSheetsAbove()
+        // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
+        // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
+        // torn down.
+        FormSheetStackRegistry.unregister(this)
         appearanceEventEmitter?.emitOnWillDisappear()
 
         val isSheetHidden =
@@ -112,10 +126,59 @@ internal class FormSheetPresentationManager(
             return
         }
 
+        if (shouldSkipExitAnimation) {
+            performInstantDismiss()
+            return
+        }
+
         startExitAnimation()
     }
 
+    // Dismissing a sheet from the middle of the stack should dismiss all sheets above it,
+    // mirroring the iOS presentation chain teardown. Sheets are dismissed top-down.
+    private fun dismissSheetsAbove() {
+        FormSheetStackRegistry.sheetsAbove(this).asReversed().forEach {
+            it.handleDismissFromCascade()
+        }
+    }
+
+    private fun handleDismissFromCascade() {
+        if (state == FormSheetPresentationState.DISMISSING || state == FormSheetPresentationState.DISMISSED) {
+            return
+        }
+
+        shouldSkipExitAnimation = true
+        updatePresentationState(false, FormSheetDismissalOrigin.USER)
+    }
+
+    private fun performInstantDismiss() {
+        currentSheetAnimator?.removeAllListeners()
+        currentSheetAnimator?.cancel()
+        currentSheetAnimator = null
+
+        performDismiss()
+    }
+
+    /**
+     * `Dialog.show()` **posts** the show message behind the sync barrier of the traversal scheduled while
+     * adding the decor to the window, so the Dialog always draws its first frame before `OnShowListener`
+     * (with our custom enter animation) runs. A freshly created sheet rests at `translationY = 0`, so that
+     * frame would show it at its final position and the enter animator would then snap it back
+     * off-screen.
+     *
+     * Applying the translation on the first pre-draw - after the layout, when the sheet height is
+     * already known, but before anything is drawn - keeps the sheet off-screen from the very first frame.
+     */
+    private fun keepOffscreenUntilEnterAnimation(view: View) {
+        view.doOnPreDraw {
+            if (currentSheetAnimator == null) {
+                view.translationY = view.height.toFloat()
+            }
+        }
+    }
+
     private fun startEnterAnimation() {
+        val bottomSheetView = bottomSheetView
         if (bottomSheetView == null) {
             onPresentationComplete()
             return
@@ -144,6 +207,7 @@ internal class FormSheetPresentationManager(
     }
 
     private fun startExitAnimation() {
+        val bottomSheetView = bottomSheetView
         if (bottomSheetView == null) {
             performDismiss()
             return
@@ -163,7 +227,6 @@ internal class FormSheetPresentationManager(
                             dimmingManager.isTransitionAnimationRunning = false
 
                             if (currentSheetAnimator == this@apply) currentSheetAnimator = null
-                            syncBehaviorStateAfterExitAnimationComplete(bottomSheetView)
                             performDismiss()
                         }
                     },
@@ -173,7 +236,10 @@ internal class FormSheetPresentationManager(
     }
 
     private fun performDismiss() {
-        dialog.dismiss()
+        shouldSkipExitAnimation = false
+        dimmingManager.detachDimming()
+        currentPresentation?.destroy()
+        currentPresentation = null
         onDismissComplete()
     }
 
@@ -207,32 +273,15 @@ internal class FormSheetPresentationManager(
         }
     }
 
-    /**
-     * Synchronizes the BottomSheetBehavior state with our custom exit animation.
-     *
-     * Since our custom ExitAnimator uses `translationY` for visual movement, the physical
-     * `top` of the view remains at the top of the screen. If we just call `state = STATE_HIDDEN`,
-     * Material will attempt to align the layout and enter `STATE_SETTLING`, leaving the state
-     * machine corrupted for the next open.
-     *
-     * To fix this, we manually push the physical `top` to the bottom of the screen.
-     * This makes the behavior skip the animation and synchronously switch to `STATE_HIDDEN`,
-     * properly cleaning up its internal state on dismissal.
-     */
-    private fun syncBehaviorStateAfterExitAnimationComplete(view: View) {
-        val behavior = BottomSheetBehavior.from(view)
-        val parent = view.parent as? View
-        val targetTop = parent?.height ?: view.height
-
-        view.offsetTopAndBottom(targetTop - view.top)
-        behavior.state = BottomSheetBehavior.STATE_HIDDEN
-    }
-
     internal fun destroy() {
+        FormSheetStackRegistry.unregister(this)
+        dimmingManager.detachDimming()
+
         currentSheetAnimator?.cancel()
         currentSheetAnimator = null
 
-        dialog.setOnShowListener(null)
+        currentPresentation?.destroy()
+        currentPresentation = null
 
         state = FormSheetPresentationState.DISMISSED
     }

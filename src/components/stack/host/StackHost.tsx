@@ -6,9 +6,11 @@ import type { StackHostProps } from './StackHost.types';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHost({ children, ref }: StackHostProps) {
+function StackHost(props: StackHostProps) {
+  const { children, ref, ...restProps } = props;
+
   return (
-    <StackHostNativeComponent ref={ref} style={styles.container}>
+    <StackHostNativeComponent ref={ref} style={styles.container} {...restProps}>
       {children}
     </StackHostNativeComponent>
   );

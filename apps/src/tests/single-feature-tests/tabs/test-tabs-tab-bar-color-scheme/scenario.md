@@ -33,7 +33,7 @@ Assumption:
 
 1. Launch the app and navigate to the **Tab Bar Color Scheme** screen.
 
-- [ ] Config tab is shown. Pickers default to `unspecified` / `inherit`
+- [ ] Config tab is shown. Pickers default to `auto` / `inherit`
 
 ---
 
@@ -76,6 +76,8 @@ Assumption:
 - [ ] Tab bar stays **dark**
 
 9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
+
+- [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
 
 ---
 

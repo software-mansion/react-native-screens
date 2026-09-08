@@ -6,6 +6,7 @@ import {
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
 import { Colors } from '@apps/shared/styling';
+import { SettingsSwitch } from '@apps/shared';
 import {
   type StackHeaderConfigRef,
   type StackHeaderToolbarMenuBaseAndroid,
@@ -98,6 +99,7 @@ function MainScreen() {
   const [eventLog, setEventLog] = useState<string[]>([]);
   const [eventCount, setEventCount] = useState(0);
   const [appleInToolbar, setAppleInToolbar] = useState(false);
+  const [useBundledImage, setUseBundledImage] = useState(true);
 
   const headerConfigRef = useRef<StackHeaderConfigRef>(null);
   const { setRouteOptions, routeKey } = useStackNavigationContext();
@@ -123,19 +125,32 @@ function MainScreen() {
     });
   }, [setRouteOptions, routeKey, handleGroupChange]);
 
-  // A large image with a random seed each call, so every download is unique and
-  // uncached (even across app restarts) and the async load stays visibly slow.
-  // Requires network access. The icon is only visible while Apple is shown in
-  // the toolbar (overflow menu items don't render icons).
+  // The photo icon used by the image cases. The icon is only visible while
+  // Apple is shown in the toolbar (overflow menu items don't render icons).
+  //
+  // Bundled (default, used by e2e): no network needed. Image icons are always
+  // resolved asynchronously on Android, so this still exercises the async path
+  // that the queue must serialize.
+  //
+  // Remote (manual testing): a large image with a random seed each call, so
+  // every download is unique and uncached (even across app restarts) and the
+  // async load stays visibly slow. Requires network access.
   const nextPhotoIcon = useCallback((): PlatformIconAndroid => {
-    const seed = Math.floor(Math.random() * 1_000_000_000);
-    return {
-      type: 'imageSource',
-      imageSource: {
-        uri: `https://picsum.photos/seed/rns-${seed}/5000`,
-      },
-    };
-  }, []);
+    if (useBundledImage) {
+      return {
+        type: 'imageSource',
+        imageSource: require('@assets/trees.jpg'),
+      };
+    } else {
+      const seed = Math.floor(Math.random() * 1_000_000_000);
+      return {
+        type: 'imageSource',
+        imageSource: {
+          uri: `https://picsum.photos/seed/rns-${seed}/5000`,
+        },
+      };
+    }
+  }, [useBundledImage]);
 
   // A guaranteed-to-fail image. The load never yields a drawable; the queue
   // must still complete the batch (icon cleared) rather than wait forever for a
@@ -206,11 +221,11 @@ function MainScreen() {
     ]);
   }, [nextPhotoIcon]);
 
-  // Case #5: two back-to-back commands on Apple. The first loads a slow remote
-  // image alongside checked:true; the second unchecks Apple synchronously. With
-  // the queue they are serialized, so the LAST event reflects the SECOND
-  // command (Apple absent). Without it, the first command's late download would
-  // land last and wrongly re-check Apple.
+  // Case #5: two back-to-back commands on Apple. The first loads an image
+  // asynchronously alongside checked:true; the second unchecks Apple
+  // synchronously. With the queue they are serialized, so the LAST event
+  // reflects the SECOND command (Apple absent). Without it, the first command
+  // would resolve after the second and wrongly re-check Apple.
   const runOrderingRace = useCallback(() => {
     const android = headerConfigRef.current?.android;
     android?.updateToolbarMenuElements([
@@ -257,6 +272,13 @@ function MainScreen() {
         contentContainerStyle={styles.content}
         testID="toolbar-menu-batch-commands-scrollview">
         <Text style={styles.heading}>Batch Commands</Text>
+        <SettingsSwitch
+          label="Bundled image"
+          value={useBundledImage}
+          onValueChange={setUseBundledImage}
+          style={styles.switch}
+          testID="bundled-image-switch"
+        />
         <View style={styles.buttons}>
           <Button
             title="Select All (1 event)"
@@ -319,7 +341,8 @@ function MainScreen() {
           don&apos;t render icons); its checkbox is only visible in the overflow
           menu. Icon &amp; showAsAction changes emit no events. Menu checked
           state persists across taps — Reset log clears only the counter and
-          log.
+          log. Turn off &quot;Bundled image&quot; to load the photo from the web
+          instead (slow, uncached; needs network).
         </Text>
 
         <Text testID="events-count-text" style={styles.heading}>
@@ -370,6 +393,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.primary,
     marginTop: 8,
+  },
+  switch: {
+    marginHorizontal: 0,
   },
   buttons: {
     gap: 8,

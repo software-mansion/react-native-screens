@@ -9,9 +9,9 @@ from props on first mount, that the per-item `onPress` callback fires with the
 correct id, and that imperative commands behave as specified: fields absent from
 `options` preserve their current value, fields set to `undefined` (encoded as
 `null` over the bridge) reset to the prop's regular default (not to the value
-last seen from props), and any props update rebuilds the entire menu —
-discarding all prior command-applied state across all items, not just the slot
-whose prop changed.
+last seen from props), and a real `toolbarMenu` prop change rebuilds the
+entire menu — discarding all prior command-applied state across all items, not
+just the slot whose prop changed.
 
 **OS test creation version:** Android: API Level 36
 
@@ -36,7 +36,9 @@ Full: All steps are covered.
   id) must not crash and must not leak state into other items.
 - A props update on any single slot rebuilds the entire
   `toolbarMenu` children array, so all command-applied overrides on every
-  item are dropped at the same time.
+  item are dropped at the same time. Only a **real** change counts —
+  re-sending a deep-equal `toolbarMenu` is a no-op and preserves command
+  state, and no other kind of header rebuild resets it.
 
 ## Steps
 

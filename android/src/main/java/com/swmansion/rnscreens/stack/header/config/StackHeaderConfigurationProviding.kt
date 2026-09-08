@@ -3,7 +3,7 @@ package com.swmansion.rnscreens.stack.header.config
 import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
-import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
+import com.swmansion.rnscreens.stack.header.toolbar.StackHeaderToolbarMenuController
 
 internal interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
@@ -27,12 +27,14 @@ internal interface StackHeaderConfigurationProviding {
     val scrollFlagExitUntilCollapsed: Boolean
     val scrollFlagSnap: Boolean
     val liftOnScroll: Boolean
+    val backgroundColor: Int?
+    val scrolledBackgroundColor: Int?
+    val statusBarScrimColor: Int?
     val leadingSubview: StackHeaderSubviewProviding?
     val centerSubview: StackHeaderSubviewProviding?
     val trailingSubview: StackHeaderSubviewProviding?
     val backgroundSubview: StackHeaderSubviewProviding?
-    val toolbarMenu: StackHeaderToolbarMenuConfig
-    val toolbarMenuGroupDividerEnabled: Boolean
+    val toolbarMenuController: StackHeaderToolbarMenuController
 
     val titleCentered: Boolean
     val subtitleCentered: Boolean

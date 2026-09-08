@@ -93,15 +93,19 @@ Incomplete.
   gesture / system back) must **not** change which events fire - all three
   produce the same pop event set for the same transition. This holds at every
   level: the top-level stack, the inner nested stack, and the container
-  boundary.
+  boundary. Note that the **outer** header back button triggers the
+  container-pop transition even while a deeper nested screen is active,
+  whereas the Android system back / gesture-back from that same screen pops
+  the innermost screen - those are different transitions, each with its own
+  event set (see step 14).
 
 - The pushed `NestedStack` route keeps its own header, so inside the
-  nested stack there are **two back buttons**. On iOS the **inner** one (in the active
-  nested screen's header) pops within the nested stack, while the **outer** one
-  (in the `NestedStack` header) pops the **whole container**
-  back to `Home` in a single step - even from `NestedA`, skipping `NestedHome`.
-  On Android there is no such shortcut: the toolbar back arrow (like the system
-  back) always pops the **innermost** screen first, one level at a time.
+  nested stack there are **two back buttons**. On both platforms the **inner**
+  one (in the active nested screen's header) pops within the nested stack,
+  while the **outer** one (in the `NestedStack` header) pops the **whole
+  container** back to `Home` in a single step - even from `NestedA`. The
+  Android system back / gesture-back has no such shortcut: it always pops the
+  **innermost** screen first, one level at a time.
 
 - Toasts stack and dismiss automatically. To dismiss a toast manually, tap
   it. Toast background colors by event type: `onWillAppear` - green,
@@ -215,8 +219,8 @@ Incomplete.
 - [ ] Screen **NestedA** (header title "NestedA") is pushed **inside the
   nested stack**. **Two stacked headers** remain visible - the outer
   **NestedStack** header above the inner **NestedA**
-  header - so NestedA shows **two back buttons**;
-  on Android the toolbar back arrow always pops the innermost screen first.
+  header - so NestedA shows **two back buttons** (the inner one pops within
+  the nested stack, the outer one pops the whole container - see step 14).
   Only the inner screens fire - the outer `NestedStack` route and `Home` stay
   silent - so this behaves exactly like a top-level push (step 2):
 
@@ -354,12 +358,16 @@ Incomplete.
   5. `NestedA: onDidDisappear`
   6. `Home: onDidAppear`
 
-- [ ] **Android** - there is **no boundary shortcut**: the toolbar back arrow
-  always pops the **innermost** screen first, so tapping it on `NestedA` pops
-  **only NestedA → NestedHome** and does **not** dismiss the container. The
-  event set is identical to the inner pop in step 8 - two toasts:
-  1. `NestedA: onWillDisappear`
-  2. `NestedA: onDidDisappear`
-
-  To then pop the whole container on Android, press back again from
-  **NestedHome** (the container-pop event set of step 11).
+- [ ] **Android** - the outer back arrow likewise pops the **whole NestedStack
+  container** in one step, going **NestedA → Home**. Unlike iOS, `NestedHome`
+  **does** fire its disappear events here: it never fired them when `NestedA`
+  was pushed (on Android a covered screen stays silent), so the container
+  teardown emits them now. All `onWillDisappear`s fire first (inner screens in
+  push order, then the outer route), then the `onDidDisappear`s in the same
+  order - six toasts, `Home` fires nothing:
+  1. `NestedHome: onWillDisappear`
+  2. `NestedA: onWillDisappear`
+  3. `NestedStack: onWillDisappear`
+  4. `NestedHome: onDidDisappear`
+  5. `NestedA: onDidDisappear`
+  6. `NestedStack: onDidDisappear`

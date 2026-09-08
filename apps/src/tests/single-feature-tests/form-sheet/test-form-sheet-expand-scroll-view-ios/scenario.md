@@ -1,10 +1,10 @@
-# Test Scenario: prefersScrollingExpandsWhenScrolledToEdge
+# Test Scenario: Expand On Scroll To Edge (iOS)
 
 ## Details
 
-**Description:** Verify the `prefersScrollingExpandsWhenScrolledToEdge` property of the `FormSheet` component. This test ensures that when the property is set to `true`, scrolling a child `ScrollView` at a lower detent expands the sheet to a larger detent first. When set to `false`, the same scrolling action should not expand the sheet, and the scroll view should scroll normally. It also verifies that manual dragging still works when scroll expansion is disabled.
+**Description:** Verify the `prefersScrollingExpandsWhenScrolledToEdge` property of the `FormSheet` component with detents `[0.5, 1.0]` and a `ScrollView` inside the sheet. When the property is `true` (the UIKit default), scrolling the list up from its top edge at the lower detent expands the sheet first; when it is `false`, the list scrolls normally and the sheet stays at its detent. Manual dragging of the non-scrollable area expands the sheet in both cases.
 
-**OS test creation version:** iOS: 18.6 and 26.4
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5.
 
 ## E2E test
 
@@ -12,46 +12,60 @@ TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
 
 ## Note
 
-- The default value of `prefersScrollingExpandsWhenScrolledToEdge` in UIKit is `true`.
-- This property only takes effect when scrolling begins exactly from the top edge of the `ScrollView` (i.e., when the content offset is at 0).
-- The FormSheet will open with the list scrolled to the point where it was left during dismissal. You may need to scroll back to the top before testing edge behaviors.
+- iOS only
+- The property only takes effect when scrolling starts exactly at the top edge of the `ScrollView` (content offset 0).
+- The list keeps its scroll position across dismiss/present – scroll back to the top before testing the edge behavior again.
+- **iPad:** the sheet is presented as a centered floating panel with a fixed width, not as a full-width bottom sheet.
 
-## Steps - iPhone
+## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the **Expand when scrolled to edge** screen.
+1. Launch the app and navigate to the **Expand On Scroll To Edge (iOS)** screen.
 
-- [ ] A status text indicating the current prop value ("Expands on edge scroll: ON"), a switch, and an "Open FormSheet" button are shown.
+- [ ] The host screen shows "Expands on scroll: ON", a switch (on) and the "Open FormSheet" button.
 
-### Expansion enabled (Default)
+---
 
-2. Ensure the toggle is set to `ON`. Tap the "Open FormSheet" button.
+### Expansion enabled (default)
 
-- [ ] The FormSheet opens at the initial lower detent (0.5). The "Drag Here to Expand" header and a scrollable list of items are visible.
+2. Tap "Open FormSheet".
 
-3. Swipe up on the scrollable list content.
+- [ ] The sheet presents at the lower detent (0.5). The "Drag Here to Expand" header and the scrollable list ("List Item 1", "List Item 2", …) are visible.
 
-- [ ] The FormSheet expands to the maximum detent (1.0). The list content does not scroll until the sheet has finished expanding to the maximum detent.
+3. Swipe up on the list.
 
-4. Dismiss the sheet by tapping "Dismiss from JS" or swiping down on the drag indicator.
+- [ ] The sheet expands to the largest detent (1.0) first; the list does not scroll until the sheet has finished expanding.
+
+4. Swipe up on the list again.
+
+- [ ] The list scrolls normally and reveals further items; "Dismiss from JS" is reachable at the end of the list.
+
+5. Tap "Dismiss from JS" (or swipe down on the header).
+
+- [ ] The sheet dismisses.
+
+---
 
 ### Expansion disabled
 
-5. Tap the switch so the status reads "Expands on edge scroll: OFF".
+6. Flip the switch so the host screen reads "Expands on scroll: OFF", then tap "Open FormSheet".
 
-6. Tap the "Open FormSheet" button.
+- [ ] The sheet presents at the lower detent (0.5).
 
-- [ ] The FormSheet opens at the initial lower detent (0.5).
+7. Make sure the list is scrolled to the very top, then swipe up on the list.
 
-7. Swipe up on the scrollable list content (ensure you are starting from the very top edge of the ScrollView).
+- [ ] The list scrolls normally and reveals further items. The sheet **does not** expand – it stays at 0.5.
 
-- [ ] The list scrolls normally to reveal lower items. The FormSheet **does not** expand to the maximum detent and remains at 0.5. 
+8. Drag the "Drag Here to Expand" header up.
 
-8. Grab the "Drag Here to Expand" header area above the list and drag it up.
+- [ ] The sheet expands to the largest detent (1.0) – manual dragging outside the list still works.
 
-- [ ] The FormSheet expands to the maximum detent (1.0), verifying that manual sheet expansion is still possible outside the ScrollView area.
+9. Tap "Dismiss from JS" (or swipe down on the header).
+
+- [ ] The sheet dismisses and "Open FormSheet" is pressable again.

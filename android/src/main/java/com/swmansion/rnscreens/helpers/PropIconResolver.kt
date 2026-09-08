@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.helpers
 
-import android.content.Context
 import android.graphics.drawable.Drawable
 
 /**
@@ -21,27 +20,28 @@ internal sealed interface IconResolution {
 
 /**
  * Stateful, latest-wins icon resolver for a single declaratively-driven icon slot — a `toolbarMenu`
- * prop menu item, or the back button — that is re-evaluated on every prop transaction. It
- * deduplicates unchanged sources ([IconResolution.Unchanged]) to avoid needless reloads/flicker,
- * and drops stale async results so a slow load cannot clobber a newer source.
+ * prop menu item, or the back button — that is re-evaluated on every source change. It deduplicates
+ * unchanged sources ([IconResolution.Unchanged]) to avoid needless reloads/flicker, and drops stale
+ * async results so a slow load cannot clobber a newer source.
+ *
+ * [load] must invoke its completion callback exactly once — synchronously or asynchronously,
+ * always on the main thread — with the loaded drawable, or `null` when the source resolves to
+ * no icon or fails to load (see e.g. [resolveImage]).
  */
-internal class PropIconResolver {
+internal class PropIconResolver(
+    private val load: (drawableIconResourceName: String?, imageIconUri: String?, onComplete: (Drawable?) -> Unit) -> Unit,
+) {
     private var lastDrawableName: String? = null
     private var lastImageUri: String? = null
     private var lastEmittedDrawableName: String? = null
     private var lastEmittedImageUri: String? = null
 
     /**
-     * Resolves an icon from a drawable resource name or an image uri.
-     *
-     * The result is delivered to [onResult] synchronously for drawable resources and empty sources,
-     * and asynchronously for image uris. For image uris, the callback is only invoked if the
-     * resolved uri is still the latest requested source (stale requests are dropped). On a failed
-     * image load the latest request still emits [IconResolution.Resolved] with a `null` drawable, so
-     * the icon is cleared rather than left stale.
+     * Resolves an icon from a drawable resource name or an image uri. The result is delivered
+     * to [onResult] only if the requested source is still the latest one (stale async results
+     * are dropped).
      */
     fun resolve(
-        context: Context,
         drawableIconResourceName: String?,
         imageIconUri: String?,
         onResult: (IconResolution) -> Unit,
@@ -56,16 +56,10 @@ internal class PropIconResolver {
         }
         lastEmittedDrawableName = drawableIconResourceName
         lastEmittedImageUri = imageIconUri
-        when {
-            drawableIconResourceName != null ->
-                onResult(IconResolution.Resolved(getSystemDrawableResource(context, drawableIconResourceName)))
-            imageIconUri != null ->
-                loadImage(context, imageIconUri) { drawable ->
-                    if (imageIconUri == lastImageUri && lastDrawableName == null) {
-                        onResult(IconResolution.Resolved(drawable))
-                    }
-                }
-            else -> onResult(IconResolution.Resolved(null))
+        load(drawableIconResourceName, imageIconUri) { drawable ->
+            if (drawableIconResourceName == lastDrawableName && imageIconUri == lastImageUri) {
+                onResult(IconResolution.Resolved(drawable))
+            }
         }
     }
 }

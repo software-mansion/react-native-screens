@@ -9,4 +9,12 @@ interface Container {
      * (if any).
      */
     fun resolveCurrentContentScrollView(): ViewGroup?
+
+    /**
+     * Asked when this container's whole subtree is about to be natively dismissed,
+     * e.g. the screen hosting this container is popped. Returns the item that
+     * vetoes the dismissal via `preventNativeDismiss`, or null when nothing
+     * in the subtree does.
+     */
+    fun wantsToPreventStackNativeDismiss(): ContainerItem?
 }

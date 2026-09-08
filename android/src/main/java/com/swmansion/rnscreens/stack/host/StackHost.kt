@@ -8,6 +8,7 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.swmansion.rnscreens.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.utils.RNSLog
@@ -25,6 +26,8 @@ class StackHost(
     private val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
     private var isLayoutEnqueued = false
+
+    internal var colorScheme: ColorScheme by container::colorScheme
 
     init {
         addView(container)
@@ -116,6 +119,16 @@ class StackHost(
     // propagated to the root view. That's why we need to manually force measure and layout pass.
     override fun requestLayout() {
         super.requestLayout()
+        refreshLayout()
+    }
+
+    // On window configuration changes ViewRootImpl calls forceLayout() recursively on every view
+    // in the hierarchy, bypassing requestLayout(). React views never lay out their children during
+    // framework traversals, so nothing would clear the force-layout flags in our subtree — and once
+    // they are set, any subsequent requestLayout() from a descendant short-circuits before reaching
+    // the override above, permanently disabling the manual pass. Schedule it from here as well.
+    override fun forceLayout() {
+        super.forceLayout()
         refreshLayout()
     }
 

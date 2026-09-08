@@ -4,7 +4,7 @@
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
-#import <rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSTabsBottomAccessoryComponentDescriptor.h>
 
 namespace react = facebook::react;
 

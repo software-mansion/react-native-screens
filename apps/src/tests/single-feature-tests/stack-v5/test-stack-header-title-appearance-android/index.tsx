@@ -328,7 +328,7 @@ function TestStackHeaderTitleAppearanceAndroid() {
 function StackSetup() {
   return (
     <StackContainer
-      routeConfigs={[{ name: 'Home', Component: ConfigScreen, options: {} }]}
+      routeConfigs={[{ name: 'Home', element: <ConfigScreen />, options: {} }]}
     />
   );
 }

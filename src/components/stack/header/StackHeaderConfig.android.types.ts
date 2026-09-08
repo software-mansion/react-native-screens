@@ -95,13 +95,6 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * @summary Title of the menu element.
    *
-   * @remarks
-   * If `title` is changed for the element of type `menu` by using the
-   * `updateToolbarMenuElements` view command, the menu title (`menuTitle`)
-   * will also be changed to the new title (unless the new title is set to
-   * `undefined`). In order to keep the custom menu title, you should also
-   * include `menuTitle` in the view command.
-   *
    * @platform android
    */
   title?: string | undefined;
@@ -209,6 +202,9 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * The icon will be visible only if the menu element is shown in the
    * Toolbar.
    *
+   * An icon set via the `updateToolbarMenuElements` view command takes
+   * precedence over this one until the next `toolbarMenu` change.
+   *
    * @platform android
    */
   icon?: PlatformIconAndroid | undefined;
@@ -312,6 +308,10 @@ export interface StackHeaderToolbarMenuItemAndroid
    * The initial state does not trigger `onSelectionChange` on
    * the group at mount time.
    *
+   * A `toolbarMenu` prop change restores the selection to this value.
+   * Neither that restore nor a native header rebuild triggers
+   * `onSelectionChange`.
+   *
    * @default false
    * @platform android
    */
@@ -405,10 +405,8 @@ export interface StackHeaderToolbarMenuAndroid
    * `title`, which controls the label shown in the parent menu's item row.
    *
    * @remarks
-   * If `title` is changed by using the `updateToolbarMenuElements` view
-   * command, the menu title will also be changed to the new title (unless the
-   * new title is set to `undefined`). In order to keep the custom menu title,
-   * you should also include `menuTitle` in the view command.
+   * When left unset, the header falls back to `title`; when both are unset,
+   * the popup shows no header.
    *
    * @platform android
    */
@@ -437,7 +435,8 @@ export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
    *
    * @description
    * Only applies to `type: 'menu'` elements. Ignored if the target is a regular
-   * menu item.
+   * menu item. Setting it to `undefined` drops the `menuTitle` prop as well,
+   * leaving the header to fall back to `title`.
    *
    * @platform android
    */
@@ -479,11 +478,18 @@ export interface StackHeaderConfigCommandsAndroid {
    * overtaken by an earlier one whose icon happened to load late.
    *
    * @remarks
-   * Updates are applied to the live toolbar: they take effect only while the
-   * header is shown, and are discarded whenever the menu is rebuilt from the
-   * `toolbarMenu` prop — whether by a prop change or a structural change such
-   * as hiding and re-showing the header. They persist across unrelated
-   * re-renders. An update whose `id` is not in the current menu is ignored.
+   * Updates persist for the lifetime of the current `toolbarMenu`
+   * configuration: they survive every native header rebuild — an effective
+   * color scheme change, a header `type`, `maxLines` or
+   * `collapsedTitleGravityMode` change, hiding and re-showing the header,
+   * reattaching the screen (e.g. switching tabs) — and unrelated re-renders.
+   * Updates sent while the header is hidden are recorded — and emit their
+   * selection events — as usual, and take effect when the header is next
+   * shown. Only a `toolbarMenu` prop change resets them, dropping the
+   * batches still queued as well (see its docs). An update whose `id` is not
+   * in the current menu is ignored. An `icon` set via this command takes
+   * precedence over the icon declared in `toolbarMenu` until the next
+   * `toolbarMenu` change.
    *
    * @param updates A single update object or an array of updates.
    */
@@ -507,6 +513,9 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * M3 Expressive headers aren't currently supported (there is no stable
    * `MDC-Android` version yet).
+   *
+   * Changing this prop at runtime rebuilds the header. Toolbar menu state
+   * survives the rebuild — see `updateToolbarMenuElements`.
    *
    * @see {@link https://m3.material.io/components/app-bars/overview|Material Design 3: App bars}
    *
@@ -745,7 +754,8 @@ export interface StackHeaderConfigPropsAndroid {
    * Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
    * installs its own content scrim and disables the app bar's lift-on-scroll,
    * so this prop has no effect there. The collapsed appearance of those headers
-   * is instead controlled by that content scrim, which is not exposed yet.
+   * is instead controlled by that content scrim — see
+   * {@link scrolledBackgroundColor}.
    *
    * Has no effect while the header is `transparent` (there is no scrolling
    * content behavior installed in that mode).
@@ -756,6 +766,72 @@ export interface StackHeaderConfigPropsAndroid {
    */
   liftOnScroll?: boolean | undefined;
   /**
+   * @summary Background color of the header.
+   *
+   * @description
+   * Applies to all header types. For `medium` / `large` headers this is the
+   * color of the expanded state — the collapsed state color is controlled by
+   * {@link scrolledBackgroundColor}.
+   *
+   * @remarks
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  backgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Background color of the header when content is scrolled beneath
+   * it.
+   *
+   * @description
+   * For the `small` header, this is the lift-on-scroll target color: when
+   * content is scrolled beneath the app bar, the background animates from
+   * {@link backgroundColor} to this color. Requires {@link liftOnScroll}.
+   *
+   * For `medium` / `large` headers, this is the color of the content scrim
+   * that fades in as the header collapses. The scrim is drawn above the
+   * header background (and the `backgroundSubview`, if any) but below the
+   * toolbar content.
+   *
+   * @remarks
+   * A translucent color is composited over the header background instead of
+   * replacing it.
+   *
+   * If value is not provided, falls back to Material's default.
+   *
+   * @platform android
+   */
+  scrolledBackgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Color of the scrim drawn in the status-bar area, masking header
+   * content that scrolls under the status bar in edge-to-edge apps.
+   *
+   * @description
+   * For the `small` header, the scrim is a constant strip pinned to the top of
+   * the window, drawn above the toolbar content. When not provided, the strip
+   * follows the header's effective background color: {@link backgroundColor} at
+   * rest, animating together with the lift-on-scroll transition towards
+   * {@link scrolledBackgroundColor}. An explicit color is applied statically,
+   * without tracking.
+   *
+   * For `medium` / `large` headers, the scrim fades in and out together with
+   * the content scrim as the header collapses. When not provided, it matches
+   * the content scrim color ({@link scrolledBackgroundColor}).
+   *
+   * Set to `'transparent'` to disable the scrim entirely.
+   *
+   * @remarks
+   * The default scrim is installed only when the color it follows resolves to
+   * a fully opaque color; translucent headers stay see-through. An explicit
+   * translucent color is honored and composites over the header background in
+   * the status-bar area (for `medium` / `large` headers the content scrim is
+   * excluded from that area while a scrim is installed, so the two scrims
+   * never stack).
+   *
+   * @platform android
+   */
+  statusBarScrimColor?: ColorValue | undefined;
+  /**
    * @summary Toolbar menu configuration.
    *
    * @description
@@ -763,8 +839,19 @@ export interface StackHeaderConfigPropsAndroid {
    * want to change some property in runtime, use `updateToolbarMenuElements`
    * view command.
    *
-   * Changing this prop in runtime will result in full toolbar menu rebuild.
-   * Any prior changes applied via `updateToolbarMenuElements` will be lost.
+   * Changing this prop at runtime rebuilds the toolbar menu and resets all
+   * of its runtime state: checkbox/radio selections return to their
+   * `initialToggleState` and every change applied via
+   * `updateToolbarMenuElements` is discarded, including batches still
+   * waiting in the queue (e.g. for an icon download). Any real change
+   * counts, even one only swapping an item's icon; re-sending an identical
+   * menu is a no-op and preserves the state.
+   *
+   * An invalid menu is rejected — for example duplicate item or group ids, a
+   * `groupId` that is not declared at the same menu level, or more than one
+   * `initialToggleState` in a single-selection group. The menu is validated
+   * when the prop is set, and a rejected menu leaves the previous one in
+   * effect.
    *
    * @platform android
    */

@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Dismiss Events',
   key: 'test-form-sheet-dismiss-events',
   details:
-    'Allows to test the dismiss events (onDismiss, onNativeDismiss) of the FormSheet component.',
+    'onDismiss vs onNativeDismiss: which event fires for JS and native dismissal.',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,

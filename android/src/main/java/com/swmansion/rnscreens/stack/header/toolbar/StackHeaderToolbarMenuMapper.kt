@@ -21,6 +21,7 @@ import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenu
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemType
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarFieldUpdate
 import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementOptions
+import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementRawUpdate
 
 /**
  * Parses React toolbar-menu props (Dynamic / ReadableMap) into the native menu
@@ -32,23 +33,37 @@ internal object StackHeaderToolbarMenuMapper {
     internal fun parseMenu(
         context: Context,
         value: Dynamic,
-    ): Pair<StackHeaderToolbarMenuConfig, Map<String, StackHeaderToolbarMenuItemIconSource>> {
-        if (value.isNull) return Pair(StackHeaderToolbarMenuConfig(emptyList(), emptyList()), emptyMap())
+    ): StackHeaderToolbarMenuConfig {
+        if (value.isNull) return StackHeaderToolbarMenuConfig(emptyList(), emptyList())
         val map =
             value.asMapOrNull()
                 ?: throw JSApplicationIllegalArgumentException(
                     "[RNScreens] toolbarMenu must be an object.",
                 )
-        val iconSources = mutableMapOf<String, StackHeaderToolbarMenuItemIconSource>()
-        val config = StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(context, map, iconSources))
-        return Pair(config, iconSources)
+        return StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(context, map))
     }
 
     // endregion
 
     // region Menu element command parsing
 
-    internal fun parseMenuElementOptions(
+    internal fun parseElementRawUpdate(
+        context: Context,
+        id: String,
+        map: ReadableMap,
+    ): StackHeaderToolbarMenuElementRawUpdate =
+        StackHeaderToolbarMenuElementRawUpdate(
+            id = id,
+            options = parseMenuElementOptions(context, map),
+            iconSource = parseCommandIconSource(map),
+            checked =
+                map.readNullableBooleanUpdate(
+                    "checked",
+                    StackHeaderToolbarMenuItemDefaults.INITIAL_TOGGLE_STATE,
+                ),
+        )
+
+    private fun parseMenuElementOptions(
         context: Context,
         map: ReadableMap,
     ): StackHeaderToolbarMenuElementOptions =
@@ -64,20 +79,15 @@ internal object StackHeaderToolbarMenuMapper {
                     "showAsAction",
                     StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION,
                 ),
-            icon = null,
             iconTintColorNormal = map.readNullableColorUpdate(context, "iconTintColorNormal"),
             iconTintColorPressed = map.readNullableColorUpdate(context, "iconTintColorPressed"),
             iconTintColorFocused = map.readNullableColorUpdate(context, "iconTintColorFocused"),
             iconTintColorDisabled = map.readNullableColorUpdate(context, "iconTintColorDisabled"),
-            checked =
-                map.readNullableBooleanUpdate(
-                    "checked",
-                    StackHeaderToolbarMenuItemDefaults.INITIAL_TOGGLE_STATE,
-                ),
             menuTitle = map.readNullableStringUpdate("menuTitle"),
         )
 
-    internal fun parseMenuElementIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
+    // Command icons are optional deltas: null when neither key is present.
+    private fun parseCommandIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource? {
         if (!map.hasKey("drawableIconResourceName") && !map.hasKey("imageIconResource")) {
             return null
         }
@@ -112,7 +122,6 @@ internal object StackHeaderToolbarMenuMapper {
     private fun parseChildren(
         context: Context,
         map: ReadableMap,
-        iconSources: MutableMap<String, StackHeaderToolbarMenuItemIconSource>,
     ): List<StackHeaderToolbarMenuElementConfig> {
         val array = map.getArray("children") ?: return emptyList()
         return (0 until array.size()).map { i ->
@@ -120,23 +129,21 @@ internal object StackHeaderToolbarMenuMapper {
                 requireNotNull(array.getMap(i)) {
                     "[RNScreens] Menu children array must contain valid menu element specification objects."
                 }
-            parseElement(context, child, iconSources)
+            parseElement(context, child)
         }
     }
 
     private fun parseElement(
         context: Context,
         map: ReadableMap,
-        iconSources: MutableMap<String, StackHeaderToolbarMenuItemIconSource>,
     ): StackHeaderToolbarMenuElementConfig {
         val item = parseItemConfig(context, map)
-        iconSources[item.id] = parseItemIconSource(map)
         return when (val type = map.readOptionalString("type")) {
             "menuItem" -> StackHeaderToolbarMenuElementConfig.MenuItem(item = item)
             "menu" ->
                 StackHeaderToolbarMenuElementConfig.Submenu(
                     item = item,
-                    menu = StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(context, map, iconSources)),
+                    menu = StackHeaderToolbarMenuConfig(parseGroups(map), parseChildren(context, map)),
                     menuTitle = map.readOptionalString("menuTitle"),
                 )
 
@@ -147,7 +154,8 @@ internal object StackHeaderToolbarMenuMapper {
         }
     }
 
-    private fun parseItemIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource =
+    // Prop icons are absolute per-item state: absent keys parse to defaults.
+    private fun parsePropIconSource(map: ReadableMap): StackHeaderToolbarMenuItemIconSource =
         StackHeaderToolbarMenuItemIconSource(
             drawableIconResourceName =
                 map.getString("drawableIconResourceName")
@@ -172,7 +180,6 @@ internal object StackHeaderToolbarMenuMapper {
             hidden = map.readBoolean("hidden", StackHeaderToolbarMenuItemDefaults.HIDDEN),
             disabled = map.readBoolean("disabled", StackHeaderToolbarMenuItemDefaults.DISABLED),
             showAsAction = map.readShowAsActionEnum("showAsAction", StackHeaderToolbarMenuItemDefaults.SHOW_AS_ACTION),
-            icon = null,
             iconTintColorNormal =
                 map.readColor(
                     context,
@@ -197,6 +204,7 @@ internal object StackHeaderToolbarMenuMapper {
                     "iconTintColorDisabled",
                     StackHeaderToolbarMenuItemDefaults.ICON_TINT_COLOR_DISABLED,
                 ),
+            iconSource = parsePropIconSource(map),
             groupId = map.readOptionalString("groupId"),
             itemType = map.readItemTypeEnum("itemType", StackHeaderToolbarMenuItemDefaults.ITEM_TYPE),
             initialToggleState =

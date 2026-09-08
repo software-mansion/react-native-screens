@@ -515,7 +515,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
         ['Top Item', 'Title X', 'Submenu B'],
         ['Title X', 'Submenu B'],
       );
-      await expectMenu(['Title X'], ['Title X', 'Title X', 'Sub A.2']);
+      await expectMenu(['Title X'], ['Header A', 'Title X', 'Sub A.2']);
     });
 
     it('hides the whole submenu when hidden = true', async () => {
@@ -532,7 +532,7 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
         ['Top Item', 'Title X', 'Submenu B'],
         ['Title X', 'Submenu B'],
       );
-      await expectMenu(['Title X'], ['Title X', 'Title X', 'Sub A.2']);
+      await expectMenu(['Title X'], ['Header A', 'Title X', 'Sub A.2']);
     });
   });
 
@@ -551,9 +551,9 @@ describeIfAndroid('Stack Toolbar Nested Menu', () => {
     });
 
     it('leaves the submenu entry without a title once both are cleared', async () => {
-      // Both fields go in one command: the header is only re-derived while
-      // handling `menuTitle`, so clearing the title alone leaves it reading
-      // whatever it fell back to one step earlier.
+      // `menuTitle` is already cleared, so the header follows the title and
+      // clearing the title alone would suffice; both go in one command to
+      // spell out the end state.
       await sendCommand({
         target: 'submenu-1',
         title: 'undefined',

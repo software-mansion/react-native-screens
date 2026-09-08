@@ -24,6 +24,7 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
+import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewFinder
@@ -67,7 +68,8 @@ class TabsContainer internal constructor(
             val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
 
             if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
+                val screenStack =
+                    ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
@@ -503,7 +505,10 @@ class TabsContainer internal constructor(
 
     private fun performSelectedTabUpdate() {
         if (pendingStateUpdateRequest == null) {
-            RNSLog.w(TAG, "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update")
+            RNSLog.w(
+                TAG,
+                "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update",
+            )
             return
         }
 
@@ -527,7 +532,10 @@ class TabsContainer internal constructor(
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
             isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
-            bottomNavigationView.setSelectedItemIdWithActionOrigin(nextSelectedMenuItemId, stateUpdateRequest.actionOrigin)
+            bottomNavigationView.setSelectedItemIdWithActionOrigin(
+                nextSelectedMenuItemId,
+                stateUpdateRequest.actionOrigin,
+            )
             isInExternalOperationContext = false
         } else {
             observerRegistry.emitOnNavigationStateUpdateRejected(
@@ -541,17 +549,19 @@ class TabsContainer internal constructor(
     }
 
     private fun updateNavigationMenuStructure() {
-        if (bottomNavigationView.menu.size != tabsModel.size) {
-            // Most likely first render or some tab has been removed. Let's nuke the menu (easiest option).
-            bottomNavigationView.menu.clear()
+        val menu = bottomNavigationView.menu
+        val isMenuInSync =
+            menu.size == tabsModel.size &&
+                tabsModel.withIndex().all { (index, fragment) ->
+                    menu.getItem(index).itemId == fragment.menuItemId
+                }
+
+        if (isMenuInSync) {
+            return
         }
-        tabsModel.forEachIndexed { index, fragment ->
-            val menuItem =
-                bottomNavigationView.menu.getOrCreateMenuItemForFragmentAt(
-                    index,
-                    fragment.tabsScreen,
-                )
-            check(fragmentIndexForMenuItemId(menuItem.itemId) == index) { "[RNScreens] Illegal state: menu items are shuffled" }
+        menu.clear()
+        tabsModel.forEach { fragment ->
+            menu.getOrCreateMenuItemForFragment(fragment)
         }
     }
 
@@ -584,7 +594,10 @@ class TabsContainer internal constructor(
         }
 
         progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
-        applyNextSelectedFragmentToFragmentManagerSync(currentSelectedFragment, nextSelectedFragment)
+        applyNextSelectedFragmentToFragmentManagerSync(
+            currentSelectedFragment,
+            nextSelectedFragment,
+        )
         return true
     }
 
@@ -654,7 +667,8 @@ class TabsContainer internal constructor(
             return false
         }
 
-        val stateChanged = updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
+        val stateChanged =
+            updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
 
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
@@ -699,7 +713,8 @@ class TabsContainer internal constructor(
 
         // We expect at most a single fragment added (detached fragments are not returned from
         // FragmentManager.getFragments call) and it being the currently selected tab.
-        val isInUpToDateState = currentFragments.size == 1 && currentFragments.first() === selectedTab
+        val isInUpToDateState =
+            currentFragments.size == 1 && currentFragments.first() === selectedTab
         if (isInUpToDateState) {
             return
         } else if (currentFragments.isEmpty()) {
@@ -728,12 +743,10 @@ class TabsContainer internal constructor(
         appearanceCoordinator.updateTabAppearance(themedContext, this)
     }
 
-    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.getOrNull(fragmentIndexForMenuItemId(itemId))
+    private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.find { it.menuItemId == itemId }
 
     private fun getMenuItemIdForFragment(tabsScreenFragment: TabsScreenFragment): Int? =
-        tabsModel.indexOfFirst { it === tabsScreenFragment }.takeIf { it != -1 }?.let {
-            menuItemIdForFragmentAtIndex(it)
-        }
+        tabsScreenFragment.menuItemId.takeIf { tabsModel.any { it === tabsScreenFragment } }
 
     private fun getSelectedTabsScreenFragmentId(): Int? =
         tabsModel
@@ -742,10 +755,9 @@ class TabsContainer internal constructor(
 
     private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
         tabsModel
-            .indexOfFirst { it.tabsScreen === tabsScreen }
-            .takeIf { it != -1 }
-            ?.let { index ->
-                bottomNavigationView.menu.findItem(menuItemIdForFragmentAtIndex(index))
+            .find { it.tabsScreen === tabsScreen }
+            ?.let { fragment ->
+                bottomNavigationView.menu.findItem(fragment.menuItemId)
             }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
@@ -790,6 +802,15 @@ class TabsContainer internal constructor(
         // We assume here that the selectedTab actually corresponds to whats in FragmentManager
         return selectedTab.tabsScreen.findContentScrollView()
     }
+
+    // Only the active item is consulted - a preventing screen inside an inactive tab
+    // does not veto the dismissal.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
+        if (navState.isNotEmpty()) {
+            selectedTab.tabsScreen.wantsToPreventStackNativeDismiss()
+        } else {
+            null
+        }
 
     // endregion
 

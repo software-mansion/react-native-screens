@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Lifecycle Events',
   key: 'test-form-sheet-lifecycle-events',
   details:
-    'Allows to test the lifecycle events (onWillAppear, onDidAppear, onWillDisappear, onDidDisappear) of the FormSheet component.',
+    'onWillAppear, onDidAppear, onWillDisappear, onDidDisappear: order on present and dismiss.',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,

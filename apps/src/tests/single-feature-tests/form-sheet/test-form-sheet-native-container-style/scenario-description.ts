@@ -1,10 +1,10 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'Native container style',
+  name: 'Native Container Style',
   key: 'test-form-sheet-native-container-style',
   details:
-    'Allows to test the native container style properties (backgroundColor) of the FormSheet.',
+    'nativeContainerStyle.backgroundColor: native background fills the whole sheet, including safe areas.',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,

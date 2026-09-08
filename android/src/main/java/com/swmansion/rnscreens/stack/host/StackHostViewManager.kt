@@ -1,12 +1,14 @@
 package com.swmansion.rnscreens.stack.host
 
 import android.view.View
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHostManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHostManagerInterface
+import com.swmansion.rnscreens.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.stack.screen.StackScreen
 
 @ReactModule(name = StackHostViewManager.REACT_CLASS)
@@ -69,6 +71,18 @@ class StackHostViewManager :
      * native layout traversal will remeasure the view and apply correct layout.
      */
     override fun needsCustomLayoutForChildren() = true
+
+    override fun setColorScheme(
+        view: StackHost,
+        value: String?,
+    ) {
+        when (value) {
+            null, "inherit" -> view.colorScheme = ColorScheme.INHERIT
+            "light" -> view.colorScheme = ColorScheme.LIGHT
+            "dark" -> view.colorScheme = ColorScheme.DARK
+            else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid color scheme: $value.")
+        }
+    }
 
     companion object {
         const val REACT_CLASS = "RNSStackHost"

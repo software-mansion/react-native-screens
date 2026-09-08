@@ -13,6 +13,7 @@ export type StackHeaderItemProps = {
   placement: StackHeaderItemPlacement;
   itemId?: string | undefined;
   identifier?: string | undefined;
+  hidesSharedBackground?: boolean | undefined;
   title?: string | undefined;
   icon?: PlatformIconIOS | undefined;
   render?: (() => ReactElement) | undefined;

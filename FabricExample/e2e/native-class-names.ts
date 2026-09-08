@@ -46,6 +46,10 @@ export const CLASS_NAME_UI_BUTTON_BAR_BUTTON = '_UIButtonBarButton';
 export const CLASS_NAME_UI_MODERN_BAR_BUTTON = '_UIModernBarButton';
 export const CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW =
   '_UINavigationBarLargeTitleView';
+// The liquid-glass "bubble" hosting bar button items on iOS 26. Items sharing
+// a background share one platter; separator-delimited items get one each.
+export const CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW =
+  '_UINavigationBarPlatterView';
 
 // --- UIKit: context menu ---
 

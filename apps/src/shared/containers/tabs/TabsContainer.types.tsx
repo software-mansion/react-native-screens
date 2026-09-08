@@ -5,6 +5,7 @@ import type {
   TabsScreenProps,
 } from 'react-native-screens';
 import type { SafeAreaViewProps } from 'react-native-screens/experimental';
+import type { RouteNameFromConfigs } from '../shared/route-name';
 
 /// Route definition
 
@@ -82,17 +83,16 @@ export type TabsHostConfig = Omit<
   'children' | 'navStateRequest'
 >;
 
-export type TabsContainerProps = Omit<
-  TabsHostProps,
-  'children' | 'navStateRequest'
-> & {
-  routeConfigs: TabRouteConfig[];
+export type TabsContainerProps<
+  TRouteConfigs extends readonly TabRouteConfig[] = TabRouteConfig[],
+> = Omit<TabsHostProps, 'children' | 'navStateRequest'> & {
+  routeConfigs: TRouteConfigs;
   /**
    * @summary
    * Name of the tab that should be selected initially.
    * Defaults to the first tab if not provided.
    */
-  defaultRouteName?: string | undefined;
+  defaultRouteName?: NoInfer<RouteNameFromConfigs<TRouteConfigs>> | undefined;
 };
 
 export type SetTabOptionsMethod = (

@@ -5,10 +5,9 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.View
 import androidx.core.animation.doOnStart
-import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
 
 internal class FormSheetAnimatorFactory(
-    private val dimmingManager: DimmingViewManager,
+    private val dimmingManager: FormSheetDimmingManager,
 ) {
     // TODO: @t0maboro - consider exposing as a prop
     val animationDuration = 250L
@@ -18,7 +17,7 @@ internal class FormSheetAnimatorFactory(
         isInterrupting: Boolean = false,
     ): Animator {
         val startY = if (isInterrupting) view.translationY else view.height.toFloat()
-        val startAlpha = if (isInterrupting) dimmingManager.dimmingViewAlpha else 0f
+        val startAlpha = if (isInterrupting) dimmingManager.dimmingAlpha else 0f
 
         val slideAnimator =
             ValueAnimator.ofFloat(startY, 0f).apply {
@@ -30,7 +29,7 @@ internal class FormSheetAnimatorFactory(
         val alphaAnimator =
             ValueAnimator.ofFloat(startAlpha, dimmingManager.maxAlpha).apply {
                 addUpdateListener { animation ->
-                    dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
+                    dimmingManager.dimmingAlpha = animation.animatedValue as Float
                 }
             }
 
@@ -46,7 +45,7 @@ internal class FormSheetAnimatorFactory(
         isInterrupting: Boolean = false,
     ): Animator {
         val startY = if (isInterrupting) view.translationY else 0f
-        val startAlpha = if (isInterrupting) dimmingManager.dimmingViewAlpha else dimmingManager.maxAlpha
+        val startAlpha = if (isInterrupting) dimmingManager.dimmingAlpha else dimmingManager.maxAlpha
 
         val slideAnimator =
             ValueAnimator.ofFloat(startY, view.height.toFloat()).apply {
@@ -58,7 +57,7 @@ internal class FormSheetAnimatorFactory(
         val alphaAnimator =
             ValueAnimator.ofFloat(startAlpha, 0f).apply {
                 addUpdateListener { animation ->
-                    dimmingManager.dimmingViewAlpha = animation.animatedValue as Float
+                    dimmingManager.dimmingAlpha = animation.animatedValue as Float
                 }
             }
 

@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.stack.header
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -25,14 +26,18 @@ import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.swmansion.rnscreens.common.text.TextAppearance
 import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
 import com.swmansion.rnscreens.ext.detachFromCurrentParent
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
+import com.swmansion.rnscreens.stack.header.appbar.StackHeaderContentScrimDrawable
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.utils.dpToPx
+import com.swmansion.rnscreens.utils.resolveColorAttr
 import com.swmansion.rnscreens.utils.resolveDrawableAttr
 import com.swmansion.rnscreens.utils.spToPx
 import kotlin.math.roundToInt
@@ -213,6 +218,10 @@ internal class StackHeaderApplicator(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
     ) {
+        // Defaults are resolved from wrappedContext, not the widget's own context: MaterialToolbar
+        // wraps its context (materialThemeOverlay) in a ContextThemeWrapper whose theme is a
+        // one-time copy, so it never sees later setTheme calls on wrappedContext (color scheme
+        // changes).
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
                 val toolbar = appBar.toolbar
@@ -224,7 +233,7 @@ internal class StackHeaderApplicator(
                     view = toolbar,
                     defaults =
                         TextAppearanceDefaults.resolve(
-                            toolbar.context,
+                            wrappedContext,
                             R.attr.textAppearanceTitleLarge,
                             R.attr.colorOnSurface,
                         ),
@@ -237,7 +246,7 @@ internal class StackHeaderApplicator(
                     view = toolbar,
                     defaults =
                         TextAppearanceDefaults.resolve(
-                            toolbar.context,
+                            wrappedContext,
                             R.attr.textAppearanceLabelMedium,
                             R.attr.colorOnSurfaceVariant,
                         ),
@@ -271,7 +280,7 @@ internal class StackHeaderApplicator(
                 applySlot(
                     view = ctl,
                     defaults =
-                        TextAppearanceDefaults.resolve(ctl.context, expandedTitleAttr, R.attr.colorOnSurface),
+                        TextAppearanceDefaults.resolve(wrappedContext, expandedTitleAttr, R.attr.colorOnSurface),
                     appearance = config.expandedTitleAppearance,
                     setColor = { ctl.setExpandedTitleTextColor(ColorStateList.valueOf(it)) },
                     setTypeface = { ctl.setExpandedTitleTypeface(it) },
@@ -280,7 +289,7 @@ internal class StackHeaderApplicator(
                 applySlot(
                     view = ctl,
                     defaults =
-                        TextAppearanceDefaults.resolve(ctl.context, R.attr.textAppearanceTitleLarge, R.attr.colorOnSurface),
+                        TextAppearanceDefaults.resolve(wrappedContext, R.attr.textAppearanceTitleLarge, R.attr.colorOnSurface),
                     appearance = config.collapsedTitleAppearance,
                     setColor = { ctl.setCollapsedTitleTextColor(it) },
                     setTypeface = { ctl.setCollapsedTitleTypeface(it) },
@@ -289,7 +298,7 @@ internal class StackHeaderApplicator(
                 applySlot(
                     view = ctl,
                     defaults =
-                        TextAppearanceDefaults.resolve(ctl.context, expandedSubtitleAttr, R.attr.colorOnSurfaceVariant),
+                        TextAppearanceDefaults.resolve(wrappedContext, expandedSubtitleAttr, R.attr.colorOnSurfaceVariant),
                     appearance = config.expandedSubtitleAppearance,
                     setColor = { ctl.setExpandedSubtitleTextColor(ColorStateList.valueOf(it)) },
                     setTypeface = { ctl.setExpandedSubtitleTypeface(it) },
@@ -298,7 +307,7 @@ internal class StackHeaderApplicator(
                 applySlot(
                     view = ctl,
                     defaults =
-                        TextAppearanceDefaults.resolve(ctl.context, R.attr.textAppearanceLabelMedium, R.attr.colorOnSurfaceVariant),
+                        TextAppearanceDefaults.resolve(wrappedContext, R.attr.textAppearanceLabelMedium, R.attr.colorOnSurfaceVariant),
                     appearance = config.collapsedSubtitleAppearance,
                     setColor = { ctl.setCollapsedSubtitleTextColor(it) },
                     setTypeface = { ctl.setCollapsedSubtitleTypeface(it) },
@@ -361,7 +370,7 @@ internal class StackHeaderApplicator(
         val baseDrawable =
             config.backButtonIcon
                 ?.let { getResizedDrawable(toolbar, it) }
-                ?: resolveDefaultBackButtonIcon()
+                ?: resolveDefaultBackButtonIcon(toolbar)
 
         val tintList =
             buildTintList(
@@ -389,7 +398,7 @@ internal class StackHeaderApplicator(
         val baseDrawable =
             config.overflowIcon
                 ?.let { getResizedDrawable(toolbar, it) }
-                ?: resolveDefaultOverflowIcon()
+                ?: resolveDefaultOverflowIcon(toolbar)
 
         val tintList =
             buildTintList(
@@ -455,6 +464,109 @@ internal class StackHeaderApplicator(
         appBar.requestLayout()
     }
 
+    internal fun applyBackgroundColors(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+    ) {
+        // Widget.Material3Expressive.AppBarLayout (an empty alias of Widget.Material3.AppBarLayout)
+        //   #android:background = @macro/m3_comp_app_bar_container_color.
+        val backgroundColor =
+            config.backgroundColor ?: resolveColorAttr(appBar.context, R.attr.colorSurface)
+
+        // Both header kinds default to the same token, from different places:
+        //   small — ...AppBarLayout#liftOnScrollColor
+        //     = @macro/m3_comp_app_bar_on_scroll_container_color;
+        //   collapsing — the M3 CollapsingToolbar styles set no contentScrim, so CTL installs its
+        //     own default for titleCollapseMode=fade (getDefaultContentScrimColorForTitleCollapseFadeMode).
+        val scrolledBackgroundColor =
+            config.scrolledBackgroundColor
+                ?: resolveColorAttr(appBar.context, R.attr.colorSurfaceContainer)
+
+        val background =
+            MaterialShapeDrawable().apply {
+                fillColor = ColorStateList.valueOf(backgroundColor)
+            }
+
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                appBar.background = background
+                appBar.setLiftOnScrollColor(ColorStateList.valueOf(scrolledBackgroundColor))
+
+                // The lift animation runs only on lifted-state changes; jump to the end
+                // state when colors change while already lifted. The end state is the
+                // scrolled color composited over the background (see Material's
+                // initializeLiftOnScrollWithColor), not the raw scrolled color — they
+                // differ when the scrolled color is not fully opaque.
+                if (appBar.isLifted) {
+                    background.fillColor =
+                        ColorStateList.valueOf(
+                            MaterialColors.layer(backgroundColor, scrolledBackgroundColor),
+                        )
+                }
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                // Fade collapse mode disables liftOnScroll, but the lift animation only checks the
+                // lift color. We set it to null so the fill stays at backgroundColor under the
+                // transparent/translucent content scrim.
+                appBar.setLiftOnScrollColor(null)
+                appBar.background = background
+                appBar.collapsingToolbarLayout.contentScrim =
+                    StackHeaderContentScrimDrawable(scrolledBackgroundColor)
+            }
+        }
+
+        applyStatusBarScrim(appBar, config, backgroundColor, scrolledBackgroundColor)
+    }
+
+    private fun applyStatusBarScrim(
+        appBar: StackHeaderAppBarLayout,
+        config: StackHeaderConfigurationProviding,
+        backgroundColor: Int,
+        scrolledBackgroundColor: Int,
+    ) {
+        when (appBar) {
+            is StackHeaderAppBarLayout.Small -> {
+                val scrimColor = resolveStatusBarScrimColor(config, drivingColor = backgroundColor)
+                val autoFollow = scrimColor != null && config.statusBarScrimColor == null
+                appBar.setStatusBarScrimSyncEnabled(autoFollow)
+                appBar.statusBarForeground?.setTint(
+                    when {
+                        scrimColor == null -> Color.TRANSPARENT
+                        // Same lifted jump as the background fill in applyBackgroundColors.
+                        autoFollow && appBar.isLifted ->
+                            MaterialColors.layer(backgroundColor, scrolledBackgroundColor)
+                        else -> scrimColor
+                    },
+                )
+            }
+
+            is StackHeaderAppBarLayout.Collapsing -> {
+                // Defaulting to the content scrim color masks toolbar content passing
+                // through the status-bar area (scroll-only flags) and is a visual
+                // no-op in the opaque exitUntilCollapsed case. An invisible scrim is
+                // normalized to null so the content scrim exclusion can key on scrim
+                // presence alone.
+                val scrimColor =
+                    resolveStatusBarScrimColor(config, drivingColor = scrolledBackgroundColor)
+                        ?.takeIf { Color.alpha(it) > 0 }
+                if (scrimColor != null) {
+                    appBar.collapsingToolbarLayout.setStatusBarScrimColor(scrimColor)
+                } else {
+                    appBar.collapsingToolbarLayout.statusBarScrim = null
+                }
+                appBar.updateContentScrimExclusion()
+            }
+        }
+    }
+
+    // The default scrim exists only for an opaque driving color — a translucent
+    // scrim would double-composite over the layer it covers.
+    private fun resolveStatusBarScrimColor(
+        config: StackHeaderConfigurationProviding,
+        drivingColor: Int,
+    ): Int? = config.statusBarScrimColor ?: drivingColor.takeIf { Color.alpha(it) == 0xFF }
+
     // endregion
 
     // region Helpers
@@ -483,13 +595,21 @@ internal class StackHeaderApplicator(
         }
     }
 
-    private fun resolveDefaultBackButtonIcon(): Drawable? = resolveDrawableAttr(wrappedContext, androidx.appcompat.R.attr.homeAsUpIndicator)
+    // Default icon drawables must load through the toolbar's snapshot context, not
+    // wrappedContext: on Android 14+ the framework's themed resource cache returns stale
+    // entries for a Theme mutated in place by setTheme (ThemeKey dedup + shallow clone),
+    // freezing the icon tint after a color scheme change. The toolbar wrapper's theme is
+    // created fresh on every rebuild, so its cache entries always match the current palette.
+    // Plain attribute resolution (e.g. text appearance defaults) doesn't hit that cache and
+    // stays on the live wrappedContext.
+    private fun resolveDefaultBackButtonIcon(toolbar: MaterialToolbar): Drawable? =
+        resolveDrawableAttr(toolbar.context, androidx.appcompat.R.attr.homeAsUpIndicator)
 
     // Mirrors how the toolbar's own overflow button obtains its icon: an AppCompatImageView built
     // with actionOverflowButtonStyle resolves the theme's srcCompat and applies AppCompat's
     // colorControlNormal auto-tint.
-    private fun resolveDefaultOverflowIcon(): Drawable? =
-        AppCompatImageView(wrappedContext, null, androidx.appcompat.R.attr.actionOverflowButtonStyle).drawable
+    private fun resolveDefaultOverflowIcon(toolbar: MaterialToolbar): Drawable? =
+        AppCompatImageView(toolbar.context, null, androidx.appcompat.R.attr.actionOverflowButtonStyle).drawable
 
     private fun maybeApplyRTLCollapsingToolbarLayoutWorkaround(
         coordinatorLayout: StackHeaderCoordinatorLayout,

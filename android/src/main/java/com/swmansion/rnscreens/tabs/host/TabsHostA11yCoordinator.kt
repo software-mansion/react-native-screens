@@ -3,6 +3,9 @@ package com.swmansion.rnscreens.tabs.host
 import android.os.Build
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.children
 import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,8 +26,26 @@ class TabsHostA11yCoordinator(
             menuItem.contentDescription = tabsScreen.tabBarItemAccessibilityLabel
         }
 
-        // when matching view by id, espresso driver seems to look for tag property
-        findTabItemView(menuItem.itemId)?.tag = tabsScreen.tabBarItemTestID
+        findTabItemView(menuItem.itemId)?.let { tabItemView ->
+            // when matching view by id, espresso driver seems to look for tag property
+            tabItemView.tag = tabsScreen.tabBarItemTestID
+
+            // UiAutomator-based drivers (Maestro, Appium) read the node's viewIdResourceName instead,
+            // so expose the testID there as well — this is what React Native's ReactAccessibilityDelegate
+            // does for every other view. Read through to the screen so a prop update is reflected.
+            ViewCompat.setAccessibilityDelegate(
+                tabItemView,
+                object : AccessibilityDelegateCompat() {
+                    override fun onInitializeAccessibilityNodeInfo(
+                        host: View,
+                        info: AccessibilityNodeInfoCompat,
+                    ) {
+                        super.onInitializeAccessibilityNodeInfo(host, info)
+                        info.viewIdResourceName = tabsScreen.tabBarItemTestID
+                    }
+                },
+            )
+        }
     }
 
     // Third-party SDKs can freely assign their own ids to id-less views in CustomBottomNavigationView's subtree and there is no way to

@@ -1,5 +1,5 @@
 #import "RNSTabsBottomAccessoryContentComponentView.h"
-#import "RNSConversions.h"
+#import "RNSConversions-Tabs.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
 
