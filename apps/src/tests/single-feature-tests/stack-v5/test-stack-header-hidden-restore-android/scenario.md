@@ -64,6 +64,7 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] While hidden there is no header and the content starts below the status
       bar.
+
 - [ ] The header comes back **expanded** - a collapse that existed while the
       content was at the top is dropped (see **Note**).
 
@@ -100,9 +101,8 @@ TBD: Planned, but will be implemented separately.
 
 7. Set **type** back to `large` and scroll the content back to the top.
 
-- [ ] The header stays fully collapsed across the type change - the header is
-      live, so its own collapse state is re-asserted - and expands only once
-      the content is back at the top.
+- [ ] The header stays fully collapsed across the type change and expands only
+      once the content is back at the top.
 
 ---
 
@@ -111,12 +111,12 @@ TBD: Planned, but will be implemented separately.
 Each step: set the flags as listed, scroll down until the content is visibly
 scrolled, toggle **hidden** on and off.
 
-8. **scrollFlagExitUntilCollapsed** off (plain scrolling header).
+8. Set **scrollFlagExitUntilCollapsed** off (plain scrolling header).
 
 - [ ] The header comes back fully collapsed - scrolled entirely off screen -
       and re-enters only once the content is scrolled back to the top.
 
-9. **scrollFlagEnterAlways** on (with **scrollFlagExitUntilCollapsed** still
+9. Set **scrollFlagEnterAlways** on (with **scrollFlagExitUntilCollapsed** still
    off).
 
 - [ ] The header comes back fully collapsed, and a small upward drag
@@ -128,13 +128,14 @@ scrolled, toggle **hidden** on and off.
 - [ ] The header comes back **fully collapsed** - the expanded-over-scrolled
       state is dropped (see **Note**).
 
-11. **scrollFlagEnterAlwaysCollapsed** on as well. After checking the first
+11. Set **scrollFlagEnterAlwaysCollapsed** on as well. After checking the first
     result, drag up so the toolbar re-enters, then toggle **hidden** on and
     off again.
 
 - [ ] The header comes back fully collapsed; an upward drag re-enters only
       the toolbar, and the full height returns only once the content reaches
       the top.
+
 - [ ] After the second hide/re-show the re-entered toolbar is dropped: the
       header is fully collapsed again, scrolled entirely off screen, leaving
       only the status bar scrim behind the status bar.
