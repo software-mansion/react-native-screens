@@ -92,7 +92,7 @@ const TAB_ROUTE_CONFIGS = defineTabRouteConfigs([
   },
 ]);
 
-export default function Test9999() {
+export default function App() {
   return (
     <TabsContainer routeConfigs={TAB_ROUTE_CONFIGS} defaultRouteName="Tab2" />
   );
