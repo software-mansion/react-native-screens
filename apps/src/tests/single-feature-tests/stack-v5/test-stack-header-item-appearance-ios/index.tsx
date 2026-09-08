@@ -57,6 +57,12 @@ const HIGHLIGHTED_STYLE: StackHeaderButtonStateAppearanceIOS = {
 const SCROLL_EDGE_HIGHLIGHTED_STYLE: StackHeaderButtonStateAppearanceIOS = {
   fontColor: 'magenta',
 };
+const BACK_BUTTON_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'deeppink',
+};
+const BACK_BUTTON_HIGHLIGHTED_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'darkcyan',
+};
 
 interface Config {
   // When enabled, items render short text labels instead of sfSymbol icons,
@@ -71,6 +77,8 @@ interface Config {
   styleScrollEdge: boolean;
   styleDisabled: boolean;
   styleHighlighted: boolean;
+  styleBackButton: boolean;
+  styleBackButtonHighlighted: boolean;
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -82,6 +90,8 @@ const DEFAULT_CONFIG: Config = {
   styleScrollEdge: true,
   styleDisabled: true,
   styleHighlighted: true,
+  styleBackButton: true,
+  styleBackButtonHighlighted: true,
 };
 
 function makeButtonAppearance(
@@ -127,17 +137,28 @@ function buildAppearances(config: Config): {
         config.styleDisabled ? SCROLL_EDGE_DISABLED_STYLE : undefined,
       )
     : undefined;
+  const backButton = makeButtonAppearance(
+    config.styleBackButton ? BACK_BUTTON_STYLE : undefined,
+    config.styleBackButtonHighlighted
+      ? BACK_BUTTON_HIGHLIGHTED_STYLE
+      : undefined,
+  );
 
   return {
     standardAppearance:
-      standardButton || standardProminentButton
-        ? { button: standardButton, prominentButton: standardProminentButton }
+      standardButton || standardProminentButton || backButton
+        ? {
+            button: standardButton,
+            prominentButton: standardProminentButton,
+            backButton,
+          }
         : undefined,
     scrollEdgeAppearance:
       scrollEdgeButton || scrollEdgeProminentButton
         ? {
             button: scrollEdgeButton,
             prominentButton: scrollEdgeProminentButton,
+            backButton,
           }
         : undefined,
   };
@@ -178,6 +199,7 @@ const buildHeaderConfig = (
   return {
     title,
     ios: {
+      backButtonTitle: 'Back',
       ...buildAppearances(config),
       trailingItems: [
         {
@@ -306,6 +328,11 @@ function ConfigControls() {
         'styleHighlighted',
         'Style highlighted (blue 24pt; magenta at edge)',
       )}
+      {makeToggle('styleBackButton', 'Style back button (deep pink)')}
+      {makeToggle(
+        'styleBackButtonHighlighted',
+        'Style back button highlighted (dark cyan)',
+      )}
     </>
   );
 }
@@ -335,7 +362,7 @@ function HomeScreen() {
 }
 
 function DetailsScreen() {
-  useApplyHeaderConfig('Details');
+  useApplyHeaderConfig('');
 
   return (
     <ScrollView
@@ -344,9 +371,12 @@ function DetailsScreen() {
       style={styles.container}>
       <Text style={styles.label}>
         Back button is visible alongside the header items. With text items
-        enabled, button attributes apply to the plain items (and the back button
-        title on iOS below 26); prominentButton attributes apply to the
-        prominent items.
+        enabled, button attributes apply to the plain items and the back button
+        title; prominentButton attributes apply to the prominent items.
+        backButton attributes apply only to the back button title, overriding
+        the button ones per attribute — unset backButton attributes inherit the
+        buttons style (UIKit derives the back button appearance from the buttons
+        appearance).
       </Text>
       <ConfigControls />
     </ScrollView>
@@ -368,6 +398,14 @@ function TestStackHeaderItemAppearanceIOS() {
             },
             {
               name: 'Details',
+              options: {
+                headerConfig: {
+                  ios: {
+                    backButtonTitle: 'Back',
+                    backButtonDisplayMode: 'default',
+                  },
+                },
+              },
               element: <DetailsScreen />,
             },
           ]}

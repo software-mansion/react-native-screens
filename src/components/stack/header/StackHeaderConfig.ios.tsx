@@ -305,6 +305,10 @@ function mapAppearanceToNativeProp(
       'appearance.prominentButton',
       appearance.prominentButton,
     ),
+    backButton: mapButtonAppearanceToNativeProp(
+      'appearance.backButton',
+      appearance.backButton,
+    ),
   };
 }
 
