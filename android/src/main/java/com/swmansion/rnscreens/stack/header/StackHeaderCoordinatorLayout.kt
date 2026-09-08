@@ -137,6 +137,26 @@ internal class StackHeaderCoordinatorLayout(
 
     // endregion
 
+    // region Layout direction
+
+    // Direction the header was last built against. In order to ensure correct
+    // layout and appearance (e.g. back button arrow direction), we rebuild the
+    // header on layout direction change.
+    private var builtLayoutDirection: Int? = null
+
+    override fun onRtlPropertiesChanged(layoutDirection: Int) {
+        super.onRtlPropertiesChanged(layoutDirection)
+
+        if (builtLayoutDirection == null || builtLayoutDirection == layoutDirection) {
+            return
+        }
+
+        invalidate(StackHeaderInvalidationFlags.STRUCTURE)
+        flushPendingUpdates()
+    }
+
+    // endregion
+
     // region Header updates
 
     private val wrappedContext =
@@ -187,6 +207,7 @@ internal class StackHeaderCoordinatorLayout(
             resetHeader()
             val appBar = applicator.rebuild(this, provider)
             appBarLayout = appBar
+            builtLayoutDirection = layoutDirection
             attachAppBarListeners(appBar)
         }
 
@@ -331,6 +352,7 @@ internal class StackHeaderCoordinatorLayout(
     private fun removeHeader() {
         resetHeader()
         isAppBarFullyCollapsed = null
+        builtLayoutDirection = null
         removeContentBehavior()
         requestLayout()
     }
