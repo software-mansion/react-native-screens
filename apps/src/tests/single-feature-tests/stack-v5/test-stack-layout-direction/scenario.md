@@ -120,12 +120,6 @@ visual check.
 
 ### B. Collapsing header
 
-This section is the reason the collapsing-toolbar RTL workaround exists.
-`CollapsingToolbarLayout` injects a full-width dummy view into the toolbar and
-the toolbar walks its custom children in opposite order per direction, so the
-two have to stay in sync. A subview going missing or collapsing onto the wrong
-edge after a direction switch is the failure to watch for.
-
 11. Set `type = large`.
 
 - [ ] `L·48` sits on the left edge and `T·48` on the right, both at their full
@@ -157,8 +151,9 @@ edge after a direction switch is the failure to watch for.
 - [ ] Every switch is still correct: both probes keep their full width, and
       the menu group sits on the trailing edge - left in RTL, right in LTR.
 
-17. Set `direction = rtl`, then set `expandedTitleHorizontalGravity` to
-    `center`, then to `end`, then back to `start`.
+17. Set `direction = rtl`, then with expanded header, set
+    `expandedTitleHorizontalGravity` to `center`, then to `end`, then back to
+    `start`.
 
 - [ ] `start` puts the expanded title on the right, `center` in the middle and
       `end` on the left.
@@ -173,6 +168,8 @@ edge after a direction switch is the failure to watch for.
 
 - [ ] The collapsed title follows the same mapping: `start` right, `center`
       middle, `end` left.
+- [ ] At `end` the title sits next to `T·48` without covering it or the menu
+      group, and at `center` it is centered between `L·48` and `T·48`.
 
 20. Scroll back up until the header is fully expanded.
 
@@ -240,8 +237,8 @@ edge after a direction switch is the failure to watch for.
 
 ### E. `inherit`
 
-30. Set `menu = none` and `type = small`, then read the `I18nManager.isRTL`
-    label with `direction = inherit`.
+30. Set `menu = none`, `type = small` and `direction = inherit`, then read the
+    `I18nManager.isRTL` label.
 
 - [ ] The label reads `I18nManager.isRTL == false` and the stack is laid out
       LTR.
