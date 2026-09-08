@@ -19,8 +19,8 @@ function TabScreen() {
         Sized SWM: a wide logo sized to 44dp via `drawableIconSize`.
       </Text>
       <Text style={styles.hint}>
-        Multicolor Tint: a VectorDrawable that keeps its own colors when focused
-        (`tinted: false`) and is template(system)-tinted otherwise.
+        Multicolor Tint: a VectorDrawable that keeps its own colors when
+        selected (`tinted: false`) and is template(system)-tinted otherwise.
       </Text>
       <Text style={styles.hint}>
         Sys (unaltered): a built-in star. Size unaltered defaults to 24dp.
@@ -30,8 +30,9 @@ function TabScreen() {
         colors when selected (`tinted: false`).
       </Text>
       <Text style={styles.hint}>
-        The active indicator is bar-wide via `tabBarItemActiveIndicatorWidth` /
-        `Height`. And shared throughout all icons
+        The active indicator is sized via `tabBarItemActiveIndicatorWidth` and
+        `tabBarItemActiveIndicatorHeight`. Those apply to the whole bar, so
+        every route repeats the same values.
       </Text>
     </View>
   );
