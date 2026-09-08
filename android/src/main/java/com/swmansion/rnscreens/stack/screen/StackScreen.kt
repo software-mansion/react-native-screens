@@ -175,4 +175,8 @@ class StackScreen(
     override fun resolveNestedContainer(): Container? = containerItemSupport.resolveNestedContainer()
 
     override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
+
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
+        resolveNestedContainer()?.wantsToPreventStackNativeDismiss()
+            ?: takeIf { isPreventNativeDismissEnabled }
 }

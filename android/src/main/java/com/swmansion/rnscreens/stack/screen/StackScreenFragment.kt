@@ -2,12 +2,14 @@ package com.swmansion.rnscreens.stack.screen
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
+import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
 import java.lang.ref.WeakReference
 
@@ -15,6 +17,7 @@ internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
+    private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -48,7 +51,11 @@ internal class StackScreenFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = StackHeaderCoordinatorLayout(requireContext(), stackScreen, canNavigateBack)
+    ): View =
+        StackHeaderCoordinatorLayout(requireContext(), stackScreen, canNavigateBack) { pressedScreen ->
+            backPressHandler.get()?.handleHeaderBackButtonPress(pressedScreen)
+                ?: Log.w(TAG, "[RNScreens] Header back button press dropped - handler is gone")
+        }
 
     override fun onViewCreated(
         view: View,
@@ -116,5 +123,9 @@ internal class StackScreenFragment(
     private fun teardownPreventNativeDismissCallback() {
         requireNativeDismissBackPressedCallback.remove()
         preventNativeDismissBackPressedCallback = null
+    }
+
+    companion object {
+        private const val TAG = "StackScreenFragment"
     }
 }

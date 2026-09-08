@@ -24,6 +24,7 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
+import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewFinder
@@ -67,7 +68,8 @@ class TabsContainer internal constructor(
             val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
 
             if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack = ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
+                val screenStack =
+                    ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
                 if (screenStack != null && screenStack.popToRoot()) {
                     return true
                 }
@@ -492,7 +494,10 @@ class TabsContainer internal constructor(
 
     private fun performSelectedTabUpdate() {
         if (pendingStateUpdateRequest == null) {
-            RNSLog.w(TAG, "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update")
+            RNSLog.w(
+                TAG,
+                "TabsContainer::performSelectedTabUpdate called w/o pending operation; skipping update",
+            )
             return
         }
 
@@ -516,7 +521,10 @@ class TabsContainer internal constructor(
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
             isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
-            bottomNavigationView.setSelectedItemIdWithActionOrigin(nextSelectedMenuItemId, stateUpdateRequest.actionOrigin)
+            bottomNavigationView.setSelectedItemIdWithActionOrigin(
+                nextSelectedMenuItemId,
+                stateUpdateRequest.actionOrigin,
+            )
             isInExternalOperationContext = false
         } else {
             observerRegistry.emitOnNavigationStateUpdateRejected(
@@ -575,7 +583,10 @@ class TabsContainer internal constructor(
         }
 
         progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
-        applyNextSelectedFragmentToFragmentManagerSync(currentSelectedFragment, nextSelectedFragment)
+        applyNextSelectedFragmentToFragmentManagerSync(
+            currentSelectedFragment,
+            nextSelectedFragment,
+        )
         return true
     }
 
@@ -645,7 +656,8 @@ class TabsContainer internal constructor(
             return false
         }
 
-        val stateChanged = updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
+        val stateChanged =
+            updateNavigationStateAndSelectedFragment(nextSelectedFragment, actionOrigin)
 
         val hasTriggeredSpecialEffect =
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
@@ -690,7 +702,8 @@ class TabsContainer internal constructor(
 
         // We expect at most a single fragment added (detached fragments are not returned from
         // FragmentManager.getFragments call) and it being the currently selected tab.
-        val isInUpToDateState = currentFragments.size == 1 && currentFragments.first() === selectedTab
+        val isInUpToDateState =
+            currentFragments.size == 1 && currentFragments.first() === selectedTab
         if (isInUpToDateState) {
             return
         } else if (currentFragments.isEmpty()) {
@@ -778,6 +791,15 @@ class TabsContainer internal constructor(
         // We assume here that the selectedTab actually corresponds to whats in FragmentManager
         return selectedTab.tabsScreen.findContentScrollView()
     }
+
+    // Only the active item is consulted - a preventing screen inside an inactive tab
+    // does not veto the dismissal.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
+        if (navState.isNotEmpty()) {
+            selectedTab.tabsScreen.wantsToPreventStackNativeDismiss()
+        } else {
+            null
+        }
 
     // endregion
 
