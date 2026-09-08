@@ -17,9 +17,8 @@ internal class StackScreenFragment(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
-    backPressHandler: StackHeaderBackPressHandler,
+    private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
 ) : Fragment() {
-    private val backPressHandler: WeakReference<StackHeaderBackPressHandler> = WeakReference(backPressHandler)
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
     /**

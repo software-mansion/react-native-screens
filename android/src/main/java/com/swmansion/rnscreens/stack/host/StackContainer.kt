@@ -243,7 +243,12 @@ internal class StackContainer(
         screen: StackScreen,
         canNavigateBack: Boolean,
     ): StackScreenFragment =
-        StackScreenFragment(screen, canNavigateBack, WeakReference(this), backPressHandler = this).also {
+        StackScreenFragment(
+            screen,
+            canNavigateBack,
+            WeakReference(this),
+            backPressHandler = WeakReference(this),
+        ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
