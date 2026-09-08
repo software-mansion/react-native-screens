@@ -38,7 +38,7 @@ function TabScreen() {
 const ROUTES: TabRouteConfig[] = [
   {
     name: 'SWM_SYMBOL',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Symbol',
@@ -49,7 +49,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'SWM_TINTED',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Tinted',
@@ -67,7 +67,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'WALKER',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Walker',
@@ -78,7 +78,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'System',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'System',
@@ -90,7 +90,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'IMAGE_TINT',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Image',

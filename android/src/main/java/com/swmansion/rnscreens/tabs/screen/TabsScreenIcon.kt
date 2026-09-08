@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import com.swmansion.rnscreens.helpers.IconResolution
 import com.swmansion.rnscreens.helpers.NoTintDrawable
 import com.swmansion.rnscreens.helpers.PropIconResolver
+import com.swmansion.rnscreens.helpers.resolveImage
 import kotlin.properties.Delegates
 
 /**
@@ -13,7 +14,7 @@ import kotlin.properties.Delegates
  * [resolveIfNeeded]. [onChanged] fires only when the resolved [drawable] actually changes.
  */
 internal class TabsScreenIcon(
-    private val context: Context,
+    context: Context,
     private val onChanged: () -> Unit,
 ) {
     var drawableResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
@@ -35,7 +36,7 @@ internal class TabsScreenIcon(
     private var isInvalidated = false
 
     // Handles source precedence (drawable name wins over uri), dedup, and stale async image drops.
-    private val resolver = PropIconResolver()
+    private val resolver = createPropIconResolver(context)
 
     // Kept unwrapped so a tint-only change re-wraps without reloading.
     private var rawDrawable: Drawable? = null
@@ -46,7 +47,7 @@ internal class TabsScreenIcon(
             return
         }
         isInvalidated = false
-        resolver.resolve(context, drawableResourceName, imageUri) { result ->
+        resolver.resolve(drawableResourceName, imageUri) { result ->
             when (result) {
                 IconResolution.Unchanged -> if (tinted != appliedTinted) emit()
                 is IconResolution.Resolved -> {
@@ -65,5 +66,12 @@ internal class TabsScreenIcon(
             drawable = next
             onChanged()
         }
+    }
+
+    private companion object {
+        fun createPropIconResolver(context: Context) =
+            PropIconResolver { name, uri, onComplete ->
+                resolveImage(context, name, uri, onComplete)
+            }
     }
 }

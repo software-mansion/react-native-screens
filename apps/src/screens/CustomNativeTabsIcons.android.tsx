@@ -45,7 +45,7 @@ const INDICATOR = {
 const ROUTES: TabRouteConfig[] = [
   {
     name: 'OG_SWM',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'OG SWM',
@@ -57,7 +57,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'SIZED_SWM',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Sized SWM',
@@ -70,7 +70,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'Multicolor',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Multicolor Tint',
@@ -92,7 +92,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'System',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Sys (unaltered)',
@@ -105,7 +105,7 @@ const ROUTES: TabRouteConfig[] = [
   },
   {
     name: 'IMAGE_TINT',
-    Component: TabScreen,
+    element: <TabScreen />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Image Tint',
