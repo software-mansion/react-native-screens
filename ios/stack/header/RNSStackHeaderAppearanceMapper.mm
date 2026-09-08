@@ -62,6 +62,19 @@
     appearance.buttonAppearance = buttonAppearance;
   }
 
+  // UIKit draws unset backButtonAppearance attributes from buttonAppearance,
+  // so backButton attributes only override the button ones where set.
+  appearance.backButtonAppearance = [self barButtonItemAppearance:appearance.backButtonAppearance
+                                            updatedWithDictionary:appearanceDict
+                                                        keyPrefix:@"backButton"];
+
+  // Prominent items use the done style below iOS 26 and the prominent style on
+  // iOS 26+, so the prominent button attributes go to the appearance object
+  // matching each style. doneButtonAppearance is written on iOS 26+ too, keeping
+  // done-styled buttons consistent with prominent ones.
+  appearance.doneButtonAppearance = [self barButtonItemAppearance:appearance.doneButtonAppearance
+                                            updatedWithDictionary:appearanceDict
+                                                        keyPrefix:@"prominentButton"];
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     UIBarButtonItemAppearance *prominentButtonAppearance =

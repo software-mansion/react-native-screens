@@ -42,6 +42,9 @@ const BUTTON_SLOTS = [
   'prominentButtonHighlighted',
   'prominentButtonDisabled',
   'prominentButtonFocused',
+  'backButton',
+  'backButtonHighlighted',
+  'backButtonFocused',
 ] as const;
 
 type ButtonSlotKey = (typeof BUTTON_SLOTS)[number];
@@ -102,6 +105,7 @@ const buildHeaderConfig = (
   return {
     title,
     ios: {
+      backButtonTitle: "Back",
       standardAppearance: buildHeaderAppearance(config.standard),
       scrollEdgeAppearance: buildHeaderAppearance(config.scrollEdge),
       trailingItems: [
@@ -274,7 +278,7 @@ function HomeScreen() {
 }
 
 function DetailsScreen() {
-  useApplyHeaderConfig('Details');
+  useApplyHeaderConfig("");
 
   return (
     <ScrollView
@@ -285,7 +289,8 @@ function DetailsScreen() {
         Back button is visible alongside the header items. With text items
         enabled, button attributes apply to the plain items (and the back button
         title on iOS below 26); prominentButton attributes apply to the
-        prominent items.
+        prominent items. backButton attributes apply only to the back button
+        title (iOS below 26), overriding the button ones.
       </Text>
       <ConfigControls />
     </ScrollView>
@@ -307,6 +312,14 @@ function TestStackHeaderItemAppearanceIOS() {
             },
             {
               name: 'Details',
+              options: {
+                headerConfig: {
+                  ios: {
+                    backButtonTitle: "Back",
+                    backButtonDisplayMode: "default"
+                  }
+                }
+              },
               element: <DetailsScreen />,
             },
           ]}

@@ -49,7 +49,10 @@ export type HeaderAppearanceSlotKey =
   | 'prominentButton'
   | 'prominentButtonHighlighted'
   | 'prominentButtonDisabled'
-  | 'prominentButtonFocused';
+  | 'prominentButtonFocused'
+  | 'backButton'
+  | 'backButtonHighlighted'
+  | 'backButtonFocused';
 
 export interface HeaderAppearanceConfig<K extends HeaderAppearanceSlotKey> {
   enabled: boolean;
