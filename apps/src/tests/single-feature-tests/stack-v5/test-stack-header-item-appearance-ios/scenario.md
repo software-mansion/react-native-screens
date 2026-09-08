@@ -95,3 +95,11 @@ TBD
 - [ ] The style is visible when the button "aa" and "cc" is being pressed
 
 - [ ] The style is NOT visible when the button "bb" and "dd" is being pressed (disabled)
+
+12. Set "item tintColor" to red
+
+- [ ] Enabled items "1" and "3" are tinted red (with sfSymbols: icon color;
+      with text items: for prominent items on iOS 26 tint affects the
+      emphasized background, otherwise the text color)
+
+- [ ] Disabled items keep the system disabled look
