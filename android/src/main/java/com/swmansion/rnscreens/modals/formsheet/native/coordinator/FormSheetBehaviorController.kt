@@ -80,7 +80,8 @@ internal class FormSheetBehaviorController(
      * Used exclusively when the sheet is in `fitToContents` mode.
      * @param nativeContainerPaddingBottom - the bottom system inset. In `fitToContents` mode, this is added to the
      * BottomSheet's height to extend its background behind the system bars, while the inner content remains within
-     * the safe area.
+     * the safe area. For fractional detents it is subtracted from the collapsed peek height, which Material resolves
+     * above the inset, so the lowest detent lands at its fraction of [sheetAvailableSpace] like the other ones.
      * @param initialDetentIndex - the index of the detent the sheet should snap to while opening.
      * @param applyInitialDetent - whether the sheet should forcefully snap to the initial detent state.
      * This should typically be `true` only when the sheet transitions from closed to open.
@@ -104,8 +105,22 @@ internal class FormSheetBehaviorController(
         } else {
             when (detents.count) {
                 1 -> configureSingleDetent(detents, sheetAvailableSpace)
-                2 -> configureTwoDetents(detents, sheetAvailableSpace, initialDetentIndex, applyInitialDetent)
-                3 -> configureThreeDetents(detents, sheetAvailableSpace, initialDetentIndex, applyInitialDetent)
+                2 ->
+                    configureTwoDetents(
+                        detents,
+                        sheetAvailableSpace,
+                        nativeContainerPaddingBottom,
+                        initialDetentIndex,
+                        applyInitialDetent,
+                    )
+                3 ->
+                    configureThreeDetents(
+                        detents,
+                        sheetAvailableSpace,
+                        nativeContainerPaddingBottom,
+                        initialDetentIndex,
+                        applyInitialDetent,
+                    )
                 else -> throw IllegalStateException(
                     "[RNScreens] Unsupported detent count ${detents.count}.",
                 )
@@ -138,12 +153,13 @@ internal class FormSheetBehaviorController(
     private fun configureTwoDetents(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
+        bottomInset: Int,
         initialDetentIndex: Int,
         applyInitialDetent: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
         isFitToContents = true
-        peekHeight = detents.firstHeight(sheetAvailableSpace)
+        peekHeight = detents.peekHeight(sheetAvailableSpace, bottomInset)
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
         if (applyInitialDetent) {
             state = resolveStateFromIndex(initialDetentIndex, detents.count)
@@ -153,12 +169,13 @@ internal class FormSheetBehaviorController(
     private fun configureThreeDetents(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
+        bottomInset: Int,
         initialDetentIndex: Int,
         applyInitialDetent: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
         isFitToContents = false
-        peekHeight = detents.firstHeight(sheetAvailableSpace)
+        peekHeight = detents.peekHeight(sheetAvailableSpace, bottomInset)
         halfExpandedRatio = detents.halfExpandedRatio()
         expandedOffset = detents.expandedOffsetFromTop(sheetAvailableSpace)
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
