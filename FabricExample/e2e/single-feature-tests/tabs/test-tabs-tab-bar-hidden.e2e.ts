@@ -1,12 +1,10 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiPad,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfiPad } from '@e2e/framework/platform';
 
 describe('Tab Bar Hidden', () => {
   beforeAll(async () => {

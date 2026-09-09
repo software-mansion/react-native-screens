@@ -1,23 +1,20 @@
 import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
-  describeIfiOS26,
-  describeIfiPadOS26,
-  expectBottomAccessoryAboveTabBar,
   forceTapByLabeliOS,
-  getBottomAccessoryAttributes,
-  getMatches,
-  getTabBarAttributes,
   scrollUntilVisible,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+} from '@e2e/framework/gestures';
+import { getMatches } from '@e2e/framework/matchers';
+import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+import { describeIfiOS26, describeIfiPadOS26 } from '@e2e/framework/platform';
+import {
+  bottomAccessoryElement,
+  expectBottomAccessoryAboveTabBar,
+  getBottomAccessoryAttributes,
+  getTabBarAttributes,
+} from '@e2e/framework/tab-bar';
 import { IosElementAttributes } from 'detox/detox';
-import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '../../native-class-names';
-
-const bottomAccessoryElement = (testID: string) =>
-  element(
-    by.id(testID).withAncestor(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
-  ).atIndex(0);
 
 async function expectBottomAccessoryExist(testID: string) {
   await expect(bottomAccessoryElement(testID)).toExist();

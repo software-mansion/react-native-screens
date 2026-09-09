@@ -1,11 +1,9 @@
 import { device, expect, element, by } from 'detox';
-import {
-  scrollUntilVisible,
-  selectComponentIntegrationTestsScreen,
-  forceSelectTabByLabel,
-  describeIfAndroid,
-} from '../../e2e-utils';
-import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
+import { selectComponentIntegrationTestsScreen } from '@e2e/app/test-screen-navigation';
+import { scrollUntilVisible } from '@e2e/framework/gestures';
+import { CLASS_NAME_UI_TAB_BAR } from '@e2e/framework/native-classes-ios';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import { forceSelectTabByLabel } from '@e2e/framework/tab-bar';
 
 describe('SVM in Stack & Tabs - tabs special effects — scrollToTop: no nesting', () => {
   beforeAll(async () => {

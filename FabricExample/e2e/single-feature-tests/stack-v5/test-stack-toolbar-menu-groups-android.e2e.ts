@@ -1,10 +1,19 @@
 import { device, expect, element, by } from 'detox';
 import {
+  selectPickerOption,
+  toggleSettingsSwitch,
+} from '@e2e/app/settings-controls';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissNextToast, expectNoToast } from '@e2e/app/toast';
+import {
+  CLASS_NAME_ANDROID_CHECK_BOX,
+  CLASS_NAME_ANDROID_RADIO_BUTTON,
+} from '@e2e/framework/native-classes-android';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
   createOverflowMenuHelpers,
-  describeIfAndroid,
-  dismissNextToast,
   expectCheckBox,
-  expectNoToast,
   expectRadioButton,
   MENU_ANIMATION_TIMEOUT_MS,
   menuItemImage,
@@ -12,15 +21,7 @@ import {
   menuItemToggle,
   openOverflowMenu,
   overflowMenuText,
-  scrollToAndTap,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
-} from '../../e2e-utils';
-import {
-  CLASS_NAME_ANDROID_CHECK_BOX,
-  CLASS_NAME_ANDROID_RADIO_BUTTON,
-} from '../../native-class-names';
+} from '@e2e/framework/toolbar-menu-android';
 
 // The cases follow `scenario.md` as one continuous flow: each starts from the
 // state the previous one left.

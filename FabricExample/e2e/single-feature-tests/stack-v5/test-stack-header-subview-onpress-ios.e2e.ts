@@ -1,16 +1,15 @@
 import { device, expect, element, by } from 'detox';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast } from '@e2e/app/toast';
 import {
   chevronFor,
-  describeIfiOS,
-  describeIfiOS26,
   dismissContextMenu,
-  dismissToast,
-  headerItem,
   menuRow,
   openContextMenu,
-  selectSingleFeatureTestsScreen,
   submenuTitleRow,
-} from '../../e2e-utils';
+} from '@e2e/framework/context-menu-ios';
+import { headerItem } from '@e2e/framework/header-items-ios';
+import { describeIfiOS, describeIfiOS26 } from '@e2e/framework/platform';
 
 /**
  * A selectable row of the presented menu. A submenu's pinned title/back row

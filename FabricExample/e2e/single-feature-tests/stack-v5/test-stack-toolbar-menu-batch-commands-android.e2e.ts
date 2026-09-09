@@ -1,20 +1,24 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import {
+  rewindAndScrollUntilVisible,
+  scrollToAndReadText,
+  scrollToAndTap,
+} from '@e2e/framework/gestures';
+import { describeIfAndroid } from '@e2e/framework/platform';
 import {
   actionMenuItem,
-  createOverflowMenuHelpers,
-  describeIfAndroid,
-  expectCheckBox,
   expectIconActionItem,
-  expectRadioButton,
   expectTextActionItem,
+} from '@e2e/framework/stack-header-android';
+import {
+  createOverflowMenuHelpers,
+  expectCheckBox,
+  expectRadioButton,
   menuItemRow,
-  DEFAULT_TIMEOUT_MS,
-  readText,
-  rewindAndScrollUntilVisible,
-  scrollToAndTap,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+} from '@e2e/framework/toolbar-menu-android';
+import { DEFAULT_TIMEOUT_MS } from '@e2e/framework/wait';
 
 // Stateful walkthrough of scenario.md: the menu's checked state is cumulative
 // and the screen has no full reset, so each case starts where the previous one
@@ -60,7 +64,10 @@ async function expectEventCount(n: number, timeoutMs = DEFAULT_TIMEOUT_MS) {
 }
 
 async function expectEventCountUnchanged(action: () => Promise<void>) {
-  const before = await readText('events-count-text', SETTINGS_CONTROL);
+  const before = await scrollToAndReadText(
+    'events-count-text',
+    SETTINGS_CONTROL,
+  );
   jestExpect(before).toMatch(/^Events received: \d+$/);
   await action();
   await scrollIntoView('events-count-text');
@@ -87,7 +94,10 @@ function parseLogEntry(raw: string): { groupId: string; ids: string[] } {
 
 // Compares ids sorted — order-insensitive, duplicates still fail.
 async function expectLogEntry(index: number, groupId: string, ids: string[]) {
-  const raw = await readText(`event-log-entry-${index}`, SETTINGS_CONTROL);
+  const raw = await scrollToAndReadText(
+    `event-log-entry-${index}`,
+    SETTINGS_CONTROL,
+  );
   const entry = parseLogEntry(raw);
   jestExpect(entry.groupId).toBe(groupId);
   jestExpect([...entry.ids].sort()).toEqual([...ids].sort());

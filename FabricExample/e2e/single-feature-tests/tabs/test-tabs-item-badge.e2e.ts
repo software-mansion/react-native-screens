@@ -1,13 +1,10 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  isIOSVersionAtLeast,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26,
   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfiOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
 const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
   ? CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26
   : CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY;
