@@ -63,7 +63,7 @@
   if (screenView.iconType == RNSTabsIconTypeSfSymbol || screenView.iconType == RNSTabsIconTypeXcasset) {
     if (screenView.iconResourceName != nil) {
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName];
+        tabBarItem.image = [RNSImageLoadingHelper symbolImageNamed:screenView.iconResourceName];
       } else {
         tabBarItem.image = [UIImage imageNamed:screenView.iconResourceName];
       }
@@ -84,7 +84,7 @@
 
     if (screenView.selectedIconResourceName != nil) {
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
+        tabBarItem.selectedImage = [RNSImageLoadingHelper symbolImageNamed:screenView.selectedIconResourceName];
       } else {
         tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
       }

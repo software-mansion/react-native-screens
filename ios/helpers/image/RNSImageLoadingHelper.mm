@@ -59,6 +59,15 @@
       }];
 }
 
++ (nullable UIImage *)symbolImageNamed:(nonnull NSString *)name
+{
+  UIImage *image = [UIImage systemImageNamed:name];
+  if (image == nil) {
+    image = [UIImage imageNamed:name];
+  }
+  return image;
+}
+
 + (nullable UIImage *)handleRenderingModeForImage:(nullable UIImage *)image isTemplate:(BOOL)isTemplate
 {
   if (isTemplate) {

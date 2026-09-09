@@ -100,6 +100,20 @@ export interface TabsScreenAppearanceAndroid {
    */
   tabBarItemActiveIndicatorEnabled?: boolean | undefined;
   /**
+   * @summary Active-indicator pill width in dp. If unset, it auto-scales to wrap
+   * the icon box when icons are enlarged via `drawableIconSize`.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorWidth?: number | undefined;
+  /**
+   * @summary Active-indicator pill height in dp. If unset, it auto-scales to wrap
+   * the icon box when icons are enlarged via `drawableIconSize`.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorHeight?: number | undefined;
+  /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
    * @platform android
@@ -162,8 +176,10 @@ export interface TabsScreenPropsAndroid {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource }`
-   *   Uses an image from the provided resource.
+   * - `{ type: 'imageSource', imageSource, tinted? }`
+   *   Uses an image from the provided resource. The tab bar tints it with the
+   *   item icon color unless `tinted` is `false`, which keeps the image's own
+   *   colors.
    *
    *   Remarks: `imageSource` type doesn't support SVGs on Android.
    *   For loading SVGs use `drawableResource` type.
@@ -186,4 +202,14 @@ export interface TabsScreenPropsAndroid {
    * @platform android
    */
   selectedIcon?: PlatformIconAndroid | undefined;
+  /**
+   * @summary Per-tab icon size in dp.
+   *
+   * The bottom bar's icon box is the largest `drawableIconSize` across all tabs;
+   * each tab's icon is inset to its own size within that box. Tabs without a value
+   * use the system default.
+   *
+   * @platform android
+   */
+  drawableIconSize?: number | undefined;
 }
