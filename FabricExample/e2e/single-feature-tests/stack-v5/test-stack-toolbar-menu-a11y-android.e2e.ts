@@ -1,8 +1,28 @@
 import { device, expect, element, by } from 'detox';
 import {
   describeIfAndroid,
+  openOverflowMenu,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
+
+// No scroll view testID on this screen: pickers are tapped in place and the
+// popup is closed with a plain Back press.
+const setTarget = (option: 'action-item' | 'overflow-item') =>
+  selectPickerOption({
+    pickerId: 'cmd-target-picker',
+    label: 'target id',
+    option,
+  });
+
+const setLabel = (option: 'Updated label' | 'undefined') =>
+  selectPickerOption({
+    pickerId: 'cmd-label-picker',
+    label: 'accessibilityLabel',
+    option,
+  });
+
+const sendCommand = () => element(by.id('send-command-button')).tap();
 
 describeIfAndroid('Stack Toolbar Menu A11y', () => {
   beforeAll(async () => {
@@ -18,73 +38,51 @@ describeIfAndroid('Stack Toolbar Menu A11y', () => {
   });
 
   it('should find overflow item by accessibilityLabel', async () => {
-    await element(by.label('More options')).tap();
+    await openOverflowMenu();
     await expect(element(by.label('Accessibility for Beta'))).toBeVisible();
     await expect(element(by.label('Accessibility for Gamma'))).toBeVisible();
     await device.pressBack();
   });
 
   it('should find submenu item by accessibilityLabel', async () => {
-    await element(by.label('More options')).tap();
+    await openOverflowMenu();
     await element(by.label('Accessibility for Gamma')).tap();
     await expect(element(by.label('Accessibility for Delta'))).toBeVisible();
     await device.pressBack();
   });
 
   it('should update accessibilityLabel via view command', async () => {
-    await element(by.id('cmd-target-picker')).tap();
-    await element(by.text('action-item')).tap();
-
-    await element(by.id('cmd-label-picker')).tap();
-    await element(by.text('Updated label')).tap();
-
-    await element(by.id('send-command-button')).tap();
-
-    await element(by.id('cmd-target-picker')).tap();
-    await element(by.id('cmd-label-picker')).tap();
+    await setTarget('action-item');
+    await setLabel('Updated label');
+    await sendCommand();
 
     await expect(element(by.label('Updated label'))).toBeVisible();
     await expect(element(by.label('Accessibility for Alpha'))).not.toExist();
   });
 
   it('should reset accessibilityLabel to title fallback', async () => {
-    await element(by.id('cmd-label-picker')).tap();
-    await element(by.text('undefined')).tap();
-
-    await element(by.id('send-command-button')).tap();
-
-    await element(by.id('cmd-label-picker')).tap();
+    await setLabel('undefined');
+    await sendCommand();
 
     await expect(element(by.label('Alpha'))).toBeVisible();
     await expect(element(by.label('Updated label'))).not.toExist();
   });
 
   it('should update overflow item accessibilityLabel via view command', async () => {
-    await element(by.id('cmd-target-picker')).tap();
-    await element(by.text('overflow-item')).tap();
+    await setTarget('overflow-item');
+    await setLabel('Updated label');
+    await sendCommand();
 
-    await element(by.id('cmd-label-picker')).tap();
-    await element(by.text('Updated label')).tap();
-
-    await element(by.id('send-command-button')).tap();
-
-    await element(by.id('cmd-target-picker')).tap();
-    await element(by.id('cmd-label-picker')).tap();
-
-    await element(by.label('More options')).tap();
+    await openOverflowMenu();
     await expect(element(by.label('Updated label'))).toBeVisible();
     await device.pressBack();
   });
 
   it('should reset overflow item to no content description', async () => {
-    await element(by.id('cmd-label-picker')).tap();
-    await element(by.text('undefined')).tap();
+    await setLabel('undefined');
+    await sendCommand();
 
-    await element(by.id('send-command-button')).tap();
-
-    await element(by.id('cmd-label-picker')).tap();
-
-    await element(by.label('More options')).tap();
+    await openOverflowMenu();
 
     await expect(element(by.text('Beta'))).toBeVisible();
     await expect(element(by.label('Updated label'))).not.toExist();

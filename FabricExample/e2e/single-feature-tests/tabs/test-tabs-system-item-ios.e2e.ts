@@ -1,18 +1,17 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
-import { selectSingleFeatureTestsScreen, describeIfiOS } from '../../e2e-utils';
-import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+import {
+  describeIfiOS,
+  isIOSVersionAtLeast,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LABEL,
   CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY,
 } from '../../native-class-names';
-const {
-  getIOSVersionNumber,
-} = require('../../../../scripts/e2e/ios-devices.js');
-
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
 }
@@ -36,13 +35,6 @@ async function tapSystemTitleOption() {
 
 async function tapSystemIconOption() {
   await element(by.text('system')).atIndex(1).tap();
-}
-
-function isIOSVersionAtLeast(version: string): boolean {
-  return (
-    device.getPlatform() === 'ios' &&
-    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
-  );
 }
 
 const tabBarButtonType = isIOSVersionAtLeast('26.0')

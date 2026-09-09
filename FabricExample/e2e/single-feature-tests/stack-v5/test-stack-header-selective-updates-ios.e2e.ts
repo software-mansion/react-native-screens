@@ -1,30 +1,13 @@
-import { device, expect, element, by, waitFor } from 'detox';
+import { device, expect, element, by } from 'detox';
 import {
+  checkmarkFor,
   describeIfiOS,
   dismissToast,
+  headerItem as textItem,
+  openContextMenu,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
-} from '../../native-class-names';
-
-function textItem(label: string) {
-  return element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).and(by.label(label)));
-}
-
-// A checked toggle/singleSelection row inside the presented native UIMenu.
-function checkmarkFor(itemLabel: string) {
-  return element(
-    by
-      .id('checkmark')
-      .withAncestor(
-        by
-          .type(CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW)
-          .and(by.label(itemLabel)),
-      ),
-  );
-}
 
 // `SettingsPicker` derives its option testIDs from the label only, not the item
 // index (`title-foo`, `menu-single`, …), so those IDs are duplicated across
@@ -32,20 +15,22 @@ function checkmarkFor(itemLabel: string) {
 // single picker, taps the option, and closes it again before the next call -
 // i.e. at most one picker is expanded at any time. Keep that invariant.
 async function setTitle(itemIndex: number, variant: 'foo' | 'bar') {
-  const pickerId = `title-picker-${itemIndex}`;
-  await element(by.id(pickerId)).tap();
-  await element(by.id(`title-${variant}`)).tap();
-  await element(by.id(pickerId)).tap();
+  await selectPickerOption({
+    pickerId: `title-picker-${itemIndex}`,
+    label: 'Title',
+    option: variant,
+  });
 }
 
 async function setMenuMode(
   itemIndex: number,
   mode: 'none' | 'single' | 'multi',
 ) {
-  const pickerId = `menu-picker-${itemIndex}`;
-  await element(by.id(pickerId)).tap();
-  await element(by.id(`menu-${mode}`)).tap();
-  await element(by.id(pickerId)).tap();
+  await selectPickerOption({
+    pickerId: `menu-picker-${itemIndex}`,
+    label: 'Menu',
+    option: mode,
+  });
 }
 
 describeIfiOS('Stack Header Selective Updates (iOS)', () => {
@@ -78,7 +63,7 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
 
   describe('opening Item 1 menu by long press with singleSelection', () => {
     it('should select Option-0-B via the menu and emit the selection toast', async () => {
-      await textItem('Bar 1').longPress();
+      await openContextMenu(textItem('Bar 1'), { gesture: 'longPress' });
       await expect(checkmarkFor('Option-0-A')).toBeVisible();
 
       await element(by.text('Option-0-B')).tap();
@@ -87,7 +72,7 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
     });
 
     it('should show only Option-0-B checked when the menu is reopened', async () => {
-      await textItem('Bar 1').longPress();
+      await openContextMenu(textItem('Bar 1'), { gesture: 'longPress' });
 
       await expect(checkmarkFor('Option-0-B')).toBeVisible();
       await expect(checkmarkFor('Option-0-A')).not.toExist();
@@ -98,14 +83,14 @@ describeIfiOS('Stack Header Selective Updates (iOS)', () => {
   it('should default to Option-0-A, add Option-0-B to the multi selection, emit a combined toast, and keep both checked on reopen', async () => {
     await setMenuMode(0, 'multi');
 
-    await textItem('Bar 1').longPress();
+    await openContextMenu(textItem('Bar 1'), { gesture: 'longPress' });
     await expect(checkmarkFor('Option-0-A')).toBeVisible();
 
     await element(by.text('Option-0-B')).tap();
     await dismissToast('1. Pressed Item 1');
     await dismissToast('1. Item 1 [multi]: "Option-0-A", "Option-0-B"');
 
-    await textItem('Bar 1').longPress();
+    await openContextMenu(textItem('Bar 1'), { gesture: 'longPress' });
     await expect(checkmarkFor('Option-0-A')).toBeVisible();
     await expect(checkmarkFor('Option-0-B')).toBeVisible();
     await dismissToast('1. Pressed Item 1');

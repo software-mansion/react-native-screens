@@ -1,13 +1,14 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
 import {
+  getSingleMatch,
+  textOf,
   describeIfAndroid,
   describeIfiOS,
-  getElementAttributes,
-  getTopmostMatch,
+  readTopmostText,
   selectSingleFeatureTestsScreen,
-  tapTopmost,
+  tapTopmostButton,
+  waitForRouteName,
   waitUntil,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
@@ -37,29 +38,15 @@ import {
  *   launch documented in the scenario.
  */
 
-type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
-
 describeIfiOS('Stack v5: simple navigation', () => {
   /**
    * Reads the currently-visible route's `Key` label. Because
    * react-native-screens detaches covered screens, only the top screen's
    * `stack-route-key` element is in the hierarchy, so this resolves
-   * unambiguously to the current screen.
+   * unambiguously to the current screen — asserted by `getSingleMatch`.
    */
-  async function readRouteKey(): Promise<string> {
-    const attrs = await getElementAttributes({
-      by: 'id',
-      value: 'stack-route-key',
-    });
-    const value = attrs.text ?? attrs.label ?? '';
-    return value.trim();
-  }
-
-  async function waitForRoute(routeName: 'Home' | 'A' | 'B'): Promise<void> {
-    await waitFor(element(by.text(`Name: ${routeName}`)))
-      .toBeVisible()
-      .withTimeout(3000);
-  }
+  const readRouteKey = async () =>
+    textOf(await getSingleMatch(by.id('stack-route-key'), 'stack-route-key'));
 
   /**
    * Waits until a screen with the same route name as `previousKey` but a
@@ -111,7 +98,7 @@ describeIfiOS('Stack v5: simple navigation', () => {
   let firstBKey = '';
 
   it('should show Home as the root screen with no back or Pop button', async () => {
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     homeKey = await readRouteKey();
     await expect(element(by.text('Push A'))).toBeVisible();
     await expect(element(by.text('Push B'))).toBeVisible();
@@ -121,7 +108,7 @@ describeIfiOS('Stack v5: simple navigation', () => {
 
   it('should push A with a new key and reveal Pop + back button', async () => {
     await element(by.text('Push A')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     firstAKey = await readRouteKey();
     jestExpect(firstAKey).not.toBe(homeKey);
     await expect(element(by.text('Pop'))).toBeVisible();
@@ -130,7 +117,7 @@ describeIfiOS('Stack v5: simple navigation', () => {
 
   it('should push B on top of A with a new key', async () => {
     await element(by.text('Push B')).tap();
-    await waitForRoute('B');
+    await waitForRouteName('B');
     firstBKey = await readRouteKey();
     jestExpect(firstBKey).not.toBe(firstAKey);
     jestExpect(firstBKey).not.toBe(homeKey);
@@ -139,26 +126,26 @@ describeIfiOS('Stack v5: simple navigation', () => {
 
   it('should push a second A instance with a key distinct from the first A', async () => {
     await element(by.text('Push A')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     const secondAKey = await readRouteKey();
     jestExpect(secondAKey).not.toBe(firstAKey);
   });
 
   it('should pop back to B keeping its original key', async () => {
     await element(by.text('Pop')).tap();
-    await waitForRoute('B');
+    await waitForRouteName('B');
     jestExpect(await readRouteKey()).toBe(firstBKey);
   });
 
   it('should pop back to A keeping its original key', async () => {
     await element(by.text('Pop')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     jestExpect(await readRouteKey()).toBe(firstAKey);
   });
 
   it('should pop back to Home with no Pop or back button', async () => {
     await element(by.text('Pop')).tap();
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     jestExpect(await readRouteKey()).toBe(homeKey);
     await expect(element(by.text('Pop'))).not.toExist();
     await expect(backButtonIcon).not.toExist();
@@ -166,16 +153,16 @@ describeIfiOS('Stack v5: simple navigation', () => {
 
   it('should navigate to Home with egde swipe', async () => {
     await element(by.text('Push A')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     firstAKey = await readRouteKey();
     await element(by.text('Push B')).tap();
-    await waitForRoute('B');
+    await waitForRouteName('B');
     await element(by.id('screenB-layout-view')).swipe('right');
     jestExpect(await readRouteKey()).toBe(firstAKey);
   });
 
   it('should assign a distinct key to every pushed A instance', async () => {
-    await waitForRoute('A');
+    await waitForRouteName('A');
     const a1 = await readRouteKey();
 
     await element(by.text('Push A')).tap();
@@ -196,21 +183,21 @@ describeIfiOS('Stack v5: simple navigation', () => {
     await element(by.text('Pop')).tap();
     await waitForKeyChange(top);
     await element(by.text('Pop')).tap();
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
   });
 
   it('should pop via the native back button like the Pop button', async () => {
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
 
     await element(by.text('Push A')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     const aKey = await readRouteKey();
 
     await element(by.text('Push B')).tap();
-    await waitForRoute('B');
+    await waitForRouteName('B');
 
     await tapBarBackButton();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     jestExpect(await readRouteKey()).toBe(aKey);
   });
 });
@@ -222,20 +209,9 @@ describeIfAndroid('Stack v5: simple navigation', () => {
   const PUSH_B = 'PUSH B';
   const POP = 'POP';
 
-  /** Reads the `Key`/`Name` label text from the topmost stacked screen. */
-  async function readTopmostText(testID: string): Promise<string> {
-    const top = await getTopmostMatch(by.id(testID));
-    return (top.text ?? top.label ?? '').trim();
-  }
-
   /** Reads the topmost route's unique `routeKey`. */
   async function readRouteKey(): Promise<string> {
     return readTopmostText('stack-route-key');
-  }
-
-  /** Taps a Push/Pop button on the topmost stacked screen. */
-  async function tapTopmostButton(title: string): Promise<void> {
-    await tapTopmost(by.text(title));
   }
 
   /**
