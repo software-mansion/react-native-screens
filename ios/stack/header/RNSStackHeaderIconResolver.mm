@@ -1,4 +1,5 @@
 #import "RNSStackHeaderIconResolver.h"
+#import <React/RCTLog.h>
 
 @implementation RNSStackHeaderIconResolver
 
@@ -18,11 +19,17 @@
   switch (iconData.iconType) {
     case RNSStackHeaderIconTypeSfSymbol: {
       UIImage *image = [UIImage systemImageNamed:iconData.resourceName];
+      if (image == nil && iconData.resourceName != nil) {
+        RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for header icon", iconData.resourceName);
+      }
       iconData.resolvedImage = image;
       return image;
     }
     case RNSStackHeaderIconTypeXcasset: {
       UIImage *image = [UIImage imageNamed:iconData.resourceName];
+      if (image == nil && iconData.resourceName != nil) {
+        RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for header icon", iconData.resourceName);
+      }
       iconData.resolvedImage = image;
       return image;
     }

@@ -63,9 +63,17 @@
   if (screenView.iconType == RNSTabsIconTypeSfSymbol || screenView.iconType == RNSTabsIconTypeXcasset) {
     if (screenView.iconResourceName != nil) {
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        tabBarItem.image = [UIImage systemImageNamed:screenView.iconResourceName];
+        UIImage *image = [UIImage systemImageNamed:screenView.iconResourceName];
+        if (image == nil) {
+          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for tab bar item", screenView.iconResourceName);
+        }
+        tabBarItem.image = image;
       } else {
-        tabBarItem.image = [UIImage imageNamed:screenView.iconResourceName];
+        UIImage *image = [UIImage imageNamed:screenView.iconResourceName];
+        if (image == nil) {
+          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for tab bar item", screenView.iconResourceName);
+        }
+        tabBarItem.image = image;
       }
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
@@ -84,9 +92,19 @@
 
     if (screenView.selectedIconResourceName != nil) {
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        tabBarItem.selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
+        UIImage *selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
+        if (selectedImage == nil) {
+          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
+                     screenView.selectedIconResourceName);
+        }
+        tabBarItem.selectedImage = selectedImage;
       } else {
-        tabBarItem.selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
+        UIImage *selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
+        if (selectedImage == nil) {
+          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for selected tab bar item",
+                     screenView.selectedIconResourceName);
+        }
+        tabBarItem.selectedImage = selectedImage;
       }
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
