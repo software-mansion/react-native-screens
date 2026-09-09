@@ -24,10 +24,10 @@ function assertSupportedVersionString(
 
 function compareVersions(
   version: MajorVersion | MajorMinorVersion,
-  minimumVersion: MajorVersion | MajorMinorVersion,
+  versionToCompare: MajorVersion | MajorMinorVersion,
 ) {
   const [majorA, minorA = '0'] = version.split('.').map(Number);
-  const [majorB, minorB = '0'] = minimumVersion.split('.').map(Number);
+  const [majorB, minorB = '0'] = versionToCompare.split('.').map(Number);
   if (majorA !== majorB) {
     return majorA - majorB;
   } else {
