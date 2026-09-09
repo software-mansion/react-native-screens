@@ -54,17 +54,87 @@
                                                    keyPrefix:@"subtitle"];
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  UIBarButtonItemAppearance *buttonAppearance = [self barButtonItemAppearance:appearance.buttonAppearance
+                                                        updatedWithDictionary:appearanceDict
+                                                                    keyPrefix:@"button"];
+  if (buttonAppearance != nil) {
+    appearance.buttonAppearance = buttonAppearance;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    UIBarButtonItemAppearance *prominentButtonAppearance =
+        [self barButtonItemAppearance:appearance.prominentButtonAppearance
+                updatedWithDictionary:appearanceDict
+                            keyPrefix:@"prominentButton"];
+    if (prominentButtonAppearance != nil) {
+      appearance.prominentButtonAppearance = prominentButtonAppearance;
+    }
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  {
+    UIBarButtonItemAppearance *doneButtonAppearance = [self barButtonItemAppearance:appearance.doneButtonAppearance
+                                                              updatedWithDictionary:appearanceDict
+                                                                          keyPrefix:@"prominentButton"];
+    if (doneButtonAppearance != nil) {
+      appearance.doneButtonAppearance = doneButtonAppearance;
+    }
+  }
 }
 
-+ (nonnull NSDictionary *)textAttributes:(nullable NSDictionary *)baseAttributes
-                   updatedWithDictionary:(nullable NSDictionary *)appearanceDict
-                               keyPrefix:(nonnull NSString *)keyPrefix
+/**
+ Creates button item appearance object based on `baseAppearance`,
+ updating it with well-known attributes prefixed with `keyPrefix` ("button" or "prominentButton")
+ */
++ (nullable UIBarButtonItemAppearance *)barButtonItemAppearance:(nonnull UIBarButtonItemAppearance *)baseAppearance
+                                          updatedWithDictionary:(nullable NSDictionary *)appearanceDict
+                                                      keyPrefix:(nonnull NSString *)keyPrefix
 {
-  id fontFamily = appearanceDict[[keyPrefix stringByAppendingString:@"FontFamily"]];
-  id fontSize = appearanceDict[[keyPrefix stringByAppendingString:@"FontSize"]];
-  id fontWeight = appearanceDict[[keyPrefix stringByAppendingString:@"FontWeight"]];
-  id fontStyle = appearanceDict[[keyPrefix stringByAppendingString:@"FontStyle"]];
-  id fontColor = appearanceDict[[keyPrefix stringByAppendingString:@"FontColor"]];
+  UIBarButtonItemAppearance *updatedAppearance = [baseAppearance copy];
+
+  BOOL didUpdate = NO;
+  didUpdate |= [self updateStateAppearance:updatedAppearance.normal fromDictionary:appearanceDict keyPrefix:keyPrefix];
+  didUpdate |= [self updateStateAppearance:updatedAppearance.highlighted
+                            fromDictionary:appearanceDict
+                                 keyPrefix:[keyPrefix stringByAppendingString:@"Highlighted"]];
+  didUpdate |= [self updateStateAppearance:updatedAppearance.disabled
+                            fromDictionary:appearanceDict
+                                 keyPrefix:[keyPrefix stringByAppendingString:@"Disabled"]];
+  didUpdate |= [self updateStateAppearance:updatedAppearance.focused
+                            fromDictionary:appearanceDict
+                                 keyPrefix:[keyPrefix stringByAppendingString:@"Focused"]];
+
+  return didUpdate ? updatedAppearance : nil;
+}
+
++ (BOOL)updateStateAppearance:(nonnull UIBarButtonItemStateAppearance *)stateAppearance
+               fromDictionary:(nullable NSDictionary *)appearanceDict
+                    keyPrefix:(nonnull NSString *)keyPrefix
+{
+  NSDictionary *textAttributes = [self textAttributes:stateAppearance.titleTextAttributes
+                                updatedWithDictionary:appearanceDict
+                                            keyPrefix:keyPrefix];
+  if (textAttributes == nil) {
+    return NO;
+  }
+  stateAppearance.titleTextAttributes = textAttributes;
+  return YES;
+}
+
++ (nullable NSDictionary *)textAttributes:(nullable NSDictionary *)baseAttributes
+                    updatedWithDictionary:(nullable NSDictionary *)appearanceDict
+                                keyPrefix:(nonnull NSString *)keyPrefix
+{
+  NSString *fontFamily = [self stringForKey:[keyPrefix stringByAppendingString:@"FontFamily"] in:appearanceDict];
+  NSNumber *fontSize = [self numberForKey:[keyPrefix stringByAppendingString:@"FontSize"] in:appearanceDict];
+  NSString *fontWeight = [self stringForKey:[keyPrefix stringByAppendingString:@"FontWeight"] in:appearanceDict];
+  NSString *fontStyle = [self stringForKey:[keyPrefix stringByAppendingString:@"FontStyle"] in:appearanceDict];
+  id fontColor = [self colorValueForKey:[keyPrefix stringByAppendingString:@"FontColor"] in:appearanceDict];
+
+  if (fontFamily == nil && fontSize == nil && fontWeight == nil && fontStyle == nil && fontColor == nil) {
+    return nil;
+  }
 
   NSMutableDictionary *textAttributes = [baseAttributes mutableCopy] ?: [NSMutableDictionary new];
 
@@ -83,6 +153,24 @@
   }
 
   return textAttributes;
+}
+
++ (nullable NSString *)stringForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
+{
+  id value = dict[key];
+  return [value isKindOfClass:[NSString class]] ? value : nil;
+}
+
++ (nullable NSNumber *)numberForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
+{
+  id value = dict[key];
+  return [value isKindOfClass:[NSNumber class]] ? value : nil;
+}
+
++ (nullable id)colorValueForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
+{
+  id value = dict[key];
+  return ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDictionary class]]) ? value : nil;
 }
 
 @end

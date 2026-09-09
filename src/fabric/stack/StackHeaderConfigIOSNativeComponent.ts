@@ -33,6 +33,54 @@ export type HeaderAppearance = {
   subtitleFontWeight?: string | undefined;
   subtitleFontStyle?: string | undefined;
   subtitleFontColor?: ProcessedColorValue | null | undefined;
+
+  buttonFontFamily?: string | undefined;
+  buttonFontSize?: CT.Float | undefined;
+  buttonFontWeight?: string | undefined;
+  buttonFontStyle?: string | undefined;
+  buttonFontColor?: ProcessedColorValue | null | undefined;
+
+  prominentButtonFontFamily?: string | undefined;
+  prominentButtonFontSize?: CT.Float | undefined;
+  prominentButtonFontWeight?: string | undefined;
+  prominentButtonFontStyle?: string | undefined;
+  prominentButtonFontColor?: ProcessedColorValue | null | undefined;
+
+  buttonHighlightedFontFamily?: string | undefined;
+  buttonHighlightedFontSize?: CT.Float | undefined;
+  buttonHighlightedFontWeight?: string | undefined;
+  buttonHighlightedFontStyle?: string | undefined;
+  buttonHighlightedFontColor?: ProcessedColorValue | null | undefined;
+
+  buttonDisabledFontFamily?: string | undefined;
+  buttonDisabledFontSize?: CT.Float | undefined;
+  buttonDisabledFontWeight?: string | undefined;
+  buttonDisabledFontStyle?: string | undefined;
+  buttonDisabledFontColor?: ProcessedColorValue | null | undefined;
+
+  buttonFocusedFontFamily?: string | undefined;
+  buttonFocusedFontSize?: CT.Float | undefined;
+  buttonFocusedFontWeight?: string | undefined;
+  buttonFocusedFontStyle?: string | undefined;
+  buttonFocusedFontColor?: ProcessedColorValue | null | undefined;
+
+  prominentButtonHighlightedFontFamily?: string | undefined;
+  prominentButtonHighlightedFontSize?: CT.Float | undefined;
+  prominentButtonHighlightedFontWeight?: string | undefined;
+  prominentButtonHighlightedFontStyle?: string | undefined;
+  prominentButtonHighlightedFontColor?: ProcessedColorValue | null | undefined;
+
+  prominentButtonDisabledFontFamily?: string | undefined;
+  prominentButtonDisabledFontSize?: CT.Float | undefined;
+  prominentButtonDisabledFontWeight?: string | undefined;
+  prominentButtonDisabledFontStyle?: string | undefined;
+  prominentButtonDisabledFontColor?: ProcessedColorValue | null | undefined;
+
+  prominentButtonFocusedFontFamily?: string | undefined;
+  prominentButtonFocusedFontSize?: CT.Float | undefined;
+  prominentButtonFocusedFontWeight?: string | undefined;
+  prominentButtonFocusedFontStyle?: string | undefined;
+  prominentButtonFocusedFontColor?: ProcessedColorValue | null | undefined;
 };
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;

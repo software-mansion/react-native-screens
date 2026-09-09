@@ -13,8 +13,8 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <react/utils/ManagedObjectWrapper.h>
 #import <react/renderer/components/rnscreens/legacy/RNSScreenStackHeaderConfigComponentDescriptor.h>
+#import <react/utils/ManagedObjectWrapper.h>
 #import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #import "RNSBackBarButtonItem.h"
 #import "RNSBarButtonItem.h"
