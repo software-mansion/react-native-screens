@@ -24,7 +24,11 @@ internal class FragmentManagerWithOwner(
     val fragmentManager: FragmentManager,
     val lifecycleOwner: LifecycleOwner,
     val onBackPressedDispatcher: OnBackPressedDispatcher,
-)
+) {
+    /** The fragment [fragmentManager] is the child FragmentManager of; null for the root one. */
+    val parentFragment: Fragment?
+        get() = lifecycleOwner as? Fragment
+}
 
 object FragmentManagerHelper {
     fun findFragmentManagerForView(view: ViewGroup): FragmentManager = findFragmentManagerWithOwnerForView(view).fragmentManager

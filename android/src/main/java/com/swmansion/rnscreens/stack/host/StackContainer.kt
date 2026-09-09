@@ -40,7 +40,13 @@ internal class StackContainer(
     ColorSchemeProviding,
     StackHeaderBackPressHandler,
     StackScreenFragmentDelegate {
-    private var fragmentManager: FragmentManager? = null
+    // The FragmentManager this container drives, with the fragment it is the child FragmentManager
+    // of (null for the root one) and the dispatcher the system back veto lives on. Resolved on
+    // attach, dropped on detach.
+    private var fragmentManagerWithOwner: FragmentManagerWithOwner? = null
+
+    private val fragmentManager: FragmentManager?
+        get() = fragmentManagerWithOwner?.fragmentManager
 
     private fun requireFragmentManager(): FragmentManager =
         checkNotNull(fragmentManager) { "[RNScreens] Attempt to use nullish FragmentManager" }
@@ -117,8 +123,8 @@ internal class StackContainer(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
-        fragmentManager = null
         teardownSystemBackVetoCallback()
+        fragmentManagerWithOwner = null
         parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
         // `parent` is still set here. The containers above must stop consulting this subtree,
@@ -135,7 +141,8 @@ internal class StackContainer(
 
     internal fun setupFragmentManger() {
         val fmWithOwner = FragmentManagerHelper.findFragmentManagerWithOwnerForView(this)
-        fragmentManager = fmWithOwner.fragmentManager.also { it.addOnBackStackChangedListener(this) }
+        fragmentManagerWithOwner = fmWithOwner
+        fmWithOwner.fragmentManager.addOnBackStackChangedListener(this)
         setupSystemBackVetoCallback(fmWithOwner)
     }
 
@@ -393,11 +400,6 @@ internal class StackContainer(
      */
     private var systemBackVetoCallback: SystemBackVetoCallback? = null
 
-    // Parent fragment of the FragmentManager this container drives (FragmentManager's own term:
-    // the fragment whose child FragmentManager it is), null for the root container. Its
-    // primary-navigation status decides whether this container is on the active branch.
-    private var fragmentManagerParentFragment: Fragment? = null
-
     private inner class SystemBackVetoCallback(
         private val dispatcher: OnBackPressedDispatcher,
     ) : OnBackPressedCallback(false) {
@@ -419,7 +421,6 @@ internal class StackContainer(
 
     private fun setupSystemBackVetoCallback(fmWithOwner: FragmentManagerWithOwner) {
         check(systemBackVetoCallback == null) { "[RNScreens] System back veto callback is already registered" }
-        fragmentManagerParentFragment = fmWithOwner.lifecycleOwner as? Fragment
         systemBackVetoCallback =
             SystemBackVetoCallback(fmWithOwner.onBackPressedDispatcher).also {
                 fmWithOwner.onBackPressedDispatcher.addCallback(fmWithOwner.lifecycleOwner, it)
@@ -429,7 +430,6 @@ internal class StackContainer(
     private fun teardownSystemBackVetoCallback() {
         systemBackVetoCallback?.remove()
         systemBackVetoCallback = null
-        fragmentManagerParentFragment = null
     }
 
     // System back pops this container's top screen (together with its subtree), therefore only
@@ -446,7 +446,7 @@ internal class StackContainer(
      * `parentFragmentManager` from throwing.
      */
     private fun isOnPrimaryNavigationPath(): Boolean {
-        var fragment = fragmentManagerParentFragment
+        var fragment = fragmentManagerWithOwner?.parentFragment
         while (fragment != null) {
             if (!fragment.isAdded || fragment.parentFragmentManager.primaryNavigationFragment !== fragment) {
                 return false
