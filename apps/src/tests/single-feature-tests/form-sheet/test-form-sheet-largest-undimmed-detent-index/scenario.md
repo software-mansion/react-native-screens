@@ -4,7 +4,7 @@
 
 **Description:** Verify the `largestUndimmedDetentIndex` property of the `FormSheet` component with detents `[0.5, 0.65, 0.8]`. This test ensures that the dimming view behind the sheet is applied or removed depending on the current detent, that the screen underneath stays interactive while the sheet is undimmed, and that the value can be changed while the sheet is presented.
 
-**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5.
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5; Android: API Level 36.
 
 ## E2E test
 
@@ -14,6 +14,7 @@ TBD: Planned, but will be implemented separately.
 
 - iPhone: device or simulator.
 - iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
+- Android: device or emulator.
 
 ## Note
 

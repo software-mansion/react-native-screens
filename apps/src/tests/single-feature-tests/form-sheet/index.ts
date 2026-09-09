@@ -8,7 +8,7 @@ import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents';
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible';
 import TestFormSheetInitialDetentIndex from './test-form-sheet-initial-detent-index';
-import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index-ios';
+import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index';
 import TestFormSheetLifecycleEvents from './test-form-sheet-lifecycle-events';
 import TestFormSheetNativeContainerStyle from './test-form-sheet-native-container-style';
 import TestFormSheetOnDetentChanged from './test-form-sheet-on-detent-changed';
@@ -26,7 +26,7 @@ export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expa
 export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents';
 export { default as TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible';
 export { default as TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index';
-export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
+export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index';
 export { default as TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events';
 export { default as TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style';
 export { default as TestFormSheetOnDetentChanged } from './test-form-sheet-on-detent-changed';

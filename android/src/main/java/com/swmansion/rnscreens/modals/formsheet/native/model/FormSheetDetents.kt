@@ -1,5 +1,7 @@
 package com.swmansion.rnscreens.modals.formsheet.native.model
 
+import android.util.Log
+
 internal class FormSheetDetents(
     rawDetents: List<Double>,
 ) {
@@ -57,9 +59,31 @@ internal class FormSheetDetents(
         return (contentHeight + bottomInset).coerceAtMost(containerHeight)
     }
 
+    internal fun resolveDetentIndex(requestedIndex: Int): Int {
+        val resolvedIndex = if (requestedIndex == LAST_DETENT_INDEX) count - 1 else requestedIndex
+        return resolvedIndex.coerceIn(0, count - 1)
+    }
+
+    internal fun resolveLargestUndimmedDetentIndex(requestedIndex: Int): Int {
+        if (requestedIndex == ALWAYS_DIMMED_DETENT_INDEX) {
+            return ALWAYS_DIMMED_DETENT_INDEX
+        }
+
+        val resolvedIndex = if (requestedIndex == NEVER_DIMMED_DETENT_INDEX) count - 1 else requestedIndex
+        if (resolvedIndex !in 0 until count) {
+            Log.e(
+                TAG,
+                "[RNScreens] largestUndimmedDetentIndex ($requestedIndex) exceeds effective detents count ($count). " +
+                    "Falling back to the default behavior (always dimmed).",
+            )
+            return ALWAYS_DIMMED_DETENT_INDEX
+        }
+        return resolvedIndex
+    }
+
     internal fun halfExpandedRatio(): Float {
         check(count == MAX_DETENTS) { "[RNScreens] Exactly $MAX_DETENTS detents are required for halfExpandedRatio." }
-        return (heightFractionAt(1) / heightFractionAt(2)).toFloat()
+        return heightFractionAt(1).toFloat()
     }
 
     internal fun expandedOffsetFromTop(
@@ -100,7 +124,16 @@ internal class FormSheetDetents(
     }
 
     companion object {
+        const val TAG = "FormSheetDetents"
+
         const val MAX_DETENTS = 3
         const val FIT_TO_CONTENTS_DETENT_VALUE = -1.0
+
+        // Predefined values for `initialDetentIndex`. Keep in sync with the JS counterpart.
+        const val LAST_DETENT_INDEX = -1
+
+        // Predefined values for `largestUndimmedDetentIndex`. Keep in sync with the JS counterpart.
+        const val ALWAYS_DIMMED_DETENT_INDEX = -1
+        const val NEVER_DIMMED_DETENT_INDEX = -2
     }
 }

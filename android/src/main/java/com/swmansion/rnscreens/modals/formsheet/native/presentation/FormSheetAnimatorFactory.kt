@@ -27,7 +27,7 @@ internal class FormSheetAnimatorFactory(
             }
 
         val alphaAnimator =
-            ValueAnimator.ofFloat(startAlpha, dimmingManager.maxAlpha).apply {
+            ValueAnimator.ofFloat(startAlpha, dimmingManager.presentationTargetAlpha).apply {
                 addUpdateListener { animation ->
                     dimmingManager.dimmingAlpha = animation.animatedValue as Float
                 }
@@ -45,7 +45,9 @@ internal class FormSheetAnimatorFactory(
         isInterrupting: Boolean = false,
     ): Animator {
         val startY = if (isInterrupting) view.translationY else 0f
-        val startAlpha = if (isInterrupting) dimmingManager.dimmingAlpha else dimmingManager.maxAlpha
+        // The dimming may rest at any value (e.g. 0 at an undimmed detent), so always fade out
+        // from the currently rendered one.
+        val startAlpha = dimmingManager.dimmingAlpha
 
         val slideAnimator =
             ValueAnimator.ofFloat(startY, view.height.toFloat()).apply {

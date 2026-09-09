@@ -8,6 +8,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialogManager
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetConfig
+import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 
 class FormSheetHost(
     val reactContext: ThemedReactContext,
@@ -32,6 +33,8 @@ class FormSheetHost(
     internal var detents: List<Double> = emptyList()
 
     internal var initialDetentIndex: Int = 0
+
+    internal var largestUndimmedDetentIndex: Int = FormSheetDetents.ALWAYS_DIMMED_DETENT_INDEX
 
     private val sheetContentView =
         FormSheetContentView(context) { width, height ->
@@ -97,6 +100,7 @@ class FormSheetHost(
                 detents = this.detents,
                 prefersGrabberVisible = this.prefersGrabberVisible,
                 initialDetentIndex = this.initialDetentIndex,
+                largestUndimmedDetentIndex = this.largestUndimmedDetentIndex,
                 preferredCornerRadius = this.preferredCornerRadius,
                 preventNativeDismiss = this.preventNativeDismiss,
                 nativeContainerBackgroundColor = this.nativeContainerBackgroundColor,

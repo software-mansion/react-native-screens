@@ -102,7 +102,7 @@ class FormSheetHostViewManager :
         view: FormSheetHost,
         value: Int,
     ) {
-        // TODO: @t0maboro - implement later
+        view.largestUndimmedDetentIndex = value
     }
 
     override fun setInitialDetentIndex(
