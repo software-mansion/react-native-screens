@@ -19,17 +19,17 @@ export const stackV5Toolbar = (): NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
 
 /**
- * The Stack v5 header's app bar. Every stacked screen keeps its own
- * `AppBarLayout`, so the bare class matches several; only the Stack v5 header
- * wraps a `MaterialToolbar`.
+ * The Stack v5 header's app bar. The bare class also matches app bars outside
+ * Stack v5 (and nested stacks render one per visible header); only the Stack
+ * v5 header wraps a `MaterialToolbar`.
  */
 export const stackV5AppBar = (): NativeMatcher =>
   by.type(CLASS_NAME_ANDROID_APP_BAR_LAYOUT).withDescendant(stackV5Toolbar());
 
 /**
- * The header's back chevron. A covered screen keeps its toolbar but loses its
- * chevron, so under a headered top screen this is that screen's alone; under a
- * headerless one the covered screen's chevron is still there and visible.
+ * The header's back chevron. Covered screens are detached and keep no views,
+ * so matches come only from visible headers — one per header in a
+ * nested-stack setup.
  */
 export const stackV5BackButton = (): NativeMatcher =>
   by

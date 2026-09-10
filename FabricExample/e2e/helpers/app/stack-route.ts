@@ -23,10 +23,10 @@ const routeKeyPattern = (routeName: string) =>
   new RegExp(`^Key: r-${escapeRegExp(routeName)}-\\d+$`);
 
 /**
- * Waits for the `Name: <routeName>` label to be visible. Only where that
- * label is unique in the hierarchy — iOS (covered screens are detached) or an
- * Android stack that never holds two screens of one route; otherwise use
- * `waitForTopmostRoute`, which reads the topmost copy.
+ * Waits for the `Name: <routeName>` label to be visible. Covered screens are
+ * detached on both platforms, so the label is unique unless two visible
+ * screens share a route name; in that case use `waitForTopmostRoute`, which
+ * reads the topmost copy.
  */
 export async function waitForRouteName(routeName: string): Promise<void> {
   await waitFor(element(by.text(`Name: ${routeName}`)))
