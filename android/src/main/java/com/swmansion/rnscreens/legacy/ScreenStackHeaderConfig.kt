@@ -231,7 +231,13 @@ class ScreenStackHeaderConfig(
 
     fun onUpdate() {
         val stack = screenStack
-        val isTop = stack == null || stack.topScreen == parent
+        // A screen that is not in a stack has nothing to configure a header for, and
+        // `canNavigateBack()` below asserts on exactly this condition. Treating a null
+        // stack as "is top" let a detached screen reach that assertion and throw.
+        if (stack == null) {
+            return
+        }
+        val isTop = stack.topScreen == parent
 
         if (!isAttachedToWindow || !isTop || isDestroyed) {
             return
