@@ -7,18 +7,27 @@ import PackageDescription
 // -- the equivalent of the podspec's `ios/**/*.h` -- so contributors never have to
 // hand-maintain this list. Every directory containing a header gets an `-I`.
 func discoverHeaderSearchPaths() -> [String] {
-    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-    var dirs = Set<String>()
-    for base in ["ios", "common/cpp", "cpp"] {
+    let root = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .standardizedFileURL
+        .resolvingSymlinksInPath()
+    let rootPath = root.path
+    let bases = ["ios", "common/cpp", "cpp"]
+    var dirs = Set<String>(bases)
+    for base in bases {
         let baseURL = root.appendingPathComponent(base)
         guard let enumerator = FileManager.default.enumerator(
             at: baseURL, includingPropertiesForKeys: nil
         ) else { continue }
         for case let url as URL in enumerator
             where url.pathExtension == "h" && !url.path.contains(".xcodeproj") {
-            let dir = url.deletingLastPathComponent().path
-                .replacingOccurrences(of: root.path + "/", with: "")
-            dirs.insert(dir)
+            let dirPath = url.deletingLastPathComponent()
+                .standardizedFileURL
+                .resolvingSymlinksInPath()
+                .path
+            guard dirPath.hasPrefix(rootPath + "/") else { continue }
+            // rootPath.count + 1 skips the root plus the separating "/".
+            dirs.insert(String(dirPath.dropFirst(rootPath.count + 1)))
         }
     }
     return dirs.sorted()
