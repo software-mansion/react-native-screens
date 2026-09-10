@@ -122,11 +122,10 @@
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
 
-  NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
+  NSMutableArray<UINavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
   for (RNSSplitScreenComponentView *column in currentColumns) {
-    [currentViewControllers addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:column.controller
-                                                                             frameOriginChangeDelegate:self]];
+    [currentViewControllers addObject:[self navigationControllerForColumn:column]];
   }
 
   self.viewControllers = currentViewControllers;
@@ -160,6 +159,18 @@
   /** The assumption is that it should come in a single batch and it won't cause any delays in rendering the content. */
   [navigationController setNavigationBarHidden:YES animated:NO];
   [navigationController setNavigationBarHidden:NO animated:NO];
+}
+
+- (UINavigationController *)navigationControllerForColumn:(RNSSplitScreenComponentView *)column
+{
+  UIView<RNSNavigationControllerProviding> *provider = column.navigationControllerProvider;
+  if (provider != nil) {
+    // Controller's pending updates must be populated before the SplitView attaches it.
+    [provider flushPendingUpdates];
+    return provider.navigationController;
+  }
+  return [[RNSSplitNavigationController alloc] initWithRootViewController:column.controller
+                                                frameOriginChangeDelegate:self];
 }
 
 #pragma mark - Helpers
@@ -316,16 +327,16 @@
 }
 
 /**
- * @brief Gets the children RNSSplitScreenController instances.
+ * @brief Gets the children UINavigationControllers instances.
  *
  * Accesses Split controllers associated with presented columns. It asserts that each view controller is a navigation
  * controller and its topViewController is of type RNSSplitScreenController.
  *
- * @return An array of RNSSplitScreenController corresponding to current split view columns.
+ * @return An array of UINavigationController corresponding to current split view columns.
  */
-- (NSArray<RNSSplitScreenController *> *)splitScreenControllers
+- (NSArray<UINavigationController *> *)visibleColumnNavigationControllers
 {
-  NSMutableArray<RNSSplitScreenController *> *splitScreenControllers =
+  NSMutableArray<UINavigationController *> *navigationControllers =
       [NSMutableArray arrayWithCapacity:_visibleColumns.count];
 
   for (NSNumber *columnNumber in _visibleColumns) {
@@ -333,27 +344,45 @@
     UIViewController *viewController = [self viewControllerForColumn:column];
     RCTAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
 
-    RNSSplitNavigationController *splitNavigationController =
-        [viewController isKindOfClass:RNSSplitNavigationController.class]
-        ? (RNSSplitNavigationController *)viewController
-        : nil;
-    RCTAssert(splitNavigationController != nil,
-              @"[RNScreens] Expected RNSSplitNavigationController but got %@",
+    RCTAssert([viewController isKindOfClass:UINavigationController.class],
+              @"[RNScreens] Expected UINavigationController but got %@",
               NSStringFromClass(viewController.class));
 
-    UIViewController *maybeSplitScreenController = splitNavigationController.topViewController;
-    RCTAssert(
-        maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for column %ld", (long)column);
-    RCTAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
-              @"[RNScreens] Expected RNSSplitScreenController but got %@",
-              NSStringFromClass(maybeSplitScreenController.class));
-
-    if ([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class]) {
-      [splitScreenControllers addObject:(RNSSplitScreenController *)maybeSplitScreenController];
+    if ([viewController isKindOfClass:UINavigationController.class]) {
+      [navigationControllers addObject:(UINavigationController *)viewController];
     }
   }
 
-  return splitScreenControllers;
+  return navigationControllers;
+}
+
+/**
+ * @brief Gets the RNSSplitScreenController of a **plain** column, or nil for a column backed by a provided
+ * external UINavigationController.
+ *
+ * A column providing an external UINavigationController has no RNSSplitScreenController in the hierarchy:
+ * the provided controller is installed directly and its top view controller is a screen of the nested container.
+ * Such a column reports its frame on its own, from the provided controller's view.
+ *
+ * TODO(@t0maboro): Unify layout reporting so that every column is re-reported through a single entry point,
+ * regardless of the UINavigationController origin.
+ */
+- (nullable RNSSplitScreenController *)splitScreenControllerOfSplitNavigationController:
+    (UINavigationController *)navigationController
+{
+  if (![navigationController isKindOfClass:RNSSplitNavigationController.class]) {
+    return nil;
+  }
+
+  UIViewController *maybeSplitScreenController = navigationController.topViewController;
+  RCTAssert(maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for a plain column");
+  RCTAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
+            @"[RNScreens] Expected RNSSplitScreenController but got %@",
+            NSStringFromClass(maybeSplitScreenController.class));
+
+  return [maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class]
+      ? (RNSSplitScreenController *)maybeSplitScreenController
+      : nil;
 }
 
 /**
@@ -394,7 +423,10 @@
  */
 - (void)splitNavigationControllerFrameOriginDidChange:(RNSSplitNavigationController *)splitNavCtrl
 {
-  for (RNSSplitScreenController *controller in self.splitScreenControllers) {
+  for (UINavigationController *navigationController in self.visibleColumnNavigationControllers) {
+    // Columns with external UINavigationController provider report on their own.
+    // TODO(@t0maboro): unify frame reporting logic
+    RNSSplitScreenController *controller = [self splitScreenControllerOfSplitNavigationController:navigationController];
     [controller columnPositioningDidChangeInSplitViewController:self];
   }
 }
@@ -531,7 +563,11 @@
       return;
     }
 
-    for (RNSSplitScreenController *controller in [strongSelf splitScreenControllers]) {
+    for (UINavigationController *navigationController in strongSelf.visibleColumnNavigationControllers) {
+      // Columns with external UINavigationController provider report on their own.
+      // TODO(@t0maboro): unify frame reporting logic
+      RNSSplitScreenController *controller =
+          [strongSelf splitScreenControllerOfSplitNavigationController:navigationController];
       [controller columnPositioningDidChangeInSplitViewController:strongSelf];
     }
   };
