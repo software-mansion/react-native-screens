@@ -32,8 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @class RNSSplitScreenController
  * @brief A UIViewController subclass that manages a Split column in a UISplitViewController.
  *
- * Associated with a RNSSplitScreenComponentView, it observes the column layout and lifecycle, reports them to its
- * delegate, and interacts with the SplitHost hierarchy.
+ * It observes the column layout and lifecycle and reports them to its delegate.
  */
 @interface RNSSplitScreenController : UIViewController
 
