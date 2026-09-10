@@ -1,6 +1,6 @@
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import React from 'react';
-import { ScrollView, Text } from 'react-native';
+import { Platform, ScrollView, Text } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -25,6 +25,17 @@ function ConfigScreen() {
         onValueChange={value => updateHostConfig({ tabBarHidden: value })}
         testID="tab-bar-hidden-switch"
       />
+      {Platform.OS === 'ios' && (
+        <SettingsSwitch
+          style={{ marginBottom: 15 }}
+          label="ios.tabBarHiddenAnimationEnabled"
+          value={hostConfig.ios?.tabBarHiddenAnimationEnabled ?? true}
+          onValueChange={value =>
+            updateHostConfig({ ios: { tabBarHiddenAnimationEnabled: value } })
+          }
+          testID="tab-bar-hidden-animation-enabled-switch"
+        />
+      )}
     </ScrollView>
   );
 }
