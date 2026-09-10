@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.View
-import androidx.core.animation.doOnStart
 
 internal class FormSheetAnimatorFactory(
     private val dimmingManager: FormSheetDimmingManager,
@@ -36,7 +35,6 @@ internal class FormSheetAnimatorFactory(
         return AnimatorSet().apply {
             playTogether(slideAnimator, alphaAnimator)
             duration = animationDuration
-            doOnStart { view.translationY = startY }
         }
     }
 
