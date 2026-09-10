@@ -27,15 +27,15 @@ import {
  *   resolves unambiguously to the top screen. The full scenario is covered,
  *   including the native header back button and the edge (gesture) back swipe
  *   except rapid tapping.
- * - Android: covered screens stay attached, so a matcher can resolve to one
- *   element per stacked screen and must be normalized to the topmost match.
- *   In addition, this screen is opened through the example app's own
- *   navigation (not launched directly via `App.tsx`), so the native header
- *   back button and the system gesture-back do not pop the nested gamma
- *   `StackContainer` — see issue #1459. The Android suite therefore covers
- *   only navigation driven by the on-screen Push/Pop buttons; native-back and
- *   gesture-back are verified on iOS and manually on Android via the direct
- *   launch documented in the scenario.
+ * - Android: covered screens are detached too, so matchers resolve to the top
+ *   screen (the topmost-match helpers degrade to the only match). However,
+ *   this screen is opened through the example app's own navigation (not
+ *   launched directly via `App.tsx`), so the native header back button and
+ *   the system gesture-back do not pop the nested `StackContainer` — see
+ *   issue #1459. The Android suite therefore covers only navigation driven
+ *   by the on-screen Push/Pop buttons; native-back and gesture-back are
+ *   verified on iOS and manually on Android via the direct launch documented
+ *   in the scenario.
  */
 
 describeIfiOS('Stack v5: simple navigation', () => {
