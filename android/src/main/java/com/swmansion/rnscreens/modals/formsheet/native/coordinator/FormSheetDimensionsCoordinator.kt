@@ -97,14 +97,13 @@ internal class FormSheetDimensionsCoordinator(
      * our container are measured, so the values applied here are picked up by the very same traversal.
      */
     private fun resolveGeometry(sheetAvailableSpace: Int) {
-        val bottomInset = effectiveBottomInset
-
         currentDetents?.let { detents ->
             behaviorController?.updateSheetBehavior(
                 detents = detents,
                 sheetAvailableSpace = sheetAvailableSpace,
                 contentHeightForFitToContents = currentContentHeight,
-                nativeContainerPaddingBottom = bottomInset,
+                nativeContainerPaddingBottom = lastBottomInset,
+                keyboardLift = keyboardLift,
                 initialDetentIndex = currentInitialDetentIndex,
                 applyInitialDetent = shouldApplyInitialDetent,
             )
@@ -112,8 +111,13 @@ internal class FormSheetDimensionsCoordinator(
         }
 
         val sheetContainerHeight =
-            currentDetents?.sheetContainerHeight(sheetAvailableSpace, lastTopInset, bottomInset, currentContentHeight)
-                ?: (sheetAvailableSpace - lastTopInset - bottomInset).coerceAtLeast(0)
+            currentDetents?.sheetContainerHeight(
+                sheetAvailableSpace,
+                lastTopInset,
+                lastBottomInset,
+                currentContentHeight,
+                keyboardLift,
+            ) ?: (sheetAvailableSpace - lastTopInset - lastBottomInset - keyboardLift).coerceAtLeast(0)
 
         val layoutParams =
             container.layoutParams
@@ -126,8 +130,13 @@ internal class FormSheetDimensionsCoordinator(
         }
     }
 
-    private val effectiveBottomInset: Int
-        get() = maxOf(lastBottomInset, lastImeInset)
+    /**
+     * The part of the keyboard inset that sticks out above the bottom system inset. Material pads the sheet by
+     * the larger of the two, so this is exactly how much the sheet has to be extended to keep its detent-sized
+     * part above the keyboard.
+     */
+    private val keyboardLift: Int
+        get() = (lastImeInset - lastBottomInset).coerceAtLeast(0)
 
     private fun getImeInset(insetsCompat: WindowInsetsCompat): Int = insetsCompat.getInsets(WindowInsetsCompat.Type.ime()).bottom
 
