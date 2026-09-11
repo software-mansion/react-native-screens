@@ -92,6 +92,7 @@ internal class FormSheetDetents(
         val middleDetentHeight =
             heightAt(1, containerHeight, keyboardLift)
                 .coerceAtMost(maxAllowedHeight(containerHeight, keyboardLift) - MIDDLE_DETENT_MIN_GAP)
+                .coerceAtLeast(1)
         return middleDetentHeight.toFloat() / containerHeight
     }
 
