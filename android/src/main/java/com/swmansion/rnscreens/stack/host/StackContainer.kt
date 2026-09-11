@@ -249,6 +249,7 @@ internal class StackContainer(
             canNavigateBack,
             WeakReference(this),
             backPressHandler = WeakReference(this),
+            colorSchemeProvider = WeakReference(this),
         ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
