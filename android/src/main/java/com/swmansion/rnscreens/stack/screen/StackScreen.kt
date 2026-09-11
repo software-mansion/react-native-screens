@@ -91,6 +91,8 @@ class StackScreen(
 
     // endregion
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     // region Header config
 
     internal var headerConfig: StackHeaderConfig? = null

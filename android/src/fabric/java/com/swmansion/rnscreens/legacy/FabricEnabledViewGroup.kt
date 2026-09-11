@@ -57,4 +57,6 @@ abstract class FabricEnabledViewGroup(
             }
         mStateWrapper?.updateState(map)
     }
+
+    override fun shouldDelayChildPressedState(): Boolean = false
 }

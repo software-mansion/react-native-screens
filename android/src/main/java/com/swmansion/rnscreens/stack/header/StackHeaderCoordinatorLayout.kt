@@ -313,6 +313,8 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Content behavior
 
+    override fun shouldDelayChildPressedState(): Boolean = (appBarLayout?.totalScrollRange ?: 0) > 0
+
     internal fun setContentBehavior() {
         val params = stackScreenWrapper.layoutParams as LayoutParams
         if (params.behavior == null) {

@@ -72,6 +72,8 @@ abstract class FabricEnabledHeaderSubviewViewGroup(
         mStateWrapper?.updateState(map)
     }
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     companion object {
         private const val DELTA = 0.9f
     }
