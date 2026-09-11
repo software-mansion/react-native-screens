@@ -18,16 +18,6 @@
   return self;
 }
 
-- (RNSSplitScreenShadowStateProxy *)shadowStateProxy
-{
-  return [_splitScreenComponentView shadowStateProxy];
-}
-
-- (RNSSplitScreenComponentEventEmitter *)reactEventEmitter
-{
-  return [_splitScreenComponentView reactEventEmitter];
-}
-
 /**
  * @brief Searching for the SplitHost controller
  *
@@ -69,36 +59,29 @@
 {
   [super viewDidLayoutSubviews];
 
-  [self updateShadowTreeState];
-}
-
-/**
- * @brief Handles frame layout changes and updates Shadow Tree accordingly.
- *
- * Requests for the ShadowNode updates through the shadow state proxy.
- * Differentiates cases when we're in the Host hierarchy to calculate frame relatively
- * to the Host view from the modal case where we're passing absolute layout metrics to the ShadowNode.
- */
-- (void)updateShadowTreeState
-{
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
   // we're attaching our touch handler and we don't need to apply any offset corrections,
   // because it's positioned relatively to our RNSSplitScreenComponentView
   if (![self isInSplitHostSubtree]) {
-    [[self shadowStateProxy] updateShadowStateOfComponent:_splitScreenComponentView];
+    [_delegate splitScreenController:self didChangeColumnFrame:self.view.frame];
     return;
   }
 
   UIView *ancestorView = [self findSplitHostController].view;
   RCTAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
-  [[self shadowStateProxy] updateShadowStateOfComponent:_splitScreenComponentView inContextOfAncestorView:ancestorView];
+  [self reportColumnFrameInContextOfView:ancestorView];
 }
 
 - (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController
 {
-  [[self shadowStateProxy] updateShadowStateOfComponent:_splitScreenComponentView
-                                inContextOfAncestorView:splitViewController.view];
+  [self reportColumnFrameInContextOfView:splitViewController.view];
+}
+
+- (void)reportColumnFrameInContextOfView:(UIView *)ancestorView
+{
+  CGRect frame = [self.view convertRect:self.view.frame toView:ancestorView];
+  [_delegate splitScreenController:self didChangeColumnFrame:frame];
 }
 
 #pragma mark - Events
@@ -106,25 +89,25 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [[self reactEventEmitter] emitOnWillAppear];
+  [_delegate splitScreenControllerWillAppear:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [[self reactEventEmitter] emitOnDidAppear];
+  [_delegate splitScreenControllerDidAppear:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  [[self reactEventEmitter] emitOnWillDisappear];
+  [_delegate splitScreenControllerWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [[self reactEventEmitter] emitOnDidDisappear];
+  [_delegate splitScreenControllerDidDisappear:self];
 }
 
 @end
