@@ -471,7 +471,8 @@ export interface StackHeaderAppearanceIOS {
    * @summary Specifies the font family used for plain header items.
    *
    * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * including the back button title unless overridden with the `backButton*`
+   * attributes (on iOS 26+ the back button shows no title by default).
    *
    * @platform ios
    */
@@ -480,7 +481,8 @@ export interface StackHeaderAppearanceIOS {
    * @summary Specifies the font size used for plain header items.
    *
    * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * including the back button title unless overridden with the `backButton*`
+   * attributes (on iOS 26+ the back button shows no title by default).
    *
    * @platform ios
    */
@@ -489,7 +491,8 @@ export interface StackHeaderAppearanceIOS {
    * @summary Specifies the font weight used for plain header items.
    *
    * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * including the back button title unless overridden with the `backButton*`
+   * attributes (on iOS 26+ the back button shows no title by default).
    *
    * @platform ios
    */
@@ -498,7 +501,8 @@ export interface StackHeaderAppearanceIOS {
    * @summary Specifies the font style used for plain header items.
    *
    * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * including the back button title unless overridden with the `backButton*`
+   * attributes (on iOS 26+ the back button shows no title by default).
    *
    * @platform ios
    */
@@ -507,7 +511,8 @@ export interface StackHeaderAppearanceIOS {
    * @summary Specifies the font color used for plain header items.
    *
    * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * including the back button title unless overridden with the `backButton*`
+   * attributes (on iOS 26+ the back button shows no title by default).
    *
    * @platform ios
    */
@@ -887,6 +892,162 @@ export interface StackHeaderAppearanceIOS {
    * @platform ios
    */
   prominentButtonFocusedFontColor?: TextStyle['color'] | undefined;
+
+  /**
+   * @summary Specifies the font family used for the back button title.
+   *
+   * @description Unset back button attributes fall back to the `button*`
+   * attributes (on iOS 26+ the back button shows no title by default).
+   *
+   * @platform ios
+   */
+  backButtonFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the back button title.
+   *
+   * @description Unset back button attributes fall back to the `button*`
+   * attributes (on iOS 26+ the back button shows no title by default).
+   *
+   * @platform ios
+   */
+  backButtonFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the back button title.
+   *
+   * @description Unset back button attributes fall back to the `button*`
+   * attributes (on iOS 26+ the back button shows no title by default).
+   *
+   * @platform ios
+   */
+  backButtonFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the back button title.
+   *
+   * @description Unset back button attributes fall back to the `button*`
+   * attributes (on iOS 26+ the back button shows no title by default).
+   *
+   * @platform ios
+   */
+  backButtonFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the back button title.
+   *
+   * @description Unset back button attributes fall back to the `button*`
+   * attributes (on iOS 26+ the back button shows no title by default).
+   *
+   * @platform ios
+   */
+  backButtonFontColor?: TextStyle['color'] | undefined;
+  /**
+   * @summary Specifies the font family used for the back button title in the
+   * highlighted (pressed) state.
+   *
+   * @description When unset, UIKit derives the highlighted (pressed) appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
+   *
+   * @platform ios
+   */
+  backButtonHighlightedFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the back button title in the
+   * highlighted (pressed) state.
+   *
+   * @description When unset, UIKit derives the highlighted (pressed) appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
+   *
+   * @platform ios
+   */
+  backButtonHighlightedFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the back button title in the
+   * highlighted (pressed) state.
+   *
+   * @description When unset, UIKit derives the highlighted (pressed) appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
+   *
+   * @platform ios
+   */
+  backButtonHighlightedFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the back button title in the
+   * highlighted (pressed) state.
+   *
+   * @description When unset, UIKit derives the highlighted (pressed) appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
+   *
+   * @platform ios
+   */
+  backButtonHighlightedFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the back button title in the
+   * highlighted (pressed) state.
+   *
+   * @description When unset, UIKit derives the highlighted (pressed) appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
+   *
+   * @platform ios
+   */
+  backButtonHighlightedFontColor?: TextStyle['color'] | undefined;
+  /**
+   * @summary Specifies the font family used for the back button title in the
+   * focused state.
+   *
+   * @description When unset, UIKit derives the focused appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system focused text color.
+   *
+   * @platform ios
+   */
+  backButtonFocusedFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the back button title in the
+   * focused state.
+   *
+   * @description When unset, UIKit derives the focused appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system focused text color.
+   *
+   * @platform ios
+   */
+  backButtonFocusedFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the back button title in the
+   * focused state.
+   *
+   * @description When unset, UIKit derives the focused appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system focused text color.
+   *
+   * @platform ios
+   */
+  backButtonFocusedFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the back button title in the
+   * focused state.
+   *
+   * @description When unset, UIKit derives the focused appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system focused text color.
+   *
+   * @platform ios
+   */
+  backButtonFocusedFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the back button title in the
+   * focused state.
+   *
+   * @description When unset, UIKit derives the focused appearance from
+   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
+   * so e.g. a font-only group keeps the system focused text color.
+   *
+   * @platform ios
+   */
+  backButtonFocusedFontColor?: TextStyle['color'] | undefined;
 }
 
 export interface StackHeaderConfigPropsIOS {

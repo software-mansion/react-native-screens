@@ -4,8 +4,8 @@
 
 **Description:** This test focuses on the appearance of regular header items:
 regular, disabled, prominent and prominent disabled, and on the button /
-prominent button text attributes configured via `standardAppearance` and
-`scrollEdgeAppearance`.
+prominent button / back button text attributes configured via
+`standardAppearance` and `scrollEdgeAppearance`.
 
 **OS test creation version:** iOS 26.5, iPadOS 26.5
 
@@ -73,14 +73,33 @@ TBD
 
 - [ ] The back button title follows the "button" slot configuration
 
-9. On the details screen, enable "scrollEdgeAppearance" and configure the slots
+9. On the details screen, configure the "backButton" slot differently from the
+   "button" slot (e.g. red color, italic style)
+
+- [ ] On iOS < 26, the back button title follows the "backButton" slot
+      configuration, overriding the "button" slot; header item text does not
+      change
+
+- [ ] Attributes left as "default" in the "backButton" slot keep following the
+      "button" slot configuration
+
+10. On the details screen, configure the "backButton (highlighted)" slot
+    differently from the "backButton" slot (e.g. blue color, fontSize 12)
+
+- [ ] The style is visible on the back button title while the back
+      button is being pressed without releasing
+
+- [ ] Attributes left as "default" in the "backButton (highlighted)" slot keep
+      following the "backButton" slot configuration while pressed
+
+11. On the details screen, enable "scrollEdgeAppearance" and configure the slots
    differently from "standardAppearance", then scroll the content
 
 - [ ] When scrolled to top, all items follow the `scrollEdgeAppearance` configuration
 
 - [ ] Otherwise, all items follow the `standardAppearance` configuration
 
-10. Configure the "button (disabled)" and "prominentButton (disabled)" slots
+12. Configure the "button (disabled)" and "prominentButton (disabled)" slots
     for both `standardAppearance` and `scrollEdgeAppearance`
 
 - [ ] The change is seen on buttons "bb" and "dd"
@@ -89,14 +108,14 @@ TBD
 
 - [ ] Items "aa" and "cc" are unaffected and behave as in 9.
 
-11. Configure the "button (highlighted)" and "prominentButton (highlighted)" slots
+13. Configure the "button (highlighted)" and "prominentButton (highlighted)" slots
     for both `standardAppearance` and `scrollEdgeAppearance`
 
 - [ ] The style is visible when the button "aa" and "cc" is being pressed
 
 - [ ] The style is NOT visible when the button "bb" and "dd" is being pressed (disabled)
 
-12. Set "item tintColor" to red
+14. Set "item tintColor" to red
 
 - [ ] Enabled items "1" and "3" are tinted red (with sfSymbols: icon color;
       with text items: for prominent items on iOS 26 tint affects the
