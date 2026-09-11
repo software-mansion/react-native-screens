@@ -51,6 +51,8 @@ internal class DimmingView(
         b: Int,
     ) = Unit
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     // We do not want to have any action defined here. We just want listeners notified that the click happened.
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
