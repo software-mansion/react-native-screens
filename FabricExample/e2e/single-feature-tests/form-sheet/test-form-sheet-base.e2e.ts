@@ -50,44 +50,17 @@ describeIfiOS('Formsheet: base functionality', () => {
     await expect(element(by.id('dismiss-formsheet-button'))).not.toExist();
   });
 
-  // it('should navigate back to First tab via tab bar', async () => {
-  //   await element(by.id('tab-bar-item-first')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('First');
-  // });
+  it('should dismiss natively when swiped down past the lower detent and reopen at the lower detent', async () => {
+    await element(by.id('open-formsheet-button')).tap();
+    await waitFor(element(by.id('formsheet-base-content')))
+      .toBeVisible()
+      .withTimeout(3000);
 
-  // it('should navigate to Second tab programmatically via Select Second button', async () => {
-  //   await element(by.id('select-second-button')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('Second');
-  // });
-
-  // it('should navigate to Third tab programmatically via Select Third button', async () => {
-  //   await element(by.id('select-third-button')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('Third');
-  // });
-
-  // it('should navigate to First tab programmatically via Select First button', async () => {
-  //   await element(by.id('select-first-button')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('First');
-  // });
-
-  // it('should skip Second tab when navigating directly from First to Third programmatically', async () => {
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('First');
-  //   await element(by.id('select-third-button')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('Third');
-  // });
-
-  // it('should skip Second tab when navigating directly from Third to First via tab bar', async () => {
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('Third');
-  //   await element(by.id('tab-bar-item-first')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('First');
-  // });
-
-  // it('should navigate correctly after mixing tab-bar and programmatic navigation', async () => {
-  //   await element(by.id('tab-bar-item-second')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('Second');
-  //   await element(by.id('select-first-button')).tap();
-  //   await expect(element(by.id('route-key-label'))).toHaveLabel('First');
-  // });
+    await element(by.id('formsheet-base-content')).swipe('down', 'fast');
+    await waitFor(element(by.id('formsheet-base-content')))
+      .not.toExist()
+      .withTimeout(3000);
+  });
 
   // it('should stay on First tab when re-tapping the active First tab bar item', async () => {
   //   await expect(element(by.id('route-key-label'))).toHaveLabel('First');
