@@ -27,13 +27,13 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Keyboard Integration** screen.
 
-- [ ] The host screen shows the "FormSheet Test" title and the four "Open FormSheet" buttons: detents, three detents, single detent, fitToContents.
+- [ ] The host screen shows the "FormSheet Test" title and the four "Open FormSheet" buttons: single detent, two detents, three detents, fitToContents.
 
 ---
 
 ### Two detents – keyboard at the lower detent
 
-2. Tap "Open FormSheet (detents)".
+2. Tap "Open FormSheet (two detents)".
 
 - [ ] The sheet presents at the lower detent (0.6). "Top input" is at the top of the sheet, "Bottom input" and "Dismiss from JS" at its bottom.
 
@@ -55,7 +55,7 @@ TBD: Planned, but will be implemented separately.
 
 6. With the keyboard shown, swipe the sheet down past the lower detent.
 
-- [ ] Both the keyboard and the sheet are dismissed. The host screen is undimmed and both "Open FormSheet" buttons are pressable again.
+- [ ] Both the keyboard and the sheet are dismissed. The host screen is undimmed and all "Open FormSheet" buttons are pressable again.
 
 ---
 
@@ -115,13 +115,13 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Keyboard Integration** screen.
 
-- [ ] The host screen shows the "FormSheet Test" title and the four "Open FormSheet" buttons: detents, three detents, single detent, fitToContents.
+- [ ] The host screen shows the "FormSheet Test" title and the four "Open FormSheet" buttons: single detent, two detents, three detents, fitToContents.
 
 ---
 
 ### Two detents – keyboard at the lower detent
 
-2. Tap "Open FormSheet (detents)".
+2. Tap "Open FormSheet (two detents)".
 
 - [ ] The sheet presents at the lower detent (0.6). "Top input" is visible at the top of the sheet; "Bottom input" and "Dismiss from JS" are not visible yet (the content box is laid out to the largest detent).
 
@@ -147,7 +147,7 @@ TBD: Planned, but will be implemented separately.
 
 7. Tap "Top input", then – with the keyboard shown – swipe the sheet down past the lower detent.
 
-- [ ] Both the keyboard and the sheet are dismissed. The host screen is undimmed and both "Open FormSheet" buttons are pressable again.
+- [ ] Both the keyboard and the sheet are dismissed. The host screen is undimmed and all "Open FormSheet" buttons are pressable again.
 
 ---
 
