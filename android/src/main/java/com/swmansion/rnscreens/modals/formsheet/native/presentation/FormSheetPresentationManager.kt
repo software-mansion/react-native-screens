@@ -109,6 +109,7 @@ internal class FormSheetPresentationManager(
         }
 
         state = FormSheetPresentationState.DISMISSING
+        currentPresentation?.setKeyboardTrackingEnabled(false)
         dismissSheetsAbove()
         // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
         // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
@@ -246,6 +247,7 @@ internal class FormSheetPresentationManager(
     private fun onPresentationComplete() {
         if (state == FormSheetPresentationState.PRESENTING) {
             state = FormSheetPresentationState.PRESENTED
+            currentPresentation?.setKeyboardTrackingEnabled(true)
             appearanceEventEmitter?.emitOnDidAppear()
             // ensure state hasn't updated during presentation
             resolvePresentationState()
