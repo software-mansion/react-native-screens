@@ -209,6 +209,7 @@ internal class StackContainer(
                     newFragment,
                     containerViewId = this.id,
                     addToBackStack = stackModel.isNotEmpty(),
+                    coveredFragment = stackModel.lastOrNull(),
                 ),
             )
             stackModel.add(newFragment)
@@ -253,16 +254,15 @@ internal class StackContainer(
         }
 
     private fun updateTopFragment() {
-        // We try to handle situation where other fragments might be present.
-        val fragmentManager = requireFragmentManager()
-        val fragments = fragmentManager.fragments.filterIsInstance<StackScreenFragment>()
-        check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
-        fragments.forEach { it.onResignTopFragment() }
-        fragments.last().onBecomeTopFragment()
+        // Covered fragments are detached, so FragmentManager's added list holds only the top
+        // fragment - the model is the only place all of them can be resigned from.
+        check(stackModel.isNotEmpty()) { "[RNScreens] Empty stack model while attempting to update top fragment" }
+        stackModel.forEach { it.onResignTopFragment() }
+        stackModel.last().onBecomeTopFragment()
 
         // This assumes that the updateTopFragment is called already after primary nav frag. is updated.
         // If this needs to be changed in the future, just remove this assertion.
-        check(fragmentManager.primaryNavigationFragment === fragments.last()) {
+        check(requireFragmentManager().primaryNavigationFragment === stackModel.last()) {
             "[RNScreens] Top fragment different from primary navigation fragment"
         }
     }

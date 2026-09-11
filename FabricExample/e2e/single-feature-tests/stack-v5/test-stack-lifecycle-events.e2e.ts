@@ -21,23 +21,24 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  * transition's batch renumbers from `1.` again. Toasts are dismissed
  * highest-number-first so the remaining lower indices stay stable.
  *
- * The two platforms fire a fundamentally different event set and are verified
- * with different mechanisms, so each keeps its own suite:
+ * Both platforms detach covered screens, so both the entering and the leaving
+ * screen fire on every transition and matchers resolve unambiguously to the
+ * top screen. The platforms interleave the events differently, so each keeps
+ * its own suite:
  *
- * - iOS: react-native-screens detaches covered screens, so every matcher
- *   resolves unambiguously to the top screen. Both screens fire on a
- *   transition (the leaving screen's disappear brackets the entering screen's
- *   appear). Covers the on-screen Pop button and the native header back button.
- * - Android: covered screens stay attached, so a matcher can resolve to one
- *   element per stacked screen and button taps must be normalized to the
- *   topmost match. Only the screen entering or leaving the stack fires. In
- *   addition, this screen is opened through the example app's own navigation
- *   (not launched directly via `App.tsx`), so the native header back button and
- *   the system gesture-back do not pop the nested `StackContainer` — see issue
- *   #1459. The Android suite therefore covers only navigation driven by the
- *   on-screen Push/Pop buttons; native-back and gesture-back are verified on
- *   iOS and manually on Android via the direct launch documented in the
- *   scenario.
+ * - iOS: the leaving screen's disappear brackets the entering screen's appear
+ *   (`willDisappear` → `willAppear` → `didDisappear` → `didAppear`). Covers
+ *   the on-screen Pop button and the native header back button.
+ * - Android: on push the entering screen's `willAppear` leads and its
+ *   `didAppear` trails the covered screen's disappear pair; on pop the
+ *   leaving screen finishes disappearing before the uncovered screen starts
+ *   appearing. In addition, this screen is opened through the example app's
+ *   own navigation (not launched directly via `App.tsx`), so the native
+ *   header back button and the system gesture-back do not pop the nested
+ *   `StackContainer` — see issue #1459. The Android suite therefore covers
+ *   only navigation driven by the on-screen Push/Pop buttons; native-back and
+ *   gesture-back are verified on iOS and manually on Android via the direct
+ *   launch documented in the scenario.
  */
 
 describeIfiOS('Stack v5: lifecycle events', () => {
@@ -294,55 +295,67 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
     await dismissToast('1. Home: onWillAppear');
   });
 
-  it('should fire the push events (onWillAppear + onDidAppear) for A only when pushing A over Home', async () => {
+  it('should fire the push event set for both screens when pushing A over Home', async () => {
     await tapTopmostButton(PUSH_A);
 
     await waitForRouteName('A');
-    await dismissToast('2. A: onDidAppear');
+    await dismissToast('4. A: onDidAppear');
+    await dismissToast('3. Home: onDidDisappear');
+    await dismissToast('2. Home: onWillDisappear');
     await dismissToast('1. A: onWillAppear');
   });
 
-  it('should fire the pop events (onWillDisappear + onDidDisappear) for A only when popping A via the Pop button', async () => {
+  it('should fire the pop event set for both screens when popping A via the Pop button', async () => {
     await tapTopmostButton(POP);
 
     await waitForRouteName('Home');
+    await dismissToast('4. Home: onDidAppear');
+    await dismissToast('3. Home: onWillAppear');
     await dismissToast('2. A: onDidDisappear');
     await dismissToast('1. A: onWillDisappear');
   });
 
-  it('should fire duplicated push events (onWillAppear + onDidAppear) for both the NestedStack container and its initial NestedHome screen when pushing NestedStack', async () => {
+  it('should fire the push event set for the NestedStack container, its initial NestedHome screen, and the covered Home', async () => {
     await tapTopmostButton(PUSH_NESTED_STACK);
 
     await waitForRouteName('NestedHome');
-    await dismissToast('4. NestedHome: onDidAppear');
-    await dismissToast('3. NestedStack: onDidAppear');
+    await dismissToast('6. NestedHome: onDidAppear');
+    await dismissToast('5. NestedStack: onDidAppear');
+    await dismissToast('4. Home: onDidDisappear');
+    await dismissToast('3. Home: onWillDisappear');
     await dismissToast('2. NestedHome: onWillAppear');
     await dismissToast('1. NestedStack: onWillAppear');
   });
 
-  it('should fire the push events (onWillAppear + onDidAppear) for the inner NestedA screen only when pushing NestedA inside the nested stack', async () => {
+  it('should fire the inner push event set for NestedA and the covered NestedHome inside the nested stack', async () => {
     await tapTopmostButton(PUSH_NESTED_A);
 
     await waitForRouteName('NestedA');
-    await dismissToast('2. NestedA: onDidAppear');
+    await dismissToast('4. NestedA: onDidAppear');
+    await dismissToast('3. NestedHome: onDidDisappear');
+    await dismissToast('2. NestedHome: onWillDisappear');
     await dismissToast('1. NestedA: onWillAppear');
   });
 
-  it('should fire the pop events (onWillDisappear + onDidDisappear) for the inner NestedA screen only when popping NestedA via the Pop button', async () => {
+  it('should fire the inner pop event set when popping NestedA via the Pop button', async () => {
     await tapTopmostButton(POP);
 
     await waitForRouteName('NestedHome');
+    await dismissToast('4. NestedHome: onDidAppear');
+    await dismissToast('3. NestedHome: onWillAppear');
     await dismissToast('2. NestedA: onDidDisappear');
     await dismissToast('1. NestedA: onWillDisappear');
   });
 
-  it('should fire duplicated pop events (onWillDisappear + onDidDisappear) for both the NestedHome screen and the NestedStack container when the Pop button on the nested root bubbles to a container pop', async () => {
+  it('should fire the duplicated container pop event set when the Pop button on the nested root bubbles to a container pop', async () => {
     // NestedHome is the nested stack's only (root) screen, so calling pop()
     // here bubbles up to pop the whole NestedStack container instead of a
     // screen within it.
     await tapTopmostButton(POP);
 
     await waitForRouteName('Home');
+    await dismissToast('6. Home: onDidAppear');
+    await dismissToast('5. Home: onWillAppear');
     await dismissToast('4. NestedStack: onDidDisappear');
     await dismissToast('3. NestedHome: onDidDisappear');
     await dismissToast('2. NestedStack: onWillDisappear');

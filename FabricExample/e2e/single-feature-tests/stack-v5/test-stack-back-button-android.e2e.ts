@@ -31,7 +31,7 @@ async function selectOption(pickerId: string, label: string, option: string) {
 
 // A hidden navigation icon leaves the hierarchy, so "hidden" is "does not
 // exist". The toolbar is asserted first, otherwise a header that never
-// rendered would pass too. Each screen builds its own toolbar, hence the index.
+// rendered would pass too.
 async function expectNoBackButton() {
   await expectTopmostVisible(stackV5Toolbar);
   await expect(element(stackV5BackButton())).not.toExist();
@@ -39,7 +39,7 @@ async function expectNoBackButton() {
 
 // The icon can lag the pushed screen's content, so wait before counting — a
 // settle race would otherwise read as "the back button is missing". The count
-// names the ambiguity a second stacked toolbar's icon would cause.
+// guards against a stray second chevron.
 async function expectSingleVisibleBackButton() {
   await expectTopmostVisible(stackV5BackButton);
   jestExpect(await countMatches(stackV5BackButton())).toBe(1);
