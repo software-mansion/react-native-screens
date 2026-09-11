@@ -276,6 +276,7 @@ internal class StackContainer(
             WeakReference(this),
             backPressHandler = WeakReference(this),
             updateBatchStateProvider = WeakReference(this),
+            colorSchemeProvider = WeakReference(this),
         ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
