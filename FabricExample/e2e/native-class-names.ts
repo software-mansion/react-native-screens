@@ -15,6 +15,10 @@
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
 
+// The view of the view controller a `FormSheet` presents. UIKit sizes it to the
+// current detent, so its frame is the sheet's on-screen rect.
+export const CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW = 'RNSFormSheetContentView';
+
 // --- React Native host views ---
 
 export const CLASS_NAME_RCT_ROOT_COMPONENT_VIEW = 'RCTRootComponentView';
@@ -75,6 +79,16 @@ export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 // --- Android ---
+
+// The library's sheet content container (a child of Material's
+// `design_bottom_sheet`). Its screen `y` moves with the sheet, so it doubles
+// as the sheet's top edge; its height is fixed to the largest detent.
+export const CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER =
+  'com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer';
+// `BottomSheetDialog`'s root layout — spans the dialog window, so its frame
+// is the window rect the detent fractions are resolved against.
+export const CLASS_NAME_ANDROID_COORDINATOR_LAYOUT =
+  'androidx.coordinatorlayout.widget.CoordinatorLayout';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
