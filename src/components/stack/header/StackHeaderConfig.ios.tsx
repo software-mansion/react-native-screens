@@ -23,7 +23,12 @@ import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
-import { NativeSyntheticEvent, StyleSheet, processColor } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  StyleSheet,
+  processColor,
+  type TextStyle,
+} from 'react-native';
 import type {
   StackHeaderAppearanceIOS,
   StackHeaderInlineCustomItemIOS,
@@ -182,33 +187,76 @@ function StackHeaderConfig(
   );
 }
 
+function toNativeFontWeight(
+  weight: TextStyle['fontWeight'],
+): string | undefined {
+  return weight !== undefined ? String(weight) : undefined;
+}
+
 function mapAppearanceToNativeProp(
   appearance?: StackHeaderAppearanceIOS,
 ): HeaderAppearance | undefined {
   if (!appearance) return undefined;
 
-  const {
-    titleFontColor,
-    titleFontWeight,
-    largeTitleFontColor,
-    largeTitleFontWeight,
-    subtitleFontColor,
-    subtitleFontWeight,
-  } = appearance;
-
+  // Font family, size and style pass through unchanged via the spread; color
+  // and weight need conversion to the wire format.
   return {
     ...appearance,
-    titleFontColor: processColor(titleFontColor),
-    titleFontWeight:
-      titleFontWeight !== undefined ? String(titleFontWeight) : undefined,
-    largeTitleFontColor: processColor(largeTitleFontColor),
-    largeTitleFontWeight:
-      largeTitleFontWeight !== undefined
-        ? String(largeTitleFontWeight)
-        : undefined,
-    subtitleFontColor: processColor(subtitleFontColor),
-    subtitleFontWeight:
-      subtitleFontWeight !== undefined ? String(subtitleFontWeight) : undefined,
+
+    titleFontColor: processColor(appearance.titleFontColor),
+    titleFontWeight: toNativeFontWeight(appearance.titleFontWeight),
+
+    largeTitleFontColor: processColor(appearance.largeTitleFontColor),
+    largeTitleFontWeight: toNativeFontWeight(appearance.largeTitleFontWeight),
+
+    subtitleFontColor: processColor(appearance.subtitleFontColor),
+    subtitleFontWeight: toNativeFontWeight(appearance.subtitleFontWeight),
+
+    buttonFontColor: processColor(appearance.buttonFontColor),
+    buttonFontWeight: toNativeFontWeight(appearance.buttonFontWeight),
+
+    buttonHighlightedFontColor: processColor(
+      appearance.buttonHighlightedFontColor,
+    ),
+    buttonHighlightedFontWeight: toNativeFontWeight(
+      appearance.buttonHighlightedFontWeight,
+    ),
+
+    buttonDisabledFontColor: processColor(appearance.buttonDisabledFontColor),
+    buttonDisabledFontWeight: toNativeFontWeight(
+      appearance.buttonDisabledFontWeight,
+    ),
+
+    buttonFocusedFontColor: processColor(appearance.buttonFocusedFontColor),
+    buttonFocusedFontWeight: toNativeFontWeight(
+      appearance.buttonFocusedFontWeight,
+    ),
+
+    prominentButtonFontColor: processColor(appearance.prominentButtonFontColor),
+    prominentButtonFontWeight: toNativeFontWeight(
+      appearance.prominentButtonFontWeight,
+    ),
+
+    prominentButtonHighlightedFontColor: processColor(
+      appearance.prominentButtonHighlightedFontColor,
+    ),
+    prominentButtonHighlightedFontWeight: toNativeFontWeight(
+      appearance.prominentButtonHighlightedFontWeight,
+    ),
+
+    prominentButtonDisabledFontColor: processColor(
+      appearance.prominentButtonDisabledFontColor,
+    ),
+    prominentButtonDisabledFontWeight: toNativeFontWeight(
+      appearance.prominentButtonDisabledFontWeight,
+    ),
+
+    prominentButtonFocusedFontColor: processColor(
+      appearance.prominentButtonFocusedFontColor,
+    ),
+    prominentButtonFocusedFontWeight: toNativeFontWeight(
+      appearance.prominentButtonFocusedFontWeight,
+    ),
   };
 }
 
