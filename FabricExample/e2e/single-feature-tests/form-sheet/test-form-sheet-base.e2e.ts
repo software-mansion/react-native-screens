@@ -9,18 +9,19 @@ describeIfiOS('Formsheet: base functionality', () => {
     await selectSingleFeatureTestsScreen('FormSheet', 'test-form-sheet-base');
   });
 
-  it('should display main screen with open button', async () => {
+  it('should display main screen with button', async () => {
     await expect(element(by.id('formsheet-base-title'))).toHaveLabel(
       'FormSheet Test',
     );
     await expect(element(by.id('open-formsheet-button'))).toBeVisible();
   });
 
-  it('should open FormSheet on lower detentwhen button is pressed', async () => {
+  it('should open FormSheet on lower detent when button is pressed', async () => {
     await element(by.id('open-formsheet-button')).tap();
     await expect(element(by.id('formsheet-base-content'))).toHaveLabel(
       'FormSheet content',
     );
+    await expect(element(by.id('dismiss-formsheet-button'))).toBeVisible();
     await expect(
       element(
         by.type('UIDimmingView').withAncestor(by.type('UIDropShadowView')),
@@ -29,18 +30,24 @@ describeIfiOS('Formsheet: base functionality', () => {
     await expectFormSheetDetentIndex(DETENTS, 0);
   });
 
-  it('should navigate to Third tab via tab bar', async () => {
-    await element(by.type('RNSFormSheetContentView')).longPressAndDrag(
-      2000,
-      0.9,
-      NaN,
-      element(by.id('cellId_6')),
-      0.9,
-      NaN,
-      'slow',
-      0,
-    );
+  it('should expand to the largest detent when dragged up', async () => {
+    await element(by.id('formsheet-base-content')).swipe('up', 'slow', 0.5);
     await expectFormSheetDetentIndex(DETENTS, 1);
+  });
+
+  it('should settles at lower detent when swipe down', async () => {
+    await element(by.id('formsheet-base-content')).swipe('down', 'slow', 0.5);
+    await expectFormSheetDetentIndex(DETENTS, 0);
+  });
+
+  it('should close FormSheet when dismissbutton is pressed', async () => {
+    await element(by.id('dismiss-formsheet-button')).tap();
+    await expect(element(by.id('formsheet-base-title'))).toHaveLabel(
+      'FormSheet Test',
+    );
+    await expect(element(by.id('open-formsheet-button'))).toBeVisible();
+    await expect(element(by.id('formsheet-base-content'))).not.toExist();
+    await expect(element(by.id('dismiss-formsheet-button'))).not.toExist();
   });
 
   // it('should navigate back to First tab via tab bar', async () => {
