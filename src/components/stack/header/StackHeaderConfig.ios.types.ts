@@ -149,6 +149,19 @@ export interface StackHeaderInlineItemIOS
    */
   type: 'item';
   /**
+   * @summary Whether the item is disabled.
+   *
+   * @description
+   * A disabled item is grayed out and does not respond to user interaction:
+   * neither {@link StackHeaderInlineItemIOS.onPress | onPress} nor
+   * {@link SupportsMenuIOS.menu | menu} is triggered.
+   *
+   * @default false
+   *
+   * @platform iOS
+   */
+  disabled?: boolean | undefined;
+  /**
    * @summary Callback invoked when the header item is pressed.
    *
    * @description
