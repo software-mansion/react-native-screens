@@ -98,6 +98,7 @@ namespace react = facebook::react;
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
   _colorScheme = UIUserInterfaceStyleUnspecified;
   _rejectStaleNavStateUpdates = NO;
+  _tabBarHiddenAnimationEnabled = YES;
   _bottomAccessoryHidden = NO;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
@@ -239,11 +240,17 @@ namespace react = facebook::react;
     _tabBarTintColor = RCTUIColorFromSharedColor(newComponentProps.tabBarTintColor);
   }
 
+  // Must be applied before `tabBarHidden`, so that both props changing in the same
+  // update use the new animation setting.
+  if (newComponentProps.tabBarHiddenAnimationEnabled != oldComponentProps.tabBarHiddenAnimationEnabled) {
+    _tabBarHiddenAnimationEnabled = newComponentProps.tabBarHiddenAnimationEnabled;
+  }
+
   if (newComponentProps.tabBarHidden != oldComponentProps.tabBarHidden) {
     _tabBarHidden = newComponentProps.tabBarHidden;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     if (@available(iOS 18.0, *)) {
-      [_controller setTabBarHidden:_tabBarHidden animated:NO];
+      [_controller setTabBarHidden:_tabBarHidden animated:_tabBarHiddenAnimationEnabled];
     } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     {

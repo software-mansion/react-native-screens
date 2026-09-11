@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL tabBarHidden;
 
+@property (nonatomic, readonly) BOOL tabBarHiddenAnimationEnabled;
+
 @property (nonatomic, readonly) BOOL bottomAccessoryHidden;
 
 @property (nonatomic, strong, readonly, nullable) UIColor *nativeContainerBackgroundColor;
