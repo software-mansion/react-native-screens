@@ -1,15 +1,12 @@
 import { device, expect, element, by } from 'detox';
-import {
-  barButtonIcon,
-  describeIfiOS,
-  headerTitle,
-  menuRowIcon,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { menuRowIcon } from '@e2e/framework/context-menu-ios';
+import { barButtonIcon, headerTitle } from '@e2e/framework/header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfiOS } from '@e2e/framework/platform';
 
 // Number of rows in the header item menu that render an icon:
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.

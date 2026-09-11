@@ -1,12 +1,10 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  getFrame,
-  scrollUntilVisible,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { scrollUntilVisible } from '@e2e/framework/gestures';
+import { getFrame } from '@e2e/framework/matchers';
+import { describeIfiOS } from '@e2e/framework/platform';
 
 const SCROLLVIEW_ID = 'tab-bar-layout-direction-scrollview';
 const DIRECTION_PICKER_ID = 'tab-bar-layout-direction-picker';

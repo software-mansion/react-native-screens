@@ -1,19 +1,19 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import { expectStillOnRoute, waitForTopmostRoute } from '@e2e/app/stack-route';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissNextToast, expectNoToast } from '@e2e/app/toast';
 import {
-  describeIfAndroid,
-  dismissNextToast,
-  expectNoToast,
   expectTopmostButtons,
   expectTopmostVisible,
-  readTopmostText,
-  selectSingleFeatureTestsScreen,
+} from '@e2e/framework/assertions';
+import { tapTopmost, tapTopmostButton } from '@e2e/framework/gestures';
+import { readTopmostText } from '@e2e/framework/matchers';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
   stackV5BackButton,
   stackV5HeaderTitle,
-  tapTopmost,
-  tapTopmostButton,
-  waitForTopmostRoute,
-} from '../../e2e-utils';
+} from '@e2e/framework/stack-header-android';
 
 /**
  * Stack v5 `preventNativeDismiss` — a nested stack inside another stack. See
@@ -73,14 +73,6 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   const PUSH_NESTED_B = pushButtonLabel('NestedB');
   const POP = POP_BUTTON_LABEL;
   const TOGGLE = TOGGLE_PREVENT_NATIVE_DISMISS_LABEL;
-
-  /** Asserts `routeName` is still on top under its original key — nothing moved. */
-  async function expectStillOn(
-    routeName: string,
-    expectedKey: string,
-  ): Promise<void> {
-    jestExpect(await waitForTopmostRoute(routeName)).toBe(expectedKey);
-  }
 
   /** Asserts the topmost screen's flag label reads Enabled / Disabled. */
   async function expectPreventNativeDismiss(
@@ -153,18 +145,18 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should intercept the native header back button on B while prevent is enabled', async () => {
-    await expectStillOn('B', bKey);
+    await expectStillOnRoute('B', bKey);
     await tapStackV5BackButton();
 
     await expectSoleToast(TOAST_FROM_B);
-    await expectStillOn('B', bKey);
+    await expectStillOnRoute('B', bKey);
   });
 
   it('should pop B with the on-screen Pop button even while prevent is enabled', async () => {
     await expectPreventNativeDismiss(PREVENT_NATIVE_DISMISS_ENABLED);
     await tapTopmostButton(POP);
 
-    await expectStillOn('A', aKey);
+    await expectStillOnRoute('A', aKey);
     await expectNoToast(TOAST_FROM_B);
   });
 
@@ -195,7 +187,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   it('should exit the nested stack with the Pop button from its sole attached route', async () => {
     await tapTopmostButton(POP);
 
-    await expectStillOn('A', aKey);
+    await expectStillOnRoute('A', aKey);
     await expectNoToast(TOAST_FROM_NESTED_HOME);
   });
 
@@ -225,7 +217,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   it('should pop NestedA back to the preserved nested root with the Pop button', async () => {
     await tapTopmostButton(POP);
 
-    await expectStillOn('NestedHome', nestedHomeKey);
+    await expectStillOnRoute('NestedHome', nestedHomeKey);
     await expectNoToast();
   });
 
@@ -242,11 +234,11 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
   });
 
   it('should intercept the native header back button on NestedB while prevent is enabled', async () => {
-    await expectStillOn('NestedB', nestedBKey);
+    await expectStillOnRoute('NestedB', nestedBKey);
     await tapStackV5BackButton();
 
     await expectSoleToast(TOAST_FROM_NESTED_B);
-    await expectStillOn('NestedB', nestedBKey);
+    await expectStillOnRoute('NestedB', nestedBKey);
   });
 
   it('should intercept every back press on NestedB individually', async () => {
@@ -259,7 +251,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await dismissNextToast(TOAST_FROM_NESTED_B);
     await dismissNextToast(TOAST_FROM_NESTED_B);
     await expectSoleToast(TOAST_FROM_NESTED_B);
-    await expectStillOn('NestedB', nestedBKey);
+    await expectStillOnRoute('NestedB', nestedBKey);
   });
 
   it('should honor the latest flag value when toggled on NestedB', async () => {
@@ -272,18 +264,18 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapStackV5BackButton();
 
     await expectSoleToast(TOAST_FROM_NESTED_B);
-    await expectStillOn('NestedB', nestedBKey);
+    await expectStillOnRoute('NestedB', nestedBKey);
   });
 
   it('should pop out of the nested stack with the Pop button, one route at a time', async () => {
     await tapTopmostButton(POP);
 
-    await expectStillOn('NestedHome', nestedHomeKey);
+    await expectStillOnRoute('NestedHome', nestedHomeKey);
     await expectNoToast(TOAST_FROM_NESTED_B);
 
     await tapTopmostButton(POP);
 
-    await expectStillOn('A', aKey);
+    await expectStillOnRoute('A', aKey);
     await expectNoToast(TOAST_FROM_NESTED_HOME);
   });
 
@@ -307,13 +299,13 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     // B and NestedHome both prevent as well, but sit below NestedB — exactly
     // one toast fires and it is NestedB's.
     await expectSoleToast(TOAST_FROM_NESTED_B);
-    await expectStillOn('NestedB', nestedBKey);
+    await expectStillOnRoute('NestedB', nestedBKey);
   });
 
   it('should return to B, not A, when the nested stack is popped', async () => {
     await tapTopmostButton(POP);
 
-    await expectStillOn('NestedHome', nestedHomeKey);
+    await expectStillOnRoute('NestedHome', nestedHomeKey);
     await expectNoToast(TOAST_FROM_NESTED_B);
 
     await tapTopmostButton(TOGGLE);
@@ -321,7 +313,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
 
     await tapTopmostButton(POP);
 
-    await expectStillOn('B', bKey);
+    await expectStillOnRoute('B', bKey);
     await expectNoToast(TOAST_FROM_NESTED_HOME);
   });
 
@@ -329,13 +321,13 @@ describeIfAndroid('Stack v5: prevent native dismiss - nested stack', () => {
     await tapStackV5BackButton();
 
     await expectSoleToast(TOAST_FROM_B);
-    await expectStillOn('B', bKey);
+    await expectStillOnRoute('B', bKey);
   });
 
   it('should pop B back to A with the Pop button', async () => {
     await tapTopmostButton(POP);
 
-    await expectStillOn('A', aKey);
+    await expectStillOnRoute('A', aKey);
     await expectNoToast(TOAST_FROM_B);
   });
 });

@@ -1,9 +1,7 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
-import {
-  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
-} from '../native-class-names';
+import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON } from '@e2e/framework/native-classes-android';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
 
 const awaitValidEventBehavior = async () => {
   await expect(

@@ -1,5 +1,5 @@
 import { device } from 'detox';
-import disableStylusPopupOnAndroid from './helpers/disableStylusPopupOnAndroid';
+import { disableStylusPopupOnAndroid } from '@e2e/framework/disable-stylus-popup-android';
 
 beforeAll(async () => {
   await device.launchApp();

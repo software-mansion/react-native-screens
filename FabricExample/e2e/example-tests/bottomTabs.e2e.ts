@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../native-class-names';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
 
 describe('Bottom tabs and native stack', () => {
   beforeEach(async () => {

@@ -1,15 +1,13 @@
 import { device, by } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
-import {
-  expectTopmostVisible,
-  isIOSVersionAtLeast,
-  tapTopmost,
-} from '../e2e-utils';
+import { expectTopmostVisible } from './assertions';
+import { tapTopmost } from './gestures';
 import {
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
   CLASS_NAME_ANDROID_TOOLBAR,
-  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-} from '../native-class-names';
+} from './native-classes-android';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from './native-classes-ios';
+import { isIOSVersionAtLeast } from './platform';
 
 /** UIKit's `BackButton` id; ambiguous on iOS 26, so narrowed to the container. */
 const iosBackButtonMatcher = (): NativeMatcher =>
