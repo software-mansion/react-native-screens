@@ -670,9 +670,10 @@ export interface StackHeaderConfigPropsAndroid {
    * - `medium` / `large` -> `true`
    *
    * @remarks
-   * Changing any `scrollFlag*` at runtime forces the header back to
-   * its fully expanded state, which produces a visible snap. Treat these
-   * props as a static configuration.
+   * Changing any `scrollFlag*` at runtime while the header is partially
+   * collapsed snaps it back to its fully expanded state. A fully collapsed
+   * header stays collapsed, unless the new flags do not allow collapsing at
+   * all - then it expands.
    *
    * @platform android
    */

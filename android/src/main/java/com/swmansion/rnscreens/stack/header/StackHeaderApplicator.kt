@@ -162,7 +162,6 @@ internal class StackHeaderApplicator(
     internal fun applyTitleAndSubtitle(
         appBar: StackHeaderAppBarLayout,
         config: StackHeaderConfigurationProviding,
-        isAppBarFullyCollapsed: Boolean,
     ) {
         when (appBar) {
             is StackHeaderAppBarLayout.Small -> {
@@ -182,15 +181,6 @@ internal class StackHeaderApplicator(
                 // title/subtitle vertical split is recomputed only in onLayout. Force a layout
                 // so toggling the subtitle at runtime reclaims the title space.
                 ctl.requestLayout()
-
-                // Material re-asserts the collapsed offset after a height change itself, but only
-                // when maxLines > 1 (CollapsingToolbarLayout.onMeasure). With maxLines == 1 it never
-                // does, so toggling the subtitle at runtime while collapsed leaves a stale offset —
-                // setExpanded(false, false) is the closest public equivalent of Material's private
-                // maybeSetPendingActionCollapsed().
-                if (config.maxLines == 1 && isAppBarFullyCollapsed) {
-                    appBar.setExpanded(false, false)
-                }
             }
         }
     }
