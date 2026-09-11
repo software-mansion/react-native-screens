@@ -43,7 +43,9 @@ function SheetContent({
 }
 
 function TestFormSheetKeyboard() {
-  const [isDetentsSheetOpen, setIsDetentsSheetOpen] = useState(false);
+  const [isSingleDetentSheetOpen, setIsSingleDetentSheetOpen] = useState(false);
+  const [isTwoDetentsSheetOpen, setIsTwoDetentsSheetOpen] = useState(false);
+  const [isThreeDetentsSheetOpen, setIsThreeDetentsSheetOpen] = useState(false);
   const [isFitToContentsSheetOpen, setIsFitToContentsSheetOpen] =
     useState(false);
 
@@ -51,9 +53,21 @@ function TestFormSheetKeyboard() {
     <View style={styles.container}>
       <Text style={styles.title}>FormSheet Test</Text>
       <Button
-        title="Open FormSheet (detents)"
+        title="Open FormSheet (single detent)"
         color={Colors.primary}
-        onPress={() => setIsDetentsSheetOpen(true)}
+        onPress={() => setIsSingleDetentSheetOpen(true)}
+      />
+      <View style={styles.spacing} />
+      <Button
+        title="Open FormSheet (two detents)"
+        color={Colors.primary}
+        onPress={() => setIsTwoDetentsSheetOpen(true)}
+      />
+      <View style={styles.spacing} />
+      <Button
+        title="Open FormSheet (three detents)"
+        color={Colors.primary}
+        onPress={() => setIsThreeDetentsSheetOpen(true)}
       />
       <View style={styles.spacing} />
       <Button
@@ -62,12 +76,30 @@ function TestFormSheetKeyboard() {
         onPress={() => setIsFitToContentsSheetOpen(true)}
       />
       <FormSheet
-        isOpen={isDetentsSheetOpen}
-        onNativeDismiss={() => setIsDetentsSheetOpen(false)}
+        isOpen={isSingleDetentSheetOpen}
+        onNativeDismiss={() => setIsSingleDetentSheetOpen(false)}
+        detents={[0.4]}>
+        <SheetContent
+          fitToContents={false}
+          onDismiss={() => setIsSingleDetentSheetOpen(false)}
+        />
+      </FormSheet>
+      <FormSheet
+        isOpen={isTwoDetentsSheetOpen}
+        onNativeDismiss={() => setIsTwoDetentsSheetOpen(false)}
         detents={[0.6, 1.0]}>
         <SheetContent
           fitToContents={false}
-          onDismiss={() => setIsDetentsSheetOpen(false)}
+          onDismiss={() => setIsTwoDetentsSheetOpen(false)}
+        />
+      </FormSheet>
+      <FormSheet
+        isOpen={isThreeDetentsSheetOpen}
+        onNativeDismiss={() => setIsThreeDetentsSheetOpen(false)}
+        detents={[0.3, 0.6, 1.0]}>
+        <SheetContent
+          fitToContents={false}
+          onDismiss={() => setIsThreeDetentsSheetOpen(false)}
         />
       </FormSheet>
       <FormSheet

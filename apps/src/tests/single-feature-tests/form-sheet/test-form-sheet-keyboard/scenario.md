@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify how a `FormSheet` reacts to the system keyboard when a TextInput inside it gets focused. Two sheets are covered: one with two detents (`[0.6, 1.0]`) and one with `detents="fitToContents"`. Each has a text input at the top and at the bottom of its content.
+**Description:** Verify how a `FormSheet` reacts to the system keyboard when a TextInput inside it gets focused. Four sheets are covered: a single detent (`[0.4]`), two detents (`[0.6, 1.0]`), three detents (`[0.3, 0.6, 1.0]`), and `detents="fitToContents"`. Each has a text input at the top and at the bottom of its content.
 
 **OS test creation version:** iOS: 26.5, Android: API Level 36.
 
@@ -19,7 +19,7 @@ TBD: Planned, but will be implemented separately.
 
 - Keyboard handling differs between platforms and both behaviors are expected:
   - **iOS:** UIKit handles it. A sheet resting at a detent smaller than the largest one grows to the largest detent while the keyboard is shown. A sheet resting at its largest detent (including `fitToContents`) is pushed up so that it sits above the keyboard; its view becomes taller by the keyboard height, the extra area is hidden behind the keyboard. Content laid out at the bottom of a sheet resting at the largest detent might end up under the keyboard.
-  - **Android:** the sheet reacts to the keyboard insets. At a lower detent the sheet moves up by the keyboard height, at the largest detent the content box shrinks so that it stays above the keyboard, a `fitToContents` sheet moves up as a whole. The sheet moves together with the keyboard animation.
+  - **Android:** the sheet reacts to the keyboard insets. Whichever detent it rests at, the sheet is pushed up by the keyboard height as far as the screen allows, so its detent-sized part stays above the keyboard (the extra area is hidden behind the keyboard, like on iOS). Only the part that can't be pushed above the keyboard shrinks the content box - a sheet resting at the full-height detent stays in place and its content box shrinks by the keyboard height. A `fitToContents` sheet moves up as a whole. The sheet moves together with the keyboard animation.
 
 ## Steps - iPhone
 
@@ -27,11 +27,11 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Keyboard Integration** screen.
 
-- [ ] The host screen shows the "FormSheet Test" title, the "Open FormSheet (detents)" and "Open FormSheet (fitToContents)" buttons.
+- [ ] The host screen shows the "FormSheet Test" title and the four "Open FormSheet" buttons: detents, three detents, single detent, fitToContents.
 
 ---
 
-### Detents – keyboard at the lower detent
+### Two detents – keyboard at the lower detent
 
 2. Tap "Open FormSheet (detents)".
 
@@ -47,7 +47,7 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Detents – keyboard at the largest detent
+### Two detents – keyboard at the largest detent
 
 5. Drag the sheet up to the largest detent (1.0), then tap "Bottom input".
 
@@ -77,17 +77,49 @@ TBD: Planned, but will be implemented separately.
 
 - [ ] The sheet dismisses and the host screen is undimmed.
 
+---
+
+### Three detents – keyboard at the middle detent
+
+11. Tap "Open FormSheet (three detents)", drag the sheet up to the middle detent (0.6), then tap "Top input".
+
+- [ ] The keyboard slides in and the sheet grows to the largest detent (1.0). "Top input" is focused and visible.
+
+12. Press the Return key on the keyboard.
+
+- [ ] The keyboard hides and the sheet returns to the middle detent (0.6).
+
+13. Tap "Dismiss from JS".
+
+- [ ] The sheet dismisses and the host screen is undimmed.
+
+---
+
+### Single detent
+
+14. Tap "Open FormSheet (single detent)", then tap "Top input".
+
+- [ ] The keyboard slides in and the sheet is pushed up so that it sits above the keyboard; its content keeps its height. "Top input" is focused and visible.
+
+15. Press the Return key on the keyboard.
+
+- [ ] The keyboard hides and the sheet returns to its resting position at the bottom of the screen.
+
+16. Tap "Dismiss from JS".
+
+- [ ] The sheet dismisses and the host screen is undimmed.
+
 ## Steps - Android
 
 ### Baseline
 
 1. Launch the app and navigate to the **Keyboard Integration** screen.
 
-- [ ] The host screen shows the "FormSheet Test" title, the "Open FormSheet (detents)" and "Open FormSheet (fitToContents)" buttons.
+- [ ] The host screen shows the "FormSheet Test" title and the four "Open FormSheet" buttons: detents, three detents, single detent, fitToContents.
 
 ---
 
-### Detents – keyboard at the lower detent
+### Two detents – keyboard at the lower detent
 
 2. Tap "Open FormSheet (detents)".
 
@@ -103,7 +135,7 @@ TBD: Planned, but will be implemented separately.
 
 ---
 
-### Detents – keyboard at the largest detent
+### Two detents – keyboard at the largest detent
 
 5. Drag the sheet up to the largest detent (1.0), then tap "Bottom input".
 
@@ -134,5 +166,37 @@ TBD: Planned, but will be implemented separately.
 - [ ] The keyboard hides and the sheet moves back down to its resting position at the bottom of the screen.
 
 11. Tap "Dismiss from JS".
+
+- [ ] The sheet dismisses and the host screen is undimmed.
+
+---
+
+### Three detents – keyboard at the middle detent
+
+12. Tap "Open FormSheet (three detents)", drag the sheet up to the middle detent (0.6), then tap "Top input".
+
+- [ ] The keyboard slides in and the sheet moves up by the keyboard height, following the keyboard animation. "Top input" is focused and visible.
+
+13. Press the system back button.
+
+- [ ] The keyboard hides and the sheet moves back down together with it, settling at the middle detent (0.6).
+
+14. Drag the sheet up to the largest detent (1.0), then tap "Dismiss from JS".
+
+- [ ] The sheet dismisses and the host screen is undimmed.
+
+---
+
+### Single detent
+
+15. Tap "Open FormSheet (single detent)", then tap "Top input".
+
+- [ ] The keyboard slides in and the sheet moves up by the keyboard height, following the keyboard animation. The content box keeps its height, "Top input" is focused and visible.
+
+16. Press the system back button.
+
+- [ ] The keyboard hides and the sheet moves back down together with it, settling at 0.4.
+
+17. Tap "Dismiss from JS".
 
 - [ ] The sheet dismisses and the host screen is undimmed.
