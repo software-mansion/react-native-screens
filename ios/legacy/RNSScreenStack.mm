@@ -6,6 +6,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <React/RCTSurfaceView.h>
 #import <React/UIView+React.h>
+#import <objc/runtime.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -25,6 +26,67 @@
 #import "integrations/RNSDismissibleModalProtocol.h"
 
 namespace react = facebook::react;
+
+#if TARGET_OS_IOS
+static void *RNSRTLLargeTitleCounterTransformKey = &RNSRTLLargeTitleCounterTransformKey;
+
+static BOOL RNSViewContainsLabelWithText(UIView *view, NSString *text)
+{
+  if ([view isKindOfClass:UILabel.class] && [((UILabel *)view).text isEqualToString:text]) {
+    return YES;
+  }
+
+  for (UIView *subview in view.subviews) {
+    if (RNSViewContainsLabelWithText(subview, text)) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+
+static BOOL RNSScrollViewHasMirroredContentSubview(UIScrollView *scrollView)
+{
+  for (UIView *subview in scrollView.subviews) {
+    if (subview.transform.a < 0) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+
+static void RNSSetRTLLargeTitleCounterTransform(UIView *view, BOOL enabled)
+{
+  if (![view isKindOfClass:UILabel.class]) {
+    for (UIView *subview in view.subviews) {
+      RNSSetRTLLargeTitleCounterTransform(subview, enabled);
+    }
+    return;
+  }
+
+  NSValue *originalTransformValue = objc_getAssociatedObject(view, RNSRTLLargeTitleCounterTransformKey);
+  if (enabled) {
+    if (originalTransformValue == nil) {
+      originalTransformValue = [NSValue valueWithCATransform3D:view.layer.sublayerTransform];
+      objc_setAssociatedObject(
+          view, RNSRTLLargeTitleCounterTransformKey, originalTransformValue, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    // Correct the label contents without changing its frame. UIKit resets UILabel.transform during title updates
+    // and navigation transitions, but it preserves the label layer's sublayer transform.
+    view.layer.sublayerTransform = CATransform3DScale(originalTransformValue.CATransform3DValue, -1, 1, 1);
+  } else if (originalTransformValue != nil) {
+    view.layer.sublayerTransform = originalTransformValue.CATransform3DValue;
+    objc_setAssociatedObject(view, RNSRTLLargeTitleCounterTransformKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  }
+}
+#endif // TARGET_OS_IOS
+
+@interface RNSNavigationController ()
+
+- (void)maybeCorrectRTLLargeTitleInScrollView:(RNSScreen *)screenController;
+
+@end
 
 @interface RNSScreenStackView () <UINavigationControllerDelegate,
                                   UIAdaptivePresentationControllerDelegate,
@@ -61,6 +123,16 @@ namespace react = facebook::react;
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
+    [self maybeCorrectRTLLargeTitleInScrollView:screenController];
+    // UIKit finishes installing or updating its private large-title label after this layout callback.
+    // Run once more on the main queue. Unlike a delayed timer, this executes before the next rendered frame.
+    __weak RNSNavigationController *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+      RNSNavigationController *strongSelf = weakSelf;
+      if ([strongSelf.topViewController isKindOfClass:[RNSScreen class]]) {
+        [strongSelf maybeCorrectRTLLargeTitleInScrollView:(RNSScreen *)strongSelf.topViewController];
+      }
+    });
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
         (screenController.presentedViewController != nil &&
          ![screenController.presentedViewController isBeingDismissed]);
@@ -76,6 +148,31 @@ namespace react = facebook::react;
 
     [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
   }
+}
+
+- (void)maybeCorrectRTLLargeTitleInScrollView:(RNSScreen *)screenController
+{
+#if TARGET_OS_IOS
+  if (@available(iOS 26.0, *)) {
+    // On iOS 26, UIKit can move the large-title view into React Native's mirrored RTL scroll view.
+    // React content receives a counter-transform, but the UIKit-owned title does not.
+    UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:screenController.view];
+    if (scrollView == nil) {
+      return;
+    }
+
+    RNSScreenStackHeaderConfig *headerConfig = screenController.screenView.findHeaderConfig;
+    NSString *title = screenController.navigationItem.title;
+    BOOL shouldCounterTransform = headerConfig.largeTitle && title.length > 0 && scrollView.transform.a < 0 &&
+        RNSScrollViewHasMirroredContentSubview(scrollView);
+    for (UIView *subview in scrollView.subviews) {
+      // The React content host is already mirrored. UIKit inserts the unmirrored large-title label host
+      // beside it. Match the current navigation title so unrelated UIKit labels are not transformed.
+      BOOL isUIKitLabelHost = subview.transform.a >= 0 && RNSViewContainsLabelWithText(subview, title);
+      RNSSetRTLLargeTitleCounterTransform(subview, shouldCounterTransform && isUIKitLabelHost);
+    }
+  }
+#endif // TARGET_OS_IOS
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
