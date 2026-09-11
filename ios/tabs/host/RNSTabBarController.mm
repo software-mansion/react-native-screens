@@ -1,4 +1,5 @@
 #import "RNSTabBarController.h"
+#import <QuartzCore/QuartzCore.h>
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 #import <objc/message.h>
@@ -15,6 +16,180 @@
 
 // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
 static constexpr NSUInteger kMinCountOfVCsForMoreVCPresence = 6;
+
+static constexpr NSTimeInterval kTabSwitchFadeDuration = 0.195924570;
+static constexpr NSTimeInterval kTabSwitchFadeInDelay = 0.05;
+static constexpr NSTimeInterval kTabSwitchFadeOutDelay = 0.1833;
+
+@interface RNSTabsDeferredTransition : NSObject <UIViewControllerAnimatedTransitioning>
+@property (nonatomic, weak) RNSTabBarController *tabBarController;
+@property (nonatomic, strong) id<UIViewControllerContextTransitioning> transitionContext;
+@property (nonatomic, strong) RNSTabsNavigationState *navigationStateAtSelection;
+@property (nonatomic, strong) RNSTabsScreenViewController *destinationViewController;
+@property (nonatomic, strong) UIView *backgroundView;
+@property (nonatomic) BOOL animating;
+
+- (void)resumeAfterStateUpdate;
+- (void)finish;
+@end
+
+@implementation RNSTabsDeferredTransition
+
+- (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+  if (@available(iOS 27.0, *)) {
+    return 0;
+  }
+
+  // Only iOS 18 and 26 have a tab-switch animation
+  if (@available(iOS 18.0, *)) {
+    return kTabSwitchFadeOutDelay + kTabSwitchFadeDuration;
+  }
+
+  return 0;
+}
+
+- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+  self.transitionContext = transitionContext;
+
+  UIView *fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+  UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
+  UIViewController *toController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+
+  toView.frame = [transitionContext finalFrameForViewController:toController];
+
+  // Make the incoming screen transparent to match the animation's initial opacity.
+  // This keeps it invisible until the animation starts.
+  toView.alpha = 0;
+
+  // UIKit fades a system background behind the incoming screen. Keeping it separate
+  // preserves the same color blend without changing either screen's background.
+  self.backgroundView = [[UIView alloc] initWithFrame:toView.frame];
+
+#if !TARGET_OS_TV
+  self.backgroundView.backgroundColor = UIColor.systemBackgroundColor;
+#endif
+
+  self.backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  self.backgroundView.userInteractionEnabled = NO;
+  self.backgroundView.alpha = 0;
+
+  [transitionContext.containerView addSubview:fromView];
+  [transitionContext.containerView addSubview:self.backgroundView];
+  [transitionContext.containerView addSubview:toView];
+
+  [self resumeAfterStateUpdate];
+}
+
+- (void)resumeAfterStateUpdate
+{
+  if (self.transitionContext == nil || self.animating) {
+    return;
+  }
+
+  RNSTabsNavigationStateUpdateRequest *request = self.tabBarController.tabsHostComponentView.navStateRequest;
+
+  // Wait for JS to acknowledge the native selection before showing the selected screen.
+  // UIKit can update the selected item on the tab bar while the outgoing content stays in place.
+  if (self.navigationStateAtSelection == nil || request == nil ||
+      request.baseProvenance < self.navigationStateAtSelection.provenance) {
+    return;
+  }
+
+  if ([self transitionDuration:self.transitionContext] == 0) {
+    [self finish];
+
+    return;
+  }
+
+  [self.destinationViewController
+      setContentScrollView:self.destinationViewController.tabScreenComponentView.cachedContentScrollView
+                   forEdge:NSDirectionalRectEdgeBottom];
+
+  UIView *fromView = [self.transitionContext viewForKey:UITransitionContextFromViewKey];
+  UIView *toView = [self.transitionContext viewForKey:UITransitionContextToViewKey];
+
+  self.animating = YES;
+
+  [CATransaction begin];
+  [CATransaction setDisableActions:YES];
+
+  __weak RNSTabsDeferredTransition *weakSelf = self;
+
+  [CATransaction setCompletionBlock:^{
+    [weakSelf finish];
+  }];
+
+  // These opacity springs and delays were measured from UIKit on iOS 18.6 and 26.5.
+  // We don't use UIKit's accompanying private mesh deformation to avoid complexity.
+  for (UIView *view in @[ fromView, self.backgroundView, toView ]) {
+    BOOL outgoing = view == fromView;
+
+    CASpringAnimation *fade = [CASpringAnimation animationWithKeyPath:@"opacity"];
+    fade.mass = 1;
+    fade.stiffness = 2221.771737253;
+    fade.damping = 94.271347445;
+    fade.initialVelocity = 0;
+
+    fade.fromValue = outgoing ? @1 : @0;
+    fade.toValue = outgoing ? @0 : @1;
+
+    fade.beginTime = outgoing ? kTabSwitchFadeOutDelay : kTabSwitchFadeInDelay;
+    fade.duration = kTabSwitchFadeDuration;
+    fade.fillMode = kCAFillModeBoth;
+    fade.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+
+    CAAnimationGroup *group = [CAAnimationGroup animation];
+    group.animations = @[ fade ];
+    group.duration = [self transitionDuration:self.transitionContext];
+    group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+
+    view.alpha = outgoing ? 0 : 1;
+    [view.layer addAnimation:group forKey:@"RNSTabsDeferredOpacity"];
+  }
+
+  [CATransaction commit];
+}
+
+- (void)finish
+{
+  [self.destinationViewController
+      setContentScrollView:self.destinationViewController.tabScreenComponentView.cachedContentScrollView
+                   forEdge:NSDirectionalRectEdgeBottom];
+
+  if (self.transitionContext != nil) {
+    id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
+
+    self.transitionContext = nil;
+    self.animating = NO;
+
+    UIView *fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+    UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
+
+    [fromView.layer removeAnimationForKey:@"RNSTabsDeferredOpacity"];
+    [toView.layer removeAnimationForKey:@"RNSTabsDeferredOpacity"];
+    [self.backgroundView.layer removeAnimationForKey:@"RNSTabsDeferredOpacity"];
+
+    [self.backgroundView removeFromSuperview];
+    self.backgroundView = nil;
+
+    BOOL cancelled = transitionContext.transitionWasCancelled;
+
+    if (cancelled) {
+      [toView removeFromSuperview];
+    } else {
+      [fromView removeFromSuperview];
+    }
+
+    fromView.alpha = 1;
+    toView.alpha = 1;
+
+    [transitionContext completeTransition:!cancelled];
+  }
+}
+
+@end
 
 // We need UINavigationControllerDelegate to handle navigation within `moreNavigationController`
 @interface RNSTabBarController () <UITabBarControllerDelegate, UINavigationControllerDelegate>
@@ -40,17 +215,16 @@ static constexpr NSUInteger kMinCountOfVCsForMoreVCPresence = 6;
  * (reached via UIKit's `tabBarController` property on the parent chain)
  * to check whether the push should be prevented (e.g. due to `preventNativeSelection`).
  */
-static void rns_pushViewController(__unsafe_unretained id self,
-                                   SEL _cmd,
-                                   UIViewController *viewController,
-                                   BOOL animated)
+static void
+rns_pushViewController(__unsafe_unretained id self, SEL _cmd, UIViewController *viewController, BOOL animated)
 {
   UITabBarController *rawTabBarController = static_cast<UIViewController *>(self).tabBarController;
 
-  RCTAssert([rawTabBarController isKindOfClass:RNSTabBarController.class],
-            @"[RNScreens] Expected tabBarController to be of class %@, got: %@",
-            RNSTabBarController.class,
-            rawTabBarController.class);
+  RCTAssert(
+      [rawTabBarController isKindOfClass:RNSTabBarController.class],
+      @"[RNScreens] Expected tabBarController to be of class %@, got: %@",
+      RNSTabBarController.class,
+      rawTabBarController.class);
   RNSTabBarController *tabBarController = static_cast<RNSTabBarController *>(rawTabBarController);
 
   if ([tabBarController moreNavigationController:self shouldPushViewController:viewController]) {
@@ -87,6 +261,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   BOOL _isHandlingExplicitSelectionUpdate;
 
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
+
+  RNSTabsDeferredTransition *_deferredTransition;
 
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
 }
@@ -139,6 +315,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)tearDown
 {
+  [_deferredTransition finish];
+  _deferredTransition = nil;
+
   [_observerRegistry clear];
   _pendingStateUpdate = nil;
   _tabsHostComponentView = nil;
@@ -268,6 +447,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   RNSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
   [self performContainerUpdate];
+  [_deferredTransition resumeAfterStateUpdate];
 }
 
 #pragma mark - Container update
@@ -275,6 +455,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)performContainerUpdate
 {
   _isHandlingExplicitSelectionUpdate = YES;
+
+  if (_deferredTransition != nil && _needsUpdateOfChildViewControllers &&
+      ![_tabScreenControllers containsObject:_deferredTransition.destinationViewController]) {
+    [_deferredTransition finish];
+    _deferredTransition = nil;
+  }
+
   [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
@@ -304,8 +491,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   UIViewController *currSelectedViewController = self.selectedViewController;
 
-  RCTAssert(![NSString rnscreens_isBlankOrNull:screenKey],
-            @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
+  RCTAssert(
+      ![NSString rnscreens_isBlankOrNull:screenKey],
+      @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
 
   [self progressNavigationState:screenKey withOrigin:actionOrigin];
 
@@ -330,8 +518,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
 {
-  RCTAssert(self.selectedViewController == viewController,
-            @"[RNScreens] Expected UIKit to update selectedViewController");
+  RCTAssert(
+      self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
   if ([self isSelectedViewControllerTheMoreNavigationController]) {
     // We don't want to run neither state update nor side effects.
@@ -354,8 +542,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
 {
   // At this moment the `UITabBarController` model is already updated.
-  RCTAssert(self.selectedViewController == viewController,
-            @"[RNScreens] Expected UIKit to update selectedViewController");
+  RCTAssert(
+      self.selectedViewController == viewController, @"[RNScreens] Expected UIKit to update selectedViewController");
 
   if ([self isSelectedViewControllerTheMoreNavigationController]) {
     [self disableNavigationBarInMoreNavigationController];
@@ -366,6 +554,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
     [_observerRegistry emitDidSelectMoreTabWithCurrentState:_navigationState sender:self];
   } else {
     [self updateNavigationStateOnModelUpdate];
+
+    if (_deferredTransition.destinationViewController == viewController &&
+        _deferredTransition.navigationStateAtSelection == nil) {
+      _deferredTransition.navigationStateAtSelection = _navigationState;
+    }
+
     auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
                                                                              isRepeated:NO
                                                               hasTriggeredSpecialEffect:NO
@@ -392,6 +586,18 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #pragma mark - UITabBarControllerDelegate
 
+- (id<UIViewControllerAnimatedTransitioning>)tabBarController:(UITabBarController *)tabBarController
+           animationControllerForTransitionFromViewController:(UIViewController *)fromViewController
+                                             toViewController:(UIViewController *)toViewController
+{
+  if (_deferredTransition.destinationViewController == toViewController &&
+      !_deferredTransition.destinationViewController.hasAppeared) {
+    return _deferredTransition;
+  }
+
+  return nil;
+}
+
 // These methods are not called on programatic selection!
 // They are called only when a user taps on tab bar.
 
@@ -401,10 +607,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(tabBarController == self, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
 
   // Can be UINavigationController in case of MoreNavigationController
-  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class] ||
-                [viewController isKindOfClass:UINavigationController.class],
-            @"[RNScreens] Unexpected type of controller: %@",
-            viewController.class);
+  RCTAssert(
+      [viewController isKindOfClass:RNSTabsScreenViewController.class] ||
+          [viewController isKindOfClass:UINavigationController.class],
+      @"[RNScreens] Unexpected type of controller: %@",
+      viewController.class);
 
   // TODO: handle enforcing orientation with natively-driven tabs
 
@@ -443,6 +650,25 @@ static void rns_pushViewController(__unsafe_unretained id self,
     }
   }
 
+  [_deferredTransition finish];
+  _deferredTransition = nil;
+
+  if ([viewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    auto *screenViewController = static_cast<RNSTabsScreenViewController *>(viewController);
+
+    if (!screenViewController.hasAppeared &&
+        screenViewController.tabScreenComponentView.deferTransitionUntilFirstStateUpdate) {
+      _deferredTransition = [RNSTabsDeferredTransition new];
+      _deferredTransition.tabBarController = self;
+      _deferredTransition.destinationViewController = screenViewController;
+
+      // Keep the outgoing scroll edge state while the destination's lazy content is missing.
+      // Restore the destination's scroll view when JS acknowledges the selection.
+      [screenViewController setContentScrollView:[[self selectedScreenViewController] findContentScrollView]
+                                         forEdge:NSDirectionalRectEdgeBottom];
+    }
+  }
+
   _isHandlingExplicitSelectionUpdate = YES;
   return YES;
 }
@@ -453,10 +679,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(self == tabBarController, @"[RNScreens] Unexpected type of controller: %@", tabBarController.class);
 
   // Can be UINavigationController in case of MoreNavigationController
-  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class] ||
-                [viewController isKindOfClass:UINavigationController.class],
-            @"[RNScreens] Unexpected type of controller: %@",
-            viewController.class);
+  RCTAssert(
+      [viewController isKindOfClass:RNSTabsScreenViewController.class] ||
+          [viewController isKindOfClass:UINavigationController.class],
+      @"[RNScreens] Unexpected type of controller: %@",
+      viewController.class);
 
   [self userDidSelectViewController:viewController];
   _isHandlingExplicitSelectionUpdate = NO;
@@ -469,9 +696,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
                     animated:(BOOL)animated
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
-  RCTAssert(self.moreNavigationController == navigationController,
-            @"[RNScreens] Unexpected view controller called delegate method: %@",
-            navigationController);
+  RCTAssert(
+      self.moreNavigationController == navigationController,
+      @"[RNScreens] Unexpected view controller called delegate method: %@",
+      navigationController);
 
   // The root view controller is of different type.
   if ([viewController isKindOfClass:RNSTabsScreenViewController.class] &&
@@ -536,14 +764,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   NSString *_Nonnull nextSelectedViewControllerKey = _pendingStateUpdate.selectedScreenKey;
   UIViewController *nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
 
-  RCTAssert(nextSelectedViewController != nil,
-            @"[RNScreens] Failed to determine next selected view controller for key: %@",
-            nextSelectedViewControllerKey);
+  RCTAssert(
+      nextSelectedViewController != nil,
+      @"[RNScreens] Failed to determine next selected view controller for key: %@",
+      nextSelectedViewControllerKey);
 
-  RCTAssert([nextSelectedViewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] nextSelectedViewController MUST be %@, got: %@",
-            RNSTabsScreenViewController.class,
-            nextSelectedViewController.class);
+  RCTAssert(
+      [nextSelectedViewController isKindOfClass:RNSTabsScreenViewController.class],
+      @"[RNScreens] nextSelectedViewController MUST be %@, got: %@",
+      RNSTabsScreenViewController.class,
+      nextSelectedViewController.class);
 
   if (self.rejectStaleNavigationStateUpdates && [self isNavigationStateUpdateStale:_pendingStateUpdate]) {
     [_observerRegistry emitRejectedStateUpdate:_pendingStateUpdate
@@ -634,9 +864,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return nil;
   }
   for (UIViewController *viewController in self.viewControllers) {
-    RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
-              @"[RNScreens] Unexpected type of controller: %@",
-              viewController.class);
+    RCTAssert(
+        [viewController isKindOfClass:RNSTabsScreenViewController.class],
+        @"[RNScreens] Unexpected type of controller: %@",
+        viewController.class);
     auto *screenViewController = static_cast<RNSTabsScreenViewController *>(viewController);
     if ([screenViewController.getScreenKeyOrNull isEqualToString:screenKey]) {
       return screenViewController;
@@ -668,18 +899,20 @@ static void rns_pushViewController(__unsafe_unretained id self,
  */
 - (RNSTabsScreenViewController *)selectedScreenViewController
 {
-  RCTAssert([self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Unexpected type of selectedViewController: %@",
-            self.selectedViewController.class);
+  RCTAssert(
+      [self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
+      @"[RNScreens] Unexpected type of selectedViewController: %@",
+      self.selectedViewController.class);
   return static_cast<RNSTabsScreenViewController *>(self.selectedViewController);
 }
 
 - (nonnull NSString *)screenKeyForViewController:(nonnull UIViewController *)viewController
 {
-  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Expected selected view controller to be of class %@, got: %@",
-            RNSTabsScreenViewController.class,
-            viewController.class);
+  RCTAssert(
+      [viewController isKindOfClass:RNSTabsScreenViewController.class],
+      @"[RNScreens] Expected selected view controller to be of class %@, got: %@",
+      RNSTabsScreenViewController.class,
+      viewController.class);
 
   auto *screenKey = static_cast<RNSTabsScreenViewController *>(viewController).getScreenKeyOrNull;
   RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
@@ -718,9 +951,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   if (![self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class]) {
-    RCTAssert(NO,
-              @"[RNScreens] Unexpected controller type during state reconciliation: %@",
-              self.selectedViewController.class);
+    RCTAssert(
+        NO,
+        @"[RNScreens] Unexpected controller type during state reconciliation: %@",
+        self.selectedViewController.class);
     return;
   }
 
@@ -729,9 +963,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  RNSLog(@"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
-         _navigationState.selectedScreenKey,
-         selectedScreenKey);
+  RNSLog(
+      @"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
+      _navigationState.selectedScreenKey,
+      selectedScreenKey);
   [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
 
   if ([self isViewControllerHostedByMoreNavigationController:self.selectedViewController]) {
@@ -843,9 +1078,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // We quietly assume here, that the root view controller is the `UIMoreListViewController`.
     if (shouldRespectSelectionPrevention) {
       UIViewController *topViewController = self.moreNavigationController.topViewController;
-      RCTAssert([topViewController isKindOfClass:RNSTabsScreenViewController.class],
-                @"[RNScreens] Unexpected type of view controller on moreNavigationControllerStack: %@",
-                topViewController.class);
+      RCTAssert(
+          [topViewController isKindOfClass:RNSTabsScreenViewController.class],
+          @"[RNScreens] Unexpected type of view controller on moreNavigationControllerStack: %@",
+          topViewController.class);
       RNSTabsScreenViewController *screenController = static_cast<RNSTabsScreenViewController *>(topViewController);
       if (screenController.isPreventNativeSelectionEnabled) {
         return [self popToRootMoreNavigationController:self.moreNavigationController animated:shouldAnimate];
@@ -873,8 +1109,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   auto *poppedViewControllers = [moreNavigationController popToRootViewControllerAnimated:animated];
-  RCTAssert(poppedViewControllers != nil && poppedViewControllers.count == 1,
-            @"[RNScreens] Expected exactly one view controller to be popped");
+  RCTAssert(
+      poppedViewControllers != nil && poppedViewControllers.count == 1,
+      @"[RNScreens] Expected exactly one view controller to be popped");
   return [poppedViewControllers firstObject];
 }
 
@@ -929,10 +1166,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
     RCTAssert(dynamicSubclass != nil, @"[RNScreens] Failed to allocate dynamic subclass of %s", currentClassName);
 
     Method pushMethod = class_getInstanceMethod(currentClass, @selector(pushViewController:animated:));
-    class_addMethod(dynamicSubclass,
-                    @selector(pushViewController:animated:),
-                    (IMP)rns_pushViewController,
-                    method_getTypeEncoding(pushMethod));
+    class_addMethod(
+        dynamicSubclass,
+        @selector(pushViewController:animated:),
+        (IMP)rns_pushViewController,
+        method_getTypeEncoding(pushMethod));
 
     objc_registerClassPair(dynamicSubclass);
   }
@@ -1040,8 +1278,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
 
-  RCTAssert(self.parentViewController != nil,
-            @"[RNScreens] Expected non-null parent view controller for layout direction update.");
+  RCTAssert(
+      self.parentViewController != nil,
+      @"[RNScreens] Expected non-null parent view controller for layout direction update.");
   [self.parentViewController
       setOverrideTraitCollection:[UITraitCollection
                                      traitCollectionWithLayoutDirection:self.tabsHostComponentView.layoutDirection]
