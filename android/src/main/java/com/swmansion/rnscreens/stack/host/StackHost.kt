@@ -97,6 +97,8 @@ class StackHost(
         }
     }
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     override fun onMeasure(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
