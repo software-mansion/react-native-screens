@@ -18,6 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) UIBarButtonItemStyle style;
+
+/**
+ Tint color of the bar button item; nil means the default system tint.
+ Named itemTintColor to avoid clashing with UIView's tintColor on conforming views.
+ */
+@property (nonatomic, readonly, nullable) UIColor *itemTintColor;
 @property (nonatomic, readonly) BOOL disabled;
 @property (nonatomic, readonly) BOOL respondsToOnPress;
 @property (nonatomic, readonly) BOOL hidesSharedBackground;
