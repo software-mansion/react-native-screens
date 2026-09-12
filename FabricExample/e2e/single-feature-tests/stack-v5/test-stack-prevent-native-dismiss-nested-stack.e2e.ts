@@ -24,8 +24,9 @@ import {
  * chevron never reaches the activity `OnBackPressedDispatcher` — the press is
  * routed to the owning `StackContainer`, which resolves `preventNativeDismiss`
  * itself (`wantsToPreventStackNativeDismiss`) before popping its own stack. Only
- * the system back / gesture-back still relies on dispatcher callback ordering
- * (`PreventNativeDismissCallback` registered after the outer navigator's).
+ * the system back / gesture-back goes through the dispatcher, where each
+ * `StackContainer` keeps a lifecycle-owned veto callback ordered right after its
+ * own FragmentManager's (manual steps only).
  */
 
 /** Taps the back chevron of the topmost headered screen. */

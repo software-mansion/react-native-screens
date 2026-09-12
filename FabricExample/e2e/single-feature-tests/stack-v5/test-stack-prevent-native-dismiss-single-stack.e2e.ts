@@ -18,11 +18,12 @@ import {
  * Stack v5 `preventNativeDismiss` — single stack. See the scenario for what is
  * automated vs. manual, and for the direct-`App.tsx` launch Android needs.
  *
- * Interception survives software-mansion/react-native-screens-labs#1459:
- * `StackScreenFragment` registers its `PreventNativeDismissCallback` after the
- * outer navigator's, and `OnBackPressedDispatcher` runs enabled callbacks in
- * reverse order — so the chevron is swallowed here even though an unintercepted
- * back press would navigate out of the example app's own navigation.
+ * Interception survives software-mansion/react-native-screens-labs#1459: the
+ * chevron never reaches the activity `OnBackPressedDispatcher` — the press is
+ * routed to the owning `StackContainer`, which resolves `preventNativeDismiss`
+ * itself before popping its own stack. So the chevron is swallowed here even
+ * though an unintercepted back press would navigate out of the example app's
+ * own navigation.
  */
 
 // The toast renders as `${index + 1}. ${message}`, so its label carries the
