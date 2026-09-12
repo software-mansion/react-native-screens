@@ -59,6 +59,10 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
   RCTImageLoader *_imageLoader;
+
+  /// Whether the navigation bar this config was last applied to was outside of any window at the time.
+  /// See `-updateViewControllerIfAppliedOutsideWindow`.
+  BOOL _appliedOutsideWindow;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -155,6 +159,30 @@ RNS_IGNORE_SUPER_CALL_END
     // returned by the `onHeaderHeightChange` event is correct.
     [self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
+}
+
+- (void)updateViewControllerIfAppliedOutsideWindow
+{
+  if (!_appliedOutsideWindow) {
+    return;
+  }
+  _appliedOutsideWindow = NO;
+
+  // The navigation bar has a window by now, but the hierarchy insertion that brought it there is
+  // still in progress and applying synchronously leaves the styling as unrealized as before. One
+  // turn of the main queue later the bar is fully attached and the application takes effect.
+  __weak RNSScreenStackHeaderConfig *weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    RNSScreenStackHeaderConfig *config = weakSelf;
+    if (config == nil) {
+      return;
+    }
+    UIViewController *vc = config.screenView.controller;
+    if (vc == nil || vc.parentViewController == nil) {
+      return;
+    }
+    [RNSScreenStackHeaderConfig updateViewController:vc withConfig:config animated:NO];
+  });
 }
 
 - (void)layoutNavigationControllerView
@@ -652,6 +680,13 @@ RNS_IGNORE_SUPER_CALL_END
                                                 withCurrentItems:navitem.leftBarButtonItems];
   navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
                                                  withCurrentItems:navitem.rightBarButtonItems];
+
+  // A bar button item assigned to a navigation bar that is not in a window yet misses the styling
+  // UIKit resolves against that window - on iOS 26 a `prominent` item ends up without its
+  // background until the items are assigned again. A stack nested in tabs reaches this state
+  // whenever a tab is re-selected after its view has been detached, and nothing reassigns the items
+  // afterwards, so record the incomplete application for `RNSScreenStackView` to repeat.
+  config->_appliedOutsideWindow = navctr.navigationBar.window == nil;
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
