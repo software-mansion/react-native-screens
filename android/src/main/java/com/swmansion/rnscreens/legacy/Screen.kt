@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
@@ -478,7 +479,8 @@ class Screen(
                 endTransitionRecursive(childView.toolbar)
             }
 
-            if (childView is ViewGroup) {
+            // Mirrors the skip in `startTransitionRecursive`.
+            if (childView is ViewGroup && childView !is RecyclerView) {
                 endTransitionRecursive(childView)
             }
         }
@@ -509,7 +511,10 @@ class Screen(
                     startTransitionRecursive(child.toolbar)
                 }
 
-                if (child is ViewGroup) {
+                // Transition a RecyclerView as one unit. It owns the attach/detach lifecycle
+                // of its children, and a child left in `mTransitioningViews` keeps its parent
+                // set after removal, which makes recycling it throw.
+                if (child is ViewGroup && child !is RecyclerView) {
                     startTransitionRecursive(child)
                 }
             }
