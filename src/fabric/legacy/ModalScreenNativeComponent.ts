@@ -37,6 +37,8 @@ type GestureResponseDistanceType = Readonly<{
   bottom: CT.Float;
 }>;
 
+type ScreenEdge = 'none' | 'top' | 'left' | 'bottom' | 'right' | 'all';
+
 type StackPresentation =
   | 'push'
   | 'modal'
@@ -102,6 +104,10 @@ export interface NativeProps extends ViewProps {
   fullScreenSwipeEnabled?: CT.WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean | undefined;
+  screenEdgesDeferringSystemGestures?: CT.WithDefault<
+    readonly ScreenEdge[],
+    'none'
+  >;
   preventNativeDismiss?: boolean | undefined;
   gestureEnabled?: CT.WithDefault<boolean, true>;
   statusBarColor?: ColorValue | undefined;

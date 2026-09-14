@@ -63,6 +63,17 @@ export type BlurEffectTypes = BlurEffect;
 
 export type ScreenReplaceTypes = 'push' | 'pop';
 
+/**
+ * Edges of the screen, mirroring `UIRectEdge`.
+ */
+export type ScreenEdgeTypes =
+  | 'none'
+  | 'top'
+  | 'left'
+  | 'bottom'
+  | 'right'
+  | 'all';
+
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 
 export type ScreenOrientationTypes =
@@ -203,6 +214,19 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   homeIndicatorHidden?: boolean | undefined;
+  /**
+   * The screen edges on which the system's own edge gestures (swipe up for the home
+   * screen, swipe down for Notification Centre) should be deferred while this screen
+   * is on top. On a deferred edge the first swipe is delivered to the app and only a
+   * second swipe invokes the system gesture. Defaults to `['none']`.
+   *
+   * Maps to `UIViewController.preferredScreenEdgesDeferringSystemGestures`. iOS only
+   * defers a gesture that has not begun yet, so the prop has to be set before the
+   * touch lands rather than from within a gesture handler.
+   *
+   * @platform ios
+   */
+  screenEdgesDeferringSystemGestures?: readonly ScreenEdgeTypes[] | undefined;
   /**
    * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
    *
