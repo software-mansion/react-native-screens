@@ -20,6 +20,7 @@ import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderC
 import com.swmansion.rnscreens.react.containers.stack.host.StackHost
 import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewSeeking
+import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -55,6 +56,12 @@ internal class StackScreen(
     var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             stackHost.get()?.stackScreenChangedActivityMode(this)
+        }
+    }
+
+    override var animation: StackAnimationDescriptor by Delegates.observable(StackAnimationDescriptor.DEFAULT) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            stackHost.get()?.stackScreenChangedAnimation(this)
         }
     }
 
