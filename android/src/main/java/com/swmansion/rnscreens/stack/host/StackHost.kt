@@ -91,6 +91,10 @@ class StackHost(
         }
     }
 
+    internal fun stackScreenChangedAnimation(stackScreen: StackScreen) {
+        container.onScreenAnimationChanged(stackScreen)
+    }
+
     override fun onScreenDismissCommitted(stackScreen: StackScreen) {
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
             stackScreen.isNativelyDismissed = true
