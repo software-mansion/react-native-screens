@@ -1,8 +1,8 @@
 package com.swmansion.rnscreens.stack.animation
 
 import com.swmansion.rnscreens.stack.animation.engine.Easings
+import com.swmansion.rnscreens.stack.animation.model.Easing
 import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
-import com.swmansion.rnscreens.stack.animation.presets.PresetDefinition
 import com.swmansion.rnscreens.stack.animation.presets.PresetTable
 import com.swmansion.rnscreens.stack.animation.presets.RowTemplate
 import com.swmansion.rnscreens.stack.animation.presets.SlotTemplate
@@ -49,22 +49,24 @@ internal object StackAnimationResolver {
                 Row.PUSH -> definition.push
                 Row.POP -> definition.pop
             }
-        return resolveRow(definition, template, outZPolicy)
+        return resolveRow(template, definition.referenceDurationMs, definition.easing, outZPolicy)
     }
 
+    /**
+     * Templates are authored in fractions of a reference duration; a row lasts as long as its
+     * longest slot, or one reference when it has no tracks at all (`none`).
+     */
     private fun resolveRow(
-        definition: PresetDefinition,
         template: RowTemplate,
+        referenceMs: Long,
+        easing: Easing,
         outZPolicy: ZPolicy,
     ): RowSpec {
-        val inSlot = template.inSlot?.let { resolveSlot(definition, it) }
-        val outSlot = template.outSlot?.let { resolveSlot(definition, it) }
+        val inSlot = template.inSlot?.let { resolveSlot(it, referenceMs, easing) }
+        val outSlot = template.outSlot?.let { resolveSlot(it, referenceMs, easing) }
         val rowDurationMs =
-            maxOf(
-                definition.referenceDurationMs.scaledBy(template.duration),
-                inSlot?.durationMs ?: 0L,
-                outSlot?.durationMs ?: 0L,
-            )
+            maxOf(inSlot?.durationMs ?: 0L, outSlot?.durationMs ?: 0L)
+                .takeIf { it > 0L } ?: referenceMs
         return RowSpec(
             inSlot = inSlot ?: SlotSpec.noOp(rowDurationMs),
             outSlot = outSlot ?: SlotSpec.noOp(rowDurationMs),
@@ -73,8 +75,9 @@ internal object StackAnimationResolver {
     }
 
     private fun resolveSlot(
-        definition: PresetDefinition,
         template: SlotTemplate,
+        referenceMs: Long,
+        easing: Easing,
     ): SlotSpec {
         val tracks =
             template.tracks.map {
@@ -82,9 +85,9 @@ internal object StackAnimationResolver {
                     property = it.property,
                     from = it.from,
                     to = it.to,
-                    startMs = definition.referenceDurationMs.scaledBy(it.start),
-                    durationMs = definition.referenceDurationMs.scaledBy(it.duration),
-                    interpolator = Easings.get(it.easing ?: definition.easing),
+                    startMs = referenceMs.scaledBy(it.start),
+                    durationMs = referenceMs.scaledBy(it.duration),
+                    interpolator = Easings.get(it.easing ?: easing),
                 )
             }
         return SlotSpec(tracks, durationMs = tracks.maxOf { it.startMs + it.durationMs })
