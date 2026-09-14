@@ -48,6 +48,7 @@ function TabsHost(props: TabsHostProps) {
       {...filteredBaseProps}
       // iOS-specific
       layoutDirection={direction}
+      tabBarHiddenAnimationEnabled={ios?.tabBarHiddenAnimationEnabled}
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
       tabBarTintColor={ios?.tabBarTintColor}
