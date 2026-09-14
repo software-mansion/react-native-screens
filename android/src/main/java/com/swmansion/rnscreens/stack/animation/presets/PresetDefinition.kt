@@ -27,7 +27,6 @@ internal data class SlotTemplate(
 internal data class RowTemplate(
     val inSlot: SlotTemplate?,
     val outSlot: SlotTemplate?,
-    val duration: Float = 1f,
 )
 
 internal data class PresetDefinition(
