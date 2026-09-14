@@ -55,6 +55,9 @@ export const CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW =
 
 export const CLASS_NAME_UI_CONTEXT_MENU_VIEW = '_UIContextMenuView';
 export const CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW = '_UIContextMenuListView';
+/** UIKit's full-screen "Dismiss context menu" overlay behind the platter. */
+export const CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW =
+  '_UIContextMenuPlatterTransitionView';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL = '_UIContextMenuCell';
 export const CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW =
   '_UIContextMenuCellContentView';
@@ -77,6 +80,9 @@ export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
 export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =
   'androidx.appcompat.widget.MenuPopupWindow$MenuDropDownListView';
+// Matches every toolbar (`by.type` uses `isAssignableFrom`): the legacy
+// `CustomToolbar` and the Stack v5 `MaterialToolbar` alike.
+export const CLASS_NAME_ANDROID_TOOLBAR = 'androidx.appcompat.widget.Toolbar';
 export const CLASS_NAME_ANDROID_MATERIAL_TOOLBAR =
   'com.google.android.material.appbar.MaterialToolbar';
 // Detox resolves `by.type` with `isAssignableFrom`, so this also matches the

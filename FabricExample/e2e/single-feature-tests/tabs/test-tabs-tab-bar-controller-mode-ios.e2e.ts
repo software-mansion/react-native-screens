@@ -2,6 +2,7 @@ import { device, expect, element, by } from 'detox';
 import {
   describeIfiOS,
   describeIfiPad,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import {
@@ -17,18 +18,12 @@ const PICKER_ID = 'tab-bar-controller-mode-picker';
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-function modeItemId(mode: TabBarControllerMode) {
-  return `tabbarcontrollermode-${mode.toLowerCase()}`;
-}
-
-async function setTabBarControllerMode(mode: TabBarControllerMode) {
-  await element(by.id(PICKER_ID)).tap();
-  await element(by.id(modeItemId(mode))).tap();
-  await expect(element(by.id(PICKER_ID))).toHaveLabel(
-    `tabBarControllerMode: ${mode}`,
-  );
-  await element(by.id(PICKER_ID)).tap();
-}
+const setTabBarControllerMode = (mode: TabBarControllerMode) =>
+  selectPickerOption({
+    pickerId: PICKER_ID,
+    label: 'tabBarControllerMode',
+    option: mode,
+  });
 
 describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   beforeAll(async () => {

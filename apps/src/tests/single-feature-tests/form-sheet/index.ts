@@ -6,6 +6,7 @@ import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents';
+import TestFormSheetFractionalDetents from './test-form-sheet-fractional-detents';
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible';
 import TestFormSheetInitialDetentIndex from './test-form-sheet-initial-detent-index';
 import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index-ios';
@@ -24,6 +25,7 @@ export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
 export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents';
+export { default as TestFormSheetFractionalDetents } from './test-form-sheet-fractional-detents';
 export { default as TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible';
 export { default as TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index';
 export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
@@ -41,6 +43,7 @@ const scenarios = {
   TestFormSheetDismissEvents,
   TestFormSheetExpandScrollView,
   TestFormSheetFitToContents,
+  TestFormSheetFractionalDetents,
   TestFormSheetGrabberVisible,
   TestFormSheetInitialDetentIndex,
   TestFormSheetLargestUndimmedDetentIndex,

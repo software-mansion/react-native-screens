@@ -3,34 +3,21 @@ import { expect as jestExpect } from '@jest/globals';
 import {
   describeIfiOS26,
   describeIfiPadOS26,
-  selectSingleFeatureTestsScreen,
+  expectBottomAccessoryAboveTabBar,
   forceTapByLabeliOS,
-  getElementAttributes,
+  getBottomAccessoryAttributes,
+  getMatches,
+  getTabBarAttributes,
+  scrollUntilVisible,
+  selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 import { IosElementAttributes } from 'detox/detox';
-import {
-  CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-  CLASS_NAME_UI_TAB_BAR,
-} from '../../native-class-names';
+import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '../../native-class-names';
 
 const bottomAccessoryElement = (testID: string) =>
   element(
     by.id(testID).withAncestor(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
   ).atIndex(0);
-
-const getBottomAccessoryAttributes = () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-    index: 0,
-  }) as Promise<IosElementAttributes>;
-
-const getExtendedTabBarAttributes = async () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_UI_TAB_BAR,
-    index: 0,
-  }) as Promise<IosElementAttributes>;
 
 async function expectBottomAccessoryExist(testID: string) {
   await expect(bottomAccessoryElement(testID)).toExist();
@@ -38,15 +25,6 @@ async function expectBottomAccessoryExist(testID: string) {
 
 async function expectBottomAccessoryText(testID: string, text: string) {
   await expect(bottomAccessoryElement(testID)).toHaveText(text);
-}
-
-function expectBottomAccessoryExtended(
-  bottomAccessory: IosElementAttributes,
-  tabBar: IosElementAttributes,
-) {
-  jestExpect(tabBar.frame.y).toBeGreaterThan(
-    bottomAccessory.frame.y + bottomAccessory.frame.height,
-  );
 }
 
 function expectBottomAccessoryInline(
@@ -83,16 +61,17 @@ function expectBottomAccessoryAtTheBottom(
   jestExpect(bottomAccessoryBottom).toBeGreaterThanOrEqual(safeAreaLine);
 }
 
-async function scrollScrollViewToItem(
+// Small steps from low on the screen: the accessory must not swallow the swipe.
+const scrollScrollViewToItem = (
   scrollViewId: string,
   itemId: string,
   direction: 'up' | 'down',
-) {
-  await waitFor(element(by.id(itemId)))
-    .toBeVisible()
-    .whileElement(by.id(scrollViewId))
-    .scroll(150, direction, NaN, 0.3);
-}
+) =>
+  scrollUntilVisible(itemId, scrollViewId, {
+    pixels: 150,
+    startPercentage: 0.3,
+    direction,
+  });
 
 type VariantCase = {
   variantId?: string; // card to tap; omitted for the initial-load variant
@@ -226,10 +205,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
 
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 
   it('should display the bottom accessory inline when scrolling down on ScrollDown tab', async () => {
@@ -247,17 +223,14 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     expectBottomAccessoryInline(
       await getBottomAccessoryAttributes(),
       extendedAccessoryWidth,
-      await getExtendedTabBarAttributes(),
+      await getTabBarAttributes(),
     );
   });
 
   it('should display the bottom accessory above the tab bar when scrolling up on ScrollDown tab', async () => {
     await element(by.id('scroll-down-scrollview')).scrollTo('top');
 
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 
   // ---------------------------------------------------------------------------
@@ -271,10 +244,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
 
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 
   it('should display the bottom accessory inline when scrolling up on ScrollUp tab', async () => {
@@ -292,7 +262,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     expectBottomAccessoryInline(
       await getBottomAccessoryAttributes(),
       extendedAccessoryWidth,
-      await getExtendedTabBarAttributes(),
+      await getTabBarAttributes(),
     );
   });
 
@@ -304,10 +274,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
       'down',
     );
 
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 });
 
@@ -324,11 +291,10 @@ describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
       'test-tabs-bottom-accessory-layout-ios',
     );
     await expect(element(by.id('config-scrollview'))).toBeVisible();
-    configScrollView = (await getElementAttributes({
-      by: 'id',
-      value: 'config-scrollview',
-      index: 0,
-    })) as IosElementAttributes;
+    // The first match, as several copies can be attached while tabs switch.
+    configScrollView = (
+      await getMatches(by.id('config-scrollview'))
+    )[0] as IosElementAttributes;
   });
 
   it('should display the Config tab content and initial accessory on load', async () => {

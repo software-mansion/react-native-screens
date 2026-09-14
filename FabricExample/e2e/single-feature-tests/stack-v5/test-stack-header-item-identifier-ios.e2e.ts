@@ -2,24 +2,14 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import {
+  barButtonIcon,
   describeIfiOS26,
+  headerTitle,
   getMatches,
   selectSingleFeatureTestsScreen,
   toggleSettingsSwitch,
 } from '../../e2e-utils';
-import {
-  CLASS_NAME_UI_LABEL,
-  CLASS_NAME_UI_MODERN_BAR_BUTTON,
-  CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW,
-} from '../../native-class-names';
-
-// The icon of the header bar button item, addressed by its icon id (SF Symbol
-// name or asset path).
-function barButtonIcon(sfSymbolName: string) {
-  return element(
-    by.id(sfSymbolName).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
-  );
-}
+import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '../../native-class-names';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
 // screen's index.tsx).
@@ -47,7 +37,7 @@ async function expectExactBarButtonSymbols(expected: string[]) {
 }
 
 async function waitForScreen(routeName: 'One' | 'Two' | 'Three') {
-  await waitFor(element(by.type(CLASS_NAME_UI_LABEL).and(by.text(routeName))))
+  await waitFor(element(headerTitle(routeName)))
     .toExist()
     .withTimeout(3000);
 }
@@ -62,7 +52,7 @@ async function pushNext() {
 // is asserted to confirm where the pop landed.
 async function popBackFrom(routeName: 'Two' | 'Three') {
   await element(by.text('Go back')).tap();
-  await waitFor(element(by.type(CLASS_NAME_UI_LABEL).and(by.text(routeName))))
+  await waitFor(element(headerTitle(routeName)))
     .not.toExist()
     .withTimeout(3000);
   await waitForScreen(routeName === 'Three' ? 'Two' : 'One');
