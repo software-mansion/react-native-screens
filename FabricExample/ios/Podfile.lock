@@ -1399,7 +1399,7 @@ PODS:
     - Yoga
   - react-native-restart (0.0.27):
     - React-Core
-  - react-native-safe-area-context (5.8.0):
+  - react-native-safe-area-context (5.9.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1411,8 +1411,8 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.8.0)
-    - react-native-safe-area-context/fabric (= 5.8.0)
+    - react-native-safe-area-context/common (= 5.9.1)
+    - react-native-safe-area-context/fabric (= 5.9.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1422,7 +1422,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/common (5.8.0):
+  - react-native-safe-area-context/common (5.9.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1443,7 +1443,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/fabric (5.8.0):
+  - react-native-safe-area-context/fabric (5.9.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1836,7 +1836,7 @@ PODS:
     - React-utils (= 0.87.0)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.87.0)
-  - RNGestureHandler (3.0.1):
+  - RNGestureHandler (3.3.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1856,33 +1856,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
+    - RNWorklets (>= 0.8.0)
     - Yoga
-  - RNReanimated (4.5.0-nightly-20260531-e6a8526c5):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-bridging
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNReanimated/apple (= 4.5.0-nightly-20260531-e6a8526c5)
-    - RNReanimated/common (= 4.5.0-nightly-20260531-e6a8526c5)
-    - RNWorklets
-    - Yoga
-  - RNReanimated/apple (4.5.0-nightly-20260531-e6a8526c5):
+  - RNReanimated (4.6.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1903,9 +1879,58 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
+    - RNReanimated/apple (= 4.6.0)
+    - RNReanimated/common (= 4.6.0)
+    - RNReanimated/view (= 4.6.0)
     - RNWorklets
     - Yoga
-  - RNReanimated/common (4.5.0-nightly-20260531-e6a8526c5):
+  - RNReanimated/apple (4.6.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - RNWorklets
+    - Yoga
+  - RNReanimated/common (4.6.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - RNWorklets
+    - Yoga
+  - RNReanimated/view (4.6.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1973,7 +1998,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets (0.10.0-nightly-20260531-e6a8526c5):
+  - RNWorklets (0.12.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1994,10 +2019,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNWorklets/apple (= 0.10.0-nightly-20260531-e6a8526c5)
-    - RNWorklets/common (= 0.10.0-nightly-20260531-e6a8526c5)
+    - RNWorklets/apple (= 0.12.2)
+    - RNWorklets/common (= 0.12.2)
     - Yoga
-  - RNWorklets/apple (0.10.0-nightly-20260531-e6a8526c5):
+  - RNWorklets/apple (0.12.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2019,7 +2044,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNWorklets/common (0.10.0-nightly-20260531-e6a8526c5):
+  - RNWorklets/common (0.12.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2369,7 +2394,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 63ff98871564a228dca69fa535ec9126c3c9984a
   React-mutationobservernativemodule: 56ea9df46bf6acdd96bd7d45080061bfde86d1d9
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
-  react-native-safe-area-context: be530894f042a7269307dff2209e6ea66967be23
+  react-native-safe-area-context: e2e8878d32c222a0cb76f034e8997486eca4725c
   React-NativeModulesApple: 6b3b14de445101c567c9f9db92e7a830a89ff769
   React-networking: 89c42d8eeb8a3b2b5b16f4f62a807955a616c624
   React-oscompat: a435b7292b9ab6c674f591751c74c17071f723ce
@@ -2406,10 +2431,10 @@ SPEC CHECKSUMS:
   ReactCodegen: f61b6c9849af999b400ab2b892322eed068c6975
   ReactCommon: 5155f2c578c7240842648e003cfdac6c2904f4f6
   ReactNativeDependencies: ec5530432d8191b38e278117d498aaff05ea9d6f
-  RNGestureHandler: 1af20c80805b370f422426a3b41b54ff62e9d1d3
-  RNReanimated: daa6063b53b4fece17afe6612b253b379e24e3b2
+  RNGestureHandler: 47df2c35442e3dea4fde3e7a1d3e97c83309f46b
+  RNReanimated: 8dc30e4ee5f219667bb1a21c83047625927336ed
   RNScreens: 35e887f24857bcf1af12c38fe6177f6f024372aa
-  RNWorklets: a9feeec184748c1b6f31d10376e3b79f1b40d832
+  RNWorklets: 3b5f905b6441b0281fad19cf696ea3dfbe57610e
   SocketRocket: d57b1af80c029e12a75cd9b218287c67381e4593
   Yoga: bae35227863013a26b8b43ac24a64c72b7e8baed
 
