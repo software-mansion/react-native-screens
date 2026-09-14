@@ -1,3 +1,4 @@
 export { default as StackScreen } from './StackScreen';
 
 export type * from './StackScreen.types';
+export type * from './animation';
