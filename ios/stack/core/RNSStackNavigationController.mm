@@ -50,7 +50,7 @@
 {
   // We assume `topViewController` corresponds to the currently presented screen.
   UIViewController *topController = self.topViewController;
-  if (![topController conformsToProtocol:@protocol(RNSContainerItem)]) {
+  if (![topController respondsToSelector:@selector(findContentScrollView)]) {
     return nil;
   }
   return [(id<RNSContainerItem>)topController findContentScrollView];
@@ -110,12 +110,13 @@
 
   for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
     RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-    RCTAssert(self.topViewController == op.stackScreen.controller, @"[RNScreens] Attempt to pop non-top screen");
+    RCTAssert(self.topViewController == op.stackScreen.stackScreenController,
+              @"[RNScreens] Attempt to pop non-top screen");
     [self popViewControllerAnimated:YES];
   }
 
   for (RNSPushOperation *op in _pendingPushOperations) {
-    [self pushViewController:op.stackScreen.controller animated:YES];
+    [self pushViewController:op.stackScreen.stackScreenController animated:YES];
   }
 
   RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");

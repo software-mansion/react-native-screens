@@ -4,8 +4,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSStackHeaderConfigComponentView;
-
 typedef NS_ENUM(int, RNSStackScreenActivityMode) {
   RNSStackScreenActivityModeDetached = 0,
   RNSStackScreenActivityModeAttached = 1,
@@ -13,13 +11,13 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @protocol RNSStackScreenProviding <NSObject>
 
-- (nonnull UIViewController *)controller;
+- (nonnull UIViewController *)stackScreenController;
 
 - (RNSStackScreenActivityMode)activityMode;
 
 - (nullable NSString *)screenKey;
 
-- (nullable RNSStackHeaderConfigComponentView *)headerConfig;
+- (nullable UIView *)stackHeaderConfig;
 
 @end
 

@@ -65,7 +65,7 @@ namespace react = facebook::react;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   if (CGRectContainsPoint(_stackNavigationController.navigationBar.frame, point)) {
-    RNSStackHeaderConfigComponentView *headerConfig = [self requireTopScreenHeaderConfig];
+    UIView *headerConfig = [self requireTopScreenHeaderConfig];
     CGPoint convertedPoint = [self convertPoint:point toView:headerConfig];
     UIView *headerHitTestResult = [headerConfig hitTest:convertedPoint withEvent:event];
     if (headerHitTestResult != nil) {
@@ -165,14 +165,14 @@ namespace react = facebook::react;
   ]];
 }
 
-- (RNSStackHeaderConfigComponentView *)requireTopScreenHeaderConfig
+- (UIView *)requireTopScreenHeaderConfig
 {
   UIView *topScreenView = _stackNavigationController.topViewController.view;
-  RCTAssert([topScreenView conformsToProtocol:@protocol(RNSStackScreenProviding)],
+  RCTAssert([topScreenView respondsToSelector:@selector(stackHeaderConfig)],
             @"[RNScreens] Expected top screen to be a react component view of a stack screen, got %@",
             topScreenView);
 
-  return [(id<RNSStackScreenProviding>)topScreenView headerConfig];
+  return [(id<RNSStackScreenProviding>)topScreenView stackHeaderConfig];
 }
 
 #pragma mark - RCTMountingTransactionObserving
