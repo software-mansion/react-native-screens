@@ -20,6 +20,7 @@ import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.stack.animation.StackAnimationAssigner
+import com.swmansion.rnscreens.stack.animation.model.StackAnimationBatchKind
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment
@@ -224,8 +225,12 @@ internal class StackContainer(
         }
 
         val previousTop = stackModel.lastOrNull()
-        val poppedFragments = arrayListOf<StackScreenFragment>()
-        val pushedFragments = arrayListOf<StackScreenFragment>()
+        val batchKind =
+            when {
+                pendingPopOperations.isEmpty() -> StackAnimationBatchKind.PUSH
+                pendingPushOperations.isEmpty() -> StackAnimationBatchKind.POP
+                else -> StackAnimationBatchKind.REPLACE
+            }
 
         pendingPopOperations.forEach { operation ->
             val fragment =
@@ -242,7 +247,6 @@ internal class StackContainer(
             check(stackModel.removeAt(stackModel.lastIndex) === fragment) {
                 "[RNScreens] Attempt to pop non-top screen"
             }
-            poppedFragments.add(fragment)
         }
 
         pendingPushOperations.forEach { operation ->
@@ -258,16 +262,14 @@ internal class StackContainer(
                 ),
             )
             stackModel.add(newFragment)
-            pushedFragments.add(newFragment)
         }
 
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
-        if (poppedFragments.isNotEmpty() || pushedFragments.isNotEmpty()) {
+        if (hasPendingOperations) {
             StackAnimationAssigner.assignBatch(
                 previousTop,
-                poppedFragments,
-                pushedFragments,
+                batchKind,
                 newTop = stackModel.last(),
                 belowNewTop = fragmentBelowTop(),
             )
