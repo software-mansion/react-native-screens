@@ -1,4 +1,5 @@
 import { NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { StackScreenAnimation } from './animation';
 
 export type OnDismissEventPayload = {
   isNativeDismiss: boolean;
@@ -33,4 +34,21 @@ export type StackScreenProps = {
 
   // Configuration
   preventNativeDismiss?: boolean | undefined;
+
+  /**
+   * @summary Transition played when this screen is pushed onto the stack and
+   * when it is popped.
+   *
+   * @description
+   * The value on the incoming screen drives a push; the value on the outgoing
+   * screen drives a pop, including the predictive back gesture. Changing it on
+   * the top screen takes effect for the next pop.
+   *
+   * Currently supported only on Android.
+   *
+   * @default 'slideFromRight'
+   *
+   * @platform android
+   */
+  animation?: StackScreenAnimation | undefined;
 };
