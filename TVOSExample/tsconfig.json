@@ -7,8 +7,7 @@
       "@assets/*": ["../apps/assets/*"],
       "react-native-screens": ["../src"],
       "react-native-screens/*": ["../src/*"]
-    },
-    "types": ["jest"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/node_modules", "**/Pods"]
