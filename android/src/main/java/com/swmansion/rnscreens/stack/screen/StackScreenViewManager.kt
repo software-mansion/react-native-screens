@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.stack.screen
 
 import android.view.View
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
@@ -12,6 +13,8 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.stack.animation.StackAnimationMapper
+import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidDisappearEvent
@@ -143,6 +146,13 @@ class StackScreenViewManager :
         value: Boolean,
     ) {
         view.isPreventNativeDismissEnabled = value
+    }
+
+    override fun setAnimation(
+        view: StackScreen,
+        value: Dynamic,
+    ) {
+        view.animation = if (value.isNull) StackAnimationDescriptor.DEFAULT else StackAnimationMapper.parse(value)
     }
 
     companion object {

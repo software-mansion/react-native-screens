@@ -13,6 +13,7 @@ import com.swmansion.rnscreens.common.container.ContainerItemSupport
 import com.swmansion.rnscreens.ext.findFragmentOrNull
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
+import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.host.StackHost
@@ -51,6 +52,12 @@ class StackScreen(
     var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             stackHost.get()?.stackScreenChangedActivityMode(this)
+        }
+    }
+
+    internal var animation: StackAnimationDescriptor by Delegates.observable(StackAnimationDescriptor.DEFAULT) { _, oldValue, newValue ->
+        if (oldValue != newValue) {
+            stackHost.get()?.stackScreenChangedAnimation(this)
         }
     }
 
