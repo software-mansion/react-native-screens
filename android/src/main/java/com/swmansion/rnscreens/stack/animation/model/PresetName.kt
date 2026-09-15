@@ -1,9 +1,7 @@
 package com.swmansion.rnscreens.stack.animation.model
 
-import com.facebook.react.bridge.JSApplicationIllegalArgumentException
-
 internal enum class PresetName(
-    val jsName: String,
+    val stringName: String,
 ) {
     SLIDE_FROM_RIGHT("slideFromRight"),
     SLIDE_FROM_LEFT("slideFromLeft"),
@@ -13,8 +11,8 @@ internal enum class PresetName(
     ;
 
     companion object {
-        fun fromJs(value: String): PresetName =
-            entries.firstOrNull { it.jsName == value }
-                ?: throw JSApplicationIllegalArgumentException("[RNScreens] Unknown animation preset: $value.")
+        fun fromString(value: String): PresetName =
+            entries.firstOrNull { it.stringName == value }
+                ?: throw IllegalArgumentException("[RNScreens] Unknown animation preset: $value.")
     }
 }
