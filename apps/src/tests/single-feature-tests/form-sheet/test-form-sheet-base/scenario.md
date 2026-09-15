@@ -12,7 +12,7 @@ Incomplete: Covers steps 1-6 on iPhone, Android phone and iPadOS 26+ (`@ipad`
 suite). On iPad detents are checked relatively, by the panel's height change
 instead of exact detent values.
 
-Not automated: content centering and anchoring,on Android: dimming and system back in step 7.
+Not automated: content centering and anchoring, for Android: dimming and system back in step 7.
 
 ## Prerequisites
 
