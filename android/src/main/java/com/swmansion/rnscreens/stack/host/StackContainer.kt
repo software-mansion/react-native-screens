@@ -20,7 +20,7 @@ import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.stack.animation.StackAnimationAssigner
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationBatchKind
+import com.swmansion.rnscreens.stack.animation.StackAnimationBatchKind
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment

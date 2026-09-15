@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.stack.animation
 
 import com.swmansion.rnscreens.stack.animation.engine.SpecTransition
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationBatchKind
 import com.swmansion.rnscreens.stack.animation.spec.Slot
 import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
 import com.swmansion.rnscreens.stack.animation.spec.ZPolicy
@@ -28,7 +27,7 @@ internal object StackAnimationAssigner {
 
             kind == StackAnimationBatchKind.PUSH -> {
                 val row = StackAnimationResolver.pushRow(newTop.stackScreen)
-                write(newTop, Slot.ENTER, row.inSlot, ZPolicy.OVER)
+                write(newTop, Slot.ENTER, row.inSlot)
                 write(previousTop, Slot.EXIT, row.outSlot, row.outZPolicy)
             }
 
@@ -37,12 +36,12 @@ internal object StackAnimationAssigner {
                 write(previousTop, Slot.RETURN, row.outSlot, row.outZPolicy)
                 // After a multi-pop the revealed screen's slot still holds the row of the screen
                 // that used to sit directly on it.
-                write(newTop, Slot.REENTER, row.inSlot, ZPolicy.UNDER)
+                write(newTop, Slot.REENTER, row.inSlot)
             }
 
             else -> {
                 val row = StackAnimationResolver.replaceRow(newTop.stackScreen, previousTop.stackScreen)
-                write(newTop, Slot.ENTER, row.inSlot, ZPolicy.OVER)
+                write(newTop, Slot.ENTER, row.inSlot)
                 write(previousTop, Slot.EXIT, row.outSlot, row.outZPolicy)
             }
         }
@@ -60,14 +59,14 @@ internal object StackAnimationAssigner {
         if (under == null) return
         val row = StackAnimationResolver.popRow(top.stackScreen)
         write(top, Slot.RETURN, row.outSlot, row.outZPolicy)
-        write(under, Slot.REENTER, row.inSlot, ZPolicy.UNDER)
+        write(under, Slot.REENTER, row.inSlot)
     }
 
     private fun write(
         fragment: StackScreenFragment,
         slot: Slot,
         spec: SlotSpec,
-        zPolicy: ZPolicy,
+        zPolicy: ZPolicy = ZPolicy.OVER,
     ) {
         val transition = SpecTransition(spec, slot, zPolicy)
         when (slot) {

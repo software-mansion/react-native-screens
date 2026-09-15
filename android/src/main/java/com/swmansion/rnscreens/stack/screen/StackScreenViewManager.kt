@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.stack.screen
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationCausedNativeException
@@ -152,10 +153,21 @@ class StackScreenViewManager :
         view: StackScreen,
         value: Dynamic,
     ) {
-        view.animation = if (value.isNull) StackAnimationDescriptor.DEFAULT else StackAnimationMapper.parse(value)
+        view.animation =
+            if (value.isNull) {
+                StackAnimationDescriptor.DEFAULT
+            } else {
+                try {
+                    StackAnimationMapper.parse(value)
+                } catch (e: IllegalArgumentException) {
+                    Log.w(TAG, "${e.message} Falling back to the default animation.")
+                    StackAnimationDescriptor.DEFAULT
+                }
+            }
     }
 
     companion object {
         const val REACT_CLASS = "RNSStackScreen"
+        private const val TAG = "StackScreenViewManager"
     }
 }
