@@ -1,13 +1,21 @@
 import { device, expect, element, by, waitFor } from 'detox';
-import { scrollToAndTap } from '@e2e/framework/gestures';
+import { scrollUntilVisible } from '@e2e/framework/gestures';
 import { DEFAULT_TIMEOUT_MS } from '@e2e/framework/wait';
 
-export async function selectIssueTestScreen(screenName: string) {
-  await scrollToAndTap('root-screen-issue-tests', {
-    scrollViewId: 'root-screen-examples-scrollview',
-  });
+async function scrollToAndTapInList(id: string, scrollViewId: string) {
+  await scrollUntilVisible(id, scrollViewId);
+  await element(by.id(id)).tap();
+}
 
-  await waitFor(element(by.id('issue-tests-scrollview'))).toBeVisible();
+export async function selectIssueTestScreen(screenName: string) {
+  await scrollToAndTapInList(
+    'root-screen-issue-tests',
+    'root-screen-examples-scrollview',
+  );
+
+  await waitFor(element(by.id('issue-tests-scrollview')))
+    .toBeVisible()
+    .withTimeout(DEFAULT_TIMEOUT_MS);
 
   if (device.getPlatform() === 'android') {
     await element(by.label('Search')).tap();
@@ -34,21 +42,23 @@ async function selectTestsScreen(
   const sectionScrollView = `${section}-scrollview`;
   const groupScrollView = `${scenarioGroupId}-scenarios-scrollview`;
 
-  await scrollToAndTap(`root-screen-${section}`, {
-    scrollViewId: 'root-screen-examples-scrollview',
-  });
+  await scrollToAndTapInList(
+    `root-screen-${section}`,
+    'root-screen-examples-scrollview',
+  );
   await waitFor(element(by.id(sectionScrollView)))
     .toBeVisible()
     .withTimeout(DEFAULT_TIMEOUT_MS);
 
-  await scrollToAndTap(`${section}-${scenarioGroupId}`, {
-    scrollViewId: sectionScrollView,
-  });
+  await scrollToAndTapInList(
+    `${section}-${scenarioGroupId}`,
+    sectionScrollView,
+  );
   await waitFor(element(by.id(groupScrollView)))
     .toBeVisible()
     .withTimeout(DEFAULT_TIMEOUT_MS);
 
-  await scrollToAndTap(screenKey, { scrollViewId: groupScrollView });
+  await scrollToAndTapInList(screenKey, groupScrollView);
 }
 
 export const selectSingleFeatureTestsScreen = (
