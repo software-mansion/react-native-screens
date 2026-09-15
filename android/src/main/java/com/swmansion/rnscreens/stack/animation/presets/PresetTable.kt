@@ -18,7 +18,7 @@ internal object PresetTable {
     private val FULL = Value.Percent(1f)
 
     private val definitions: Map<PresetName, PresetDefinition> =
-        PresetName.entries.associateWithTo(EnumMap(PresetName::class.java)) { build(it) }
+        PresetName.values().associateWithTo(EnumMap(PresetName::class.java)) { build(it) }
 
     internal fun get(name: PresetName): PresetDefinition = definitions.getValue(name)
 
