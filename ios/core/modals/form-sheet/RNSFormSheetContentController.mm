@@ -6,7 +6,7 @@
 #import "RNSFormSheetUpdateFlags.h"
 #import "RNSPresentationSourceProvider.h"
 
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 
 @interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
                                              UIGestureRecognizerDelegate
@@ -37,7 +37,7 @@
 
 - (RNSFormSheetContentView *)contentView
 {
-  RCTAssert([self.view isKindOfClass:[RNSFormSheetContentView class]],
+  RNSAssert([self.view isKindOfClass:[RNSFormSheetContentView class]],
             @"[RNScreens] ContentView must be of type RNSFormSheetContentView");
   return static_cast<RNSFormSheetContentView *>(self.view);
 }
@@ -111,7 +111,7 @@
 {
   id<RNSFormSheetPresentationProvider> presentationProvider = self.presentationProvider;
 
-  RCTAssert(presentationProvider != nil,
+  RNSAssert(presentationProvider != nil,
             @"[RNScreens] Presentation provider must be set before updating presentation state.");
 
   if (presentationProvider == nil) {
@@ -146,8 +146,8 @@
   id<RNSFormSheetAppearanceProvider> appearanceProvider = self.appearanceProvider;
   id<RNSFormSheetBehaviorProvider> behaviorProvider = self.behaviorProvider;
 
-  RCTAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
-  RCTAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating behavior.");
+  RNSAssert(appearanceProvider != nil, @"[RNScreens] Appearance provider must be set before updating appearance.");
+  RNSAssert(behaviorProvider != nil, @"[RNScreens] Behavior provider must be set before updating behavior.");
 
   if (appearanceProvider == nil || behaviorProvider == nil) {
     return;
