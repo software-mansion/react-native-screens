@@ -10,59 +10,32 @@ import {
 } from '../native-class-names';
 
 /**
- * Geometry-based detent detection for `FormSheet`. Neither platform exposes
- * the selected detent to Detox, so it is inferred from the sheet's visible
- * height relative to the height a `1.0` detent resolves to:
- *
- * - iOS: `RNSFormSheetContentView` is sized by UIKit to the current detent.
- *   Fractions resolve against `maximumDetentValue` = window height minus top
- *   safe-area inset minus a 10 pt gap (see `RNSFormSheetDetentResolver`).
- * - Android: `FormSheetContainer`'s screen `y` is the sheet's top edge and
- *   fractions resolve against the dialog window, i.e. its `CoordinatorLayout`
- *   (see `FormSheetDetents`). Only the focused dialog window is matchable, so
- *   stacked sheets always measure the topmost one.
- *
- * iPhone / Android phone only; iPad presents a floating panel. `fitToContents`
- * has no fraction to resolve — use {@link getFormSheetGeometry} and compare
- * heights directly.
+ * Detox can't read the selected detent, so it is inferred from the sheet's
+ * visible height as a fraction of a `1.0` detent. Phone only.
  */
 
 export type FormSheetGeometryOptions = {
-  /**
-   * iOS only: top safe-area inset in points. Detox cannot read it, so it
-   * defaults to the iPhone 15/16 family value; pass it for other devices.
-   */
+  /** iOS only. Detox can't read it; defaults to iPhone 15/16. */
   topInset?: number;
 };
 
 export type FormSheetDetentOptions = FormSheetGeometryOptions & {
-  /** Max distance from the closest detent before resolution fails. */
   tolerance?: number;
 };
 
 export type FormSheetGeometry = {
-  /** Screen `y` of the sheet's top edge. */
   top: number;
-  /** Height of the on-screen part of the sheet. */
   visibleHeight: number;
   windowHeight: number;
-  /** Height a `1.0` detent resolves to on this platform. */
   maxDetentHeight: number;
-  /** `visibleHeight / maxDetentHeight`, comparable to a `detents` entry. */
   fraction: number;
-  /**
-   * Android only: the sheet container, sized to the largest detent, is fully
-   * on screen, which happens only when the sheet sits at that detent.
-   */
+  /** Android only. */
   isAtLargestDetent?: boolean;
 };
 
 export const DEFAULT_IOS_TOP_INSET = 59;
+// See `RNSFormSheetDetentResolver`.
 const IOS_SHEET_TOP_GAP = 10;
-/**
- * Fraction of the max detent height. Absorbs the top-inset estimate error on
- * iOS as long as detents are at least ~0.1 apart.
- */
 export const DEFAULT_TOLERANCE = 0.05;
 
 export async function getFormSheetGeometry({
@@ -84,13 +57,11 @@ export async function getFormSheetGeometry({
 }
 
 export type IOSFormSheetFrames = {
-  /** The presented sheet: a bottom sheet on iPhone, a floating panel on iPad. */
   sheet: ElementAttributeFrame;
-  /** The window the sheet is presented in. */
   window: ElementAttributeFrame;
 };
 
-/** iOS only. Unlike {@link getFormSheetGeometry}, also works on iPad. */
+/** iOS only, iPad included. */
 export async function getIOSFormSheetFrames(): Promise<IOSFormSheetFrames> {
   const sheet = await getTopmostMatch(
     by.type(CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW),
@@ -137,18 +108,12 @@ async function getAndroidGeometry(): Promise<FormSheetGeometry> {
     windowHeight,
     maxDetentHeight: windowHeight,
     fraction: visibleHeight / windowHeight,
-    // Detox reports the full view size at its on-screen position, so a
-    // container hanging below the screen edge is detectable.
+    // Sized to the largest detent, so it fits on screen only there.
     isAtLargestDetent: sheet.frame.y + sheet.frame.height <= windowBottom,
   };
 }
 
-/**
- * Index into `detents` (the fractional array passed to the component) of the
- * detent the sheet currently sits at. Throws if the closest detent is further
- * than `tolerance` away, so a sheet caught mid-animation fails loudly instead
- * of resolving to a neighbor.
- */
+/** Throws beyond `tolerance`, so a sheet caught mid-animation fails loudly. */
 export async function resolveFormSheetDetentIndex(
   detents: readonly number[],
   {
@@ -164,8 +129,7 @@ export async function resolveFormSheetDetentIndex(
 
   const geometry = await getFormSheetGeometry(geometryOptions);
 
-  // Android shortens the largest detent by the status bar, so its fraction
-  // undershoots; the container fitting on screen identifies it instead.
+  // Android shortens the largest detent by the status bar.
   if (geometry.isAtLargestDetent) {
     return detents.length - 1;
   }
@@ -189,7 +153,6 @@ export async function resolveFormSheetDetentIndex(
   return closestIndex;
 }
 
-/** Asserts the presented sheet sits at `detents[expectedIndex]`. */
 export async function expectFormSheetDetentIndex(
   detents: readonly number[],
   expectedIndex: number,

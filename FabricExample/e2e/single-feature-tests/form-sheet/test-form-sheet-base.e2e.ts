@@ -6,7 +6,6 @@ import {
 } from '../../elements/form-sheet';
 import {
   describeIfiPad,
-  describeIfiPadOS26,
   expectDimmingIfiOS,
   expectNoDimmingIfiOS,
   selectSingleFeatureTestsScreen,
