@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSFormSheetContentWrapperDelegate <NSObject>
 
 - (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper
-    didChangeReactContentsHeight:(CGFloat)reactContentsHeight;
+    didChangeContentsHeight:(CGFloat)contentsHeight;
 
 @end
 

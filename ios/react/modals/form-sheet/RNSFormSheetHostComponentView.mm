@@ -43,7 +43,7 @@ namespace react = facebook::react;
   BOOL _preventNativeDismiss;
   UIColor *_Nullable _nativeContainerBackgroundColor;
 
-  CGFloat _reactContentsHeight;
+  CGFloat _contentsHeight;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -78,7 +78,7 @@ namespace react = facebook::react;
   _preventNativeDismiss = NO;
   _nativeContainerBackgroundColor = nil;
 
-  _reactContentsHeight = 0.0;
+  _contentsHeight = 0.0;
 }
 
 - (void)setupController
@@ -115,18 +115,18 @@ namespace react = facebook::react;
   return _detents;
 }
 
-- (CGFloat)reactContentsHeight
+- (CGFloat)contentsHeight
 {
-  return _reactContentsHeight;
+  return _contentsHeight;
 }
 
 #pragma mark - RNSFormSheetContentWrapperDelegate
 
 - (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper
-    didChangeReactContentsHeight:(CGFloat)reactContentsHeight
+    didChangeContentsHeight:(CGFloat)contentsHeight
 {
-  if (_reactContentsHeight != reactContentsHeight) {
-    _reactContentsHeight = reactContentsHeight;
+  if (_contentsHeight != contentsHeight) {
+    _contentsHeight = contentsHeight;
     [_controller setNeedsBehaviorUpdate];
   }
 }

@@ -76,7 +76,7 @@ static BOOL RNSAreDetentsStrictlyAscending(NSArray<NSNumber *> *detents)
                                             resolver:^CGFloat(
                                                 id<UISheetPresentationControllerDetentResolutionContext> context) {
                                               CGFloat currentHeight =
-                                                  weakProvider ? [weakProvider reactContentsHeight] : 0.0;
+                                                  weakProvider ? [weakProvider contentsHeight] : 0.0;
 
                                               // Safe fallback for uncalculated layout or deallocated provider
                                               if (currentHeight <= 0.0) {
