@@ -1,5 +1,6 @@
 import { by, device } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
+import type { ElementAttributeFrame } from 'detox/detox';
 import { getMatches, getTopmostMatch, isIPadTarget } from '../e2e-utils';
 import {
   CLASS_NAME_ANDROID_COORDINATOR_LAYOUT,
@@ -49,6 +50,11 @@ export type FormSheetGeometry = {
   maxDetentHeight: number;
   /** `visibleHeight / maxDetentHeight`, comparable to a `detents` entry. */
   fraction: number;
+  /**
+   * Android only: the sheet container, sized to the largest detent, is fully
+   * on screen, which happens only when the sheet sits at that detent.
+   */
+  isAtLargestDetent?: boolean;
 };
 
 export const DEFAULT_IOS_TOP_INSET = 59;
@@ -77,15 +83,28 @@ export async function getFormSheetGeometry({
   throw new Error(`Platform "${platform}" not supported`);
 }
 
-async function getIOSGeometry(topInset: number): Promise<FormSheetGeometry> {
+export type IOSFormSheetFrames = {
+  /** The presented sheet: a bottom sheet on iPhone, a floating panel on iPad. */
+  sheet: ElementAttributeFrame;
+  /** The window the sheet is presented in. */
+  window: ElementAttributeFrame;
+};
+
+/** iOS only. Unlike {@link getFormSheetGeometry}, also works on iPad. */
+export async function getIOSFormSheetFrames(): Promise<IOSFormSheetFrames> {
   const sheet = await getTopmostMatch(
     by.type(CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW),
   );
   const [root] = await getMatches(by.type(CLASS_NAME_RCT_ROOT_COMPONENT_VIEW));
+  return { sheet: sheet.frame, window: root.frame };
+}
 
-  const top = sheet.frame.y;
-  const visibleHeight = sheet.frame.height;
-  const windowHeight = root.frame.height;
+async function getIOSGeometry(topInset: number): Promise<FormSheetGeometry> {
+  const { sheet, window } = await getIOSFormSheetFrames();
+
+  const top = sheet.y;
+  const visibleHeight = sheet.height;
+  const windowHeight = window.height;
   const maxDetentHeight = windowHeight - topInset - IOS_SHEET_TOP_GAP;
 
   return {
@@ -108,8 +127,9 @@ async function getAndroidGeometry(): Promise<FormSheetGeometry> {
   );
 
   const windowHeight = window.frame.height;
+  const windowBottom = window.frame.y + windowHeight;
   const top = sheet.frame.y;
-  const visibleHeight = window.frame.y + windowHeight - top;
+  const visibleHeight = windowBottom - top;
 
   return {
     top,
@@ -117,6 +137,9 @@ async function getAndroidGeometry(): Promise<FormSheetGeometry> {
     windowHeight,
     maxDetentHeight: windowHeight,
     fraction: visibleHeight / windowHeight,
+    // Detox reports the full view size at its on-screen position, so a
+    // container hanging below the screen edge is detectable.
+    isAtLargestDetent: sheet.frame.y + sheet.frame.height <= windowBottom,
   };
 }
 
@@ -140,6 +163,12 @@ export async function resolveFormSheetDetentIndex(
   }
 
   const geometry = await getFormSheetGeometry(geometryOptions);
+
+  // Android shortens the largest detent by the status bar, so its fraction
+  // undershoots; the container fitting on screen identifies it instead.
+  if (geometry.isAtLargestDetent) {
+    return detents.length - 1;
+  }
 
   const distances = detents.map(detent => Math.abs(detent - geometry.fraction));
   const closestDistance = Math.min(...distances);

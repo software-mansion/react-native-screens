@@ -70,6 +70,13 @@ export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
 export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
   '_UIContextMenuSubmenuTitleView';
 
+// --- UIKit: sheet presentation ---
+
+// The backdrop UIKit inserts behind a presented sheet. Android draws its dim as
+// an overlay drawable instead, which has no view to match.
+export const CLASS_NAME_UI_DIMMING_VIEW = 'UIDimmingView';
+export const CLASS_NAME_UI_DROP_SHADOW_VIEW = 'UIDropShadowView';
+
 // --- UIKit: other controls ---
 export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
