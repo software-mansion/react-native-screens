@@ -271,7 +271,7 @@ This scenario is manual only.
 
 22. Open **Settings → System → Developer options** and set **Animator
     duration scale** and **Transition animation scale** to **5x**. Return to
-    the app on **Home** with **next push** at `slideFromRight`. Tap
+    the app on **Home** and set **next push** to `slideFromRight`. Tap
     **Push Blue** and, while **Blue** is still sliding in, tap **Push Red**
     on it.
 
