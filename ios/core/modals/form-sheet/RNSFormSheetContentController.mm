@@ -7,7 +7,6 @@
 #import "RNSPresentationSourceProvider.h"
 
 #import <React/RCTAssert.h>
-#import <React/RCTLog.h>
 
 @interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
                                              UIGestureRecognizerDelegate
