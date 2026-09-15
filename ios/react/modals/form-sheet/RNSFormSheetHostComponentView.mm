@@ -34,7 +34,7 @@ namespace react = facebook::react;
 
   // Props
   BOOL _isOpen;
-  std::vector<double> _detents;
+  NSArray<NSNumber *> *_detents;
   BOOL _prefersGrabberVisible;
   CGFloat _preferredCornerRadius;
   NSInteger _largestUndimmedDetentIndex;
@@ -69,7 +69,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _isOpen = NO;
-  _detents = {};
+  _detents = @[];
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
@@ -110,7 +110,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetBehaviorProvider
 
-- (const std::vector<double> &)detents
+- (NSArray<NSNumber *> *)detents
 {
   return _detents;
 }
@@ -253,7 +253,11 @@ namespace react = facebook::react;
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
-    _detents = newComponentProps.detents;
+    NSMutableArray<NSNumber *> *detents = [NSMutableArray arrayWithCapacity:newComponentProps.detents.size()];
+    for (double detent : newComponentProps.detents) {
+      [detents addObject:@(detent)];
+    }
+    _detents = detents;
     [_controller setNeedsBehaviorUpdate];
   }
 
