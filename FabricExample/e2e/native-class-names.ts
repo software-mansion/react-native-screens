@@ -10,13 +10,12 @@
  * are exported side by side (see the iOS 26 pairs below).
  */
 
-// --- react-native-screens views ---
+// --- react-native-screens views (iOS)---
 
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
 
-// The view of the view controller a `FormSheet` presents. UIKit sizes it to the
-// current detent, so its frame is the sheet's on-screen rect.
+// The library's `FormSheet` content view.
 export const CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW = 'RNSFormSheetContentView';
 
 // --- React Native host views ---
@@ -72,8 +71,7 @@ export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
 
 // --- UIKit: sheet presentation ---
 
-// The backdrop UIKit inserts behind a presented sheet. Android draws its dim as
-// an overlay drawable instead, which has no view to match.
+// The backdrop UIKit inserts behind a presented sheet.
 export const CLASS_NAME_UI_DIMMING_VIEW = 'UIDimmingView';
 export const CLASS_NAME_UI_DROP_SHADOW_VIEW = 'UIDropShadowView';
 
@@ -87,13 +85,10 @@ export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 // --- Android ---
 
-// The library's sheet content container (a child of Material's
-// `design_bottom_sheet`). Its screen `y` moves with the sheet, so it doubles
-// as the sheet's top edge; its height is fixed to the largest detent.
+// The library's `FormSheet` content container.
 export const CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER =
   'com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer';
-// `BottomSheetDialog`'s root layout — spans the dialog window, so its frame
-// is the window rect the detent fractions are resolved against.
+// `BottomSheetDialog`'s root layout, spanning the dialog window.
 export const CLASS_NAME_ANDROID_COORDINATOR_LAYOUT =
   'androidx.coordinatorlayout.widget.CoordinatorLayout';
 

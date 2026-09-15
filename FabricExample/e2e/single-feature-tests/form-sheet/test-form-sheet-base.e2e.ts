@@ -5,6 +5,7 @@ import {
   getIOSFormSheetFrames,
 } from '../../elements/form-sheet';
 import {
+  describeIfiPad,
   describeIfiPadOS26,
   expectDimmingIfiOS,
   expectNoDimmingIfiOS,
@@ -79,7 +80,7 @@ describe('Formsheet: base functionality', () => {
 // math used above does not apply. Detents are verified relatively instead: the
 // panel grows when dragged up and returns to its opening height when dragged
 // back down.
-describeIfiPadOS26('@ipad Formsheet: base functionality (iPadOS 26+)', () => {
+describeIfiPad('@ipad Formsheet: base functionality', () => {
   // Absorbs sub-point rounding in frames reported by UIKit.
   const FRAME_TOLERANCE_PT = 1;
   let openedHeight: number;
