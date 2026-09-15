@@ -12,7 +12,7 @@ internal enum class PresetName(
 
     companion object {
         fun fromString(value: String): PresetName =
-            entries.firstOrNull { it.stringName == value }
+            values().firstOrNull { it.stringName == value }
                 ?: throw IllegalArgumentException("[RNScreens] Unknown animation preset: $value.")
     }
 }
