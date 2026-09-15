@@ -45,8 +45,9 @@ function TestStackAnimationOperationsAndroid() {
 
 /**
  * The reference navigator exposes only the current screen's key, while a multi-pop needs the
- * keys of the screens below it. Screens register on mount, in stack order, so the tail of the
- * list is the top of the stack. A popped screen leaves the list once its dismissal completes.
+ * keys of the screens below it. Screens register on mount, in stack order. A popped screen
+ * leaves the list only once its dismissal completes, so the tail may still be a screen that is
+ * being popped natively - operations start from the pressing screen's own entry instead.
  */
 type RouteKeysLedgerPayload = {
   keys: string[];
@@ -106,7 +107,7 @@ function Screen({ route }: { route: (typeof ROUTES)[number] }) {
 function OperationButtons() {
   const { routeKey, push, batch } = useStackNavigationContext();
   const { keys } = useRouteKeysLedger();
-  const depth = keys.length;
+  const depth = keys.indexOf(routeKey) + 1;
 
   const pushMultiple = (routeNames: RouteName[]) =>
     batch(routeNames.map(routeName => ({ type: 'push', routeName })));
@@ -114,7 +115,7 @@ function OperationButtons() {
   // Top first, so that every pop in the batch targets the current top.
   const popActions = (count: number) =>
     keys
-      .slice(-count)
+      .slice(depth - count, depth)
       .reverse()
       .map(key => ({ type: 'pop' as const, routeKey: key }));
 
@@ -125,8 +126,6 @@ function OperationButtons() {
       ...popActions(count),
       ...routeNames.map(routeName => ({ type: 'push' as const, routeName })),
     ]);
-
-  const isRoot = keys[0] === routeKey;
 
   return (
     <View style={styles.buttons}>
@@ -142,7 +141,11 @@ function OperationButtons() {
         title="Push Right + Bottom + Left"
         onPress={() => pushMultiple(['Right', 'Bottom', 'Left'])}
       />
-      <Button title="Pop" disabled={isRoot} onPress={() => popMultiple(1)} />
+      <Button
+        title="Pop"
+        disabled={depth <= 1}
+        onPress={() => popMultiple(1)}
+      />
       <Button
         title="Pop 2"
         disabled={depth <= 2}
@@ -155,12 +158,12 @@ function OperationButtons() {
       />
       <Button
         title="Replace with Right"
-        disabled={isRoot}
+        disabled={depth <= 1}
         onPress={() => replaceMultiple(1, ['Right'])}
       />
       <Button
         title="Replace with Bottom"
-        disabled={isRoot}
+        disabled={depth <= 1}
         onPress={() => replaceMultiple(1, ['Bottom'])}
       />
       <Button

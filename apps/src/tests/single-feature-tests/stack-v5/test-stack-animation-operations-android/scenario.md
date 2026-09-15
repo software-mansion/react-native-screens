@@ -79,11 +79,14 @@ cannot assert reliably. This scenario is manual only.
 
 ## Note
 
-- The panel tracks the stack by the order screens mounted. A popped screen
-  is removed from that list only once its dismissal completes, so **wait
-  for every animation to finish** before tapping the next button;
-  otherwise a multi-pop may target a screen that is already gone and pop
-  fewer screens than requested.
+- Every button acts on the screen it is shown on: **Pop** pops that screen,
+  **Pop 2** and **Pop 3** also pop the screens below it. The panel tracks the
+  stack by the order screens mounted, and a popped screen is removed from that
+  list only once its dismissal completes, so **wait for every animation to
+  finish** before tapping the next button; otherwise a multi-pop may target a
+  screen that is already gone and pop fewer screens than requested, and a tap
+  right after a native pop is ignored with a warning, because the navigator
+  still sees the popped screen on top.
 - "Static" below means the screen does not move at all and stays fully
   visible for the whole transition, with no flash of the window background
   and no jump at the end.
