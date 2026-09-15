@@ -6,7 +6,7 @@ import PackageDescription
 let headerSearchPaths: [String] = [
     "ios",
     "ios/conversion",
-    "ios/core/form-sheet",
+    "ios/core/modals/form-sheet",
     "ios/core/utils",
     "ios/helpers/container",
     "ios/helpers/image",
@@ -16,7 +16,7 @@ let headerSearchPaths: [String] = [
     "ios/legacy/integrations",
     "ios/legacy/utils",
     "ios/react/bridging",
-    "ios/react/form-sheet",
+    "ios/react/modals/form-sheet",
     "ios/safe-area",
     "ios/scroll-to-top-guard",
     "ios/scroll-view-marker",
