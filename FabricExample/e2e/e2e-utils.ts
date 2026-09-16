@@ -23,6 +23,8 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
+  CLASS_NAME_UI_DIMMING_VIEW,
+  CLASS_NAME_UI_DROP_SHADOW_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
   CLASS_NAME_UI_LABEL,
   CLASS_NAME_UI_MODERN_BAR_BUTTON,
@@ -876,6 +878,43 @@ export async function dismissContextMenu(
     CONTEXT_MENU_DISMISS_X_FRACTION,
   );
   await waitFor(contextMenu()).not.toExist().withTimeout(timeout);
+}
+
+// ---------------------------------------------------------------------------
+// iOS sheet presentation dimming
+// ---------------------------------------------------------------------------
+
+const DIMMING_REMOVAL_TIMEOUT_MS = 3000;
+
+const sheetDimmingView = () =>
+  element(
+    by
+      .type(CLASS_NAME_UI_DIMMING_VIEW)
+      .withAncestor(by.type(CLASS_NAME_UI_DROP_SHADOW_VIEW)),
+  );
+
+/**
+ * Asserts the backdrop UIKit inserts behind a presented sheet exists. No-op on
+ * Android: the dim is an overlay drawable there, with no view to match.
+ */
+export async function expectDimmingIfiOS(): Promise<void> {
+  if (device.getPlatform() !== 'ios') {
+    return;
+  }
+  await expect(sheetDimmingView()).toExist();
+}
+
+/**
+ * Asserts the sheet backdrop is gone, waiting out the dismissal animation.
+ * No-op on Android, see {@link expectDimmingIfiOS}.
+ */
+export async function expectNoDimmingIfiOS(): Promise<void> {
+  if (device.getPlatform() !== 'ios') {
+    return;
+  }
+  await waitFor(sheetDimmingView())
+    .not.toExist()
+    .withTimeout(DIMMING_REMOVAL_TIMEOUT_MS);
 }
 
 // ---------------------------------------------------------------------------

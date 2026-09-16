@@ -10,10 +10,13 @@
  * are exported side by side (see the iOS 26 pairs below).
  */
 
-// --- react-native-screens views ---
+// --- react-native-screens views (iOS)---
 
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
+
+// The library's `FormSheet` content view.
+export const CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW = 'RNSFormSheetContentView';
 
 // --- React Native host views ---
 
@@ -66,6 +69,12 @@ export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
 export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
   '_UIContextMenuSubmenuTitleView';
 
+// --- UIKit: sheet presentation ---
+
+// The backdrop UIKit inserts behind a presented sheet.
+export const CLASS_NAME_UI_DIMMING_VIEW = 'UIDimmingView';
+export const CLASS_NAME_UI_DROP_SHADOW_VIEW = 'UIDropShadowView';
+
 // --- UIKit: other controls ---
 export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';
 export const CLASS_NAME_UI_BUTTON = 'UIButton';
@@ -75,6 +84,13 @@ export const CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW = '_UIListContentImageView';
 export const CLASS_NAME_UI_LABEL = 'UILabel';
 
 // --- Android ---
+
+// The library's `FormSheet` content container.
+export const CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER =
+  'com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer';
+// `BottomSheetDialog`'s root layout, spanning the dialog window.
+export const CLASS_NAME_ANDROID_COORDINATOR_LAYOUT =
+  'androidx.coordinatorlayout.widget.CoordinatorLayout';
 
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
