@@ -33,6 +33,40 @@ export type TabBarMinimizeBehavior =
 
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
+/**
+ * @summary Specifies whether the sidebar or the tab bar is preferred when only
+ * one of them can be displayed.
+ *
+ * @description
+ * Available starting from iOS 27.
+ * Not supported on tvOS.
+ *
+ * The following values are currently supported:
+ *
+ * - `automatic` - the system resolves to the platform default (the tab bar on iOS)
+ * - `sidebar` - the sidebar is displayed when it is available
+ * - `tabBar` - the tab bar is displayed
+ *
+ * This prop requires `tabBarControllerMode` to be set to `tabSidebar`.
+ * Otherwise, the sidebar is not considered a supported mode and the tab bar
+ * is always displayed.
+ *
+ * The button that shows the sidebar is visible only when the screen has
+ * a header. The sidebar can also be shown with a swipe from the leading edge.
+ * The sidebar overlaps the content, and the content is not accessible until
+ * the sidebar is hidden.
+ *
+ * @default Defaults to `automatic`.
+ *
+ * @platform ios
+ * @supported iOS 27 or higher
+ */
+
+export type TabBarSidebarPreferredPlacement =
+  | 'automatic'
+  | 'sidebar'
+  | 'tabBar';
+
 export interface TabsHostPropsIOS {
   /**
    * @summary Whether changes of `tabBarHidden` are animated.
@@ -141,6 +175,31 @@ export interface TabsHostPropsIOS {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode | undefined;
+  /**
+   * @summary Specifies whether the sidebar or the tab bar is preferred when
+   * only one of them can be displayed.
+   *
+   * Available starting from iOS 27.
+   * Not supported on tvOS.
+   *
+   * Has no effect on iPadOS, where the sidebar can be minimized into the top
+   * tab bar.
+   *
+   * The following values are currently supported:
+   *
+   * - `automatic` - the system resolves to the platform default (tab bar on iOS)
+   * - `sidebar` - the sidebar is displayed when it is supported
+   * - `tabBar` - the tab bar is displayed
+   *
+   * See the official documentation for more details:
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/sidebar-swift.class/preferredplacement|UITabBarController.Sidebar.preferredPlacement}
+   *
+   * @default Defaults to `automatic`.
+   *
+   * @platform ios
+   * @supported iOS 27 or higher
+   */
+  tabBarSidebarPreferredPlacement?: TabBarSidebarPreferredPlacement | undefined;
   /**
    * @summary
    * A callback that gets invoked when the user taps the "More" tab bar item.
