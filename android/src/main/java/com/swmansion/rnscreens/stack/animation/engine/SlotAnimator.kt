@@ -33,8 +33,11 @@ internal object SlotAnimator {
             interpolator = LinearInterpolator()
             addUpdateListener { animator ->
                 val timeMs = animator.animatedFraction * spec.durationMs
-                tracks.forEach { it.applyTo(view, timeMs) }
-                scrim?.apply(timeMs)
+                // A seek-driven animator (predictive back) is never started: its tracks follow
+                // the gesture linearly and the authored curves apply only to plays.
+                val eased = animator.isStarted
+                tracks.forEach { it.applyTo(view, timeMs, eased) }
+                scrim?.apply(timeMs, eased)
             }
             addListener(RestoreRestValuesListener(view))
             scrim?.attachTo(this, rootTransition)
