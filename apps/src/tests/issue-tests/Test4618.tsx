@@ -83,10 +83,10 @@ function ActionButton({ label, onPress }: ActionButtonProps) {
 export default function Test4618() {
   const [showDetail, setShowDetail] = React.useState(false);
 
-  // React.useEffect(() => {
-  //   TVEventControl.enableTVMenuKey();
-  //   return () => TVEventControl.disableTVMenuKey();
-  // }, []);
+  React.useEffect(() => {
+    TVEventControl.enableTVMenuKey();
+    return () => TVEventControl.disableTVMenuKey();
+  }, []);
 
   const popToHome = () => setShowDetail(false);
 
