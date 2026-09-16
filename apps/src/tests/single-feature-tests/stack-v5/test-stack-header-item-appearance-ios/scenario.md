@@ -19,7 +19,7 @@ TBD
 
 ## Note
 
-- runtime changes of appearance don't work on iOS 26, but does work on 18 and works partially on 27 (only color doesn't)
+- runtime changes of appearance don't work on iOS 26, but does work on 18 and works partially on 27 (there may be bugs, or some may not update)
 - runtime switch between `standardAppearance` and `scrollEdgeAppearance` doesn't work on iOS 26
 - menu overflow doesn't appear on iOS 18 by default, some steps won't work
 
