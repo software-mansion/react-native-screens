@@ -91,6 +91,7 @@ struct ContentWrapperBox {
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _hasScreenEdgesDeferringSystemGesturesSet = NO;
   _activityState = RNSActivityStateUndefined;
   _fullScreenSwipeEnabled = RNSOptionalBooleanUndefined;
   _fullScreenSwipeShadowEnabled = YES;
@@ -401,6 +402,13 @@ RNS_IGNORE_SUPER_CALL_END
   _hasHomeIndicatorHiddenSet = YES;
   _homeIndicatorHidden = homeIndicatorHidden;
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
+}
+
+- (void)setScreenEdgesDeferringSystemGestures:(UIRectEdge)screenEdgesDeferringSystemGestures
+{
+  _hasScreenEdgesDeferringSystemGesturesSet = YES;
+  _screenEdgesDeferringSystemGestures = screenEdgesDeferringSystemGestures;
+  [RNSScreenWindowTraits updateScreenEdgesDeferringSystemGestures];
 }
 #endif
 
@@ -1295,6 +1303,12 @@ RNS_IGNORE_SUPER_CALL_END
     [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
   }
 
+  if (newScreenProps.screenEdgesDeferringSystemGestures != oldScreenProps.screenEdgesDeferringSystemGestures) {
+    UIRectEdge edges =
+        [RNSConvert UIRectEdgeFromDeferredScreenEdgesCppEquivalent:newScreenProps.screenEdgesDeferringSystemGestures];
+    [self setScreenEdgesDeferringSystemGestures:edges];
+  }
+
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
@@ -1830,6 +1844,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     case RNSWindowTraitHomeIndicatorHidden: {
       return self.screenView.hasHomeIndicatorHiddenSet;
     }
+    case RNSWindowTraitScreenEdgesDeferringSystemGestures: {
+      return self.screenView.hasScreenEdgesDeferringSystemGesturesSet;
+    }
     default: {
       RCTLogError(@"Unknown trait passed: %d", (int)trait);
     }
@@ -1891,6 +1908,18 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (BOOL)prefersHomeIndicatorAutoHidden
 {
   return self.screenView.homeIndicatorHidden;
+}
+
+- (UIViewController *)childViewControllerForScreenEdgesDeferringSystemGestures
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitScreenEdgesDeferringSystemGestures
+                                            includingModals:YES];
+  return vc == self ? nil : vc;
+}
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures
+{
+  return self.screenView.screenEdgesDeferringSystemGestures;
 }
 - (int)getParentChildrenCount
 {

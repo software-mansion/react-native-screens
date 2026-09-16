@@ -102,6 +102,13 @@ namespace react = facebook::react;
   return [self topViewController];
 }
 
+#if !TARGET_OS_TV
+- (UIViewController *)childViewControllerForScreenEdgesDeferringSystemGestures
+{
+  return [self topViewController];
+}
+#endif // !TARGET_OS_TV
+
 - (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
   // This might happen e.g. if there is only native title present in navigation bar.

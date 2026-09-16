@@ -183,6 +183,31 @@
 
 #undef SWITCH_EDGE_EFFECT
 
++ (UIRectEdge)UIRectEdgeFromDeferredScreenEdgesCppEquivalent:
+    (react::RNSScreenScreenEdgesDeferringSystemGesturesMask)screenEdges
+{
+  using enum react::RNSScreenScreenEdgesDeferringSystemGestures;
+
+  if (screenEdges & All) {
+    return UIRectEdgeAll;
+  }
+
+  UIRectEdge edges = UIRectEdgeNone;
+  if (screenEdges & Top) {
+    edges |= UIRectEdgeTop;
+  }
+  if (screenEdges & Left) {
+    edges |= UIRectEdgeLeft;
+  }
+  if (screenEdges & Bottom) {
+    edges |= UIRectEdgeBottom;
+  }
+  if (screenEdges & Right) {
+    edges |= UIRectEdgeRight;
+  }
+  return edges;
+}
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents
 {
   auto array = [NSMutableArray<NSNumber *> arrayWithCapacity:detents.size()];
