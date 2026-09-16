@@ -22,11 +22,10 @@ internal class DimScrim(
             setBackgroundColor(spec.color)
             alpha = spec.from
         }
+    private val interpolator = spec.easing.toInterpolator(host.context)
 
     fun apply(timeMs: Float) {
-        view.alpha =
-            spec.from +
-            (spec.to - spec.from) * spec.interpolator.getInterpolation(localFraction(timeMs, spec.startMs, spec.durationMs))
+        view.alpha = spec.from + (spec.to - spec.from) * interpolator.getInterpolation(spec.fractionAt(timeMs))
     }
 
     fun attachTo(
