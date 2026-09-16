@@ -34,7 +34,7 @@ namespace react = facebook::react;
 
   // Props
   BOOL _isOpen;
-  std::vector<double> _detents;
+  NSArray<NSNumber *> *_detents;
   BOOL _prefersGrabberVisible;
   CGFloat _preferredCornerRadius;
   NSInteger _largestUndimmedDetentIndex;
@@ -43,7 +43,7 @@ namespace react = facebook::react;
   BOOL _preventNativeDismiss;
   UIColor *_Nullable _nativeContainerBackgroundColor;
 
-  CGFloat _reactContentsHeight;
+  CGFloat _contentsHeight;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -69,7 +69,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _isOpen = NO;
-  _detents = {};
+  _detents = @[];
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
@@ -78,7 +78,7 @@ namespace react = facebook::react;
   _preventNativeDismiss = NO;
   _nativeContainerBackgroundColor = nil;
 
-  _reactContentsHeight = 0.0;
+  _contentsHeight = 0.0;
 }
 
 - (void)setupController
@@ -110,23 +110,23 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetBehaviorProvider
 
-- (const std::vector<double> &)detents
+- (NSArray<NSNumber *> *)detents
 {
   return _detents;
 }
 
-- (CGFloat)reactContentsHeight
+- (CGFloat)contentsHeight
 {
-  return _reactContentsHeight;
+  return _contentsHeight;
 }
 
 #pragma mark - RNSFormSheetContentWrapperDelegate
 
 - (void)contentWrapper:(RNSFormSheetContentWrapperComponentView *)wrapper
-    didChangeReactContentsHeight:(CGFloat)reactContentsHeight
+    didChangeContentsHeight:(CGFloat)contentsHeight
 {
-  if (_reactContentsHeight != reactContentsHeight) {
-    _reactContentsHeight = reactContentsHeight;
+  if (_contentsHeight != contentsHeight) {
+    _contentsHeight = contentsHeight;
     [_controller setNeedsBehaviorUpdate];
   }
 }
@@ -213,7 +213,7 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+  [_controller.contentView insertContentSubview:childComponentView atIndex:index];
 
   // Assuming that for `fitToContents` the RNSFormSheetContentWrapperComponentView will be a direct child of
   // RNSFormSheetHostComponentView.
@@ -228,7 +228,7 @@ namespace react = facebook::react;
     ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = nil;
   }
 
-  [_controller.contentView removeReactSubview:childComponentView];
+  [_controller.contentView removeContentSubview:childComponentView];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -253,7 +253,11 @@ namespace react = facebook::react;
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
-    _detents = newComponentProps.detents;
+    NSMutableArray<NSNumber *> *detents = [NSMutableArray arrayWithCapacity:newComponentProps.detents.size()];
+    for (double detent : newComponentProps.detents) {
+      [detents addObject:@(detent)];
+    }
+    _detents = detents;
     [_controller setNeedsBehaviorUpdate];
   }
 

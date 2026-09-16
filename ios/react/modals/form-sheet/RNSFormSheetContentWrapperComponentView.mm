@@ -33,7 +33,7 @@ namespace react = facebook::react;
 
   if (newHeight != oldHeight) {
     if (_delegate) {
-      [_delegate contentWrapper:self didChangeReactContentsHeight:newHeight];
+      [_delegate contentWrapper:self didChangeContentsHeight:newHeight];
     }
   }
 }
