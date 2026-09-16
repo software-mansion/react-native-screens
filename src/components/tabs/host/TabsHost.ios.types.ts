@@ -56,6 +56,12 @@ export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
  * The sidebar overlaps the content, and the content is not accessible until
  * the sidebar is hidden.
  *
+ * The sidebar can be displayed only when the interface has a regular
+ * horizontal size class. On iPhone, this applies only to larger models
+ * (e.g. Pro Max, Plus and Air) in landscape orientation. On other iPhones
+ * (e.g. iPhone 18 Pro), and on all iPhones in portrait orientation,
+ * the tab bar is always displayed.
+ *
  * @default Defaults to `automatic`.
  *
  * @platform ios
