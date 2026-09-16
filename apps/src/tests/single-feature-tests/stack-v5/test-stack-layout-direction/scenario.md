@@ -31,6 +31,8 @@ visual check.
 
 - Android emulator or physical device.
 - `supportsRtl` enabled in the app manifest.
+- Section C needs **API 33 or newer**: it relies on the `default` animation,
+  which is a zoom with no sideways motion below API 33.
 
 ## Note
 
@@ -177,7 +179,8 @@ visual check.
 
 20. Press **Push screen (adds a back button)**.
 
-- [ ] The incoming screen slides in from the **left**.
+- [ ] The incoming screen slides in a short distance from the **left** while
+      fading in, and the covered screen moves slightly to the right.
 - [ ] On the pushed screen the back arrow sits on the **right** (leading) edge
       and points **right**.
 - [ ] The pushed screen's header is laid out RTL from the first frame - it
@@ -185,7 +188,8 @@ visual check.
 
 21. Tap the back arrow.
 
-- [ ] The stack pops, mirroring the push: the popped screen leaves to the left.
+- [ ] The stack pops, mirroring the push: the popped screen moves a short
+      distance to the left while fading out.
 
 22. Press **Push screen** again, then use the system back gesture or button.
 
@@ -200,12 +204,13 @@ visual check.
 
 24. Tap the back arrow.
 
-- [ ] The pop mirrors the LTR direction: the popped screen leaves to the right.
+- [ ] The pop mirrors the LTR direction: the popped screen moves a short
+      distance to the right while fading out.
 
 25. Press **Push screen** again, then tap the back arrow.
 
-- [ ] The push slides in from the right and out to the left, i.e. the
-      behaviour in LTR is unchanged.
+- [ ] The pushed screen enters from the right and leaves to the right on pop,
+      i.e. the behaviour in LTR is unchanged.
 
 ---
 
