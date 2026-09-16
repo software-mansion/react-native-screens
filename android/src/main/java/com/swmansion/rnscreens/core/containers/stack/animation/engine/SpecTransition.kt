@@ -49,12 +49,12 @@ internal class SpecTransition(
         view: View,
         startValues: TransitionValues?,
         endValues: TransitionValues?,
-    ): Animator = SlotAnimator.create(view, spec, sceneRoot)
+    ): Animator = SlotAnimator.create(view, spec, sceneRoot, rootTransition)
 
     override fun onDisappear(
         sceneRoot: ViewGroup,
         view: View,
         startValues: TransitionValues?,
         endValues: TransitionValues?,
-    ): Animator = SlotAnimator.create(view, spec, sceneRoot)
+    ): Animator = SlotAnimator.create(view, spec, sceneRoot, rootTransition)
 }

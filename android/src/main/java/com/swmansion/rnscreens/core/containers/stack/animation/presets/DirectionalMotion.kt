@@ -8,6 +8,8 @@ internal enum class Edge {
     RIGHT,
     TOP,
     BOTTOM,
+    START,
+    END,
     ;
 
     fun opposite(): Edge =
@@ -16,6 +18,8 @@ internal enum class Edge {
             RIGHT -> LEFT
             TOP -> BOTTOM
             BOTTOM -> TOP
+            START -> END
+            END -> START
         }
 }
 
@@ -23,30 +27,36 @@ internal object DirectionalMotion {
     /**
      * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives
      * at rest along it, a disappearing view departs from rest along it (exiting through the
-     * opposite edge).
+     * opposite edge). Logical edges are authored as their left-to-right counterparts and mirrored
+     * at run time.
      */
-    fun slideFrom(
+    fun translateFrom(
         edge: Edge,
         distance: Value,
         appearing: Boolean,
-    ): SlotTemplate {
+    ): TrackTemplate {
         val property =
             when (edge) {
-                Edge.LEFT, Edge.RIGHT -> TrackProperty.TRANSLATE_X
+                Edge.LEFT, Edge.RIGHT, Edge.START, Edge.END -> TrackProperty.TRANSLATE_X
                 Edge.TOP, Edge.BOTTOM -> TrackProperty.TRANSLATE_Y
             }
         val towardEdge =
             when (edge) {
-                Edge.RIGHT, Edge.BOTTOM -> distance
-                Edge.LEFT, Edge.TOP -> distance.negated()
+                Edge.RIGHT, Edge.BOTTOM, Edge.END -> distance
+                Edge.LEFT, Edge.TOP, Edge.START -> distance.negated()
             }
         val rest = Value.Percent(0f)
-        val track =
-            if (appearing) {
-                TrackTemplate(property, from = towardEdge, to = rest)
-            } else {
-                TrackTemplate(property, from = rest, to = towardEdge.negated())
-            }
-        return SlotTemplate(listOf(track))
+        val mirrorInRtl = edge == Edge.START || edge == Edge.END
+        return if (appearing) {
+            TrackTemplate(property, from = towardEdge, to = rest, mirrorInRtl = mirrorInRtl)
+        } else {
+            TrackTemplate(property, from = rest, to = towardEdge.negated(), mirrorInRtl = mirrorInRtl)
+        }
     }
+
+    fun slideFrom(
+        edge: Edge,
+        distance: Value,
+        appearing: Boolean,
+    ): SlotTemplate = SlotTemplate(listOf(translateFrom(edge, distance, appearing)))
 }
