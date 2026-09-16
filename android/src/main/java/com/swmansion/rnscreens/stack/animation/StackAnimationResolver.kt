@@ -6,6 +6,7 @@ import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.stack.animation.presets.PresetTable
 import com.swmansion.rnscreens.stack.animation.presets.RowTemplate
 import com.swmansion.rnscreens.stack.animation.presets.SlotTemplate
+import com.swmansion.rnscreens.stack.animation.spec.DimSpec
 import com.swmansion.rnscreens.stack.animation.spec.RowSpec
 import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
 import com.swmansion.rnscreens.stack.animation.spec.TrackSpec
@@ -88,9 +89,22 @@ internal object StackAnimationResolver {
                     startMs = referenceMs.scaledBy(it.start),
                     durationMs = referenceMs.scaledBy(it.duration),
                     interpolator = Easings.get(it.easing ?: easing),
+                    mirrorInRtl = it.mirrorInRtl,
                 )
             }
-        return SlotSpec(tracks, durationMs = tracks.maxOf { it.startMs + it.durationMs })
+        val dim =
+            template.dim?.let {
+                DimSpec(
+                    color = it.color,
+                    from = it.from,
+                    to = it.to,
+                    startMs = referenceMs.scaledBy(it.start),
+                    durationMs = referenceMs.scaledBy(it.duration),
+                    interpolator = Easings.get(it.easing ?: easing),
+                )
+            }
+        val endsMs = tracks.map { it.startMs + it.durationMs } + listOfNotNull(dim?.let { it.startMs + it.durationMs })
+        return SlotSpec(tracks, dim, durationMs = endsMs.maxOrNull() ?: 0L)
     }
 
     private fun Long.scaledBy(fraction: Float): Long = (this * fraction).roundToLong()

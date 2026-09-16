@@ -11,4 +11,8 @@ internal data class TrackSpec(
     val startMs: Long,
     val durationMs: Long,
     val interpolator: Interpolator,
+    /**
+     * Negate the values when the container is laid out right-to-left.
+     */
+    val mirrorInRtl: Boolean,
 )

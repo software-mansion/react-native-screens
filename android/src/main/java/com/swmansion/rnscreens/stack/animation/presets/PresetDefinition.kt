@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.stack.animation.presets
 
+import android.graphics.Color
 import com.swmansion.rnscreens.stack.animation.model.Easing
 import com.swmansion.rnscreens.stack.animation.model.TrackProperty
 import com.swmansion.rnscreens.stack.animation.model.Value
@@ -15,10 +16,24 @@ internal data class TrackTemplate(
     val start: Float = 0f,
     val duration: Float = 1f,
     val easing: Easing? = null,
+    val mirrorInRtl: Boolean = false,
+)
+
+/**
+ * A scrim drawn over the slot's screen, above its content and below its siblings.
+ */
+internal data class DimTemplate(
+    val from: Float,
+    val to: Float,
+    val start: Float = 0f,
+    val duration: Float = 1f,
+    val easing: Easing? = null,
+    val color: Int = Color.BLACK,
 )
 
 internal data class SlotTemplate(
     val tracks: List<TrackTemplate>,
+    val dim: DimTemplate? = null,
 )
 
 /**
