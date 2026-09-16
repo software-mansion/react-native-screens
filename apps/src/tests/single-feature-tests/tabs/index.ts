@@ -3,6 +3,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 // Scenario objects (default exports) — carry metadata, used to build the
 // scenario group consumed by the selection menu.
 import TestTabsSimpleNav from './test-tabs-simple-nav';
+import TestTabsLazyRendering from './test-tabs-lazy-rendering';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
 import TestTabsStaleUpdateRejection from './test-tabs-stale-update-rejection';
 import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
@@ -32,6 +33,7 @@ import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-ex
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
+export { default as TestTabsLazyRendering } from './test-tabs-lazy-rendering';
 export { default as TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
 export { default as TestTabsStaleUpdateRejection } from './test-tabs-stale-update-rejection';
 export { default as TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
@@ -60,6 +62,7 @@ export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-
 
 const scenarios = {
   TestTabsSimpleNav,
+  TestTabsLazyRendering,
   TestTabsPreventNativeSelection,
   TestTabsStaleUpdateRejection,
   TestTabsAppearanceDefinedBySelectedTab,
