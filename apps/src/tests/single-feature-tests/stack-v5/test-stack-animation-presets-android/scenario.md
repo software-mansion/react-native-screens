@@ -25,9 +25,9 @@ qualities that Detox cannot assert reliably.
 
 ## Prerequisites
 
-- Android emulator or device on **API 33 or newer** for every section except
+- Android emulator or device on **API 34 or newer** for every section except
   "`default` below API 33", which needs a second emulator on **API 32 or
-  older**.
+  older**. The interactive predictive back gesture needs API 34.
 
 - **System animations must be enabled** — verify **Settings → Accessibility →
   Color and motion → Remove animations** is **OFF**.
@@ -126,19 +126,19 @@ qualities that Detox cannot assert reliably.
    - [ ] **Blue** shrinks and fades out on top; **Home** shrinks back to its
          size and fades in.
 
-7. Tap **Push Blue**, predictive back **hold**, **commit**; push again,
-   **hold**, **cancel**.
+7. Tap **Push Blue**, then swipe back from the screen edge and release.
 
-   - [ ] The zoom is scrubbed by the finger; cancel restores both screens to
-         full size and full opacity. Continue on the API 33+ emulator.
+   - [ ] Nothing moves while the finger is down; after release the pop plays
+         the same zoom as in step 6. Continue on the API 34+ emulator.
 
 ### `fade`
 
 8. On **Home**, set **next push** to `fade`, tap **Push Blue**, then tap
    **Pop**.
 
-   - [ ] Crossfade both ways: mid-way both cards are partially visible, no
-         frame moves and no window background shows. On the push **Blue**
+   - [ ] Crossfade both ways: mid-way both cards are partially visible and no
+         frame moves. The window background shows through faintly while both
+         screens are translucent, which is expected. On the push **Blue**
          fades in on top of **Home**; on the pop **Blue** fades out on top of
          **Home**.
 
