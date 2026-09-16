@@ -296,6 +296,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if TARGET_OS_TV
   if (self.window != nil) {
     [self registerForTVMenuKeyNotificationsIfNeeded];
+    [self syncTVMenuKeyHandling];
   } else {
     [self unregisterForTVMenuKeyNotificationsIfNeeded];
   }
