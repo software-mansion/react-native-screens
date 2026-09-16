@@ -57,6 +57,7 @@ namespace react = facebook::react;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
   _visibilityPriority = RNSHeaderItemVisibilityPriorityStandard;
+  _paddingRemoved = NO;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -279,6 +280,11 @@ RNS_IGNORE_SUPER_CALL_END
       needsUpdate = YES;
     }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  }
+
+  if (oldItemProps.paddingRemoved != newItemProps.paddingRemoved) {
+    _paddingRemoved = newItemProps.paddingRemoved;
+    needsUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
