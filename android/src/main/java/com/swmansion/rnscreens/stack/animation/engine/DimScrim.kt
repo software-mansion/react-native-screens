@@ -48,7 +48,6 @@ internal class DimScrim(
 
     private fun remove() {
         host.overlay.remove(view)
-        view.alpha = spec.from
     }
 
     private inner class Listener :
