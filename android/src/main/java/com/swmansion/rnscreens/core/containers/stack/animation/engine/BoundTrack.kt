@@ -15,8 +15,8 @@ internal class BoundTrack(
     context: Context,
 ) {
     private val sign = if (spec.mirrorInRtl && metrics.isRTL) -1f else 1f
-    private val from = sign * spec.from.toPixels(spec.property, metrics)
-    private val to = sign * spec.to.toPixels(spec.property, metrics)
+    private val from = sign * spec.from.resolve(spec.property, metrics)
+    private val to = sign * spec.to.resolve(spec.property, metrics)
     private val interpolator = spec.easing.toInterpolator(context)
 
     fun applyTo(
