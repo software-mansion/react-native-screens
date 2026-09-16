@@ -22,8 +22,9 @@ internal class BoundTrack(
     fun applyTo(
         view: View,
         timeMs: Float,
+        eased: Boolean,
     ) {
-        val value = from + (to - from) * interpolator.getInterpolation(spec.fractionAt(timeMs))
+        val value = from + (to - from) * spec.progressAt(timeMs, interpolator, eased)
         when (spec.property) {
             TrackProperty.TRANSLATE_X -> view.translationX = value
             TrackProperty.TRANSLATE_Y -> view.translationY = value
