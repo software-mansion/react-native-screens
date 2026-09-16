@@ -24,8 +24,11 @@ internal class DimScrim(
         }
     private val interpolator = spec.easing.toInterpolator(host.context)
 
-    fun apply(timeMs: Float) {
-        view.alpha = spec.from + (spec.to - spec.from) * interpolator.getInterpolation(spec.fractionAt(timeMs))
+    fun apply(
+        timeMs: Float,
+        eased: Boolean,
+    ) {
+        view.alpha = spec.from + (spec.to - spec.from) * spec.progressAt(timeMs, interpolator, eased)
     }
 
     fun attachTo(

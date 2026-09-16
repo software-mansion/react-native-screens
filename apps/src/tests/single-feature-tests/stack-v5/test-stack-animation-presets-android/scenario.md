@@ -68,6 +68,9 @@ qualities that Detox cannot assert reliably.
   travel. The legacy stack behaved the same on API 33+.
 - Only `default` follows the `direction` picker; every other preset keeps its
   physical direction in RTL.
+- Under the finger every track progresses linearly with the gesture; track
+  delays keep their place, the authored easing applies only to
+  non-interactive plays, and release settles with the system spring.
 - **Known issue:** an operation dispatched while a transition is still
   running completes that transition instantly and a screen popped by the new
   batch is removed without its own pop animation. Wait for every animation to
@@ -161,8 +164,9 @@ qualities that Detox cannot assert reliably.
 12. Tap **Push Blue**, predictive back **hold**, **commit**; push again,
     **hold**, **cancel**.
 
-    - [ ] The sink and fade track the finger; cancel returns **Blue** to rest,
-          fully opaque.
+    - [ ] **Blue** sinks steadily from the start of the swipe and the fade
+          joins about 40 % of the way; cancel returns **Blue** to rest, fully
+          opaque.
 
 13. On **Home**, set **next push** to `fadeFromTop`, tap **Push Blue**, then
     tap **Pop**.

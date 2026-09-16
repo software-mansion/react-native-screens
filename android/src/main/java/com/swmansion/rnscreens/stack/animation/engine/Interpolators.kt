@@ -6,6 +6,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.Interpolator
 import com.swmansion.rnscreens.stack.animation.model.Easing
 import com.swmansion.rnscreens.stack.animation.model.EasingName
+import com.swmansion.rnscreens.stack.animation.spec.TimedSpan
 import com.google.android.material.R as MaterialR
 
 /**
@@ -16,6 +17,15 @@ internal fun Easing.toInterpolator(context: Context): Interpolator =
     when (this) {
         is Easing.Named -> AnimationUtils.loadInterpolator(context, name.resourceId)
     }
+
+internal fun TimedSpan.progressAt(
+    timeMs: Float,
+    interpolator: Interpolator,
+    eased: Boolean,
+): Float {
+    val fraction = fractionAt(timeMs)
+    return if (eased) interpolator.getInterpolation(fraction) else fraction
+}
 
 private val EasingName.resourceId: Int
     @SuppressLint("PrivateResource")
