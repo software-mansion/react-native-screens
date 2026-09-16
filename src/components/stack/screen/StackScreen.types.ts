@@ -47,7 +47,7 @@ export type StackScreenProps = {
    *
    * Currently supported only on Android.
    *
-   * @default 'slideFromRight'
+   * @default 'default'
    *
    * @platform android
    */
