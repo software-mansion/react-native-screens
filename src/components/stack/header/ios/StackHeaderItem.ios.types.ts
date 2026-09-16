@@ -18,6 +18,7 @@ export type StackHeaderItemProps = {
   identifier?: string | undefined;
   hidesSharedBackground?: boolean | undefined;
   visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
+  paddingRemoved?: boolean | undefined;
   title?: string | undefined;
   icon?: PlatformIconIOS | undefined;
   render?: (() => ReactElement) | undefined;
