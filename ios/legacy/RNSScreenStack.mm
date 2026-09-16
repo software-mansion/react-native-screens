@@ -283,6 +283,16 @@ RNS_IGNORE_SUPER_CALL_END
   [super didMoveToWindow];
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
+
+  if (self.window != nil) {
+    // The header config of the screen shown by this stack might have been applied while our
+    // navigation bar was still outside of any window, which leaves part of the navigation item
+    // styling unrealized. Now that the bar has a window, let the config finish the job.
+    if ([_controller.topViewController isKindOfClass:RNSScreen.class]) {
+      RNSScreen *topScreen = (RNSScreen *)_controller.topViewController;
+      [[topScreen.screenView findHeaderConfig] updateViewControllerIfAppliedOutsideWindow];
+    }
+  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer
