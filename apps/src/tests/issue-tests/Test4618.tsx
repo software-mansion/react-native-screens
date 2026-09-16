@@ -23,7 +23,6 @@ import {
  * Manual test matrix: see `PR-4618-tvos-menu-key.md` at repo root.
  * Toggle the flags below, reload, and run each case on Apple TV.
  */
-/** Case 2 (fix): true. Case 1 / 4 (baseline): false. */
 const DISABLE_DEFAULT_MENU_ACTION = true;
 
 function useMenuKeyProbe() {
@@ -84,10 +83,10 @@ function ActionButton({ label, onPress }: ActionButtonProps) {
 export default function Test4618() {
   const [showDetail, setShowDetail] = React.useState(false);
 
-  React.useEffect(() => {
-    TVEventControl.enableTVMenuKey();
-    return () => TVEventControl.disableTVMenuKey();
-  }, []);
+  // React.useEffect(() => {
+  //   TVEventControl.enableTVMenuKey();
+  //   return () => TVEventControl.disableTVMenuKey();
+  // }, []);
 
   const popToHome = () => setShowDetail(false);
 
