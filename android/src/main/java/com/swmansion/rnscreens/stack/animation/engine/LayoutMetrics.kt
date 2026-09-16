@@ -27,7 +27,10 @@ internal data class LayoutMetrics(
     }
 }
 
-internal fun Value.toPixels(
+/**
+ * The concrete value for [property]: pixels for translations, the raw scalar otherwise.
+ */
+internal fun Value.resolve(
     property: TrackProperty,
     metrics: LayoutMetrics,
 ): Float =
