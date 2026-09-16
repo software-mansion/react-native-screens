@@ -1,7 +1,7 @@
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperation.h"
-#import "RNSStackScreenComponentView.h"
+#import "RNSStackScreenProviding.h"
 
 @implementation RNSStackOperationCoordinator {
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
@@ -27,20 +27,20 @@
   return _pendingPushOperations.count > 0 || _pendingPopOperations.count > 0;
 }
 
-- (void)addPushOperation:(nonnull RNSStackScreenComponentView *)stackScreen
+- (void)addPushOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen
 {
   RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreen:stackScreen];
   [_pendingPushOperations addObject:operation];
 }
 
-- (void)addPopOperation:(nonnull RNSStackScreenComponentView *)stackScreen
+- (void)addPopOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen
 {
   RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreen:stackScreen];
   [_pendingPopOperations addObject:operation];
 }
 
 - (void)executePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
-                     withRenderedScreens:(nonnull NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens
+                     withRenderedScreens:(nonnull NSMutableArray<UIView<RNSStackScreenProviding> *> *)renderedScreens
 {
   if (![self hasPendingOperations]) {
     return;
@@ -68,7 +68,7 @@
 
 - (NSArray<RNSStackOperation *> *)orderedOperations:(nonnull NSMutableArray<RNSStackOperation *> *)operations
                                     withIndicesFrom:
-                                        (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
+                                        (nonnull NSMutableArray<UIView<RNSStackScreenProviding> *> *)stackScreens
 {
   return [operations sortedArrayUsingComparator:^NSComparisonResult(RNSStackOperation *obj1, RNSStackOperation *obj2) {
     return [@([stackScreens indexOfObject:obj1.stackScreen]) compare:@([stackScreens indexOfObject:obj2.stackScreen])];

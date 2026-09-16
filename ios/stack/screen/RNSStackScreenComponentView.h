@@ -2,6 +2,7 @@
 
 #import "RNSReactBaseView.h"
 #import "RNSStackScreenComponentEventEmitter.h"
+#import "RNSStackScreenProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,12 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSStackHostComponentView;
 @class RNSStackHeaderConfigComponentView;
 
-typedef NS_ENUM(int, RNSStackScreenActivityMode) {
-  RNSStackScreenActivityModeDetached = 0,
-  RNSStackScreenActivityModeAttached = 1,
-};
-
-@interface RNSStackScreenComponentView : RNSReactBaseView
+@interface RNSStackScreenComponentView : RNSReactBaseView <RNSStackScreenProviding>
 
 @property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, weak, readonly, nullable) RNSStackHeaderConfigComponentView *headerConfig;

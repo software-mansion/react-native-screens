@@ -1,14 +1,14 @@
 #pragma once
 
-#import "RNSStackScreenComponentView.h"
+#import "RNSStackScreenProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackOperation : NSObject
 
-@property (nonatomic, strong, readonly) RNSStackScreenComponentView *stackScreen;
+@property (nonatomic, strong, readonly) UIView<RNSStackScreenProviding> *stackScreen;
 
-- (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (instancetype)initWithScreen:(nonnull UIView<RNSStackScreenProviding> *)stackScreen;
 
 @end
 
