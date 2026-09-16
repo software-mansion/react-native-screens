@@ -52,8 +52,6 @@ internal object DefaultPreset {
         ),
     )
 
-    // The v33 XMLs also widen the moving views' draw bounds (`<extend>`), which has no
-    // Transition-world equivalent and is dropped.
     private fun slide(): PresetDefinition {
         val travel = Value.Percent(0.1f)
         return PresetDefinition(

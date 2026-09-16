@@ -230,9 +230,9 @@ visual / interactive qualities that Detox cannot assert reliably.
 ### Changing a covered screen's animation
 
 17. On **Red**, set **this screen** to `slideFromTop`, then tap **Push Blue**
-    (defaults) and, on **Blue**, tap **Pop**.
+    (`slideFromRight`) and, on **Blue**, tap **Pop**.
 
-    - [ ] The push plays **Blue**'s default slide from the right; **Red**'s
+    - [ ] The push plays **Blue**'s slide from the right; **Red**'s
           value does not affect it. The pop plays **Blue**'s own slide out to
           the right with **Red** entering from the left — the covered screen's
           value only governs its own pop.
