@@ -95,7 +95,7 @@ export interface SupportsMenuIOS {
   menu?: StackHeaderMenuIOS | undefined;
 }
 
-export interface SupportsSharedBackgroundIOS {
+export interface SupportsInlineVisualModificationsIOS {
   /**
    * @summary Whether the liquid glass background for this item should be hidden.
    *
@@ -111,6 +111,21 @@ export interface SupportsSharedBackgroundIOS {
    * @supported iOS 26 and higher
    */
   hidesSharedBackground?: boolean | undefined;
+  /**
+   * @summary Whether the internal padding around the item's content should be removed.
+   *
+   * @description
+   * Bar button items reserve internal padding around their content
+   * inside the liquid glass background. Setting this to `true` removes that
+   * padding, so the item's content spans its full frame.
+   *
+   * @default false
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  paddingRemoved?: boolean | undefined;
 }
 
 export interface SupportsIdentifierIOS {
@@ -141,7 +156,7 @@ export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
     SupportsMenuIOS,
     SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS {
+    SupportsInlineVisualModificationsIOS {
   /**
    * @summary Marks this object as a header item definition.
    *
@@ -169,7 +184,7 @@ export interface StackHeaderInlineItemIOS
 export interface StackHeaderInlineCustomItemIOS
   extends SupportsMenuIOS,
     SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS {
+    SupportsInlineVisualModificationsIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
