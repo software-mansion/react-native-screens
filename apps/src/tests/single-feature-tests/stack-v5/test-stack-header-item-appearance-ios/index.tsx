@@ -105,7 +105,7 @@ const buildHeaderConfig = (
   return {
     title,
     ios: {
-      backButtonTitle: "Back",
+      backButtonTitle: 'Back',
       standardAppearance: buildHeaderAppearance(config.standard),
       scrollEdgeAppearance: buildHeaderAppearance(config.scrollEdge),
       trailingItems: [
@@ -278,7 +278,7 @@ function HomeScreen() {
 }
 
 function DetailsScreen() {
-  useApplyHeaderConfig("");
+  useApplyHeaderConfig('');
 
   return (
     <ScrollView
@@ -290,7 +290,8 @@ function DetailsScreen() {
         enabled, button attributes apply to the plain items (and the back button
         title on iOS below 26); prominentButton attributes apply to the
         prominent items. backButton attributes apply only to the back button
-        title, overriding the button ones.
+        title; setting any of them detaches the back button from the button
+        attributes entirely (unset ones fall back to system defaults).
       </Text>
       <ConfigControls />
     </ScrollView>
@@ -315,10 +316,10 @@ function TestStackHeaderItemAppearanceIOS() {
               options: {
                 headerConfig: {
                   ios: {
-                    backButtonTitle: "Back",
-                    backButtonDisplayMode: "default"
-                  }
-                }
+                    backButtonTitle: 'Back',
+                    backButtonDisplayMode: 'default',
+                  },
+                },
               },
               element: <DetailsScreen />,
             },
