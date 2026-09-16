@@ -20,16 +20,16 @@ TBD
 
 1. Inspect the header trailing items
 
-- [ ] Four items with "1", "2", "3", "4" circled sfSymbols are visible
-
-- [ ] Item "1" is displayed as a regular, enabled item
-
-- [ ] Item "2" is grayed out (disabled)
-
-- [ ] Item "3" is displayed as a regular, enabled item (prominent style not implemented yet)
-
-- [ ] Item "4" is grayed out (disabled; prominent style not implemented yet)
+    - [ ] Four items with "1", "2", "3", "4" circled sfSymbols are visible
+    
+    - [ ] Item "1" is displayed as a regular, enabled item
+    
+    - [ ] Item "2" is grayed out (disabled)
+    
+    - [ ] Item "3" is displayed as a regular, enabled item (prominent style not implemented yet)
+    
+    - [ ] Item "4" is grayed out (disabled; prominent style not implemented yet)
 
 2. Tap items "2" and "4"
 
-- [ ] Disabled items do not react to touches (no highlight)
+    - [ ] Disabled items do not react to touches (no highlight)
