@@ -111,6 +111,8 @@ internal class ScreensCoordinatorLayout(
         }
     }
 
+    override fun shouldDelayChildPressedState(): Boolean = fragment.screen.usesFormSheetPresentation()
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
