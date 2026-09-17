@@ -23,7 +23,7 @@ class StackHost(
     StackContainerDelegate,
     StackContainerParent {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
-    private val container = StackContainer(reactContext, WeakReference(this))
+    internal val container = StackContainer(reactContext, WeakReference(this))
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
     private var isLayoutEnqueued = false
 

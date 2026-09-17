@@ -29,6 +29,17 @@ function StackSetup() {
         {
           name: 'Home',
           element: <HomeScreen />,
+          options: {
+            // Disabled by default; the Toggle on Home enables it at runtime to
+            // exercise the flag on the root screen of the app's root stack.
+            onNativeDismissPrevented: () => {
+              console.info('Native dismiss prevented');
+              toast.push({
+                message: 'Native dismiss prevented',
+                backgroundColor: Colors.GreenLight60,
+              });
+            },
+          },
         },
         {
           name: 'A',
@@ -65,7 +76,9 @@ function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight40 }}>
       <StackRouteInformation routeName="Home" />
+      <PreventNativeDismissInfo />
       <StackNavigationButtons isPopEnabled={false} routeNames={['A', 'B']} />
+      <TogglePreventNativeDismiss />
     </CenteredLayoutView>
   );
 }

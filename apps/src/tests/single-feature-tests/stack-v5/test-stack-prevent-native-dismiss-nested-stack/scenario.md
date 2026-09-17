@@ -12,9 +12,11 @@ stack. When the flag is **Disabled**, native back pops normally: a non-root
 screen pops within its stack, and the nested root pops the whole nested
 stack back into the parent. The on-screen **Pop** button always pops
 regardless of the flag. Also verifies that when several ancestors prevent at
-once, only the current top screen intercepts, and that system-back
+once, only the current top screen intercepts, that system-back
 interception survives the app being backgrounded and foregrounded (an
-activity stop/start cycle, issue #1775). See the Notes for `routeKey`
+activity stop/start cycle, issue #1775), and that a preventing screen in a
+covered branch (a nested stack below a screen pushed on the outer stack) does
+not veto pops of the screens above it. See the Notes for `routeKey`
 behavior and how Android is launched directly to work around issue #1459.
 
 **OS test creation version:** Android API Level 36.
@@ -43,6 +45,8 @@ Manual only (not automated):
 - Pop actions triggered by the header back chevron when `preventNativeDismiss`
   is Disabled.
 - Interception after the app is backgrounded and foregrounded (issue #1775).
+- Pops of outer-stack screens pushed above a preventing nested stack, and the
+  flag flipped while the nested screen is covered.
 - Screen and toast colors, and that **NestedHome** shows no header at all.
 
 ## Prerequisites
@@ -85,6 +89,9 @@ Manual only (not automated):
   route itself **Disabled** (it never intercepts), `NestedHome` **Enabled**,
   `NestedA` **Disabled**, `NestedB` **Enabled**. The **Toggle Prevent Native
   Dismiss** button flips the flag at runtime via `setRouteOptions`.
+  **NestedHome** additionally offers **Toggle Prevent Native Dismiss (3s
+  delay)** and **Push A (outer)**, which pushes `A` on the **outer** stack;
+  both are used from step 33 on.
 - `Key` values use a session-global counter that never
   resets — only verify relationships: a push yields a new, higher key;
   popping back to a preserved instance keeps its key.
@@ -99,7 +106,11 @@ Manual only (not automated):
   fires `onNativeDismissPrevented`. The **header back chevron** asks the
   pressed header's own container. The **system back / gesture-back** goes
   through the activity's back dispatcher, where every stack container keeps a
-  veto callback that is enabled only while its subtree has a vetoing screen.
+  veto callback that is enabled only while its subtree has a vetoing screen
+  and the container itself sits on the active navigation path (its host screen
+  is the top of every enclosing stack, its tab is selected). Android keeps
+  covered stack screens resumed with their views attached, so without that
+  gate a nested stack below a pushed screen would veto pops of that screen.
   Whichever container's callback runs, the vetoing screen is looked up
   deepest-first, so the nested top screen's toast fires rather than an outer
   ancestor's.
@@ -342,3 +353,54 @@ Manual only (not automated):
 
 - [ ] The gesture is intercepted: the "Native dismiss prevented - NestedB"
       toast appears and the app stays on **NestedB**.
+
+### Veto only from the active branch (screens pushed above a preventing nested stack)
+
+33. On **NestedB**, tap the on-screen **Pop** button. On **NestedHome**
+    (prevent Enabled), tap **Push A (outer)**.
+
+- [ ] A fresh screen **A** (yellow background, header "A" with a back chevron)
+      is pushed on the **outer** stack, above the **NestedStack** route, with
+      a `Key` higher than any seen so far.
+
+34. On **A**, perform a system gesture-back.
+
+- [ ] **A** pops back to **NestedHome**, whose `Key` is unchanged from step
+      33. No toast: the preventing screen below the popped one is not being
+      dismissed and gets no vote. Before the fix this gesture was intercepted
+      with "Native dismiss prevented - NestedHome" and **A** stayed.
+
+35. On **NestedHome**, perform a system gesture-back.
+
+- [ ] Intercepted again: the "Native dismiss prevented - NestedHome" toast
+      appears and the app stays on **NestedHome**. The veto re-arms as soon as
+      its branch is active again.
+
+36. On **NestedHome**, tap **Toggle Prevent Native Dismiss** so the label reads
+    **Disabled**. Tap **Toggle Prevent Native Dismiss (3s delay)**, then
+    immediately tap **Push A (outer)**. Wait at least three seconds on **A**,
+    then tap the native header back-button chevron.
+
+- [ ] The chevron pops **A** back to **NestedHome**. No toast, although the
+      flag flipped to **Enabled** while **NestedHome** was covered. The label
+      on **NestedHome** now reads **Prevent native dismiss: Enabled**.
+
+37. On **NestedHome**, perform a system gesture-back.
+
+- [ ] Intercepted: the toast appears and the app stays on **NestedHome**. A
+      flag flipped while covered is honored once the screen is on top again.
+
+38. On **NestedHome**, tap **Push A (outer)**. On **A**, start a system
+    gesture-back and release it before it commits (drag from the edge and let
+    go close to it), then perform a full gesture-back.
+
+- [ ] The cancelled gesture leaves **A** in place, no toast. The full gesture
+      pops **A** back to **NestedHome**, no toast.
+
+39. On **NestedHome**, tap **Push A (outer)**. Background and foreground the
+    app. On **A**, perform a system gesture-back, then another one on
+    **NestedHome**.
+
+- [ ] **A** pops with no toast; the following gesture on **NestedHome** is
+      intercepted with its toast. Neither the covered veto nor the restart
+      leaks into the other case.

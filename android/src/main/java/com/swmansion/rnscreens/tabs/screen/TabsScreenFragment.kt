@@ -42,6 +42,14 @@ class TabsScreenFragment(
         super.onStop()
     }
 
+    override fun onPrimaryNavigationFragmentChanged(isPrimaryNavigationFragment: Boolean) {
+        super.onPrimaryNavigationFragmentChanged(isPrimaryNavigationFragment)
+        // FragmentManager's recursion continues into this tab's child FragmentManager and notifies
+        // ITS primary fragment - the top screen of a stack nested in this tab - which re-evaluates
+        // the container nested in that screen, not the stack this tab hosts. Hence this hook.
+        tabsScreen.resolveNestedContainer()?.onOwnerPrimaryNavigationFragmentChanged()
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 

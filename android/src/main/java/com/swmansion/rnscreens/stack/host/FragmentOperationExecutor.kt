@@ -58,19 +58,6 @@ internal class FragmentOperationExecutor {
         fragmentManager.executePendingTransactions()
     }
 
-    internal fun executeOnCommitCallbackOp(
-        fragmentManager: FragmentManager,
-        op: OnCommitCallbackOp,
-    ) {
-        commitTransaction(
-            fragmentManager
-                .createTransactionWithReordering()
-                .runOnCommit(op.onCommitCallback),
-            allowStateLoss = op.allowStateLoss,
-            flushSync = op.flushSync,
-        )
-    }
-
     private fun commitTransaction(
         tx: FragmentTransaction,
         allowStateLoss: Boolean,
