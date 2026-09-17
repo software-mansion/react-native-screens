@@ -13,6 +13,18 @@
   RCTImageSource *imageSource = [RCTConvert RCTImageSource:jsonImageSource];
   RCTAssert(imageSource != nil, @"[RNScreens] Expected nonnil image source");
 
+  // Expo Updates can resolve local icons outside NSBundle, where RCTImageLoader loads asynchronously.
+  // Supply these PNGs before UIKit lays out and animates the bar button item.
+  NSURL *url = imageSource.request.URL;
+  if (url.isFileURL && [url.pathExtension.lowercaseString isEqualToString:@"png"]) {
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    UIImage *image = data ? [UIImage imageWithData:data scale:imageSource.scale ?: 1.0] : nil;
+    if (image != nil) {
+      imageLoadingCompletionBlock([self handleRenderingModeForImage:image isTemplate:isTemplate]);
+      return;
+    }
+  }
+
 #if !defined(NDEBUG) // We're in debug mode here
   if (imageSource.packagerAsset) {
     // We use `+ [RCTConvert UIImage:]` only in debug mode, because it is deprecated, however
