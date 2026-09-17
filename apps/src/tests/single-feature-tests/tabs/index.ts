@@ -9,7 +9,7 @@ import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defin
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
-import testTabsTabBarInitiallyHidden from './test-tabs-tab-bar-initially-hidden';
+import TestTabsTabBarInitiallyHidden from './test-tabs-tab-bar-initially-hidden';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets-android';
 import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scroll-to-top';
@@ -38,7 +38,7 @@ export { default as TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-a
 export { default as TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
 export { default as TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
 export { default as TestTabsTabBarHidden } from './test-tabs-tab-bar-hidden';
-export { default as testTabsTabBarInitiallyHidden } from './test-tabs-tab-bar-initially-hidden';
+export { default as TestTabsTabBarInitiallyHidden } from './test-tabs-tab-bar-initially-hidden';
 export { default as TestTabsTabBarLayoutDirection } from './test-tabs-tab-bar-layout-direction';
 export { default as TestTabsIMEInsets } from './test-tabs-ime-insets-android';
 export { default as TestTabsSpecialEffectsScrollToTop } from './test-tabs-special-effects-scroll-to-top';
@@ -67,7 +67,7 @@ const scenarios = {
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
   TestTabsTabBarHidden,
-  testTabsTabBarInitiallyHidden,
+  TestTabsTabBarInitiallyHidden,
   TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSpecialEffectsScrollToTop,
