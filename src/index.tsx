@@ -2,6 +2,9 @@
 // is loaded.
 import './fabric/NativeScreensModule';
 
+// Consumers that need a platform metric before layout read it through this module.
+export { default as NativeScreensModule } from './fabric/NativeScreensModule';
+
 export * from './legacy';
 
 /**

@@ -26,6 +26,21 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
+- (NSNumber *)getNavigationBarHeight
+{
+  // UIKit answers with the metric of the current environment: device idiom, size class,
+  // orientation and OS version. Asking beats keeping a table, which goes stale on every OS
+  // that resizes the bar. The value excludes the status bar, and a plain `UINavigationBar`
+  // does not stand for a modally presented one.
+  __block CGFloat height = 0;
+  RCTUnsafeExecuteOnMainQueueSync(^{
+    UINavigationBar *bar = [UINavigationBar new];
+    CGFloat width = UIScreen.mainScreen.bounds.size.width;
+    height = [bar sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height;
+  });
+  return @(height);
+}
+
 - (NSDictionary *)constantsToExport
 {
   [self installHostObject];

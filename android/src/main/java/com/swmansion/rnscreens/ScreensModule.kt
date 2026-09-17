@@ -64,6 +64,9 @@ class ScreensModule(
         }
     }
 
+    // Android has no equivalent synchronous metric here; 0 tells the caller to fall back.
+    override fun getNavigationBarHeight(): Double = 0.0
+
     override fun getName(): String = NAME
 
     @DoNotStrip
