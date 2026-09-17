@@ -250,7 +250,9 @@ namespace react = facebook::react;
     _tabBarHidden = newComponentProps.tabBarHidden;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     if (@available(iOS 18.0, *)) {
-      [_controller setTabBarHidden:_tabBarHidden animated:_tabBarHiddenAnimationEnabled];
+      // Do not animate during the first render / when it's deteached from the UI.
+      const BOOL shouldAnimate = [[_controller tabBar] window] != nil && _tabBarHiddenAnimationEnabled;
+      [_controller setTabBarHidden:_tabBarHidden animated:shouldAnimate];
     } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     {
