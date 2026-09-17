@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description**: This test scenario focuses on lack of animation dirctly after first render when the 
+**Description**: This test scenario focuses on lack of animation directly after first render when the 
 `ios.tabBarHiddenAnimationEnabled` is enabled and the tab bar is initially hidden.
 
 **OS test creation version:** iOS: 18.6 and 26.2.
