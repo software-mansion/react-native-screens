@@ -6,7 +6,7 @@ import { NativeSyntheticEvent, StyleSheet } from 'react-native';
 import { resolveIconAssetSources, resolveMenuIcons } from './iconUtils.ios';
 
 export default function StackHeaderItem(props: StackHeaderItemProps) {
-  const { render, onPress, icon, menu, ...rest } = props;
+  const { render, onPress, icon, menu, menuRepresentation, ...rest } = props;
 
   // `rest.menu` includes some JS callback within nested menu specification
   // codegen strips JS functions and replaces them with NULLT and keys of such type
@@ -24,12 +24,20 @@ export default function StackHeaderItem(props: StackHeaderItemProps) {
     () => (menu != null ? resolveMenuIcons(menu) : undefined),
     [menu],
   );
+  const resolvedMenuRepresentation = useMemo(
+    () =>
+      menuRepresentation != null
+        ? resolveMenuIcons(menuRepresentation)
+        : undefined,
+    [menuRepresentation],
+  );
 
   return (
     <StackHeaderItemIOSNativeComponent
       {...rest}
       icon={resolvedIcon}
       menu={resolvedMenu}
+      menuRepresentation={resolvedMenuRepresentation}
       // We need to tell iOS that we want the handler to be attached only when we actually require it
       // because doing so makes the menu appear on long press instead of tap
       respondsToOnPress={!!onPress}
