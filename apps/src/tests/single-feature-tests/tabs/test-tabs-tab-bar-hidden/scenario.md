@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Full: Covers all manual scenario steps.
+Incomplete: Steps 4-5 are not covered.
 
 ## Prerequisites
 
