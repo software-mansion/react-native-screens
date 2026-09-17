@@ -17,7 +17,7 @@ Incomplete: not covered at all.
 
 ## Steps
 
-1. Launch the app and navigate to the screen Tab Bar Hidden.
+1. Launch the app and navigate to the screen Tab Bar Initially Hidden.
 
 - [ ] The tab bar should be not visible even for a frame. There should be no animation visible.
 
