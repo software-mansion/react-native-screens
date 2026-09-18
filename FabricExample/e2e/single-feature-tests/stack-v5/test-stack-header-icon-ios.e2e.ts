@@ -1,7 +1,12 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { menuRowIcon } from '@e2e/framework/context-menu-ios';
-import { barButtonIcon, headerTitle } from '@e2e/framework/header-items-ios';
+import {
+  barButtonIcon,
+  expectBarButtonIconShown,
+  headerTitle,
+  longPressHeaderItem,
+} from '@e2e/framework/header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
@@ -62,7 +67,7 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
 
   it('should display the header with a star sfSymbol icon on the trailing item', async () => {
     await expect(element(headerTitle('Header Icons'))).toExist();
-    await expect(barButtonIcon(ICON_IDS.sfSymbol)).toBeVisible();
+    await expectBarButtonIconShown(ICON_IDS.sfSymbol);
   });
 
   describe('cycling the bar button item icon', () => {
@@ -70,36 +75,36 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('xcasset'))),
-      ).toBeVisible();
+      ).toExist();
       await expect(barButtonIcon(ICON_IDS.sfSymbol)).not.toExist();
-      await expect(barButtonIcon(ICON_IDS.xcasset)).toBeVisible();
+      await expectBarButtonIconShown(ICON_IDS.xcasset);
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('imageSource'))),
-      ).toBeVisible();
-      await expect(barButtonIcon(ICON_IDS.imageSource)).toBeVisible();
+      ).toExist();
+      await expectBarButtonIconShown(ICON_IDS.imageSource);
       await expect(barButtonIcon(ICON_IDS.xcasset)).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('templateSource'))),
-      ).toBeVisible();
-      await expect(barButtonIcon(ICON_IDS.templateSource)).toBeVisible();
+      ).toExist();
+      await expectBarButtonIconShown(ICON_IDS.templateSource);
       await expect(barButtonIcon(ICON_IDS.imageSource)).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('sfSymbol'))),
-      ).toBeVisible();
-      await expect(barButtonIcon(ICON_IDS.sfSymbol)).toBeVisible();
+      ).toExist();
+      await expectBarButtonIconShown(ICON_IDS.sfSymbol);
       await expect(barButtonIcon(ICON_IDS.templateSource)).not.toExist();
     });
   });
 
   describe('the header item menu', () => {
     it('should open the menu on long press and show its items with the star icon', async () => {
-      await element(by.label('Actions')).atIndex(0).longPress();
+      await longPressHeaderItem('Actions');
 
       await expect(element(by.text('Toggle 1'))).toBeVisible();
       await expect(element(by.text('Toggle 2'))).toBeVisible();
