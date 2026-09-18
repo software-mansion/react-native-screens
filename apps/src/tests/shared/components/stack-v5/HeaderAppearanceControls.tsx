@@ -18,13 +18,13 @@ const PLATFORM_COLOR = PlatformColor('systemGreenColor');
 // derived from the array so the two can never drift apart.
 const options = <const T extends string>(...values: T[]): T[] => values;
 
-const COLOR_OPTIONS = options('default', 'red', 'blue', 'platform');
+export const COLOR_OPTIONS = options('default', 'red', 'blue', 'platform');
 const SIZE_OPTIONS = options('default', '12', '30');
 const FAMILY_OPTIONS = options('default', 'Courier New', 'Times New Roman');
 const WEIGHT_OPTIONS = options('default', '400', '700', 'bold', '900');
 const STYLE_OPTIONS = options('default', 'normal', 'italic');
 
-type ColorOption = (typeof COLOR_OPTIONS)[number];
+export type ColorOption = (typeof COLOR_OPTIONS)[number];
 type SizeOption = (typeof SIZE_OPTIONS)[number];
 type FamilyOption = (typeof FAMILY_OPTIONS)[number];
 type WeightOption = (typeof WEIGHT_OPTIONS)[number];
@@ -75,7 +75,7 @@ export function makeDefaultHeaderAppearanceConfig<
   };
 }
 
-function resolveColor(value: ColorOption): ColorValue | undefined {
+export function resolveColor(value: ColorOption): ColorValue | undefined {
   switch (value) {
     case 'red':
       return 'red';
