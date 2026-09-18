@@ -57,9 +57,5 @@ internal interface StackHeaderConfigurationProviding {
 
     val isRTL: Boolean
 
-    val invalidationFlags: StackHeaderInvalidationFlags
-
-    fun clearInvalidationFlags(flags: StackHeaderInvalidationFlags)
-
     fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?)
 }
