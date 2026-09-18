@@ -58,6 +58,8 @@ type TabBarMinimizeBehavior =
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
+type TabBarSidebarPreferredPlacement = 'automatic' | 'sidebar' | 'tabBar';
+
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
@@ -89,6 +91,10 @@ export interface NativeProps extends ViewProps {
   tabBarTintColor?: ColorValue | undefined;
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
+  tabBarSidebarPreferredPlacement?: CT.WithDefault<
+    TabBarSidebarPreferredPlacement,
+    'automatic'
+  >;
   bottomAccessoryHidden?: CT.WithDefault<boolean, false>;
 }
 

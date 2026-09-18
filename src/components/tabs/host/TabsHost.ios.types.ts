@@ -33,6 +33,11 @@ export type TabBarMinimizeBehavior =
 
 export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
+export type TabBarSidebarPreferredPlacement =
+  | 'automatic'
+  | 'sidebar'
+  | 'tabBar';
+
 export interface TabsHostPropsIOS {
   /**
    * @summary Whether changes of `tabBarHidden` are animated.
@@ -141,6 +146,42 @@ export interface TabsHostPropsIOS {
    * @supported iOS 18 or higher
    */
   tabBarControllerMode?: TabBarControllerMode | undefined;
+  /**
+   * @summary Specifies whether the sidebar or the tab bar is preferred when only
+   * one of them can be displayed.
+   *
+   * @description
+   * The following values are currently supported:
+   *
+   * - `automatic` - the system resolves to the platform default (the tab bar on iOS)
+   * - `sidebar` - the sidebar is displayed when it is available
+   * - `tabBar` - the tab bar is displayed
+   *
+   * This prop requires `tabBarControllerMode` to be set to `tabSidebar`.
+   * Otherwise, the sidebar is not considered a supported mode and the tab bar
+   * is always displayed.
+   *
+   * The button that shows the sidebar is visible only when the screen has
+   * a header. After using it, the sidebar is displayed and the content is accessible.
+   *
+   * The sidebar can also be shown with a swipe from the leading edge.
+   * In this case, the sidebar overlaps the content, and the content is not accessible until
+   * the sidebar is hidden.
+   *
+   * The sidebar is enabled only when the interface has a regular
+   * horizontal size class. On iPhone, this applies only to larger models
+   * (e.g. Pro Max, Plus and Air) in landscape orientation. On other iPhones
+   * (e.g. iPhone 18 Pro), and on all iPhones in portrait orientation,
+   * the tab bar is always displayed.
+   *
+   * @default Defaults to `automatic`.
+   *
+   * Not supported on tvOS.
+   *
+   * @platform ios
+   * @supported iOS 27 or higher
+   */
+  tabBarSidebarPreferredPlacement?: TabBarSidebarPreferredPlacement | undefined;
   /**
    * @summary
    * A callback that gets invoked when the user taps the "More" tab bar item.
