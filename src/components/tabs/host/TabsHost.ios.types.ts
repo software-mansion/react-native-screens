@@ -167,7 +167,7 @@ export interface TabsHostPropsIOS {
    * a header. After using it, the sidebar is displayed and the content is accessible.
    *
    * The sidebar can also be shown with a swipe from the leading edge.
-   * The sidebar overlaps the content, and the content is not accessible until
+   * In this case, the sidebar overlaps the content, and the content is not accessible until
    * the sidebar is hidden.
    *
    * The sidebar is enabled only when the interface has a regular
