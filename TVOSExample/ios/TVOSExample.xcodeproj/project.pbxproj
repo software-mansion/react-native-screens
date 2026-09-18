@@ -11,6 +11,8 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		4DB2E7972E3283815C3211C3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		E204D239305D41E800A7FBBC /* ReactNativeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D237305D41E800A7FBBC /* ReactNativeDelegate.swift */; };
+		E204D23A305D41E800A7FBBC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E204D238305D41E800A7FBBC /* SceneDelegate.swift */; };
 		EB6C9AB62D6639D300378B82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6C9AB52D6639D300378B82 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +36,8 @@
 		5709B34CF0A7D63546082F79 /* Pods-TVOSExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TVOSExample.release.xcconfig"; path = "Target Support Files/Pods-TVOSExample/Pods-TVOSExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-TVOSExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TVOSExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TVOSExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		E204D237305D41E800A7FBBC /* ReactNativeDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactNativeDelegate.swift; sourceTree = "<group>"; };
+		E204D238305D41E800A7FBBC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		EB6C9AB42D6639D300378B82 /* TVOSExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TVOSExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		EB6C9AB52D6639D300378B82 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -67,6 +71,8 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				EB6C9AB52D6639D300378B82 /* AppDelegate.swift */,
 				EB6C9AB42D6639D300378B82 /* TVOSExample-Bridging-Header.h */,
+				E204D237305D41E800A7FBBC /* ReactNativeDelegate.swift */,
+				E204D238305D41E800A7FBBC /* SceneDelegate.swift */,
 			);
 			name = TVOSExample;
 			sourceTree = "<group>";
@@ -304,6 +310,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E204D239305D41E800A7FBBC /* ReactNativeDelegate.swift in Sources */,
+				E204D23A305D41E800A7FBBC /* SceneDelegate.swift in Sources */,
 				EB6C9AB62D6639D300378B82 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -504,7 +512,7 @@
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = appletvos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG RNS_USE_SCENE_DELEGATE";
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				TVOS_DEPLOYMENT_TARGET = 15.1;
 				USE_HERMES = true;
@@ -583,7 +591,7 @@
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = appletvos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RNS_DEBUG_LOGGING;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "RNS_DEBUG_LOGGING RNS_USE_SCENE_DELEGATE";
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				TVOS_DEPLOYMENT_TARGET = 15.1;
 				USE_HERMES = true;
