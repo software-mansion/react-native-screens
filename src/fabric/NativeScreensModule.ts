@@ -10,7 +10,7 @@ export interface Spec extends TurboModule {
    * bar's own top inset). Same definition as the `headerHeight` reported by
    * `onHeaderHeightChange`, available synchronously before any stack mounts.
    *
-   * Measured for the key window's traits and bounds. A modally presented bar
+   * Measured for the app window's scene: its traits, safe area and bounds. A modally presented bar
    * is not described. Call it during render, not from an effect, since it
    * waits on the main queue.
    *
