@@ -1,24 +1,28 @@
 #if RNS_USE_SCENE_DELEGATE
 
+  import ReactAppDependencyProvider
   import React_RCTAppDelegate
   import UIKit
 
   class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+    var reactNativeDelegate: ReactNativeDelegate?
+    var reactNativeFactory: RCTReactNativeFactory?
 
     func scene(
       _ scene: UIScene, willConnectTo session: UISceneSession,
       options connectionOptions: UIScene.ConnectionOptions
     ) {
-      guard let windowScene = scene as? UIWindowScene,
-        let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-        let factory = appDelegate.reactNativeFactory
-      else {
-        return
-      }
+      guard let scene = (scene as? UIWindowScene) else { return }
 
-      let window = UIWindow(windowScene: windowScene)
-      self.window = window
+      let delegate = ReactNativeDelegate()
+      let factory = RCTReactNativeFactory(delegate: delegate)
+      delegate.dependencyProvider = RCTAppDependencyProvider()
+
+      reactNativeDelegate = delegate
+      reactNativeFactory = factory
+
+      window = UIWindow(windowScene: scene)
 
       factory.startReactNative(
         withModuleName: "FabricExample",

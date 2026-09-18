@@ -36,7 +36,6 @@
 
 #else
 
-  import ReactAppDependencyProvider
   import React_RCTAppDelegate
   import UIKit
 
@@ -44,24 +43,21 @@
   class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
-    // The factory is owned by the app delegate and only *started* by `SceneDelegate`, which creates
-    // the window once the scene connects. Keeping `reactNativeFactory` here is required by tooling
-    // that resolves the React host through `UIApplication.shared.delegate` (e.g. Detox's
-    // `reloadReactNative`) and mirrors what Expo does with `ExpoReactNativeFactoryProvider`.
-    var reactNativeDelegate: ReactNativeDelegate?
-    var reactNativeFactory: RCTReactNativeFactory?
+    // Under the scene lifecycle the React Native factory is owned by `SceneDelegate`.
+    // Tooling that resolves the React host through `UIApplication.shared.delegate`
+    // (e.g. Detox's `reloadReactNative`, which reads `reactNativeFactory` via KVC)
+    // still expects it here, so expose a read-only proxy to the active scene's factory.
+    @objc var reactNativeFactory: RCTReactNativeFactory? {
+      let sceneDelegates = UIApplication.shared.connectedScenes
+        .sorted { $0.activationState == .foregroundActive && $1.activationState != .foregroundActive }
+        .compactMap { $0.delegate as? SceneDelegate }
+      return sceneDelegates.first?.reactNativeFactory
+    }
 
     func application(
       _ application: UIApplication,
       didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-      let delegate = ReactNativeDelegate()
-      let factory = RCTReactNativeFactory(delegate: delegate)
-      delegate.dependencyProvider = RCTAppDependencyProvider()
-
-      reactNativeDelegate = delegate
-      reactNativeFactory = factory
-
       return true
     }
 
