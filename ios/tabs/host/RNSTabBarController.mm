@@ -665,8 +665,23 @@ static void rns_pushViewController(__unsafe_unretained id self,
       return;
     }
 
+    /*
+     * iOS 27 fires `willShow` also for transitions caused by a programmatic selection
+     * change - by the time this deferred handler runs the selection may already point
+     * elsewhere. Such stale transitions must not progress the state.
+     */
+    if (self.selectedViewController != viewController) {
+      return;
+    }
+
     // No delegate reports the re-display of a More-hosted tab - progress the state here.
+    [self disableNavigationBarInMoreNavigationController];
     [self userDidSelectViewController:viewController];
+    return;
+  }
+
+  // Skip stale transitions (see above) - the selection already moved off the More controller.
+  if (![self isSelectedViewControllerTheMoreNavigationController]) {
     return;
   }
 
