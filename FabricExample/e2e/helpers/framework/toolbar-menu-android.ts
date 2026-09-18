@@ -276,8 +276,10 @@ export function createOverflowMenuHelpers({
    * `assertions` can only address rows inside it.
    */
   const withOverflowMenu = async (assertions: () => Promise<void>) => {
-    await openOverflowMenu();
-    await closingMenuAfter(assertions);
+    await closingMenuAfter(async () => {
+      await openOverflowMenu();
+      await assertions();
+    });
   };
 
   /** Taps `title` in the open popup and waits for the popup to go away. */

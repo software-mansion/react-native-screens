@@ -248,9 +248,10 @@ async function expectMenu(
   const tappedRow = path[path.length - 1];
   const gate = expected.find(text => text !== tappedRow) ?? expected[0];
 
-  await openMenu(path, gate, countOf(expected, gate));
-
-  await closingMenuAfter(() => expectMenuContents(expected, submenus));
+  await closingMenuAfter(async () => {
+    await openMenu(path, gate, countOf(expected, gate));
+    await expectMenuContents(expected, submenus);
+  });
 }
 
 // `submenu-1` sits between `item-top` and `submenu-2`, the only handle on it
@@ -266,9 +267,9 @@ async function expectUntitledSubmenu(
   rowCount: number,
   expected: [MenuText, ...MenuText[]],
 ) {
-  await openTopLevelMenu();
-
   await closingMenuAfter(async () => {
+    await openTopLevelMenu();
+
     jestExpect(await countMatches(overflowMenuRow(), { orEmpty: true })).toBe(
       rowCount,
     );

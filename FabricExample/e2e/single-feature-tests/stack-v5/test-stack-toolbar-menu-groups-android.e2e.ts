@@ -168,12 +168,12 @@ async function tapSubmenuItem(title: string) {
 }
 
 /**
- * Opening the submenu is inside the cleanup scope: it is a tap that can fail
- * with the parent menu already up, and that popup still has to come down.
+ * Opening both menus is inside the cleanup scope: either step can fail with a
+ * popup already up, and that popup still has to come down.
  */
 async function withSubmenu(assertions: () => Promise<void>) {
-  await openOverflowMenu();
   await closingMenuAfter(async () => {
+    await openOverflowMenu();
     await openSubmenu();
     await assertions();
   });
