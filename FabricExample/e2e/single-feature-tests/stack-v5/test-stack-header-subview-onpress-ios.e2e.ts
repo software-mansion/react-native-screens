@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { dismissToast } from '@e2e/app/toast';
+import { dismissNextToast } from '@e2e/app/toast';
 import {
   chevronFor,
   dismissContextMenu,
@@ -41,7 +41,7 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
 
   it('should fire the onPress toast when tapping Item 0 (it has both onPress and a menu)', async () => {
     await headerItem('Item 0').tap();
-    await dismissToast('1. onPress Item 0');
+    await dismissNextToast('onPress Item 0');
   });
 
   it('should open a native menu with two actions on a single tap of Menu 1, which has no onPress', async () => {
@@ -98,7 +98,7 @@ describeIfiOS('Stack Header Subview onPress (iOS)', () => {
       await expect(actionRow('Action 0-2')).toBeVisible();
 
       await actionRow('Item 0').atIndex(1).tap();
-      await dismissToast('1. onPress Item 0');
+      await dismissNextToast('onPress Item 0');
     });
 
     it("should open a 2-row submenu (Action 1-1, Action 1-2) for the overflow's Menu 1 entry, which has no onPress", async () => {
