@@ -6,6 +6,7 @@
     "paths": {
       "@apps/*": ["../apps/src/*"],
       "@assets/*": ["../apps/assets/*"],
+      "@e2e/*": ["e2e/helpers/*"],
       "react-native-screens": ["../src"],
       "react-native-screens/*": ["../src/*"]
     }

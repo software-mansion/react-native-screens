@@ -1,6 +1,7 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
-import { tapBarBackButton } from '../elements/back-button';
+import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { tapBarBackButton } from '@e2e/framework/back-button';
+import { describeIfiOS } from '@e2e/framework/platform';
 
 // Detox currently supports orientation only on iOS
 describeIfiOS('Test528', () => {

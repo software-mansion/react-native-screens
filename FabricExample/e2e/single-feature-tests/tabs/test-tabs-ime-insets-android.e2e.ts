@@ -1,10 +1,8 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfAndroid,
-  getFrame,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { getFrame } from '@e2e/framework/matchers';
+import { describeIfAndroid } from '@e2e/framework/platform';
 
 const getTabBarItemY = async () =>
   (

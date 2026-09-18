@@ -1,22 +1,22 @@
 import { device, expect, element, by, waitFor } from 'detox';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { expectLastClicked } from '@e2e/app/test-screen-readouts';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { describeIfAndroid } from '@e2e/framework/platform';
 import {
   actionMenuItem,
-  createOverflowMenuHelpers,
-  describeIfAndroid,
   expectIconActionItem,
-  expectLastClicked,
   expectNoActionItem,
-  expectOverflowMenuOrder,
   expectTextActionItem,
-  menuItemImage,
+  TOOLBAR_UPDATE_TIMEOUT_MS,
+} from '@e2e/framework/stack-header-android';
+import {
+  createOverflowMenuHelpers,
+  expectOverflowMenuItems,
   openOverflowMenu,
   OVERFLOW_MENU_LABEL,
-  overflowMenuText,
-  scrollToAndTap,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-  TOOLBAR_UPDATE_TIMEOUT_MS,
-} from '../../e2e-utils';
+} from '@e2e/framework/toolbar-menu-android';
 // Typed from the screen, so a rename there fails type-checking here.
 import type {
   CmdIconOption,
@@ -47,12 +47,6 @@ const ALL_TITLES = Object.keys({
   'Item 2': true,
   'Item Number Three': true,
 } satisfies Record<MenuTitle, true>) as MenuTitle[];
-
-const overflowRow = (title: MenuTitle) => overflowMenuText(title);
-
-// A row's `group_divider` and `submenuarrow` are GONE here, so a match is an
-// icon.
-const overflowRowImage = (title: MenuTitle) => menuItemImage(title);
 
 const actionItem = (title: MenuTitle) => element(actionMenuItem(title));
 
@@ -126,37 +120,23 @@ async function expectNoOverflowMenu() {
     .withTimeout(TOOLBAR_UPDATE_TIMEOUT_MS);
 }
 
-const { closeMenuIfOpen, withOverflowMenu, waitForMenuItem, tapMenuItem } =
+const { closeMenuIfOpen, withOverflowMenu, tapMenuItem } =
   createOverflowMenuHelpers({ scrollViewId: SCROLLVIEW_ID });
 
 // Asserts the exact overflow menu contents — the given titles top to bottom in
 // that order, each row icon-less, all other titles absent — then closes it.
 // `expectedVisible` is a non-empty subset of ALL_TITLES (anything else would go
-// unasserted); its first entry gates the open animation.
+// unasserted). `withOverflowMenu` closes the popup even when an assertion
+// throws; a leak would fail every later step of this stateful suite.
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
 ): Promise<void> {
-  // A leaked popup would fail every later step of this stateful suite;
-  // `withOverflowMenu` closes it even when an assertion throws.
-  await withOverflowMenu(async () => {
-    // Rows populate in one layout pass, so once the first is up the
-    // `not.toExist()` checks below cannot pass prematurely.
-    await waitForMenuItem(expectedVisible[0]);
-
-    for (const title of expectedVisible) {
-      await expect(element(overflowRow(title))).toBeVisible();
-      // Icons never render in the overflow menu, whatever the `icon` prop.
-      await expect(element(overflowRowImage(title))).not.toExist();
-    }
-
-    await expectOverflowMenuOrder(expectedVisible);
-
-    for (const title of ALL_TITLES) {
-      if (!expectedVisible.includes(title)) {
-        await expect(element(overflowRow(title))).not.toExist();
-      }
-    }
-  });
+  await withOverflowMenu(() =>
+    expectOverflowMenuItems(expectedVisible, ALL_TITLES, {
+      checkOrder: true,
+      withoutIcons: true,
+    }),
+  );
 }
 
 // Which icon renders stays manual (see the header comment).
