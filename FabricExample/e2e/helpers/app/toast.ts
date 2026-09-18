@@ -1,28 +1,34 @@
 import { expect, element, by, waitFor } from 'detox';
 import { DEFAULT_TIMEOUT_MS } from '@e2e/framework/wait';
 
-export async function dismissToast(message: string) {
-  await waitFor(element(by.label(message)))
-    .toBeVisible()
-    .withTimeout(DEFAULT_TIMEOUT_MS);
-  await element(by.label(message)).tap();
-}
-
-/** Dismisses the head of the toast queue — always `1.` if each is dismissed. */
-export async function dismissNextToast(message: string) {
-  await dismissToast(`1. ${message}`);
+/**
+ * Toasts render as `<n>. <message>`, where `<n>` is the toast's 1-based
+ * position in the on-screen queue. The helpers below match on `message` only
+ * and ignore `<n>`, so they don't depend on the order in which toasts were
+ * pushed (e.g. lifecycle event order differs between iOS versions).
+ */
+function toastMatcher(message?: string) {
+  if (message === undefined) {
+    return by.label(/^\d+\. .*$/);
+  }
+  const escaped = message.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return by.label(new RegExp(`^\\d+\\. ${escaped}$`));
 }
 
 /**
- * Asserts no toast is on screen. Passing `message` pins the check to the
- * queue head (`1.`) — every caller here dismisses its own toasts first, so an
- * unexpected one always lands there, same as `dismissNextToast`. Omitting it
- * falls back to Detox matching a regex against the whole string, so any
- * position and text counts as a toast; dropping that wildcard suffix would
- * match nothing and always pass.
+ * Dismisses a toast showing `message`, whatever its position. When several
+ * toasts share the message, the first match is dismissed.
+ */
+export async function dismissToast(message: string) {
+  const toast = element(toastMatcher(message)).atIndex(0);
+  await waitFor(toast).toBeVisible().withTimeout(DEFAULT_TIMEOUT_MS);
+  await toast.tap();
+}
+
+/**
+ * Asserts no toast showing `message` is on screen, at any position. Omitting
+ * `message` asserts that no toast at all is on screen.
  */
 export async function expectNoToast(message?: string) {
-  const matcher =
-    message === undefined ? by.label(/\d+\. .*/) : by.label(`1. ${message}`);
-  await expect(element(matcher)).not.toExist();
+  await expect(element(toastMatcher(message))).not.toExist();
 }
