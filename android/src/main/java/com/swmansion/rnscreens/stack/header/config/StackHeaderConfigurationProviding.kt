@@ -55,7 +55,5 @@ internal interface StackHeaderConfigurationProviding {
     val expandedSubtitleAppearance: TextAppearance
     val collapsedSubtitleAppearance: TextAppearance
 
-    val isRTL: Boolean
-
     fun setConfigurationObserver(observer: StackHeaderConfigurationObserver?)
 }
