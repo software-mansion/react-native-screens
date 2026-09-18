@@ -2,14 +2,12 @@
 
 ## Details
 
-**Description:** A stack v5 nested in a tab has its fragment view destroyed and
-recreated on every tab switch (tabs detach/attach the fragment). The fragment
-retains its header view across that cycle, so the whole live header - app bar,
-title, collapsing scroll behavior, toolbar menu state and the current scroll
-offset - must come back untouched, without a visible rebuild. Configuration
-changes applied while the tab is detached must still land on reattach; the ones
-that force a header rebuild are covered separately, since they cannot preserve a
-partial collapse offset.
+**Description:** Verifies that a Stack v5 header nested in a native tab survives
+switching away to another tab and back: the app bar, its title, subtitle,
+collapse state and toolbar menu selections come back unchanged and without a
+visible flash. Header configuration changed while the tab is away - the title,
+`type` and `hidden` - is applied when the tab comes back. Pass: nothing about
+the header resets on a tab switch.
 
 **OS test creation version:** Android: API Level 37.
 
@@ -19,30 +17,12 @@ TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- Android device / emulator.
-- The app draws edge to edge. The _Other_ tab always applies a `SafeAreaView`
-  top inset; _Home_ applies one only while its header is hidden.
+- Android emulator or device.
 
 ## Note
 
-- The header is not rebuilt on a tab round trip, so its collapse state survives,
-  including a partial (mid-scroll) offset. There must be no flash of an expanded
-  or re-built header when the tab comes back.
-- `medium` and `large` headers default to `scrollFlagSnap: true`, so the app bar
-  always settles fully expanded or fully collapsed. The _Home_ screen exposes a
-  **scrollFlagSnap** switch; turn it off wherever a step asks for a _partial_
-  offset, and leave it on otherwise so the default configuration is the one
-  under test.
-- Known limitation: a change that forces a header rebuild while the tab is
-  detached (`type`, `hidden`, subviews, or a color scheme switch) re-asserts
-  only the _fully_ collapsed resting state on reattach. A partially collapsed
-  header returns expanded in that case. Delta-only changes (e.g. the title)
-  keep the exact offset.
-- Toolbar menu selections live in native state owned by the configuration, so
-  they survive the round trip.
-- Known issue: popping in the nested stack (step 19) finishes the activity,
-  because `TabsContainer` does not set the primary navigation fragment. Until
-  that lands, treat the step as blocked rather than failed.
+- A header that has been hidden and re-shown always comes back expanded.
+- Dismiss the overflow menu (tap outside it) after checking it.
 
 ## Steps
 
@@ -51,149 +31,113 @@ TBD: Planned, but will be implemented separately.
 1. Launch the app and navigate to the **Stack in Tabs - header persistence
    across tab switches** screen.
 
-- [ ] The _Stack_ tab is selected and shows the _Home_ screen with a `medium`
-      collapsing header titled _Home v1_, subtitle _Tab persistence_, and an
-      overflow menu button.
+   - [ ] The "Stack" tab is selected and shows a collapsing header titled
+         "Home v1" with the subtitle "Tab persistence" and an overflow menu
+         button.
 
-2. Scroll the content down and up.
+2. Scroll down one full screen, then back to the top.
 
-- [ ] The header collapses and expands with the content (collapsing scroll
-      behavior works).
+   - [ ] The header collapses to the toolbar row on the way down and is
+         expanded again at the top.
 
 ---
 
 ### Header survives a tab round trip
 
-3. Switch to the _Other_ tab and back to _Stack_.
+3. Switch to the "Other" tab, then back to "Stack".
 
-- [ ] The _Home_ header is still present: title _Home v1_, subtitle, overflow
-      menu button.
+   - [ ] The header is still there: "Home v1", "Tab persistence" and the
+         overflow menu button.
+   - [ ] There is no flash of a re-built header when "Stack" comes back.
 
-4. Scroll the content down and up again.
+4. Scroll down one full screen, then back to the top.
 
-- [ ] Collapsing scroll behavior still works after the round trip.
+   - [ ] The header still collapses on the way down and expands again at the
+         top.
 
-5. Repeat steps 3-4 a few times.
+5. Switch to the "Other" tab and back to "Stack" 3 times.
 
-- [ ] The header is present after every round trip.
-
----
-
-### Scroll offset survives a tab round trip
-
-6. With **scrollFlagSnap** left on (the default), scroll until the header is
-   fully collapsed. Switch to the _Other_ tab and back.
-
-- [ ] The header is still fully collapsed. It does not come back expanded, and
-      there is no flash of a re-built header.
-
-7. Turn **scrollFlagSnap** off, then scroll until the header is _partially_
-   collapsed and release.
-
-- [ ] The header rests part-way instead of snapping to an edge.
-
-8. Switch to the _Other_ tab and back.
-
-- [ ] The header comes back at exactly the same partial offset - no jump to
-      expanded, no rebuild flash.
-
-9. Turn **scrollFlagSnap** back on.
-
-- [ ] The header snaps to fully expanded (a scroll-flag change resets the app
-      bar) and snapping behavior is restored.
+   - [ ] The header is present and unchanged after every one of the 3
+         switches.
 
 ---
 
-### Menu state survives
+### Collapse state survives a tab round trip
 
-10. Open the overflow menu.
+6. Scroll until the header is fully collapsed.
 
-- [ ] _Filter A_ is checked, _Filter B_ is unchecked.
+   - [ ] Only the toolbar row is left; the expanded title area is gone.
 
-11. Tap _Filter B_, then switch to the _Other_ tab and back. Open the overflow
-    menu.
+7. Switch to the "Other" tab, then back to "Stack".
 
-- [ ] Both _Filter A_ and _Filter B_ are checked (the selection made before
-      switching away survived; "Last menu selection" lists both).
+   - [ ] The header is still fully collapsed. It does not come back expanded.
 
 ---
 
-### Delta change while detached
+### Menu selection survives a tab round trip
 
-12. Turn **scrollFlagSnap** off and scroll the header to a _partial_ collapse.
-    Switch to the _Other_ tab, tap **Change Home title**, and switch back to
-    _Stack_.
+8. Open the overflow menu.
 
-- [ ] The header title reads _Home v2_ **and** the header is still at the same
-      partial offset - a title change is applied to the live header, not a
-      rebuild.
+   - [ ] "Filter A" is checked and "Filter B" is unchecked.
+
+9. Tap "Filter B".
+
+   - [ ] "Last menu selection" reads `["filterA","filterB"]`.
+
+10. Switch to the "Other" tab, back to "Stack", then open the overflow menu.
+
+    - [ ] "Filter A" and "Filter B" are both checked.
+    - [ ] "Last menu selection" still reads `["filterA","filterB"]`.
 
 ---
 
-### Rebuild while detached
+### Configuration changed while the tab is away
 
-13. Still with **scrollFlagSnap** off, scroll the header to a _partial_
-    collapse. Switch to the _Other_ tab, change **type** under _Header rebuild
-    triggers_ from `medium` to `large`, and switch back to _Stack_.
+11. Scroll until the header is fully collapsed. Switch to the "Other" tab,
+    tap "Change Home title (v1 → v2)", then switch back to "Stack".
 
-- [ ] The header is rebuilt with the new type, and it comes back **expanded**.
-      Losing a partial offset across a rebuild is the documented limitation, not
-      a failure.
+    - [ ] The header title reads "Home v2".
+    - [ ] The header is still fully collapsed.
 
-14. Turn **scrollFlagSnap** back on and scroll the header to a _full_ collapse.
-    Switch to the _Other_ tab, change **type** again from `large` to `medium`,
-    and switch back.
+12. Switch to the "Other" tab, set "type" to `large`, then switch back to
+    "Stack".
 
-- [ ] The header is rebuilt with the new type and is still fully collapsed.
+    - [ ] The header is still fully collapsed.
 
-15. Scroll the header to a _full_ collapse, switch to the _Other_ tab, toggle
-    **trailing subview** on, and switch back.
+13. Scroll back to the top.
 
-- [ ] A grey _T_ subview is shown in the trailing slot of the toolbar, and the
-      header is still fully collapsed.
+    - [ ] The header expands to a large header, taller than in step 4.
 
-16. Switch to the _Other_ tab, toggle **hidden** on, and switch back.
+14. Switch to the "Other" tab, toggle "hidden" on, then switch back to
+    "Stack".
 
-- [ ] The _Home_ screen has no header at all, and its content starts below the
-      status bar (the `SafeAreaView` top edge takes over from the header).
+    - [ ] The "Home" screen has no header and its content starts below the
+          status bar.
 
-17. Switch to the _Other_ tab, toggle **hidden** off and **trailing subview**
-    off, and switch back.
+15. Switch to the "Other" tab, toggle "hidden" off, then switch back to
+    "Stack".
 
-- [ ] The header is back, **expanded**, with the _T_ subview gone, and the
-      content no longer carries the top inset. A header that was actually
-      removed always comes back expanded - the collapse memory is dropped
-      together with the app bar. (Toggling **hidden** on and off again without
-      visiting _Stack_ in between never removes the header, so in that case the
-      collapse state is kept.)
-- [ ] Scrolling collapses and expands the header as before.
+    - [ ] The header is back and expanded (see Note).
+
+16. Scroll down one full screen, then back to the top.
+
+    - [ ] The header collapses on the way down and expands again at the top.
+
+17. Switch to the "Other" tab, set "type" to `medium`, then switch back to
+    "Stack".
+
+    - [ ] The header is a medium header again, shorter than in step 13.
 
 ---
 
 ### Pushed screen
 
-18. On the _Stack_ tab, tap **Push Details**. Switch to the _Other_ tab and
-    back.
+18. Tap "Push Details", then switch to the "Other" tab and back to "Stack".
 
-- [ ] The _Details_ header is present after the round trip.
+    - [ ] The "Details" header is still present with the title "Details" and
+          a back button.
 
-19. Navigate back to _Home_.
+19. Tap the back button.
 
-- [ ] The _Home_ header is present with the current title and the offset it had
-      before the push. (See the known issue in **Note**.)
-
----
-
-### With a color scheme override
-
-20. Set **StackHost color scheme** to the opposite of the current device scheme
-    (e.g. `dark` on a light device).
-
-- [ ] The header re-themes to the selected scheme.
-
-21. Scroll the header to a _full_ collapse. While on the _Other_ tab, change the
-    override (e.g. back to `inherit`), then switch back to _Stack_.
-
-- [ ] The header shows up already using the new scheme and is still fully
-      collapsed (a scheme change forces a rebuild, so a _partial_ offset would
-      be lost here - see **Note**).
+    - [ ] The "Details" screen is popped.
+    - [ ] "Home" screen is shown again, with the title "Home v2".

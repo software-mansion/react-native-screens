@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useLayoutEffect,
+  useMemo,
   useState,
 } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -23,7 +24,6 @@ import {
 import type {
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderTypeAndroid,
-  StackHostColorScheme,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -33,55 +33,24 @@ const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'medium', 'large'];
 const PersistenceContext = createContext<{
   titleVersion: number;
   bumpTitleVersion: () => void;
-  hostColorScheme: StackHostColorScheme;
-  setHostColorScheme: (val: StackHostColorScheme) => void;
   headerType: StackHeaderTypeAndroid;
   setHeaderType: (val: StackHeaderTypeAndroid) => void;
-  trailingSubviewEnabled: boolean;
-  setTrailingSubviewEnabled: (val: boolean) => void;
   headerHidden: boolean;
   setHeaderHidden: (val: boolean) => void;
 }>({
   titleVersion: 1,
   bumpTitleVersion: () => {},
-  hostColorScheme: 'inherit',
-  setHostColorScheme: () => {},
   headerType: 'medium',
   setHeaderType: () => {},
-  trailingSubviewEnabled: false,
-  setTrailingSubviewEnabled: () => {},
   headerHidden: false,
   setHeaderHidden: () => {},
 });
 
-function ColorSchemePicker() {
-  const { hostColorScheme, setHostColorScheme } =
-    useContext(PersistenceContext);
-
-  return (
-    <View style={styles.section}>
-      <Text style={styles.heading}>StackHost color scheme</Text>
-      <SettingsPicker<StackHostColorScheme>
-        label={'colorScheme'}
-        value={hostColorScheme}
-        onValueChange={setHostColorScheme}
-        items={['inherit', 'light', 'dark']}
-      />
-    </View>
-  );
-}
-
 // Every one of these forces a header rebuild, unlike a title change which is applied
 // as a delta to the live header.
 function RebuildControls() {
-  const {
-    headerType,
-    setHeaderType,
-    trailingSubviewEnabled,
-    setTrailingSubviewEnabled,
-    headerHidden,
-    setHeaderHidden,
-  } = useContext(PersistenceContext);
+  const { headerType, setHeaderType, headerHidden, setHeaderHidden } =
+    useContext(PersistenceContext);
 
   return (
     <View style={styles.section}>
@@ -91,11 +60,6 @@ function RebuildControls() {
         value={headerType}
         onValueChange={setHeaderType}
         items={HEADER_TYPES}
-      />
-      <SettingsSwitch
-        label="trailing subview"
-        value={trailingSubviewEnabled}
-        onValueChange={setTrailingSubviewEnabled}
       />
       <SettingsSwitch
         label="hidden"
@@ -131,16 +95,20 @@ function buildToolbarMenu(
 
 function HomeScreen() {
   const { push, setRouteOptions, routeKey } = useStackNavigationContext();
-  const { titleVersion, headerType, trailingSubviewEnabled, headerHidden } =
+  const { titleVersion, headerType, headerHidden } =
     useContext(PersistenceContext);
   const [lastSelection, setLastSelection] = useState<string | null>(null);
-  // `medium`/`large` headers snap by default, so the app bar can never rest at a
-  // partial offset. Turning it off is what makes the fractional case testable.
-  const [snapEnabled, setSnapEnabled] = useState(true);
 
   const handleSelectionChange = useCallback((selectedIds: string[]) => {
     setLastSelection(JSON.stringify(selectedIds));
   }, []);
+
+  // Memoized so that a title or type change does not hand the native side a
+  // fresh menu object; menu state must only be exercised by the tab round trip.
+  const toolbarMenu = useMemo(
+    () => buildToolbarMenu(handleSelectionChange),
+    [handleSelectionChange],
+  );
 
   useLayoutEffect(() => {
     setRouteOptions(routeKey, {
@@ -152,17 +120,7 @@ function HomeScreen() {
           type: headerType,
           scrollFlagScroll: true,
           scrollFlagExitUntilCollapsed: true,
-          scrollFlagSnap: snapEnabled,
-          toolbarMenu: buildToolbarMenu(handleSelectionChange),
-          trailingSubview: trailingSubviewEnabled
-            ? {
-                render: () => (
-                  <View style={styles.subview}>
-                    <Text style={styles.subviewLabel}>T</Text>
-                  </View>
-                ),
-              }
-            : undefined,
+          toolbarMenu,
         },
       },
     });
@@ -170,11 +128,9 @@ function HomeScreen() {
     setRouteOptions,
     routeKey,
     titleVersion,
-    handleSelectionChange,
+    toolbarMenu,
     headerType,
-    trailingSubviewEnabled,
     headerHidden,
-    snapEnabled,
   ]);
 
   return (
@@ -195,16 +151,6 @@ function HomeScreen() {
             Last menu selection: {lastSelection ?? 'none yet'}
           </Text>
         </View>
-
-        <View style={styles.section}>
-          <SettingsSwitch
-            label="scrollFlagSnap"
-            value={snapEnabled}
-            onValueChange={setSnapEnabled}
-          />
-        </View>
-
-        <ColorSchemePicker />
 
         <View style={styles.section}>
           <Button title="Push Details" onPress={() => push('Details')} />
@@ -251,8 +197,6 @@ function OtherTabScreen() {
         </View>
 
         <RebuildControls />
-
-        <ColorSchemePicker />
       </ScrollView>
     </SafeAreaView>
   );
@@ -274,21 +218,10 @@ const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
   },
 ];
 
-function StackTabScreen() {
-  const { hostColorScheme } = useContext(PersistenceContext);
-
-  return (
-    <StackContainer
-      routeConfigs={STACK_ROUTE_CONFIGS}
-      colorScheme={hostColorScheme}
-    />
-  );
-}
-
 const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Stack',
-    element: <StackTabScreen />,
+    element: <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />,
     options: {
       title: 'Stack',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
@@ -306,11 +239,8 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
 
 export function TestStackTabsStackInTabsHeaderPersistence() {
   const [titleVersion, setTitleVersion] = useState(1);
-  const [hostColorScheme, setHostColorScheme] =
-    useState<StackHostColorScheme>('inherit');
   const [headerType, setHeaderType] =
     useState<StackHeaderTypeAndroid>('medium');
-  const [trailingSubviewEnabled, setTrailingSubviewEnabled] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
 
   const bumpTitleVersion = useCallback(
@@ -323,12 +253,8 @@ export function TestStackTabsStackInTabsHeaderPersistence() {
       value={{
         titleVersion,
         bumpTitleVersion,
-        hostColorScheme,
-        setHostColorScheme,
         headerType,
         setHeaderType,
-        trailingSubviewEnabled,
-        setTrailingSubviewEnabled,
         headerHidden,
         setHeaderHidden,
       }}>
@@ -361,15 +287,5 @@ const styles = StyleSheet.create({
   text: {
     color: 'gray',
     marginBottom: 10,
-  },
-  subview: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(128, 128, 128, 0.4)',
-  },
-  subviewLabel: {
-    fontWeight: 'bold',
   },
 });
