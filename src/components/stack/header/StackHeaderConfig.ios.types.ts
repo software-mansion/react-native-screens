@@ -2,6 +2,9 @@ import type { ReactElement } from 'react';
 import type { TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
+import type { StackHeaderItemVisibilityPriorityIOS } from './ios/StackHeaderItem.ios.types';
+
+export type { StackHeaderItemVisibilityPriorityIOS };
 
 /**
  * @summary Options for updating a menu action (leaf item) at runtime.
@@ -113,6 +116,29 @@ export interface SupportsSharedBackgroundIOS {
   hidesSharedBackground?: boolean | undefined;
 }
 
+export interface SupportsVisibilityPriorityIOS {
+  /**
+   * @summary Decides which items give way first when the header runs out of room.
+   *
+   * @description
+   * When the items do not fit, the header moves the ones with the lowest
+   * priority into the overflow ("...") menu, and keeps the higher ones. Items
+   * of equal priority are given up starting from the trailing edge of the bar.
+   *
+   * Accepts `'low'`, `'standard'` (the default) and `'high'`, which map to the
+   * `UIBarButtonItemVisibilityPriority` constants, or a raw number for a value
+   * between or beyond them - the underlying type is an extensible enum over
+   * `NSInteger`, so any value is valid and only the relative order matters.
+   *
+   * @default 'standard'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
+}
+
 export interface SupportsIdentifierIOS {
   /**
    * @summary Stable identifier used to match the item across different screens
@@ -141,7 +167,8 @@ export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
     SupportsMenuIOS,
     SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS {
+    SupportsSharedBackgroundIOS,
+    SupportsVisibilityPriorityIOS {
   /**
    * @summary Marks this object as a header item definition.
    *
@@ -169,7 +196,8 @@ export interface StackHeaderInlineItemIOS
 export interface StackHeaderInlineCustomItemIOS
   extends SupportsMenuIOS,
     SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS {
+    SupportsSharedBackgroundIOS,
+    SupportsVisibilityPriorityIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
