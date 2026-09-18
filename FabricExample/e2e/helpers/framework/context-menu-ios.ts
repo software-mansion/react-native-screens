@@ -2,6 +2,7 @@ import { element, by, waitFor } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
 import { tapWithinFrame } from './gestures';
 import { getFrame } from './matchers';
+import { headerTitle } from './header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
@@ -107,6 +108,18 @@ export async function openContextMenu(
   } else {
     await anchor.tap();
   }
+  await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
+}
+
+/**
+ * Opens the menu attached to the header title. UIKit's title control fails
+ * Detox's visibility threshold, so the label is tapped by coordinates.
+ */
+export async function openHeaderTitleMenu(
+  title: string,
+  timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+) {
+  await tapWithinFrame(await getFrame(headerTitle(title)));
   await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
 }
 

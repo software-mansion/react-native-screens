@@ -1,18 +1,17 @@
 import { device, expect, element, by, waitFor } from 'detox';
 import { selectPickerOption } from '@e2e/app/settings-controls';
-import { scrollToAndTap, tapWithinFrame } from '@e2e/framework/gestures';
+import { scrollToAndTap } from '@e2e/framework/gestures';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { dismissToast } from '@e2e/app/toast';
 import {
-  CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
   checkmarkFor,
   contextMenu,
   dismissContextMenu,
   menuRow,
   menuRowIcon,
   openContextMenu,
+  openHeaderTitleMenu,
 } from '@e2e/framework/context-menu-ios';
-import { getFrame } from '@e2e/framework/matchers';
 import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
 import { describeIfiOS } from '@e2e/framework/platform';
 
@@ -44,17 +43,6 @@ async function tapSendButton(buttonId: string) {
 
 async function openMenuOne() {
   await openContextMenu(menuOneBarButton);
-}
-
-/**
- * Opens the menu attached to the header title. UIKit's title control fails
- * Detox's visibility threshold, so the label is tapped by coordinates.
- */
-async function openHeaderTitleMenu(title: string) {
-  await tapWithinFrame(await getFrame(headerTitle(title)));
-  await waitFor(contextMenu())
-    .toBeVisible()
-    .withTimeout(CONTEXT_MENU_ANIMATION_TIMEOUT_MS);
 }
 
 describeIfiOS('Stack Header Menu (iOS)', () => {
