@@ -36,16 +36,32 @@
 
 #else
 
+  import ReactAppDependencyProvider
+  import React_RCTAppDelegate
   import UIKit
 
   @main
   class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
+    // The factory is owned by the app delegate and only *started* by `SceneDelegate`, which creates
+    // the window once the scene connects. Keeping `reactNativeFactory` here is required by tooling
+    // that resolves the React host through `UIApplication.shared.delegate` (e.g. Detox's
+    // `reloadReactNative`) and mirrors what Expo does with `ExpoReactNativeFactoryProvider`.
+    var reactNativeDelegate: ReactNativeDelegate?
+    var reactNativeFactory: RCTReactNativeFactory?
+
     func application(
       _ application: UIApplication,
       didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+      let delegate = ReactNativeDelegate()
+      let factory = RCTReactNativeFactory(delegate: delegate)
+      delegate.dependencyProvider = RCTAppDependencyProvider()
+
+      reactNativeDelegate = delegate
+      reactNativeFactory = factory
+
       return true
     }
 
