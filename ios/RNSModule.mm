@@ -26,17 +26,32 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
-- (NSNumber *)getNavigationBarHeight
+- (NSNumber *)getHeaderHeight
 {
-  // UIKit answers with the metric of the current environment: device idiom, size class,
-  // orientation and OS version. Asking beats keeping a table, which goes stale on every OS
-  // that resizes the bar. The value excludes the status bar, and a plain `UINavigationBar`
-  // does not stand for a modally presented one.
+  // Lay a throwaway navigation controller out in the current window and read where UIKit puts
+  // the bar. That is the same quantity `onHeaderHeightChange` reports later (bar height plus its
+  // origin), computed by UIKit for the window's traits, safe area and bounds, so it stays right
+  // when an OS or a form factor moves the bar. The view is hidden and removed within this call,
+  // so nothing is drawn.
   __block CGFloat height = 0;
   RCTUnsafeExecuteOnMainQueueSync(^{
-    UINavigationBar *bar = [UINavigationBar new];
-    CGFloat width = UIScreen.mainScreen.bounds.size.width;
-    height = [bar sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height;
+    UIWindow *window = RCTKeyWindow();
+    if (window == nil) {
+      return;
+    }
+    UINavigationController *nav =
+        [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    nav.view.frame = window.bounds;
+    nav.view.hidden = YES;
+    [window addSubview:nav.view];
+    [nav.view layoutIfNeeded];
+#if TARGET_OS_TV
+    // Mirrors `calculateHeaderHeightIsModal:` — on tvOS the bar has no inset.
+    height = nav.navigationBar.frame.size.height;
+#else
+    height = CGRectGetMaxY(nav.navigationBar.frame);
+#endif
+    [nav.view removeFromSuperview];
   });
   return @(height);
 }
