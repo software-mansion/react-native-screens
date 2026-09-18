@@ -1,10 +1,8 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfAndroid,
-  openOverflowMenu,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import { openOverflowMenu } from '@e2e/framework/toolbar-menu-android';
 
 // No scroll view testID on this screen: pickers are tapped in place and the
 // popup is closed with a plain Back press.

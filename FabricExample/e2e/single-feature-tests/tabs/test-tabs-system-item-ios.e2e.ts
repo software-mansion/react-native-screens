@@ -1,32 +1,22 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
-import { IosElementAttributes } from 'detox/detox';
-import {
-  describeIfiOS,
-  isIOSVersionAtLeast,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { getMatches } from '@e2e/framework/matchers';
 import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LABEL,
   CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfiOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
 }
 
+/** Screen `x` of the first view carrying `tabLabel` — items are compared by position. */
 async function getTabBarItemFrameX(tabLabel: string): Promise<number> {
-  const attrs = (await element(by.label(tabLabel))
-    .atIndex(0)
-    .getAttributes()) as
-    | IosElementAttributes
-    | { elements: IosElementAttributes[] };
-  const frame = 'frame' in attrs ? attrs.frame : attrs.elements[0]?.frame;
-  if (!frame) {
-    throw new Error(`Could not read frame for tab labelled "${tabLabel}"`);
-  }
-  return frame.x;
+  const [item] = await getMatches(by.label(tabLabel));
+  return item.frame.x;
 }
 
 async function tapSystemTitleOption() {

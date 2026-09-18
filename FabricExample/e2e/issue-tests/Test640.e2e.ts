@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
-import { CLASS_NAME_UI_REFRESH_CONTROL } from '../native-class-names';
+import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { CLASS_NAME_UI_REFRESH_CONTROL } from '@e2e/framework/native-classes-ios';
 
 describe('Test640', () => {
   beforeAll(async () => {

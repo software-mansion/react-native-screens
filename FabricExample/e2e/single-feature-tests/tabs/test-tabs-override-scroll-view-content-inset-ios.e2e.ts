@@ -1,14 +1,11 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
-import {
-  describeIfiOS,
-  forceTapByLabeliOS,
-  getFrame,
-  getSingleMatch,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
-import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { forceTapByLabeliOS } from '@e2e/framework/gestures';
+import { getFrame, getSingleMatch } from '@e2e/framework/matchers';
+import { CLASS_NAME_UI_TAB_BAR } from '@e2e/framework/native-classes-ios';
+import { describeIfiOS } from '@e2e/framework/platform';
 
 const getScrollViewSafeAreaInsetsTop = async (testID: string) => ({
   top: ((await getSingleMatch(by.id(testID), testID)) as IosElementAttributes)

@@ -1,12 +1,13 @@
 import { device, expect, element, by, waitFor } from 'detox';
+import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+import { describeIfiOS26 } from '@e2e/framework/platform';
 import {
-  DEFAULT_TIMEOUT_MS,
-  describeIfiOS26,
+  bottomAccessoryElement,
   expectBottomAccessoryAboveTabBar,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
-} from '../../e2e-utils';
-import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '../../native-class-names';
+} from '@e2e/framework/tab-bar';
+import { DEFAULT_TIMEOUT_MS } from '@e2e/framework/wait';
 
 /**
  * Covers the end state of each `scenario.md` step: after every `hidden` /
@@ -27,9 +28,9 @@ const SETTINGS_CONTROL = { scrollViewId: SCROLL_VIEW };
 
 const bottomAccessory = by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY);
 
-// The text resolves twice under the same `testID`.
-const bottomAccessoryText = () =>
-  element(by.id(ACCESSORY_TEXT).withAncestor(bottomAccessory)).atIndex(0);
+// The text resolves twice under the same `testID`; the shared accessor takes
+// the first.
+const bottomAccessoryText = () => bottomAccessoryElement(ACCESSORY_TEXT);
 
 const setHidden = (to: boolean) =>
   toggleSettingsSwitch(

@@ -5,21 +5,26 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
 import {
-  createOverflowMenuHelpers,
-  describeIfAndroid,
-  getSingleMatch,
-  menuItemRow,
-  MENU_ANIMATION_TIMEOUT_MS,
-  readText,
-  rewindAndScrollUntilVisible,
   selectPickerOption,
-  selectSingleFeatureTestsScreen,
   toggleSettingsSwitch,
-} from '../../e2e-utils';
+} from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import {
+  rewindAndScrollUntilVisible,
+  scrollToAndTap,
+  scrollToAndReadText,
+} from '@e2e/framework/gestures';
+import { getSingleMatch } from '@e2e/framework/matchers';
 import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-android';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
+  createOverflowMenuHelpers,
+  menuItemRow,
+  MENU_ANIMATION_TIMEOUT_MS,
+} from '@e2e/framework/toolbar-menu-android';
 // Typed from the screen, so a rename there fails type-checking here.
 import type {
   AllIds as ElementId,
@@ -116,7 +121,8 @@ async function expectActionBarEnabled(enabled: boolean) {
   ).toBe(enabled);
 }
 
-const readLastEvent = () => readText('last-event-text', SETTINGS_CONTROL);
+const readLastEvent = () =>
+  scrollToAndReadText('last-event-text', SETTINGS_CONTROL);
 
 async function expectLastEvent(expected: string) {
   await scrollIntoView('last-event-text');
@@ -176,8 +182,7 @@ async function sendCommand(options: {
   await selectOption('cmd-target-picker', 'target id', options.target);
   await selectOption('cmd-disabled-picker', 'disabled', options.disabled);
 
-  await scrollIntoView('send-command-button');
-  await element(by.id('send-command-button')).tap();
+  await scrollToAndTap('send-command-button', SETTINGS_CONTROL);
 }
 
 // One ordered script: each `describe` starts from the state the previous left,
