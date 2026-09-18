@@ -3,11 +3,13 @@ package com.swmansion.rnscreens.helpers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import androidx.core.graphics.drawable.toDrawable
 import com.facebook.common.executors.CallerThreadExecutor
 import com.facebook.common.references.CloseableReference
@@ -24,21 +26,22 @@ private const val TAG = "ImageLoader"
 /**
  * Resolves an icon from a system drawable resource name or an image uri, whichever is provided
  * ([systemDrawableResourceName] takes precedence). [onComplete] is always invoked exactly once —
- * synchronously for drawable resources and empty sources, asynchronously on the main thread for
- * image uris — with the resolved drawable, or `null` when the source resolves to no icon or fails
- * to load.
+ * synchronously for drawable resources, empty sources, and supported images when requested,
+ * otherwise asynchronously on the main thread, with the resolved drawable, or `null` when the
+ * source resolves to no icon or fails to load.
  */
 internal fun resolveImage(
     context: Context,
     systemDrawableResourceName: String?,
     imageUri: String?,
+    preferredLoadingMode: String? = null,
     onComplete: (Drawable?) -> Unit,
 ) {
     when {
         systemDrawableResourceName != null ->
             onComplete(getSystemDrawableResource(context, systemDrawableResourceName))
 
-        imageUri != null -> loadImage(context, imageUri, onComplete)
+        imageUri != null -> loadImage(context, imageUri, preferredLoadingMode, onComplete)
         else -> onComplete(null)
     }
 }
@@ -52,12 +55,20 @@ internal fun resolveImage(
 internal fun loadImage(
     context: Context,
     uri: String,
+    preferredLoadingMode: String? = null,
     onComplete: (Drawable?) -> Unit,
 ) {
     val resolvedUri = ImageSource(context, uri).getUri(context)
     if (resolvedUri == null) {
         Handler(Looper.getMainLooper()).post { onComplete(null) }
         return
+    }
+
+    if (preferredLoadingMode == "synchronous" && Looper.myLooper() == Looper.getMainLooper()) {
+        loadLocalPng(context, resolvedUri)?.let {
+            onComplete(it)
+            return
+        }
     }
 
     // Since image loading might happen on a background thread
@@ -69,6 +80,50 @@ internal fun loadImage(
         }
     }
 }
+
+/** Attempts only local PNGs; all other sources retain the existing image pipeline. */
+private fun loadLocalPng(
+    context: Context,
+    uri: Uri,
+): Drawable? =
+    try {
+        val bitmap =
+            when (uri.scheme) {
+                "file" -> {
+                    val path = uri.path
+                    if (path == null || !path.endsWith(".png", ignoreCase = true)) {
+                        null
+                    } else if (path.startsWith("/android_asset/")) {
+                        context.assets.open(path.removePrefix("/android_asset/")).use { BitmapFactory.decodeStream(it) }
+                    } else {
+                        BitmapFactory.decodeFile(path)
+                    }
+                }
+                "android.resource" -> {
+                    // Resource decoding preserves the density qualifiers chosen by Android.
+                    if (uri.authority != context.packageName) {
+                        null
+                    } else {
+                        val resourceId = uri.lastPathSegment?.toIntOrNull()
+                        val value = TypedValue()
+                        if (resourceId == null) {
+                            null
+                        } else {
+                            context.resources.getValue(resourceId, value, true)
+                            if (value.string?.toString()?.endsWith(".png", ignoreCase = true) == true) {
+                                BitmapFactory.decodeResource(context.resources, resourceId)
+                            } else {
+                                null
+                            }
+                        }
+                    }
+                }
+                else -> null
+            }
+        bitmap?.toDrawable(context.resources)
+    } catch (_: Exception) {
+        null
+    }
 
 private fun loadImageInternal(
     context: Context,

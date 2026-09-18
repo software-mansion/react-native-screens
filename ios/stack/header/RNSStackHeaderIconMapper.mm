@@ -17,13 +17,15 @@
   if ([type isEqualToString:@"sfSymbol"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeSfSymbol
                                            resourceName:dict[@"name"]
-                                             jsonSource:nil];
+                                             jsonSource:nil
+                              prefersSynchronousLoading:NO];
   }
 
   if ([type isEqualToString:@"xcasset"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeXcasset
                                            resourceName:dict[@"name"]
-                                             jsonSource:nil];
+                                             jsonSource:nil
+                              prefersSynchronousLoading:NO];
   }
 
   if ([type isEqualToString:@"imageSource"]) {
@@ -33,7 +35,8 @@
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeImageSource
                                            resourceName:nil
-                                             jsonSource:source];
+                                             jsonSource:source
+                              prefersSynchronousLoading:[dict[@"preferredLoadingMode"] isEqualToString:@"synchronous"]];
   }
 
   if ([type isEqualToString:@"templateSource"]) {
@@ -43,7 +46,8 @@
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeTemplateSource
                                            resourceName:nil
-                                             jsonSource:source];
+                                             jsonSource:source
+                              prefersSynchronousLoading:[dict[@"preferredLoadingMode"] isEqualToString:@"synchronous"]];
   }
 
   return nil;

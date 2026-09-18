@@ -29,12 +29,19 @@ internal sealed interface IconResolution {
  * no icon or fails to load (see e.g. [resolveImage]).
  */
 internal class PropIconResolver(
-    private val load: (drawableIconResourceName: String?, imageIconUri: String?, onComplete: (Drawable?) -> Unit) -> Unit,
+    private val load: (
+        drawableIconResourceName: String?,
+        imageIconUri: String?,
+        preferredLoadingMode: String?,
+        onComplete: (Drawable?) -> Unit,
+    ) -> Unit,
 ) {
     private var lastDrawableName: String? = null
     private var lastImageUri: String? = null
+    private var lastPreferredLoadingMode: String? = null
     private var lastEmittedDrawableName: String? = null
     private var lastEmittedImageUri: String? = null
+    private var lastEmittedPreferredLoadingMode: String? = null
 
     /**
      * Resolves an icon from a drawable resource name or an image uri. The result is delivered
@@ -44,20 +51,27 @@ internal class PropIconResolver(
     fun resolve(
         drawableIconResourceName: String?,
         imageIconUri: String?,
+        preferredLoadingMode: String? = null,
         onResult: (IconResolution) -> Unit,
     ) {
         lastDrawableName = drawableIconResourceName
         lastImageUri = imageIconUri
+        lastPreferredLoadingMode = preferredLoadingMode
         if (drawableIconResourceName == lastEmittedDrawableName &&
-            imageIconUri == lastEmittedImageUri
+            imageIconUri == lastEmittedImageUri &&
+            preferredLoadingMode == lastEmittedPreferredLoadingMode
         ) {
             onResult(IconResolution.Unchanged)
             return
         }
         lastEmittedDrawableName = drawableIconResourceName
         lastEmittedImageUri = imageIconUri
-        load(drawableIconResourceName, imageIconUri) { drawable ->
-            if (drawableIconResourceName == lastDrawableName && imageIconUri == lastImageUri) {
+        lastEmittedPreferredLoadingMode = preferredLoadingMode
+        load(drawableIconResourceName, imageIconUri, preferredLoadingMode) { drawable ->
+            if (drawableIconResourceName == lastDrawableName &&
+                imageIconUri == lastImageUri &&
+                preferredLoadingMode == lastPreferredLoadingMode
+            ) {
                 onResult(IconResolution.Resolved(drawable))
             }
         }

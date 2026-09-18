@@ -17,6 +17,8 @@ import {
 import type { PlatformIconAndroid } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 
+type LoadingMode = 'automatic' | 'synchronous' | undefined;
+
 const ID_OPTIONS = ['item-1', 'item-2', 'item-3'] as const;
 type IdOption = (typeof ID_OPTIONS)[number];
 
@@ -87,11 +89,15 @@ const ITEM_TITLES: Record<IdOption, string> = {
   'item-3': 'Item 3',
 };
 
-function resolveIcon(option: IconOption): PlatformIconAndroid | undefined {
+function resolveIcon(
+  option: IconOption,
+  preferredLoadingMode?: LoadingMode,
+): PlatformIconAndroid | undefined {
   switch (option) {
     case 'imageSource':
       return {
         type: 'imageSource',
+        ...(preferredLoadingMode !== undefined && { preferredLoadingMode }),
         imageSource: require('@assets/search_black.png'),
       };
     case 'drawableResource':
@@ -119,7 +125,10 @@ function resolveTintColor(option: TintColorOption): ColorValue | undefined {
   }
 }
 
-function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
+function buildItems(
+  slots: Slots,
+  preferredLoadingMode?: LoadingMode,
+): StackHeaderToolbarMenuItemAndroid[] {
   return slots
     .filter(s => s.include)
     .map(s => ({
@@ -127,7 +136,7 @@ function buildItems(slots: Slots): StackHeaderToolbarMenuItemAndroid[] {
       id: s.id,
       title: ITEM_TITLES[s.id],
       showAsAction: s.showAsAction,
-      icon: resolveIcon(s.icon),
+      icon: resolveIcon(s.icon, preferredLoadingMode),
       iconTintColorNormal: resolveTintColor(s.tintColorNormal),
       iconTintColorPressed: resolveTintColor(s.tintColorPressed),
       iconTintColorFocused: resolveTintColor(s.tintColorFocused),
@@ -176,6 +185,8 @@ function TestStackToolbarMenuIcon() {
 }
 
 function MainScreen() {
+  const [preferredLoadingMode, setPreferredLoadingMode] =
+    useState<LoadingMode>();
   const [slots, setSlots] = useState<Slots>(DEFAULT_SLOTS);
   const [lastClicked, setLastClicked] = useState<string | null>(null);
 
@@ -201,35 +212,24 @@ function MainScreen() {
         title: HEADER_TITLE,
         android: {
           toolbarMenu: {
-            children: withOnPress(buildItems(DEFAULT_SLOTS), setLastClicked),
+            children: withOnPress(
+              buildItems(slots, preferredLoadingMode),
+              setLastClicked,
+            ),
           },
         },
       },
       headerConfigRef,
     });
-  }, [setRouteOptions, routeKey]);
-
-  const applySlots = useCallback(
-    (next: Slots) => {
-      setSlots(next);
-      setRouteOptions(routeKey, {
-        headerConfig: {
-          title: HEADER_TITLE,
-          android: {
-            toolbarMenu: {
-              children: withOnPress(buildItems(next), setLastClicked),
-            },
-          },
-        },
-      });
-    },
-    [setRouteOptions, routeKey],
-  );
+  }, [setRouteOptions, routeKey, slots, preferredLoadingMode]);
 
   const sendCommand = useCallback(() => {
     const options: StackHeaderToolbarMenuElementOptionsAndroid = {
       ...(cmdIcon !== 'no change' && {
-        icon: cmdIcon === 'none' ? undefined : resolveIcon(cmdIcon),
+        icon:
+          cmdIcon === 'none'
+            ? undefined
+            : resolveIcon(cmdIcon, preferredLoadingMode),
       }),
       ...(cmdTintColorNormal !== 'no change' && {
         iconTintColorNormal: resolveTintColor(cmdTintColorNormal),
@@ -252,6 +252,7 @@ function MainScreen() {
       options,
     });
   }, [
+    preferredLoadingMode,
     cmdTargetId,
     cmdIcon,
     cmdTintColorNormal,
@@ -264,6 +265,27 @@ function MainScreen() {
   return (
     <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text testID="current-loading-mode">
+          {preferredLoadingMode ?? 'omitted'}
+        </Text>
+        <Button
+          testID="cycle-loading-mode-button"
+          title="Cycle image loading preference"
+          onPress={() =>
+            setPreferredLoadingMode(mode =>
+              mode === undefined
+                ? 'synchronous'
+                : mode === 'synchronous'
+                ? 'automatic'
+                : undefined,
+            )
+          }
+        />
+        <Text>
+          Use a Release build to exercise packaged PNG loading. Debug assets may
+          come from Metro over HTTP. Icon visibility alone does not prove
+          synchronous loading.
+        </Text>
         <Text style={styles.heading}>Send Command</Text>
         <SettingsPicker<IdOption>
           label="target id"
@@ -315,7 +337,7 @@ function MainScreen() {
         <Text style={styles.heading}>Menu Items — Props</Text>
         <SlotControls
           slots={slots}
-          updateSlot={(i, patch) => applySlots(updateSlotAt(slots, i, patch))}
+          updateSlot={(i, patch) => setSlots(updateSlotAt(slots, i, patch))}
         />
       </ScrollView>
     </ScrollViewMarker>

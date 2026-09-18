@@ -6,6 +6,7 @@ export function parseAndroidIconToNativeProps(
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
+  imageIconPreferredLoadingMode?: 'automatic' | 'synchronous' | undefined;
 } {
   if (!icon) {
     return {};
@@ -24,6 +25,7 @@ export function parseAndroidIconToNativeProps(
       // ReadableMap. Passing `iconResource` directly will result in crash, because `require` API is returning
       // double as a value.
       imageIconResource: parsedIconResource || undefined,
+      imageIconPreferredLoadingMode: icon.preferredLoadingMode,
     };
   } else if (icon.type === 'drawableResource') {
     return {

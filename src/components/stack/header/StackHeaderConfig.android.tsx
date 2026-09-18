@@ -174,12 +174,16 @@ function parseBackButtonIconToNativeProps(
   icon: StackHeaderConfigPropsAndroid['backButtonIcon'],
 ): Pick<
   StackHeaderConfigAndroidNativeComponentProps,
-  'backButtonImageIconResource' | 'backButtonDrawableIconResourceName'
+  | 'backButtonImageIconResource'
+  | 'backButtonDrawableIconResourceName'
+  | 'backButtonImageIconPreferredLoadingMode'
 > {
   const parsed = parseAndroidIconToNativeProps(icon);
 
   return {
     backButtonImageIconResource: parsed.imageIconResource,
+    backButtonImageIconPreferredLoadingMode:
+      parsed.imageIconPreferredLoadingMode,
     backButtonDrawableIconResourceName: parsed.drawableIconResourceName,
   };
 }
@@ -188,12 +192,16 @@ function parseOverflowIconToNativeProps(
   icon: StackHeaderConfigPropsAndroid['overflowIcon'],
 ): Pick<
   StackHeaderConfigAndroidNativeComponentProps,
-  'overflowIconImageIconResource' | 'overflowIconDrawableIconResourceName'
+  | 'overflowIconImageIconResource'
+  | 'overflowIconDrawableIconResourceName'
+  | 'overflowIconImageIconPreferredLoadingMode'
 > {
   const parsed = parseAndroidIconToNativeProps(icon);
 
   return {
     overflowIconImageIconResource: parsed.imageIconResource,
+    overflowIconImageIconPreferredLoadingMode:
+      parsed.imageIconPreferredLoadingMode,
     overflowIconDrawableIconResourceName: parsed.drawableIconResourceName,
   };
 }
@@ -580,9 +588,12 @@ function parseToolbarMenuElementOptionsToNativeProps(
             if (iconValue === undefined) {
               const noIcon: Pick<
                 NativeToolbarMenuElementOptionsAndroid,
-                'imageIconResource' | 'drawableIconResourceName'
+                | 'imageIconResource'
+                | 'drawableIconResourceName'
+                | 'imageIconPreferredLoadingMode'
               > = {
                 imageIconResource: null,
+                imageIconPreferredLoadingMode: null,
                 drawableIconResourceName: null,
               };
               return Object.entries(noIcon);

@@ -94,6 +94,7 @@ internal object StackHeaderToolbarMenuMapper {
         return StackHeaderToolbarMenuItemIconSource(
             drawableIconResourceName = map.getString("drawableIconResourceName"),
             imageIconUri = map.readImageUri("imageIconResource", null),
+            imageIconPreferredLoadingMode = map.readOptionalString("imageIconPreferredLoadingMode"),
         )
     }
 
@@ -162,6 +163,7 @@ internal object StackHeaderToolbarMenuMapper {
                     ?: StackHeaderToolbarMenuItemDefaults.DRAWABLE_ICON_RESOURCE_NAME,
             imageIconUri =
                 map.readImageUri("imageIconResource", StackHeaderToolbarMenuItemDefaults.IMAGE_ICON_URI),
+            imageIconPreferredLoadingMode = map.readOptionalString("imageIconPreferredLoadingMode"),
         )
 
     private fun parseItemConfig(

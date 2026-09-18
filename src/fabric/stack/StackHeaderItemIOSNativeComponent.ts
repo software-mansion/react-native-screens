@@ -44,11 +44,13 @@ export type HeaderItemPressEvent = Readonly<{}>;
 export type PlatformIconShared = {
   type: 'imageSource';
   imageSource: ImageResolvedAssetSource;
+  preferredLoadingMode?: 'automatic' | 'synchronous' | undefined;
 };
 
 export type PlatformIconIOSTemplate = {
   type: 'templateSource';
   templateSource: ImageResolvedAssetSource;
+  preferredLoadingMode?: 'automatic' | 'synchronous' | undefined;
 };
 
 export type PlatformIconIOSSfSymbol = {

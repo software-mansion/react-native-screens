@@ -15,17 +15,20 @@
  */
 + (void)loadImageSyncIfPossibleFromJsonSource:(nonnull NSDictionary *)jsonImageSource
                               withImageLoader:(nonnull RCTImageLoader *)imageLoader
+                    prefersSynchronousLoading:(BOOL)prefersSynchronousLoading
                                    asTemplate:(BOOL)isTemplate
                               completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
 
 /**
- * Loads image from `RCTImageSource`, relies on `RCTImageLoader` implementation.
+ * Attempts immediate loading of local PNG files when requested, otherwise uses `RCTImageLoader`.
+ * Other sources and failed local reads or decodes also use `RCTImageLoader`.
  * `completionBlock` is executed on main queue.
  */
 + (void)loadImageFromSource:(nonnull RCTImageSource *)imageSource
-            withImageLoader:(nonnull RCTImageLoader *)imageLoader
-                 asTemplate:(BOOL)isTemplate
-            completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
+              withImageLoader:(nonnull RCTImageLoader *)imageLoader
+    prefersSynchronousLoading:(BOOL)prefersSynchronousLoading
+                   asTemplate:(BOOL)isTemplate
+              completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
 
 @end
 

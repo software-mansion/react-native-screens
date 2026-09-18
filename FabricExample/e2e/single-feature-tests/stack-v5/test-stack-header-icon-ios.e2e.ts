@@ -8,6 +8,8 @@ import {
 } from '../../e2e-utils';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
+  CLASS_NAME_UI_IMAGE_VIEW,
+  CLASS_NAME_UI_MODERN_BAR_BUTTON,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
 } from '../../native-class-names';
 
@@ -98,6 +100,36 @@ describeIfiOS('Stack Header Icon (iOS)', () => {
       await expect(barButtonIcon(ICON_IDS.sfSymbol)).toBeVisible();
       await expect(barButtonIcon(ICON_IDS.templateSource)).not.toExist();
     });
+  });
+
+  it('keeps bundled original and template icons visible with each loading preference', async () => {
+    // This verifies rendering, not synchronous completion. Run in Release so
+    // require() resolves to a bundled PNG instead of a Metro HTTP URL.
+    for (const mode of ['omitted', 'synchronous', 'automatic']) {
+      await expect(
+        element(by.id('current-loading-mode').and(by.text(mode))),
+      ).toBeVisible();
+      await element(by.id('cycle-item-icon-button')).tap(); // xcasset
+      await element(by.id('cycle-item-icon-button')).tap(); // imageSource
+      // UIImage created from file data has no UIKit asset-name identifier.
+      await expect(
+        element(
+          by
+            .type(CLASS_NAME_UI_IMAGE_VIEW)
+            .withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
+        ),
+      ).toBeVisible();
+      await element(by.id('cycle-item-icon-button')).tap(); // templateSource
+      await expect(
+        element(
+          by
+            .type(CLASS_NAME_UI_IMAGE_VIEW)
+            .withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
+        ),
+      ).toBeVisible();
+      await element(by.id('cycle-item-icon-button')).tap(); // sfSymbol
+      await element(by.id('cycle-loading-mode-button')).tap();
+    }
   });
 
   describe('the header item menu', () => {
