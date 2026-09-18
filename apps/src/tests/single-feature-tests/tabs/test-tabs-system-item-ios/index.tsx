@@ -31,7 +31,24 @@ function StaticSystemItemScreen() {
   );
 }
 
-type SystemItemOption = 'favorites' | 'history' | 'search';
+function StaticSearchScreen() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Static Search</Text>
+      <Text style={styles.hint}>
+        This tab uses systemItem: `search` with no custom{'\n'}title or icon
+        override.
+        {'\n'}
+        {'\n'}
+        On iOS 26 the tab bar item is separated from the{'\n'}other items; on
+        iOS 18 and iOS 27 it renders inline{'\n'}with the magnifying glass icon
+        and the localized{'\n'}`Search` title.
+      </Text>
+    </View>
+  );
+}
+
+type SystemItemOption = 'favorites' | 'history';
 type TitleOption = 'system' | 'custom' | 'hidden';
 type IconOption = 'system' | 'house' | 'heart';
 
@@ -47,11 +64,7 @@ const INITIAL_CONFIG: RuntimeConfig = {
   icon: 'system',
 };
 
-const SYSTEM_ITEM_OPTIONS: SystemItemOption[] = [
-  'favorites',
-  'history',
-  'search',
-];
+const SYSTEM_ITEM_OPTIONS: SystemItemOption[] = ['favorites', 'history'];
 const TITLE_OPTIONS: TitleOption[] = ['system', 'custom', 'hidden'];
 const ICON_OPTIONS: IconOption[] = ['system', 'house', 'heart'];
 
@@ -204,6 +217,16 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       tabBarItemTestID: 'custom-tab-item',
       ios: {
         systemItem: INITIAL_CONFIG.systemItem,
+      },
+    },
+  },
+  {
+    name: 'StaticSearch',
+    element: <StaticSearchScreen />,
+    options: {
+      tabBarItemTestID: 'search-tab-item',
+      ios: {
+        systemItem: 'search',
       },
     },
   },

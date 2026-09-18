@@ -93,6 +93,7 @@ namespace react = facebook::react;
   _selectedIconResourceName = nil;
 
   _systemItem = RNSTabsScreenSystemItemNone;
+  _automaticallyActivatesSearch = NO;
 
   _userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 }
@@ -376,9 +377,23 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
-    _systemItem =
+    RNSTabsScreenSystemItem newSystemItem =
         rnscreens::conversion::RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(newComponentProps.systemItem);
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    if (@available(iOS 18.0, *)) {
+      RCTAssert(_controller.tabBarController == nil ||
+                    (_systemItem == RNSTabsScreenSystemItemSearch) == (newSystemItem == RNSTabsScreenSystemItemSearch),
+                @"[RNScreens] Changing `systemItem` to or from 'search' on a mounted tab screen is not supported.");
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+    _systemItem = newSystemItem;
     tabBarItemNeedsRecreation = YES;
+  }
+
+  if (newComponentProps.automaticallyActivatesSearch != oldComponentProps.automaticallyActivatesSearch) {
+    _automaticallyActivatesSearch = newComponentProps.automaticallyActivatesSearch;
   }
 
   if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {

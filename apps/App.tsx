@@ -1,7 +1,8 @@
 import React from 'react';
 import { enableFreeze } from 'react-native-screens';
 
-import Example from './Example';
+import { TestTabsSearchTabActivation as Example } from './src/tests/single-feature-tests/tabs';
+// import Example from './Example';
 
 // import { TestTabsSimpleNav as Example } from './src/tests/single-feature-tests';
 // import { TestTabsInStackStableEnterTransition as Example } from './src/tests/component-integration-tests';

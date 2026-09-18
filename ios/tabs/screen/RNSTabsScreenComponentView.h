@@ -77,6 +77,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) RNSTabsScreenSystemItem systemItem;
 
+/**
+ * Whether selecting the search tab should automatically activate its search controller.
+ * Effective only on iOS 26+ for screens with `systemItem` set to `search` (backed by `UISearchTab`).
+ */
+@property (nonatomic, readonly) BOOL automaticallyActivatesSearch;
+
 @end
 
 #pragma mark - Experimental
