@@ -151,8 +151,6 @@ export interface TabsHostPropsIOS {
    * one of them can be displayed.
    *
    * @description
-   * Not supported on tvOS.
-   *
    * The following values are currently supported:
    *
    * - `automatic` - the system resolves to the platform default (the tab bar on iOS)
@@ -177,6 +175,8 @@ export interface TabsHostPropsIOS {
    * the tab bar is always displayed.
    *
    * @default Defaults to `automatic`.
+   *
+   * Not supported on tvOS.
    *
    * @platform ios
    * @supported iOS 27 or higher
