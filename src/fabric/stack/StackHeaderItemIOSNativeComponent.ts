@@ -78,8 +78,6 @@ export interface NativeProps extends ViewProps {
   itemId?: string | undefined;
   identifier?: string | undefined;
   hidesSharedBackground?: CT.WithDefault<boolean, false>;
-  // A string | number union - passed as mixed and resolved natively, so that the
-  // named values keep pointing at the UIKit constants instead of hardcoded numbers.
   visibilityPriority?:
     | UnsafeMixed<StackHeaderItemVisibilityPriorityIOS>
     | undefined;
