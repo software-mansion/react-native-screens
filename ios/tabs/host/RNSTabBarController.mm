@@ -523,6 +523,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
+/**
+ * Returns the `UITab` backing the given screen controller, creating it on first use.
+ *
+ * The tab class is determined ONCE, at creation: screens with `systemItem` set to `search` are
+ * backed by `UISearchTab` (which drives the system search treatment - the detached item on
+ * iOS 26+, prominent placement eligibility on iOS 27+ - and provides a localized title and
+ * magnifier image), all other screens by a plain `UITab`.
+ *
+ * Changing the role of a live screen (`systemItem` to / from `search`) is unsupported.
+ */
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
   for (UITab *tab in self.tabs) {
@@ -532,6 +542,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
+
+  if (screenController.tabScreenComponentView.systemItem == RNSTabsScreenSystemItemSearch) {
+    // The designated initializer of `UISearchTab` takes no identifier - UIKit assigns a system one.
+    return [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
+      return weakScreenController;
+    }];
+  }
 
   return [[UITab alloc] initWithTitle:@""
                                 image:nil
@@ -572,6 +589,19 @@ static void rns_pushViewController(__unsafe_unretained id self,
     [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
     return NO;
   }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    if ([tab isKindOfClass:UISearchTab.class]) {
+      /*
+       * A native pop in the nested stack (back gesture) changes the top navigation item without
+       * a mounting transaction until JS catches up - re-mirror the search controller just before
+       * UIKit may auto-activate it for this selection.
+       */
+      [static_cast<RNSTabsScreenViewController *>(viewController) updateNavigationItemSearchControllerFromNestedStack];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
   _isHandlingExplicitSelectionUpdate = YES;
   return YES;

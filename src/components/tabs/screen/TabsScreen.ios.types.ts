@@ -271,11 +271,34 @@ export interface TabsScreenPropsIOS {
    * @remarks
    * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which does not display any title (system or custom).
    *
+   * On iOS 18+, a tab screen with `systemItem: 'search'` is backed natively by `UISearchTab`
+   * (other values use a plain `UITab`), and the native tab class cannot change during the
+   * screen's lifetime. Changing `systemItem` to or from `'search'` on a mounted tab screen is
+   * therefore not supported - it triggers an assertion in development builds. To change the
+   * search role at runtime, remount the tab screen (e.g. by changing its React `key`).
+   * Changes between the other system item values are applied dynamically.
+   *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
    *
    * @platform ios
    */
   systemItem?: TabsScreenSystemItem | undefined;
+  /**
+   * @summary Specifies whether selecting this tab automatically activates its search field.
+   *
+   * Effective only for tab screens with `systemItem: 'search'` and only when a search bar
+   * is configured in the header of the screen stack nested in this tab
+   * (see `headerSearchBarOptions`). When enabled, selecting the search tab immediately
+   * activates the search field. Cancelling the search restores the previously selected tab.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch|UISearchTab.automaticallyActivatesSearch}
+   *
+   * @default false
+   *
+   * @platform ios
+   * @supported iOS 26 or higher
+   */
+  automaticallyActivatesSearch?: boolean | undefined;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`

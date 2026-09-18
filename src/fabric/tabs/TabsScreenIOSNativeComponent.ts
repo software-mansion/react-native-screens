@@ -146,6 +146,7 @@ export interface NativeProps extends ViewProps {
   // Tab config
   isTitleUndefined?: CT.WithDefault<boolean, true>;
   systemItem?: CT.WithDefault<SystemItem, 'none'>;
+  automaticallyActivatesSearch?: CT.WithDefault<boolean, false>;
 
   // Appearance
   standardAppearance?: UnsafeMixed<Appearance> | undefined;
