@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -11,6 +11,7 @@ import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import {
   type StackHeaderConfigProps,
+  type StackHeaderConfigPropsAndroid,
   type StackHeaderTypeAndroid,
   ScrollViewMarker,
 } from 'react-native-screens';
@@ -19,37 +20,85 @@ import LongText from '@apps/shared/LongText';
 
 const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'medium', 'large'];
 
+type ScrollFlags = Required<
+  Pick<
+    StackHeaderConfigPropsAndroid,
+    | 'scrollFlagScroll'
+    | 'scrollFlagEnterAlways'
+    | 'scrollFlagEnterAlwaysCollapsed'
+    | 'scrollFlagExitUntilCollapsed'
+    | 'scrollFlagSnap'
+  >
+>;
+
+const ALL_FLAGS_OFF: ScrollFlags = {
+  scrollFlagScroll: false,
+  scrollFlagEnterAlways: false,
+  scrollFlagEnterAlwaysCollapsed: false,
+  scrollFlagExitUntilCollapsed: false,
+  scrollFlagSnap: false,
+};
+
+// Only valid flag combinations: `enterAlwaysCollapsed` requires `enterAlways`,
+// and both are meaningful only without `exitUntilCollapsed`.
+const SCROLL_FLAG_PRESETS = {
+  default: {
+    ...ALL_FLAGS_OFF,
+    scrollFlagScroll: true,
+    scrollFlagExitUntilCollapsed: true,
+    scrollFlagSnap: true,
+  },
+  'no snap': {
+    ...ALL_FLAGS_OFF,
+    scrollFlagScroll: true,
+    scrollFlagExitUntilCollapsed: true,
+  },
+  'scroll only': { ...ALL_FLAGS_OFF, scrollFlagScroll: true },
+  enterAlways: {
+    ...ALL_FLAGS_OFF,
+    scrollFlagScroll: true,
+    scrollFlagEnterAlways: true,
+  },
+  enterAlwaysCollapsed: {
+    ...ALL_FLAGS_OFF,
+    scrollFlagScroll: true,
+    scrollFlagEnterAlways: true,
+    scrollFlagEnterAlwaysCollapsed: true,
+  },
+  none: ALL_FLAGS_OFF,
+} satisfies Record<string, ScrollFlags>;
+
+type ScrollFlagPreset = keyof typeof SCROLL_FLAG_PRESETS;
+
+const SCROLL_FLAG_PRESET_NAMES = Object.keys(
+  SCROLL_FLAG_PRESETS,
+) as ScrollFlagPreset[];
+
 interface Config {
   hidden: boolean;
+  headerConfig: boolean;
   type: StackHeaderTypeAndroid;
-  scrollFlagScroll: boolean;
-  scrollFlagEnterAlways: boolean;
-  scrollFlagEnterAlwaysCollapsed: boolean;
-  scrollFlagExitUntilCollapsed: boolean;
-  scrollFlagSnap: boolean;
+  scrollFlags: ScrollFlagPreset;
 }
 
 const DEFAULT_CONFIG: Config = {
   hidden: false,
+  headerConfig: true,
   type: 'large',
-  scrollFlagScroll: true,
-  scrollFlagEnterAlways: false,
-  scrollFlagEnterAlwaysCollapsed: false,
-  scrollFlagExitUntilCollapsed: true,
-  scrollFlagSnap: true,
+  scrollFlags: 'default',
 };
 
-function buildHeaderConfig(config: Config): StackHeaderConfigProps {
+function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
+  if (!config.headerConfig) {
+    return undefined;
+  }
+
   return {
     title: 'Hidden restore',
     hidden: config.hidden,
     android: {
       type: config.type,
-      scrollFlagScroll: config.scrollFlagScroll,
-      scrollFlagEnterAlways: config.scrollFlagEnterAlways,
-      scrollFlagEnterAlwaysCollapsed: config.scrollFlagEnterAlwaysCollapsed,
-      scrollFlagExitUntilCollapsed: config.scrollFlagExitUntilCollapsed,
-      scrollFlagSnap: config.scrollFlagSnap,
+      ...SCROLL_FLAG_PRESETS[config.scrollFlags],
     },
   };
 }
@@ -71,57 +120,43 @@ function HomeScreen() {
     setRouteOptions(routeKey, { headerConfig });
   }, [headerConfig, setRouteOptions, routeKey]);
 
+  const hasHeader = config.headerConfig && !config.hidden;
+
   return (
     // Without a header there is nothing keeping the content below the status
-    // bar, so the top inset has to take over while `hidden` is set.
-    <SafeAreaView edges={{ top: config.hidden }}>
+    // bar, so the top inset has to take over while the header is gone.
+    <SafeAreaView edges={{ top: !hasHeader }}>
       <ScrollViewMarker style={styles.scrollViewMarker}>
         <ScrollView
           nestedScrollEnabled
           style={styles.scroll}
-          contentContainerStyle={styles.content}>
-          <Text style={styles.heading}>Scroll flags</Text>
-          <SettingsSwitch
-            label="scrollFlagScroll"
-            value={config.scrollFlagScroll}
-            onValueChange={v => updateConfig('scrollFlagScroll', v)}
-          />
-          <SettingsSwitch
-            label="scrollFlagEnterAlways"
-            value={config.scrollFlagEnterAlways}
-            onValueChange={v => updateConfig('scrollFlagEnterAlways', v)}
-          />
-          <SettingsSwitch
-            label="scrollFlagEnterAlwaysCollapsed"
-            value={config.scrollFlagEnterAlwaysCollapsed}
-            onValueChange={v =>
-              updateConfig('scrollFlagEnterAlwaysCollapsed', v)
-            }
-          />
-          <SettingsSwitch
-            label="scrollFlagExitUntilCollapsed"
-            value={config.scrollFlagExitUntilCollapsed}
-            onValueChange={v => updateConfig('scrollFlagExitUntilCollapsed', v)}
-          />
-          <SettingsSwitch
-            label="scrollFlagSnap"
-            value={config.scrollFlagSnap}
-            onValueChange={v => updateConfig('scrollFlagSnap', v)}
-          />
-          <Text style={styles.heading}>Header config</Text>
-          <SettingsPicker<StackHeaderTypeAndroid>
-            label="type"
-            value={config.type}
-            onValueChange={v => updateConfig('type', v)}
-            items={HEADER_TYPES}
-          />
-          <SettingsSwitch
-            label="hidden"
-            value={config.hidden}
-            onValueChange={v => updateConfig('hidden', v)}
-          />
-
-          <View style={styles.section}>
+          contentContainerStyle={styles.content}
+          // The controls stick below the header so they stay reachable at any
+          // scroll offset.
+          stickyHeaderIndices={[0]}>
+          <View style={styles.controls}>
+            <SettingsSwitch
+              label="hidden"
+              value={config.hidden}
+              onValueChange={v => updateConfig('hidden', v)}
+            />
+            <SettingsSwitch
+              label="headerConfig"
+              value={config.headerConfig}
+              onValueChange={v => updateConfig('headerConfig', v)}
+            />
+            <SettingsPicker<StackHeaderTypeAndroid>
+              label="type"
+              value={config.type}
+              onValueChange={v => updateConfig('type', v)}
+              items={HEADER_TYPES}
+            />
+            <SettingsPicker<ScrollFlagPreset>
+              label="scroll flags"
+              value={config.scrollFlags}
+              onValueChange={v => updateConfig('scrollFlags', v)}
+              items={SCROLL_FLAG_PRESET_NAMES}
+            />
             <Button title="Push Details" onPress={() => push('Details')} />
           </View>
 
@@ -143,9 +178,7 @@ function DetailsScreen() {
         hidden,
         android: {
           type: 'large',
-          scrollFlagScroll: true,
-          scrollFlagExitUntilCollapsed: true,
-          scrollFlagSnap: true,
+          ...SCROLL_FLAG_PRESETS.default,
         },
       },
     });
@@ -158,19 +191,17 @@ function DetailsScreen() {
           <ScrollView
             nestedScrollEnabled
             style={styles.scroll}
-            contentContainerStyle={styles.content}>
-            <Text style={styles.text}>
-              This screen mounts with its header hidden - the header below has
-              never been built when it is first shown.
-            </Text>
-            <LongText size="sm" />
-            <SettingsSwitch
-              label="hidden"
-              value={hidden}
-              onValueChange={setHidden}
-            />
+            contentContainerStyle={styles.content}
+            stickyHeaderIndices={[0]}>
+            <View style={styles.controls}>
+              <SettingsSwitch
+                label="hidden"
+                value={hidden}
+                onValueChange={setHidden}
+              />
+            </View>
 
-            <LongText size="lg" />
+            <LongText size="xl" />
           </ScrollView>
         </ScrollViewMarker>
       </SafeAreaView>
@@ -217,19 +248,10 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+  },
+  controls: {
     gap: 6,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  section: {
-    marginVertical: 12,
-  },
-  text: {
-    color: 'gray',
-    marginBottom: 10,
+    paddingVertical: 6,
+    backgroundColor: Colors.cardBackground,
   },
 });

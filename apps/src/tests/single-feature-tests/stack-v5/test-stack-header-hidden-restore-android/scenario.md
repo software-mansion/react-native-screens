@@ -2,49 +2,35 @@
 
 ## Details
 
-**Description:** Re-showing a hidden stack v5 header must restore the collapse
-state. The rule under test: the header comes back **fully collapsed** when the
-content is scrolled away from the top and **expanded** otherwise, independent
-of the configured scroll flags. This prevents the broken shape of an expanded
-app bar pushed above content that is scrolled into its middle, for every
-scroll-flag combination, including a header that was hidden from the moment
-its screen mounted.
+**Description:** Verifies the collapse state of a Stack v5 header after it is
+removed and shown again: by toggling `hidden` (also while a `type` change
+lands, and on a screen that mounts hidden) or by detaching `headerConfig`.
+Pass: the header comes back fully collapsed when the content is scrolled and
+expanded when the content is at the top, under every scroll-flag preset.
 
 **OS test creation version:** Android: API Level 37.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+TBD: planned, will be implemented separately.
 
 ## Prerequisites
 
-- Android device / emulator.
+- Android emulator or device.
 
 ## Note
 
-- Defaults: `large` header with `scrollFlagScroll`,
-  `scrollFlagExitUntilCollapsed` and `scrollFlagSnap` on - the stack's
-  default collapsing configuration. Steps that change the type or flags say
-  so and restore the defaults afterwards.
-- The re-show rule drops state the content position cannot testify to: a
-  collapse that existed while the content was at the top comes back expanded,
-  (with **scrollFlagSnap** off) a _partial_ offset always resets, and a
-  header re-entered above scrolled content via **scrollFlagEnterAlways** -
-  the whole header, or just its toolbar when
-  **scrollFlagEnterAlwaysCollapsed** is also on - comes back fully
-  collapsed. All of these are expected results below, not failures.
-- While the header is hidden the content starts below the status bar (a
-  `SafeAreaView` top inset takes over).
-- Scroll-flag steps only use valid combinations
-  (`scrollFlagEnterAlwaysCollapsed` requires `scrollFlagEnterAlways`; both
-  are meaningful only with `scrollFlagExitUntilCollapsed` off).
-- A `small` header cannot collapse while `scrollFlagExitUntilCollapsed` is on
-  (its pinned height equals its full height), which is why the small-header
-  step turns that flag off.
-- When `medium/large` header with `scrollFlagExitUntilCollapsed: false` is
-  re-shown, its status bar scrim flashes (it fades in). This is a known
-  issue, see
-  https://github.com/software-mansion/react-native-screens-labs/issues/1782.
+- A re-shown header comes back fully collapsed when the content is scrolled
+  away from the top and expanded when the content is at the top, regardless
+  of its state before removal.
+- Fully collapsed: only the toolbar row is visible. With the `scroll only`,
+  `enterAlways` and `enterAlwaysCollapsed` presets the whole header is
+  scrolled off screen instead and only the status bar scrim remains behind
+  the status bar.
+- **Known issue:** with a `medium` or `large` header and the `scroll only`,
+  `enterAlways` or `enterAlwaysCollapsed` preset, the status bar scrim fades
+  in when the header is re-shown
+  (https://github.com/software-mansion/react-native-screens-labs/issues/1782).
 
 ## Steps
 
@@ -52,145 +38,124 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Stack header hidden restore** screen.
 
-- [ ] The _Home_ screen shows a `large` collapsing header titled _Hidden
-      restore_; scrolling collapses and expands it.
+   - [ ] The "Home" screen shows a large header titled "Hidden restore" with
+         the controls right below it.
+
+2. Scroll down one full screen, then back to the top.
+
+   - [ ] The header collapses on the way down and is expanded again at the
+         top; the controls stay pinned below it and never scroll away.
 
 ---
 
 ### Re-show with the content at the top
 
-2. Scroll until the header is fully collapsed while the content is still at
-   the top, then toggle **hidden** on and off.
+3. Drag up by more than half of the header height but less than its full
+   height, then release.
 
-- [ ] While hidden there is no header and the content starts below the status
-      bar.
+   - [ ] The header snaps to fully collapsed; the text below the controls has
+         not moved.
 
-- [ ] The header comes back **expanded** - a collapse that existed while the
-      content was at the top is dropped (see **Note**).
+4. Toggle "hidden" on.
+
+   - [ ] There is no header and the controls start below the status bar.
+
+5. Toggle "hidden" off.
+
+   - [ ] The header is back and expanded (see Note).
+
+6. Set "scroll flags" to `no snap`, drag up by less than the header height
+   and release so that the header rests part-way, then toggle "hidden" on
+   and off.
+
+   - [ ] The header comes back expanded (see Note).
 
 ---
 
 ### Re-show with the content scrolled
 
-3. Scroll down until the header collapses and the content itself is visibly
-   scrolled, then toggle **hidden** on and off.
+7. Set "scroll flags" to `default`, scroll down one full screen, then toggle
+   "hidden" on and off.
 
-- [ ] The header comes back **fully collapsed** (pinned toolbar only) - it is
-      not expanded above mid-scrolled content, and the content is not pushed
-      down by the full header height.
+   - [ ] The header comes back fully collapsed and the text below the controls
+         has not moved.
 
-4. With the header expanded and the content at the top, toggle **hidden** on,
-   scroll the content down a little, then toggle **hidden** off.
+8. Scroll back to the top, toggle "hidden" on, scroll down one full screen,
+   then toggle "hidden" off.
 
-- [ ] The header comes back **fully collapsed**.
+   - [ ] The header comes back fully collapsed.
 
-5. With the header collapsed and the content scrolled, toggle **hidden** on,
-   scroll the content back to the top, then toggle **hidden** off.
+9. Toggle "hidden" on, scroll back to the top, then toggle "hidden" off.
 
-- [ ] The header comes back **expanded**.
+   - [ ] The header comes back expanded.
 
 ---
 
-### Rebuild while hidden
+### Header removed in other ways
 
-6. With the header collapsed and the content scrolled, toggle **hidden** on,
-   change **type** to `medium`, then toggle **hidden** off.
+10. Scroll down one full screen, toggle "hidden" on, set "type" to `medium`,
+    then toggle "hidden" off.
 
-- [ ] The header comes back as a `medium` header, **fully collapsed** - a
-      rebuild request arriving while hidden does not disturb the rule.
+    - [ ] The header comes back as a medium header, fully collapsed.
 
-7. Set **type** back to `large` and scroll the content back to the top.
+11. Set "type" back to `large`, then toggle "headerConfig" off and on.
 
-- [ ] The header stays fully collapsed across the type change and expands only
-      once the content is back at the top.
+    - [ ] The header comes back as a large header, fully collapsed.
 
 ---
 
-### Scroll-flag variants
+### Scroll-flag presets
 
-Each step: set the flags as listed, scroll down until the content is visibly
-scrolled, toggle **hidden** on and off.
+12. Scroll back to the top, set "scroll flags" to `scroll only`, scroll down
+    one full screen, then toggle "hidden" on and off.
 
-8. Set **scrollFlagExitUntilCollapsed** off (plain scrolling header).
+    - [ ] The header comes back scrolled entirely off screen (see Known Issue in
+          the Note)
 
-- [ ] The header comes back fully collapsed - scrolled entirely off screen -
-      and re-enters only once the content is scrolled back to the top.
+13. Set "scroll flags" to `enterAlways`, scroll down one full screen, then
+    toggle "hidden" on and off.
 
-9. Set **scrollFlagEnterAlways** on (with **scrollFlagExitUntilCollapsed** still
-   off).
+    - [ ] The header comes back scrolled entirely off screen.
 
-- [ ] The header comes back fully collapsed, and a small upward drag
-      re-enters the whole header while the content stays mid-list.
+14. Drag down until the whole header has re-entered and release right away,
+    then toggle "hidden" on and off.
 
-10. With the flags from step 9, drag up so the whole header re-enters while
-    the content stays scrolled, then toggle **hidden** on and off.
+    - [ ] The header comes back scrolled entirely off screen (see Note).
 
-- [ ] The header comes back **fully collapsed** - the expanded-over-scrolled
-      state is dropped (see **Note**).
+15. Set "scroll flags" to `enterAlwaysCollapsed`, scroll down one full screen,
+    then toggle "hidden" on and off.
 
-11. Set **scrollFlagEnterAlwaysCollapsed** on as well. After checking the first
-    result, drag up so the toolbar re-enters, then toggle **hidden** on and
-    off again.
+    - [ ] The header comes back scrolled entirely off screen.
 
-- [ ] The header comes back fully collapsed; an upward drag re-enters only
-      the toolbar, and the full height returns only once the content reaches
-      the top.
+16. Drag down until the toolbar row has re-entered and release right away,
+    then toggle "hidden" on and off.
 
-- [ ] After the second hide/re-show the re-entered toolbar is dropped: the
-      header is fully collapsed again, scrolled entirely off screen, leaving
-      only the status bar scrim behind the status bar.
+    - [ ] The toolbar row is gone again; only the status bar scrim is left.
 
-12. All scroll-flag switches off.
+17. Set "scroll flags" to `none`, scroll down one full screen, then toggle
+    "hidden" on and off.
 
-- [ ] The header no longer collapses while scrolling; after hiding over
-      scrolled content it comes back at its full height (a header that cannot
-      collapse always restores expanded).
+    - [ ] The header comes back at its full height.
 
-13. Restore the defaults: **scrollFlagScroll**,
-    **scrollFlagExitUntilCollapsed** and **scrollFlagSnap** on, both
-    enter-always switches off.
+18. Set "type" to `small` and "scroll flags" to `scroll only`, scroll down one
+    full screen, then toggle "hidden" on and off.
 
-- [ ] Collapsing behavior is back to the baseline.
-
----
-
-### Partial offset
-
-14. Turn **scrollFlagSnap** off, scroll to a _partial_ collapse with the
-    content at the top, then toggle **hidden** on and off. Turn
-    **scrollFlagSnap** back on afterwards.
-
-- [ ] The header comes back **expanded** - partial offsets reset (see
-      **Note**).
-
----
-
-### Small header
-
-15. Set **type** to `small` and turn **scrollFlagExitUntilCollapsed** off
-    (see **Note**). Scroll down until the toolbar is gone and the content is
-    scrolled, then toggle **hidden** on and off. Restore `large` and the
-    flag afterwards.
-
-- [ ] The toolbar comes back fully collapsed (still off screen) and only
-      re-enters once the content is scrolled back to the top.
+    - [ ] The toolbar comes back scrolled off screen.
 
 ---
 
 ### Hidden from the start
 
-16. Scroll to the top. Tap **Push Details**.
+19. Set "type" to `large` and "scroll flags" to `default`, scroll back to the
+    top, then tap "Push Details".
 
-- [ ] The _Details_ screen has no header from the moment it appears and its
-      content starts below the status bar.
+    - [ ] The "Details" screen has no header; its "hidden" switch starts below
+          the status bar.
 
-17. Scroll the _Details_ content down a little, then toggle its **hidden**
-    switch off.
+20. Scroll down one full screen, then toggle "hidden" off.
 
-- [ ] The header appears **fully collapsed** - the very first build of this
-      header lands on scrolled content and must not expand above it.
+    - [ ] The header appears fully collapsed.
 
-18. Navigate back to _Home_.
+21. Tap the back button.
 
-- [ ] The _Home_ header still matches its state from step 16 (expanded,
-      `large`), unaffected by the _Details_ round trip.
+    - [ ] The "Home" screen is shown with an expanded large header.

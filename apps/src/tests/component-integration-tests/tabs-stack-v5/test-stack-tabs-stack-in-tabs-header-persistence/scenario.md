@@ -6,8 +6,9 @@
 switching away to another tab and back: the app bar, its title, subtitle,
 collapse state and toolbar menu selections come back unchanged and without a
 visible flash. Header configuration changed while the tab is away - the title,
-`type` and `hidden` - is applied when the tab comes back. Pass: nothing about
-the header resets on a tab switch.
+`type` and `hidden` - is applied when the tab comes back (the collapse state of
+a re-shown header is covered in full by `test-stack-header-hidden-restore-android`).
+Pass: nothing about the header resets on a tab switch.
 
 **OS test creation version:** Android: API Level 37.
 
@@ -21,7 +22,9 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- A header that has been hidden and re-shown always comes back expanded.
+- A re-shown header comes back expanded when the content is at the top and
+  fully collapsed when the content is scrolled, whatever its state before it
+  was hidden.
 - Dismiss the overflow menu (tap outside it) after checking it.
 
 ## Steps
@@ -123,8 +126,20 @@ TBD: Planned, but will be implemented separately.
 
     - [ ] The header collapses on the way down and expands again at the top.
 
-17. Switch to the "Other" tab, set "type" to `medium`, then switch back to
+17. Scroll down until "Push Details" is out of view. Switch to the "Other"
+    tab, toggle "hidden" on, then switch back to "Stack".
+
+    - [ ] The "Home" screen has no header; "Push Details" is still out of
+          view.
+
+18. Switch to the "Other" tab, toggle "hidden" off, then switch back to
     "Stack".
+
+    - [ ] The header comes back fully collapsed (see Note); "Push Details" is
+          still out of view and the content has not moved down.
+
+19. Scroll back to the top. Switch to the "Other" tab, set "type" to
+    `medium`, then switch back to "Stack".
 
     - [ ] The header is a medium header again, shorter than in step 13.
 
@@ -132,12 +147,12 @@ TBD: Planned, but will be implemented separately.
 
 ### Pushed screen
 
-18. Tap "Push Details", then switch to the "Other" tab and back to "Stack".
+20. Tap "Push Details", then switch to the "Other" tab and back to "Stack".
 
     - [ ] The "Details" header is still present with the title "Details" and
           a back button.
 
-19. Tap the back button.
+21. Tap the back button.
 
     - [ ] The "Details" screen is popped.
     - [ ] "Home" screen is shown again, with the title "Home v2".
