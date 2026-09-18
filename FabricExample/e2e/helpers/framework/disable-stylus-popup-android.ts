@@ -1,14 +1,16 @@
 import { device } from 'detox';
 
-const {
-  getCommandLineResponse,
-} = require('../../../scripts/e2e/command-line-helpers');
+/** Typed once here; specs never `require` `scripts/e2e/*` directly. */
+const { getCommandLineResponse } =
+  require('../../../../scripts/e2e/command-line-helpers') as {
+    getCommandLineResponse: (command: string) => string;
+  };
 
 /**
  * Some devices may display an introductory popup to enable stylus input as the default input method. This popup is not a subject of react-native-screens testing and breaks the react-native-screens e2e test flow.
  * This function disables the display of the pop-up window by modifying a special system flag.
  */
-export default function disableStylusPopupOnAndroid() {
+export function disableStylusPopupOnAndroid() {
   if (device.getPlatform() === 'ios') return;
   try {
     getCommandLineResponse(

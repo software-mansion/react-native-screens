@@ -1,20 +1,19 @@
-import { device, expect, element, by } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast } from '@e2e/app/toast';
 import {
   checkmarkFor,
   contextMenu,
-  describeIfiOS,
   dismissContextMenu,
-  dismissToast,
-  headerTitle,
-  headerItem,
   menuRow,
   menuRowIcon,
   openContextMenu,
   openHeaderTitleMenu,
-  scrollToAndTap,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+} from '@e2e/framework/context-menu-ios';
+import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
+import { describeIfiOS } from '@e2e/framework/platform';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 

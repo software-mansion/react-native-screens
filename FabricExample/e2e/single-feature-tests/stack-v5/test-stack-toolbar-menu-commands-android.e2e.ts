@@ -1,16 +1,18 @@
 import { device, expect, element, by } from 'detox';
 import {
-  createOverflowMenuHelpers,
-  describeIfAndroid,
-  expectLastClicked,
-  expectOverflowMenuOrder,
-  openOverflowMenu,
-  overflowMenuText,
-  rewindAndScrollUntilVisible,
   selectPickerOption,
-  selectSingleFeatureTestsScreen,
   toggleSettingsSwitch,
-} from '../../e2e-utils';
+} from '@e2e/app/settings-controls';
+import { expectLastClicked } from '@e2e/app/test-screen-readouts';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
+  createOverflowMenuHelpers,
+  expectOverflowMenuItems,
+  type ExpectMenuItemsOptions,
+  openOverflowMenu,
+} from '@e2e/framework/toolbar-menu-android';
 
 const SCROLLVIEW_ID = 'toolbar-menu-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
@@ -30,13 +32,6 @@ const ALL_TITLES = [
 ] as const;
 
 type MenuTitle = (typeof ALL_TITLES)[number];
-
-/** A row of the focused popup, addressed by its visible text. */
-const overflowRow = (title: MenuTitle) => overflowMenuText(title);
-
-async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SETTINGS_CONTROL);
-}
 
 // Closing the picker again matters: its option rows stay in the hierarchy and
 // would collide with the `by.text` matchers used for the toolbar menu items.
@@ -63,8 +58,7 @@ async function sendCommand(options: {
   await selectOption('cmd-title-picker', 'cmd title', options.title);
   await selectOption('cmd-hidden-picker', 'cmd hidden', options.hidden);
 
-  await scrollIntoView('send-command-button');
-  await element(by.id('send-command-button')).tap();
+  await scrollToAndTap('send-command-button', SETTINGS_CONTROL);
 }
 
 async function setSlotTitle(slot: number, title: string) {
@@ -84,38 +78,22 @@ async function setSlotInclude(slot: number, include: boolean) {
   );
 }
 
-const { closeMenuIfOpen, withOverflowMenu, waitForMenuItem, tapMenuItem } =
+const { closeMenuIfOpen, withOverflowMenu, tapMenuItem } =
   createOverflowMenuHelpers({
     scrollViewId: SCROLLVIEW_ID,
   });
 
-// Asserts the exact menu contents, then closes it. `expectedVisible` is a
-// non-empty subset of ALL_TITLES — a title outside that set would go unasserted,
-// and the first entry gates the open animation. With `checkOrder`, the entries
-// must also appear top to bottom in the order given.
+// Asserts the exact overflow menu contents, then closes it. `expectedVisible`
+// is a non-empty subset of ALL_TITLES — a title outside that set would go
+// unasserted. With `checkOrder`, the entries must also appear top to bottom in
+// the order given.
 async function expectMenuItems(
   expectedVisible: [MenuTitle, ...MenuTitle[]],
-  { checkOrder = false }: { checkOrder?: boolean } = {},
+  options?: ExpectMenuItemsOptions,
 ): Promise<void> {
-  await withOverflowMenu(async () => {
-    // Populated in a single layout pass, so once the first expected entry is up
-    // the `not.toExist()` checks below cannot pass prematurely.
-    await waitForMenuItem(expectedVisible[0]);
-
-    for (const title of expectedVisible) {
-      await expect(element(overflowRow(title))).toBeVisible();
-    }
-
-    if (checkOrder) {
-      await expectOverflowMenuOrder(expectedVisible);
-    }
-
-    for (const title of ALL_TITLES) {
-      if (!expectedVisible.includes(title)) {
-        await expect(element(overflowRow(title))).not.toExist();
-      }
-    }
-  });
+  await withOverflowMenu(() =>
+    expectOverflowMenuItems(expectedVisible, ALL_TITLES, options),
+  );
 }
 
 describeIfAndroid('Stack Toolbar Menu Commands', () => {

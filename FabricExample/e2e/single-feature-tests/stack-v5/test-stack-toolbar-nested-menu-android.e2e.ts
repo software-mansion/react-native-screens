@@ -2,22 +2,23 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import type { AndroidElementAttributes } from 'detox/detox';
 import {
-  countMatches,
+  selectPickerOption,
+  toggleSettingsSwitch,
+} from '@e2e/app/settings-controls';
+import { expectLastClicked } from '@e2e/app/test-screen-readouts';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { countMatches, getMatches } from '@e2e/framework/matchers';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
   createOverflowMenuHelpers,
-  describeIfAndroid,
-  expectLastClicked,
-  getMatches,
   MENU_ANIMATION_TIMEOUT_MS,
   menuItemImage,
   openOverflowMenu,
   overflowMenuRow,
   overflowMenuText,
-  rewindAndScrollUntilVisible,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
-  waitUntil,
-} from '../../e2e-utils';
+} from '@e2e/framework/toolbar-menu-android';
+import { waitUntil } from '@e2e/framework/wait';
 import type {
   AllIds,
   CmdHiddenOption,
@@ -78,10 +79,6 @@ async function expectSubmenuArrow(text: MenuText, present: boolean) {
   }).toEqual({ text, arrows: present ? 1 : 0 });
 }
 
-async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID);
-}
-
 /**
  * Open option rows stay in the hierarchy and would collide with the `by.text`
  * menu matchers, so the picker is closed again.
@@ -110,8 +107,7 @@ async function sendCommand({
   await selectOption('cmd-hidden-picker', 'hidden', hidden);
   await selectOption('cmd-menutitle-picker', 'menuTitle', menuTitle);
 
-  await scrollIntoView('send-command-button');
-  await element(by.id('send-command-button')).tap();
+  await scrollToAndTap('send-command-button', SETTINGS_CONTROL);
 }
 
 async function setSubmenu1Title(title: Submenu1TitleOption) {
@@ -252,9 +248,10 @@ async function expectMenu(
   const tappedRow = path[path.length - 1];
   const gate = expected.find(text => text !== tappedRow) ?? expected[0];
 
-  await openMenu(path, gate, countOf(expected, gate));
-
-  await closingMenuAfter(() => expectMenuContents(expected, submenus));
+  await closingMenuAfter(async () => {
+    await openMenu(path, gate, countOf(expected, gate));
+    await expectMenuContents(expected, submenus);
+  });
 }
 
 // `submenu-1` sits between `item-top` and `submenu-2`, the only handle on it
@@ -270,9 +267,9 @@ async function expectUntitledSubmenu(
   rowCount: number,
   expected: [MenuText, ...MenuText[]],
 ) {
-  await openTopLevelMenu();
-
   await closingMenuAfter(async () => {
+    await openTopLevelMenu();
+
     jestExpect(await countMatches(overflowMenuRow(), { orEmpty: true })).toBe(
       rowCount,
     );

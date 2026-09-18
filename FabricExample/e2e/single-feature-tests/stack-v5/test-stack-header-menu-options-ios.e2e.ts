@@ -1,20 +1,19 @@
 import { device, expect, element, by } from 'detox';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   chevronFor,
-  describeIfiOS,
-  headerTitle,
   dismissContextMenu,
-  headerItem,
   menuRow,
   openContextMenu,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
-import { expect as jestExpect } from '@jest/globals';
+} from '@e2e/framework/context-menu-ios';
+import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfiOS } from '@e2e/framework/platform';
+import { expect as jestExpect } from '@jest/globals';
 import { IosElementAttributes } from 'detox/detox';
 
 /**
