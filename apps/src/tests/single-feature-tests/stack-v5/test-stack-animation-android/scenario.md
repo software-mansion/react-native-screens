@@ -86,11 +86,11 @@ visual / interactive qualities that Detox cannot assert reliably.
 
 ## Note
 
-- Unless stated otherwise, both pickers are at their default,
-  `slideFromRight`: on **push** the incoming screen slides in from the right
-  while the covered screen slides out to the left; on **pop** the outgoing
-  screen slides out to the right while the revealed screen slides in from the
-  left.
+- Unless stated otherwise, both pickers are at `slideFromRight`, the value
+  every route starts with: on **push** the incoming screen slides in from the
+  right while the covered screen slides out to the left; on **pop** the
+  outgoing screen slides out to the right while the revealed screen slides in
+  from the left.
 - "Smooth" below means: continuous motion, button shadows persist during and
   after the transition, neither screen's content jumps, both move as rigid
   blocks.
@@ -116,7 +116,7 @@ visual / interactive qualities that Detox cannot assert reliably.
          **Push Blue** / **Push Red** / **Push NestedHost** buttons. No **Pop**
          button is shown.
 
-### Push and pop with the default preset
+### Push and pop with `slideFromRight`
 
 2. Tap **Push Blue**.
 
@@ -230,9 +230,9 @@ visual / interactive qualities that Detox cannot assert reliably.
 ### Changing a covered screen's animation
 
 17. On **Red**, set **this screen** to `slideFromTop`, then tap **Push Blue**
-    (defaults) and, on **Blue**, tap **Pop**.
+    (`slideFromRight`) and, on **Blue**, tap **Pop**.
 
-    - [ ] The push plays **Blue**'s default slide from the right; **Red**'s
+    - [ ] The push plays **Blue**'s slide from the right; **Red**'s
           value does not affect it. The pop plays **Blue**'s own slide out to
           the right with **Red** entering from the left — the covered screen's
           value only governs its own pop.
@@ -255,8 +255,8 @@ visual / interactive qualities that Detox cannot assert reliably.
     `slideFromLeft` and tap **Push NestedRed**.
 
     - [ ] Each push inside the **nested** stack animates with its own preset
-          (default, then from the left), drawn on top, smooth, independently of
-          the outer stack's `slideFromBottom`.
+          (`slideFromRight`, then from the left), drawn on top, smooth,
+          independently of the outer stack's `slideFromBottom`.
 
 21. Inside the nested stack, tap **Pop**, then perform the predictive back
     gesture twice.

@@ -9,13 +9,13 @@ that exactly one direction is correct for each operation, and a wrong
 direction, a moving intermediate screen or a flash of a screen that should
 never appear is immediately visible.
 
-| Route  | `animation`                | Colour |
-| ------ | -------------------------- | ------ |
-| Home   | default (`slideFromRight`) | yellow |
-| Right  | `slideFromRight`           | blue   |
-| Left   | `slideFromLeft`            | red    |
-| Bottom | `slideFromBottom`          | green  |
-| Top    | `slideFromTop`             | purple |
+| Route  | `animation`       | Colour |
+| ------ | ----------------- | ------ |
+| Home   | `default`         | yellow |
+| Right  | `slideFromRight`  | blue   |
+| Left   | `slideFromLeft`   | red    |
+| Bottom | `slideFromBottom` | green  |
+| Top    | `slideFromTop`    | purple |
 
 The rules the scenario checks:
 

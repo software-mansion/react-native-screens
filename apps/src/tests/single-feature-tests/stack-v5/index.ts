@@ -7,6 +7,7 @@ import TestStackPreventNativeDismissNestedStack from './test-stack-prevent-nativ
 import TestStackLifecycleEvents from './test-stack-lifecycle-events';
 import TestStackAnimationAndroid from './test-stack-animation-android';
 import TestStackAnimationOperationsAndroid from './test-stack-animation-operations-android';
+import TestStackAnimationPresetsAndroid from './test-stack-animation-presets-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
@@ -46,6 +47,7 @@ export { default as TestStackPreventNativeDismissNestedStack } from './test-stac
 export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-events';
 export { default as TestStackAnimationAndroid } from './test-stack-animation-android';
 export { default as TestStackAnimationOperationsAndroid } from './test-stack-animation-operations-android';
+export { default as TestStackAnimationPresetsAndroid } from './test-stack-animation-presets-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
@@ -84,6 +86,7 @@ const scenarios = {
   TestStackLifecycleEvents,
   TestStackAnimationAndroid,
   TestStackAnimationOperationsAndroid,
+  TestStackAnimationPresetsAndroid,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
   TestStackLiftOnScrollAndroid,

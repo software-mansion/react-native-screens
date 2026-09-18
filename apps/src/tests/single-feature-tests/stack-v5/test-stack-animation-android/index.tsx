@@ -22,7 +22,19 @@ const ANIMATION_OPTIONS = [
 ] as const satisfies readonly StackScreenAnimation[];
 type AnimationOption = (typeof ANIMATION_OPTIONS)[number];
 
+// An unset `animation` resolves to `default` natively; this test is about the slides, so every
+// route starts with `slideFromRight` set explicitly.
 const DEFAULT_ANIMATION: AnimationOption = 'slideFromRight';
+const DEFAULT_OPTIONS = { animation: DEFAULT_ANIMATION };
+
+// The pickers only offer the slide subset of the library's union.
+function asOption(
+  animation: StackScreenAnimation | undefined,
+): AnimationOption {
+  return (
+    ANIMATION_OPTIONS.find(option => option === animation) ?? DEFAULT_ANIMATION
+  );
+}
 
 function TestStackAnimationAndroid() {
   return <StackSetup />;
@@ -35,18 +47,22 @@ function StackSetup() {
         {
           name: 'Home',
           element: <HomeScreen />,
+          options: DEFAULT_OPTIONS,
         },
         {
           name: 'Blue',
           element: <BlueScreen />,
+          options: DEFAULT_OPTIONS,
         },
         {
           name: 'Red',
           element: <RedScreen />,
+          options: DEFAULT_OPTIONS,
         },
         {
           name: 'NestedHost',
           element: <NestedHostScreen />,
+          options: DEFAULT_OPTIONS,
         },
       ]}
     />
@@ -64,9 +80,8 @@ function AnimationControls() {
   const { routeConfigs, updateRouteConfigWithOptions } =
     useStackRouteConfigContext();
 
-  const nextPushAnimation =
-    routeConfigs[0]?.options?.animation ?? DEFAULT_ANIMATION;
-  const ownAnimation = routeOptions.animation ?? DEFAULT_ANIMATION;
+  const nextPushAnimation = asOption(routeConfigs[0]?.options?.animation);
+  const ownAnimation = asOption(routeOptions.animation);
 
   return (
     <View style={styles.controls}>
@@ -133,14 +148,17 @@ function NestedHostScreen() {
         {
           name: 'NestedHome',
           element: <NestedHomeScreen />,
+          options: DEFAULT_OPTIONS,
         },
         {
           name: 'NestedBlue',
           element: <NestedBlueScreen />,
+          options: DEFAULT_OPTIONS,
         },
         {
           name: 'NestedRed',
           element: <NestedRedScreen />,
+          options: DEFAULT_OPTIONS,
         },
       ]}
     />

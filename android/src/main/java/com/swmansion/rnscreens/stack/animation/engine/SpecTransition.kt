@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.transition.TransitionValues
 import androidx.transition.Visibility
-import com.swmansion.rnscreens.stack.animation.spec.Slot
+import com.swmansion.rnscreens.stack.animation.model.SlotRole
 import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
 import com.swmansion.rnscreens.stack.animation.spec.ZPolicy
 import com.swmansion.rnscreens.stack.host.StackContainer
@@ -16,11 +16,11 @@ import com.swmansion.rnscreens.stack.host.StackContainer
  */
 internal class SpecTransition(
     private val spec: SlotSpec,
-    slot: Slot,
+    slot: TransitionSlot,
     private val zPolicy: ZPolicy,
 ) : Visibility() {
     init {
-        mode = if (slot.appearing) MODE_IN else MODE_OUT
+        mode = if (slot.role == SlotRole.IN) MODE_IN else MODE_OUT
     }
 
     override fun isSeekingSupported(): Boolean = true
@@ -49,12 +49,12 @@ internal class SpecTransition(
         view: View,
         startValues: TransitionValues?,
         endValues: TransitionValues?,
-    ): Animator = SlotAnimator.create(view, spec, sceneRoot)
+    ): Animator = SlotAnimator.create(view, spec, sceneRoot, rootTransition)
 
     override fun onDisappear(
         sceneRoot: ViewGroup,
         view: View,
         startValues: TransitionValues?,
         endValues: TransitionValues?,
-    ): Animator = SlotAnimator.create(view, spec, sceneRoot)
+    ): Animator = SlotAnimator.create(view, spec, sceneRoot, rootTransition)
 }
