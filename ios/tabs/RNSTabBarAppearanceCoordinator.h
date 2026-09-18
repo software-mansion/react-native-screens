@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import "RNSDefines.h"
 #import "RNSTabsScreenViewController.h"
 
 @class RNSTabsHostComponentView;
@@ -32,6 +33,17 @@ NS_ASSUME_NONNULL_BEGIN
             tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
                      imageLoader:(nullable RCTImageLoader *)imageLoader;
 #endif // defined(__cplusplus)
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+/// `UITab` API only. Mirrors the icons onto given tabs from their `UITabBarItem`s (the
+/// tabs do not observe the items). @return whether anything was mutated - the caller is
+/// responsible for repainting the tab bar then.
+- (BOOL)syncIconsOfTabs:(nullable NSArray<__kindof UITab *> *)tabs API_AVAILABLE(ios(18.0));
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+/// Applies the user interface style of given screen (the style follows the selection).
+- (void)updateUserInterfaceStyleOfTabBar:(nullable UITabBar *)tabBar
+                           forScreenView:(nullable RNSTabsScreenComponentView *)screenView;
 
 /**
  * Configures UITabBarAppearance object using appearance props provided in the param.

@@ -1,4 +1,5 @@
 #import "RNSTabBarAppearanceCoordinator.h"
+#import <React/RCTAssert.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTLog.h>
@@ -8,6 +9,27 @@
 #import "RNSTabBarController.h"
 #import "RNSTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"
+
+/// Default icon of the screen's system item, nil for screens without one. UIKit carries
+/// these icons implicitly on system-item-flavored `UITabBarItem` instances - they must be
+/// restored explicitly whenever such an item gets replaced.
+static UIImage *_Nullable RNSSystemItemDefaultImageForScreenView(RNSTabsScreenComponentView *screenView, BOOL selected)
+{
+  if (screenView.systemItem == RNSTabsScreenSystemItemNone) {
+    return nil;
+  }
+
+  std::optional<UITabBarSystemItem> systemItem =
+      rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
+  if (!systemItem) {
+    RCTLogError(@"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+                (long)screenView.systemItem);
+    return nil;
+  }
+
+  UITabBarItem *systemFlavoredItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
+  return selected ? systemFlavoredItem.selectedImage : systemFlavoredItem.image;
+}
 
 @implementation RNSTabBarAppearanceCoordinator
 
@@ -75,19 +97,9 @@
         }
         tabBarItem.image = image;
       }
-    } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
-      // Restore default system item icon
-      std::optional<UITabBarSystemItem> systemItem =
-          rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      if (!systemItem) {
-        RCTLogError(
-            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-            (long)screenView.systemItem);
-        return;
-      }
-      tabBarItem.image = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].image;
     } else {
-      tabBarItem.image = nil;
+      // Restores the default system item icon for system item screens, clears otherwise.
+      tabBarItem.image = RNSSystemItemDefaultImageForScreenView(screenView, NO);
     }
 
     if (screenView.selectedIconResourceName != nil) {
@@ -106,19 +118,9 @@
         }
         tabBarItem.selectedImage = selectedImage;
       }
-    } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
-      // Restore default system item icon
-      std::optional<UITabBarSystemItem> systemItem =
-          rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      if (!systemItem) {
-        RCTLogError(
-            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-            (long)screenView.systemItem);
-        return;
-      }
-      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].selectedImage;
     } else {
-      tabBarItem.selectedImage = nil;
+      // Restores the default system item icon for system item screens, clears otherwise.
+      tabBarItem.selectedImage = RNSSystemItemDefaultImageForScreenView(screenView, YES);
     }
   } else if (imageLoader != nil) {
     bool isTemplate = screenView.iconType == RNSTabsIconTypeTemplate;
@@ -194,6 +196,68 @@
   if ([screenParentViewController isKindOfClass:[UITabBarController class]]) {
     UITabBarController *tabBarVC = (UITabBarController *)screenParentViewController;
     [tabBarVC.tabBar setNeedsLayout];
+
+    if ([tabBarVC isKindOfClass:RNSTabBarController.class]) {
+      /*
+       * With the `UITab` API (iOS 18+) the tab does not observe `tabBarItem` - the controller
+       * must mirror the freshly loaded icon onto the corresponding tab. No-op on the legacy path.
+       */
+      [static_cast<RNSTabBarController *>(tabBarVC) tabBarItemsDidChange];
+    }
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+- (BOOL)syncIconsOfTabs:(nullable NSArray<__kindof UITab *> *)tabs API_AVAILABLE(ios(18.0))
+{
+  BOOL tabsDidChange = NO;
+  for (UITab *tab in tabs) {
+    UIViewController *viewController = tab.viewController;
+    RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
+              @"[RNScreens] Unexpected type of controller: %@",
+              viewController.class);
+    auto *screenController = static_cast<RNSTabsScreenViewController *>(viewController);
+    UITabBarItem *item = screenController.tabBarItem;
+    RNSTabsScreenComponentView *screenView = screenController.tabScreenComponentView;
+
+    /*
+     * Nil item image falls back to the current system item default, so an in-place
+     * `systemItem` change propagates.
+     */
+    UIImage *_Nullable image = item.image ?: RNSSystemItemDefaultImageForScreenView(screenView, NO);
+    if (tab.image != image && ![tab.image isEqual:image]) {
+      tab.image = image;
+      tabsDidChange = YES;
+    }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+    if (@available(iOS 26.1, *)) {
+      if (tab.selectedImage != item.selectedImage) {
+        tab.selectedImage = item.selectedImage;
+        tabsDidChange = YES;
+      }
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  }
+  return tabsDidChange;
+}
+
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+- (void)updateUserInterfaceStyleOfTabBar:(nullable UITabBar *)tabBar
+                           forScreenView:(nullable RNSTabsScreenComponentView *)screenView
+{
+  if (tabBar == nil || screenView == nil) {
+    return;
+  }
+
+  if (@available(iOS 26.0, *)) {
+    // On iOS 26, we need to set user interface style 2 parent views above the tab bar
+    // for this prop to take effect.
+    tabBar.superview.superview.overrideUserInterfaceStyle = screenView.userInterfaceStyle;
+  } else {
+    tabBar.overrideUserInterfaceStyle = screenView.userInterfaceStyle;
   }
 }
 

@@ -222,6 +222,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateTabBarAppearance;
 
 /**
+ * Notify the controller that per-tab configuration living on `UITabBarItem` changed outside
+ * of a container update pass (e.g. an asynchronously loaded icon). No-op on the legacy path.
+ */
+- (void)tabBarItemsDidChange;
+
+/**
  * Updates the interface orientation based on selected tab screen and its children.
  *
  * This method does nothing if the update has not been previously requested.
