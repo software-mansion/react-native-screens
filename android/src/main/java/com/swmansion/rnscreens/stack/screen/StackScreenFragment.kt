@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.transition.Slide
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
+import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
 import java.lang.ref.WeakReference
 
 internal class StackScreenFragment(
@@ -18,6 +19,7 @@ internal class StackScreenFragment(
     private val canNavigateBack: Boolean,
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
+    private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -61,10 +63,19 @@ internal class StackScreenFragment(
     ): View {
         headerCoordinatorLayout?.let { return it }
 
-        return StackHeaderCoordinatorLayout(requireContext(), stackScreen, canNavigateBack) { pressedScreen ->
+        return StackHeaderCoordinatorLayout(
+            requireContext(),
+            stackScreen,
+            canNavigateBack,
+            updateBatchStateProvider,
+        ) { pressedScreen ->
             backPressHandler.get()?.handleHeaderBackButtonPress(pressedScreen)
                 ?: Log.w(TAG, "[RNScreens] Header back button press dropped - handler is gone")
         }.also { headerCoordinatorLayout = it }
+    }
+
+    internal fun flushPendingHeaderUpdates() {
+        headerCoordinatorLayout?.flushPendingUpdates()
     }
 
     override fun onViewCreated(

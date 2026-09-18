@@ -4,17 +4,12 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.LayoutDirection
 import android.view.Gravity
-import com.facebook.react.bridge.UIManager
-import com.facebook.react.bridge.UIManagerListener
-import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.common.text.ReactTextAppearance
 import com.swmansion.rnscreens.helpers.IconResolution
 import com.swmansion.rnscreens.helpers.PropIconResolver
-import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.helpers.resolveImage
 import com.swmansion.rnscreens.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
@@ -27,7 +22,6 @@ import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMen
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
-@OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")
 internal class StackHeaderConfig(
     val reactContext: ThemedReactContext,
@@ -35,14 +29,7 @@ internal class StackHeaderConfig(
     StackHeaderConfigurationProviding,
     StackHeaderDelegate,
     StackHeaderToolbarMenuDelegate,
-    OnStackHeaderSubviewChangeListener,
-    UIManagerListener {
-    init {
-        UIManagerHelper
-            .getFabricUIManagerNotNull(reactContext)
-            .addUIManagerEventListener(this)
-    }
-
+    OnStackHeaderSubviewChangeListener {
     // region Handling configuration changes
 
     private var configObserver: StackHeaderConfigurationObserver? = null
@@ -380,36 +367,9 @@ internal class StackHeaderConfig(
 
     // endregion
 
-    // region UIManagerListener
-
-    private var isInsideMountTransaction = false
-
-    override val isUpdatePending: Boolean
-        get() = isInsideMountTransaction
-
-    override fun willMountItems(uiManager: UIManager) {
-        isInsideMountTransaction = true
-    }
-
-    override fun didMountItems(uiManager: UIManager) {
-        isInsideMountTransaction = false
-        configObserver?.onFlushRequested()
-    }
-
-    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
-
-    override fun didDispatchMountItems(uiManager: UIManager) = Unit
-
-    override fun didScheduleMountItems(uiManager: UIManager) = Unit
-
-    // endregion
-
     // region Teardown
 
     internal fun tearDown() {
-        UIManagerHelper
-            .getFabricUIManagerNotNull(reactContext)
-            .removeUIManagerEventListener(this)
         toolbarMenuController.tearDown()
         configObserver = null
     }

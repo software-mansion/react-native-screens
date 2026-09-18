@@ -21,7 +21,9 @@ import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationObser
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.stack.header.config.StackHeaderInvalidationFlags
+import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
 import com.swmansion.rnscreens.stack.screen.StackScreen
+import java.lang.ref.WeakReference
 
 /**
  * Root CoordinatorLayout for a screen's header: hosts the app bar and the
@@ -33,6 +35,7 @@ internal class StackHeaderCoordinatorLayout(
     context: Context,
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
+    private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
     private val backPressHandler: StackHeaderBackPressHandler,
 ) : CoordinatorLayout(context),
     ColorSchemeProviding {
@@ -79,13 +82,9 @@ internal class StackHeaderCoordinatorLayout(
     // region Configuration observer
 
     private val configObserver =
-        object : StackHeaderConfigurationObserver {
-            override fun onInvalidated(flags: StackHeaderInvalidationFlags) {
-                invalidate(flags)
-                flushPendingUpdates()
-            }
-
-            override fun onFlushRequested() = flushPendingUpdates()
+        StackHeaderConfigurationObserver { flags ->
+            invalidate(flags)
+            flushPendingUpdates()
         }
 
     // endregion
@@ -158,12 +157,12 @@ internal class StackHeaderCoordinatorLayout(
         pendingFlags = pendingFlags or flags
     }
 
-    private fun flushPendingUpdates() {
+    internal fun flushPendingUpdates() {
         val provider = currentProvider ?: return
         if (pendingFlags.isEmpty) return
-        // Hold the flush while more updates may arrive in the current batch; the batch end
-        // triggers onFlushRequested.
-        if (provider.isUpdatePending) return
+        // Hold the flush while more updates may arrive in the current batch; the container
+        // flushes when the batch ends.
+        if (updateBatchStateProvider.get()?.isUpdatePending == true) return
         // While detached from window, only accumulate: onAttachedToWindow flushes once, after the
         // color scheme is resolved, so the header is built under the right theme.
         if (!isAttachedToWindow) return
