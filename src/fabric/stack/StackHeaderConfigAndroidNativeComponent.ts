@@ -53,6 +53,11 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   >;
   drawableIconResourceName?: string | null | undefined;
   imageIconResource?: ImageSource | null | undefined;
+  imageIconPreferredLoadingMode?:
+    | 'automatic'
+    | 'synchronous'
+    | null
+    | undefined;
   iconTintColorNormal?: ProcessedColorValue | null | undefined;
   iconTintColorPressed?: ProcessedColorValue | null | undefined;
   iconTintColorFocused?: ProcessedColorValue | null | undefined;
@@ -164,12 +169,20 @@ export interface NativeProps extends ViewProps {
   backButtonTintColorFocused?: ColorValue | undefined;
   backButtonDrawableIconResourceName?: string | undefined;
   backButtonImageIconResource?: ImageSource | undefined;
+  backButtonImageIconPreferredLoadingMode?: CT.WithDefault<
+    'automatic' | 'synchronous',
+    'automatic'
+  >;
 
   overflowIconTintColorNormal?: ColorValue | undefined;
   overflowIconTintColorPressed?: ColorValue | undefined;
   overflowIconTintColorFocused?: ColorValue | undefined;
   overflowIconDrawableIconResourceName?: string | undefined;
   overflowIconImageIconResource?: ImageSource | undefined;
+  overflowIconImageIconPreferredLoadingMode?: CT.WithDefault<
+    'automatic' | 'synchronous',
+    'automatic'
+  >;
 
   scrollFlagScroll?: CT.WithDefault<boolean, false>;
   scrollFlagEnterAlways?: CT.WithDefault<boolean, false>;

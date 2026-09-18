@@ -41,6 +41,7 @@
       // Weak ref to iconData to avoid retaining it if the item is removed before load completes
       __weak RNSStackHeaderIconData *weakIconData = iconData;
       [imageLoader loadImageFromJsonSource:iconData.jsonSource
+                 prefersSynchronousLoading:iconData.prefersSynchronousLoading
                                 asTemplate:iconData.iconType == RNSStackHeaderIconTypeTemplateSource
                     withCompletionCallback:^(UIImage *_Nullable image) {
                       weakIconData.resolvedImage = image;
