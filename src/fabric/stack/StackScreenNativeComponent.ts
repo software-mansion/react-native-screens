@@ -6,6 +6,7 @@ import type {
   ViewProps,
 } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
+import type { UnsafeMixed } from '../codegenUtils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -15,6 +16,13 @@ type OnDismissEventPayload = Readonly<{
 }>;
 
 type ActivityMode = 'detached' | 'attached';
+
+type StackScreenAnimation =
+  | 'slideFromRight'
+  | 'slideFromLeft'
+  | 'slideFromBottom'
+  | 'slideFromTop'
+  | 'none';
 
 export interface NativeProps extends ViewProps {
   // Control
@@ -39,6 +47,7 @@ export interface NativeProps extends ViewProps {
   // Configuration
 
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
+  animation?: UnsafeMixed<StackScreenAnimation> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {
