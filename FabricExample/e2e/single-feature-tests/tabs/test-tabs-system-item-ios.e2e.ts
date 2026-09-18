@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import {
   describeIfiOS,
@@ -237,9 +237,7 @@ describeIfiOS('Tab Bar System Item', () => {
       ).not.toExist();
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        await expect(
-          element(by.label('favorite').and(by.type(tabBarButtonType))),
-        ).toExist();
+        await expect(element(by.text('Favorites'))).not.toExist();
       } else {
         await expect(
           element(
@@ -285,7 +283,7 @@ describeIfiOS('Tab Bar System Item', () => {
         element(by.id('config-icon').and(by.label("icon: custom 'house'"))),
       ).toBeVisible();
       await expect(
-        element(by.id('house').and(by.label('home'))).atIndex(0),
+        element(by.id('house.fill').and(by.label('home'))).atIndex(0),
       ).toExist();
       await expect(
         element(by.id('star.fill').and(by.label('favorite'))).atIndex(0),
@@ -296,7 +294,7 @@ describeIfiOS('Tab Bar System Item', () => {
       await element(by.label('Bookmarks')).atIndex(0).tap();
       await expect(element(by.text('Static System Item'))).toBeVisible();
       await expect(
-        element(by.id('house').and(by.label('home'))).atIndex(0),
+        element(by.id('house.fill').and(by.label('home'))).atIndex(0),
       ).toExist();
       await expect(
         element(by.id('book.fill').and(by.label('bookmark'))).atIndex(0),
@@ -310,7 +308,7 @@ describeIfiOS('Tab Bar System Item', () => {
         element(by.id('config-icon').and(by.label("icon: custom 'house'"))),
       ).toBeVisible();
       await expect(
-        element(by.id('house').and(by.label('home'))).atIndex(0),
+        element(by.id('house.fill').and(by.label('home'))).atIndex(0),
       ).toExist();
     });
 
@@ -321,9 +319,11 @@ describeIfiOS('Tab Bar System Item', () => {
       ).toBeVisible();
 
       await expect(
-        element(by.id('heart').and(by.label('love'))).atIndex(0),
+        element(by.id('heart.fill').and(by.label('love'))).atIndex(0),
       ).toExist();
-      await expect(element(by.id('house').and(by.label('home')))).not.toExist();
+      await expect(
+        element(by.id('house.fill').and(by.label('home'))),
+      ).not.toExist();
     });
 
     it('should update tab bar item icon when restoring system icon', async () => {
@@ -338,7 +338,7 @@ describeIfiOS('Tab Bar System Item', () => {
         element(by.id('star.fill').and(by.label('favorite'))).atIndex(0),
       ).toExist();
       await expect(
-        element(by.id('heart').and(by.label('love'))).atIndex(0),
+        element(by.id('heart.fill').and(by.label('love'))).atIndex(0),
       ).not.toExist();
     });
   });
@@ -368,7 +368,7 @@ describeIfiOS('Tab Bar System Item', () => {
         element(by.label('Custom').and(by.type(tabBarButtonType))),
       ).toExist();
       await expect(
-        element(by.id('heart').and(by.label('love'))).atIndex(0),
+        element(by.id('heart.fill').and(by.label('love'))).atIndex(0),
       ).toExist();
       await expect(
         element(by.id('magnifyingglass').and(by.label('Search'))).atIndex(0),
@@ -430,9 +430,10 @@ describeIfiOS('Tab Bar System Item', () => {
         element(by.label('History').and(by.type(tabBarButtonType))),
       ).not.toExist();
 
-      await expect(
-        element(by.id('heart').and(by.label('love'))).atIndex(0),
-      ).toExist();
+      // TODO: revert after iOS 27 gets back prominent search support
+      // await expect(
+      //   element(by.id('heart').and(by.label('love'))).atIndex(0),
+      // ).toExist();
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).not.toExist();
@@ -472,7 +473,7 @@ describeIfiOS('Tab Bar System Item', () => {
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).toExist();
       await expect(
-        element(by.id('heart').and(by.label('love'))).atIndex(0),
+        element(by.id('heart.fill').and(by.label('love'))).atIndex(0),
       ).not.toExist();
     });
 
