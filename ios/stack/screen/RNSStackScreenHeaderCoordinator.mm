@@ -553,6 +553,14 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    if (item.visibilityPriority != nil) {
+      barButtonItem.visibilityPriority = item.visibilityPriority.integerValue;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
     __weak auto weakSelf = self;
