@@ -17,6 +17,42 @@
 
 namespace react = facebook::react;
 
+/**
+ * Resolves the `visibilityPriority` prop, which is either one of the named
+ * values or a raw number, into a `UIBarButtonItemVisibilityPriority` value.
+ * The names are resolved here rather than in JS, so that they keep pointing at
+ * whatever the UIKit constants hold.
+ */
+static NSNumber *_Nullable RNSVisibilityPriorityFromPropValue(id _Nullable value)
+{
+  if (value == nil) {
+    return nil;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    if ([value isKindOfClass:NSNumber.class]) {
+      return @([(NSNumber *)value integerValue]);
+    }
+
+    if ([value isKindOfClass:NSString.class]) {
+      if ([(NSString *)value isEqualToString:@"low"]) {
+        return @(UIBarButtonItemVisibilityPriorityLow);
+      }
+      if ([(NSString *)value isEqualToString:@"high"]) {
+        return @(UIBarButtonItemVisibilityPriorityHigh);
+      }
+      if ([(NSString *)value isEqualToString:@"standard"]) {
+        return @(UIBarButtonItemVisibilityPriorityStandard);
+      }
+      RCTLogWarn(@"[RNScreens] Unsupported visibilityPriority value: %@", value);
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+
+  return nil;
+}
+
 @implementation RNSStackHeaderItemComponentView {
   BOOL _didSetHeaderItemPlacement;
 
@@ -53,6 +89,7 @@ namespace react = facebook::react;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
+  _visibilityPriority = nil;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -224,6 +261,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.hidesSharedBackground != newItemProps.hidesSharedBackground) {
     _hidesSharedBackground = newItemProps.hidesSharedBackground;
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.visibilityPriority != newItemProps.visibilityPriority) {
+    _visibilityPriority = RNSVisibilityPriorityFromPropValue(
+        rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.visibilityPriority));
     needsUpdate = YES;
   }
 
