@@ -1,3 +1,4 @@
+import TestStackSearchBarIOS from './test-stack-search-bar-ios';
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 // Scenario objects (default exports) — carry metadata, used to build the
@@ -77,6 +78,7 @@ export { default as TestStackLayoutDirection } from './test-stack-layout-directi
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
 
 const scenarios = {
+  TestStackSearchBarIOS,
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
   TestStackLifecycleEvents,

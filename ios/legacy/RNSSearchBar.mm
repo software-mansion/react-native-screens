@@ -383,7 +383,15 @@ namespace react = facebook::react;
     self.allowToolbarIntegration = newScreenProps.allowToolbarIntegration;
   }
 
+  BOOL navigationItemDidChange = oldScreenProps.hideWhenScrolling != newScreenProps.hideWhenScrolling ||
+      oldScreenProps.placement != newScreenProps.placement ||
+      oldScreenProps.allowToolbarIntegration != newScreenProps.allowToolbarIntegration;
+
   [super updateProps:props oldProps:oldProps];
+
+  if (navigationItemDidChange) {
+    [self.navigationItemDelegate searchBarDidUpdateNavigationItem:self];
+  }
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
