@@ -16,12 +16,14 @@
   RNSStackOperationCoordinator *_operationCoordinator;
   NSMutableArray<UIView<RNSStackScreenProviding> *> *_renderedScreens;
   RNSSplitColumnFrameObserver *_frameObserver;
+  BOOL _waitingForTransition;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
     _navigationController = [RNSStackNavigationController new];
+    _navigationController.allowsEmptyStack = YES;
     _operationCoordinator = [RNSStackOperationCoordinator new];
     _renderedScreens = [NSMutableArray new];
     // The view must exist to observe its frame; it is loaded before the Split installs it in a column anyway.
@@ -60,7 +62,9 @@
       [_operationCoordinator addPushOperation:screen];
       break;
     case RNSStackScreenActivityModeDetached:
-      [self addPopOperationIfNeeded:screen];
+      if ([_navigationController.viewControllers containsObject:screen.controller]) {
+        [_operationCoordinator addPopOperation:screen];
+      }
       break;
     default:
       RCTAssert(NO, @"[RNScreens] Unexpected value of activityMode: %d", screen.activityMode);
@@ -70,6 +74,26 @@
 
 - (void)flushPendingUpdates
 {
+  if (_waitingForTransition) {
+    return;
+  }
+  id<UIViewControllerTransitionCoordinator> coordinator = _navigationController.transitionCoordinator;
+  if (coordinator != nil) {
+    // UIKit can ignore pops while the column is being shown or hidden.
+    _waitingForTransition = YES;
+    __weak RNSSplitColumnController *weakSelf = self;
+    [coordinator animateAlongsideTransition:nil
+                                 completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+                                   dispatch_async(dispatch_get_main_queue(), ^{
+                                     RNSSplitColumnController *strongSelf = weakSelf;
+                                     if (strongSelf != nil) {
+                                       strongSelf->_waitingForTransition = NO;
+                                       [strongSelf flushPendingUpdates];
+                                     }
+                                   });
+                                 }];
+    return;
+  }
   [_operationCoordinator executePendingOperationsIfNeeded:_navigationController withRenderedScreens:_renderedScreens];
 }
 

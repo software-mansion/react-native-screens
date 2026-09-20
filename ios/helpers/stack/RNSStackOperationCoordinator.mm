@@ -46,8 +46,13 @@
     return;
   }
 
-  auto popOperations = [[[self orderedOperations:(NSMutableArray<RNSStackOperation *> *)_pendingPopOperations
-                                 withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects];
+  // Unmounted screens are no longer in renderedScreens. Their pop order still follows the native stack.
+  auto orderedPops = [_pendingPopOperations
+      sortedArrayUsingComparator:^NSComparisonResult(RNSPopOperation *obj1, RNSPopOperation *obj2) {
+        return [@([controller.viewControllers indexOfObject:obj1.stackScreen.controller])
+            compare:@([controller.viewControllers indexOfObject:obj2.stackScreen.controller])];
+      }];
+  auto popOperations = [[orderedPops reverseObjectEnumerator] allObjects];
 
   for (RNSStackOperation *operation in popOperations) {
     [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).stackScreen];

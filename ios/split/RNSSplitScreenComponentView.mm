@@ -24,6 +24,7 @@ namespace react = facebook::react;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
   BOOL _hasUpdatedActivityMode;
+  BOOL _isInvalidated;
 }
 
 - (RNSSplitScreenController *)controller
@@ -153,6 +154,9 @@ namespace react = facebook::react;
 - (void)splitScreenController:(RNSSplitScreenController *)controller didDismissNatively:(BOOL)isNativeDismiss
 {
   [_reactEventEmitter emitOnDismissWithNativeDismiss:isNativeDismiss];
+  if (_isInvalidated) {
+    _controller = nil;
+  }
 }
 
 #pragma mark - RNSStackScreenProviding
@@ -274,14 +278,13 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
-  // Controller keeps the strong reference to the component via the `.view` property.
-  // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
-  // when we want to destroy the component. It is deferred so that a pending pop of the screen, applied after the
-  // mounting transaction, still finds the controller.
+  // Keep the controller available until a pending pop completes, including after a split transition.
+  // A controller that never attached can release its component reference after this transaction.
+  _isInvalidated = YES;
   __weak auto weakSelf = self;
   dispatch_async(dispatch_get_main_queue(), ^{
     auto strongSelf = weakSelf;
-    if (strongSelf) {
+    if (strongSelf && strongSelf->_controller.parentViewController == nil) {
       strongSelf->_controller = nil;
     }
   });

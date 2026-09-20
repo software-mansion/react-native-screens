@@ -12,6 +12,11 @@
 
 @property (nonatomic, readonly, nonnull) RNSStackNavigationBarCoordinator *navigationBarCoordinator;
 
+/** Split columns use a native placeholder while empty. Standalone stacks keep their root screen by default. */
+@property (nonatomic) BOOL allowsEmptyStack;
+
+@property (nonatomic, readonly, getter=isStackEmpty) BOOL stackEmpty;
+
 - (void)enqueuePushOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen;
 
 - (void)enqueuePopOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen;

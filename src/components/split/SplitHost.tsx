@@ -117,6 +117,7 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
       // This enables us to fully recreate the Split when necessary, ensuring the correct column configuration is always applied.
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
       {...props}
+      numberOfColumns={columns.length}
       style={styles.container}>
       {indexedChildren}
     </SplitHostNativeComponent>
