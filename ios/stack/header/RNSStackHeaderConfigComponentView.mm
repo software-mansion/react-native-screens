@@ -65,6 +65,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _title = nil;
   _subtitle = nil;
   _hidden = NO;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
+  if (@available(iOS 16.0, *)) {
+    _navigationItemStyle = UINavigationItemStyleNavigator;
+  }
+#endif
   _largeTitle = nil;
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
@@ -426,6 +431,16 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (oldHeaderProps.hidden != newHeaderProps.hidden) {
     _hidden = newHeaderProps.hidden;
   }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
+  if (@available(iOS 16.0, *)) {
+    if (oldHeaderProps.navigationItemStyle != newHeaderProps.navigationItemStyle) {
+      _navigationItemStyle =
+          rnscreens::conversion::UINavigationItemStyleFromReactRNSStackHeaderConfigIOSNavigationItemStyle(
+              newHeaderProps.navigationItemStyle);
+    }
+  }
+#endif
 
   if (oldHeaderProps.largeTitle != newHeaderProps.largeTitle) {
     _largeTitle = RCTNSStringFromStringNilIfEmpty(newHeaderProps.largeTitle);
