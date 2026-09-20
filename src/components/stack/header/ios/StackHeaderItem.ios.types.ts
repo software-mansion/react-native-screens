@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import type { PlatformIconIOS } from '../../../shared/types';
 import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
+import type { StackHeaderItemAxisBehaviorIOS } from '../StackHeaderConfig.ios.types';
 
 export type StackHeaderItemPlacement =
   | 'leading'
@@ -14,6 +15,7 @@ export type StackHeaderItemProps = {
   itemId?: string | undefined;
   identifier?: string | undefined;
   hidesSharedBackground?: boolean | undefined;
+  axisBehavior?: StackHeaderItemAxisBehaviorIOS | undefined;
   title?: string | undefined;
   icon?: PlatformIconIOS | undefined;
   render?: (() => ReactElement) | undefined;
