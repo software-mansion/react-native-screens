@@ -146,7 +146,7 @@ function ToolbarScreen({ name }: { name: string }) {
 function PlainScreen() {
   const { routeKey, pop } = useStackNavigationContext();
   return (
-    <View style={styles.screen}>
+    <View style={styles.screen} testID="toolbar-screen-root">
       <Text testID="toolbar-screen-name">Plain</Text>
       <Button title="Go back" onPress={() => pop(routeKey)} />
     </View>
