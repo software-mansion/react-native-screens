@@ -53,7 +53,11 @@ function ToolbarScreen({ name }: { name: string }) {
                             </Pressable>
                           ),
                         }
-                      : { type: 'item', id: 'status', title: name },
+                      : {
+                          type: 'item',
+                          id: 'status',
+                          title: `${name} toolbar`,
+                        },
                     { type: 'spacer', id: 'flexible', sizing: 'flexible' },
                     {
                       type: 'item',
@@ -94,6 +98,18 @@ function ToolbarScreen({ name }: { name: string }) {
       <Text testID="toolbar-screen-name">{name}</Text>
       <Text testID="toolbar-filter">Filter: {filter ? 'All' : 'Unread'}</Text>
       <Text testID="toolbar-last-action">Action: {lastAction}</Text>
+      <Button
+        title="Reset controls"
+        onPress={() => {
+          setFilter(false);
+          setItems('shown');
+          setHeaderMounted(true);
+          setHeaderHidden(false);
+          setCustom(false);
+          setWidth(12);
+          setLastAction('None');
+        }}
+      />
       <Button title="Empty items" onPress={() => setItems('empty')} />
       <Button title="Omit items" onPress={() => setItems('omitted')} />
       <Button title="Restore items" onPress={() => setItems('shown')} />
