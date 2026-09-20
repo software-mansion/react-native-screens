@@ -41,6 +41,14 @@ function ColumnContent(props: {
         title="Show supplementary"
         onPress={() => props.hostRef.current?.show('supplementary')}
       />
+      <Button
+        title="Hide primary"
+        onPress={() => props.hostRef.current?.hide('primary')}
+      />
+      <Button
+        title="Hide supplementary"
+        onPress={() => props.hostRef.current?.hide('supplementary')}
+      />
     </View>
   );
 }
