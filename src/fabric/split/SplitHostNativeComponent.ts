@@ -115,10 +115,14 @@ interface NativeCommands {
     viewRef: React.ComponentRef<ComponentType>,
     column: string,
   ) => void;
+  hideColumn: (
+    viewRef: React.ComponentRef<ComponentType>,
+    column: string,
+  ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['showColumn'],
+  supportedCommands: ['showColumn', 'hideColumn'],
 });
 
 export default codegenNativeComponent<NativeProps>(
