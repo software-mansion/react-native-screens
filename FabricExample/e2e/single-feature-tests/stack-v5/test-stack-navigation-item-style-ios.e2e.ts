@@ -1,12 +1,14 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
-  describeIfiOS,
   getFrame,
+  isIOSVersionAtLeast,
   selectSingleFeatureTestsScreen,
   waitUntil,
 } from '../../e2e-utils';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
+
+const describeIfiOS16 = isIOSVersionAtLeast('16.0') ? describe : describe.skip;
 
 function scenarioNavigationBar() {
   return by
@@ -82,7 +84,7 @@ async function expectEditor() {
   );
 }
 
-describeIfiOS('Stack v5: navigationItemStyle', () => {
+describeIfiOS16('Stack v5: navigationItemStyle', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
