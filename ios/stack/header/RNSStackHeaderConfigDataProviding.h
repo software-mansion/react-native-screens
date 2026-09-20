@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) NSString *subtitle;
 @property (nonatomic, readonly) BOOL hidden;
+@property (nonatomic, readonly) BOOL backButtonHidden;
 @property (nonatomic, readonly, nullable) NSString *largeTitle;
 @property (nonatomic, readonly, nullable) NSString *largeSubtitle;
 @property (nonatomic, readonly) BOOL largeTitleEnabled;

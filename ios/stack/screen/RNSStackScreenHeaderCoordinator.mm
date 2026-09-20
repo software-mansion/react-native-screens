@@ -338,6 +338,7 @@
 
 #if !TARGET_OS_TV
   navItem.prompt = nil;
+  navItem.hidesBackButton = NO;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
 
   [self clearAppliedBackButtonConfig];
@@ -429,6 +430,8 @@
   navItem.scrollEdgeAppearance = _configDataProvider.scrollEdgeAppearance;
 
 #if !TARGET_OS_TV
+  navItem.hidesBackButton = _configDataProvider.backButtonHidden;
+
   NSString *prompt = _configDataProvider.prompt;
   if (navItem.prompt != prompt && ![navItem.prompt isEqualToString:prompt]) {
     navItem.prompt = prompt;
