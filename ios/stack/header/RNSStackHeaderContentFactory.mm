@@ -89,6 +89,7 @@
       // UIKit shapes automatic scroll-edge effects around native labels, but does not recognize Fabric text views.
       // Supply the custom title's geometry in the native wrapper, outside Fabric's managed children.
       UILabel *titleScrollEdgeEffectGuide = [UILabel new];
+      titleScrollEdgeEffectGuide.isAccessibilityElement = NO;
       titleScrollEdgeEffectGuide.accessibilityElementsHidden = YES;
       titleScrollEdgeEffectGuide.userInteractionEnabled = NO;
       titleScrollEdgeEffectGuide.frame = wrapperView.bounds;
