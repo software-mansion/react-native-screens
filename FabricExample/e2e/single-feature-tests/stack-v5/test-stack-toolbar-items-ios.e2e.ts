@@ -1,11 +1,13 @@
 import { expect as jestExpect } from '@jest/globals';
 import type { IosElementAttributes } from 'detox/detox';
 import { by, device, element, expect, waitFor } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import {
+  describeIfiOS,
+  headerItem,
+  selectSingleFeatureTestsScreen,
+} from '../../e2e-utils';
 
-const toolbar = () => element(by.type('UIToolbar'));
-const toolbarItem = (title: string) =>
-  element(by.label(title).withAncestor(by.type('UIToolbar')));
+const toolbarItem = (title: string) => headerItem(title);
 const button = (title: string) => element(by.text(title));
 
 async function expectScreen(name: string) {
@@ -15,8 +17,8 @@ async function expectScreen(name: string) {
 }
 
 describeIfiOS('Stack Toolbar Items (iOS)', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
+  beforeEach(async () => {
+    await device.launchApp({ newInstance: true });
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-items-ios',
@@ -37,6 +39,7 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
   });
 
   it('updates a fixed spacer without reversing item order', async () => {
+    await toolbarItem('Unread').tap();
     const before = (await toolbarItem(
       'First',
     ).getAttributes()) as IosElementAttributes;
@@ -63,6 +66,7 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
   });
 
   it('replaces the toolbar owner on push and restores it on pop', async () => {
+    await toolbarItem('Unread').tap();
     await button('Push other toolbar').tap();
     await expectScreen('Second');
     await expect(toolbarItem('Second')).toBeVisible();
@@ -74,10 +78,43 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
     await expect(toolbarItem('All')).toBeVisible();
   });
 
+  it('restores toolbar ownership after native back navigation', async () => {
+    await button('Push other toolbar').tap();
+    await expectScreen('Second');
+    await element(by.id('chevron.backward').and(by.type('UIImageView'))).tap();
+    await expectScreen('First');
+    await expect(toolbarItem('First')).toBeVisible();
+    await expect(toolbarItem('Second')).not.toExist();
+  });
+
+  it('keeps toolbar ownership after a cancelled gesture and restores it after a pop gesture', async () => {
+    await button('Push other toolbar').tap();
+    await expectScreen('Second');
+    await element(by.id('toolbar-screen-root')).swipe(
+      'right',
+      'slow',
+      0.15,
+      0.02,
+      0.5,
+    );
+    await expectScreen('Second');
+    await expect(toolbarItem('Second')).toBeVisible();
+    await element(by.id('toolbar-screen-root')).swipe(
+      'right',
+      'fast',
+      0.8,
+      0.02,
+      0.5,
+    );
+    await expectScreen('First');
+    await expect(toolbarItem('First')).toBeVisible();
+    await expect(toolbarItem('Second')).not.toExist();
+  });
+
   it('hides the toolbar on a screen without items and restores it on pop', async () => {
     await button('Push plain screen').tap();
     await expectScreen('Plain');
-    await expect(toolbar()).not.toBeVisible();
+    await expect(toolbarItem('Actions')).not.toExist();
     await button('Go back').tap();
     await expectScreen('First');
     await expect(toolbarItem('First')).toBeVisible();
@@ -90,7 +127,7 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
       'Toggle header config',
     ]) {
       await button(removal).tap();
-      await expect(toolbar()).not.toBeVisible();
+      await expect(toolbarItem('Actions')).not.toExist();
       await button(
         removal === 'Toggle header config' ? removal : 'Restore items',
       ).tap();
@@ -107,12 +144,12 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
 
   it('renders and removes a custom toolbar item', async () => {
     await button('Toggle custom item').tap();
-    await toolbarItem('Custom action').tap();
+    await element(by.id('toolbar-custom')).tap();
     await expect(element(by.id('toolbar-last-action'))).toHaveText(
       'Action: Custom',
     );
     await button('Toggle custom item').tap();
-    await expect(toolbarItem('Custom action')).not.toExist();
+    await expect(element(by.id('toolbar-custom'))).not.toExist();
     await expect(toolbarItem('First')).toBeVisible();
   });
 });
