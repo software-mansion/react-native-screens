@@ -26,6 +26,7 @@
 
   NSMutableArray<UIBarButtonItem *> *_Nonnull _leadingBarButtonItems;
   NSMutableArray<UIBarButtonItem *> *_Nonnull _trailingBarButtonItems;
+  NSMutableArray<UIBarButtonItem *> *_Nonnull _toolbarBarButtonItems;
   NSMutableDictionary<NSString *, UIBarButtonItem *> *_Nonnull _barButtonItemsByItemId;
 }
 
@@ -36,6 +37,7 @@
     _trackerRegistry = [RNSStackHeaderMenuTrackerRegistry new];
     _leadingBarButtonItems = [NSMutableArray new];
     _trailingBarButtonItems = [NSMutableArray new];
+    _toolbarBarButtonItems = [NSMutableArray new];
     _barButtonItemsByItemId = [NSMutableDictionary new];
   }
   return self;
@@ -64,6 +66,7 @@
 
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
+  [_toolbarBarButtonItems removeAllObjects];
   [_barButtonItemsByItemId removeAllObjects];
   [_trackerRegistry clear];
 
@@ -81,6 +84,11 @@
           break;
         case RNSHeaderItemPlacementTrailing:
           [_trailingBarButtonItems addObject:[self buildBarButtonItemForItem:item]];
+          break;
+        case RNSHeaderItemPlacementToolbar:
+#if !TARGET_OS_TV
+          [_toolbarBarButtonItems addObject:[self buildBarButtonItemForItem:item]];
+#endif // !TARGET_OS_TV
           break;
         case RNSHeaderItemPlacementTitle:
           if (item.customView != nil) {
@@ -111,6 +119,11 @@
         case RNSHeaderItemSpacerPlacementTrailing:
           [_trailingBarButtonItems addObject:barButtonItem];
           break;
+        case RNSHeaderItemSpacerPlacementToolbar:
+#if !TARGET_OS_TV
+          [_toolbarBarButtonItems addObject:barButtonItem];
+#endif // !TARGET_OS_TV
+          break;
       }
     }
   }
@@ -124,6 +137,7 @@
   [self applyTitleMenuForController:controller];
   [self updateNavigationBarVisibilityAnimated:YES];
 #if !TARGET_OS_TV
+  [self updateToolbarVisibilityAnimated:YES];
   [self updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
 }
@@ -137,11 +151,23 @@
   [self applyConfigPropertiesForController:[self requireScreenController]];
   [self updateNavigationBarVisibilityAnimated:YES];
 #if !TARGET_OS_TV
+  [self updateToolbarVisibilityAnimated:YES];
   [self updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
 }
 
 #if !TARGET_OS_TV
+- (void)updateToolbarVisibilityAnimated:(BOOL)animated
+{
+  RNSStackNavigationController *navController = [self getNavigationController];
+  if (navController == nil || navController.topViewController != _screenController) {
+    return;
+  }
+
+  // Items belong to each screen. Only the visible screen may change the shared toolbar.
+  [navController setToolbarHidden:_screenController.toolbarItems.count == 0 animated:animated];
+}
+
 - (void)updateBackButtonMenuEnabled
 {
   RNSStackNavigationController *navController = [self getNavigationController];
@@ -201,6 +227,20 @@
       }
 
       [controller.navigationItem setRightBarButtonItems:[_trailingBarButtonItems copy] animated:YES];
+      break;
+    }
+    case RNSHeaderItemPlacementToolbar: {
+#if !TARGET_OS_TV
+      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem];
+      NSUInteger index = oldBarButtonItem == nil ? NSNotFound : [_toolbarBarButtonItems indexOfObject:oldBarButtonItem];
+      if (index != NSNotFound) {
+        _toolbarBarButtonItems[index] = newBarButtonItem;
+      } else {
+        RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+      }
+      [controller setToolbarItems:[_toolbarBarButtonItems copy] animated:YES];
+      [self updateToolbarVisibilityAnimated:YES];
+#endif // !TARGET_OS_TV
       break;
     }
     case RNSHeaderItemPlacementTitle:
@@ -307,6 +347,7 @@
 
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
+  [_toolbarBarButtonItems removeAllObjects];
   [_barButtonItemsByItemId removeAllObjects];
   [_trackerRegistry clear];
 
@@ -337,6 +378,7 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #if !TARGET_OS_TV
+  [controller setToolbarItems:nil animated:YES];
   navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
 
@@ -345,6 +387,7 @@
 
   [self updateNavigationBarVisibilityAnimated:YES];
 #if !TARGET_OS_TV
+  [self updateToolbarVisibilityAnimated:YES];
   [self updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
 }
@@ -415,8 +458,9 @@
     return nil;
   }
 
-  RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
-            @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
+  RCTAssert(
+      [navController isKindOfClass:RNSStackNavigationController.class],
+      @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
   return (RNSStackNavigationController *)navController;
 }
 
@@ -488,6 +532,7 @@
   UINavigationItem *navItem = controller.navigationItem;
 
 #if !TARGET_OS_TV
+  [controller setToolbarItems:[_toolbarBarButtonItems copy] animated:YES];
   navItem.leftItemsSupplementBackButton = YES;
 #endif // !TARGET_OS_TV
 

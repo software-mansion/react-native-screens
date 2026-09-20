@@ -58,6 +58,7 @@
   [super viewWillAppear:animated];
   [self.headerCoordinator updateNavigationBarVisibilityAnimated:animated];
 #if !TARGET_OS_TV
+  [self.headerCoordinator updateToolbarVisibilityAnimated:animated];
   [self.headerCoordinator updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
   [[self reactEventEmitter] emitOnWillAppear];
