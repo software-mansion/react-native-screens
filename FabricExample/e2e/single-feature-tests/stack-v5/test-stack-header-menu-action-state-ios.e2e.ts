@@ -1,6 +1,7 @@
 import { by, device, element, expect } from 'detox';
 import {
   checkmarkFor,
+  CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
   contextMenu,
   describeIfiOS,
   dismissContextMenu,
@@ -127,6 +128,10 @@ describeIfiOS('Stack Header Menu Action State (iOS)', () => {
     await dismissContextMenu();
     await element(by.id('toggle-menu')).tap();
     await headerItem('Format').tap();
+    // A negative waitFor returns immediately while presentation is still pending.
+    await new Promise(resolve =>
+      setTimeout(resolve, CONTEXT_MENU_ANIMATION_TIMEOUT_MS),
+    );
     await expect(contextMenu()).not.toExist();
     await element(by.id('toggle-menu')).tap();
     await openMenu();
