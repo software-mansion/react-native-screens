@@ -2,7 +2,7 @@
 
 Run on iPhone and iPad, with iOS 18 and iOS 26 or later.
 
-1. Observe Unread, First, and Actions in the bottom toolbar, in that order.
+1. Observe Unread, First toolbar, and Actions in the bottom toolbar, in that order.
 2. Tap Unread. Both the item and the Filter status change to All. No keyboard appears.
 3. Open Actions, select Archive, and observe Action: Archive.
 4. Toggle fixed width. The gap between the first two items grows, then resets.
@@ -15,3 +15,5 @@ Run on iPhone and iPad, with iOS 18 and iOS 26 or later.
 11. Repeat navigation using the native back button and an interactive back gesture, including cancellation.
 
 Android and tvOS ignore `ios.toolbarItems`. This scenario does not attach a SearchBar.
+
+The automated cancelled/completed gesture case runs on iOS 26 or later. The same swipe does not complete on unchanged main on iOS 18, so older-runtime interactive gesture verification remains manual. Native back-button and programmatic navigation are covered on both versions.
