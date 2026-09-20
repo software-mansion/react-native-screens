@@ -44,6 +44,7 @@ function ToolbarScreen({ name }: { name: string }) {
                           id: 'custom',
                           render: () => (
                             <Pressable
+                              testID="toolbar-custom"
                               accessibilityRole="button"
                               accessibilityLabel="Custom action"
                               style={styles.custom}
