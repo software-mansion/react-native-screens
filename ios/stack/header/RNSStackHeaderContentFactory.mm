@@ -82,6 +82,22 @@
   wrapperView.translatesAutoresizingMaskIntoConstraints = NO;
   [wrapperView addSubview:contentView];
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    if (item.placement == RNSHeaderItemPlacementTitle || item.placement == RNSHeaderItemPlacementSubtitle ||
+        item.placement == RNSHeaderItemPlacementLargeSubtitle) {
+      // UIKit shapes automatic scroll-edge effects around native labels, but does not recognize Fabric text views.
+      // Supply the custom title's geometry in the native wrapper, outside Fabric's managed children.
+      UILabel *titleScrollEdgeEffectGuide = [UILabel new];
+      titleScrollEdgeEffectGuide.accessibilityElementsHidden = YES;
+      titleScrollEdgeEffectGuide.userInteractionEnabled = NO;
+      titleScrollEdgeEffectGuide.frame = wrapperView.bounds;
+      titleScrollEdgeEffectGuide.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+      [wrapperView addSubview:titleScrollEdgeEffectGuide];
+    }
+  }
+#endif
+
   [NSLayoutConstraint activateConstraints:@[
     [contentView.leadingAnchor constraintEqualToAnchor:wrapperView.leadingAnchor],
     [contentView.trailingAnchor constraintEqualToAnchor:wrapperView.trailingAnchor],
