@@ -247,6 +247,40 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
     ).toBeGreaterThan(0);
   });
 
+  itIfiOS26(
+    'keeps the toolbar hidden after cancelling a plain-screen pop and restores it after completing the pop',
+    async () => {
+      const { frame } = (await toolbarItem(
+        'Actions',
+      ).getAttributes()) as IosElementAttributes;
+      await button('Push plain screen').tap();
+      await expectScreen('Plain');
+      await element(by.id('toolbar-screen-root')).swipe(
+        'right',
+        'slow',
+        0.15,
+        0.02,
+        0.5,
+      );
+      await expectScreen('Plain');
+      jestExpect(
+        await renderedActionPixels('toolbar-hidden-after-cancelled-pop', frame),
+      ).toBe(0);
+      await element(by.id('toolbar-screen-root')).swipe(
+        'right',
+        'fast',
+        0.8,
+        0.001,
+        0.5,
+      );
+      await expectScreen('First');
+      await expectToolbarItem('First toolbar');
+      jestExpect(
+        await renderedActionPixels('toolbar-restored-after-gesture-pop', frame),
+      ).toBeGreaterThan(0);
+    },
+  );
+
   it('clears empty, omitted, and unmounted configurations', async () => {
     for (const removal of [
       'Empty items',

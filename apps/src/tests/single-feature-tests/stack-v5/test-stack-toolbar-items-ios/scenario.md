@@ -8,7 +8,7 @@ Run on iPhone and iPad, with iOS 18 and iOS 26 or later.
 4. Toggle fixed width. The gap between the first two items grows, then resets.
 5. Toggle custom item, tap Custom, and observe Action: Custom. Toggle it off.
 6. Push other toolbar. Second replaces First. Go back and observe the First toolbar restored.
-7. Push plain screen. The toolbar disappears. Go back and observe the First toolbar restored.
+7. Push plain screen. The toolbar disappears. Cancel an interactive back gesture and verify it remains hidden. Complete the pop and verify the First toolbar returns. Also repeat using Go back.
 8. Try Empty items and Omit items, restoring after each. The toolbar disappears and returns.
 9. Toggle header config off and on. The toolbar clears and returns with the new config.
 10. Toggle header visibility. The toolbar remains visible with the navigation bar hidden.
