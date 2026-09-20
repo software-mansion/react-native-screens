@@ -311,6 +311,26 @@ export type StackHeaderBackButtonDisplayModeIOS =
   | 'generic'
   | 'minimal';
 
+/**
+ * @summary UIKit navigation item layout style.
+ *
+ * @description
+ * - `navigator`: traditional navigation, with a centered title.
+ * - `browser`: a leading-aligned title in supported layouts.
+ * - `editor`: a leading-aligned title in supported layouts and a chevron-only
+ *   back button.
+ *
+ * UIKit adapts title placement to the device and available space.
+ *
+ * @platform iOS
+ *
+ * @supported iOS 16 and higher
+ */
+export type StackHeaderNavigationItemStyleIOS =
+  | 'navigator'
+  | 'browser'
+  | 'editor';
+
 export interface StackHeaderAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of the header.
@@ -425,6 +445,20 @@ export interface StackHeaderAppearanceIOS {
 }
 
 export interface StackHeaderConfigPropsIOS {
+  /**
+   * @summary Controls the current screen's UIKit navigation item layout style.
+   *
+   * @description
+   * Maps to `UINavigationItem.style`. Removing the option restores `navigator`.
+   * Ignored before iOS 16 and on tvOS.
+   *
+   * @default 'navigator'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 16 and higher
+   */
+  navigationItemStyle?: StackHeaderNavigationItemStyleIOS | undefined;
   /**
    * @summary Title displayed next to the back button on this screen.
    *
