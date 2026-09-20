@@ -92,6 +92,19 @@ namespace react = facebook::react;
 
 #pragma mark - RNSStackHeaderItemDataProviding
 
+- (RNSHeaderItemAxisBehavior)axisBehavior
+{
+  const auto &props = *std::static_pointer_cast<const react::RNSStackHeaderItemIOSProps>(_props);
+  switch (props.axisBehavior) {
+    case react::RNSStackHeaderItemIOSAxisBehavior::Automatic:
+      return RNSHeaderItemAxisBehaviorAutomatic;
+    case react::RNSStackHeaderItemIOSAxisBehavior::HorizontalOnly:
+      return RNSHeaderItemAxisBehaviorHorizontalOnly;
+    case react::RNSStackHeaderItemIOSAxisBehavior::VerticalPreferred:
+      return RNSHeaderItemAxisBehaviorVerticalPreferred;
+  }
+}
+
 - (nullable UIView *)customView
 {
   return self.subviews.count > 0 ? self : nil;
@@ -178,7 +191,7 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &newItemProps = *std::static_pointer_cast<const react::RNSStackHeaderItemIOSProps>(props);
   const auto &oldItemProps = *std::static_pointer_cast<const react::RNSStackHeaderItemIOSProps>(_props);
 
-  BOOL needsUpdate = NO;
+  BOOL needsUpdate = oldItemProps.axisBehavior != newItemProps.axisBehavior;
   BOOL menuDidChange = NO;
 
   if (oldItemProps.itemId != newItemProps.itemId) {

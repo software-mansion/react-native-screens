@@ -113,6 +113,33 @@ export interface SupportsSharedBackgroundIOS {
   hidesSharedBackground?: boolean | undefined;
 }
 
+export type StackHeaderItemAxisBehaviorIOS =
+  | 'automatic'
+  | 'horizontalOnly'
+  | 'verticalPreferred';
+
+export interface SupportsAxisBehaviorIOS {
+  /**
+   * @summary Supported bar axes and preferred placement for this item.
+   *
+   * @description
+   * Matches UIKit's `UIBarButtonItem.axisBehavior`.
+   * - `automatic`: UIKit infers supported axes from the item's contents.
+   * - `horizontalOnly`: only supports horizontal bars. The item is hidden
+   *   when no horizontal bar is present.
+   * - `verticalPreferred`: supports both axes and prefers vertical placement
+   *   when both horizontal and vertical bars are present.
+   *
+   * Removing this option restores `automatic`. Ignored on older iOS versions
+   * and on other platforms.
+   *
+   * @default automatic
+   * @platform iOS
+   * @supported iOS 27.1 and higher, when built with the iOS 27.1 SDK or newer
+   */
+  axisBehavior?: StackHeaderItemAxisBehaviorIOS | undefined;
+}
+
 export interface SupportsIdentifierIOS {
   /**
    * @summary Stable identifier used to match the item across different screens
@@ -141,6 +168,7 @@ export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
     SupportsMenuIOS,
     SupportsIdentifierIOS,
+    SupportsAxisBehaviorIOS,
     SupportsSharedBackgroundIOS {
   /**
    * @summary Marks this object as a header item definition.
@@ -169,6 +197,7 @@ export interface StackHeaderInlineItemIOS
 export interface StackHeaderInlineCustomItemIOS
   extends SupportsMenuIOS,
     SupportsIdentifierIOS,
+    SupportsAxisBehaviorIOS,
     SupportsSharedBackgroundIOS {
   /**
    * @summary A unique identifier within the screen header.
