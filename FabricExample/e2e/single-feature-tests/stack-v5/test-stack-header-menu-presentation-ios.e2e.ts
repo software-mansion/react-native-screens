@@ -1,6 +1,7 @@
 import { by, device, element, expect } from 'detox';
 import {
   contextMenu,
+  countMatches,
   describeIfiOS,
   dismissContextMenu,
   getFrame,
@@ -8,7 +9,10 @@ import {
   openContextMenu,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
-import { CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW } from '../../native-class-names';
+import {
+  CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
+  CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW,
+} from '../../native-class-names';
 
 const openMenu = () => openContextMenu(headerItem('Actions'));
 const notificationsCheckmark = () =>
@@ -25,6 +29,14 @@ const notificationsCheckmark = () =>
 async function tapDisabledItem(title: string) {
   const { x, y, width, height } = await getFrame(by.text(title));
   await device.tap({ x: x + width / 2, y: y + height / 2 });
+  // UIKit may keep a disabled row's menu presented; reopen from a closed menu.
+  if (
+    await countMatches(by.type(CLASS_NAME_UI_CONTEXT_MENU_LIST_VIEW), {
+      orEmpty: true,
+    })
+  ) {
+    await dismissContextMenu();
+  }
 }
 
 describeIfiOS('Stack Header Menu Presentation (iOS)', () => {
