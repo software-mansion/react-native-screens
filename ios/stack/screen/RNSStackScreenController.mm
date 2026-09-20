@@ -72,6 +72,12 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
+#if !TARGET_OS_TV
+  UISearchController *searchController = self.navigationItem.searchController;
+  if (searchController.isActive) {
+    searchController.active = NO;
+  }
+#endif // !TARGET_OS_TV
   [[self reactEventEmitter] emitOnWillDisappear];
 }
 

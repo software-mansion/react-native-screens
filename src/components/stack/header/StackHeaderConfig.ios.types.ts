@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import type { TextStyle } from 'react-native';
+import type { SearchBarProps } from '../../../legacy/types';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
@@ -425,6 +426,20 @@ export interface StackHeaderAppearanceIOS {
 }
 
 export interface StackHeaderConfigPropsIOS {
+  /**
+   * @summary Search bar displayed in the native navigation header.
+   *
+   * @description
+   * Pass a single `<SearchBar />` element. Its existing props, events and ref
+   * commands configure the native search controller. Removing or replacing
+   * the element dismisses the previous search controller. Search is dismissed
+   * when the screen loses focus; returning does not automatically focus it.
+   *
+   * Ignored on tvOS, Android and web.
+   *
+   * @platform iOS
+   */
+  searchBar?: ReactElement<SearchBarProps> | undefined;
   /**
    * @summary Title displayed next to the back button on this screen.
    *
