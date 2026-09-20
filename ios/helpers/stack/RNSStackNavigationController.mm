@@ -12,6 +12,7 @@
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
+  UIViewController *_emptyStackController;
 }
 
 - (instancetype)init
@@ -34,6 +35,26 @@
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
+}
+
+- (void)setAllowsEmptyStack:(BOOL)allowsEmptyStack
+{
+  _allowsEmptyStack = allowsEmptyStack;
+  if (allowsEmptyStack) {
+    if (_emptyStackController == nil) {
+      _emptyStackController = [UIViewController new];
+    }
+    if (self.viewControllers.count == 0) {
+      [self setViewControllers:@[ _emptyStackController ] animated:NO];
+    }
+  } else if (self.topViewController == _emptyStackController) {
+    [self setViewControllers:@[] animated:NO];
+  }
+}
+
+- (BOOL)isStackEmpty
+{
+  return self.viewControllers.count == 0 || self.topViewController == _emptyStackController;
 }
 
 #pragma mark-- Layout
@@ -109,16 +130,31 @@
   }
 
   for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
-    RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
+    RCTAssert(
+        self.allowsEmptyStack ? !self.isStackEmpty : [self.viewControllers count] > 1,
+        @"[RNScreens] Attempt to pop last screen from the stack");
     RCTAssert(self.topViewController == op.stackScreen.controller, @"[RNScreens] Attempt to pop non-top screen");
-    [self popViewControllerAnimated:YES];
+    if (self.allowsEmptyStack && self.viewControllers.count == 1) {
+      // UIKit cannot show an empty nested navigation controller when the split is collapsed.
+      [self setViewControllers:@[ _emptyStackController ] animated:NO];
+    } else {
+      // Intermediate pops must finish synchronously before starting the final transition.
+      [self popViewControllerAnimated:op == _pendingPopOperations.lastObject];
+    }
   }
 
   for (RNSPushOperation *op in _pendingPushOperations) {
-    [self pushViewController:op.stackScreen.controller animated:YES];
+    if (self.allowsEmptyStack && self.isStackEmpty) {
+      // The first screen is the root, so the placeholder must not appear in its back stack.
+      [self setViewControllers:@[ op.stackScreen.controller ] animated:NO];
+    } else {
+      [self pushViewController:op.stackScreen.controller animated:op == _pendingPushOperations.lastObject];
+    }
   }
 
-  RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
+  RCTAssert(
+      self.allowsEmptyStack || [self.viewControllers count] > 0,
+      @"[RNScreens] Stack should never be empty after updates");
 
   [self dumpStackModel];
 
@@ -133,6 +169,9 @@
 #ifdef RNS_DEBUG_LOGGING
   RNSLog(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
+    if (viewController == _emptyStackController) {
+      continue;
+    }
     RNSLog(@"[RNScreens] %@", [(id<RNSStackScreenProviding>)viewController.view screenKey]);
   }
 #endif // RNS_DEBUG_LOGGING

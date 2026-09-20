@@ -7,6 +7,7 @@
 #import "RNSSplitColumnController.h"
 #import "RNSSplitColumnControllerDelegate.h"
 #import "RNSSplitScreenController.h"
+#import "RNSStackNavigationController.h"
 
 [[maybe_unused]] static const NSInteger minNumberOfColumns = 2;
 [[maybe_unused]] static const NSInteger maxNumberOfColumns = 3;
@@ -57,6 +58,7 @@
     }
 
     self.delegate = self;
+    [self installColumnsIfNeeded];
   }
 
   return self;
@@ -99,6 +101,7 @@
   if (column < 0) {
     if (_inspectorColumnController == nil) {
       _inspectorColumnController = [RNSSplitColumnController new];
+      _inspectorColumnController.delegate = self;
     }
     return _inspectorColumnController;
   }
@@ -141,27 +144,24 @@
 }
 
 /**
- * @brief Installs the navigation controllers of the columns in the Split once every column has its first screen;
- * afterwards the columns live for the host's lifetime and only their stacks change.
+ * @brief Installs the column navigation controllers once, including columns with no attached screens.
+ * The controllers live for the host's lifetime and only their stacks change.
  */
 - (void)installColumnsIfNeeded
 {
   if (!_columnsInstalled) {
-    NSMutableArray<UIViewController *> *navigationControllers =
-        [NSMutableArray arrayWithCapacity:_columnControllers.count];
-    for (RNSSplitColumnController *columnController in _columnControllers) {
-      if (columnController.navigationController.viewControllers.count == 0) {
-        return;
-      }
-      [navigationControllers addObject:columnController.navigationController];
+    for (NSInteger index = 0; index < (NSInteger)_columnControllers.count; index++) {
+      UISplitViewControllerColumn column = index == (NSInteger)_columnControllers.count - 1
+          ? UISplitViewControllerColumnSecondary
+          : (index == 0 ? UISplitViewControllerColumnPrimary : UISplitViewControllerColumnSupplementary);
+      [self setViewController:_columnControllers[index].navigationController forColumn:column];
     }
-    self.viewControllers = navigationControllers;
     _columnsInstalled = YES;
   }
 
 #if !TARGET_OS_TV && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    if (!_inspectorInstalled && _inspectorColumnController.navigationController.viewControllers.count > 0) {
+    if (!_inspectorInstalled && _inspectorColumnController != nil) {
       [self setViewController:_inspectorColumnController.navigationController
                     forColumn:UISplitViewControllerColumnInspector];
       _inspectorInstalled = YES;
@@ -270,7 +270,7 @@
 - (void)reactMountingTransactionDidMount
 {
   [self flushPendingColumnUpdates];
-  RCTAssert(_columnsInstalled, @"[RNScreens] Every column of the Split must have a screen");
+  RCTAssert(_columnsInstalled, @"[RNScreens] Split column controllers must be installed");
   [self updateSplitAppearanceIfNeeded];
 }
 
@@ -285,7 +285,7 @@
  * @brief Gets the children RNSSplitScreenController instances.
  *
  * Accesses Split controllers associated with presented columns. It asserts that each view controller is a navigation
- * controller and its topViewController is of type RNSSplitScreenController.
+ * controller. Empty columns have no screen to notify; other top controllers must be RNSSplitScreenController.
  *
  * @return An array of RNSSplitScreenController corresponding to current split view columns.
  */
@@ -306,11 +306,15 @@
               NSStringFromClass(viewController.class));
 
     UIViewController *maybeSplitScreenController = navigationController.topViewController;
+    if (maybeSplitScreenController == nil ||
+        ([navigationController isKindOfClass:RNSStackNavigationController.class] &&
+         [(RNSStackNavigationController *)navigationController isStackEmpty])) {
+      continue;
+    }
     RCTAssert(
-        maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for column %ld", (long)column);
-    RCTAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
-              @"[RNScreens] Expected RNSSplitScreenController but got %@",
-              NSStringFromClass(maybeSplitScreenController.class));
+        [maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
+        @"[RNScreens] Expected RNSSplitScreenController but got %@",
+        NSStringFromClass(maybeSplitScreenController.class));
 
     if ([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class]) {
       [splitScreenControllers addObject:(RNSSplitScreenController *)maybeSplitScreenController];

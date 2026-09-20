@@ -101,6 +101,11 @@ static const CGFloat epsilon = 1e-6;
 
 - (int)getNumberOfColumns
 {
+  const auto &props = *std::static_pointer_cast<const react::RNSSplitHostProps>(_props);
+  if (props.numberOfColumns > 0) {
+    return props.numberOfColumns;
+  }
+
   NSMutableSet<NSNumber *> *columns = [NSMutableSet set];
   for (RNSSplitScreenComponentView *screen in _reactSubviews) {
     if (screen.columnType == RNSSplitScreenColumnTypeColumn) {
