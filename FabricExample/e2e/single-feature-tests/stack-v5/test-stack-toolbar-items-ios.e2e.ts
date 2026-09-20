@@ -287,12 +287,23 @@ describeIfiOS('Stack Toolbar Items (iOS)', () => {
       'Omit items',
       'Toggle header config',
     ]) {
+      const { frame } = (await toolbarItem(
+        'Actions',
+      ).getAttributes()) as IosElementAttributes;
+      jestExpect(
+        await renderedActionPixels(`toolbar-before-${removal}`, frame),
+      ).toBeGreaterThan(0);
       await button(removal).tap();
-      await expect(toolbarItem('Actions')).not.toExist();
+      jestExpect(
+        await renderedActionPixels(`toolbar-hidden-${removal}`, frame),
+      ).toBe(0);
       await button(
         removal === 'Toggle header config' ? removal : 'Restore items',
       ).tap();
       await expectToolbarItem('First toolbar');
+      jestExpect(
+        await renderedActionPixels(`toolbar-restored-${removal}`, frame),
+      ).toBeGreaterThan(0);
     }
   });
 
