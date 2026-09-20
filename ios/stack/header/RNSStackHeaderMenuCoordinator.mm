@@ -128,9 +128,10 @@
     RNSMenuItemType effectiveItemType = [self resolveItemType:itemData.itemType
                                         insideSingleSelection:insideSingleSelection];
 
-    RCTAssert(!(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
-              @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
-              itemData.menuElementId);
+    RCTAssert(
+        !(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
+        @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
+        itemData.menuElementId);
 
     if (effectiveItemType == RNSMenuItemTypeToggle) {
       if (insideSingleSelection && itemData.initialToggleState) {
@@ -230,7 +231,7 @@
               }];
   toggleAction.state = isItemToggledOn ? UIMenuElementStateOn : UIMenuElementStateOff;
 
-  [self decorateActionKeepsMenuPresented:toggleAction withData:data];
+  [self decorateAction:toggleAction withData:data];
 
   return toggleAction;
 }
@@ -261,7 +262,7 @@
                                          [weakDelegate didPressMenuItem:data.menuElementId];
                                        }];
 
-  [self decorateActionKeepsMenuPresented:action withData:data];
+  [self decorateAction:action withData:data];
 
   return action;
 }
@@ -310,8 +311,20 @@
   }
 }
 
-+ (void)decorateActionKeepsMenuPresented:(UIAction *)action withData:(RNSStackHeaderMenuItemData *)data
++ (void)decorateAction:(UIAction *)action withData:(RNSStackHeaderMenuItemData *)data
 {
+  if (data.disabled) {
+    action.attributes |= UIMenuElementAttributesDisabled;
+  }
+  if (data.destructive) {
+    action.attributes |= UIMenuElementAttributesDestructive;
+  }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(15_0) || (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 150000)
+  if (@available(iOS 15.0, tvOS 15.0, *)) {
+    action.subtitle = data.subtitle;
+  }
+#endif
+
   if (data.keepsMenuPresented) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) || (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 160000)
     if (@available(iOS 16.0, tvOS 16.0, *)) {
