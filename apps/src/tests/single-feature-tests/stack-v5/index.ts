@@ -27,6 +27,7 @@ import TestStackToolbarMenuA11y from './test-stack-toolbar-menu-a11y-android';
 import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-ios';
 import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
+import TestStackHeaderMenuActionStateIOS from './test-stack-header-menu-action-state-ios';
 import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
 import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
 import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
@@ -50,6 +51,7 @@ export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios'
 export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
+export { default as TestStackHeaderMenuActionStateIOS } from './test-stack-header-menu-action-state-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
 export { default as TestStackHeaderSubviewOnPressIOS } from './test-stack-header-subview-onpress-ios';
 export { default as TestStackBackButtonIOS } from './test-stack-back-button-ios';
@@ -87,6 +89,7 @@ const scenarios = {
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,
+  TestStackHeaderMenuActionStateIOS,
   TestStackBackButtonIOS,
   TestStackBackButtonAndroid,
   TestStackOverflowIcon,

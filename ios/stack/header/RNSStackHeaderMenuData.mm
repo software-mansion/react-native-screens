@@ -7,6 +7,7 @@
 - (instancetype)initWithId:(NSString *)menuElementId
                      title:(nullable NSString *)title
                   itemType:(RNSMenuItemType)itemType
+                     state:(UIMenuElementState)state
         initialToggleState:(BOOL)initialToggleState
         keepsMenuPresented:(BOOL)keepsMenuPresented
                       icon:(nullable RNSStackHeaderIconData *)icon
@@ -15,6 +16,7 @@
     _menuElementId = [menuElementId copy];
     _title = [title copy];
     _itemType = itemType;
+    _state = state;
     _initialToggleState = initialToggleState;
     _keepsMenuPresented = keepsMenuPresented;
     _icon = icon;
