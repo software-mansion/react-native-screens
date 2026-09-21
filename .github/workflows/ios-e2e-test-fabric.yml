@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 90
     env:
       WORKING_DIRECTORY: FabricExample

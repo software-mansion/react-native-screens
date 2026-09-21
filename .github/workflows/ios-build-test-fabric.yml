@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
@@ -37,7 +37,7 @@ jobs:
       - name: Use latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.2'
+          xcode-version: '27.0'
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
