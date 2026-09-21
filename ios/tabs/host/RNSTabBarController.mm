@@ -314,6 +314,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
+  [self updateSearchTabsIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
@@ -467,11 +468,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
   if (@available(iOS 26.1, *)) {
-    UITab *_Nullable previouslySelectedTab = self.selectedTab;
+    UIViewController *_Nullable previouslySelectedController = self.selectedTab.viewController;
 
-    // Restoring the stale `selectedTab` while More is active would yank the selection away.
+    // Restoring the stale selection while More is active would yank the selection away.
     BOOL shouldRestoreSelectedTab =
-        previouslySelectedTab != nil && ![self isMoreNavigationControllerTabBarItemSelected];
+        previouslySelectedController != nil && ![self isMoreNavigationControllerTabBarItemSelected];
 
     NSMutableArray<__kindof UITab *> *tabs = [NSMutableArray arrayWithCapacity:screenControllers.count];
     for (RNSTabsScreenViewController *screenController in screenControllers) {
@@ -479,8 +480,15 @@ static void rns_pushViewController(__unsafe_unretained id self,
     }
     self.tabs = tabs;
 
-    if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
-      self.selectedTab = previouslySelectedTab;
+    if (shouldRestoreSelectedTab) {
+      // Match by view controller rather than tab instance - robust against the backing tab
+      // being a different object than the one selected before the update.
+      for (UITab *tab in tabs) {
+        if (tab.viewController == previouslySelectedController) {
+          self.selectedTab = tab;
+          break;
+        }
+      }
     }
     return;
   }
@@ -520,6 +528,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self setSelectedViewController:screenController];
 }
 
+/// Returns the `UITab` backing the screen controller, creating it on first use. The tab class is
+/// fixed at creation: `searchRole` screens are backed by `UISearchTab` (drives the system search
+/// treatment), all others by a plain `UITab`. Changing the search role of a live screen is
+/// unsupported - a live tab is never rebuilt, because UIKit asserts when a view controller is
+/// resolved by a second `UITab` instance (even one replacing the original in the tabs array).
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
   for (UITab *tab in self.tabs) {
@@ -536,6 +549,19 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (UITab *)makeTabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
+
+  if (screenController.tabScreenComponentView.searchRole) {
+    // The designated initializer of `UISearchTab` takes no identifier - UIKit assigns a system one.
+    UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
+      return weakScreenController;
+    }];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 26.0, *)) {
+      searchTab.automaticallyActivatesSearch = screenController.tabScreenComponentView.automaticallyActivatesSearch;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    return searchTab;
+  }
 
   return [[UITab alloc] initWithTitle:screenController.title ?: @""
                                 image:nil
@@ -574,6 +600,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   _isHandlingExplicitSelectionUpdate = YES;
   _isHandlingUserTabSelection = YES;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    if ([tab isKindOfClass:UISearchTab.class]) {
+      // A native pop in the nested stack changes the top navigation item without a mounting
+      // transaction until JS catches up - re-mirror just before UIKit may auto-activate.
+      [static_cast<RNSTabsScreenViewController *>(viewController) updateNavigationItemSearchControllerFromNestedStack];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
   return YES;
 }
 
@@ -774,6 +811,31 @@ static void rns_pushViewController(__unsafe_unretained id self,
     tabViewController.tabBarItem.accessibilityIdentifier = screenView.tabItemTestID;
     tabViewController.tabBarItem.accessibilityLabel = screenView.tabItemAccessibilityLabel;
   }
+}
+
+/// Mirrors search-related configuration onto live `UISearchTab` instances:
+/// the `automaticallyActivatesSearch` prop and the nested stack's `searchController`
+/// (UIKit activates the one attached to the tab view controller's navigation item).
+- (void)updateSearchTabsIfNeeded
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    for (UITab *tab in self.tabs) {
+      if (![tab isKindOfClass:UISearchTab.class]) {
+        continue;
+      }
+      auto *searchTab = static_cast<UISearchTab *>(tab);
+      auto *screenController = static_cast<RNSTabsScreenViewController *>(tab.viewController);
+      auto *screenView = screenController.tabScreenComponentView;
+
+      if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
+        searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;
+      }
+
+      [screenController updateNavigationItemSearchControllerFromNestedStack];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Utility
