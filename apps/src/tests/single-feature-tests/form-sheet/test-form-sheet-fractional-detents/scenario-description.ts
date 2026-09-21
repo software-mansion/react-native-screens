@@ -6,5 +6,5 @@ export const scenarioDescription: ScenarioDescription = {
   details: 'testing different setups for one, two and three fractional detents',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
-  smokeTest: false,
+  smokeTest: true,
 };
