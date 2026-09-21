@@ -14,6 +14,8 @@ type FinishTransitioningEvent = Readonly<{}>;
 export interface NativeProps extends ViewProps {
   nativeContainerBackgroundColor?: ColorValue | undefined;
 
+  disableDefaultMenuAction?: CT.WithDefault<boolean, false>;
+
   onFinishTransitioning?:
     | CT.DirectEventHandler<FinishTransitioningEvent>
     | undefined;
