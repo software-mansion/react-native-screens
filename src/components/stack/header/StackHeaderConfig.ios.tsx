@@ -58,6 +58,8 @@ function StackHeaderConfig(
     largeSubtitle,
     largeTitleEnabled,
     prompt,
+    minimizationBehavior,
+    restorationBehavior,
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
@@ -166,6 +168,8 @@ function StackHeaderConfig(
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
       prompt={prompt}
+      minimizationBehavior={minimizationBehavior}
+      restorationBehavior={restorationBehavior}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       titleMenu={resolvedTitleMenu}
