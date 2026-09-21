@@ -37,12 +37,14 @@ import {
 const PROBE_WIDTH = 48;
 const PROBE_HEIGHT = 32;
 
+const PUSH_LABEL = 'Push screen (adds a back button)';
+
 // Each picker's options are the single source of truth; the option union type is
 // derived from the array so the two can never drift apart.
 const options = <const T extends string>(...values: T[]): T[] => values;
 
 const DIRECTIONS: StackHostDirection[] = ['inherit', 'ltr', 'rtl'];
-const MENU_OPTIONS = options('none', 'overflow', 'action + overflow');
+const MENU_OPTIONS = options('none', 'action + overflow');
 // medium is the same Collapsing branch as large, differing only in type scale.
 const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'large'];
 const HORIZONTAL_GRAVITY_OPTIONS: StackHeaderTitleHorizontalGravityAndroid[] = [
@@ -56,39 +58,23 @@ export type MenuOption = (typeof MENU_OPTIONS)[number];
 interface Config {
   direction: StackHostDirection;
   type: StackHeaderTypeAndroid;
-  leadingSubview: boolean;
   centerSubview: boolean;
-  trailingSubview: boolean;
   titleCentered: boolean;
   subtitleCentered: boolean;
   expandedTitleHorizontalGravity: StackHeaderTitleHorizontalGravityAndroid;
   collapsedTitleHorizontalGravity: StackHeaderTitleHorizontalGravityAndroid;
   menu: MenuOption;
-  backButtonHidden: boolean;
 }
 
 const DEFAULT_CONFIG: Config = {
   direction: 'inherit',
   type: 'small',
-  leadingSubview: true,
   centerSubview: false,
-  trailingSubview: true,
   titleCentered: false,
   subtitleCentered: false,
   expandedTitleHorizontalGravity: 'start',
   collapsedTitleHorizontalGravity: 'start',
   menu: 'none',
-  backButtonHidden: false,
-};
-
-// The case the collapsing-toolbar RTL workaround exists for: a collapsing
-// header with both edge subviews and a menu view competing for the toolbar's
-// layout cursor.
-const COLLAPSING_PRESET: Config = {
-  ...DEFAULT_CONFIG,
-  direction: 'rtl',
-  type: 'large',
-  menu: 'action + overflow',
 };
 
 const ConfigContext = React.createContext<{
@@ -101,11 +87,7 @@ const ConfigContext = React.createContext<{
   setConfig: () => {},
 });
 
-function makeProbe(enabled: boolean, label: string) {
-  if (!enabled) {
-    return undefined;
-  }
-
+function makeProbe(label: string) {
   return {
     render: () => (
       <View style={styles.probe}>
@@ -122,15 +104,6 @@ function buildMenu(
     return undefined;
   }
 
-  const overflowItems: StackHeaderToolbarMenuBaseAndroid['children'] = [
-    { type: 'menuItem', id: 'overflow-1', title: 'Overflow one' },
-    { type: 'menuItem', id: 'overflow-2', title: 'Overflow two' },
-  ];
-
-  if (option === 'overflow') {
-    return { children: overflowItems };
-  }
-
   return {
     children: [
       {
@@ -139,32 +112,32 @@ function buildMenu(
         title: 'Act',
         showAsAction: 'always',
       },
-      ...overflowItems,
+      { type: 'menuItem', id: 'overflow-1', title: 'Overflow one' },
+      { type: 'menuItem', id: 'overflow-2', title: 'Overflow two' },
     ],
   };
 }
 
 function buildHeaderConfig(config: Config): StackHeaderConfigProps {
+  const isSmall = config.type === 'small';
+
   return {
     title: 'Direction',
     subtitle: 'Subtitle',
-    backButtonHidden: config.backButtonHidden,
     android: {
       type: config.type,
       titleCentered: config.titleCentered,
       subtitleCentered: config.subtitleCentered,
       expandedTitleHorizontalGravity: config.expandedTitleHorizontalGravity,
       collapsedTitleHorizontalGravity: config.collapsedTitleHorizontalGravity,
-      leadingSubview: makeProbe(config.leadingSubview, 'L'),
+      leadingSubview: makeProbe('L'),
       // Center subviews are supported only by the small header.
       centerSubview:
-        config.type === 'small'
-          ? makeProbe(config.centerSubview, 'C')
-          : undefined,
-      trailingSubview: makeProbe(config.trailingSubview, 'T'),
+        isSmall && config.centerSubview ? makeProbe('C') : undefined,
+      trailingSubview: makeProbe('T'),
       toolbarMenu: buildMenu(config.menu),
       // Keeps the collapsed state of the large header reachable from any offset.
-      scrollFlagEnterAlways: config.type === 'small' ? undefined : true,
+      scrollFlagEnterAlways: isSmall ? undefined : true,
     },
   };
 }
@@ -184,16 +157,18 @@ function TestStackLayoutDirection() {
       <StackContainer
         direction={config.direction}
         routeConfigs={[
-          { name: 'Root', element: <RootScreen /> },
-          { name: 'Pushed', element: <PushedScreen /> },
+          { name: 'Root', element: <ConfigScreen /> },
+          { name: 'Pushed', element: <ConfigScreen /> },
         ]}
       />
     </ConfigContext.Provider>
   );
 }
 
-function RtlControls() {
+function ConfigControls() {
+  const { config, updateConfig, setConfig } = useContext(ConfigContext);
   const [forceRtl, setForceRtl] = useState(I18nManager.isRTL);
+  const isSmall = config.type === 'small';
 
   useEffect(() => {
     I18nManager.forceRTL(forceRtl);
@@ -202,10 +177,7 @@ function RtlControls() {
   return (
     <>
       <Text style={styles.heading}>React Native</Text>
-      <Text style={styles.note}>
-        Only affects `direction: inherit`, and only after the app is restarted.
-      </Text>
-      <Text style={styles.note}>
+      <Text style={styles.readout}>
         {`I18nManager.isRTL == ${I18nManager.isRTL}`}
       </Text>
       <SettingsSwitch
@@ -214,17 +186,6 @@ function RtlControls() {
         value={forceRtl}
         onValueChange={setForceRtl}
       />
-    </>
-  );
-}
-
-function ConfigControls() {
-  const { config, updateConfig, setConfig } = useContext(ConfigContext);
-  const isSmall = config.type === 'small';
-
-  return (
-    <>
-      <RtlControls />
 
       <Text style={styles.heading}>StackHost</Text>
       <SettingsPicker<StackHostDirection>
@@ -234,15 +195,6 @@ function ConfigControls() {
         onValueChange={v => updateConfig('direction', v)}
         items={DIRECTIONS}
       />
-
-      <Text style={styles.heading}>Presets</Text>
-      <View style={styles.presets}>
-        <Button title="Reset" onPress={() => setConfig(DEFAULT_CONFIG)} />
-        <Button
-          title="RTL collapsing header with menu"
-          onPress={() => setConfig(COLLAPSING_PRESET)}
-        />
-      </View>
 
       <Text style={styles.heading}>Header</Text>
       <SettingsPicker<StackHeaderTypeAndroid>
@@ -259,14 +211,6 @@ function ConfigControls() {
         onValueChange={v => updateConfig('menu', v)}
         items={MENU_OPTIONS}
       />
-      <SettingsSwitch
-        testID="back-button-hidden-switch"
-        label="backButtonHidden"
-        value={config.backButtonHidden}
-        onValueChange={v => updateConfig('backButtonHidden', v)}
-      />
-
-      <Text style={styles.heading}>Title position</Text>
       {isSmall ? (
         <>
           <SettingsSwitch
@@ -280,6 +224,12 @@ function ConfigControls() {
             label="subtitleCentered"
             value={config.subtitleCentered}
             onValueChange={v => updateConfig('subtitleCentered', v)}
+          />
+          <SettingsSwitch
+            testID="center-subview-switch"
+            label="centerSubview"
+            value={config.centerSubview}
+            onValueChange={v => updateConfig('centerSubview', v)}
           />
         </>
       ) : (
@@ -304,31 +254,7 @@ function ConfigControls() {
           />
         </>
       )}
-
-      <Text style={styles.heading}>Probe subviews</Text>
-      <Text style={styles.note}>
-        {`Fixed ${PROBE_WIDTH}dp boxes. L must sit on the leading edge and T on the trailing edge; C stays centered. Center subviews are supported only by the small header.`}
-      </Text>
-      <SettingsSwitch
-        testID="leading-subview-switch"
-        label="leadingSubview"
-        value={config.leadingSubview}
-        onValueChange={v => updateConfig('leadingSubview', v)}
-      />
-      {isSmall && (
-        <SettingsSwitch
-          testID="center-subview-switch"
-          label="centerSubview"
-          value={config.centerSubview}
-          onValueChange={v => updateConfig('centerSubview', v)}
-        />
-      )}
-      <SettingsSwitch
-        testID="trailing-subview-switch"
-        label="trailingSubview"
-        value={config.trailingSubview}
-        onValueChange={v => updateConfig('trailingSubview', v)}
-      />
+      <Button title="Reset" onPress={() => setConfig(DEFAULT_CONFIG)} />
     </>
   );
 }
@@ -354,7 +280,7 @@ function useApplyHeaderConfig() {
   }, [headerConfig, setRouteOptions, routeKey]);
 }
 
-function ConfigScreen({ pushTitle }: { pushTitle: string }) {
+function ConfigScreen() {
   const { push } = useStackNavigationContext();
   useApplyHeaderConfig();
 
@@ -364,25 +290,19 @@ function ConfigScreen({ pushTitle }: { pushTitle: string }) {
         nestedScrollEnabled={true}
         style={styles.scroll}
         contentContainerStyle={styles.content}
+        // The controls stick below the header so they stay reachable at any
+        // scroll offset.
         testID="layout-direction-scrollview">
         <ContentDirectionMarker />
         <ConfigControls />
         <Text style={styles.heading}>Navigation</Text>
-        <Button title={pushTitle} onPress={() => push('Pushed')} />
+        <Button title={PUSH_LABEL} onPress={() => push('Pushed')} />
         <LongText size="lg" />
         {/* Bottom sentinel: lets e2e assert the content actually scrolled. */}
         <Text testID="layout-direction-bottom-marker">End of content</Text>
       </ScrollView>
     </ScrollViewMarker>
   );
-}
-
-function RootScreen() {
-  return <ConfigScreen pushTitle="Push screen (adds a back button)" />;
-}
-
-function PushedScreen() {
-  return <ConfigScreen pushTitle="Push another" />;
 }
 
 const styles = StyleSheet.create({
@@ -402,12 +322,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 4,
   },
-  note: {
+  readout: {
     fontSize: 13,
     marginBottom: 4,
-  },
-  presets: {
-    gap: 4,
   },
   marker: {
     flexDirection: 'row',
