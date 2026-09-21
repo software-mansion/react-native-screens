@@ -72,6 +72,8 @@ function TabsScreen(props: TabsScreenProps) {
       )}
       userInterfaceStyle={ios?.experimental_userInterfaceStyle}
       systemItem={ios?.systemItem}
+      searchRole={ios?.searchRole}
+      automaticallyActivatesSearch={ios?.automaticallyActivatesSearch}
       overrideScrollViewContentInsetAdjustmentBehavior={
         ios?.overrideScrollViewContentInsetAdjustmentBehavior
       }>
