@@ -1,9 +1,8 @@
 #import "RNSSplitScreenShadowStateProxy.h"
-#import "RNSSplitScreenComponentView.h"
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
-#import <rnscreens/RNSSplitScreenShadowNode.h>
+#import <react/renderer/components/rnscreens/RNSSplitScreenShadowNode.h>
 
 namespace react = facebook::react;
 
@@ -21,21 +20,6 @@ namespace react = facebook::react;
   return self;
 }
 
-- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
-{
-  [self updateShadowStateOfComponent:screenComponentView inContextOfAncestorView:nil];
-}
-
-- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
-             inContextOfAncestorView:(UIView *_Nullable)ancestorView
-{
-  CGRect frame = screenComponentView.frame;
-  if (ancestorView != nil) {
-    frame = [screenComponentView convertRect:frame toView:ancestorView];
-  }
-  [self updateShadowStateWithFrame:frame];
-}
-
 - (void)updateShadowStateWithFrame:(CGRect)frame
 {
   if (_state == nullptr) {
@@ -48,15 +32,6 @@ namespace react = facebook::react;
 
     _lastScheduledFrame = frame;
   }
-}
-
-- (void)updateShadowStateOfComponent:(RNSSplitScreenComponentView *)screenComponentView
-                           withFrame:(CGRect)frame
-             inContextOfAncestorView:(nonnull UIView *)ancestorView
-{
-  RCTAssert(ancestorView != nil, @"[RNScreens] ancestorView must not be nil");
-  CGRect convertedFrame = [screenComponentView convertRect:frame toView:ancestorView];
-  [self updateShadowStateWithFrame:convertedFrame];
 }
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState

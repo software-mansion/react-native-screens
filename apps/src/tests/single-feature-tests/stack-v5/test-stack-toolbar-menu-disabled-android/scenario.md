@@ -35,9 +35,12 @@ Not automated:
 - The **Last Event** line shows the most recent `onPress` /
   `onSelectionChange`. "Does not update" below means the previous text
   stays unchanged — disabled elements fire no events.
-- The props flow rebuilds the menu from scratch on every update,
-  resetting toggle states to their initial values (`opt-a` checked,
-  `opt-b` unchecked).
+- The props flow rebuilds the menu from scratch on every **real**
+  `toolbarMenu` change, resetting toggle states to their initial values
+  (`opt-a` checked, `opt-b` unchecked). Every props control on this screen
+  rewrites `toolbarMenu`, so each one is a real change. Re-sending a
+  deep-equal menu is a no-op, and no other kind of header rebuild resets
+  the state.
 
 ## Steps
 

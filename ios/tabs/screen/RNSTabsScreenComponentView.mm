@@ -1,5 +1,6 @@
 #import "RNSTabsScreenComponentView.h"
 #import "NSString+RNSUtility.h"
+#import "RNSConversions-Tabs.h"
 #import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"

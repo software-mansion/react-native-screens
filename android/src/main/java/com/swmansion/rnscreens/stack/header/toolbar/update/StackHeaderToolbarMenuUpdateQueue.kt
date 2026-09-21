@@ -23,6 +23,7 @@ internal class StackHeaderToolbarMenuUpdateQueue(
     private val pendingBatches = ArrayDeque<List<StackHeaderToolbarMenuElementRawUpdate>>()
     private var isProcessing = false
     private var isTornDown = false
+    private var generation = 0
 
     internal fun enqueue(batch: List<StackHeaderToolbarMenuElementRawUpdate>) {
         if (batch.isEmpty()) {
@@ -32,6 +33,18 @@ internal class StackHeaderToolbarMenuUpdateQueue(
         if (!isProcessing) {
             processNext()
         }
+    }
+
+    /**
+     * Drops every batch that has not been applied yet, including one whose
+     * icons are still resolving — its eventual dispatch becomes a no-op. Used
+     * when the menu configuration is replaced: commands sent against the old
+     * menu must never touch the new one. The queue stays usable.
+     */
+    internal fun clearPending() {
+        pendingBatches.clear()
+        generation++
+        isProcessing = false
     }
 
     internal fun tearDown() {
@@ -48,11 +61,12 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                 return
             }
             isProcessing = true
+            val batchGeneration = generation
 
             val updates = arrayOfNulls<StackHeaderToolbarMenuElementUpdate>(batch.size)
             var outstanding = batch.size
 
-            var isProcessingBatch = true
+            var inSyncDispatchLoop = true
 
             fun dispatchResolvedBatch() {
                 pendingBatches.removeFirst()
@@ -63,20 +77,20 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                 index: Int,
                 options: StackHeaderToolbarMenuElementOptions,
             ) {
+                if (isTornDown || batchGeneration != generation) {
+                    return
+                }
+
                 check(updates[index] == null) {
                     "[RNScreens] Unexpected duplicated element resolution."
                 }
 
-                if (isTornDown) {
-                    return
-                }
-
-                updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options)
+                updates[index] = StackHeaderToolbarMenuElementUpdate(batch[index].id, options, batch[index].checked)
                 outstanding -= 1
 
                 // A synchronous completion is applied by the loop below; only an asynchronous one
                 // advances the queue processing from here.
-                if (outstanding == 0 && !isProcessingBatch) {
+                if (outstanding == 0 && !inSyncDispatchLoop) {
                     dispatchResolvedBatch()
                     processNext()
                 }
@@ -88,11 +102,11 @@ internal class StackHeaderToolbarMenuUpdateQueue(
                     onElementResolved(index, update.options)
                 } else {
                     iconResolver.resolve(iconSource) { icon ->
-                        onElementResolved(index, update.options.copy(icon = icon))
+                        onElementResolved(index, update.options.copy(icon = StackHeaderToolbarFieldUpdate.from(icon)))
                     }
                 }
             }
-            isProcessingBatch = false
+            inSyncDispatchLoop = false
 
             if (outstanding > 0) {
                 // An icon is still loading asynchronously; its callback will apply the batch

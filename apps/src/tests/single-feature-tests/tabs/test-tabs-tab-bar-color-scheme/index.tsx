@@ -1,6 +1,5 @@
 import {
   Appearance,
-  ColorSchemeName,
   Platform,
   ScrollView,
   StyleSheet,
@@ -23,7 +22,7 @@ import {
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
   const [reactColorScheme, setReactColorScheme] =
-    React.useState<ColorSchemeName>('unspecified');
+    React.useState<Appearance.ColorSchemeOverride>('auto');
 
   useEffect(() => {
     Appearance.setColorScheme(reactColorScheme);
@@ -48,13 +47,15 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>React Native's color scheme</Text>
-        <SettingsPicker<ColorSchemeName>
+        <SettingsPicker<Appearance.ColorSchemeOverride>
           label={'colorScheme'}
           value={reactColorScheme}
-          onValueChange={function (value: ColorSchemeName): void {
+          onValueChange={function (
+            value: Appearance.ColorSchemeOverride,
+          ): void {
             setReactColorScheme(value);
           }}
-          items={['unspecified', 'light', 'dark']}
+          items={['auto', 'light', 'dark']}
         />
       </View>
 

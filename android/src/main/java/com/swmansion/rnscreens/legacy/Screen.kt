@@ -495,8 +495,10 @@ class Screen(
                     // It has a custom `getChildDrawingOrder` method which returns
                     // wrong index if we called `startViewTransition` on the views on new arch.
                     // We add a simple View to bump the number of children to make it work.
+                    // Appended, not inserted at `i`: a filler before the circle inflates the
+                    // index `onMeasure` caches for it, which then outlives the child it points at.
                     // TODO: find a better way to handle this scenario
-                    it.addView(View(context), i)
+                    it.addView(View(context))
                 } else {
                     child?.let { view -> it.startViewTransition(view) }
                 }

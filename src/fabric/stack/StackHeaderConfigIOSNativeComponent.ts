@@ -3,6 +3,7 @@
 import type {
   CodegenTypes as CT,
   HostComponent,
+  ProcessedColorValue,
   ViewProps,
 } from 'react-native';
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
@@ -11,6 +12,28 @@ import type {
   StackHeaderMenuIOS,
 } from './StackHeaderItemIOSNativeComponent';
 import { UnsafeMixed } from '../codegenUtils';
+
+type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
+
+export type HeaderAppearance = {
+  titleFontFamily?: string | undefined;
+  titleFontSize?: CT.Float | undefined;
+  titleFontWeight?: string | undefined;
+  titleFontStyle?: string | undefined;
+  titleFontColor?: ProcessedColorValue | null | undefined;
+
+  largeTitleFontFamily?: string | undefined;
+  largeTitleFontSize?: CT.Float | undefined;
+  largeTitleFontWeight?: string | undefined;
+  largeTitleFontStyle?: string | undefined;
+  largeTitleFontColor?: ProcessedColorValue | null | undefined;
+
+  subtitleFontFamily?: string | undefined;
+  subtitleFontSize?: CT.Float | undefined;
+  subtitleFontWeight?: string | undefined;
+  subtitleFontStyle?: string | undefined;
+  subtitleFontColor?: ProcessedColorValue | null | undefined;
+};
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
 
@@ -27,11 +50,20 @@ export interface NativeProps extends ViewProps {
   backButtonHidden?: CT.WithDefault<boolean, false>;
 
   // iOS-specific props
+  backButtonTitle?: string | undefined;
+  backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
+  backButtonMenuEnabled?: CT.WithDefault<boolean, true>;
+
   largeTitle?: string | undefined;
   largeSubtitle?: string | undefined;
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 
+  prompt?: string | undefined;
+
   titleMenu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
+
+  standardAppearance?: UnsafeMixed<HeaderAppearance> | undefined;
+  scrollEdgeAppearance?: UnsafeMixed<HeaderAppearance> | undefined;
 
   onMenuItemPress?: CT.DirectEventHandler<MenuItemPressEvent> | undefined;
   onMenuSelectionChange?:

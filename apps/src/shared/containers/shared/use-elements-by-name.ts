@@ -3,7 +3,7 @@ import type { StackRouteConfig } from '../stack';
 import type { TabRouteConfig } from '../tabs';
 
 export const useElementsByName = (
-  routeConfigs: StackRouteConfig[] | TabRouteConfig[],
+  routeConfigs: readonly StackRouteConfig[] | readonly TabRouteConfig[],
 ) => {
   return useMemo(() => {
     const map = new Map<string, React.ReactElement>();

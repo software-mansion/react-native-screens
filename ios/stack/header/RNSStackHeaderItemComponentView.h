@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) BOOL respondsToOnPress;
+@property (nonatomic, readonly) BOOL hidesSharedBackground;
 
 @property (nonatomic, nullable) NSString *titleProp;
 @property (nonatomic, nullable) RNSStackHeaderIconData *iconProp;
@@ -43,7 +44,7 @@ NS_ASSUME_NONNULL_END
 
 #if defined(__cplusplus)
 
-#import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 @interface RNSStackHeaderItemComponentView ()
 

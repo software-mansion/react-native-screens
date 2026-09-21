@@ -12,9 +12,6 @@ import com.swmansion.rnscreens.utils.resolveStyleResAttr
  *
  * Resolved from the style rather than read back from the widget: Material resolves a slot's
  * default typeface asynchronously, so until that lands the widget reports [Typeface.DEFAULT].
- *
- * Values depend on the current theme and display metrics — resolve at apply time through
- * the widget's own context.
  */
 internal class TextAppearanceDefaults(
     val color: Int,

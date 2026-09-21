@@ -1,11 +1,11 @@
-import { device, element, by, waitFor } from 'detox';
-import { IosElementAttributes, AndroidElementAttributes } from 'detox/detox';
+import { device, element, by } from 'detox';
 import {
   describeIfAndroid,
   describeIfiOS,
   selectSingleFeatureTestsScreen,
   dismissToast,
-  tapTopmost,
+  tapTopmostButton,
+  waitForRouteName,
 } from '../../e2e-utils';
 import { tapBarBackButton } from '../../elements/back-button';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
@@ -40,14 +40,6 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  *   scenario.
  */
 
-type AnyAttributes = IosElementAttributes | AndroidElementAttributes;
-
-async function waitForRoute(routeName: string): Promise<void> {
-  await waitFor(element(by.text(`Name: ${routeName}`)))
-    .toBeVisible()
-    .withTimeout(3000);
-}
-
 describeIfiOS('Stack v5: lifecycle events', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -58,7 +50,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   });
 
   it('should show Home and fire onWillAppear + onDidAppear on launch', async () => {
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('2. Home: onDidAppear');
     await dismissToast('1. Home: onWillAppear');
   });
@@ -66,7 +58,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should fire the push event set when pushing A over Home', async () => {
     await element(by.text('Push A')).tap();
 
-    await waitForRoute('A');
+    await waitForRouteName('A');
     await dismissToast('4. A: onDidAppear');
     await dismissToast('3. Home: onDidDisappear');
     await dismissToast('2. A: onWillAppear');
@@ -76,7 +68,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should fire the pop event set when popping A via the native header back button', async () => {
     await tapBarBackButton();
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('4. Home: onDidAppear');
     await dismissToast('3. A: onDidDisappear');
     await dismissToast('2. Home: onWillAppear');
@@ -85,7 +77,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
   it('should fire the identical pop event set when popping A via native back gesture', async () => {
     await element(by.text('Push A')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     await dismissToast('4. A: onDidAppear');
     await dismissToast('3. Home: onDidDisappear');
     await dismissToast('2. A: onWillAppear');
@@ -93,7 +85,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
     await element(by.id('screenA-layout-view')).swipe('right');
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('4. Home: onDidAppear');
     await dismissToast('3. A: onDidDisappear');
     await dismissToast('2. Home: onWillAppear');
@@ -102,7 +94,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
   it('should fire the identical pop event set when popping A via the Pop button', async () => {
     await element(by.text('Push A')).tap();
-    await waitForRoute('A');
+    await waitForRouteName('A');
     await dismissToast('4. A: onDidAppear');
     await dismissToast('3. Home: onDidDisappear');
     await dismissToast('2. A: onWillAppear');
@@ -110,7 +102,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
     await element(by.text('Pop')).tap();
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('4. Home: onDidAppear');
     await dismissToast('3. A: onDidDisappear');
     await dismissToast('2. Home: onWillAppear');
@@ -120,7 +112,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should fire the duplicated container + initial-screen push event set when pushing NestedStack', async () => {
     await element(by.text('Push NestedStack')).tap();
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('6. NestedHome: onDidAppear');
     await dismissToast('5. NestedStack: onDidAppear');
     await dismissToast('4. Home: onDidDisappear');
@@ -132,7 +124,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should fire the inner push event set when pushing NestedA inside the nested stack', async () => {
     await element(by.text('Push NestedA')).tap();
 
-    await waitForRoute('NestedA');
+    await waitForRouteName('NestedA');
     await dismissToast('4. NestedA: onDidAppear');
     await dismissToast('3. NestedHome: onDidDisappear');
     await dismissToast('2. NestedA: onWillAppear');
@@ -144,7 +136,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
       by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON).withAncestor(by.id('NestedA')),
     ).tap();
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('4. NestedHome: onDidAppear');
     await dismissToast('3. NestedA: onDidDisappear');
     await dismissToast('2. NestedHome: onWillAppear');
@@ -153,7 +145,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
   it('should fire the identical inner pop event set when popping NestedA via native back gesture', async () => {
     await element(by.text('Push NestedA')).tap();
-    await waitForRoute('NestedA');
+    await waitForRouteName('NestedA');
     await dismissToast('4. NestedA: onDidAppear');
     await dismissToast('3. NestedHome: onDidDisappear');
     await dismissToast('2. NestedA: onWillAppear');
@@ -161,7 +153,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
     await element(by.id('nested-screenA-layout-view')).swipe('right');
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('4. NestedHome: onDidAppear');
     await dismissToast('3. NestedA: onDidDisappear');
     await dismissToast('2. NestedHome: onWillAppear');
@@ -170,7 +162,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
   it('should fire the identical inner pop event set when popping NestedA via the Pop button', async () => {
     await element(by.text('Push NestedA')).tap();
-    await waitForRoute('NestedA');
+    await waitForRouteName('NestedA');
     await dismissToast('4. NestedA: onDidAppear');
     await dismissToast('3. NestedHome: onDidDisappear');
     await dismissToast('2. NestedA: onWillAppear');
@@ -178,7 +170,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
     await element(by.text('Pop')).tap();
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('4. NestedHome: onDidAppear');
     await dismissToast('3. NestedA: onDidDisappear');
     await dismissToast('2. NestedHome: onWillAppear');
@@ -193,7 +185,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
     // event set.
     await element(by.id('nested-home-screen-layout-view')).swipe('right');
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('6. Home: onDidAppear');
     await dismissToast('5. NestedHome: onDidDisappear');
     await dismissToast('4. NestedStack: onDidDisappear');
@@ -205,7 +197,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should fire the identical container-pop event set when popping the container from NestedHome via the NestedStack header back button', async () => {
     await element(by.text('Push NestedStack')).tap();
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('6. NestedHome: onDidAppear');
     await dismissToast('5. NestedStack: onDidAppear');
     await dismissToast('4. Home: onDidDisappear');
@@ -215,7 +207,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
     await tapBarBackButton();
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('6. Home: onDidAppear');
     await dismissToast('5. NestedHome: onDidDisappear');
     await dismissToast('4. NestedStack: onDidDisappear');
@@ -227,7 +219,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should fire the identical container-pop event set when the Pop button on the nested root bubbles to a container pop', async () => {
     await element(by.text('Push NestedStack')).tap();
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('6. NestedHome: onDidAppear');
     await dismissToast('5. NestedStack: onDidAppear');
     await dismissToast('4. Home: onDidDisappear');
@@ -237,7 +229,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
 
     await element(by.text('Pop')).tap();
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('6. Home: onDidAppear');
     await dismissToast('5. NestedHome: onDidDisappear');
     await dismissToast('4. NestedStack: onDidDisappear');
@@ -249,7 +241,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   it('should pop the whole NestedStack container from NestedA to Home in one step via the outer NestedStack header back button (skipping NestedHome)', async () => {
     await element(by.text('Push NestedStack')).tap();
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('6. NestedHome: onDidAppear');
     await dismissToast('5. NestedStack: onDidAppear');
     await dismissToast('4. Home: onDidDisappear');
@@ -258,7 +250,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
     await dismissToast('1. Home: onWillDisappear');
 
     await element(by.text('Push NestedA')).tap();
-    await waitForRoute('NestedA');
+    await waitForRouteName('NestedA');
     await dismissToast('4. NestedA: onDidAppear');
     await dismissToast('3. NestedHome: onDidDisappear');
     await dismissToast('2. NestedA: onWillAppear');
@@ -270,7 +262,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
         .withAncestor(by.id('NestedStack')),
     ).tap();
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('6. Home: onDidAppear');
     await dismissToast('5. NestedA: onDidDisappear');
     await dismissToast('4. NestedStack: onDidDisappear');
@@ -288,11 +280,6 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   const PUSH_NESTED_A = 'PUSH NESTEDA';
   const POP = 'POP';
 
-  /** Taps a Push/Pop button on the topmost stacked screen. */
-  async function tapTopmostButton(title: string): Promise<void> {
-    await tapTopmost(by.text(title));
-  }
-
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -302,7 +289,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   });
 
   it('should show Home and fire onWillAppear + onDidAppear on launch', async () => {
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('2. Home: onDidAppear');
     await dismissToast('1. Home: onWillAppear');
   });
@@ -310,7 +297,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   it('should fire the push events (onWillAppear + onDidAppear) for A only when pushing A over Home', async () => {
     await tapTopmostButton(PUSH_A);
 
-    await waitForRoute('A');
+    await waitForRouteName('A');
     await dismissToast('2. A: onDidAppear');
     await dismissToast('1. A: onWillAppear');
   });
@@ -318,7 +305,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   it('should fire the pop events (onWillDisappear + onDidDisappear) for A only when popping A via the Pop button', async () => {
     await tapTopmostButton(POP);
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('2. A: onDidDisappear');
     await dismissToast('1. A: onWillDisappear');
   });
@@ -326,7 +313,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   it('should fire duplicated push events (onWillAppear + onDidAppear) for both the NestedStack container and its initial NestedHome screen when pushing NestedStack', async () => {
     await tapTopmostButton(PUSH_NESTED_STACK);
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('4. NestedHome: onDidAppear');
     await dismissToast('3. NestedStack: onDidAppear');
     await dismissToast('2. NestedHome: onWillAppear');
@@ -336,7 +323,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   it('should fire the push events (onWillAppear + onDidAppear) for the inner NestedA screen only when pushing NestedA inside the nested stack', async () => {
     await tapTopmostButton(PUSH_NESTED_A);
 
-    await waitForRoute('NestedA');
+    await waitForRouteName('NestedA');
     await dismissToast('2. NestedA: onDidAppear');
     await dismissToast('1. NestedA: onWillAppear');
   });
@@ -344,7 +331,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
   it('should fire the pop events (onWillDisappear + onDidDisappear) for the inner NestedA screen only when popping NestedA via the Pop button', async () => {
     await tapTopmostButton(POP);
 
-    await waitForRoute('NestedHome');
+    await waitForRouteName('NestedHome');
     await dismissToast('2. NestedA: onDidDisappear');
     await dismissToast('1. NestedA: onWillDisappear');
   });
@@ -355,7 +342,7 @@ describeIfAndroid('Stack v5: lifecycle events', () => {
     // screen within it.
     await tapTopmostButton(POP);
 
-    await waitForRoute('Home');
+    await waitForRouteName('Home');
     await dismissToast('4. NestedStack: onDidDisappear');
     await dismissToast('3. NestedHome: onDidDisappear');
     await dismissToast('2. NestedStack: onWillDisappear');

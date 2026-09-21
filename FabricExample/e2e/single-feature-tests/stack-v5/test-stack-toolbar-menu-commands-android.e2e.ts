@@ -1,19 +1,23 @@
-import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import {
   createOverflowMenuHelpers,
   describeIfAndroid,
+  expectLastClicked,
+  expectOverflowMenuOrder,
   openOverflowMenu,
+  overflowMenuText,
+  rewindAndScrollUntilVisible,
+  selectPickerOption,
   selectSingleFeatureTestsScreen,
+  toggleSettingsSwitch,
 } from '../../e2e-utils';
-import { CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW } from '../../native-class-names';
 
 const SCROLLVIEW_ID = 'toolbar-menu-commands-scrollview';
 const HEADER_TITLE = 'Toolbar Menu Commands Test';
 
-// Detox's idle sync does not cover popup window animations, so every wait that
-// straddles the overflow menu opening or dismissing has to be explicit.
-const MENU_ANIMATION_TIMEOUT = 2000;
+// 300px steps keep a short picker option row from being carried past the
+// viewport.
+const SETTINGS_CONTROL = { scrollViewId: SCROLLVIEW_ID, pixels: 300 };
 
 // Every title this scenario can put into the menu. Assertions check the full
 // set — expected titles visible, all others absent — so a leaked entry fails.
@@ -27,42 +31,17 @@ const ALL_TITLES = [
 
 type MenuTitle = (typeof ALL_TITLES)[number];
 
-// Mirrors the option `testID` that `SettingsPicker` derives from its `label`.
-// @see apps/src/shared/SettingsPicker.tsx
-function optionId(pickerLabel: string, option: string): string {
-  return `${pickerLabel.split(' ').join('-')}-${option}`.toLowerCase();
-}
+/** A row of the focused popup, addressed by its visible text. */
+const overflowRow = (title: MenuTitle) => overflowMenuText(title);
 
-// Rewinds to the top first, so a target above the current offset is still
-// reachable — `whileElement` only scrolls one way.
 async function scrollIntoView(id: string) {
-  await element(by.id(SCROLLVIEW_ID)).scrollTo('top');
-  await waitFor(element(by.id(id)))
-    .toBeVisible()
-    .whileElement(by.id(SCROLLVIEW_ID))
-    .scroll(300, 'down', Number.NaN, 0.85);
+  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SETTINGS_CONTROL);
 }
 
 // Closing the picker again matters: its option rows stay in the hierarchy and
 // would collide with the `by.text` matchers used for the toolbar menu items.
-async function selectOption(
-  pickerId: string,
-  pickerLabel: string,
-  option: string,
-) {
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  const rowId = optionId(pickerLabel, option);
-  await scrollIntoView(rowId);
-  await element(by.id(rowId)).tap();
-
-  await scrollIntoView(pickerId);
-  await element(by.id(pickerId)).tap();
-
-  await expect(element(by.id(pickerId))).toHaveText(
-    `${pickerLabel}: ${option}`,
-  );
+async function selectOption(pickerId: string, label: string, option: string) {
+  await selectPickerOption({ pickerId, label, option }, SETTINGS_CONTROL);
 }
 
 type CmdTitle =
@@ -95,73 +74,20 @@ async function setSlotTitle(slot: number, title: string) {
 // The switch only toggles, so `include` is the state expected afterwards — a
 // swallowed tap fails here instead of as a wrong-menu assertion steps later.
 async function setSlotInclude(slot: number, include: boolean) {
-  const switchId = `slot-${slot}-include-switch`;
-  await scrollIntoView(switchId);
-  await element(by.id(switchId)).tap();
-
-  await expect(
-    element(by.text(`slot ${slot} include: ${include}`)),
-  ).toBeVisible();
+  await toggleSettingsSwitch(
+    {
+      switchId: `slot-${slot}-include-switch`,
+      label: `slot ${slot} include`,
+      to: include,
+    },
+    SETTINGS_CONTROL,
+  );
 }
 
-const { waitForScreen, closeMenuIfOpen, withOverflowMenu } =
+const { closeMenuIfOpen, withOverflowMenu, waitForMenuItem, tapMenuItem } =
   createOverflowMenuHelpers({
     scrollViewId: SCROLLVIEW_ID,
   });
-
-async function waitForMenuItem(title: MenuTitle) {
-  await waitFor(
-    element(
-      by
-        .text(title)
-        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-    ),
-  )
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-}
-
-async function tapMenuItem(title: MenuTitle) {
-  await waitForMenuItem(title);
-  await element(
-    by
-      .text(title)
-      .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-  ).tap();
-  await waitFor(
-    element(
-      by
-        .text(title)
-        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-    ),
-  )
-    .not.toExist()
-    .withTimeout(MENU_ANIMATION_TIMEOUT);
-  await waitForScreen();
-}
-
-// Rows are stacked vertically, so their on-screen positions carry the order the
-// menu was built in. Only callable while the menu is open.
-async function expectMenuOrder(titles: readonly MenuTitle[]): Promise<void> {
-  const rows: { title: MenuTitle; top: number }[] = [];
-
-  for (const title of titles) {
-    const attributes = await element(
-      by
-        .text(title)
-        .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-    ).getAttributes();
-
-    if ('elements' in attributes) {
-      throw new Error(`Expected a single menu row titled "${title}".`);
-    }
-
-    rows.push({ title, top: attributes.frame.y });
-  }
-
-  const topToBottom = [...rows].sort((a, b) => a.top - b.top).map(r => r.title);
-  jestExpect(topToBottom).toEqual([...titles]);
-}
 
 // Asserts the exact menu contents, then closes it. `expectedVisible` is a
 // non-empty subset of ALL_TITLES — a title outside that set would go unasserted,
@@ -177,40 +103,19 @@ async function expectMenuItems(
     await waitForMenuItem(expectedVisible[0]);
 
     for (const title of expectedVisible) {
-      await expect(
-        element(
-          by
-            .text(title)
-            .withAncestor(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW)),
-        ),
-      ).toBeVisible();
+      await expect(element(overflowRow(title))).toBeVisible();
     }
 
     if (checkOrder) {
-      await expectMenuOrder(expectedVisible);
+      await expectOverflowMenuOrder(expectedVisible);
     }
 
     for (const title of ALL_TITLES) {
       if (!expectedVisible.includes(title)) {
-        await expect(
-          element(
-            by
-              .text(title)
-              .withAncestor(
-                by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW),
-              ),
-          ),
-        ).not.toExist();
+        await expect(element(overflowRow(title))).not.toExist();
       }
     }
   });
-}
-
-async function expectLastClicked(id: string) {
-  await scrollIntoView('last-clicked-text');
-  await expect(element(by.id('last-clicked-text'))).toHaveText(
-    `Last clicked: ${id}`,
-  );
 }
 
 describeIfAndroid('Stack Toolbar Menu Commands', () => {
@@ -241,7 +146,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
 
       await expect(element(by.text('Title B'))).not.toExist();
       await expect(element(by.text('Title C'))).not.toExist();
-      await expectLastClicked('item-1');
+      await expectLastClicked('item-1', SETTINGS_CONTROL);
     });
 
     it('reports item-3 when tapping "Title C"', async () => {
@@ -249,7 +154,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       await tapMenuItem('Title C');
 
       await expect(element(by.text('Title A'))).not.toExist();
-      await expectLastClicked('item-3');
+      await expectLastClicked('item-3', SETTINGS_CONTROL);
     });
   });
 
@@ -262,7 +167,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       });
 
       await expectMenuItems(['Title A', 'Title B', 'Title C']);
-      await expectLastClicked('item-3');
+      await expectLastClicked('item-3', SETTINGS_CONTROL);
     });
   });
 
@@ -282,7 +187,7 @@ describeIfAndroid('Stack Toolbar Menu Commands', () => {
       await tapMenuItem('Changed');
 
       await expect(element(by.text('Title A'))).not.toExist();
-      await expectLastClicked('item-2');
+      await expectLastClicked('item-2', SETTINGS_CONTROL);
     });
   });
 

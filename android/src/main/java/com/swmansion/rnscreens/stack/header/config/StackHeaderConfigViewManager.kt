@@ -101,7 +101,6 @@ internal open class StackHeaderConfigViewManager :
         super.onAfterUpdateTransaction(view)
         view.resolveBackButtonIconIfNeeded()
         view.resolveOverflowIconIfNeeded()
-        view.resolveToolbarMenuItemIconsIfNeeded()
     }
 
     override fun onDropViewInstance(view: StackHeaderConfig) {
@@ -134,6 +133,13 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.subtitle = value ?: ""
+    }
+
+    override fun setMaxLines(
+        view: StackHeaderConfig,
+        value: Int,
+    ) {
+        view.maxLines = value.coerceAtLeast(1)
     }
 
     override fun setTitleCentered(
@@ -191,6 +197,25 @@ internal open class StackHeaderConfigViewManager :
                 )
             }
     }
+
+    // region Header spacing
+    // Spacing arrives as a float defaulting to -1 (unset); 0 is a valid, applied value.
+
+    override fun setContentInsetStart(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.contentInsetStart = value.takeIf { it >= 0f }
+    }
+
+    override fun setContentInsetEnd(
+        view: StackHeaderConfig,
+        value: Float,
+    ) {
+        view.contentInsetEnd = value.takeIf { it >= 0f }
+    }
+
+    // endregion
 
     // region Text appearance
     // Font size arrives as a float defaulting to -1 (unset); non-positive means "use default".
@@ -540,20 +565,39 @@ internal open class StackHeaderConfigViewManager :
         view.liftOnScroll = value
     }
 
+    override fun setBackgroundColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.backgroundColor = value
+    }
+
+    override fun setScrolledBackgroundColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.scrolledBackgroundColor = value
+    }
+
+    override fun setStatusBarScrimColor(
+        view: StackHeaderConfig,
+        value: Int?,
+    ) {
+        view.statusBarScrimColor = value
+    }
+
     override fun setToolbarMenuGroupDividerEnabled(
         view: StackHeaderConfig,
         value: Boolean,
     ) {
-        view.toolbarMenuGroupDividerEnabled = value
+        view.setToolbarMenuGroupDividerEnabledFromProps(value)
     }
 
     override fun setToolbarMenu(
         view: StackHeaderConfig,
         value: Dynamic,
     ) {
-        val (menu, iconSources) = StackHeaderToolbarMenuMapper.parseMenu(view.context, value)
-        view.toolbarMenu = menu
-        view.toolbarMenuItemIconSourceMap = iconSources
+        view.setToolbarMenuFromProps(StackHeaderToolbarMenuMapper.parseMenu(view.context, value))
     }
 
     override fun updateToolbarMenuElements(
@@ -572,13 +616,7 @@ internal open class StackHeaderConfigViewManager :
                 Log.w(TAG, "[RNScreens] Skipping toolbar menu update at index $i: missing 'id'.")
                 continue
             }
-            parsed.add(
-                StackHeaderToolbarMenuElementRawUpdate(
-                    id,
-                    StackHeaderToolbarMenuMapper.parseMenuElementOptions(view.context, map),
-                    StackHeaderToolbarMenuMapper.parseMenuElementIconSource(map),
-                ),
-            )
+            parsed.add(StackHeaderToolbarMenuMapper.parseElementRawUpdate(view.context, id, map))
         }
         view.dispatchMenuElementUpdates(parsed)
     }

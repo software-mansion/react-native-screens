@@ -1,0 +1,382 @@
+#import "RNSConversions-Tabs.h"
+#import <React/RCTLog.h>
+#import <react/renderer/imagemanager/RCTImagePrimitivesConversions.h>
+
+namespace rnscreens::conversion {
+
+namespace react = facebook::react;
+
+UIBlurEffect *RNSUIBlurEffectFromOptionalUIBlurEffectStyle(std::optional<UIBlurEffectStyle> &maybeStyle)
+{
+  if (maybeStyle) {
+    return [UIBlurEffect effectWithStyle:maybeStyle.value()];
+  }
+  return nil;
+}
+
+std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString)
+{
+  if ([blurEffectString isEqualToString:@"none"] || [blurEffectString isEqualToString:@"systemDefault"]) {
+    return std::nullopt;
+  } else if ([blurEffectString isEqualToString:@"extraLight"]) {
+    return {UIBlurEffectStyleExtraLight};
+  } else if ([blurEffectString isEqualToString:@"light"]) {
+    return {UIBlurEffectStyleLight};
+  } else if ([blurEffectString isEqualToString:@"dark"]) {
+    return {UIBlurEffectStyleDark};
+  } else if ([blurEffectString isEqualToString:@"regular"]) {
+    return {UIBlurEffectStyleRegular};
+  } else if ([blurEffectString isEqualToString:@"prominent"]) {
+    return {UIBlurEffectStyleProminent};
+  }
+#if !TARGET_OS_TV
+  else if ([blurEffectString isEqualToString:@"systemUltraThinMaterial"]) {
+    return {UIBlurEffectStyleSystemUltraThinMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemThinMaterial"]) {
+    return {UIBlurEffectStyleSystemThinMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemMaterial"]) {
+    return {UIBlurEffectStyleSystemMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemThickMaterial"]) {
+    return {UIBlurEffectStyleSystemThickMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemChromeMaterial"]) {
+    return {UIBlurEffectStyleSystemChromeMaterial};
+  } else if ([blurEffectString isEqualToString:@"systemUltraThinMaterialLight"]) {
+    return {UIBlurEffectStyleSystemUltraThinMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemThinMaterialLight"]) {
+    return {UIBlurEffectStyleSystemThinMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemMaterialLight"]) {
+    return {UIBlurEffectStyleSystemMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemThickMaterialLight"]) {
+    return {UIBlurEffectStyleSystemThickMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemChromeMaterialLight"]) {
+    return {UIBlurEffectStyleSystemChromeMaterialLight};
+  } else if ([blurEffectString isEqualToString:@"systemUltraThinMaterialDark"]) {
+    return {UIBlurEffectStyleSystemUltraThinMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemThinMaterialDark"]) {
+    return {UIBlurEffectStyleSystemThinMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemMaterialDark"]) {
+    return {UIBlurEffectStyleSystemMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemThickMaterialDark"]) {
+    return {UIBlurEffectStyleSystemThickMaterialDark};
+  } else if ([blurEffectString isEqualToString:@"systemChromeMaterialDark"]) {
+    return {UIBlurEffectStyleSystemChromeMaterialDark};
+  }
+#endif // !TARGET_OS_TV
+  else {
+#if !TARGET_OS_TV
+    RCTLogError(@"[RNScreens] Unsupported blur effect style: %@", blurEffectString);
+#endif // !TARGET_OS_TV
+    return std::nullopt;
+  }
+}
+
+UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString)
+{
+  std::optional<UIBlurEffectStyle> maybeStyle = RNSMaybeUIBlurEffectStyleFromString(blurEffectString);
+  return RNSUIBlurEffectFromOptionalUIBlurEffectStyle(maybeStyle);
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+API_AVAILABLE(ios(26.0))
+UITabBarMinimizeBehavior UITabBarMinimizeBehaviorFromRNSTabsHostTabBarMinimizeBehavior(
+    react::RNSTabsHostIOSTabBarMinimizeBehavior tabBarMinimizeBehavior)
+{
+  using enum facebook::react::RNSTabsHostIOSTabBarMinimizeBehavior;
+
+  switch (tabBarMinimizeBehavior) {
+    case Never:
+      return UITabBarMinimizeBehaviorNever;
+    case OnScrollDown:
+      return UITabBarMinimizeBehaviorOnScrollDown;
+    case OnScrollUp:
+      return UITabBarMinimizeBehaviorOnScrollUp;
+    default:
+      return UITabBarMinimizeBehaviorAutomatic;
+  }
+}
+
+#endif // Check for iOS >= 26
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+
+API_AVAILABLE(ios(18.0))
+UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode(
+    react::RNSTabsHostIOSTabBarControllerMode tabBarControllerMode)
+{
+  using enum facebook::react::RNSTabsHostIOSTabBarControllerMode;
+
+  switch (tabBarControllerMode) {
+    case Automatic:
+      return UITabBarControllerModeAutomatic;
+    case TabBar:
+      return UITabBarControllerModeTabBar;
+    case TabSidebar:
+      return UITabBarControllerModeTabSidebar;
+    default:
+      return UITabBarControllerModeAutomatic;
+  }
+}
+
+#endif // Check for iOS >= 18
+
+react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
+RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
+    RNSTabsNavigationStateRejectionReason reason)
+{
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason;
+  switch (reason) {
+    case RNSTabsNavigationStateRejectionReasonStale:
+      return Stale;
+    case RNSTabsNavigationStateRejectionReasonRepeated:
+      return Repeated;
+    default:
+      return Stale;
+  }
+}
+
+react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedActionOriginFromRNSTabsActionOrigin(
+    RNSTabsActionOrigin actionOrigin)
+{
+  using enum facebook::react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin;
+  switch (actionOrigin) {
+    case RNSTabsActionOriginUser:
+      return User;
+    case RNSTabsActionOriginProgrammaticJs:
+      return ProgrammaticJs;
+    case RNSTabsActionOriginProgrammaticNative:
+      return ProgrammaticNative;
+    case RNSTabsActionOriginImplicit:
+      return Implicit;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected actionOrigin: %ld", actionOrigin);
+  }
+  return User;
+}
+
+RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType)
+{
+  using enum facebook::react::RNSTabsScreenIOSIconType;
+  switch (iconType) {
+    case Image:
+      return RNSTabsIconTypeImage;
+    case Template:
+      return RNSTabsIconTypeTemplate;
+    case SfSymbol:
+      return RNSTabsIconTypeSfSymbol;
+    case Xcasset:
+      return RNSTabsIconTypeXcasset;
+  }
+}
+
+RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::ImageSource *imageSource,
+                                                         RNSTabsIconType iconType)
+{
+  RCTImageSource *iconImageSource;
+
+  switch (iconType) {
+    case RNSTabsIconTypeSfSymbol:
+      iconImageSource = nil;
+      break;
+
+    case RNSTabsIconTypeImage:
+    case RNSTabsIconTypeTemplate:
+      iconImageSource =
+          [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
+                                                size:CGSizeMake(imageSource->size.width, imageSource->size.height)
+                                               scale:imageSource->scale];
+      break;
+
+    default:
+      RCTLogError(@"[RNScreens] unsupported icon type");
+  }
+
+  return iconImageSource;
+}
+
+RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation)
+{
+  using enum facebook::react::RNSTabsScreenIOSOrientation;
+
+  switch (orientation) {
+    case Inherit:
+      return RNSOrientationInherit;
+    case All:
+      return RNSOrientationAll;
+    case AllButUpsideDown:
+      return RNSOrientationAllButUpsideDown;
+    case Portrait:
+      return RNSOrientationPortrait;
+    case PortraitUp:
+      return RNSOrientationPortraitUp;
+    case PortraitDown:
+      return RNSOrientationPortraitDown;
+    case Landscape:
+      return RNSOrientationLandscape;
+    case LandscapeLeft:
+      return RNSOrientationLandscapeLeft;
+    case LandscapeRight:
+      return RNSOrientationLandscapeRight;
+    default:
+      RCTLogError(@"[RNScreens] unsupported orientation");
+      return RNSOrientationInherit;
+  }
+}
+
+RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
+    react::RNSTabsScreenIOSSystemItem systemItem)
+{
+  using enum facebook::react::RNSTabsScreenIOSSystemItem;
+
+  switch (systemItem) {
+    case None:
+      return RNSTabsScreenSystemItemNone;
+    case Bookmarks:
+      return RNSTabsScreenSystemItemBookmarks;
+    case Contacts:
+      return RNSTabsScreenSystemItemContacts;
+    case Downloads:
+      return RNSTabsScreenSystemItemDownloads;
+    case Favorites:
+      return RNSTabsScreenSystemItemFavorites;
+    case Featured:
+      return RNSTabsScreenSystemItemFeatured;
+    case History:
+      return RNSTabsScreenSystemItemHistory;
+    case More:
+      return RNSTabsScreenSystemItemMore;
+    case MostRecent:
+      return RNSTabsScreenSystemItemMostRecent;
+    case MostViewed:
+      return RNSTabsScreenSystemItemMostViewed;
+    case Recents:
+      return RNSTabsScreenSystemItemRecents;
+    case Search:
+      return RNSTabsScreenSystemItemSearch;
+    case TopRated:
+      return RNSTabsScreenSystemItemTopRated;
+    default:
+      RCTLogError(@"[RNScreens] unsupported tabs screen systemItem");
+      return RNSTabsScreenSystemItemNone;
+  }
+}
+
+std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
+{
+  switch (systemItem) {
+    case RNSTabsScreenSystemItemNone:
+      return std::nullopt;
+    case RNSTabsScreenSystemItemBookmarks:
+      return UITabBarSystemItemBookmarks;
+    case RNSTabsScreenSystemItemContacts:
+      return UITabBarSystemItemContacts;
+    case RNSTabsScreenSystemItemDownloads:
+      return UITabBarSystemItemDownloads;
+    case RNSTabsScreenSystemItemFavorites:
+      return UITabBarSystemItemFavorites;
+    case RNSTabsScreenSystemItemFeatured:
+      return UITabBarSystemItemFeatured;
+    case RNSTabsScreenSystemItemHistory:
+      return UITabBarSystemItemHistory;
+    case RNSTabsScreenSystemItemMore:
+      return UITabBarSystemItemMore;
+    case RNSTabsScreenSystemItemMostRecent:
+      return UITabBarSystemItemMostRecent;
+    case RNSTabsScreenSystemItemMostViewed:
+      return UITabBarSystemItemMostViewed;
+    case RNSTabsScreenSystemItemRecents:
+      return UITabBarSystemItemRecents;
+    case RNSTabsScreenSystemItemSearch:
+      return UITabBarSystemItemSearch;
+    case RNSTabsScreenSystemItemTopRated:
+      return UITabBarSystemItemTopRated;
+  }
+  return std::nullopt;
+}
+
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+
+API_AVAILABLE(ios(26.0))
+std::optional<react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment>
+RNSTabsBottomAccessoryOnEnvironmentChangePayloadFromUITabAccessoryEnvironment(UITabAccessoryEnvironment environment)
+{
+  switch (environment) {
+    case UITabAccessoryEnvironmentRegular:
+      return react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Regular;
+    case UITabAccessoryEnvironmentInline:
+      return react::RNSTabsBottomAccessoryEventEmitter::OnEnvironmentChangeEnvironment::Inline;
+    default:
+      // We want to ignore other environments (e.g. `none`), that's why there is no warning here.
+      return std::nullopt;
+  }
+}
+
+RNSTabsBottomAccessoryEnvironment RNSTabsBottomAccessoryEnvironmentFromCppEquivalent(
+    react::RNSTabsBottomAccessoryContentEnvironment environment)
+{
+  using enum react::RNSTabsBottomAccessoryContentEnvironment;
+
+  switch (environment) {
+    case Regular:
+      return RNSTabsBottomAccessoryEnvironmentRegular;
+
+    case Inline:
+      return RNSTabsBottomAccessoryEnvironmentInline;
+
+    default:
+      RCTLogError(@"[RNScreens] Unsupported TabsBottomAccessory environment");
+  }
+}
+
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+
+UIUserInterfaceStyle UIUserInterfaceStyleFromTabsScreenCppEquivalent(
+    react::RNSTabsScreenIOSUserInterfaceStyle userInterfaceStyle)
+{
+  using enum facebook::react::RNSTabsScreenIOSUserInterfaceStyle;
+  switch (userInterfaceStyle) {
+    case Unspecified:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported user interface style");
+  }
+}
+
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
+    react::RNSTabsHostIOSLayoutDirection layoutDirection)
+{
+  using enum facebook::react::RNSTabsHostIOSLayoutDirection;
+  switch (layoutDirection) {
+    case Inherit:
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+    case Ltr:
+      return UITraitEnvironmentLayoutDirectionLeftToRight;
+    case Rtl:
+      return UITraitEnvironmentLayoutDirectionRightToLeft;
+    default:
+      RCTLogError(@"[RNScreens] unsupported layout direction");
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+  }
+}
+
+UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostIOSColorScheme colorScheme)
+{
+  using enum facebook::react::RNSTabsHostIOSColorScheme;
+  switch (colorScheme) {
+    case Inherit:
+      return UIUserInterfaceStyleUnspecified;
+    case Light:
+      return UIUserInterfaceStyleLight;
+    case Dark:
+      return UIUserInterfaceStyleDark;
+    default:
+      RCTLogError(@"[RNScreens] unsupported color scheme");
+      return UIUserInterfaceStyleUnspecified;
+  }
+}
+
+}; // namespace rnscreens::conversion

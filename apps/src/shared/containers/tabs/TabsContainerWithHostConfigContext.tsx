@@ -1,6 +1,10 @@
 import React from 'react';
 import { TabsContainer } from './TabsContainer';
-import type { TabsContainerProps, TabsHostConfig } from './TabsContainer.types';
+import type {
+  TabRouteConfig,
+  TabsContainerProps,
+  TabsHostConfig,
+} from './TabsContainer.types';
 import { deepMerge } from '@apps/shared/utils/deep-merge';
 import {
   TabsHostConfigContext,
@@ -16,7 +20,9 @@ import {
  * the host config state after mount. Runtime updates should go through
  * updateHostConfig (via TabsHostConfigContext) rather than prop changes.
  */
-export function TabsContainerWithHostConfigContext(props: TabsContainerProps) {
+export function TabsContainerWithHostConfigContext<
+  const TRouteConfigs extends readonly TabRouteConfig[],
+>(props: TabsContainerProps<TRouteConfigs>) {
   const { routeConfigs, defaultRouteName, ...hostProps } = props;
 
   const [hostConfig, setHostConfig] = React.useState<TabsHostConfig>(hostProps);

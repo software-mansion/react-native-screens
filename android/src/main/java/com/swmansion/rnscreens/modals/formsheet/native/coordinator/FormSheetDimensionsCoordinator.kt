@@ -4,63 +4,56 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.doOnLayout
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetAvailableHeightProvider
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer
+import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.modals.formsheet.native.model.FormSheetDetents
 
 internal class FormSheetDimensionsCoordinator(
-    private val dialog: BottomSheetDialog,
+    private val dialog: FormSheetDialog,
     private val container: FormSheetContainer,
-    private val bottomSheetView: FrameLayout?,
     private val behaviorController: FormSheetBehaviorController?,
-) : FormSheetContentSizeChangeDelegate {
+) : FormSheetContentSizeChangeDelegate,
+    FormSheetAvailableHeightProvider.OnAvailableHeightMeasuredListener {
     private var lastTopInset = 0
     private var lastBottomInset = 0
+    private var lastImeInset = 0
     private var currentDetents: FormSheetDetents? = null
     private var currentInitialDetentIndex: Int = 0
     private var shouldApplyInitialDetent: Boolean = false
 
     private var currentContentHeight: Int = 0
 
-    internal fun setup() {
-        setupWindowInsetsListener()
+    // Height the metrics were last resolved against. Any other value reported by the measure pass
+    // means the window has been resized and metrics have to be recomputed.
+    private var resolvedAvailableSpace: Int = 0
+    private var isGeometryDirty: Boolean = false
 
-        bottomSheetView?.let { view ->
-            disableMaterialInsetsAnimationCallback(view)
-        }
+    internal fun setup() {
+        dialog.availableHeightProvider.availableHeightListener = this
+        setupWindowInsetsListener()
     }
 
     private fun setupWindowInsetsListener() {
         ViewCompat.setOnApplyWindowInsetsListener(container) { _, insets ->
-            lastTopInset = getTopInset(insets)
-            lastBottomInset = getBottomInset(insets)
-            updateNativeContainerHeight()
+            val topInset = getTopInset(insets)
+            val bottomInset = getBottomInset(insets)
+            val imeInset = getImeInset(insets)
+            if (topInset != lastTopInset || bottomInset != lastBottomInset || imeInset != lastImeInset) {
+                lastTopInset = topInset
+                lastBottomInset = bottomInset
+                lastImeInset = imeInset
+                invalidateGeometry()
+            }
             insets
-        }
-    }
-
-    /**
-     * BottomSheetBehavior registers an internal `WindowInsetsAnimationCallback` on the
-     * sheet view during its first `onLayoutChild`. That callback drives `translationY` to follow
-     * animated inset changes, what interferes with our slide-in custom animation.
-     *
-     * We manage insets ourselves by setting a fixed height for FormSheetContainer, so we can
-     * clear the Material's callback to remove the conflict entirely.
-     *
-     * This method must run after the first layout pass.
-     */
-    private fun disableMaterialInsetsAnimationCallback(view: FrameLayout) {
-        view.doOnLayout {
-            ViewCompat.setWindowInsetsAnimationCallback(it, null)
         }
     }
 
     override fun onContentHeightChanged(newHeight: Int) {
         if (currentContentHeight != newHeight) {
             currentContentHeight = newHeight
-            updateNativeContainerHeight()
+            invalidateGeometry()
         }
     }
 
@@ -72,7 +65,25 @@ internal class FormSheetDimensionsCoordinator(
         currentDetents = detents
         currentInitialDetentIndex = initialDetentIndex
         shouldApplyInitialDetent = applyInitialDetent
-        updateNativeContainerHeight()
+        invalidateGeometry()
+    }
+
+    // Schedules a measure pass; the metrics are resolved from there. The provider is a sibling of the sheet
+    // subtree, not an ancestor, so it has to be asked for a re-measure explicitly. No-op while the dialog
+    // is not shown - the first traversal after `show()` measures everything anyway.
+    private fun invalidateGeometry() {
+        isGeometryDirty = true
+        dialog.availableHeightProvider.requestLayout()
+        container.requestLayout()
+    }
+
+    override fun onAvailableHeightMeasured(height: Int) {
+        if (!isGeometryDirty && height == resolvedAvailableSpace) {
+            return
+        }
+        isGeometryDirty = false
+        resolvedAvailableSpace = height
+        resolveGeometry(height)
     }
 
     /**
@@ -81,20 +92,18 @@ internal class FormSheetDimensionsCoordinator(
      * status bar or display cutout. This causes Yoga to recalculate the layout, resulting in UI flickering
      * during the drag gesture. By calculating and enforcing a static height that explicitly subtracts
      * the system insets, we completely bypass these redundant layout passes.
+     *
+     * Runs inside the measure pass of `FormSheetAvailableHeightProvider`, i.e. before Material's container, the sheet and
+     * our container are measured, so the values applied here are picked up by the very same traversal.
      */
-    private fun updateNativeContainerHeight() {
-        val dialogDecorHeight = dialog.window?.decorView?.height ?: 0
-
-        if (dialogDecorHeight <= 0) {
-            return
-        }
-
+    private fun resolveGeometry(sheetAvailableSpace: Int) {
         currentDetents?.let { detents ->
             behaviorController?.updateSheetBehavior(
                 detents = detents,
-                sheetAvailableSpace = dialogDecorHeight,
+                sheetAvailableSpace = sheetAvailableSpace,
                 contentHeightForFitToContents = currentContentHeight,
                 nativeContainerPaddingBottom = lastBottomInset,
+                keyboardLift = keyboardLift,
                 initialDetentIndex = currentInitialDetentIndex,
                 applyInitialDetent = shouldApplyInitialDetent,
             )
@@ -102,8 +111,13 @@ internal class FormSheetDimensionsCoordinator(
         }
 
         val sheetContainerHeight =
-            currentDetents?.sheetContainerHeight(dialogDecorHeight, lastTopInset, lastBottomInset, currentContentHeight)
-                ?: (dialogDecorHeight - lastTopInset - lastBottomInset).coerceAtLeast(0)
+            currentDetents?.sheetContainerHeight(
+                sheetAvailableSpace,
+                lastTopInset,
+                lastBottomInset,
+                currentContentHeight,
+                keyboardLift,
+            ) ?: (sheetAvailableSpace - lastTopInset - lastBottomInset - keyboardLift).coerceAtLeast(0)
 
         val layoutParams =
             container.layoutParams
@@ -115,6 +129,16 @@ internal class FormSheetDimensionsCoordinator(
             container.layoutParams = layoutParams
         }
     }
+
+    /**
+     * The part of the keyboard inset that sticks out above the bottom system inset. Material pads the sheet by
+     * the larger of the two, so this is exactly how much the sheet has to be extended to keep its detent-sized
+     * part above the keyboard.
+     */
+    private val keyboardLift: Int
+        get() = (lastImeInset - lastBottomInset).coerceAtLeast(0)
+
+    private fun getImeInset(insetsCompat: WindowInsetsCompat): Int = insetsCompat.getInsets(WindowInsetsCompat.Type.ime()).bottom
 
     private fun getTopInset(insetsCompat: WindowInsetsCompat): Int =
         insetsCompat
@@ -129,6 +153,7 @@ internal class FormSheetDimensionsCoordinator(
             ).bottom
 
     internal fun destroy() {
+        dialog.availableHeightProvider.availableHeightListener = null
         ViewCompat.setOnApplyWindowInsetsListener(container, null)
     }
 }

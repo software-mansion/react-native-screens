@@ -94,11 +94,13 @@ function SmallHorizontalItem() {
 interface Config {
   enabled: boolean;
   hidden: boolean;
+  promptEnabled: boolean;
   largeTitleEnabled: boolean;
   largeTitle: LargeTitleOption;
   largeSubtitle: LargeSubtitleOption;
   leadingItemsCount: number;
   trailingItemsCount: number;
+  hidesSharedBackground: boolean;
   title: TitleOption;
   subtitle: TitleOption;
   hitSlop: HitSlopValue;
@@ -123,11 +125,13 @@ function resolveTitle(
 const DEFAULT_CONFIG: Config = {
   enabled: true,
   hidden: false,
+  promptEnabled: false,
   largeTitleEnabled: false,
   largeTitle: 'none',
   largeSubtitle: 'none',
   leadingItemsCount: 2,
   trailingItemsCount: 2,
+  hidesSharedBackground: false,
   title: 'short',
   subtitle: 'short',
   hitSlop: '0',
@@ -173,6 +177,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     }).map((_, i) => ({
       type: 'item',
       id: `leading-${i}`,
+      hidesSharedBackground: config.hidesSharedBackground,
       render: () => <ResizingItem />,
     }));
   if (leadingItems.length > 1) {
@@ -190,6 +195,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     (_, i) => ({
       type: 'item',
       id: `trailing-${i}`,
+      hidesSharedBackground: config.hidesSharedBackground,
       render: () => <ResizingItem />,
     }),
   );
@@ -206,6 +212,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
     subtitle: resolveTitle(config.subtitle),
     hidden: config.hidden,
     ios: {
+      prompt: config.promptEnabled ? 'Header prompt' : undefined,
       largeTitleEnabled: config.largeTitleEnabled,
       largeTitle: resolveTitle(config.largeTitle),
       largeSubtitle: resolveTitle(config.largeSubtitle),
@@ -279,6 +286,16 @@ function ConfigScreen() {
         label="hidden"
         value={config.hidden}
         onValueChange={v => updateConfig('hidden', v)}
+      />
+      <SettingsSwitch
+        label="prompt"
+        value={config.promptEnabled}
+        onValueChange={v => updateConfig('promptEnabled', v)}
+      />
+      <SettingsSwitch
+        label="hidesSharedBackground"
+        value={config.hidesSharedBackground}
+        onValueChange={v => updateConfig('hidesSharedBackground', v)}
       />
       <SettingsSwitch
         label="large header enabled"

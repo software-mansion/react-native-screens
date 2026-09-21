@@ -5,7 +5,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSStackScreenComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
 #import "RNSScrollViewMarkerComponentView.h"
@@ -116,7 +116,8 @@ namespace react = facebook::react;
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
 
   if (oldComponentProps.activityMode != newComponentProps.activityMode) {
-    _activityMode = rnscreens::conversion::convert<RNSStackScreenActivityMode>(newComponentProps.activityMode);
+    _activityMode = rnscreens::conversion::RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
+        newComponentProps.activityMode);
     _hasUpdatedActivityMode = YES;
   }
 
@@ -132,6 +133,11 @@ namespace react = facebook::react;
 {
   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
     _headerConfig = (RNSStackHeaderConfigComponentView *)childComponentView;
+    _headerConfig.headerCoordinator = _controller.headerCoordinator;
+    _controller.headerCoordinator.configDataProvider = _headerConfig;
+    _controller.headerCoordinator.frameChangeDelegate = _headerConfig;
+    _controller.headerCoordinator.eventsDelegate = _headerConfig;
+    _controller.headerCoordinator.imageLoader = _headerConfig;
   }
   [super mountChildComponentView:childComponentView index:index];
 }
@@ -140,6 +146,7 @@ namespace react = facebook::react;
 {
   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
     [_controller.headerCoordinator clearHeaderConfiguration];
+    _headerConfig.headerCoordinator = nil;
     _headerConfig = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];

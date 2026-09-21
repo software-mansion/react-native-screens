@@ -2,18 +2,26 @@ package com.swmansion.rnscreens.stack.host
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.swmansion.rnscreens.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
+import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment
+import com.swmansion.rnscreens.stack.screen.StackScreenFragmentDelegate
 import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
@@ -23,7 +31,10 @@ internal class StackContainer(
     private val delegate: WeakReference<StackContainerDelegate>,
 ) : FrameLayout(context),
     Container,
-    FragmentManager.OnBackStackChangedListener {
+    FragmentManager.OnBackStackChangedListener,
+    ColorSchemeProviding,
+    StackHeaderBackPressHandler,
+    StackScreenFragmentDelegate {
     private var fragmentManager: FragmentManager? = null
 
     private fun requireFragmentManager(): FragmentManager =
@@ -51,6 +62,20 @@ internal class StackContainer(
     private val fragmentOpExecutor: FragmentOperationExecutor = FragmentOperationExecutor()
     private val fragmentOps: MutableList<FragmentOperation> = arrayListOf()
 
+    // region Color Scheme
+
+    private val colorSchemeCoordinator = ColorSchemeCoordinator()
+
+    internal var colorScheme: ColorScheme by colorSchemeCoordinator::colorScheme
+
+    override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
+
+    override fun addColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.addColorSchemeListener(listener)
+
+    override fun removeColorSchemeListener(listener: ColorSchemeListener) = colorSchemeCoordinator.removeColorSchemeListener(listener)
+
+    // endregion
+
     init {
         id = ViewIdGenerator.generateViewId()
     }
@@ -61,6 +86,10 @@ internal class StackContainer(
 
         parentContainerRegistry.attach(this)
         setupFragmentManger()
+
+        // StackContainer only provides container-level color scheme configuration for its screens
+        // but doesn't use any color scheme-dependent views, so we don't need the callback.
+        colorSchemeCoordinator.setup(this, null)
 
         // Following line works with a couple of assumptions.
         // First, that this view is laid out by our parent view, which is a component view.
@@ -81,7 +110,15 @@ internal class StackContainer(
         requireFragmentManager().removeOnBackStackChangedListener(this)
         fragmentManager = null
         parentContainerRegistry.detach(this)
+        colorSchemeCoordinator.teardown()
     }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        colorSchemeCoordinator.onConfigurationChanged(newConfig)
+    }
+
+    override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
     internal fun setupFragmentManger() {
         fragmentManager =
@@ -164,7 +201,8 @@ internal class StackContainer(
         }
 
         pendingPushOperations.forEach { operation ->
-            val newFragment = createFragmentForScreen(operation.screen, canNavigateBack = stackModel.isNotEmpty())
+            val newFragment =
+                createFragmentForScreen(operation.screen, canNavigateBack = stackModel.isNotEmpty())
 
             fragmentOps.add(
                 AddAndSetAsPrimaryOp(
@@ -205,7 +243,12 @@ internal class StackContainer(
         screen: StackScreen,
         canNavigateBack: Boolean,
     ): StackScreenFragment =
-        StackScreenFragment(screen, canNavigateBack).also {
+        StackScreenFragment(
+            screen,
+            canNavigateBack,
+            WeakReference(this),
+            backPressHandler = WeakReference(this),
+        ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
@@ -289,6 +332,63 @@ internal class StackContainer(
         determineTopFragment()
             ?.stackScreen
             ?.findContentScrollView()
+
+    // Asked when this container's whole subtree is about to be dismissed (the screen
+    // hosting this container is popped) - every item gets a vote, back-to-front, so
+    // the deepest preventing screen wins.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
+        stackModel
+            .asReversed()
+            .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
+
+    // endregion
+
+    // region Header back button
+
+    override fun handleHeaderBackButtonPress(pressedScreen: StackScreen) {
+        val fragmentManager = fragmentManager
+        if (fragmentManager == null) {
+            Log.w(TAG, "[RNScreens] Ignoring header back button press - container is detached")
+            return
+        }
+
+        val topScreen = stackModel.lastOrNull()?.stackScreen
+        if (topScreen !== pressedScreen || stackModel.size <= 1) {
+            Log.w(
+                TAG,
+                "[RNScreens] Ignoring header back button press for non-top screen ${pressedScreen.screenKey}",
+            )
+            return
+        }
+
+        // This pop dismisses only the top screen (together with its subtree), therefore
+        // only the top item is asked - screens below the top get no vote at this level.
+        val vetoingItem = topScreen.wantsToPreventStackNativeDismiss()
+        if (vetoingItem != null) {
+            // Only a StackScreen can veto - TabsScreen has no own flag and only forwards.
+            val vetoingScreen = vetoingItem as? StackScreen
+            if (vetoingScreen != null) {
+                vetoingScreen.onNativeDismissPrevented()
+            } else {
+                Log.w(
+                    TAG,
+                    "[RNScreens] Unexpected vetoing item type: ${vetoingItem.javaClass.simpleName}",
+                )
+            }
+            return
+        }
+
+        // Mirrors FragmentManager's internal OnBackPressedCallback, which also runs
+        // popBackStackImmediate. The synchronous pop makes the top-screen guard above
+        // reliable against double taps: onBackStackChangeCommitted -> onNativeFragmentPop
+        // updates stackModel before this call returns.
+        fragmentManager.popBackStackImmediate(
+            // key MUST BE present, otherwise the navigation action will be delegated to child primary navigation
+            // fragment.
+            checkNotNull(pressedScreen.screenKey) { "[RNScreens] Screen key is required" },
+            FragmentManager.POP_BACK_STACK_INCLUSIVE,
+        )
+    }
 
     // endregion
 

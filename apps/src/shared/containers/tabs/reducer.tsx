@@ -149,7 +149,7 @@ function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
 }
 
 export type TabsContainerStateInitArg = {
-  routeConfigs: TabRouteConfig[];
+  routeConfigs: readonly TabRouteConfig[];
   defaultRouteName?: string | undefined;
 };
 

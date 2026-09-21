@@ -23,7 +23,9 @@ import { RNSLog } from 'react-native-screens/private';
 import { TabsContainerItem } from './TabsContainerItem';
 import { useElementsByName } from '../shared/use-elements-by-name';
 
-export function TabsContainer(props: TabsContainerProps) {
+export function TabsContainer<
+  const TRouteConfigs extends readonly TabRouteConfig[],
+>(props: TabsContainerProps<TRouteConfigs>) {
   RNSLog.info('TabsContainer render');
 
   const { routeConfigs, defaultRouteName, onTabSelected, ...restProps } = props;
@@ -117,7 +119,7 @@ function useTabsHostNavStateRequest(
   return hostNavStateRequest;
 }
 
-function useSanitizeRouteConfigs(routeConfigs: TabRouteConfig[]) {
+function useSanitizeRouteConfigs(routeConfigs: readonly TabRouteConfig[]) {
   if (routeConfigs.length === 0) {
     throw new Error('[Tabs] There must be at least one tab defined');
   }

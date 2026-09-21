@@ -27,7 +27,7 @@ internal enum class FormSheetPresentationState {
     /**
      * The manager is actively preparing to show the sheet. `presentIfNeeded()` has been called.
      * During this state, `dialog.show()` is executed. The manager waits for the `onShowListener`
-     * to fire, requests DimmingView attachment from `dimmingManager` and runs starts entrance animation.
+     * to fire, attaches the dimming through `dimmingManager` and starts the entrance animation.
      * Once the enter animator finishes, the state moves to [PRESENTED].
      * **Transitional state** from [DISMISSED] to [PRESENTED].
      */

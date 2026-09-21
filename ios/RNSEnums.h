@@ -1,5 +1,7 @@
 #pragma once
 
+#import <UIKit/UIKit.h>
+
 typedef NS_ENUM(NSInteger, RNSScrollEdgeEffect) {
   RNSScrollEdgeEffectAutomatic,
   RNSScrollEdgeEffectHard,

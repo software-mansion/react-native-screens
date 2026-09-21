@@ -7,6 +7,6 @@ export const scenarioDescription: ScenarioDescription = {
     'Test bottom accessory visibility toggling via bottomAccessory ' +
     'and bottomAccessoryHidden props.',
   platforms: ['ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };

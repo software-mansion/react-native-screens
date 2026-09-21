@@ -21,4 +21,5 @@ export { useTabsHostConfig } from './hooks/useTabsHostConfig';
 
 export { TabsContainer } from './TabsContainer';
 export { TabsContainerWithHostConfigContext } from './TabsContainerWithHostConfigContext';
+export { defineTabRouteConfigs } from './defineTabRouteConfigs';
 export { DEFAULT_TAB_ROUTE_OPTIONS } from './presets';

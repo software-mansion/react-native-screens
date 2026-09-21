@@ -13,7 +13,7 @@
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSStackHeaderItemComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderItemComponentDescriptor.h>
 
 namespace react = facebook::react;
 
@@ -52,6 +52,7 @@ namespace react = facebook::react;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
+  _hidesSharedBackground = NO;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -193,7 +194,8 @@ RNS_IGNORE_SUPER_CALL_END
     if (_didSetHeaderItemPlacement) {
       RCTLogWarn(@"[RNScreens] Changing header item placement at runtime is not supported");
     } else {
-      _placement = rnscreens::conversion::convert<RNSHeaderItemPlacement>(newItemProps.placement);
+      _placement =
+          rnscreens::conversion::RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(newItemProps.placement);
     }
   }
   _didSetHeaderItemPlacement = YES;
@@ -217,6 +219,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.respondsToOnPress != newItemProps.respondsToOnPress) {
     _respondsToOnPress = newItemProps.respondsToOnPress;
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.hidesSharedBackground != newItemProps.hidesSharedBackground) {
+    _hidesSharedBackground = newItemProps.hidesSharedBackground;
     needsUpdate = YES;
   }
 

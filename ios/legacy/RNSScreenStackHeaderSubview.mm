@@ -10,7 +10,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 
-#import <rnscreens/RNSScreenStackHeaderSubviewComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/legacy/RNSScreenStackHeaderSubviewComponentDescriptor.h>
 
 namespace react = facebook::react;
 

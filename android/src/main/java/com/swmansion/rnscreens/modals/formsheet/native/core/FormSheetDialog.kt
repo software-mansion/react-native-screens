@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.modals.formsheet.native.core
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -14,8 +15,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
  * A custom BottomSheetDialog override used to render the FormSheet native component.
  *
  * We enforce edge-to-edge rendering, bypassing standard Material checks.
- * This enforcement is required because our custom dimming view must span the entire screen.
- * The FormSheetContainer is sized manually against the system insets.
+ * This is required because our custom dimming logic needs the Dialog to span
+ * the entire screen. The FormSheetContainer is sized manually against the system insets.
  */
 internal class FormSheetDialog(
     context: Context,
@@ -33,6 +34,12 @@ internal class FormSheetDialog(
 
     internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
 
+    /**
+     * Installed next to Material's content once the dialog is created. Reports the height the sheet
+     * is measured against so the sheet metrics can be resolved before the sheet itself is measured.
+     */
+    internal val availableHeightProvider = FormSheetAvailableHeightProvider(context)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,6 +47,7 @@ internal class FormSheetDialog(
         disableNativeWindowAnimation(window)
 
         setupBottomSheetHeight()
+        installAvailableHeightProvider()
     }
 
     override fun onAttachedToWindow() {
@@ -63,7 +71,8 @@ internal class FormSheetDialog(
      * `enableEdgeToEdge` attribute AND the navigation bar is translucent (see
      * `BottomSheetDialog#onAttachedToWindow`).
      *
-     * We force edge-to-edge on every API level so the custom dimming view covers the whole screen.
+     * We force edge-to-edge on every API level so the window content always spans the whole
+     * screen.
      */
     private fun forceEdgeToEdge() {
         val window = window ?: return
@@ -79,5 +88,28 @@ internal class FormSheetDialog(
     private fun setupBottomSheetHeight() {
         val bottomSheetView = findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
         bottomSheetView?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+    }
+
+    private fun installAvailableHeightProvider() {
+        if (availableHeightProvider.parent != null) {
+            return
+        }
+
+        val contentParent = findViewById<ViewGroup>(android.R.id.content)
+        if (contentParent == null) {
+            Log.e(TAG, "[RNScreens] Window content view not found; the sheet dimensions won't be resolved.")
+            return
+        }
+
+        // FrameLayout measures its children in order, so the provider reports the height before Material's container
+        contentParent.addView(
+            availableHeightProvider,
+            0,
+            FrameLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT),
+        )
+    }
+
+    companion object {
+        private const val TAG = "FormSheetDialog"
     }
 }

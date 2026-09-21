@@ -35,12 +35,13 @@ function compareVersions(
   }
 }
 
+/** `true` when `version` is at least `minimumVersion`. */
 export default function isVersionEqualOrHigherThan(
-  first: string,
-  second: string,
+  version: string,
+  minimumVersion: string,
 ) {
-  assertSupportedVersionString(first);
-  assertSupportedVersionString(second);
+  assertSupportedVersionString(version);
+  assertSupportedVersionString(minimumVersion);
 
-  return compareVersions(first, second) >= 0;
+  return compareVersions(version, minimumVersion) >= 0;
 }

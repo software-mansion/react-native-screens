@@ -7,43 +7,33 @@
 #import "RNSFormSheetUpdateCoordinator.h"
 #import "RNSFormSheetUpdateFlags.h"
 
-@implementation RNSFormSheetConfigurationApplicator {
-  BOOL _initialDetentApplied;
-}
+@implementation RNSFormSheetConfigurationApplicator
 
-- (instancetype)init
-{
-  if (self = [super init]) {
-    _initialDetentApplied = NO;
-  }
-  return self;
-}
-
-- (void)resetInitialDetent
-{
-  _initialDetentApplied = NO;
-}
-
-- (void)applyConfigurationIfNeededWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
++ (void)applyConfigurationIfNeededWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
                                         behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
                                               controller:(RNSFormSheetContentController *)controller
                                              coordinator:(RNSFormSheetUpdateCoordinator *)coordinator
 {
-  RNSFormSheetUpdateFlags configFlags = RNSFormSheetUpdateFlagsAppearance | RNSFormSheetUpdateFlagsBehavior;
+  RNSFormSheetUpdateFlags configFlags =
+      RNSFormSheetUpdateFlagsAppearance | RNSFormSheetUpdateFlagsBehavior | RNSFormSheetUpdateFlagsInitialDetent;
+
+  BOOL shouldSelectInitialDetent = [coordinator needsAny:RNSFormSheetUpdateFlagsInitialDetent];
 
   [coordinator updateIfAnyNeeded:configFlags
                performOperations:^{
                  [self applyConfigurationWithAppearanceProvider:appearanceProvider
                                                behaviorProvider:behaviorProvider
-                                                     controller:controller];
+                                                     controller:controller
+                                            selectInitialDetent:shouldSelectInitialDetent];
                }];
 }
 
 #pragma mark - Updaters
 
-- (void)applyConfigurationWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
++ (void)applyConfigurationWithAppearanceProvider:(id<RNSFormSheetAppearanceProvider>)appearanceProvider
                                 behaviorProvider:(id<RNSFormSheetBehaviorProvider>)behaviorProvider
                                       controller:(RNSFormSheetContentController *)controller
+                             selectInitialDetent:(BOOL)selectInitialDetent
 {
 #if !TARGET_OS_TV
   UISheetPresentationController *sheet = controller.sheetPresentationController;
@@ -57,11 +47,10 @@
       [RNSFormSheetDetentResolver buildSheetDetentsWithBehaviorProvider:behaviorProvider];
 
   UISheetPresentationControllerDetentIdentifier initialDetentIdentifier = nil;
-  if (!_initialDetentApplied) {
+  if (selectInitialDetent) {
     initialDetentIdentifier =
         [RNSFormSheetDetentResolver initialDetentIdentifierForDetents:nativeDetents
                                                      atRequestedIndex:behaviorProvider.initialDetentIndex];
-    _initialDetentApplied = YES;
   }
 
   BOOL prefersScrollingExpands = behaviorProvider.prefersScrollingExpandsWhenScrolledToEdge;

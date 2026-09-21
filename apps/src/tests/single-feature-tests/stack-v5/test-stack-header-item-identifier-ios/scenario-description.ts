@@ -8,6 +8,6 @@ export const scenarioDescription: ScenarioDescription = {
     'ordered differently and with different icons across screens. On iOS 26+ matched items animate ' +
     'between positions instead of cross-fading. Not supported on iOS 18 and below.',
   platforms: ['ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };

@@ -18,7 +18,7 @@ import {
 
 export function useStackOperationMethods(
   dispatch: React.Dispatch<NavigationAction>,
-  routeConfigs: StackRouteConfig[],
+  routeConfigs: readonly StackRouteConfig[],
 ): NavigationActionMethods {
   const actionContext: NavigationActionContext = React.useMemo(() => {
     return {

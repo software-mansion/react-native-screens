@@ -1,13 +1,11 @@
 package com.swmansion.rnscreens.modals.formsheet.native.coordinator
 
 import androidx.activity.OnBackPressedCallback
-import com.swmansion.rnscreens.modals.dimmingview.DimmingViewManager
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
 
 internal class FormSheetNativeDismissCoordinator(
     private val dialog: FormSheetDialog,
     private val behaviorController: FormSheetBehaviorController?,
-    private val dimmingManager: DimmingViewManager,
     private val onDismissAllowed: () -> Unit,
     private val onDismissPrevented: () -> Unit,
 ) : FormSheetDialog.CancelRequestInterceptor {
@@ -27,15 +25,11 @@ internal class FormSheetNativeDismissCoordinator(
     internal fun setup() {
         dialog.cancelRequestInterceptor = this
         dialog.onBackPressedDispatcher.addCallback(preventNativeDismissBackPressCallback)
-        // Backdrop taps go through `cancel()` rather than dismissing directly, so that they are
-        // subject to the very same interception as the back press and the swipe down.
-        dimmingManager.setOnBackdropClickListener { dialog.cancel() }
     }
 
     internal fun destroy() {
         dialog.cancelRequestInterceptor = null
         preventNativeDismissBackPressCallback.remove()
-        dimmingManager.setOnBackdropClickListener(null)
     }
 
     override fun handleCancelRequest() {

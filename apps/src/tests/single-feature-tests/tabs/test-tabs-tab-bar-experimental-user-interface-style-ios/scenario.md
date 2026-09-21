@@ -34,7 +34,7 @@ Occasional flashes of the back button in the header are expected behavior and ar
 
 3. On `Home` screen click `Dark` button.
 
-  - [ ] Screen is shown with a black background. A single button to push the screen with dark style is visible.
+- [ ] Screen is shown with a black background. A single button to push the screen with dark style is visible.
 
 4. Tap **"Push screen with style: dark"** and observe tab bar.
 
@@ -44,7 +44,7 @@ Occasional flashes of the back button in the header are expected behavior and ar
 
 - [ ] Both tabs maintain the dark interface style. No flash, flicker, or reversion to light style on tab switch.
 
-1. Pop back to previous `Dark` screen and then pop back to the `Home` screen.
+6. Pop back to previous `Dark` screen and then pop back to the `Home` screen.
 
 - [ ] `Home` screen is shown with two buttons `Dark` and `Light`.
 
@@ -52,11 +52,11 @@ Occasional flashes of the back button in the header are expected behavior and ar
 
 7. Set system appearance to **dark**. Click `Light` button.
 
-  - [ ] Screen is shown with a white background. A single button to push the screen with light style is visible.
+- [ ] Screen is shown with a white background. A single button to push the screen with light style is visible.
 
 8. Push **"Push screen with style: light"** and observe tab bar.
 
-- [ ] `LightScreen` is pushed. The tab bar reflects a **light** style and appears without flash, flicker, or reversion to light style.
+- [ ] `LightScreen` is pushed. The tab bar reflects a **light** style and appears without flash, flicker, or reversion to dark style.
 
 9. Switch between **Tab1** and **Tab2** on the pushed screen.
 

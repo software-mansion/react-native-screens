@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Platform, StyleSheet, Text, View } from 'react-native';
 import { FormSheet } from 'react-native-screens';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   },
   sheetContainer: {
     flex: 1,
+    justifyContent: Platform.OS === 'ios' ? 'center' : 'flex-start',
     backgroundColor: Colors.background,
     padding: 24,
     alignItems: 'center',

@@ -12,3 +12,4 @@ export { useStackRouteConfigContext } from './hooks/useStackRouteConfigContext';
 
 export { StackContainer } from './StackContainer';
 export { StackContainerWithDynamicRouteConfigs } from './StackContainerWithDynamicRouteConfigs';
+export { defineStackRouteConfigs } from './defineStackRouteConfigs';

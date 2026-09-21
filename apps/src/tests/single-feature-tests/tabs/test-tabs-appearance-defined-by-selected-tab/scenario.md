@@ -170,10 +170,10 @@ icons and titles are blue.
   four "Select tab N" buttons.
 - [ ] Four tabs are visible in the tab bar: Tab1, Tab2, Tab3, Tab4.
 - [ ] The tab bar background is dark navy.
-- [ ] The selected Tab1 icon and title are green.
+- [ ] The selected Tab1 icon is green and its title is a lighter green.
 - [ ] Unselected tab icons and titles are blue.
-- [ ] A persistent green pill-shaped active indicator is visible
-  behind the Tab1 icon.
+- [ ] A persistent pill-shaped active indicator is visible behind the Tab1
+  icon, in the same light green as the selected title.
 - [ ] The Tab3 badge displays the value "123" in white text on a green background.
 - [ ] The Tab4 badge displays the value "Platform" in white text on a green
   background.
@@ -211,7 +211,7 @@ text on a green background.
 - [ ] Tab1 becomes selected (label changes to "Tab1").
 - [ ] The tab bar background reverts to dark navy, item colors
   revert to the Tab1 configuration, and the active indicator
-  reverts to green.
+  reverts to the light green shared with the selected title.
 - [ ] The result is identical to tapping Tab1 in the native tab bar.
 
 ---
@@ -222,10 +222,10 @@ text on a green background.
 
 - [ ] The screen label changes to "Tab3".
 - [ ] The tab bar background is dark navy (same as Tab1).
-- [ ] The active indicator pill is green.
 - [ ] Icon and title colors for normal, selected, and focused states
   match Tab1's configuration (blue normal, green selected,
-  yellow focused).
+  yellow focused): the selected icon is green and its title a lighter green.
+- [ ] The active indicator pill is the same light green as the selected title.
 - [ ] The badge backgrounds for Tab3 and Tab4 change to red, while their values
   remain "123" and "Platform" with green text.
 
@@ -236,8 +236,10 @@ text on a green background.
 7. Tap **Tab4** in the native tab bar.
 
 - [ ] The screen label changes to "Tab4".
-- [ ] The selected Tab4 icon and title is green.
-- [ ] Unselected tab icons and titles are blue.
+- [ ] The selected Tab4 icon and title are both the same green — a darker,
+  system-resolved shade than Tab1/Tab3's green.
+- [ ] Unselected tab icons and titles are both the same blue,
+  likewise a different shade than Tab1/Tab3's blue.
 - [ ] The active indicator pill uses the system accent color.
 - [ ] The badge backgrounds for Tab3 and Tab4 change to orange, while their values
   remain "123" and "Platform" with white text.
