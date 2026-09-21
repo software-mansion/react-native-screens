@@ -448,6 +448,15 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    UIBarMinimization *minimization = [UIBarMinimization new];
+    minimization.minimizationBehavior = _configDataProvider.minimizationBehavior;
+    minimization.restorationBehavior = _configDataProvider.restorationBehavior;
+    navItem.navigationBarMinimization = minimization;
+  }
+#endif // Check for iOS >= 27
+
 #if !TARGET_OS_TV
   navItem.largeTitleDisplayMode = _configDataProvider.largeTitleEnabled ? UINavigationItemLargeTitleDisplayModeAlways
                                                                         : UINavigationItemLargeTitleDisplayModeNever;

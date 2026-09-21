@@ -52,4 +52,35 @@ UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonD
   }
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+
+UIBarMinimizationBehavior UIBarMinimizationBehaviorFromReactRNSStackHeaderConfigIOSMinimizationBehavior(
+    react::RNSStackHeaderConfigIOSMinimizationBehavior minimizationBehavior)
+{
+  switch (minimizationBehavior) {
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::Automatic:
+      return UIBarMinimizationBehaviorAutomatic;
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::Never:
+      return UIBarMinimizationBehaviorNever;
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::OnScrollDown:
+      return UIBarMinimizationBehaviorOnScrollDown;
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::OnScrollUp:
+      return UIBarMinimizationBehaviorOnScrollUp;
+  }
+}
+
+UIBarMinimizationRestorationBehavior
+UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationBehavior(
+    react::RNSStackHeaderConfigIOSRestorationBehavior restorationBehavior)
+{
+  switch (restorationBehavior) {
+    case react::RNSStackHeaderConfigIOSRestorationBehavior::Automatic:
+      return UIBarMinimizationRestorationBehaviorAutomatic;
+    case react::RNSStackHeaderConfigIOSRestorationBehavior::AtScrollEdge:
+      return UIBarMinimizationRestorationBehaviorAtScrollEdge;
+  }
+}
+
+#endif // Check for iOS >= 27
+
 }; // namespace rnscreens::conversion

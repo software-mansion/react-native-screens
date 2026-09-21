@@ -311,6 +311,37 @@ export type StackHeaderBackButtonDisplayModeIOS =
   | 'generic'
   | 'minimal';
 
+/**
+ * @summary Controls when the navigation bar minimizes in response to scrolling.
+ *
+ * @description
+ * - `automatic`: the system determines the minimization behavior.
+ * - `never`: the navigation bar does not minimize.
+ * - `onScrollDown`: the navigation bar minimizes when the user scrolls down.
+ * - `onScrollUp`: the navigation bar minimizes when the user scrolls up.
+ *
+ * @platform iOS
+ */
+export type StackHeaderMinimizationBehaviorIOS =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+/**
+ * @summary Controls when a minimized navigation bar restores.
+ *
+ * @description
+ * - `automatic`: the system determines the restoration behavior. By default
+ *   the navigation bar restores when the user reverses scroll direction.
+ * - `atScrollEdge`: the navigation bar restores only when the scroll view's
+ *   content reaches the scroll edge. Honored only together with
+ *   `minimizationBehavior: 'onScrollDown'`.
+ *
+ * @platform iOS
+ */
+export type StackHeaderRestorationBehaviorIOS = 'automatic' | 'atScrollEdge';
+
 export interface StackHeaderAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of the header.
@@ -569,6 +600,33 @@ export interface StackHeaderConfigPropsIOS {
    * @platform iOS
    */
   prompt?: string | undefined;
+  /**
+   * @summary Controls when the navigation bar minimizes in response to scrolling.
+   *
+   * @description
+   * When the navigation bar minimizes, an integrated top tab bar minimizes as well.
+   *
+   * @default 'automatic'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  minimizationBehavior?: StackHeaderMinimizationBehaviorIOS | undefined;
+  /**
+   * @summary Controls when a minimized navigation bar restores.
+   *
+   * @description
+   * Currently honored only together with `minimizationBehavior: 'onScrollDown'`.
+   * With other minimization behaviors, the system falls back to `automatic`.
+   *
+   * @default 'automatic'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  restorationBehavior?: StackHeaderRestorationBehaviorIOS | undefined;
   /**
    * @summary Appearance of the header when the edge of scrollable content
    * is not aligned with the edge of the header.
