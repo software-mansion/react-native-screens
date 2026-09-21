@@ -36,11 +36,24 @@
 
 #else
 
+  import React_RCTAppDelegate
   import UIKit
 
   @main
   class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+
+    // Under the scene lifecycle the React Native factory is owned by `SceneDelegate`.
+    // Tooling that resolves the React host through `UIApplication.shared.delegate`
+    // (e.g. Detox's `reloadReactNative`, which reads `reactNativeFactory` via KVC)
+    // still expects it here, so expose a read-only proxy to the active scene's factory.
+    @objc var reactNativeFactory: RCTReactNativeFactory? {
+      // Pick the foreground-active scene and fall back to any connected one (e.g. while the
+      // app is backgrounded); this mirrors how RN's own `RCTKeyWindow()` resolves a scene.
+      let scenes = UIApplication.shared.connectedScenes.filter { $0.delegate is SceneDelegate }
+      let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first
+      return (scene?.delegate as? SceneDelegate)?.reactNativeFactory
+    }
 
     func application(
       _ application: UIApplication,
