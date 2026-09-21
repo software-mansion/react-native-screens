@@ -18,7 +18,7 @@ on:
 jobs:
   test:
     runs-on: macos-26-xlarge
-    timeout-minutes: 90
+    timeout-minutes: 120
     env:
       WORKING_DIRECTORY: FabricExample
     concurrency:
@@ -61,6 +61,13 @@ jobs:
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
+        # Reuses the build above; runs only the @ipad-tagged specs on an iPad
+        # simulator. `!cancelled()` so the iPad suite still runs when the
+        # iPhone one failed - both results land in the same job.
+      - name: Test app (iPad)
+        if: ${{ !cancelled() }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn test-e2e-ios-ipad
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
