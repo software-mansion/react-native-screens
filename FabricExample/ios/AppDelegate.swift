@@ -48,10 +48,11 @@
     // (e.g. Detox's `reloadReactNative`, which reads `reactNativeFactory` via KVC)
     // still expects it here, so expose a read-only proxy to the active scene's factory.
     @objc var reactNativeFactory: RCTReactNativeFactory? {
-      let sceneDelegates = UIApplication.shared.connectedScenes
-        .sorted { $0.activationState == .foregroundActive && $1.activationState != .foregroundActive }
-        .compactMap { $0.delegate as? SceneDelegate }
-      return sceneDelegates.first?.reactNativeFactory
+      // Pick the foreground-active scene and fall back to any connected one (e.g. while the
+      // app is backgrounded); this mirrors how RN's own `RCTKeyWindow()` resolves a scene.
+      let scenes = UIApplication.shared.connectedScenes.filter { $0.delegate is SceneDelegate }
+      let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first
+      return (scene?.delegate as? SceneDelegate)?.reactNativeFactory
     }
 
     func application(
