@@ -58,6 +58,9 @@ namespace react = facebook::react;
 /**
  * This method throws an error in debug mode in case it fails to find the ScrollView instance,
  * as it does not make sense to use this component if the ScrollView is not there.
+ *
+ * Finding nothing is legitimate when a nested marker owns the ScrollView: the innermost marker
+ * configures it, and this one deliberately stands down rather than competing for it.
  */
 - (nullable UIScrollView *)findScrollView
 {
@@ -66,7 +69,12 @@ namespace react = facebook::react;
             @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
             self.subviews);
 
-  UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:self.subviews.firstObject];
+  UIView *_Nullable childView = self.subviews.firstObject;
+  if ([childView isKindOfClass:RNSScrollViewMarkerComponentView.class]) {
+    return nil;
+  }
+
+  UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:childView];
 
   RCTAssert(foundScrollView != nil, @"[RNScreens] Failed to find ScrollView"); // debug assertion only
   return foundScrollView;
@@ -165,7 +173,8 @@ static const NSUInteger RNSScrollViewMarkerMaxVisitedViews = 250;
 
   for (UIView *subview in childView.subviews) {
     // A nested marker owns the ScrollView below it; adopting it here would give two markers the
-    // same ScrollView and make the effective configuration depend on mount order.
+    // same ScrollView and make the effective configuration depend on mount order. The same rule
+    // is applied to a marker that is the direct child, in `findScrollView`.
     if ([subview isKindOfClass:RNSScrollViewMarkerComponentView.class]) {
       continue;
     }
