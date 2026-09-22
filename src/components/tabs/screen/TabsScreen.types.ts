@@ -27,6 +27,16 @@ export interface TabsScreenPropsBase {
   /**
    * @summary Identifies screen, e.g. when receiving onNativeFocusChange event.
    *
+   * @remarks
+   * The value is **immutable for the lifetime of the component instance**. Once a
+   * `TabsScreen` has mounted with a given `screenKey`, passing a different one is not
+   * supported - on iOS the native tab identity is established from it and cannot be
+   * rebound. To use a different identity, remount the screen (e.g. by changing its React
+   * `key`); note that `screenKey` is distinct from the React `key`.
+   *
+   * Violations are reported by an assertion in assertion-enabled builds only, so treat
+   * this as a contract rather than an enforced runtime guarantee.
+   *
    * @platform android, ios
    */
   screenKey: string;

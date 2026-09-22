@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSTabsScreenComponentView () <RNSScrollViewBehaviorOverriding>
 
+/// Identity of the screen. Immutable once initialized - see the `screenKey` JSDoc in
+/// `src/components/tabs/screen/TabsScreen.types.ts`. Nil until the first `updateProps:oldProps:`.
 @property (nonatomic, readonly, nullable) NSString *screenKey;
 @property (nonatomic, readonly, nullable) NSString *badgeValue;
 

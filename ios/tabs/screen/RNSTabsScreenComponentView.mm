@@ -272,6 +272,14 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.screenKey != oldComponentProps.screenKey) {
     RCTAssert(!newComponentProps.screenKey.empty(), @"[RNScreens] screenKey must not be empty!");
+    // The screen's identity is immutable for the lifetime of the component instance.
+    // On iOS 18+ the native tab identifier is derived from it and `UITab.identifier` is
+    // readonly, so a changed key could not be rebound. Changing identity requires remounting
+    // the screen, e.g. by changing its React key.
+    RCTAssert(_screenKey == nil,
+              @"[RNScreens] TabsScreen cannot change its screenKey (%@ -> %s)",
+              _screenKey,
+              newComponentProps.screenKey.c_str());
     _screenKey = RCTNSStringFromString(newComponentProps.screenKey);
   }
 
