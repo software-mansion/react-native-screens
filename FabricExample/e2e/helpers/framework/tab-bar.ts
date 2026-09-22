@@ -1,7 +1,7 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, element, by } from 'detox';
 import type { IosElementAttributes, NativeMatcher } from 'detox/detox';
-import { forceTapByLabeliOS } from './gestures';
+import { forceTapByLabelIOS } from './gestures';
 import { getMatches } from './matchers';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
@@ -10,7 +10,7 @@ import {
 
 export async function forceSelectTabByLabel(label: string) {
   if (device.getPlatform() === 'ios') {
-    await forceTapByLabeliOS(label);
+    await forceTapByLabelIOS(label);
   } else {
     await element(by.label(label)).tap();
   }

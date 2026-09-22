@@ -65,7 +65,7 @@ const isIPadTarget =
   device.getPlatform() === 'ios' &&
   /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
 
-export const describeIfiPad = isIPadTarget ? describe : describe.skip;
+export const describeIfIPad = isIPadTarget ? describe : describe.skip;
 
 /** `true` on iOS at `version` or newer; `false` on Android. */
 export function isIOSVersionAtLeast(version: string): boolean {
@@ -76,9 +76,9 @@ export function isIOSVersionAtLeast(version: string): boolean {
 }
 
 /** Suites for iOS 26+ only features; skipped on Android and older iOS. */
-export const describeIfiOS26 = isIOSVersionAtLeast('26.0')
+export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
   ? describe
   : describe.skip;
 
-export const describeIfiPadOS26 =
+export const describeIfIPadOS26 =
   isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;

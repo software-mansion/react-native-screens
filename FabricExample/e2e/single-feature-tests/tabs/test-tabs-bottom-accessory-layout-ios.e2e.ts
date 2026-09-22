@@ -2,7 +2,7 @@ import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
-  forceTapByLabeliOS,
+  forceTapByLabelIOS,
   scrollUntilVisible,
 } from '@e2e/framework/gestures';
 import { getMatches } from '@e2e/framework/matchers';
@@ -179,12 +179,12 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
-    await forceTapByLabeliOS('scroll-down-tab-item-label');
+    await forceTapByLabelIOS('scroll-down-tab-item-label');
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
-    await forceTapByLabeliOS('config-tab-item-label');
+    await forceTapByLabelIOS('config-tab-item-label');
     await expect(element(by.id('config-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
@@ -195,7 +195,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   // ---------------------------------------------------------------------------
 
   it('should display the ScrollDown tab scrollable list with extended bottom accessory', async () => {
-    await forceTapByLabeliOS('scroll-down-tab-item-label');
+    await forceTapByLabelIOS('scroll-down-tab-item-label');
 
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expect(element(by.id('scroll-down-item-1'))).toBeVisible();
@@ -235,7 +235,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   // ---------------------------------------------------------------------------
 
   it('should display the ScrollUp tab scrollable list', async () => {
-    await forceTapByLabeliOS('scroll-up-tab-item-label');
+    await forceTapByLabelIOS('scroll-up-tab-item-label');
 
     await expect(element(by.id('scroll-up-scrollview'))).toBeVisible();
 

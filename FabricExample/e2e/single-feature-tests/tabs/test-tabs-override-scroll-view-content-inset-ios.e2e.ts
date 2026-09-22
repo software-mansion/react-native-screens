@@ -2,7 +2,7 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { forceTapByLabeliOS } from '@e2e/framework/gestures';
+import { forceTapByLabelIOS } from '@e2e/framework/gestures';
 import { getFrame, getSingleMatch } from '@e2e/framework/matchers';
 import { CLASS_NAME_UI_TAB_BAR } from '@e2e/framework/native-classes-ios';
 import { describeIfiOS } from '@e2e/framework/platform';
@@ -67,7 +67,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('False tab (overrideScrollViewContentInsetAdjustmentBehavior: false)', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-false');
+      await forceTapByLabelIOS('override-inset-tab-false');
     });
 
     it('should display the false tab scrollview with the tab bar visible', async () => {
@@ -90,7 +90,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('True tab (overrideScrollViewContentInsetAdjustmentBehavior: true)', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-true');
+      await forceTapByLabelIOS('override-inset-tab-true');
     });
 
     it('should display the true tab scrollview with the tab bar visible', async () => {
@@ -112,7 +112,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
   });
   describe('Default tab (prop omitted)', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-default');
+      await forceTapByLabelIOS('override-inset-tab-default');
     });
 
     it('should display the default tab scrollview with the tab bar visible', async () => {
@@ -135,7 +135,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('Cross-tab comparison', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-default');
+      await forceTapByLabelIOS('override-inset-tab-default');
     });
 
     it('should show the information text visible between True and Default tabs', async () => {

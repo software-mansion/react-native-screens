@@ -50,7 +50,7 @@ export async function tapWithinFrame(
 }
 
 /** Coordinate tap (iOS) — bypasses Detox's visibility check. */
-export async function forceTapByLabeliOS(testLabel: string) {
+export async function forceTapByLabelIOS(testLabel: string) {
   await tapWithinFrame(
     await getFrame(by.label(testLabel), `label "${testLabel}"`),
   );
