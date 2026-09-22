@@ -46,4 +46,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-ios --simulator="Apple TV"
+        run: npx react-native run-ios --simulator="Apple TV 4K (3rd generation)"
