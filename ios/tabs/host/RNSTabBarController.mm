@@ -206,7 +206,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
 #if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
-  if (@available(iOS 27.0, *)) {
+  if (@available(iOS 26.1, *)) {
     // The only direct "user tapped More" signal on the UITab path - no UITab delegate covers More.
     // Mirrors the More branch of the legacy `shouldSelectViewController:`: enforce selection
     // prevention on the More stack top before UIKit displays it.
@@ -467,8 +467,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   _installedScreenControllers = screenControllers;
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
-  if (@available(iOS 27.0, *)) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
     UITab *_Nullable previouslySelectedTab = self.selectedTab;
 
     // Restoring the stale `selectedTab` while More is active would yank the selection away.
@@ -486,7 +486,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     }
     return;
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   [self setViewControllers:screenControllers animated:animated];
 }
@@ -494,11 +494,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
 // Controllers currently installed in UIKit, not including more controller.
 - (nonnull NSArray<RNSTabsScreenViewController *> *)installedScreenControllers
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
-  if (@available(iOS 27.0, *)) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
     return _installedScreenControllers ?: @[];
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
   return self.viewControllers ?: @[];
 }
 
@@ -509,8 +509,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)applySelectedScreenController:(nonnull UIViewController *)screenController
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
-  if (@available(iOS 27.0, *)) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
     if (![self isMoreNavigationControllerTabBarItemSelected]) {
       UITab *tab = [self findTabForScreenKey:[self screenKeyForViewController:screenController]];
       RCTAssert(tab != nil,
@@ -520,7 +520,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
       return;
     }
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   // Goes through our own setter override, so that reconciliation of implicit UIKit-driven
   // updates keeps working.

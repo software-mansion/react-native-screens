@@ -177,6 +177,14 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
   }
+
+  if (@available(iOS 26.1, *)) {
+    // TODO: This is an ugly workaround and I would love to see it replaced.
+    // With UITab-managed children (iOS >= 26.1) a replacement item does not repaint first time.
+    // Assigning a throwaway item first flips the internal logic so that the real assignment
+    // below paints synchronously.
+    _controller.tabBarItem = [[UITabBarItem alloc] init];
+  }
   _controller.tabBarItem = tabBarItem;
 }
 
