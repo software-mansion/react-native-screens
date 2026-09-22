@@ -64,8 +64,7 @@ jobs:
         run: yarn test-e2e-ios
         # Reuses the app built above; runs only the @ipad-tagged specs on an
         # iPad simulator. Gated on the build succeeding - without that app
-        # there is nothing to test - but not on the iPhone suite passing, so
-        # both results land in the same job.
+        # there is nothing to test.
       - name: Test app (iPad)
         if: ${{ !cancelled() && steps.build-app.outcome == 'success' }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
