@@ -1,9 +1,7 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfAndroid,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { describeIfAndroid } from '@e2e/framework/platform';
 
 const selectLabelVisibilityMode = (
   mode: 'auto' | 'selected' | 'labeled' | 'unlabeled',

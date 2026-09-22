@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen, dismissToast } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast } from '@e2e/app/toast';
 
 // These scenarios are split into two separate suites using `device.reloadReactNative()`.
 // Running these scenarios sequentially within a single app lifecycle caused deterministic
