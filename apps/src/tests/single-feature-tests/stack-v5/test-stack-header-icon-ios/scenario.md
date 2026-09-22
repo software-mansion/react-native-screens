@@ -8,7 +8,7 @@
 
 ## E2E test
 
-Full: all steps covered.
+Incomplete: all steps are automated but for iOS27 icon visibility is not checked.
 
 ## Prerequisites
 

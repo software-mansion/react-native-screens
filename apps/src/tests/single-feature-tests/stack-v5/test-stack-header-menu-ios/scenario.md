@@ -8,7 +8,9 @@
 
 ## E2E test
 
-Incomplete: Covers all manual scenario steps except the **Menu representation** section.
+Incomplete: Covers all manual scenario steps except the **Menu representation**
+section. On iOS 27 the header item "Menu 1" is only checked to exist, not to be
+visible.
 
 ## Prerequisites
 
