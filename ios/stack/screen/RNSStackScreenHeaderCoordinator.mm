@@ -336,6 +336,12 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    navItem.navigationBarMinimization = [UIBarMinimization new];
+  }
+#endif // Check for iOS >= 27
+
 #if !TARGET_OS_TV
   navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
