@@ -1428,6 +1428,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _isSwiping;
   BOOL _shouldNotify;
   BOOL _isRemovedFromParent;
+  BOOL _dismissReported;
+  BOOL _dismissCompleted;
 }
 
 #pragma mark - Common
@@ -1501,6 +1503,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // as per documentation of these methods
   _goingForward = !([self isBeingDismissed] || [self isMovingFromParentViewController]);
 
+  [self scheduleDismissalReportForZoomTransitionIfNeeded];
+
   if (_shouldNotify) {
     _closing = YES;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
@@ -1528,6 +1532,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewDidDisappear:animated];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
+    // Set only here, and not whenever the screen disappears: `viewDidDisappear` also runs when the
+    // screen is merely covered by a push, and that screen's own dismissal is still to come.
+    _dismissCompleted = YES;
     if (self.screenView.preventNativeDismiss) {
       // if we want to prevent the native dismiss, we do not send dismissal event,
       // but instead call `updateContainer`, which restores the JS navigation stack
@@ -1535,7 +1542,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.screenView notifyDismissCancelledWithDismissCount:_dismissCount];
     } else {
       // screen dismissed, send event
-      [self.screenView notifyDismissedWithCount:_dismissCount];
+      [self notifyDismissedIfNeeded];
     }
   }
   // same flow as in viewDidAppear
@@ -1546,6 +1553,82 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
+}
+
+- (void)notifyDismissedIfNeeded
+{
+  if (_dismissReported) {
+    return;
+  }
+  _dismissReported = YES;
+  [self.screenView notifyDismissedWithCount:_dismissCount];
+}
+
+// True between an early dismissal report (see below) and UIKit finishing the transition. In that
+// window JS already considers the screen gone, while its view is still on screen and animating.
+- (BOOL)isDismissalInFlight
+{
+  return _dismissReported && !_dismissCompleted;
+}
+
+// On iOS 18+, a screen pushed with a zoom transition (`preferredTransition`) finishes its pop well
+// after the duration the transition coordinator declares: measured on iOS 18.5, 18.6 and 26.5, the
+// coordinator reports 0.34s while `viewDidDisappear` (and the coordinator's own completion) run at
+// ~0.84s. The same happens in a plain UIKit app, so it is UIKit's behaviour. Since JS learns about
+// the dismissal only from `viewDidDisappear`, its navigation state is stale for that extra time,
+// and navigating to the screen underneath is a no-op.
+//
+// For such screens we report a committed dismissal once the declared duration elapses. An
+// interactive dismissal is reported only once the gesture ends without being cancelled; a
+// cancelled one leaves all state untouched. `viewDidDisappear` still reports if it runs first.
+- (void)scheduleDismissalReportForZoomTransitionIfNeeded
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV
+  if (@available(iOS 18.0, *)) {
+    if (self.preferredTransition == nil) {
+      return;
+    }
+  } else {
+    return;
+  }
+
+  id<UIViewControllerTransitionCoordinator> coordinator = self.transitionCoordinator;
+  if (coordinator == nil || _dismissReported || !self.isMovingFromParentViewController ||
+      self.screenView.preventNativeDismiss) {
+    return;
+  }
+
+  if (coordinator.isInteractive) {
+    __weak auto weakSelf = self;
+    [coordinator notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+      if (context.isCancelled) {
+        return;
+      }
+      [weakSelf scheduleDismissalReportAfterDelay:context.transitionDuration];
+    }];
+    return;
+  }
+
+  [self scheduleDismissalReportAfterDelay:coordinator.transitionDuration];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV
+}
+
+- (void)scheduleDismissalReportAfterDelay:(NSTimeInterval)delay
+{
+  __weak auto weakSelf = self;
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    RNSScreen *strongSelf = weakSelf;
+    if (strongSelf == nil || strongSelf.screenView.preventNativeDismiss) {
+      return;
+    }
+    // `parentViewController` is not cleared until the late completion, so check the stack itself:
+    // a screen that is still in it has not been popped after all.
+    UINavigationController *navigationController = strongSelf.navigationController;
+    if (navigationController != nil && [navigationController.viewControllers containsObject:strongSelf]) {
+      return;
+    }
+    [strongSelf notifyDismissedIfNeeded];
+  });
 }
 
 - (void)viewDidLayoutSubviews
@@ -1665,6 +1748,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // Since view recycling is disabled, we can rely on a flag indicating that the controller
     // has been removed from the hierarchy, as it will not be reused.
     _isRemovedFromParent = YES;
+    _dismissCompleted = YES;
   } else {
     _isRemovedFromParent = NO;
   }
@@ -2002,6 +2086,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window == nil) {
+    return;
+  }
+
+  // A zoom transition dismissal reported early (see `scheduleDismissalReportForZoomTransitionIfNeeded`)
+  // is a native dismissal too: UIKit is still animating this view, so there is nothing to stand in for.
+  if ([self isDismissalInFlight]) {
     return;
   }
 
