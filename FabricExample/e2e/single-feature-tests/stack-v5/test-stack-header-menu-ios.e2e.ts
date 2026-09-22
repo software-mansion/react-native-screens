@@ -9,15 +9,18 @@ import {
   dismissContextMenu,
   menuRow,
   menuRowIcon,
-  openContextMenu,
+  openHeaderItemMenu,
   openHeaderTitleMenu,
 } from '@e2e/framework/context-menu-ios';
-import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
+import {
+  expectHeaderItemShown,
+  headerTitle,
+} from '@e2e/framework/header-items-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
-const menuOneBarButton = headerItem('Menu 1', { control: true });
+const MENU_ONE_TITLE = 'Menu 1';
 
 const HEADER_TITLE = 'Header Menu';
 
@@ -42,7 +45,7 @@ async function tapSendButton(buttonId: string) {
 }
 
 async function openMenuOne() {
-  await openContextMenu(menuOneBarButton);
+  await openHeaderItemMenu(MENU_ONE_TITLE, { control: true });
 }
 
 describeIfIOS('Stack Header Menu (iOS)', () => {
@@ -56,7 +59,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
 
   it('should display the header with a trailing item exposing a real menu', async () => {
     await expect(headerTitleLabel).toExist();
-    await expect(menuOneBarButton).toBeVisible();
+    await expectHeaderItemShown(MENU_ONE_TITLE, { control: true });
   });
 
   describe('opening Menu 1', () => {
@@ -83,7 +86,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
 
   describe('toggle item selection persists across reopening the menu', () => {
     it('should show a checkmark next to Toggle 1-1 after selecting it and reopening the menu', async () => {
-      await menuOneBarButton.tap();
+      await openMenuOne();
       await element(by.text('Toggle 1-1')).tap();
       await dismissToast('1. Selected "toggle-1-1"');
 
