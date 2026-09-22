@@ -56,16 +56,18 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
       - name: Build app
+        id: build-app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-ios
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
-        # Reuses the build above; runs only the @ipad-tagged specs on an iPad
-        # simulator. `!cancelled()` so the iPad suite still runs when the
-        # iPhone one failed - both results land in the same job.
+        # Reuses the app built above; runs only the @ipad-tagged specs on an
+        # iPad simulator. Gated on the build succeeding - without that app
+        # there is nothing to test - but not on the iPhone suite passing, so
+        # both results land in the same job.
       - name: Test app (iPad)
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.build-app.outcome == 'success' }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios-ipad
       - uses: actions/upload-artifact@v4
