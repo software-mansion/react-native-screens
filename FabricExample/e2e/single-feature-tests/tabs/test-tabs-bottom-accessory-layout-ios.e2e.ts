@@ -1,23 +1,20 @@
 import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
-  describeIfiOS26,
-  describeIfiPadOS26,
-  expectBottomAccessoryAboveTabBar,
-  forceTapByLabeliOS,
-  getBottomAccessoryAttributes,
-  getMatches,
-  getTabBarAttributes,
+  forceTapByLabelIOS,
   scrollUntilVisible,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+} from '@e2e/framework/gestures';
+import { getMatches } from '@e2e/framework/matchers';
+import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+import { describeIfIOS26, describeIfIPadOS26 } from '@e2e/framework/platform';
+import {
+  bottomAccessoryElement,
+  expectBottomAccessoryAboveTabBar,
+  getBottomAccessoryAttributes,
+  getTabBarAttributes,
+} from '@e2e/framework/tab-bar';
 import { IosElementAttributes } from 'detox/detox';
-import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '../../native-class-names';
-
-const bottomAccessoryElement = (testID: string) =>
-  element(
-    by.id(testID).withAncestor(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
-  ).atIndex(0);
 
 async function expectBottomAccessoryExist(testID: string) {
   await expect(bottomAccessoryElement(testID)).toExist();
@@ -140,7 +137,7 @@ async function verifyConfigTabInitialContent() {
   ).toBeVisible();
 }
 
-describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
+describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -182,12 +179,12 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
-    await forceTapByLabeliOS('scroll-down-tab-item-label');
+    await forceTapByLabelIOS('scroll-down-tab-item-label');
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
-    await forceTapByLabeliOS('config-tab-item-label');
+    await forceTapByLabelIOS('config-tab-item-label');
     await expect(element(by.id('config-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
@@ -198,7 +195,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   // ---------------------------------------------------------------------------
 
   it('should display the ScrollDown tab scrollable list with extended bottom accessory', async () => {
-    await forceTapByLabeliOS('scroll-down-tab-item-label');
+    await forceTapByLabelIOS('scroll-down-tab-item-label');
 
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expect(element(by.id('scroll-down-item-1'))).toBeVisible();
@@ -238,7 +235,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   // ---------------------------------------------------------------------------
 
   it('should display the ScrollUp tab scrollable list', async () => {
-    await forceTapByLabeliOS('scroll-up-tab-item-label');
+    await forceTapByLabelIOS('scroll-up-tab-item-label');
 
     await expect(element(by.id('scroll-up-scrollview'))).toBeVisible();
 
@@ -278,7 +275,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   });
 });
 
-describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
+describeIfIPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
   // The Config scroll view spans the full window height and is the same across
   // every test in this block, so read its frame + safe-area insets once and
   // reuse it as the window/safe-area reference for the bottom-anchor assertion.

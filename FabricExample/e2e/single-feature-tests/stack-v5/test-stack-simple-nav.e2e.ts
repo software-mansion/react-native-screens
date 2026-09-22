@@ -1,21 +1,16 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import {
-  getSingleMatch,
-  textOf,
-  describeIfAndroid,
-  describeIfiOS,
-  readTopmostText,
-  selectSingleFeatureTestsScreen,
-  tapTopmostButton,
-  waitForRouteName,
-  waitUntil,
-} from '../../e2e-utils';
-import { tapBarBackButton } from '../../elements/back-button';
+import { waitForRouteName } from '@e2e/app/stack-route';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { tapBarBackButton } from '@e2e/framework/back-button';
+import { tapTopmostButton } from '@e2e/framework/gestures';
+import { readSingleText, readTopmostText } from '@e2e/framework/matchers';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_IMAGE_VIEW,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfAndroid, describeIfIOS } from '@e2e/framework/platform';
+import { waitUntil } from '@e2e/framework/wait';
 
 /**
  * Stack v5 simple navigation.
@@ -38,15 +33,14 @@ import {
  *   launch documented in the scenario.
  */
 
-describeIfiOS('Stack v5: simple navigation', () => {
+describeIfIOS('Stack v5: simple navigation', () => {
   /**
    * Reads the currently-visible route's `Key` label. Because
    * react-native-screens detaches covered screens, only the top screen's
    * `stack-route-key` element is in the hierarchy, so this resolves
    * unambiguously to the current screen — asserted by `getSingleMatch`.
    */
-  const readRouteKey = async () =>
-    textOf(await getSingleMatch(by.id('stack-route-key'), 'stack-route-key'));
+  const readRouteKey = async () => readSingleText('stack-route-key');
 
   /**
    * Waits until a screen with the same route name as `previousKey` but a
