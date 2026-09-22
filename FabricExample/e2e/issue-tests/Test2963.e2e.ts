@@ -1,9 +1,9 @@
 import { device, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 // issue related to iOS
-describeIfiOS('Test2963', () => {
+describeIfIOS('Test2963', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
   });

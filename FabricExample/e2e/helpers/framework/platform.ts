@@ -51,7 +51,7 @@ function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
   return compareVersions(version, minimumVersion) >= 0;
 }
 
-export const describeIfiOS =
+export const describeIfIOS =
   device.getPlatform() === 'ios' ? describe : describe.skip;
 
 export const describeIfAndroid =

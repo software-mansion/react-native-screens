@@ -1,10 +1,10 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 // issue related to iOS native back button
-describeIfiOS('Test654', () => {
+describeIfIOS('Test654', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await element(by.id('root-screen-switch-rtl')).tap();

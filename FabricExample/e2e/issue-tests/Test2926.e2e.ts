@@ -2,10 +2,10 @@ import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { tapBarBackButton } from '@e2e/framework/back-button';
 import { CLASS_NAME_UI_SEARCH_BAR_TEXT_FIELD } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 // PR related to iOS search bar
-describeIfiOS('Test2926', () => {
+describeIfIOS('Test2926', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
   });

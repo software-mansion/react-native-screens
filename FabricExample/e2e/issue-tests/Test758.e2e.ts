@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
-import { describeIfiOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
+import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
 
 // On iOS 26+ cancel button does not contain any text.
 function getSearchBarCloseButton() {
@@ -12,7 +12,7 @@ function getSearchBarCloseButton() {
 }
 
 // PR related to iOS search bar
-describeIfiOS('Test758', () => {
+describeIfIOS('Test758', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
   });
