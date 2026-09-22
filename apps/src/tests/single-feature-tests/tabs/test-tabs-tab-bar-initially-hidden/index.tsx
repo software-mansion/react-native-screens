@@ -53,8 +53,14 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TestTabsTabBarHidden() {
-  return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
+function TestTabsTabBarInitiallyHidden() {
+  return (
+    <TabsContainerWithHostConfigContext
+      routeConfigs={ROUTE_CONFIGS}
+      tabBarHidden
+      ios={{ tabBarHiddenAnimationEnabled: true }}
+    />
+  );
 }
 
-export default createScenario(TestTabsTabBarHidden, scenarioDescription);
+export default createScenario(TestTabsTabBarInitiallyHidden, scenarioDescription);
