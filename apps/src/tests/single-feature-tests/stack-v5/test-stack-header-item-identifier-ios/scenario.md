@@ -13,13 +13,17 @@ stay put, only changing their appearance.
 
 ## E2E test
 
-Incomplete: covers the end state after each push for steps 1–3 of **Steps on
-iPhone** and steps 1–2 of **Steps with separators** — which item shows at which
-trailing position (asserted via horizontal frame order) for
-the sfSymbols and separators configurations, and that with separators each
-item sits in its own platter view.
+Incomplete: covers the end state after each push, not the transitions.
 
-Not automated:
+- Steps 1–3 of **Steps on iPhone** (sfSymbols): which item shows at which
+  trailing position (asserted via horizontal frame order); each expected symbol
+  is visible (on iOS 26) or exists (on iOS 27), and no other symbol is present.
+- iOS 26 only:
+  - Steps 1–2 of **Steps with separators**: the same symbol and position
+    checks, plus that each item sits in its own platter view
+    (`_UINavigationBarPlatterView`).
+
+Not automated (any iOS version):
 
 - Transition quality (steps 2–4 of **Steps on iPhone**, step 2 of **Steps with
   separators**): flashing / blur / crossfade — Detox samples settled state, not
@@ -28,6 +32,7 @@ Not automated:
   that the custom views render, not the real identifier-matching functionality.
 - Step 5 of **Steps on iPhone** (identifiers off): end state is identical, only
   the transition differs — Detox can't assert it.
+- iOS 27 only: Steps 1–2 of **Steps with separators**: skipped.
 
 ## Prerequisites
 
