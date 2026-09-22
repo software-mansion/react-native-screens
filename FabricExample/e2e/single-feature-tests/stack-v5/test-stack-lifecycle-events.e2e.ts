@@ -5,7 +5,7 @@ import { dismissToast } from '@e2e/app/toast';
 import { tapBarBackButton } from '@e2e/framework/back-button';
 import { tapTopmostButton } from '@e2e/framework/gestures';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
-import { describeIfAndroid, describeIfiOS } from '@e2e/framework/platform';
+import { describeIfAndroid, describeIfIOS } from '@e2e/framework/platform';
 
 /**
  * Stack v5 lifecycle events.
@@ -37,7 +37,7 @@ import { describeIfAndroid, describeIfiOS } from '@e2e/framework/platform';
  *   scenario.
  */
 
-describeIfiOS('Stack v5: lifecycle events', () => {
+describeIfIOS('Stack v5: lifecycle events', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

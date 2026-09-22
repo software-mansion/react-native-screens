@@ -5,7 +5,7 @@ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation'
 import { forceTapByLabelIOS } from '@e2e/framework/gestures';
 import { getFrame, getSingleMatch } from '@e2e/framework/matchers';
 import { CLASS_NAME_UI_TAB_BAR } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 const getScrollViewSafeAreaInsetsTop = async (testID: string) => ({
   top: ((await getSingleMatch(by.id(testID), testID)) as IosElementAttributes)
@@ -56,7 +56,7 @@ async function scrollToMaxTop(scrollViewId: string) {
   await element(by.id(scrollViewId)).scrollTo('top', NaN, 0.5);
 }
 
-describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
+describeIfIOS('Override Scroll View Content Inset (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

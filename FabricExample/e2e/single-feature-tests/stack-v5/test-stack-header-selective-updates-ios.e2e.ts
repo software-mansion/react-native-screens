@@ -4,7 +4,7 @@ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation'
 import { dismissToast } from '@e2e/app/toast';
 import { checkmarkFor, openContextMenu } from '@e2e/framework/context-menu-ios';
 import { headerItem as textItem } from '@e2e/framework/header-items-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 // `SettingsPicker` derives its option testIDs from the label only, not the item
 // index (`title-foo`, `menu-single`, …), so those IDs are duplicated across
@@ -30,7 +30,7 @@ async function setMenuMode(
   });
 }
 
-describeIfiOS('Stack Header Selective Updates (iOS)', () => {
+describeIfIOS('Stack Header Selective Updates (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

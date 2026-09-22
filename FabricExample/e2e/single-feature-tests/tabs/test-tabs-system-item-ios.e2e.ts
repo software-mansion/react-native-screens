@@ -8,7 +8,7 @@ import {
   CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
+import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
 }
@@ -31,7 +31,7 @@ const tabBarButtonType = isIOSVersionAtLeast('26.0')
   ? CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26
   : CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY;
 
-describeIfiOS('Tab Bar System Item', () => {
+describeIfIOS('Tab Bar System Item', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-system-item-ios');

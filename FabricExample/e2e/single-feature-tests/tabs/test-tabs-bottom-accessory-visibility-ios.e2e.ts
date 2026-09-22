@@ -2,7 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS26 } from '@e2e/framework/platform';
+import { describeIfIOS26 } from '@e2e/framework/platform';
 import {
   bottomAccessoryElement,
   expectBottomAccessoryAboveTabBar,
@@ -70,7 +70,7 @@ async function expectBottomAccessoryAbsent() {
   await expect(element(by.id(ACCESSORY_TEXT))).not.toExist();
 }
 
-describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
+describeIfIOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

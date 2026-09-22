@@ -13,7 +13,7 @@ import {
   openHeaderTitleMenu,
 } from '@e2e/framework/context-menu-ios';
 import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
@@ -45,7 +45,7 @@ async function openMenuOne() {
   await openContextMenu(menuOneBarButton);
 }
 
-describeIfiOS('Stack Header Menu (iOS)', () => {
+describeIfIOS('Stack Header Menu (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -183,7 +183,7 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
   });
 });
 
-describeIfiOS(
+describeIfIOS(
   'Stack Header Menu (iOS): setMenuItemOptions view command',
   () => {
     beforeAll(async () => {
@@ -290,7 +290,7 @@ describeIfiOS(
   },
 );
 
-describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
+describeIfIOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

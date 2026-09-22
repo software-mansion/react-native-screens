@@ -9,7 +9,7 @@ import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_IMAGE_VIEW,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfAndroid, describeIfiOS } from '@e2e/framework/platform';
+import { describeIfAndroid, describeIfIOS } from '@e2e/framework/platform';
 import { waitUntil } from '@e2e/framework/wait';
 
 /**
@@ -33,7 +33,7 @@ import { waitUntil } from '@e2e/framework/wait';
  *   launch documented in the scenario.
  */
 
-describeIfiOS('Stack v5: simple navigation', () => {
+describeIfIOS('Stack v5: simple navigation', () => {
   /**
    * Reads the currently-visible route's `Key` label. Because
    * react-native-screens detaches covered screens, only the top screen's

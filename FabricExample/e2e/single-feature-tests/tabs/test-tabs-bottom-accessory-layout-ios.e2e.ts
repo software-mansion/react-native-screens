@@ -7,7 +7,7 @@ import {
 } from '@e2e/framework/gestures';
 import { getMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS26, describeIfiPadOS26 } from '@e2e/framework/platform';
+import { describeIfIOS26, describeIfIPadOS26 } from '@e2e/framework/platform';
 import {
   bottomAccessoryElement,
   expectBottomAccessoryAboveTabBar,
@@ -137,7 +137,7 @@ async function verifyConfigTabInitialContent() {
   ).toBeVisible();
 }
 
-describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
+describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -275,7 +275,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   });
 });
 
-describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
+describeIfIPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
   // The Config scroll view spans the full window height and is the same across
   // every test in this block, so read its frame + safe-area insets once and
   // reuse it as the window/safe-area reference for the bottom-anchor assertion.

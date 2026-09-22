@@ -9,7 +9,7 @@ import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS, describeIfiPad } from '@e2e/framework/platform';
+import { describeIfIOS, describeIfIPad } from '@e2e/framework/platform';
 
 const PICKER_ID = 'tab-bar-controller-mode-picker';
 
@@ -22,7 +22,7 @@ const setTabBarControllerMode = (mode: TabBarControllerMode) =>
     option: mode,
   });
 
-describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
+describeIfIPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -95,7 +95,7 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   });
 });
 
-describeIfiOS('Tabs: tabBarControllerMode (iPhone)', () => {
+describeIfIOS('Tabs: tabBarControllerMode (iPhone)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

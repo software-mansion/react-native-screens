@@ -5,7 +5,7 @@ import {
   CLASS_NAME_UI_BUTTON,
   CLASS_NAME_UI_TAB_SIDEBAR_CELL,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfiPad } from '@e2e/framework/platform';
+import { describeIfIPad } from '@e2e/framework/platform';
 
 describe('@smoke Tabs: preventNativeSelection', () => {
   beforeAll(async () => {
@@ -166,7 +166,7 @@ describe('@smoke Tabs: preventNativeSelection', () => {
   });
 });
 
-describeIfiPad(
+describeIfIPad(
   '@ipad Tabs: preventNativeSelection — iPad sidebar (tabSidebar mode)',
   () => {
     beforeAll(async () => {

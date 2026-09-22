@@ -6,7 +6,7 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 // Number of rows in the header item menu that render an icon:
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
@@ -51,7 +51,7 @@ const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {
   }
 };
 
-describeIfiOS('Stack Header Icon (iOS)', () => {
+describeIfIOS('Stack Header Icon (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

@@ -12,7 +12,7 @@ import {
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
   CLASS_NAME_UI_IMAGE_VIEW,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS } from '@e2e/framework/platform';
+import { describeIfIOS } from '@e2e/framework/platform';
 import { expect as jestExpect } from '@jest/globals';
 import { IosElementAttributes } from 'detox/detox';
 
@@ -49,7 +49,7 @@ async function toggleAndExpectLabel(testID: string, expectedLabel: string) {
   await expect(element(by.id(testID))).toHaveLabel(expectedLabel);
 }
 
-describeIfiOS('Stack Header Menu Options (iOS)', () => {
+describeIfIOS('Stack Header Menu Options (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

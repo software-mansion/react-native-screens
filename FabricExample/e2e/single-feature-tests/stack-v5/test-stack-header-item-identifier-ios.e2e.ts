@@ -6,7 +6,7 @@ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation'
 import { barButtonIcon, headerTitle } from '@e2e/framework/header-items-ios';
 import { getMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '@e2e/framework/native-classes-ios';
-import { describeIfiOS26 } from '@e2e/framework/platform';
+import { describeIfIOS26 } from '@e2e/framework/platform';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
 // screen's index.tsx).
@@ -104,7 +104,7 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
 
 // The identifier-driven item-matching behavior under test only exists on
 // iOS 26+ (see scenario.md, "OS test creation version").
-describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
+describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
   describe('sfSymbols with identifiers (default)', () => {
     beforeAll(async () => {
       await device.reloadReactNative();
