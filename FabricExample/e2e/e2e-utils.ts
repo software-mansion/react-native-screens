@@ -897,7 +897,7 @@ const sheetDimmingView = () =>
  * Asserts the backdrop UIKit inserts behind a presented sheet exists. No-op on
  * Android: the dim is an overlay drawable there, with no view to match.
  */
-export async function expectDimmingIfiOS(): Promise<void> {
+export async function expectDimmingIfIOS(): Promise<void> {
   if (device.getPlatform() !== 'ios') {
     return;
   }
@@ -906,9 +906,9 @@ export async function expectDimmingIfiOS(): Promise<void> {
 
 /**
  * Asserts the sheet backdrop is gone, waiting out the dismissal animation.
- * No-op on Android, see {@link expectDimmingIfiOS}.
+ * No-op on Android, see {@link expectDimmingIfIOS}.
  */
-export async function expectNoDimmingIfiOS(): Promise<void> {
+export async function expectNoDimmingIfIOS(): Promise<void> {
   if (device.getPlatform() !== 'ios') {
     return;
   }
