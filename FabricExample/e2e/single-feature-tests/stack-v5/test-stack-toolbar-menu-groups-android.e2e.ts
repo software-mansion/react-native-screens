@@ -178,7 +178,7 @@ async function withSubmenu(assertions: () => Promise<void>) {
   });
 }
 
-describeIfAndroid('Stack Toolbar Menu Groups', () => {
+describeIfAndroid('@smoke Stack Toolbar Menu Groups', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

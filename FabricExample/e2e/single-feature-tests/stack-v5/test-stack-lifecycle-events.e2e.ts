@@ -40,7 +40,7 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  *   scenario.
  */
 
-describeIfiOS('Stack v5: lifecycle events', () => {
+describeIfiOS('@smoke Stack v5: lifecycle events', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -272,7 +272,7 @@ describeIfiOS('Stack v5: lifecycle events', () => {
   });
 });
 
-describeIfAndroid('Stack v5: lifecycle events', () => {
+describeIfAndroid('@smoke Stack v5: lifecycle events', () => {
   // React Native's core `<Button>` uppercases its `title` on Android
   // (`title.toUpperCase()`), so buttons are matched by their rendered text.
   const PUSH_A = 'PUSH A';
