@@ -8,7 +8,10 @@ import TestStackLifecycleEvents from './test-stack-lifecycle-events';
 import TestStackAnimationAndroid from './test-stack-animation-android';
 import TestStackAnimationOperationsAndroid from './test-stack-animation-operations-android';
 import TestStackAnimationUpdateAndroid from './test-stack-animation-update-android';
-import TestStackAnimationPresetsAndroid from './test-stack-animation-presets-android';
+import TestStackAnimationSlideAndroid from './test-stack-animation-slide-android';
+import TestStackAnimationFadeAndroid from './test-stack-animation-fade-android';
+import TestStackAnimationIOSAndroid from './test-stack-animation-ios-android';
+import TestStackAnimationNoneAndroid from './test-stack-animation-none-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
@@ -49,7 +52,10 @@ export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-even
 export { default as TestStackAnimationAndroid } from './test-stack-animation-android';
 export { default as TestStackAnimationOperationsAndroid } from './test-stack-animation-operations-android';
 export { default as TestStackAnimationUpdateAndroid } from './test-stack-animation-update-android';
-export { default as TestStackAnimationPresetsAndroid } from './test-stack-animation-presets-android';
+export { default as TestStackAnimationSlideAndroid } from './test-stack-animation-slide-android';
+export { default as TestStackAnimationFadeAndroid } from './test-stack-animation-fade-android';
+export { default as TestStackAnimationIOSAndroid } from './test-stack-animation-ios-android';
+export { default as TestStackAnimationNoneAndroid } from './test-stack-animation-none-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
@@ -89,7 +95,10 @@ const scenarios = {
   TestStackAnimationAndroid,
   TestStackAnimationOperationsAndroid,
   TestStackAnimationUpdateAndroid,
-  TestStackAnimationPresetsAndroid,
+  TestStackAnimationSlideAndroid,
+  TestStackAnimationFadeAndroid,
+  TestStackAnimationIOSAndroid,
+  TestStackAnimationNoneAndroid,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
   TestStackLiftOnScrollAndroid,
