@@ -20,6 +20,8 @@ mirroring and the transition direction are not; not implemented yet.
 ## Prerequisites
 
 - Android emulator or device.
+- Steps 14-17 need **API 33 or newer**: they rely on the `default` animation,
+  which below API 33 is a zoom with no sideways motion.
 
 ## Note
 
@@ -130,14 +132,16 @@ mirroring and the transition direction are not; not implemented yet.
 14. Tap "Reset", set "direction" to `rtl`, then tap "Push screen (adds a back
     button)".
 
-    - [ ] The incoming screen slides in from the left.
+    - [ ] The incoming screen slides in a short distance from the left while
+          fading in, and the covered screen moves slightly to the right.
     - [ ] Its back arrow is on the right edge and points right.
     - [ ] Its header is right-to-left from the first frame; it does not appear
           left-to-right and then flip.
 
 15. Tap the back arrow.
 
-    - [ ] The popped screen leaves to the left, mirroring the push.
+    - [ ] The popped screen moves a short distance to the left while fading
+          out, mirroring the push.
 
 16. Tap "Push screen (adds a back button)", then set "direction" to `ltr`.
 
@@ -147,7 +151,8 @@ mirroring and the transition direction are not; not implemented yet.
 
 17. Tap the back arrow.
 
-    - [ ] The popped screen leaves to the right.
+    - [ ] The popped screen moves a short distance to the right while fading
+          out.
 
 ---
 
