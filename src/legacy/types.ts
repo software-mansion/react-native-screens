@@ -1114,6 +1114,14 @@ export interface SearchBarProps {
   shouldShowHintSearchIcon?: boolean | undefined;
 }
 
+/**
+ * Priority deciding which header items are given up first when they do not fit.
+ * Each value maps to the matching UIKit constant.
+ *
+ * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitemvisibilitypriority
+ */
+export type HeaderBarButtonItemVisibilityPriority = 'low' | 'standard' | 'high';
+
 export interface ScreenStackHeaderSubviewProps {
   /**
    * A boolean value indicating whether the background this item may share with other items in the bar should be hidden.
@@ -1123,6 +1131,15 @@ export interface ScreenStackHeaderSubviewProps {
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/hidessharedbackground
    */
   hidesSharedBackground?: boolean | undefined;
+  /**
+   * Priority used when the header runs out of room: items with the lowest
+   * priority are moved into the overflow menu first. Defaults to 'standard'.
+   * Only applicable to type="right" and type="left" subviews.
+   * Only available from iOS 27.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitemvisibilitypriority
+   */
+  visibilityPriority?: HeaderBarButtonItemVisibilityPriority | undefined;
 }
 
 interface SharedHeaderBarButtonItem {
@@ -1193,6 +1210,14 @@ interface SharedHeaderBarButtonItem {
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/identifier
    */
   identifier?: string | undefined;
+  /**
+   * Priority used when the header runs out of room: items with the lowest
+   * priority are moved into the overflow menu first. Defaults to 'standard'.
+   * Only available from iOS 27.0 and later.
+   *
+   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitemvisibilitypriority
+   */
+  visibilityPriority?: HeaderBarButtonItemVisibilityPriority | undefined;
   /**
    * A badge to be rendered on a item.
    * Only available from iOS 26.0 and later.

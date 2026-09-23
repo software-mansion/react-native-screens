@@ -21,6 +21,7 @@ namespace react = facebook::react;
   // The cycle is cleared via `invalidateUIBarButtonItem` method, called by `invalidate` callback.
   UIBarButtonItem *_barButtonItem;
   BOOL _hidesSharedBackground;
+  react::RNSScreenStackHeaderSubviewVisibilityPriority _visibilityPriority;
 }
 
 #pragma mark - Common
@@ -112,6 +113,7 @@ namespace react = facebook::react;
     _props = defaultProps;
     _lastScheduledFrame = CGRectZero;
     _synchronousShadowStateUpdatesEnabled = YES;
+    _visibilityPriority = react::RNSScreenStackHeaderSubviewVisibilityPriority::Standard;
   }
 
   return self;
@@ -125,6 +127,7 @@ namespace react = facebook::react;
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [self setHidesSharedBackground:newHeaderSubviewProps.hidesSharedBackground];
+  [self setVisibilityPriority:newHeaderSubviewProps.visibilityPriority];
   [self setSynchronousShadowStateUpdatesEnabled:newHeaderSubviewProps.synchronousShadowStateUpdatesEnabled];
   [super updateProps:props oldProps:oldProps];
 }
@@ -280,12 +283,38 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+  if (@available(iOS 27.0, *)) {
+    if (_barButtonItem != nil) {
+      _barButtonItem.visibilityPriority =
+          [RNSConvert UIBarButtonItemVisibilityPriorityFromCppEquivalent:_visibilityPriority];
+    }
+  }
+#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
 }
 
 - (void)setHidesSharedBackground:(BOOL)hidesSharedBackground
 {
   _hidesSharedBackground = hidesSharedBackground;
   [self configureBarButtonItem];
+}
+
+- (void)setVisibilityPriority:(react::RNSScreenStackHeaderSubviewVisibilityPriority)visibilityPriority
+{
+  if (visibilityPriority == _visibilityPriority) {
+    return;
+  }
+
+  _visibilityPriority = visibilityPriority;
+  [self configureBarButtonItem];
+
+  // Changing the priority of an item that is already in the bar is not enough:
+  // the bar only re-evaluates which items fit when it is handed its items again,
+  // which the header does whenever it re-applies its config.
+  if (_barButtonItem != nil) {
+    [[self getHeaderConfig] updateViewControllerIfNeeded];
+  }
 }
 
 #pragma mark - Dynamic frameworks support
