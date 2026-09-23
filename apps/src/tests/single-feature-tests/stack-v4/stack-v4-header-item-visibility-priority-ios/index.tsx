@@ -100,13 +100,13 @@ export function TestStackV4HeaderItemVisibilityPriorityIOS() {
               setVideoPriorityIndex(index => (index + 1) % PRIORITIES.length)
             }
           />
-          {/* <Button
+          <Button
             testID="toggle-search-visibility-priority-button"
             title={`search visibilityPriority: ${searchPriority}`}
             onPress={() =>
               setSearchPriorityIndex(index => (index + 1) % PRIORITIES.length)
             }
-          /> */}
+          />
         </View>
       </ScreenStackItem>
     </ScreenStack>
