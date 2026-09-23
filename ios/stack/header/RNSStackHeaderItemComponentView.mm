@@ -53,7 +53,7 @@ namespace react = facebook::react;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
-  _visibilityPriority = nil;
+  _visibilityPriority = RNSHeaderItemVisibilityPriorityStandard;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -229,14 +229,15 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (oldItemProps.visibilityPriority != newItemProps.visibilityPriority) {
+    _visibilityPriority =
+        rnscreens::conversion::RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+            newItemProps.visibilityPriority);
 #if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+    // The item is rebuilt only where the priority is actually applied to it.
     if (@available(iOS 27.0, *)) {
-      _visibilityPriority =
-          @(rnscreens::conversion::UIBarButtonItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
-              newItemProps.visibilityPriority));
+      needsUpdate = YES;
     }
 #endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
-    needsUpdate = YES;
   }
 
   [super updateProps:props oldProps:oldProps];

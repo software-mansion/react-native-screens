@@ -1,18 +1,7 @@
 import type { ReactElement } from 'react';
 import type { PlatformIconIOS } from '../../../shared/types';
 import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
-
-/**
- * @summary Priority used when the header has to decide which items to keep.
- *
- * @description
- * Each value maps to the matching `UIBarButtonItemVisibilityPriority` constant.
- *
- * @platform iOS
- *
- * @supported iOS 27 and higher
- */
-export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';
+import type { StackHeaderItemVisibilityPriorityIOS } from '../StackHeaderConfig.ios.types';
 
 export type StackHeaderItemPlacement =
   | 'leading'

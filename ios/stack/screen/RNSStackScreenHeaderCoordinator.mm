@@ -1,6 +1,7 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
@@ -555,9 +556,9 @@
 
 #if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
   if (@available(iOS 27.0, *)) {
-    if (item.visibilityPriority != nil) {
-      barButtonItem.visibilityPriority = item.visibilityPriority.integerValue;
-    }
+    barButtonItem.visibilityPriority =
+        rnscreens::conversion::UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+            item.visibilityPriority);
   }
 #endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
 

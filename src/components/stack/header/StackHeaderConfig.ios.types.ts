@@ -2,9 +2,6 @@ import type { ReactElement } from 'react';
 import type { TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
-import type { StackHeaderItemVisibilityPriorityIOS } from './ios/StackHeaderItem.ios.types';
-
-export type { StackHeaderItemVisibilityPriorityIOS };
 
 /**
  * @summary Options for updating a menu action (leaf item) at runtime.
@@ -116,18 +113,35 @@ export interface SupportsSharedBackgroundIOS {
   hidesSharedBackground?: boolean | undefined;
 }
 
+/**
+ * @summary Priority used when the header has to decide which items to keep.
+ *
+ * @description
+ * Each value maps to the matching `UIBarButtonItemVisibilityPriority` constant.
+ *
+ * @platform iOS
+ *
+ * @supported iOS 27 and higher
+ */
+export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';
+
 export interface SupportsVisibilityPriorityIOS {
   /**
    * @summary Decides which items give way first when the header runs out of room.
    *
    * @description
    * When the items do not fit, the header moves the ones with the lowest
-   * priority into the overflow ("...") menu, and keeps the higher ones. Items
-   * of equal priority are given up starting from the trailing edge of the bar.
+   * priority into the overflow ("...") menu, and keeps the higher ones.
    *
    * Accepts `'low'`, `'standard'` (the default) and `'high'`, which map to the
    * `UIBarButtonItemVisibilityPriority` constants. Only the relative order of
    * the items matters.
+   *
+   * When the item is placed in an implicit group of items, the group
+   * inherits this priority.
+   *
+   * A custom item ({@link StackHeaderInlineCustomItemIOS.render | render})
+   * moved into the overflow menu has no content to show there.
    *
    * @default 'standard'
    *
