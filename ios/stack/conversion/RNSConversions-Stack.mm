@@ -52,4 +52,19 @@ UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonD
   }
 }
 
+#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+    react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case react::RNSStackHeaderItemIOSVisibilityPriority::Low:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::High:
+      return UIBarButtonItemVisibilityPriorityHigh;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::Standard:
+      return UIBarButtonItemVisibilityPriorityStandard;
+  }
+}
+#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+
 }; // namespace rnscreens::conversion
