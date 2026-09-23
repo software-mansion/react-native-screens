@@ -118,6 +118,23 @@
   }
 }
 
+#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
++ (UIBarButtonItemVisibilityPriority)UIBarButtonItemVisibilityPriorityFromCppEquivalent:
+    (react::RNSScreenStackHeaderSubviewVisibilityPriority)visibilityPriority
+{
+  switch (visibilityPriority) {
+    using enum react::RNSScreenStackHeaderSubviewVisibilityPriority;
+
+    case Low:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case High:
+      return UIBarButtonItemVisibilityPriorityHigh;
+    case Standard:
+      return UIBarButtonItemVisibilityPriorityStandard;
+  }
+}
+#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (react::RNSScreenReplaceAnimation)replaceAnimation
 {

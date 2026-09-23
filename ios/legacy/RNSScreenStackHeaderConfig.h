@@ -99,6 +99,12 @@ NS_ASSUME_NONNULL_END
  */
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
 
+/**
+ * Re-applies this config onto its view controller's navigation item, if that
+ * view controller is the one currently shown.
+ */
+- (void)updateViewControllerIfNeeded;
+
 @end
 
 #pragma mark - Experimental
