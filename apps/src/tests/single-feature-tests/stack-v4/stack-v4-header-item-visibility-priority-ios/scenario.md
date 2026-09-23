@@ -33,7 +33,7 @@ TBD.
 3. Press the "..." button
     - [ ] Nothing happens — the item moved there is a custom view, which has
         nothing to show inside a menu
-4. Press 'square visibilityPriority' button to reach `high`
+4. Press `square visibilityPriority` button to reach `high`
     - [ ] The resizing item is back in the header, at its full width, and both
         icons are in the overflow menu instead
 5. Press the "..." button
@@ -41,16 +41,9 @@ TBD.
 6. Press the "search" to hide the menu
     - [ ] The resizing item is in the header, at its full width, and both
         icons are in the overflow menu
-7. Press the `square visibilityPriority` button to reach `low`
-    - [ ] The resizing item disappears, both icons stay in the header
-8. Press the `square visibilityPriority` button intil it reads `high` and press 
-    the resizing item.
-    - [ ] Same as 1.
-9. Press the `square visibilityPriority` button until it reads `standard`,
-    press the `video visibilityPriority` button until it reads `low`, then
-    press the resizing item
-    - [ ] The resizing item and the video icon are in the overflow menu, the
-        search icon stays in the header
-10. Press the `video visibilityPriority` button until it reads `standard`
-    - [ ] The video icon is back in the header, the search icon stays in the
-        header, and the resizing item is in the overflow menu
+7. Press the `video visibilityPriority` button to reach `high`
+    - [ ] The video icon is back in the header
+    - [ ] The resizing item disappears from the header
+    - [ ] The search icon is in the overflow menu
+
+    
