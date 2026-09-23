@@ -8,6 +8,7 @@ import {
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
 import { SettingsPicker, ThemedText } from '@apps/shared';
+import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigProps,
@@ -37,12 +38,58 @@ const INITIAL_CONFIG: MinimizationConfig = {
   restorationBehavior: 'automatic',
 };
 
+function ResizingItem() {
+  const [large, setLarge] = React.useState(false);
+
+  return (
+    <PressableWithFeedback
+      onPress={() => setLarge(value => !value)}
+      style={{ width: large ? 60 : 20, height: large ? 30 : 20 }}
+    />
+  );
+}
+
 function buildHeaderConfig(config: MinimizationConfig): StackHeaderConfigProps {
   return {
     title: 'Scroll',
     ios: {
       minimizationBehavior: config.minimizationBehavior,
       restorationBehavior: config.restorationBehavior,
+      leadingItems: [
+        {
+          type: 'item',
+          id: 'leading-0',
+          render: () => <ResizingItem />,
+        },
+        {
+          type: 'spacer',
+          id: 'spacer-leading-1',
+          sizing: 'fixed',
+          width: 100,
+        },
+        {
+          type: 'item',
+          id: 'leading-1',
+          render: () => <ResizingItem />,
+        },
+      ],
+      trailingItems: [
+        {
+          type: 'item',
+          id: 'trailing-0',
+          render: () => <ResizingItem />,
+        },
+        {
+          type: 'spacer',
+          id: 'spacer-trailing-1',
+          sizing: 'flexible',
+        },
+        {
+          type: 'item',
+          id: 'trailing-1',
+          render: () => <ResizingItem />,
+        },
+      ],
     },
   };
 }
