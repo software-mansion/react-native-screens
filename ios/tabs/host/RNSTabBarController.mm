@@ -92,10 +92,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
   BOOL _isHandlingExplicitSelectionUpdate;
 
-  /**
-   * UITab path only. Set when `shouldSelectTab:` admits a user selection, consumed by
-   * `didSelectTab:` - which fires also for programmatic selection and this flag allows for filtering the latter.
-   */
+  /// UITab path only. Set when `shouldSelectTab:` admits a user selection, consumed by
+  /// `didSelectTab:` - which fires also for programmatic selection and this flag allows for filtering the latter.
   BOOL _isHandlingUserTabSelection;
 
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
@@ -458,7 +456,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 #pragma mark - UIKit configuration boundary
 
 // Every UIKit read/write related to child installation & selection goes through the methods below.
-// The legacy `viewControllers`-based API and the `UITab`-based API (iOS 27+) are mutually
+// The legacy `viewControllers`-based API and the `UITab`-based API (iOS 26.1+) are mutually
 // exclusive - funnelling the accesses through a single boundary is what lets the rest of the
 // controller stay path-agnostic.
 
