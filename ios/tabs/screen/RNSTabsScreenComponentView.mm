@@ -190,8 +190,6 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateTabBarItem
 {
-  UITabBarItem *tabBarItem = _controller.tabBarItem;
-
   NSString *evaluatedTitle = _title;
   if (_title == nil && _systemItem != RNSTabsScreenSystemItemNone) {
     // Restore default system item title
@@ -208,9 +206,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self updateTabBarItemTitle:evaluatedTitle];
 
-  if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
-    tabBarItem.badgeValue = _badgeValue;
-  }
+  // The badge is missing here intentionally. It is applied by `RNSTabBarAppearanceCoordinator`
+  // to be correctly caught by UITab update.
 }
 
 - (void)updateTabBarItemTitle:(NSString *)newTitle

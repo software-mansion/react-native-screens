@@ -51,6 +51,8 @@
   tabBarItem.standardAppearance = tabScreenCtrl.tabScreenComponentView.standardAppearance;
   tabBarItem.scrollEdgeAppearance = tabScreenCtrl.tabScreenComponentView.scrollEdgeAppearance;
 
+  tabBarItem.badgeValue = tabScreenCtrl.tabScreenComponentView.badgeValue;
+
   [self setIconsForTabBarItem:tabBarItem
                fromScreenView:tabScreenCtrl.tabScreenComponentView
               withImageLoader:imageLoader];
