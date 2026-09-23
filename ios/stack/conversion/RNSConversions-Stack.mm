@@ -52,17 +52,31 @@ UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonD
   }
 }
 
-#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
-UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
 {
   switch (visibilityPriority) {
     case react::RNSStackHeaderItemIOSVisibilityPriority::Low:
-      return UIBarButtonItemVisibilityPriorityLow;
-    case react::RNSStackHeaderItemIOSVisibilityPriority::High:
-      return UIBarButtonItemVisibilityPriorityHigh;
+      return RNSHeaderItemVisibilityPriorityLow;
     case react::RNSStackHeaderItemIOSVisibilityPriority::Standard:
+      return RNSHeaderItemVisibilityPriorityStandard;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::High:
+      return RNSHeaderItemVisibilityPriorityHigh;
+  }
+}
+
+#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+API_AVAILABLE(ios(27.0))
+UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case RNSHeaderItemVisibilityPriorityLow:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case RNSHeaderItemVisibilityPriorityStandard:
       return UIBarButtonItemVisibilityPriorityStandard;
+    case RNSHeaderItemVisibilityPriorityHigh:
+      return UIBarButtonItemVisibilityPriorityHigh;
   }
 }
 #endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE

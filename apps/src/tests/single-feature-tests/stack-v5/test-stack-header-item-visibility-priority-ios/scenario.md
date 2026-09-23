@@ -38,7 +38,7 @@ TBD.
         icons are in the overflow menu instead
 5. Press the "..." button
     - [ ] The two icons are listed in the menu
-6. Press the "search" to hide the menu
+6. Tap outside the menu to close it
     - [ ] The resizing item is in the header, at its full width, and both
         icons are in the overflow menu
 7. Press the `video visibilityPriority` button to reach `high`
