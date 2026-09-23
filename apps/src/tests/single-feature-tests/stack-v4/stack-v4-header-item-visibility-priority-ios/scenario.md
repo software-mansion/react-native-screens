@@ -7,7 +7,7 @@ view (`ScreenStackHeaderRightView`) that grows when pressed, the other two are
 native SF Symbol items (`headerRightBarButtonItems`). The button on screen
 cycles the `visibilityPriority` of the growing item through `standard`, `high`
 and `low`. A second button cycles the same values for the native
-video icon, while the search icon always keeps the default priority.
+video icon, a third one for the search icon.
 
 **OS test creation version:** iOS 27.0
 
@@ -25,7 +25,8 @@ TBD.
     - [ ] The header shows the title and, on its right, the resizing item
         (rightmost), the video icon and the search icon
     - [ ] The `square visibilityPriority` button reads `standard`
-    - [ ] The `video visibilityPriority` button reads `standard`
+    - [ ] The `video visibilityPriority` button reads `standard`    
+    - [ ] The `search visibilityPriority` button reads `standard`
 2. Press the resizing item
     - [ ] It disappears from the header and a "..." button takes its place — it
         grew wider than the header can fit and was moved into the overflow menu
