@@ -8,12 +8,12 @@ import android.util.SparseArray
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
 import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.common.nestedscroll.ScreenNestedScrollCoordinatorLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
@@ -34,7 +34,7 @@ internal class StackHeaderCoordinatorLayout(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
     private val backPressHandler: StackHeaderBackPressHandler,
-) : CoordinatorLayout(context),
+) : ScreenNestedScrollCoordinatorLayout(context, stackScreen),
     ColorSchemeProviding {
     // region Config attach / detach
 
