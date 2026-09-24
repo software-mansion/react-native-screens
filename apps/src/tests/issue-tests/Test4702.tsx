@@ -8,19 +8,6 @@ import {
 } from '@react-navigation/native-stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-// Reproduces https://github.com/software-mansion/react-native-screens/issues/4702
-//
-// Native tabs + nested native stack. On iOS 27, re-tapping the active tab to
-// pop to root and immediately switching to another tab can leave JS out of sync
-// with UIKit (nested screen "comes back" when returning to the first tab).
-//
-// Steps:
-// 1. First tab → Go to nested screen
-// 2. Re-tap First tab (pop to root)
-// 3. Immediately tap Second tab
-// 4. Tap First tab again
-// Expected: First tab home. Bug: Nested screen reappears (iOS 27).
-
 type FirstTabStackParamList = {
   FirstTabHome: undefined;
   NestedScreen: undefined;
@@ -29,7 +16,6 @@ type FirstTabStackParamList = {
 type TabParamList = {
   FirstTab: undefined;
   SecondTab: undefined;
-  ThirdTab: undefined;
 };
 
 const Tabs = createNativeBottomTabNavigator<TabParamList>();
@@ -99,14 +85,6 @@ function SecondTab() {
   );
 }
 
-function ThirdTab() {
-  return (
-    <SafeAreaView style={styles.screen} testID="test4702-third-tab">
-      <Text style={styles.title}>Third tab</Text>
-    </SafeAreaView>
-  );
-}
-
 export default function Test4702() {
   return (
     <SafeAreaProvider>
@@ -129,16 +107,6 @@ export default function Test4702() {
               title: 'Second',
               tabBarIcon: Platform.select({
                 ios: { type: 'sfSymbol', name: 'star' },
-              }),
-            }}
-          />
-          <Tabs.Screen
-            name="ThirdTab"
-            component={ThirdTab}
-            options={{
-              title: 'Third',
-              tabBarIcon: Platform.select({
-                ios: { type: 'sfSymbol', name: 'gearshape' },
               }),
             }}
           />

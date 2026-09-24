@@ -1751,7 +1751,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     };
 
     BOOL notifyDismissWhenTransitionEnds = _closing;
-    __weak RNSScreen *weakSelf = self;
     [self.transitionCoordinator
         animateAlongsideTransition:animation
                         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
@@ -1762,7 +1761,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
                           // interrupts popToRoot. If this screen was popped,
                           // notify JS when the transition ends.
                           if (notifyDismissWhenTransitionEnds) {
-                            [weakSelf notifyDismissedIfNeeded];
+                            [self notifyDismissedIfNeeded];
                           }
                         }];
   }
