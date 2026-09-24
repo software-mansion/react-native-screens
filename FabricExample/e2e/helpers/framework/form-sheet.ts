@@ -1,18 +1,18 @@
-import { by, device } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
+import { by, device, element, expect, waitFor } from 'detox';
 import type { ElementAttributeFrame, IosElementAttributes } from 'detox/detox';
-import {
-  getMatches,
-  getTopmostMatch,
-  isIOSVersionAtLeast,
-  isIPadTarget,
-} from '../e2e-utils';
+import { getMatches, getTopmostMatch } from './matchers';
+import { isIOSVersionAtLeast, isIPadTarget } from './platform';
 import {
   CLASS_NAME_ANDROID_COORDINATOR_LAYOUT,
   CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER,
+} from './native-classes-android';
+import {
   CLASS_NAME_RCT_ROOT_COMPONENT_VIEW,
   CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW,
-} from '../native-class-names';
+  CLASS_NAME_UI_DIMMING_VIEW,
+  CLASS_NAME_UI_DROP_SHADOW_VIEW,
+} from './native-classes-ios';
 
 /**
  * Detox can't read the selected detent, so it is inferred from the sheet's
@@ -202,4 +202,41 @@ export async function expectFormSheetDetentIndex(
 ): Promise<void> {
   const actualIndex = await resolveFormSheetDetentIndex(detents, options);
   jestExpect(actualIndex).toBe(expectedIndex);
+}
+
+// ---------------------------------------------------------------------------
+// iOS sheet presentation dimming
+// ---------------------------------------------------------------------------
+
+const DIMMING_REMOVAL_TIMEOUT_MS = 3000;
+
+const sheetDimmingView = () =>
+  element(
+    by
+      .type(CLASS_NAME_UI_DIMMING_VIEW)
+      .withAncestor(by.type(CLASS_NAME_UI_DROP_SHADOW_VIEW)),
+  );
+
+/**
+ * Asserts the backdrop UIKit inserts behind a presented sheet exists. No-op on
+ * Android: the dim is an overlay drawable there, with no view to match.
+ */
+export async function expectDimmingIfIOS(): Promise<void> {
+  if (device.getPlatform() !== 'ios') {
+    return;
+  }
+  await expect(sheetDimmingView()).toExist();
+}
+
+/**
+ * Asserts the sheet backdrop is gone, waiting out the dismissal animation.
+ * No-op on Android, see {@link expectDimmingIfIOS}.
+ */
+export async function expectNoDimmingIfIOS(): Promise<void> {
+  if (device.getPlatform() !== 'ios') {
+    return;
+  }
+  await waitFor(sheetDimmingView())
+    .not.toExist()
+    .withTimeout(DIMMING_REMOVAL_TIMEOUT_MS);
 }

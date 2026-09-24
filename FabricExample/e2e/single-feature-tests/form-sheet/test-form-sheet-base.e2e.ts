@@ -1,15 +1,13 @@
 import { device, expect, element, by, waitFor } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
 import {
-  expectFormSheetDetentIndex,
-  getIOSFormSheetFrames,
-} from '../../elements/form-sheet';
-import {
-  describeIfiPad,
   expectDimmingIfIOS,
+  expectFormSheetDetentIndex,
   expectNoDimmingIfIOS,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+  getIOSFormSheetFrames,
+} from '../../helpers/framework/form-sheet';
+import { describeIfIPad } from '../../helpers/framework/platform';
+import { selectSingleFeatureTestsScreen } from '../../helpers/app/test-screen-navigation';
 
 const DETENTS = [0.6, 1.0];
 
@@ -79,7 +77,7 @@ describe('Formsheet: base functionality', () => {
 // math used above does not apply. Detents are verified relatively instead: the
 // panel grows when dragged up and returns to its opening height when dragged
 // back down.
-describeIfiPad('@ipad Formsheet: base functionality', () => {
+describeIfIPad('@ipad Formsheet: base functionality', () => {
   // Absorbs sub-point rounding in frames reported by UIKit.
   const FRAME_TOLERANCE_PT = 1;
   let openedHeight: number;

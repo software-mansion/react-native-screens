@@ -1,14 +1,11 @@
 import { device, element, by } from 'detox';
-import {
-  describeIfAndroid,
-  describeIfiOS,
-  selectSingleFeatureTestsScreen,
-  dismissToast,
-  tapTopmostButton,
-  waitForRouteName,
-} from '../../e2e-utils';
-import { tapBarBackButton } from '../../elements/back-button';
-import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
+import { waitForRouteName } from '@e2e/app/stack-route';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast } from '@e2e/app/toast';
+import { tapBarBackButton } from '@e2e/framework/back-button';
+import { tapTopmostButton } from '@e2e/framework/gestures';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
+import { describeIfAndroid, describeIfIOS } from '@e2e/framework/platform';
 
 /**
  * Stack v5 lifecycle events.
@@ -40,7 +37,7 @@ import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '../../native-class-names';
  *   scenario.
  */
 
-describeIfiOS('Stack v5: lifecycle events', () => {
+describeIfIOS('Stack v5: lifecycle events', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

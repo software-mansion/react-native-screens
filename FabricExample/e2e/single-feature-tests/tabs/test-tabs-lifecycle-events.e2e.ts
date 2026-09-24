@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen, dismissToast } from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast } from '@e2e/app/toast';
 
 describe('Tabs lifecycle events', () => {
   beforeAll(async () => {

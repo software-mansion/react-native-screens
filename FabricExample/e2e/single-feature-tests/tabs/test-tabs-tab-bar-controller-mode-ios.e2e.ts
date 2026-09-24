@@ -1,10 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  describeIfiPad,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW,
   CLASS_NAME_UI_TAB_SIDEBAR_COLLECTION_VIEW,
@@ -12,7 +8,8 @@ import {
   CLASS_NAME_RCT_ROOT_COMPONENT_VIEW,
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfIOS, describeIfIPad } from '@e2e/framework/platform';
 
 const PICKER_ID = 'tab-bar-controller-mode-picker';
 
@@ -25,7 +22,7 @@ const setTabBarControllerMode = (mode: TabBarControllerMode) =>
     option: mode,
   });
 
-describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
+describeIfIPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -98,7 +95,7 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   });
 });
 
-describeIfiOS('Tabs: tabBarControllerMode (iPhone)', () => {
+describeIfIOS('Tabs: tabBarControllerMode (iPhone)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
