@@ -2,7 +2,8 @@
 
 ## Details
 
-**Description:** This test scenario focuses on the visibility management of the tab bar. It validates the tabBarHidden property, ensuring that the UI responds dynamically to state changes without layout shifts or persistence errors. On iOS, it also validates the `ios.tabBarHiddenAnimationEnabled` property, which controls whether the transition is animated (iOS 18+).
+**Description:** This test scenario focuses on the visibility management of the tab bar. It validates the tabBarHidden property, ensuring that the UI responds dynamically to state changes without layout shifts or persistence errors.
+On iOS, it also validates the `ios.tabBarHiddenAnimationEnabled` property, which controls whether the transition is animated (iOS 18+).
 
 **OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
@@ -17,6 +18,8 @@ Incomplete: Steps 4-5 are not covered.
 
 ## Steps
 
+### Basic functionality
+
 1. Launch the app and navigate to the screen Tab Bar Hidden.
 
 - [ ] Screen with one Tab in tab bar should be displayed.
@@ -25,9 +28,13 @@ Incomplete: Steps 4-5 are not covered.
 
 - [ ] Tab bar should disappear. On iOS 18+, the transition should be animated (`ios.tabBarHiddenAnimationEnabled` defaults to `true`); on Android and iOS < 18 the tab bar disappears immediately.
 
-3. Toggle back to `false`.
+3. Toggle `tabBarHidden` back to `false`.
 
 - [ ] Tab bar should reappear, with the same animation behavior as in step 2.
+
+---
+
+### (iOS only) Hiding animation can be enabled and disabled dynamically
 
 4. (iOS only) Toggle `ios.tabBarHiddenAnimationEnabled` to `false`, then repeat steps 2-3.
 
