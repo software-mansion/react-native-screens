@@ -346,6 +346,24 @@ static void rns_pushViewController(__unsafe_unretained id self,
             hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
 }
 
+#if RNS_UITAB_API_SDK_AVAILABLE
+
+- (void)userDidRepeatSelectionOfTab:(nonnull UITab *)tab API_AVAILABLE(ios(18.0))
+{
+  RCTAssert(self.selectedTab == tab, @"[RNScreens] Expected the repeated tab to be the selected one");
+
+  [self progressNavigationState:[self screenKeyForViewController:tab.viewController]
+                     withOrigin:RNSTabsActionOriginUser];
+
+  BOOL repeatedSelectionHandledBySpecialEffect =
+      [static_cast<RNSTabsScreenViewController *>(tab.viewController) tabScreenSelectedRepeatedly];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
+                             repeated:YES
+            hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
+}
+
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
 {
   // At this moment the `UITabBarController` model is already updated.
@@ -461,6 +479,62 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _isHandlingExplicitSelectionUpdate = NO;
 }
 
+#if RNS_UITAB_API_SDK_AVAILABLE
+
+#pragma mark UITabBarControllerDelegate (UITab API)
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectTab:(UITab *)tab API_AVAILABLE(ios(18.0))
+{
+  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected instance of TabBarController");
+
+  UIViewController *viewController = tab.viewController;
+  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
+            @"[RNScreens] Unexpected type of controller: %@",
+            viewController.class);
+
+  // While More is active `selectedTab` is stale - a tap on the last selected "regular" tab
+  // is actually a selection change, not a repeat.
+  BOOL isRepeatedSelection = self.selectedTab == tab && ![self isMoreNavigationControllerTabBarItemSelected];
+
+  if (isRepeatedSelection) {
+    // NO prevents the native pop-to-root effect (iOS 26+); `didSelectTab:` won't fire then,
+    // so the state update happens here.
+    [self userDidRepeatSelectionOfTab:tab];
+    return NO;
+  }
+
+  if ([self shouldPreventNativeTabSelection:viewController]) {
+    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+    return NO;
+  }
+
+  _isHandlingExplicitSelectionUpdate = YES;
+  _isHandlingUserTabSelection = YES;
+  return YES;
+}
+
+- (void)tabBarController:(UITabBarController *)tabBarController
+            didSelectTab:(UITab *)selectedTab
+             previousTab:(nullable UITab *)previousTab API_AVAILABLE(ios(18.0))
+{
+  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected instance of TabBarController");
+
+  if (!_isHandlingUserTabSelection) {
+    return;
+  }
+  _isHandlingUserTabSelection = NO;
+
+  // Counterpart of `userDidSelectViewController:`. Asserts stay in the synchronously-mutated
+  // tab domain - `selectedViewController` may still lag mid-transition (iOS 27).
+  RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
+  [self progressNavigationState:[self screenKeyForViewController:selectedTab.viewController]
+                     withOrigin:RNSTabsActionOriginUser];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
+  _isHandlingExplicitSelectionUpdate = NO;
+}
+
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
 #pragma mark - UIKit configuration boundary
 
 // Every UIKit read/write related to child installation & selection goes through the methods below.
@@ -552,72 +626,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
                viewControllerProvider:^UIViewController *(UITab *) {
                  return weakScreenController;
                }];
-}
-
-#pragma mark UITabBarControllerDelegate (UITab API)
-
-- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectTab:(UITab *)tab API_AVAILABLE(ios(18.0))
-{
-  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected instance of TabBarController");
-
-  UIViewController *viewController = tab.viewController;
-  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Unexpected type of controller: %@",
-            viewController.class);
-
-  // While More is active `selectedTab` is stale - a tap on the last selected "regular" tab
-  // is actually a selection change, not a repeat.
-  BOOL isRepeatedSelection = self.selectedTab == tab && ![self isMoreNavigationControllerTabBarItemSelected];
-
-  if (isRepeatedSelection) {
-    // NO prevents the native pop-to-root effect (iOS 26+); `didSelectTab:` won't fire then,
-    // so the state update happens here.
-    [self userDidRepeatSelectionOfTab:tab];
-    return NO;
-  }
-
-  if ([self shouldPreventNativeTabSelection:viewController]) {
-    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
-    return NO;
-  }
-
-  _isHandlingExplicitSelectionUpdate = YES;
-  _isHandlingUserTabSelection = YES;
-  return YES;
-}
-
-- (void)userDidRepeatSelectionOfTab:(nonnull UITab *)tab API_AVAILABLE(ios(18.0))
-{
-  RCTAssert(self.selectedTab == tab, @"[RNScreens] Expected the repeated tab to be the selected one");
-
-  [self progressNavigationState:[self screenKeyForViewController:tab.viewController]
-                     withOrigin:RNSTabsActionOriginUser];
-
-  BOOL repeatedSelectionHandledBySpecialEffect =
-      [static_cast<RNSTabsScreenViewController *>(tab.viewController) tabScreenSelectedRepeatedly];
-  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
-                             repeated:YES
-            hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
-}
-
-- (void)tabBarController:(UITabBarController *)tabBarController
-            didSelectTab:(UITab *)selectedTab
-             previousTab:(nullable UITab *)previousTab API_AVAILABLE(ios(18.0))
-{
-  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected instance of TabBarController");
-
-  if (!_isHandlingUserTabSelection) {
-    return;
-  }
-  _isHandlingUserTabSelection = NO;
-
-  // Counterpart of `userDidSelectViewController:`. Asserts stay in the synchronously-mutated
-  // tab domain - `selectedViewController` may still lag mid-transition (iOS 27).
-  RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
-  [self progressNavigationState:[self screenKeyForViewController:selectedTab.viewController]
-                     withOrigin:RNSTabsActionOriginUser];
-  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
-  _isHandlingExplicitSelectionUpdate = NO;
 }
 
 #endif // RNS_UITAB_API_SDK_AVAILABLE
