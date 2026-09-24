@@ -208,8 +208,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   // The only direct "user tapped More" signal on the UITab path - no UITab delegate covers More.
   // Mirrors the More branch of the legacy `shouldSelectViewController:`: enforce selection
   // prevention on the More stack top before UIKit displays it.
-  if (self.tabs.count > 0 && [self isMoreNavigationControllerPresentInTabBar] &&
-      item == self.moreNavigationController.tabBarItem) {
+  if ([self isMoreNavigationControllerPresentInTabBar] && item == self.moreNavigationController.tabBarItem) {
     [self prepareForMoreNavigationControllerHandlingIfNeeded];
     [self disableNavigationBarInMoreNavigationController];
     UIViewController *_Nullable poppedViewController =
