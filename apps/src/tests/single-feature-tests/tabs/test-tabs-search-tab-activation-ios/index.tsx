@@ -4,6 +4,7 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
   ParamListBase,
+  type RouteProp,
 } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -59,6 +60,7 @@ function SearchListScreen({
   useLayoutEffect(() => {
     navigation.setOptions({
       headerSearchBarOptions: {
+        placeholder: 'Search places',
         onChangeText: event => setSearch(event.nativeEvent.text),
       },
     });
@@ -81,14 +83,43 @@ function SearchListScreen({
   );
 }
 
-function SearchDetailsScreen() {
+function SearchDetailsScreen({
+  navigation,
+  route,
+}: {
+  navigation: SearchStackNavigationProp;
+  route: RouteProp<SearchStackParamList, 'Details'>;
+}) {
+  const [search, setSearch] = useState('');
+
+  // This screen mounts its own search bar. UIKit hosts (and auto-activates)
+  // only the search bar of the ROOT screen of the search stack - this one is
+  // a regular in-header search bar, activated by tapping it.
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerSearchBarOptions: {
+        placeholder: 'Search in details',
+        onChangeText: event => setSearch(event.nativeEvent.text),
+      },
+    });
+  }, [navigation]);
+
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Details</Text>
+      <Text style={styles.label}>{route.params.place}</Text>
       <Text style={styles.hint}>
-        Go back with the back gesture, switch to the Config tab,{'\n'}then
-        reselect the search tab - activation must still{'\n'}focus the search
-        field of the List screen.
+        Typed in the Details search bar: &quot;{search}&quot;
+      </Text>
+      <Text style={styles.hint}>
+        With this screen on top the stack is not at its root,{'\n'}so UIKit
+        removes the tab-hosted search field: switching{'\n'}to Config and
+        reselecting the search tab must NOT{'\n'}activate any search. This
+        screen&apos;s bar activates by{'\n'}tapping it in the header.
+        {'\n'}
+        {'\n'}
+        Go back with the back gesture - the &quot;Search places&quot;
+        {'\n'}field returns to the tab bar, and reselecting the{'\n'}search tab
+        auto-activates it again.
       </Text>
     </View>
   );

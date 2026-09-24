@@ -31,16 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)tabScreenOrientationHasChanged;
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION
-/**
- * Copies `searchController` (with its related configuration) from the navigation item of the
- * top view controller of the nested stack (if any) onto this controller's `navigationItem`.
- * Required by `UISearchTab` on iOS 26+ - UIKit activates the search controller attached to
- * the navigation item of the tab's view controller.
- */
-- (void)updateNavigationItemSearchControllerFromNestedStack;
-#endif // !TARGET_OS_TV && !TARGET_OS_VISION
-
 /**
  * Tell the controller that the tab item related to this controller has been selected again after being presented.
  * Returns boolean indicating whether the action has been handled.

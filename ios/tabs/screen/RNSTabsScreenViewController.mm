@@ -38,42 +38,6 @@
   [[self findTabBarController] setNeedsOrientationUpdate:true];
 }
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION
-
-- (void)updateNavigationItemSearchControllerFromNestedStack
-{
-  // The nested stack's navigation controller mounts as a direct child of this controller
-  // (legacy stack attaches via `reactAddControllerToClosestParent:`).
-  UINavigationController *_Nullable nestedNavigationController = nil;
-  for (UIViewController *childViewController in self.childViewControllers) {
-    if ([childViewController isKindOfClass:UINavigationController.class]) {
-      nestedNavigationController = static_cast<UINavigationController *>(childViewController);
-      break;
-    }
-  }
-
-  UINavigationItem *_Nullable sourceNavigationItem = nestedNavigationController.topViewController.navigationItem;
-  UISearchController *_Nullable searchController = sourceNavigationItem.searchController;
-
-  // Copy semantics (not move) - this controller's `navigationItem` is never rendered by any
-  // navigation bar, so sharing the `UISearchController` with the nested stack's header is safe.
-  // nil is copied too, covering search bar unmount & top screen without a search bar.
-  if (self.navigationItem.searchController != searchController) {
-    self.navigationItem.searchController = searchController;
-  }
-
-  if (searchController != nil) {
-    self.navigationItem.hidesSearchBarWhenScrolling = sourceNavigationItem.hidesSearchBarWhenScrolling;
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-    if (@available(iOS 16.0, *)) {
-      self.navigationItem.preferredSearchBarPlacement = sourceNavigationItem.preferredSearchBarPlacement;
-    }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  }
-}
-
-#endif // !TARGET_OS_TV && !TARGET_OS_VISION
-
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
