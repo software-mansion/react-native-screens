@@ -317,6 +317,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self updateOrientationIfNeeded];
 }
 
+/**
+ * Update tabs navigation state in reaction to UIKit model update.
+ *
+ * This method does not update the UIKit model. It assumes that exactly one model update happened,
+ * and will sync the state with the UIKit and progress the provenance.
+ */
+- (void)updateNavigationStateOnModelUpdate
+{
+  [self progressNavigationState:[self screenKeyForSelectedViewController] withOrigin:RNSTabsActionOriginUser];
+}
+
 - (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
 {
   RCTAssert(self.selectedViewController == viewController,
@@ -327,17 +338,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  [self progressNavigationState:[self screenKeyForSelectedViewController] withOrigin:RNSTabsActionOriginUser];
+  [self updateNavigationStateOnModelUpdate];
 
   // After state progression we trigger the special effect.
   BOOL repeatedSelectionHandledBySpecialEffect = [[self selectedScreenViewController] tabScreenSelectedRepeatedly];
-
-  auto *updateContext =
-      [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                         isRepeated:YES
-                                          hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
-                                                       actionOrigin:RNSTabsActionOriginUser];
-  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
+                             repeated:YES
+            hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
 }
 
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
@@ -354,16 +361,18 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // Instead, we emit a dedicated event so JS knows the More tab was tapped.
     [_observerRegistry emitDidSelectMoreTabWithCurrentState:_navigationState sender:self];
   } else {
-    [self progressNavigationState:[self screenKeyForSelectedViewController] withOrigin:RNSTabsActionOriginUser];
-    [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser];
+    [self updateNavigationStateOnModelUpdate];
+    [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
   }
 }
 
 - (void)emitSelectionUpdateWithOrigin:(RNSTabsActionOrigin)actionOrigin
+                             repeated:(BOOL)repeated
+            hasTriggeredSpecialEffect:(BOOL)hasTriggeredSpecialEffect
 {
   auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                                           isRepeated:NO
-                                                            hasTriggeredSpecialEffect:NO
+                                                                           isRepeated:repeated
+                                                            hasTriggeredSpecialEffect:hasTriggeredSpecialEffect
                                                                          actionOrigin:actionOrigin];
   [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
 }
@@ -586,13 +595,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   BOOL repeatedSelectionHandledBySpecialEffect =
       [static_cast<RNSTabsScreenViewController *>(tab.viewController) tabScreenSelectedRepeatedly];
-
-  auto *updateContext =
-      [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                         isRepeated:YES
-                                          hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
-                                                       actionOrigin:RNSTabsActionOriginUser];
-  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
+                             repeated:YES
+            hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -611,7 +616,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
   [self progressNavigationState:[self screenKeyForViewController:selectedTab.viewController]
                      withOrigin:RNSTabsActionOriginUser];
-  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
   _isHandlingExplicitSelectionUpdate = NO;
 }
 
@@ -741,7 +746,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     [self disableNavigationBarInMoreNavigationController];
   }
 
-  [self emitSelectionUpdateWithOrigin:_pendingStateUpdate.actionOrigin];
+  [self emitSelectionUpdateWithOrigin:_pendingStateUpdate.actionOrigin repeated:NO hasTriggeredSpecialEffect:NO];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -901,7 +906,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     [self disableNavigationBarInMoreNavigationController];
   }
 
-  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginImplicit];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginImplicit repeated:NO hasTriggeredSpecialEffect:NO];
 }
 
 /**
