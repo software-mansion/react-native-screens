@@ -90,6 +90,7 @@ export interface NativeProps extends ViewProps {
   tabBarMinimizeBehavior?: CT.WithDefault<TabBarMinimizeBehavior, 'automatic'>;
   tabBarControllerMode?: CT.WithDefault<TabBarControllerMode, 'automatic'>;
   bottomAccessoryHidden?: CT.WithDefault<boolean, false>;
+  prominentTabScreenKey?: string | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {

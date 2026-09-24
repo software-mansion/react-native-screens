@@ -99,6 +99,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
 
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
+
+  /// Screen key of the prominent tab (iOS 27+), nil for the system default. Kept as the screen key,
+  /// because `UISearchTab` gets a system-assigned identifier & the tabs are rebuilt on children updates.
+  NSString *_Nullable _prominentTabScreenKey;
+
+  BOOL _needsUpdateOfProminentTab;
 }
 
 - (instancetype)init
@@ -112,6 +118,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
     _isHandlingUserTabSelection = NO;
+    _prominentTabScreenKey = nil;
+    _needsUpdateOfProminentTab = NO;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
     _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 
@@ -315,6 +323,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
   [self updateSearchTabsIfNeeded];
+  [self updateProminentTabIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
@@ -490,6 +499,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
         }
       }
     }
+
+    // The backing tabs might have been rebuilt - re-resolve the prominent tab against them.
+    [self applyProminentTabIdentifierAnimated:NO warnIfUnresolved:NO];
+    _needsUpdateOfProminentTab = YES;
     return;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
@@ -836,6 +849,60 @@ static void rns_pushViewController(__unsafe_unretained id self,
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+#pragma mark - Prominent tab
+
+- (void)setProminentTabScreenKey:(nullable NSString *)screenKey
+{
+  NSString *_Nullable newScreenKey = screenKey.length > 0 ? [screenKey copy] : nil;
+  if (newScreenKey == _prominentTabScreenKey || [newScreenKey isEqualToString:_prominentTabScreenKey]) {
+    return;
+  }
+  _prominentTabScreenKey = newScreenKey;
+
+  // Applied eagerly, so that a runtime change is animated. The children might not be installed
+  // yet at this point, hence the validation is left to `updateProminentTabIfNeeded`.
+  [self applyProminentTabIdentifierAnimated:YES warnIfUnresolved:NO];
+  _needsUpdateOfProminentTab = YES;
+}
+
+- (void)updateProminentTabIfNeeded
+{
+  if (!_needsUpdateOfProminentTab) {
+    return;
+  }
+  _needsUpdateOfProminentTab = NO;
+  [self applyProminentTabIdentifierAnimated:NO warnIfUnresolved:YES];
+}
+
+/// Resolves `_prominentTabScreenKey` against the installed tabs & pushes the result to UIKit.
+/// Pass `warnIfUnresolved` only when the installed tabs are final for the current update.
+- (void)applyProminentTabIdentifierAnimated:(BOOL)animated warnIfUnresolved:(BOOL)warnIfUnresolved
+{
+#if RNS_TABS_PROMINENT_TAB_AVAILABLE
+  if (@available(iOS 27.0, *)) {
+    NSString *_Nullable tabIdentifier = nil;
+
+    if (_prominentTabScreenKey != nil) {
+      // The lookup goes through the view controller, because `UISearchTab` carries
+      // a system-assigned identifier.
+      UITab *_Nullable tab = [self findTabForScreenKey:_prominentTabScreenKey];
+      if (tab != nil) {
+        tabIdentifier = tab.identifier;
+      } else if (warnIfUnresolved) {
+        RCTLogWarn(
+            @"[RNScreens] prominentTabScreenKey '%@' does not match the screenKey of any tab screen, falling back to the system default",
+            _prominentTabScreenKey);
+      }
+    }
+
+    if (tabIdentifier == self.prominentTabIdentifier || [tabIdentifier isEqualToString:self.prominentTabIdentifier]) {
+      return;
+    }
+    [self setProminentTabIdentifier:tabIdentifier animated:animated];
+  }
+#endif // RNS_TABS_PROMINENT_TAB_AVAILABLE
 }
 
 #pragma mark - Utility
