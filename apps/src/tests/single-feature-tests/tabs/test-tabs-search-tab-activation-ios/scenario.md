@@ -10,6 +10,16 @@ the header of the stack nested in the tab. The nested stack is a legacy
 (v4) `@react-navigation/native-stack` navigator, since the v5 stack does
 not integrate the search bar into the header yet.
 
+Both screens of the nested stack mount their own search bar (List:
+"Search places", Details: "Search in details"), so the scenario also
+validates the UIKit hosted-search contract across push and pop: UIKit
+hosts (and auto-activates) only the search bar of the ROOT screen of
+the search stack, and only while the stack is at its root. A pushed
+screen's search bar is a regular in-header search bar; while it is on
+top, the tab-hosted search field is removed and reselecting the tab
+does not auto-activate anything. Popping back to the root restores the
+hosted field and auto-activation.
+
 **OS test creation version:** iOS 27.0
 
 ## E2E test
@@ -68,13 +78,36 @@ TBD.
 
     - [ ] The previously selected tab (`Config`) becomes selected again.
 
-7. Tap the search tab again, type a query, tap a list item to push
-   **Details**, go back with the back gesture, switch to `Config`, then
-   reselect the search tab.
+### Hosted search across push/pop in the nested stack
 
-    - [ ] Activation still focuses the search field of the List screen
-      (no stale search controller from the popped screen).
+7. Tap the search tab again, dismiss the keyboard by dragging the list
+   (do not cancel - cancel restores the previous tab), then tap a list
+   item to push **Details**.
 
-8. Disable **automaticallyActivatesSearch** and tap the search tab.
+    - [ ] The push removes the tab-hosted search field (the regular tab
+      bar returns).
+
+    - [ ] The Details screen has its own search bar with the
+      "Search in details" placeholder in the header.
+
+8. With Details on top, switch to `Config`, then reselect the search tab.
+
+    - [ ] No search activates automatically (the stack is not at its
+      root, so there is no hosted search field). The Details screen
+      stays visible.
+
+    - [ ] Tapping the "Search in details" field focuses it and typing
+      updates the "Typed in the Details search bar" text.
+
+9. Go back to **List** with the back gesture.
+
+    - [ ] The "Search places" field returns to the tab bar area.
+
+10. Switch to `Config`, then reselect the search tab.
+
+    - [ ] Activation focuses the "Search places" field of the List screen
+      again (the hosted field re-binds after the pop).
+
+11. Disable **automaticallyActivatesSearch** and tap the search tab.
 
     - [ ] The search field is not focused automatically anymore.

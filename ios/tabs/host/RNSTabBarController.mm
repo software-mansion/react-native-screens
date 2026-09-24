@@ -600,17 +600,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   _isHandlingExplicitSelectionUpdate = YES;
   _isHandlingUserTabSelection = YES;
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-  if (@available(iOS 26.0, *)) {
-    if ([tab isKindOfClass:UISearchTab.class]) {
-      // A native pop in the nested stack changes the top navigation item without a mounting
-      // transaction until JS catches up - re-mirror just before UIKit may auto-activate.
-      [static_cast<RNSTabsScreenViewController *>(viewController) updateNavigationItemSearchControllerFromNestedStack];
-    }
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-
   return YES;
 }
 
@@ -813,9 +802,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
-/// Mirrors search-related configuration onto live `UISearchTab` instances:
-/// the `automaticallyActivatesSearch` prop and the nested stack's `searchController`
-/// (UIKit activates the one attached to the tab view controller's navigation item).
+/// Syncs the `automaticallyActivatesSearch` prop onto live `UISearchTab` instances.
+/// The search controller itself needs no syncing: UIKit resolves it on its own from the
+/// navigation item of the ROOT view controller of the nested navigation controller (and hosts
+/// its search bar only while the nested stack is at its root).
 - (void)updateSearchTabsIfNeeded
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
@@ -831,8 +821,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
       if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
         searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;
       }
-
-      [screenController updateNavigationItemSearchControllerFromNestedStack];
     }
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
