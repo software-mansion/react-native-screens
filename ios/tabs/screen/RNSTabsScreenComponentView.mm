@@ -190,11 +190,11 @@ RNS_IGNORE_SUPER_CALL_END
  */
 - (void)applyTabBarItemRepaintWorkaround
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
-  if (@available(iOS 26.1, *)) {
-    _controller.tabBarItem = [[UITabBarItem alloc] init];
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+#if RNS_UITAB_API_SDK_AVAILABLE
+  RNS_UITAB_API_AVAILABLE_BEGIN
+  _controller.tabBarItem = [[UITabBarItem alloc] init];
+  RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 }
 
 - (void)updateTabBarItem
