@@ -42,14 +42,13 @@ struct ContentWrapperBox {
   float contentHeightErrata{0.f};
 };
 
-@interface RNSScreenView () <
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
+@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate,
+                             UIGestureRecognizerDelegate,
 #if !TARGET_OS_TV
-    UISheetPresentationControllerDelegate,
+                             UISheetPresentationControllerDelegate,
 #endif
-    RCTRNSScreenViewProtocol,
-    CAAnimationDelegate>
+                             RCTRNSScreenViewProtocol,
+                             CAAnimationDelegate>
 @end
 
 @implementation RNSScreenView {
@@ -148,10 +147,10 @@ RNS_IGNORE_SUPER_CALL_END
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
-    _state->updateState(
-        std::move(newState),
-        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                                              : facebook::react::EventQueue::UpdateMode::Asynchronous);
+    _state->updateState(std::move(newState),
+                        _synchronousShadowStateUpdatesEnabled
+                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -556,9 +555,8 @@ RNS_IGNORE_SUPER_CALL_END
   if (_eventEmitter != nullptr) {
     int index = static_cast<int>(newDetentIndex);
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetDetentChanged(
-            react::RNSScreenEventEmitter::OnSheetDetentChanged{
-                .index = index, .isStable = static_cast<bool>(isStable)});
+        ->onSheetDetentChanged(react::RNSScreenEventEmitter::OnSheetDetentChanged{
+            .index = index, .isStable = static_cast<bool>(isStable)});
   }
 }
 
@@ -629,9 +627,8 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(
-            react::RNSScreenEventEmitter::OnTransitionProgress{
-                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
+            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInteger:self.tag]
@@ -2099,26 +2096,24 @@ RCT_EXPORT_MODULE()
 @implementation RCTConvert (RNSScreen)
 
 #if !TARGET_OS_TV
-RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
-    integerValue)
+RCT_ENUM_CONVERTER(UIStatusBarAnimation,
+                   (@{
+                     @"none" : @(UIStatusBarAnimationNone),
+                     @"fade" : @(UIStatusBarAnimationFade),
+                     @"slide" : @(UIStatusBarAnimationSlide)
+                   }),
+                   UIStatusBarAnimationNone,
+                   integerValue)
 
-RCT_ENUM_CONVERTER(
-    RNSStatusBarStyle,
-    (@{
-      @"auto" : @(RNSStatusBarStyleAuto),
-      @"inverted" : @(RNSStatusBarStyleInverted),
-      @"light" : @(RNSStatusBarStyleLight),
-      @"dark" : @(RNSStatusBarStyleDark),
-    }),
-    RNSStatusBarStyleAuto,
-    integerValue)
+RCT_ENUM_CONVERTER(RNSStatusBarStyle,
+                   (@{
+                     @"auto" : @(RNSStatusBarStyleAuto),
+                     @"inverted" : @(RNSStatusBarStyleInverted),
+                     @"light" : @(RNSStatusBarStyleLight),
+                     @"dark" : @(RNSStatusBarStyleDark),
+                   }),
+                   RNSStatusBarStyleAuto,
+                   integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {
