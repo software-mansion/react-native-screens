@@ -120,6 +120,28 @@ UITabBarControllerMode UITabBarControllerModeFromRNSTabsHostTabBarControllerMode
 
 #endif // Check for iOS >= 18
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+
+API_AVAILABLE(ios(27.0))
+UITabBarControllerSidebarPlacement UITabBarControllerSidebarPlacementFromRNSTabsHostTabBarSidebarPreferredPlacement(
+    react::RNSTabsHostIOSTabBarSidebarPreferredPlacement tabBarSidebarPreferredPlacement)
+{
+  using enum facebook::react::RNSTabsHostIOSTabBarSidebarPreferredPlacement;
+
+  switch (tabBarSidebarPreferredPlacement) {
+    case Automatic:
+      return UITabBarControllerSidebarPlacementAutomatic;
+    case Sidebar:
+      return UITabBarControllerSidebarPlacementSidebar;
+    case TabBar:
+      return UITabBarControllerSidebarPlacementTabBar;
+    default:
+      return UITabBarControllerSidebarPlacementAutomatic;
+  }
+}
+
+#endif // Check for iOS >= 27 && !TARGET_OS_TV
+
 react::RNSTabsHostIOSEventEmitter::OnTabSelectionRejectedRejectionReason
 RNSOnTabSelectionRejectedRejectionReasonFromRNSTabsNavigationStateRejectionReason(
     RNSTabsNavigationStateRejectionReason reason)
