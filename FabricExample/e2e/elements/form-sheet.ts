@@ -1,7 +1,12 @@
 import { by, device } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
-import type { ElementAttributeFrame } from 'detox/detox';
-import { getMatches, getTopmostMatch, isIPadTarget } from '../e2e-utils';
+import type { ElementAttributeFrame, IosElementAttributes } from 'detox/detox';
+import {
+  getMatches,
+  getTopmostMatch,
+  isIOSVersionAtLeast,
+  isIPadTarget,
+} from '../e2e-utils';
 import {
   CLASS_NAME_ANDROID_COORDINATOR_LAYOUT,
   CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER,
@@ -14,12 +19,7 @@ import {
  * visible height as a fraction of a `1.0` detent. Phone only.
  */
 
-export type FormSheetGeometryOptions = {
-  /** iOS only. Detox can't read it; defaults to iPhone 15/16. */
-  topInset?: number;
-};
-
-export type FormSheetDetentOptions = FormSheetGeometryOptions & {
+export type FormSheetDetentOptions = {
   tolerance?: number;
 };
 
@@ -33,14 +33,17 @@ export type FormSheetGeometry = {
   isAtLargestDetent?: boolean;
 };
 
-export const DEFAULT_IOS_TOP_INSET = 59;
-// See `RNSFormSheetDetentResolver`.
-const IOS_SHEET_TOP_GAP = 10;
 export const DEFAULT_TOLERANCE = 0.05;
 
-export async function getFormSheetGeometry({
-  topInset = DEFAULT_IOS_TOP_INSET,
-}: FormSheetGeometryOptions = {}): Promise<FormSheetGeometry> {
+// UIKit's gap between the largest detent and the top safe area, through iOS 18.
+const IOS_SHEET_TOP_GAP = 10;
+
+/** From iOS 26 the sheet is an overlay that reaches the safe area exactly. */
+function iosSheetTopGap(): number {
+  return isIOSVersionAtLeast('26.0') ? 0 : IOS_SHEET_TOP_GAP;
+}
+
+export async function getFormSheetGeometry(): Promise<FormSheetGeometry> {
   const platform = device.getPlatform();
   if (platform === 'ios') {
     if (isIPadTarget) {
@@ -48,7 +51,7 @@ export async function getFormSheetGeometry({
         'getFormSheetGeometry: iPad presents FormSheet as a floating panel; detent geometry is iPhone-only.',
       );
     }
-    return getIOSGeometry(topInset);
+    return getIOSGeometry();
   }
   if (platform === 'android') {
     return getAndroidGeometry();
@@ -61,7 +64,12 @@ export type IOSFormSheetFrames = {
   window: ElementAttributeFrame;
 };
 
-/** iOS only, iPad included. */
+/**
+ * Raw screen-space frames; iOS only, iPad included. `window` is the root view's
+ * `frame`, which before iOS 26 UIKit scales down behind a sheet at the largest
+ * detent -- so it is trustworthy only where that presentation does not happen,
+ * i.e. iPad's floating panel. Phone detent math uses {@link getFormSheetGeometry}.
+ */
 export async function getIOSFormSheetFrames(): Promise<IOSFormSheetFrames> {
   const sheet = await getTopmostMatch(
     by.type(CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW),
@@ -70,13 +78,28 @@ export async function getIOSFormSheetFrames(): Promise<IOSFormSheetFrames> {
   return { sheet: sheet.frame, window: root.frame };
 }
 
-async function getIOSGeometry(topInset: number): Promise<FormSheetGeometry> {
-  const { sheet, window } = await getIOSFormSheetFrames();
+async function getIOSGeometry(): Promise<FormSheetGeometry> {
+  const sheet = (await getTopmostMatch(
+    by.type(CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW),
+  )) as IosElementAttributes;
+  const [rootMatch] = await getMatches(
+    by.type(CLASS_NAME_RCT_ROOT_COMPONENT_VIEW),
+  );
+  const root = rootMatch as IosElementAttributes;
 
-  const top = sheet.y;
-  const visibleHeight = sheet.height;
-  const windowHeight = window.height;
-  const maxDetentHeight = windowHeight - topInset - IOS_SHEET_TOP_GAP;
+  // `frame` is in screen space, so it carries any ancestor transform: before
+  // iOS 26 UIKit scales the root view down behind a sheet at the largest
+  // detent, and from iOS 26 it scales the sheet itself at lower detents.
+  // `elementBounds` is in element space, where the transform is already
+  // applied and does not distort width/height.
+  const visibleHeight = sheet.elementBounds.height;
+  const windowHeight = root.elementBounds.height;
+  // Bottom-anchored, like the detent fraction itself, so `top + visibleHeight`
+  // always equals `windowHeight`. `sheet.frame.y` would break that from iOS 26,
+  // where a lower detent is inset on screen but not in its own bounds.
+  const top = windowHeight - visibleHeight;
+  const maxDetentHeight =
+    windowHeight - root.safeAreaInsets.top - iosSheetTopGap();
 
   return {
     top,
@@ -116,10 +139,7 @@ async function getAndroidGeometry(): Promise<FormSheetGeometry> {
 /** Throws beyond `tolerance`, so a sheet caught mid-animation fails loudly. */
 export async function resolveFormSheetDetentIndex(
   detents: readonly number[],
-  {
-    tolerance = DEFAULT_TOLERANCE,
-    ...geometryOptions
-  }: FormSheetDetentOptions = {},
+  { tolerance = DEFAULT_TOLERANCE }: FormSheetDetentOptions = {},
 ): Promise<number> {
   if (detents.length === 0) {
     throw new Error(
@@ -127,11 +147,33 @@ export async function resolveFormSheetDetentIndex(
     );
   }
 
-  const geometry = await getFormSheetGeometry(geometryOptions);
+  const geometry = await getFormSheetGeometry();
 
-  // Android shortens the largest detent by the status bar.
+  // Android shortens the largest detent by the system insets.
   if (geometry.isAtLargestDetent) {
     return detents.length - 1;
+  }
+
+  // A missing geometry attribute yields NaN, which would slip past every
+  // comparison below and resolve to index -1 instead of failing.
+  if (!Number.isFinite(geometry.fraction)) {
+    throw new Error(
+      `resolveFormSheetDetentIndex: measured fraction is not a finite number ` +
+        `(visible ${geometry.visibleHeight}, window ${geometry.windowHeight}, ` +
+        `max ${geometry.maxDetentHeight}).`,
+    );
+  }
+
+  // The largest detent measures exactly 1.0, so an overshoot means the
+  // reference height is wrong -- not that the sheet sits past its top detent.
+  if (geometry.fraction > 1 + tolerance) {
+    throw new Error(
+      `resolveFormSheetDetentIndex: measured fraction ${geometry.fraction.toFixed(
+        3,
+      )} exceeds 1.0 ` +
+        `(top ${geometry.top}, visible ${geometry.visibleHeight}, window ${geometry.windowHeight}, ` +
+        `max ${geometry.maxDetentHeight}); the max-detent reference is wrong.`,
+    );
   }
 
   const distances = detents.map(detent => Math.abs(detent - geometry.fraction));

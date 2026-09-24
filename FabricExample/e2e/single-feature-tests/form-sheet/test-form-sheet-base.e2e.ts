@@ -6,8 +6,8 @@ import {
 } from '../../elements/form-sheet';
 import {
   describeIfiPad,
-  expectDimmingIfiOS,
-  expectNoDimmingIfiOS,
+  expectDimmingIfIOS,
+  expectNoDimmingIfIOS,
   selectSingleFeatureTestsScreen,
 } from '../../e2e-utils';
 
@@ -32,20 +32,20 @@ describe('Formsheet: base functionality', () => {
       'FormSheet content',
     );
     await expect(element(by.id('dismiss-formsheet-button'))).toBeVisible();
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
     await expectFormSheetDetentIndex(DETENTS, 0);
   });
 
   it('should expand to the largest detent when dragged up', async () => {
     await element(by.id('formsheet-base-content')).swipe('up', 'slow', 0.5);
     await expectFormSheetDetentIndex(DETENTS, 1);
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
   });
 
   it('should settles at lower detent when swipe down', async () => {
     await element(by.id('formsheet-base-content')).swipe('down', 'slow', 0.5);
     await expectFormSheetDetentIndex(DETENTS, 0);
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
   });
 
   it('should close FormSheet when dismiss button is pressed', async () => {
@@ -56,7 +56,7 @@ describe('Formsheet: base functionality', () => {
     await expect(element(by.id('open-formsheet-button'))).toBeVisible();
     await expect(element(by.id('formsheet-base-content'))).not.toExist();
     await expect(element(by.id('dismiss-formsheet-button'))).not.toExist();
-    await expectNoDimmingIfiOS();
+    await expectNoDimmingIfIOS();
   });
 
   it('should dismiss natively when swiped down past the lower detent', async () => {
@@ -65,13 +65,13 @@ describe('Formsheet: base functionality', () => {
       .toBeVisible()
       .withTimeout(3000);
     await expectFormSheetDetentIndex(DETENTS, 0);
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
 
     await element(by.id('formsheet-base-content')).swipe('down', 'fast');
     await waitFor(element(by.id('formsheet-base-content')))
       .not.toExist()
       .withTimeout(3000);
-    await expectNoDimmingIfiOS();
+    await expectNoDimmingIfIOS();
   });
 });
 
@@ -102,7 +102,7 @@ describeIfiPad('@ipad Formsheet: base functionality', () => {
       'FormSheet content',
     );
     await expect(element(by.id('dismiss-formsheet-button'))).toBeVisible();
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
 
     const { sheet, window } = await getIOSFormSheetFrames();
     jestExpect(sheet.width).toBeLessThan(window.width);
@@ -116,7 +116,7 @@ describeIfiPad('@ipad Formsheet: base functionality', () => {
     await element(by.id('formsheet-base-content')).swipe('up', 'slow', 0.5);
     const { sheet } = await getIOSFormSheetFrames();
     jestExpect(sheet.height).toBeGreaterThan(openedHeight + FRAME_TOLERANCE_PT);
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
   });
 
   it('should return to the opening height when dragged back down', async () => {
@@ -125,14 +125,14 @@ describeIfiPad('@ipad Formsheet: base functionality', () => {
     jestExpect(Math.abs(sheet.height - openedHeight)).toBeLessThanOrEqual(
       FRAME_TOLERANCE_PT,
     );
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
   });
 
   it('should close FormSheet when dismiss button is pressed', async () => {
     await element(by.id('dismiss-formsheet-button')).tap();
     await expect(element(by.id('open-formsheet-button'))).toBeVisible();
     await expect(element(by.id('formsheet-base-content'))).not.toExist();
-    await expectNoDimmingIfiOS();
+    await expectNoDimmingIfIOS();
   });
 
   it('should dismiss natively when swiped down', async () => {
@@ -140,12 +140,12 @@ describeIfiPad('@ipad Formsheet: base functionality', () => {
     await waitFor(element(by.id('formsheet-base-content')))
       .toBeVisible()
       .withTimeout(3000);
-    await expectDimmingIfiOS();
+    await expectDimmingIfIOS();
 
     await element(by.id('formsheet-base-content')).swipe('down', 'fast');
     await waitFor(element(by.id('formsheet-base-content')))
       .not.toExist()
       .withTimeout(3000);
-    await expectNoDimmingIfiOS();
+    await expectNoDimmingIfIOS();
   });
 });
