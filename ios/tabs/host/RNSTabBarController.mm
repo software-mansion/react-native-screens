@@ -217,6 +217,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
       [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:poppedViewController]];
     }
 
+    // At this point, the `view.selectedViewController` is not yet updated and points
+    // to previous tab's viewController, which allows us to tell if whether
+    // we've just navigated to More tab or we've been there earlier
+    // Verified on both iOS 26 and 27. There's no other simple way to check that
+    // since `didSelectTab:` doesn't fire for More tab
     if (![self isSelectedViewControllerTheMoreNavigationController]) {
       [_observerRegistry emitDidSelectMoreTabWithCurrentState:_navigationState sender:self];
     }
