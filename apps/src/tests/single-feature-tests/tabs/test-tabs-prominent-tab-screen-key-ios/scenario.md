@@ -115,7 +115,7 @@ TBD.
 
 13. Tap the search tab.
 
-    - [ ] The List screen appears with
+    - [ ] The List screen appears
     - [ ] The search field are open.
 
 14. Tap the **Config** tab, then tap the **Cart** tab and scroll **down**.
