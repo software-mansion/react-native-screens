@@ -177,13 +177,29 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
   }
+
+  [self applyTabBarItemRepaintWorkaround];
   _controller.tabBarItem = tabBarItem;
+}
+
+/**
+ * TODO: This is an ugly workaround and I would love to see it replaced.
+ * With UITab-managed children (iOS >= 26.1) any change to the systemItem for the first time
+ * results in missing icon and wrong title. Assigning a throwaway item first flips the internal logic
+ * so that the real assignment that follows paints synchronously.
+ * Remove once UIKit internals no longer require it.
+ */
+- (void)applyTabBarItemRepaintWorkaround
+{
+#if RNS_UITAB_API_SDK_AVAILABLE
+  RNS_UITAB_API_AVAILABLE_BEGIN
+  _controller.tabBarItem = [[UITabBarItem alloc] init];
+  RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 }
 
 - (void)updateTabBarItem
 {
-  UITabBarItem *tabBarItem = _controller.tabBarItem;
-
   NSString *evaluatedTitle = _title;
   if (_title == nil && _systemItem != RNSTabsScreenSystemItemNone) {
     // Restore default system item title
@@ -199,10 +215,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   [self updateTabBarItemTitle:evaluatedTitle];
-
-  if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
-    tabBarItem.badgeValue = _badgeValue;
-  }
+  [self updateTabBarItemBadge:_badgeValue];
 }
 
 - (void)updateTabBarItemTitle:(NSString *)newTitle
@@ -214,6 +227,20 @@ RNS_IGNORE_SUPER_CALL_END
   if (![_controller.tabBarItem.title isEqualToString:newTitle] || ![_controller.title isEqualToString:newTitle]) {
     _controller.title = newTitle;
     _controller.tabBarItem.title = newTitle;
+  }
+}
+
+- (void)updateTabBarItemBadge:(NSString *)badgeValue
+{
+  if (![_controller.tabBarItem.badgeValue isEqualToString:badgeValue]) {
+    // item badge value is needed for both viewController and UITab APIs. For the latter,
+    // it is read after building the tab and reassigned (it wouldn't be rendered otherwise)
+    _controller.tabBarItem.badgeValue = badgeValue;
+#if RNS_UITAB_API_SDK_AVAILABLE
+    RNS_UITAB_API_AVAILABLE_BEGIN
+    _controller.tab.badgeValue = badgeValue;
+    RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
   }
 }
 
