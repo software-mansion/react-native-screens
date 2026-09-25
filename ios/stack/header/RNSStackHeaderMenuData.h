@@ -21,6 +21,9 @@ typedef NS_ENUM(NSInteger, RNSMenuItemType) {
 @interface RNSStackHeaderMenuItemData : NSObject <RNSStackHeaderMenuElement>
 
 @property (nonatomic, copy, readonly, nullable) NSString *title;
+@property (nonatomic, copy, readonly, nullable) NSString *subtitle;
+@property (nonatomic, readonly) BOOL disabled;
+@property (nonatomic, readonly) BOOL destructive;
 @property (nonatomic, readonly) RNSMenuItemType itemType;
 @property (nonatomic, readonly) BOOL initialToggleState;
 @property (nonatomic, readonly) BOOL keepsMenuPresented;
@@ -28,6 +31,9 @@ typedef NS_ENUM(NSInteger, RNSMenuItemType) {
 
 - (instancetype)initWithId:(NSString *)menuElementId
                      title:(nullable NSString *)title
+                  subtitle:(nullable NSString *)subtitle
+                  disabled:(BOOL)disabled
+               destructive:(BOOL)destructive
                   itemType:(RNSMenuItemType)itemType
         initialToggleState:(BOOL)initialToggleState
         keepsMenuPresented:(BOOL)keepsMenuPresented

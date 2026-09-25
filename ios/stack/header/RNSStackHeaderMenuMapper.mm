@@ -13,8 +13,17 @@ static NSSet<NSString *> *const kRNSAllowedMenuKeys = [NSSet setWithObjects:@"id
                                                                             @"displayAsPalette",
                                                                             @"icon",
                                                                             nil];
-static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
-    setWithObjects:@"id", @"type", @"title", @"itemType", @"initialToggleState", @"keepsMenuPresented", @"icon", nil];
+static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet setWithObjects:@"id",
+                                                                                @"type",
+                                                                                @"title",
+                                                                                @"subtitle",
+                                                                                @"disabled",
+                                                                                @"destructive",
+                                                                                @"itemType",
+                                                                                @"initialToggleState",
+                                                                                @"keepsMenuPresented",
+                                                                                @"icon",
+                                                                                nil];
 
 @implementation RNSStackHeaderMenuMapper
 
@@ -74,6 +83,9 @@ static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
 
     return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"id" in:dict]
                                                     title:[self stringForKey:@"title" in:dict]
+                                                 subtitle:[self stringForKey:@"subtitle" in:dict]
+                                                 disabled:[self boolForKey:@"disabled" in:dict]
+                                              destructive:[self boolForKey:@"destructive" in:dict]
                                                  itemType:[self itemTypeFromString:[self stringForKey:@"itemType"
                                                                                                    in:dict]]
                                        initialToggleState:[self boolForKey:@"initialToggleState" in:dict]
