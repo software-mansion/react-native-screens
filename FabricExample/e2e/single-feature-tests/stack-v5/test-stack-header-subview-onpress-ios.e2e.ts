@@ -9,7 +9,7 @@ import {
   submenuTitleRow,
 } from '@e2e/framework/context-menu-ios';
 import { headerItem } from '@e2e/framework/header-items-ios';
-import { describeIfIOS, describeIfIOS26 } from '@e2e/framework/platform';
+import { describeIfIOS, describeIfIOSAtLeast } from '@e2e/framework/platform';
 
 /**
  * A selectable row of the presented menu. A submenu's pinned title/back row
@@ -66,7 +66,7 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
     await dismissContextMenu();
   });
 
-  describeIfIOS26('iOS 26 toolbar overflow ("More") menu', () => {
+  describeIfIOSAtLeast('26.0')('iOS 26 toolbar overflow ("More") menu', () => {
     it('should move Item 0 and Menu 1 into the overflow button once 5 items are configured', async () => {
       await toggleItemsCount(); // 2 -> 3
       await toggleItemsCount(); // 3 -> 4
