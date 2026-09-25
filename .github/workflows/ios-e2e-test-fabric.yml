@@ -66,7 +66,8 @@ jobs:
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-ios
-      # The `argent` job tests the same release build on its own simulator.
+      # Hands the release build to the `argent` job (jobs run on separate
+      # machines). Internal only — nothing to download from the run page.
       - name: Package app for Argent
         run: |
           tar -czf "$RUNNER_TEMP/FabricExample-app.tar.gz" \
@@ -74,9 +75,9 @@ jobs:
       - name: Upload app for Argent
         uses: actions/upload-artifact@v4
         with:
-          name: ios-release-app
+          name: build-ios-app
           path: ${{ runner.temp }}/FabricExample-app.tar.gz
-          retention-days: 3
+          retention-days: 1
       - name: Test app
         if: ${{ !inputs.argent-only }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -114,7 +115,7 @@ jobs:
       - name: Download app built by the test job
         uses: actions/download-artifact@v4
         with:
-          name: ios-release-app
+          name: build-ios-app
           path: ${{ runner.temp }}/app
       - name: Unpack app
         run: |
@@ -134,16 +135,27 @@ jobs:
         run: xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
       - name: Install Argent and start the tool-server
         uses: ./.github/actions/argent-server
+      # --output keeps baseline/current/diff PNGs of every mismatching snapshot.
       - name: Run Argent flows
         run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/argent-out"
           argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
-            --output "$RUNNER_TEMP/argent-out"
-      - name: Upload Argent artifacts
-        if: ${{ !success() }}
+            --output "$RUNNER_TEMP/argent-out/snapshots" 2>&1 | tee "$RUNNER_TEMP/argent-out/argent-flows.log"
+      - name: Capture screen at failure
+        if: ${{ failure() }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/argent-out"
+          xcrun simctl io "$SIMULATOR_UDID" screenshot "$RUNNER_TEMP/argent-out/screen-at-failure.png" || true
+      - name: Summarize Argent failure
+        if: ${{ failure() }}
+        run: |
+          cp "${ARGENT_SERVER_LOG:-/nonexistent}" "$RUNNER_TEMP/argent-out/" 2>/dev/null || true
+          scripts/e2e/argent-failure-summary.sh ios "$RUNNER_TEMP/argent-out"
+      - name: Upload Argent failure artifact
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: ios-argent-debug
-          path: |
-            ${{ runner.temp }}/argent-out
-            ${{ runner.temp }}/argent-server.log
+          name: argent-ios-failure
+          path: ${{ runner.temp }}/argent-out
           if-no-files-found: ignore

@@ -82,13 +82,14 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
 
-      # The `argent` job tests the same release build on its own emulator.
+      # Hands the release build to the `argent` job (jobs run on separate
+      # machines). Internal only — nothing to download from the run page.
       - name: Upload APK for Argent
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-apk
+          name: build-android-apk
           path: ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk/release/app-release.apk
-          retention-days: 3
+          retention-days: 1
 
       - name: Enable KVM
         run: |
@@ -176,7 +177,7 @@ jobs:
       - name: Download APK built by the test job
         uses: actions/download-artifact@v4
         with:
-          name: android-release-apk
+          name: build-android-apk
           path: FabricExample/android/app/build/outputs/apk/release
 
       - name: Install AVD dependencies
@@ -229,12 +230,18 @@ jobs:
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh
 
-      - name: Upload Argent artifacts
-        if: ${{ !success() }}
+      # The emulator is gone after the step above, so its script already took
+      # screen-at-failure.png.
+      - name: Summarize Argent failure
+        if: ${{ failure() }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/argent-out"
+          cp "${ARGENT_SERVER_LOG:-/nonexistent}" "$RUNNER_TEMP/argent-out/" 2>/dev/null || true
+          scripts/e2e/argent-failure-summary.sh android "$RUNNER_TEMP/argent-out"
+      - name: Upload Argent failure artifact
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: android-argent-debug
-          path: |
-            ${{ runner.temp }}/argent-out
-            ${{ runner.temp }}/argent-server.log
+          name: argent-android-failure
+          path: ${{ runner.temp }}/argent-out
           if-no-files-found: ignore
