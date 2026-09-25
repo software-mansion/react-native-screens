@@ -20,10 +20,6 @@ import { Colors } from '@apps/shared/styling';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
-// The search tab hosts a legacy (v4) native stack - v5 stack does not integrate
-// the search bar into the header yet, and UISearchTab activation on iOS 26.1+
-// works with the search controller mirrored from the nested stack's header.
-
 type SearchStackParamList = {
   List: undefined;
   Details: { place: string };
@@ -146,9 +142,6 @@ function ConfigTab() {
 
   const onAutomaticallyActivatesSearchChange = (value: boolean) => {
     setAutomaticallyActivatesSearch(value);
-    // Options set at mount are snapshotted by the container - runtime changes
-    // must go through setRouteOptions. `ios` is replaced wholesale, so repeat
-    // the full search tab config here.
     setRouteOptions('Search', {
       ios: {
         systemItem: 'search',
@@ -231,7 +224,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
-function TestTabsProminentTabIdentifier() {
+function TestTabsProminentTabScreenKey() {
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
@@ -277,6 +270,6 @@ const styles = StyleSheet.create({
 });
 
 export default createScenario(
-  TestTabsProminentTabIdentifier,
+  TestTabsProminentTabScreenKey,
   scenarioDescription,
 );
