@@ -10,6 +10,7 @@ import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
 import TestStackSubviewsIOS from './test-stack-subviews-ios';
+import TestStackCustomTitleScrollEdgeIOS from './test-stack-custom-title-scroll-edge-ios';
 import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
 import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
 import TestStackBackButtonIOS from './test-stack-back-button-ios';
@@ -46,6 +47,7 @@ export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
 export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
+export { default as TestStackCustomTitleScrollEdgeIOS } from './test-stack-custom-title-scroll-edge-ios';
 export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
 export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
@@ -81,6 +83,7 @@ const scenarios = {
   TestStackSubviewsAndroid,
   TestStackLiftOnScrollAndroid,
   TestStackSubviewsIOS,
+  TestStackCustomTitleScrollEdgeIOS,
   TestStackHeaderMenuIOS,
   TestStackHeaderIconIOS,
   TestStackHeaderItemIdentifierIOS,
