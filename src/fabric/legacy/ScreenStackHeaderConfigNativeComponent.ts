@@ -45,6 +45,14 @@ type BlurEffect =
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
+type MinimizationBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+type RestorationBehavior = 'automatic' | 'atScrollEdge';
+
 export interface NativeProps extends ViewProps {
   onAttached?: CT.DirectEventHandler<OnAttachedEvent> | undefined;
   onDetached?: CT.DirectEventHandler<OnDetachedEvent> | undefined;
@@ -75,6 +83,8 @@ export interface NativeProps extends ViewProps {
   hideBackButton?: boolean | undefined;
   backButtonInCustomView?: boolean | undefined;
   blurEffect?: CT.WithDefault<BlurEffect, 'none'>;
+  minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'automatic'>;
+  restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean | undefined;
   headerLeftBarButtonItems?: CT.UnsafeMixed[] | undefined;
