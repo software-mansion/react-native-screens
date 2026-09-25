@@ -180,27 +180,14 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 // Returns origin of the screen in the coordinate space of its navigation controller's view, which matches
-// the coordinate space of the screen stack in the shadow tree. Transforms are ignored on purpose,
-// as these are applied only temporarily, e.g. by transition animations.
+// the coordinate space of the screen stack in the shadow tree.
 - (CGPoint)originInNavigationView
 {
   UIView *navigationView = _controller.navigationController.view;
-  if (navigationView == nil) {
+  if (navigationView == nil || ![self isDescendantOfView:navigationView]) {
     return CGPointZero;
   }
-
-  CGPoint origin = CGPointZero;
-  for (UIView *view = self; view != navigationView; view = view.superview) {
-    if (view.superview == nil) {
-      // Screen is not attached to the navigation controller's view hierarchy, fallback to header height.
-      return CGPointMake(0, [_controller calculateHeaderHeightIsModal:NO]);
-    }
-    const CGRect bounds = view.bounds;
-    const CGPoint anchorPoint = view.layer.anchorPoint;
-    origin.x += view.center.x - bounds.origin.x - bounds.size.width * anchorPoint.x;
-    origin.y += view.center.y - bounds.origin.y - bounds.size.height * anchorPoint.y;
-  }
-  return origin;
+  return [self convertPoint:CGPointZero toView:navigationView];
 }
 
 - (void)applyFrameCorrectionForDescendantScrollView
