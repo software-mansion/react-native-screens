@@ -358,7 +358,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
  */
 - (void)updateNavigationStateOnModelUpdate
 {
-  [self progressNavigationState:[self screenKeyForSelectedViewController] withOrigin:RNSTabsActionOriginUser];
+  UIViewController *viewController = self.selectedViewController;
+#if RNS_UITAB_API_SDK_AVAILABLE
+  RNS_UITAB_API_AVAILABLE_BEGIN
+  viewController = self.selectedTab.viewController;
+  RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  [self progressNavigationState:[self screenKeyForViewController:viewController] withOrigin:RNSTabsActionOriginUser];
 }
 
 - (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
@@ -404,7 +410,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(self.selectedViewController == viewController,
             @"[RNScreens] Expected UIKit to update selectedViewController");
 
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+  if (![self usesUITabAPI] && [self isSelectedViewControllerTheMoreNavigationController]) {
     [self disableNavigationBarInMoreNavigationController];
     [self prepareForMoreNavigationControllerHandlingIfNeeded];
 
@@ -444,6 +450,41 @@ static void rns_pushViewController(__unsafe_unretained id self,
   return screenViewController.isPreventNativeSelectionEnabled;
 }
 
+/// Shared handling for the `shouldSelect` delegate callbacks - the legacy
+/// `tabBarController:shouldSelectViewController:` and the `UITab` `tabBarController:shouldSelectTab:`.
+- (BOOL)interceptUserSelectionOfViewController:(nonnull UIViewController *)viewController
+{
+  BOOL repeatedSelection = viewController == self.selectedViewController;
+#if RNS_UITAB_API_SDK_AVAILABLE
+  RNS_UITAB_API_AVAILABLE_BEGIN
+  repeatedSelection = viewController.tab == self.selectedTab && ![self isMoreNavigationControllerTabBarItemSelected];
+  RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
+  if (repeatedSelection) {
+    // On repeated selection we block the native *pop to root* effect (works from iOS 26) that
+    // interferes with our implementation (necessary for controlled tabs). The did-select callback
+    // won't fire on a blocked selection, so we trigger the state update here.
+#if RNS_UITAB_API_SDK_AVAILABLE
+    RNS_UITAB_API_AVAILABLE_BEGIN
+    [self userDidRepeatSelectionOfTab:viewController.tab];
+    return YES;
+    RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+    [self userDidRepeatViewControllerSelection:viewController];
+    return YES;
+  }
+
+  if ([self shouldPreventNativeTabSelection:viewController]) {
+    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback. As long as we
+    // emit the event asynchronously this is rather fine.
+    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+    return YES;
+  }
+
+  return NO;
+}
+
 #pragma mark - UITabBarControllerDelegate
 
 // Not called when children are managed through the `UITab` API. Fires only on user taps,
@@ -462,22 +503,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   // TODO: handle enforcing orientation with natively-driven tabs
 
-  // Detect repeated selection and inform tabScreenController
-  BOOL repeatedSelection = self.selectedViewController == viewController;
-
-  if (repeatedSelection) {
-    // On repeated selection we return false to prevent native *pop to root* effect that works only starting from iOS 26
-    // and interferes with our implementation (which is necessary for controlled tabs).
-
-    // We trigger the state update from here, because `tabBarController:didSelectViewController:` won't be called.
-    [self userDidRepeatViewControllerSelection:viewController];
-    return NO;
-  }
-
-  if ([self shouldPreventNativeTabSelection:viewController]) {
-    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
-    // As long as we emit the event asynchronously this is rather fine.
-    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+  BOOL selectionWasIntercepted = [self interceptUserSelectionOfViewController:viewController];
+  if (selectionWasIntercepted) {
     return NO;
   }
 
@@ -526,19 +553,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
             @"[RNScreens] Unexpected type of controller: %@",
             viewController.class);
 
-  // While More is active `selectedTab` is stale - a tap on the last selected "regular" tab
-  // is actually a selection change, not a repeat.
-  BOOL isRepeatedSelection = self.selectedTab == tab && ![self isMoreNavigationControllerTabBarItemSelected];
-
-  if (isRepeatedSelection) {
-    // NO prevents the native pop-to-root effect (iOS 26+); `didSelectTab:` won't fire then,
-    // so the state update happens here.
-    [self userDidRepeatSelectionOfTab:tab];
-    return NO;
-  }
-
-  if ([self shouldPreventNativeTabSelection:viewController]) {
-    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+  BOOL selectionWasIntercepted = [self interceptUserSelectionOfViewController:viewController];
+  if (selectionWasIntercepted) {
     return NO;
   }
 
@@ -558,12 +574,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
   _isHandlingUserTabSelection = NO;
 
-  // Counterpart of `userDidSelectViewController:`. Asserts stay in the synchronously-mutated
-  // tab domain - `selectedViewController` may still lag mid-transition (iOS 27).
   RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
-  [self progressNavigationState:[self screenKeyForViewController:selectedTab.viewController]
-                     withOrigin:RNSTabsActionOriginUser];
-  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
+  [self userDidSelectViewController:selectedTab.viewController];
   _isHandlingExplicitSelectionUpdate = NO;
 }
 
@@ -865,6 +877,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (origin != RNSTabsActionOriginProgrammaticJs) {
     _lastUINavigationState = [_navigationState cloneState];
   }
+}
+
+- (BOOL)usesUITabAPI
+{
+#if RNS_UITAB_API_SDK_AVAILABLE
+  RNS_UITAB_API_AVAILABLE_BEGIN
+  return YES;
+  RNS_UITAB_API_AVAILABLE_END
+  return NO;
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 }
 
 /**
