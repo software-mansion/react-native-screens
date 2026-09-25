@@ -5,11 +5,14 @@ on:
       - main
     paths:
       - '.github/workflows/ios-e2e-test-fabric.yml'
+      - '.github/actions/argent-server/**'
+      - '.argent/**'
       - 'RNScreens.podspec'
       - 'package.json'
       - 'ios/**'
       - 'common/**'
       - 'FabricExample/**'
+      - 'apps/**'
       - 'src/**'
   push:
     branches:
@@ -61,8 +64,46 @@ jobs:
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
+      # Reuse the simulator Detox booted (scripts/e2e/ios-devices.js default) and
+      # the release build it tested.
+      - name: Prepare simulator for Argent
+        if: ${{ !cancelled() }}
+        env:
+          SIM_NAME: iPhone 17
+        run: |
+          UDID=$(xcrun simctl list devices booted -j | jq -r --arg n "$SIM_NAME" '[.devices[][] | select(.name==$n)][0].udid // empty')
+          if [ -z "$UDID" ]; then
+            UDID=$(xcrun simctl list devices available -j | jq -r --arg n "$SIM_NAME" '[.devices[][] | select(.name==$n)][0].udid // empty')
+            if [ -z "$UDID" ]; then
+              echo "No available \"$SIM_NAME\" simulator" >&2
+              xcrun simctl list devices available >&2
+              exit 1
+            fi
+            xcrun simctl boot "$UDID" || true
+          fi
+          xcrun simctl bootstatus "$UDID"
+          xcrun simctl install "$UDID" "$WORKING_DIRECTORY/ios/build/Build/Products/Release-iphonesimulator/FabricExample.app"
+          echo "Using simulator $UDID"
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+      - name: Install Argent and start the tool-server
+        if: ${{ !cancelled() }}
+        uses: ./.github/actions/argent-server
+      - name: Run Argent flows
+        if: ${{ !cancelled() }}
+        run: |
+          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
+            --output "$RUNNER_TEMP/argent-out"
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: ios-fail-screen-shots
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
+      - name: Upload Argent artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-argent-debug
+          path: |
+            ${{ runner.temp }}/argent-out
+            ${{ runner.temp }}/argent-server.log
+          if-no-files-found: ignore

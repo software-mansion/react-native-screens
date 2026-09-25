@@ -5,10 +5,14 @@ on:
       - main
     paths:
       - '.github/workflows/android-e2e-test-fabric.yml'
+      - '.github/actions/argent-server/**'
+      - '.argent/**'
+      - 'scripts/e2e/run-argent-flows-android.sh'
       - 'package.json'
       - 'android/**'
       - 'common/**'
       - 'FabricExample/**'
+      - 'apps/**'
       - 'src/**'
   push:
     branches:
@@ -17,11 +21,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 75
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
       AVD_PROFILE: pixel_7
+      # The emulator advertises its gRPC console in
+      # $XDG_RUNTIME_DIR/avd/running/pid_*.ini, which is where Argent's Android
+      # backend looks for it. The variable is unset on runners, so pin it.
+      XDG_RUNTIME_DIR: /tmp/xdg-runtime
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -79,6 +87,13 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # The emulator ignores XDG_RUNTIME_DIR if it does not exist, so create it
+      # before any boot. 0700 per the XDG spec.
+      - name: Prepare shared XDG_RUNTIME_DIR
+        run: |
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
+
       - name: AVD cache
         uses: actions/cache@v4
         id: avd-cache
@@ -120,8 +135,43 @@ jobs:
           arch: x86_64
           script: yarn test-e2e-android
 
+      # Host process; it outlives this step and serves the next emulator boot.
+      - name: Install Argent and start the tool-server
+        if: ${{ !cancelled() }}
+        uses: ./.github/actions/argent-server
+
+      # A second boot from the cached AVD: android-emulator-runner keeps the
+      # emulator alive only for its `script:`. `-grpc` makes the emulator write
+      # the grpc.port Argent reads from $XDG_RUNTIME_DIR.
+      - name: Run Argent flows
+        if: ${{ !cancelled() }}
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: default
+          profile: ${{ env.AVD_PROFILE }}
+          ram-size: '4096M'
+          disk-size: '10G'
+          disable-animations: false
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -grpc 8554
+          avd-name: e2e_emulator
+          arch: x86_64
+          script: ./scripts/e2e/run-argent-flows-android.sh
+
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: android-fail-screen-shots
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
+
+      - name: Upload Argent artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-argent-debug
+          path: |
+            ${{ runner.temp }}/argent-out
+            ${{ runner.temp }}/argent-server.log
+          if-no-files-found: ignore
+
