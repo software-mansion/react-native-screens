@@ -2,7 +2,7 @@ import { device, expect, element, by, waitFor } from 'detox';
 import { selectPickerOption } from '@e2e/app/settings-controls';
 import { scrollToAndTap } from '@e2e/framework/gestures';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { dismissToast } from '@e2e/app/toast';
+import { dismissNextToast } from '@e2e/app/toast';
 import {
   checkmarkFor,
   contextMenu,
@@ -75,7 +75,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
     it('should dismiss the menu and emit toast after tapping the action item "Action 1-1"', async () => {
       await openMenuOne();
       await element(by.text('Action 1-1')).tap();
-      await dismissToast('1. Clicked Action 1-1');
+      await dismissNextToast('Clicked Action 1-1');
 
       await expect(contextMenu()).not.toExist();
     });
@@ -85,7 +85,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
     it('should show a checkmark next to Toggle 1-1 after selecting it and reopening the menu', async () => {
       await menuOneBarButton.tap();
       await element(by.text('Toggle 1-1')).tap();
-      await dismissToast('1. Selected "toggle-1-1"');
+      await dismissNextToast('Selected "toggle-1-1"');
 
       await expect(contextMenu()).not.toExist();
 
@@ -96,7 +96,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
 
     it('should show checkmarks next to both Toggle 1-1 and Toggle 1-3 after selecting Toggle 1-3 too', async () => {
       await element(by.text('Toggle 1-3')).tap();
-      await dismissToast('1. Selected "toggle-1-1", "toggle-1-3"');
+      await dismissNextToast('Selected "toggle-1-1", "toggle-1-3"');
 
       await expect(contextMenu()).not.toExist();
 
@@ -108,7 +108,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
 
     it('should remove the checkmark next to Toggle 1-1 after tapping it again, leaving only Toggle 1-3 checked', async () => {
       await element(by.text('Toggle 1-1')).tap();
-      await dismissToast('1. Selected "toggle-1-3"');
+      await dismissNextToast('Selected "toggle-1-3"');
 
       await expect(contextMenu()).not.toExist();
 
@@ -142,7 +142,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
     it('should select Radio 1-2 in the nested SubSubMenu, dismiss the whole menu chain, and clear Radio 1-1', async () => {
       await element(by.text('SubSubMenu with Radio')).tap();
       await element(by.text('Radio 1-2')).tap();
-      await dismissToast('1. Selected unique "radio-1-2"');
+      await dismissNextToast('Selected unique "radio-1-2"');
 
       await expect(contextMenu()).not.toExist();
       await openMenuOne();
@@ -168,7 +168,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
 
     it('should dismiss the title menu and emit a toast after tapping "Title Action 1"', async () => {
       await element(by.text('Title Action 1')).tap();
-      await dismissToast('1. Clicked "Title Action 1"');
+      await dismissNextToast('Clicked "Title Action 1"');
 
       await expect(contextMenu()).not.toExist();
     });
@@ -176,7 +176,7 @@ describeIfIOS('Stack Header Menu (iOS)', () => {
     it('should dismiss the title menu and emit a toast after tapping "Title Action 2"', async () => {
       await openHeaderTitleMenu(HEADER_TITLE);
       await element(by.text('Title Action 2')).tap();
-      await dismissToast('1. Clicked "Title Action 2"');
+      await dismissNextToast('Clicked "Title Action 2"');
 
       await expect(contextMenu()).not.toExist();
     });
@@ -233,7 +233,7 @@ describeIfIOS(
       );
       await tapSendButton('send-menu-item-options-button');
 
-      await dismissToast('1. Selected "toggle-1-1"');
+      await dismissNextToast('Selected "toggle-1-1"');
 
       await openMenuOne();
 
@@ -276,7 +276,7 @@ describeIfIOS(
       );
       await tapSendButton('send-menu-item-options-button');
 
-      await dismissToast('1. Selected unique "radio-1-2"');
+      await dismissNextToast('Selected unique "radio-1-2"');
 
       await openMenuOne();
       await element(by.text('Submenu with Radio')).tap();
