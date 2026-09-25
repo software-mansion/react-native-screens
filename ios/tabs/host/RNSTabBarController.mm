@@ -621,12 +621,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
 
-  return [[UITab alloc] initWithTitle:screenController.title ?: @""
-                                image:nil
-                           identifier:[screenController.tabScreenComponentView screenKey]
-               viewControllerProvider:^UIViewController *(UITab *) {
-                 return weakScreenController;
-               }];
+  UITab *tab = [[UITab alloc] initWithTitle:screenController.title ?: @""
+                                      image:nil
+                                 identifier:[screenController.tabScreenComponentView screenKey]
+                     viewControllerProvider:^UIViewController *(UITab *) {
+                       return weakScreenController;
+                     }];
+
+  // A badge set from props before the tab existed could not land on it - seed it now.
+  tab.badgeValue = screenController.tabScreenComponentView.badgeValue;
+
+  return tab;
 }
 
 #endif // RNS_UITAB_API_SDK_AVAILABLE

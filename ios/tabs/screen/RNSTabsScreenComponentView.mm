@@ -215,9 +215,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   [self updateTabBarItemTitle:evaluatedTitle];
-
-  // The badge is missing here intentionally. It is applied by `RNSTabBarAppearanceCoordinator`
-  // to be correctly caught by UITab update.
+  [self updateTabBarItemBadge:_badgeValue];
 }
 
 - (void)updateTabBarItemTitle:(NSString *)newTitle
@@ -229,6 +227,20 @@ RNS_IGNORE_SUPER_CALL_END
   if (![_controller.tabBarItem.title isEqualToString:newTitle] || ![_controller.title isEqualToString:newTitle]) {
     _controller.title = newTitle;
     _controller.tabBarItem.title = newTitle;
+  }
+}
+
+- (void)updateTabBarItemBadge:(NSString *)badgeValue
+{
+  if (![_controller.tabBarItem.badgeValue isEqualToString:badgeValue]) {
+    // item badge value is needed for both viewController and UITab APIs. For the latter,
+    // it is read after building the tab and reassigned (it wouldn't be rendered otherwise)
+    _controller.tabBarItem.badgeValue = badgeValue;
+#if RNS_UITAB_API_SDK_AVAILABLE
+    RNS_UITAB_API_AVAILABLE_BEGIN
+    _controller.tab.badgeValue = badgeValue;
+    RNS_UITAB_API_AVAILABLE_END
+#endif // RNS_UITAB_API_SDK_AVAILABLE
   }
 }
 
