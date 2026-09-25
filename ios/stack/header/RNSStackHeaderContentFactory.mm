@@ -12,21 +12,42 @@
                        withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)headerEventsDelegate
                                 withImageLoader:(id<RNSImageLoading>)imageLoader
 {
+  UIBarButtonItem *barButtonItem;
   if (item.customView != nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
     if (@available(iOS 26.0, *)) {
-      return [[UIBarButtonItem alloc]
+      barButtonItem = [[UIBarButtonItem alloc]
           initWithCustomView:[self makeWrappedInlineItemViewForIOS26WithContentView:item.customView
                                                                 frameChangeDelegate:delegate]];
-    }
+    } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-    return [[UIBarButtonItem alloc] initWithCustomView:[self wrappedViewForHeaderItem:item
-                                                                  frameChangeDelegate:delegate]];
+    {
+      barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:[self wrappedViewForHeaderItem:item
+                                                                             frameChangeDelegate:delegate]];
+    }
+  } else {
+    barButtonItem = [self labelBarButtonItemForHeaderItem:item
+                                 withHeaderEventsDelegate:headerEventsDelegate
+                                          withImageLoader:imageLoader];
   }
 
-  return [self labelBarButtonItemForHeaderItem:item
-                      withHeaderEventsDelegate:headerEventsDelegate
-                               withImageLoader:imageLoader];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_1) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.1, *)) {
+    switch (item.axisBehavior) {
+      case RNSHeaderItemAxisBehaviorAutomatic:
+        barButtonItem.axisBehavior = UIBarButtonItemAxisBehaviorAutomatic;
+        break;
+      case RNSHeaderItemAxisBehaviorHorizontalOnly:
+        barButtonItem.axisBehavior = UIBarButtonItemAxisBehaviorHorizontalOnly;
+        break;
+      case RNSHeaderItemAxisBehaviorVerticalPreferred:
+        barButtonItem.axisBehavior = UIBarButtonItemAxisBehaviorVerticalPreferred;
+        break;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_1) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+  return barButtonItem;
 }
 
 + (UIBarButtonItem *)labelBarButtonItemForHeaderItem:(id<RNSStackHeaderItemDataProviding>)item
