@@ -112,6 +112,14 @@ export type SplitNavigableColumn = 'primary' | 'supplementary' | 'secondary';
 
 export type SplitHostCommands = {
   show: (column: SplitNavigableColumn) => void;
+  /**
+   * Hides a sidebar column using UIKit's native transition to the closest
+   * supported display mode. UIKit does not support hiding the secondary column.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/hide(_:)|UISplitViewController.hide(_:)}
+   * @platform ios
+   */
+  hide: (column: Exclude<SplitNavigableColumn, 'secondary'>) => void;
 };
 
 export interface SplitHostProps extends ViewProps {
