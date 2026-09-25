@@ -57,6 +57,7 @@ function StackHeaderConfig(
     largeTitle,
     largeSubtitle,
     largeTitleEnabled,
+    navigationItemStyle,
     prompt,
     backButtonTitle,
     backButtonDisplayMode,
@@ -162,6 +163,7 @@ function StackHeaderConfig(
       backButtonTitle={backButtonTitle}
       backButtonDisplayMode={backButtonDisplayMode}
       backButtonMenuEnabled={backButtonMenuEnabled}
+      navigationItemStyle={navigationItemStyle}
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
