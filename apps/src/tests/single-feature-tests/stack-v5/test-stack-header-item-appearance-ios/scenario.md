@@ -49,38 +49,46 @@ TBD
 
     - [ ] Items "1"-"4" are moved to the overflow menu
 
-5. Toggle off "Push to overflow", then enable "Use text items"
+5. Set "item tintColor" to red
+
+    - [ ] Item "1" symbol is tinted red
+    
+    - [ ] Item "3" background is tinted red
+    
+    - [ ] Disabled items keep the system disabled look
+
+6. Set "item tintColor" to default, toggle off "Push to overflow", then enable "Use text items"
 
     - [ ] Items render short text labels "aa" (regular), "bb" (disabled), "cc"
           (prominent), "dd" (prominent disabled) instead of sfSymbols
 
-6. Enable "standardAppearance" and configure the "button" slot (e.g. red color,
+7. Enable "standardAppearance" and configure the "button" slot (e.g. red color,
    italic style)
 
     - [ ] Text of item "aa" changes accordingly
     
     - [ ] Text of item "bb" changes with additional gray tint (disabled)
 
-7. Configure the "prominentButton" slot (e.g. blue color, fontSize 12)
+8. Configure the "prominentButton" slot (e.g. blue color, fontSize 12)
 
     - [ ] Text of item "cc" changes accordingly
     
     - [ ] Text of item "dd" changes with additional gray tint (disabled)
 
-8. Tap "Push details screen"
+9. Tap "Push details screen"
 
     - [ ] All four items and the back button fit on the screen
     
     - [ ] The back button title follows the "button" slot configuration
 
-9. On the details screen, enable "scrollEdgeAppearance" and configure the slots
+10. On the details screen, enable "scrollEdgeAppearance" and configure the slots
    differently from "standardAppearance", then scroll the content
 
     - [ ] When scrolled to top, all items follow the `scrollEdgeAppearance` configuration
     
     - [ ] Otherwise, all items follow the `standardAppearance` configuration
 
-10. Configure the "button (disabled)" and "prominentButton (disabled)" slots
+11. Configure the "button (disabled)" and "prominentButton (disabled)" slots
     for both `standardAppearance` and `scrollEdgeAppearance`
 
     - [ ] The change is seen on buttons "bb" and "dd"
@@ -89,9 +97,17 @@ TBD
     
     - [ ] Items "aa" and "cc" are unaffected and behave as in 9.
 
-11. Configure the "button (highlighted)" and "prominentButton (highlighted)" slots
+12. Configure the "button (highlighted)" and "prominentButton (highlighted)" slots
     for both `standardAppearance` and `scrollEdgeAppearance`
 
     - [ ] The style is visible when the button "aa" and "cc" is being pressed
     
     - [ ] The style is NOT visible when the button "bb" and "dd" is being pressed (disabled)
+
+13. Set "item tintColor" to red
+
+    - [ ] Item "aa" text is tinted red
+    
+    - [ ] Item "cc" background is tinted red
+    
+    - [ ] Disabled items keep the system disabled look
