@@ -317,6 +317,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
+  [self updateSearchTabsIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
@@ -662,6 +663,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
+  // Return existing tab if present. Note that this "latches"
+  // the type of the tab: you cannot swap regular UITab with UISearchTab;
+  // and we want it this way because tabs hold view controller references
+  // and UIKit asserts they are unique even for the detached, not-deallocated tabs
   if (screenController.tab) {
     return screenController.tab;
   }
@@ -674,6 +679,23 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (UITab *)makeTabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
+
+  if (screenController.tabScreenComponentView.searchRole) {
+    // The designated initializer of `UISearchTab` takes no identifier - UIKit assigns a system one.
+    UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
+      return weakScreenController;
+    }];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 26.0, *)) {
+      searchTab.automaticallyActivatesSearch = screenController.tabScreenComponentView.automaticallyActivatesSearch;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+    // A badge set from props before the tab existed could not land on it - seed it now.
+    searchTab.badgeValue = screenController.tabScreenComponentView.badgeValue;
+
+    return searchTab;
+  }
 
   UITab *tab = [[UITab alloc] initWithTitle:screenController.title ?: @""
                                       image:nil
@@ -845,6 +867,26 @@ static void rns_pushViewController(__unsafe_unretained id self,
     tabViewController.tabBarItem.accessibilityIdentifier = screenView.tabItemTestID;
     tabViewController.tabBarItem.accessibilityLabel = screenView.tabItemAccessibilityLabel;
   }
+}
+
+- (void)updateSearchTabsIfNeeded
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    for (UITab *tab in self.tabs) {
+      if (![tab isKindOfClass:UISearchTab.class]) {
+        continue;
+      }
+      auto *searchTab = static_cast<UISearchTab *>(tab);
+      auto *screenController = static_cast<RNSTabsScreenViewController *>(tab.viewController);
+      auto *screenView = screenController.tabScreenComponentView;
+
+      if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
+        searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Utility

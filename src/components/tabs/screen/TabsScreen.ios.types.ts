@@ -269,13 +269,55 @@ export interface TabsScreenPropsIOS {
    * overridden by providing a custom `title`.
    *
    * @remarks
-   * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which does not display any title (system or custom).
+   * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which does not display
+   * any title (system or custom). Starting with iOS 27 the system renders a plain search item
+   * inline with the other items - the detached search treatment there comes from `searchRole`
+   * (see its docs for the exact conditions).
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
    *
    * @platform ios
    */
   systemItem?: TabsScreenSystemItem | undefined;
+  /**
+   * @summary Marks this tab as the system search tab.
+   *
+   * On iOS 26.1+ (where tabs are managed through the `UITab` API) a tab screen with
+   * `searchRole: true` is backed natively by `UISearchTab`, which enables the system
+   * search behavior: `automaticallyActivatesSearch` and the detached trailing
+   * placement UIKit gives search tabs. Behavior differs between OS versions: iOS 26.x
+   * detaches `UISearchTab` unconditionally, iOS 27.0 only while `automaticallyActivatesSearch`
+   * is enabled. This prop does not affect the tab bar item's icon or title - combine
+   * it with `systemItem: 'search'` for the system magnifier item.
+   *
+   * The native tab class cannot change during the screen's lifetime - changing
+   * `searchRole` on a mounted tab screen is not supported and triggers an assertion
+   * in development builds.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab|UISearchTab}
+   *
+   * @default false
+   *
+   * @platform ios
+   * @supported iOS 26.1 or higher
+   */
+  searchRole?: boolean | undefined;
+  /**
+   * @summary Specifies whether selecting this tab automatically activates its search field.
+   *
+   * Effective only for tab screens with `searchRole: true` and only when a search bar
+   * is configured in the header of the screen stack nested in this tab
+   * (see `headerSearchBarOptions`). When enabled, selecting the search tab immediately
+   * activates the search field. Cancelling the search restores the previously selected tab.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch|UISearchTab.automaticallyActivatesSearch}
+   *
+   * @default false
+   *
+   * @platform ios
+   * @supported iOS 26.1 or higher
+   */
+  automaticallyActivatesSearch?: boolean | undefined;
   /**
    * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
    * in first descendant chain from tab screen should be overridden back from `never`

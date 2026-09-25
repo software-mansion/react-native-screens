@@ -1,6 +1,7 @@
 #import "RNSTabsScreenViewController.h"
 #import "RNSContainer.h"
 #import "RNSContainerItemSupport.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"

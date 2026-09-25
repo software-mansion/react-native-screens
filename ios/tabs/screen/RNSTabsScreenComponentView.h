@@ -77,6 +77,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) RNSTabsScreenSystemItem systemItem;
 
+/**
+ * Whether this screen is the system search tab. On the UITab path (iOS 26.1+) it decides the
+ * backing tab class: `UISearchTab` vs plain `UITab`. Fixed for the screen's lifetime.
+ */
+@property (nonatomic, readonly) BOOL searchRole;
+
+/**
+ * Whether selecting the search tab should automatically activate its search controller.
+ * Effective only on iOS 26.1+ for screens with `searchRole` set.
+ */
+@property (nonatomic, readonly) BOOL automaticallyActivatesSearch;
+
 @end
 
 #pragma mark - Experimental
