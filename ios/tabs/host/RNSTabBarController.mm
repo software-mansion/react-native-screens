@@ -321,6 +321,36 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 /**
+ * Update UIKit model and associated navigation state.
+ *
+ * This method will advance state in case the selected view controller is repeated.
+ *
+ * This method MUST be called only in situations where `UITabBarController` state has not been updated yet.
+ * Otherwise it'll progress the state incorrectly.
+ *
+ * @returns whether the state has been updated or not.
+ */
+- (BOOL)updateSelectedViewControllerTo:(nullable UIViewController *)nextSelectedViewController
+                               withKey:(nullable NSString *)screenKey
+                          actionOrigin:(RNSTabsActionOrigin)actionOrigin
+{
+  if (nextSelectedViewController == nil) {
+    return NO;
+  }
+
+  RCTAssert(![NSString rnscreens_isBlankOrNull:screenKey],
+            @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
+
+  [self progressNavigationState:screenKey withOrigin:actionOrigin];
+
+  if (![self isScreenControllerCurrentlySelected:nextSelectedViewController]) {
+    [self applySelectedScreenController:nextSelectedViewController];
+  }
+
+  return YES;
+}
+
+/**
  * Update tabs navigation state in reaction to UIKit model update.
  *
  * This method does not update the UIKit model. It assumes that exactly one model update happened,
@@ -604,6 +634,18 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self setSelectedViewController:screenController];
 }
 
+/// Whether `screenController` is already the effective current selection.
+///
+/// While the More controller is active `self.selectedViewController` is the More controller itself,
+/// so the current selection is what its stack tops; otherwise it is `self.selectedViewController`
+/// (which, at container-update time, is settled and matches the `UITab` selection).
+- (BOOL)isScreenControllerCurrentlySelected:(nonnull UIViewController *)screenController
+{
+  return [self isMoreNavigationControllerTabBarItemSelected]
+      ? screenController == [self resolveMoreNavigationController].topViewController
+      : screenController == self.selectedViewController;
+}
+
 #if RNS_UITAB_API_SDK_AVAILABLE
 
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
@@ -726,11 +768,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  // While More is active `self.selectedViewController` is the More controller itself - a matching
-  // request is a repeat only when it targets what the More stack currently tops.
-  BOOL isRepeatedSelection = [self isMoreNavigationControllerTabBarItemSelected]
-      ? nextSelectedViewController == [self resolveMoreNavigationController].topViewController
-      : nextSelectedViewController == self.selectedViewController;
+  BOOL isRepeatedSelection = [self isScreenControllerCurrentlySelected:nextSelectedViewController];
 
   // Programmatic repeat selection is rejected, unless we're during first render.
   if (isRepeatedSelection && _navigationState != nil) {
@@ -752,17 +790,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
-  [self progressNavigationState:nextSelectedViewControllerKey withOrigin:_pendingStateUpdate.actionOrigin];
+  BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
+                                                         withKey:nextSelectedViewControllerKey
+                                                    actionOrigin:_pendingStateUpdate.actionOrigin];
 
-  if (!isRepeatedSelection) {
-    [self applySelectedScreenController:nextSelectedViewController];
-  }
-
-  if ([self isViewControllerHostedByMoreNavigationController:nextSelectedViewController]) {
+  if (hasStateProgressed && [self isViewControllerHostedByMoreNavigationController:nextSelectedViewController]) {
     [self disableNavigationBarInMoreNavigationController];
   }
 
-  [self emitSelectionUpdateWithOrigin:_pendingStateUpdate.actionOrigin repeated:NO hasTriggeredSpecialEffect:NO];
+  if (hasStateProgressed) {
+    [self emitSelectionUpdateWithOrigin:_pendingStateUpdate.actionOrigin repeated:NO hasTriggeredSpecialEffect:NO];
+  }
 }
 
 - (void)updateTabBarAppearanceIfNeeded
