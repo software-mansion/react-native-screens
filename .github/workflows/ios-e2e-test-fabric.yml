@@ -18,6 +18,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      argent-only:
+        description: Skip the Detox tests; only build the app and run the Argent flows.
+        type: boolean
+        default: false
 jobs:
   test:
     runs-on: macos-26-xlarge
@@ -61,45 +66,80 @@ jobs:
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-ios
+      # The `argent` job tests the same release build on its own simulator.
+      - name: Package app for Argent
+        run: |
+          tar -czf "$RUNNER_TEMP/FabricExample-app.tar.gz" \
+            -C "$WORKING_DIRECTORY/ios/build/Build/Products/Release-iphonesimulator" FabricExample.app
+      - name: Upload app for Argent
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-app
+          path: ${{ runner.temp }}/FabricExample-app.tar.gz
+          retention-days: 3
       - name: Test app
+        if: ${{ !inputs.argent-only }}
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
-      # Reuse the simulator Detox booted (scripts/e2e/ios-devices.js default) and
-      # the release build it tested.
-      - name: Prepare simulator for Argent
-        if: ${{ !cancelled() }}
-        env:
-          SIM_NAME: iPhone 17
-        run: |
-          UDID=$(xcrun simctl list devices booted -j | jq -r --arg n "$SIM_NAME" '[.devices[][] | select(.name==$n)][0].udid // empty')
-          if [ -z "$UDID" ]; then
-            UDID=$(xcrun simctl list devices available -j | jq -r --arg n "$SIM_NAME" '[.devices[][] | select(.name==$n)][0].udid // empty')
-            if [ -z "$UDID" ]; then
-              echo "No available \"$SIM_NAME\" simulator" >&2
-              xcrun simctl list devices available >&2
-              exit 1
-            fi
-            xcrun simctl boot "$UDID" || true
-          fi
-          xcrun simctl bootstatus "$UDID"
-          xcrun simctl install "$UDID" "$WORKING_DIRECTORY/ios/build/Build/Products/Release-iphonesimulator/FabricExample.app"
-          echo "Using simulator $UDID"
-          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
-      - name: Install Argent and start the tool-server
-        if: ${{ !cancelled() }}
-        uses: ./.github/actions/argent-server
-      - name: Run Argent flows
-        if: ${{ !cancelled() }}
-        run: |
-          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
-            --output "$RUNNER_TEMP/argent-out"
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: ios-fail-screen-shots
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
+
+  argent:
+    # Separate job so the Argent flows get their own time budget and a fresh
+    # simulator, whatever state the Detox run left behind. Runs even when Detox
+    # failed, as long as the app artifact was uploaded.
+    needs: test
+    if: ${{ !cancelled() }}
+    runs-on: macos-26-xlarge
+    timeout-minutes: 30
+    concurrency:
+      group: ios-argent-fabric-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      # Only needed to run the Argent CLI — the app is downloaded, not built.
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      # Same Xcode as the build, so the simulator runtime matches the SDK.
+      - name: Use latest stable Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.2'
+      - name: Download app built by the test job
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-release-app
+          path: ${{ runner.temp }}/app
+      - name: Unpack app
+        run: |
+          tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$RUNNER_TEMP/app"
+          echo "APP_PATH=$RUNNER_TEMP/app/FabricExample.app" >> "$GITHUB_ENV"
+      # iPhone 17 matches the geometry of the committed iOS baselines (1206x2622).
+      # A freshly created simulator, never one another job has used.
+      - name: Boot iPhone 17 simulator
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes ios -j | jq -r '.runtimes | map(select(.isAvailable)) | last | .identifier')
+          UDID=$(xcrun simctl create "Argent iPhone 17" com.apple.CoreSimulator.SimDeviceType.iPhone-17 "$RUNTIME")
+          echo "Booting $UDID ($RUNTIME)"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID"
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+      - name: Install app on simulator
+        run: xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
+      - name: Install Argent and start the tool-server
+        uses: ./.github/actions/argent-server
+      - name: Run Argent flows
+        run: |
+          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
+            --output "$RUNNER_TEMP/argent-out"
       - name: Upload Argent artifacts
-        if: ${{ failure() }}
+        if: ${{ !success() }}
         uses: actions/upload-artifact@v4
         with:
           name: ios-argent-debug

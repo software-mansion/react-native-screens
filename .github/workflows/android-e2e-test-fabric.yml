@@ -18,18 +18,19 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      argent-only:
+        description: Skip the Detox tests; only build the app and run the Argent flows.
+        type: boolean
+        default: false
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
       AVD_PROFILE: pixel_7
-      # The emulator advertises its gRPC console in
-      # $XDG_RUNTIME_DIR/avd/running/pid_*.ini, which is where Argent's Android
-      # backend looks for it. The variable is unset on runners, so pin it.
-      XDG_RUNTIME_DIR: /tmp/xdg-runtime
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -81,18 +82,19 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
 
+      # The `argent` job tests the same release build on its own emulator.
+      - name: Upload APK for Argent
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 3
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-
-      # The emulator ignores XDG_RUNTIME_DIR if it does not exist, so create it
-      # before any boot. 0700 per the XDG spec.
-      - name: Prepare shared XDG_RUNTIME_DIR
-        run: |
-          mkdir -p "$XDG_RUNTIME_DIR"
-          chmod 700 "$XDG_RUNTIME_DIR"
 
       - name: AVD cache
         uses: actions/cache@v4
@@ -120,6 +122,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run emulator and tests
+        if: ${{ !inputs.argent-only }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -135,16 +138,83 @@ jobs:
           arch: x86_64
           script: yarn test-e2e-android
 
-      # Host process; it outlives this step and serves the next emulator boot.
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: android-fail-screen-shots
+          path: ${{ env.WORKING_DIRECTORY }}/artifacts
+
+  argent:
+    # Separate job so the Argent flows get their own time budget and a fresh
+    # emulator, whatever state the Detox run left behind. Runs even when Detox
+    # failed, as long as the APK artifact was uploaded.
+    needs: test
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      API_LEVEL: 34
+      AVD_PROFILE: pixel_7
+      # The emulator advertises its gRPC console in
+      # $XDG_RUNTIME_DIR/avd/running/pid_*.ini, which is where Argent's Android
+      # backend looks for it. The variable is unset on runners, so pin it.
+      XDG_RUNTIME_DIR: /tmp/xdg-runtime
+    concurrency:
+      group: android-argent-fabric-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Only needed to run the Argent CLI — the APK is downloaded, not built.
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      # Where scripts/e2e/run-argent-flows-android.sh installs it from.
+      - name: Download APK built by the test job
+        uses: actions/download-artifact@v4
+        with:
+          name: android-release-apk
+          path: FabricExample/android/app/build/outputs/apk/release
+
+      - name: Install AVD dependencies
+        run: |
+          sudo apt update
+          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # The emulator ignores XDG_RUNTIME_DIR if it does not exist, so create it
+      # before booting. 0700 per the XDG spec.
+      - name: Prepare shared XDG_RUNTIME_DIR
+        run: |
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
+
+      # Same AVD (pixel_7, 1080x2400 — the geometry of the committed Android
+      # baselines) as the test job; restored from its cache when present.
+      - name: AVD cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}
+
+      # Host process; it outlives this step and serves the emulator boot below.
       - name: Install Argent and start the tool-server
-        if: ${{ !cancelled() }}
         uses: ./.github/actions/argent-server
 
-      # A second boot from the cached AVD: android-emulator-runner keeps the
-      # emulator alive only for its `script:`. `-grpc` makes the emulator write
-      # the grpc.port Argent reads from $XDG_RUNTIME_DIR.
+      # android-emulator-runner keeps the emulator alive only for its `script:`.
+      # `-grpc` makes the emulator write the grpc.port Argent reads from
+      # $XDG_RUNTIME_DIR.
       - name: Run Argent flows
-        if: ${{ !cancelled() }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.API_LEVEL }}
@@ -159,14 +229,8 @@ jobs:
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ failure() }}
-        with:
-          name: android-fail-screen-shots
-          path: ${{ env.WORKING_DIRECTORY }}/artifacts
-
       - name: Upload Argent artifacts
-        if: ${{ failure() }}
+        if: ${{ !success() }}
         uses: actions/upload-artifact@v4
         with:
           name: android-argent-debug
@@ -174,4 +238,3 @@ jobs:
             ${{ runner.temp }}/argent-out
             ${{ runner.temp }}/argent-server.log
           if-no-files-found: ignore
-
