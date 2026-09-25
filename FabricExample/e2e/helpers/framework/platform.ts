@@ -51,8 +51,10 @@ function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
   return compareVersions(version, minimumVersion) >= 0;
 }
 
-export const describeIfIOS =
-  device.getPlatform() === 'ios' ? describe : describe.skip;
+/** Every iOS guard below derives from this, so none can leak onto Android. */
+const isIOS = device.getPlatform() === 'ios';
+
+export const describeIfIOS = isIOS ? describe : describe.skip;
 
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
@@ -62,17 +64,13 @@ export const describeIfAndroid =
  * RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)". See scripts/e2e/ios-devices.js.
  */
 const isIPadTarget =
-  device.getPlatform() === 'ios' &&
-  /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
+  isIOS && /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
 
 export const describeIfIPad = isIPadTarget ? describe : describe.skip;
 
 /** `true` on iOS at `version` or newer; `false` on Android. */
 export function isIOSVersionAtLeast(version: string): boolean {
-  return (
-    device.getPlatform() === 'ios' &&
-    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
-  );
+  return isIOS && isVersionEqualOrHigherThan(getIOSVersionNumber(), version);
 }
 
 /**
@@ -87,12 +85,12 @@ export const describeIfIOSAtLeast = (version: string) =>
 
 /**
  * Suites for behavior that iOS `version` changed, kept on the releases before
- * it. Unlike `describeIfIOSAtLeast` this also runs on Android - the version
- * check is `false` there - so nest it inside `describeIfIOS` for an iOS-only
- * suite.
+ * it; skipped on Android and from `version` on. `isIOS` is required on its own
+ * because `isIOSVersionAtLeast` is also `false` on Android, so negating that
+ * alone would run the suite there.
  */
 export const describeIfIOSBelow = (version: string) =>
-  isIOSVersionAtLeast(version) ? describe.skip : describe;
+  isIOS && !isIOSVersionAtLeast(version) ? describe : describe.skip;
 
 /** Suites for iPad-only features added in iPadOS `version`. */
 export const describeIfIPadOSAtLeast = (version: string) =>
