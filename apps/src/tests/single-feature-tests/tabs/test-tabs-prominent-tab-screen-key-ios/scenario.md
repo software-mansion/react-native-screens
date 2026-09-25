@@ -50,62 +50,54 @@ TBD.
 
 ## Steps
 
-### automaticallyActivatesSearch on
-
 1. Launch the app and navigate to the **Prominent Tab Screen Key** screen.
 
-    - [ ] Three tabs are visible: **Config**, **Cart** and the search tab
-          (magnifier icon).
-    - [ ] **Config** is selected, the `prominentTabScreenKey` picker reads `none`,
-          and **automaticallyActivatesSearch** is on.
-    - [ ] The search tab bar item is detached from the other items on its own
-          surface.
-
----
-
-### Promoting an arbitrary tab
+   - [ ] Three tabs are visible: **Config**, **Cart** and the search tab
+         (magnifier icon).
+   - [ ] **Config** is selected, the `prominentTabScreenKey` picker reads `none`,
+         and **automaticallyActivatesSearch** is on.
+   - [ ] The search tab bar item is detached from the other items on its own
+         surface.
 
 2. Set `prominentTabScreenKey` = `Cart`.
 
-    - [ ] **Cart** receives the prominent treatment.
-    - [ ] The search tab bar item sits with the remaining items.
+   - [ ] **Cart** receives the prominent treatment.
+   - [ ] The search tab bar item sits with the remaining items.
 
 3. Tap the **Cart** tab.
 
-    - [ ] **Cart** is selected and shows its rows.
-    - [ ] The prominent treatment stays on **Cart** while it is selected.
+   - [ ] **Cart** is selected and shows its rows.
+   - [ ] The prominent treatment stays on **Cart** while it is selected.
 
 4. Scroll **down** through the list.
 
-    - [ ] The tab bar minimizes.
-    - [ ] **Cart** remains visible next to the minimized tab bar.
+   - [ ] The tab bar minimizes.
+   - [ ] **Cart** remains visible next to the minimized tab bar.
 
 5. Scroll back **up**, switch to **Config** and set
    `prominentTabScreenKey` = `Search`.
 
-    - [ ] The search tab bar item receives the prominent treatment.
-    - [ ] **Cart** sits with the remaining items.
+   - [ ] The search tab bar item receives the prominent treatment.
+   - [ ] **Cart** sits with the remaining items.
 
 6. Tap the search tab.
 
-    - [ ] The List screen appears.
-    - [ ] The search field activates immediately.
+   - [ ] The List screen appears.
+   - [ ] The search field activates immediately.
 
 7. Tap the **Config** tab, then tap the **Cart** tab and scroll **down**.
 
-    - [ ] The tab bar minimizes.
-    - [ ] The search tab bar item remains visible.
-
-### automaticallyActivatesSearch off
+   - [ ] The tab bar minimizes.
+   - [ ] The search tab bar item remains visible.
 
 8. Scroll back **up**, switch to **Config**, set `prominentTabScreenKey` =
    `none` and turn **automaticallyActivatesSearch** off.
 
-    - [ ] No tab is prominent - all three items sit together.
+   - [ ] No tab is prominent - all three items sit together.
 
 9. Set `prominentTabScreenKey` = `Cart`.
 
-    - [ ] **Cart** receives the prominent treatment.
+   - [ ] **Cart** receives the prominent treatment.
 
 10. Tap the **Cart** tab.
 
@@ -124,7 +116,7 @@ TBD.
 13. Tap the search tab.
 
     - [ ] The List screen appears with
-    - [ ] The search field activates immediately.
+    - [ ] The search field are open.
 
 14. Tap the **Config** tab, then tap the **Cart** tab and scroll **down**.
 
