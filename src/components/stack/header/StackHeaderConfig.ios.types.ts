@@ -524,6 +524,25 @@ export interface StackHeaderConfigPropsIOS {
       )[]
     | undefined;
   /**
+   * @summary Items displayed in the native bottom toolbar for this screen.
+   *
+   * @description Items are ordered from the leading edge. Use fixed or flexible
+   * spacers to position them. Omitting this prop or passing an empty array hides
+   * the toolbar. Navigating to another screen displays that screen's toolbar
+   * items. The toolbar is independent of the header's `hidden` prop.
+   *
+   * Ignored on Android and tvOS.
+   *
+   * @platform iOS
+   */
+  toolbarItems?:
+    | (
+        | StackHeaderInlineItemIOS
+        | StackHeaderInlineCustomItemIOS
+        | StackHeaderSpacerItemIOS
+      )[]
+    | undefined;
+  /**
    * @summary Large title text, displayed when `largeTitleEnabled = true`.
    *
    * @description When ScrollView is present on the screen, large header is displayed only when
