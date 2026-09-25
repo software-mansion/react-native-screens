@@ -58,6 +58,9 @@ namespace react = facebook::react;
 /**
  * This method throws an error in debug mode in case it fails to find the ScrollView instance,
  * as it does not make sense to use this component if the ScrollView is not there.
+ *
+ * Finding nothing is legitimate when a nested marker owns the ScrollView: the innermost marker
+ * configures it, and this one deliberately stands down rather than competing for it.
  */
 - (nullable UIScrollView *)findScrollView
 {
@@ -66,7 +69,12 @@ namespace react = facebook::react;
             @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
             self.subviews);
 
-  UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:self.subviews.firstObject];
+  UIView *_Nullable childView = self.subviews.firstObject;
+  if ([childView isKindOfClass:RNSScrollViewMarkerComponentView.class]) {
+    return nil;
+  }
+
+  UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:childView];
 
   RCTAssert(foundScrollView != nil, @"[RNScreens] Failed to find ScrollView"); // debug assertion only
   return foundScrollView;
@@ -128,11 +136,32 @@ namespace react = facebook::react;
  *
  * Currently it supports only direct `UIScrollView` or react-native's `<ScrollView />` component.
  */
+/**
+ * Bounded so a deep or unexpected tree cannot stall a mounting transaction.
+ */
+static const NSUInteger RNSScrollViewMarkerMaxVisitedViews = 250;
+
 - (nullable UIScrollView *)resolveScrollViewFromChildView:(nullable UIView *)childView
 {
-  if (childView == nil) {
+  NSUInteger visitedViews = 0;
+  return [self resolveScrollViewFromChildView:childView visitedViews:&visitedViews];
+}
+
+/**
+ * The child is not always the ScrollView itself. A list or a wrapper component may render its
+ * ScrollView below one or more of its own container views — for example
+ * react-native-keyboard-controller's `KeyboardChatScrollView`, which renders the ScrollView inside
+ * a `ClippingScrollViewDecoratorView`. Resolving only the direct child makes the marker unusable
+ * with those components, and the assertion in `findScrollView` turns it into a debug crash.
+ */
+- (nullable UIScrollView *)resolveScrollViewFromChildView:(nullable UIView *)childView
+                                             visitedViews:(NSUInteger *)visitedViews
+{
+  if (childView == nil || *visitedViews >= RNSScrollViewMarkerMaxVisitedViews) {
     return nil;
   }
+
+  *visitedViews += 1;
 
   if ([childView isKindOfClass:UIScrollView.class]) {
     return static_cast<UIScrollView *>(childView);
@@ -140,6 +169,21 @@ namespace react = facebook::react;
 
   if ([childView isKindOfClass:RCTScrollViewComponentView.class]) {
     return static_cast<RCTScrollViewComponentView *>(childView).scrollView;
+  }
+
+  for (UIView *subview in childView.subviews) {
+    // A nested marker owns the ScrollView below it; adopting it here would give two markers the
+    // same ScrollView and make the effective configuration depend on mount order. The same rule
+    // is applied to a marker that is the direct child, in `findScrollView`.
+    if ([subview isKindOfClass:RNSScrollViewMarkerComponentView.class]) {
+      continue;
+    }
+
+    UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:subview
+                                                                      visitedViews:visitedViews];
+    if (foundScrollView != nil) {
+      return foundScrollView;
+    }
   }
 
   return nil;
