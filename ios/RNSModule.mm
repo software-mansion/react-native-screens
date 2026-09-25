@@ -26,6 +26,44 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
+- (NSNumber *)getHeaderHeight
+{
+  // Lay a throwaway navigation controller out in a probe window of the current scene and read
+  // where UIKit puts the bar. That is the same quantity `onHeaderHeightChange` reports later (bar
+  // height plus its origin), computed by UIKit for the scene's traits, safe area and bounds, so it
+  // stays right when an OS or a form factor moves the bar.
+  //
+  // The probe window has to be un-hidden: a window that is not visible gets no safe area, and the
+  // bar would then be laid out as if there were no status bar. It is fully transparent and sits
+  // below the app window, and it is hidden again before this call returns, so nothing is drawn
+  // and the app's own window hierarchy is left alone.
+  __block CGFloat height = 0;
+  RCTUnsafeExecuteOnMainQueueSync(^{
+    UIWindow *appWindow = RCTKeyWindow();
+    if (appWindow == nil) {
+      return;
+    }
+    UINavigationController *nav =
+        [[UINavigationController alloc] initWithRootViewController:[UIViewController new]];
+    UIWindow *probe = [[UIWindow alloc] initWithWindowScene:appWindow.windowScene];
+    probe.frame = appWindow.frame;
+    probe.windowLevel = UIWindowLevelNormal - 1;
+    probe.alpha = 0;
+    probe.rootViewController = nav;
+    probe.hidden = NO;
+    [probe layoutIfNeeded];
+#if TARGET_OS_TV
+    // Mirrors `calculateHeaderHeightIsModal:` — on tvOS the bar has no inset.
+    height = nav.navigationBar.frame.size.height;
+#else
+    height = CGRectGetMaxY(nav.navigationBar.frame);
+#endif
+    probe.hidden = YES;
+    probe.rootViewController = nil;
+  });
+  return @(height);
+}
+
 - (NSDictionary *)constantsToExport
 {
   [self installHostObject];
