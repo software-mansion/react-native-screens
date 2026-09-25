@@ -785,7 +785,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateTabBarA11yIfNeeded
 {
-  for (RNSTabsScreenViewController *tabViewController in _tabScreenControllers) {
+  for (RNSTabsScreenViewController *tabViewController in [self installedScreenControllers]) {
     auto screenView = tabViewController.tabScreenComponentView;
     if (!screenView.tabBarItemNeedsA11yUpdate) {
       continue;
@@ -804,7 +804,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (screenKey == nil) {
     return nil;
   }
-  for (RNSTabsScreenViewController *screenViewController in _tabScreenControllers) {
+  for (RNSTabsScreenViewController *screenViewController in [self installedScreenControllers]) {
     if ([screenViewController.getScreenKeyOrNull isEqualToString:screenKey]) {
       return screenViewController;
     }
@@ -932,7 +932,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
   // The count is documented. Size class check is empirical, to tighten the condition and have less
   // false positives. If we ever find it not correct, we can safely remove it.
-  return _tabScreenControllers.count >= kMinCountOfVCsForMoreVCPresence &&
+  return [self installedScreenControllers].count >= kMinCountOfVCsForMoreVCPresence &&
       self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 #else
   return NO;
@@ -946,7 +946,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   // Guard: VC must be one we manage (excludes arbitrary external VCs).
-  if (![_tabScreenControllers containsObject:static_cast<RNSTabsScreenViewController *>(viewController)]) {
+  if (![[self installedScreenControllers] containsObject:static_cast<RNSTabsScreenViewController *>(viewController)]) {
     return NO;
   }
 
