@@ -590,11 +590,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 #if RNS_UITAB_API_SDK_AVAILABLE
   RNS_UITAB_API_AVAILABLE_BEGIN
   if (![self isMoreNavigationControllerTabBarItemSelected]) {
-    UITab *tab = [self findTabForScreenKey:[self screenKeyForViewController:screenController]];
-    RCTAssert(tab != nil,
+    RCTAssert(screenController.tab != nil,
               @"[RNScreens] No installed UITab for screenKey: %@",
               [self screenKeyForViewController:screenController]);
-    self.selectedTab = tab;
+    self.selectedTab = screenController.tab;
     return;
   }
   RNS_UITAB_API_AVAILABLE_END
@@ -609,10 +608,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
-  for (UITab *tab in self.tabs) {
-    if (tab.viewController == screenController) {
-      return tab;
-    }
+  if (screenController.tab) {
+    return screenController.tab;
   }
 
   return [self makeTabForTabScreenController:screenController];
@@ -850,23 +847,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(screenKey != nil, @"[RNScreens] screenKey MUST NOT be nil");
   return screenKey;
 }
-
-#if RNS_UITAB_API_SDK_AVAILABLE
-
-- (nullable UITab *)findTabForScreenKey:(nullable NSString *)screenKey API_AVAILABLE(ios(18.0))
-{
-  if (screenKey == nil) {
-    return nil;
-  }
-  for (UITab *tab in self.tabs) {
-    if ([[self screenKeyForViewController:tab.viewController] isEqualToString:screenKey]) {
-      return tab;
-    }
-  }
-  return nil;
-}
-
-#endif // RNS_UITAB_API_SDK_AVAILABLE
 
 - (nonnull NSString *)screenKeyForSelectedViewController
 {
