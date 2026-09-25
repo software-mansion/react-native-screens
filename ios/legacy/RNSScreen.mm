@@ -141,9 +141,12 @@ RNS_IGNORE_SUPER_CALL_END
     // navigation bar, therefore there is no need to set content offset in shadow tree.
     // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
     // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
-    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent || self.isPresentedAsNativeModal
-        ? 0
-        : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+    // * Otherwise the offset must match the actual native origin of the screen. We can not derive it from the
+    // navigation bar geometry, because UIKit does not always lay out the screen right below the navigation bar
+    // (e.g. on iOS 26 `edgesForExtendedLayout` ignores the navigation bar's origin offset).
+    // See https://github.com/software-mansion/react-native-screens-labs/issues/1841
+    const CGFloat effectiveContentOffsetY =
+        config.largeTitle || config.translucent || self.isPresentedAsNativeModal ? 0 : [self originInNavigationView].y;
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
@@ -174,6 +177,30 @@ RNS_IGNORE_SUPER_CALL_END
     // height of the sheet.
     [self applyFrameCorrectionForDescendantScrollView];
   }
+}
+
+// Returns origin of the screen in the coordinate space of its navigation controller's view, which matches
+// the coordinate space of the screen stack in the shadow tree. Transforms are ignored on purpose,
+// as these are applied only temporarily, e.g. by transition animations.
+- (CGPoint)originInNavigationView
+{
+  UIView *navigationView = _controller.navigationController.view;
+  if (navigationView == nil) {
+    return CGPointZero;
+  }
+
+  CGPoint origin = CGPointZero;
+  for (UIView *view = self; view != navigationView; view = view.superview) {
+    if (view.superview == nil) {
+      // Screen is not attached to the navigation controller's view hierarchy, fallback to header height.
+      return CGPointMake(0, [_controller calculateHeaderHeightIsModal:NO]);
+    }
+    const CGRect bounds = view.bounds;
+    const CGPoint anchorPoint = view.layer.anchorPoint;
+    origin.x += view.center.x - bounds.origin.x - bounds.size.width * anchorPoint.x;
+    origin.y += view.center.y - bounds.origin.y - bounds.size.height * anchorPoint.y;
+  }
+  return origin;
 }
 
 - (void)applyFrameCorrectionForDescendantScrollView
