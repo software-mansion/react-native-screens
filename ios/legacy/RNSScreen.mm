@@ -1428,6 +1428,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _isSwiping;
   BOOL _shouldNotify;
   BOOL _isRemovedFromParent;
+  BOOL _hasNotifiedDismissed;
 }
 
 #pragma mark - Common
@@ -1439,6 +1440,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _fakeView = [UIView new];
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
+    _hasNotifiedDismissed = NO;
   }
   return self;
 }
@@ -1535,7 +1537,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.screenView notifyDismissCancelledWithDismissCount:_dismissCount];
     } else {
       // screen dismissed, send event
-      [self.screenView notifyDismissedWithCount:_dismissCount];
+      [self notifyDismissedIfNeeded];
     }
   }
   // same flow as in viewDidAppear
@@ -1698,6 +1700,34 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   _isRemovedFromParent = YES;
 }
 
+- (BOOL)isNativelyDismissedFromContainer
+{
+  if (self.presentingViewController != nil) {
+    return NO;
+  }
+  if (self.parentViewController == nil) {
+    return YES;
+  }
+  if ([self.parentViewController isKindOfClass:UINavigationController.class]) {
+    UINavigationController *navigationController = (UINavigationController *)self.parentViewController;
+    return ![navigationController.viewControllers containsObject:self];
+  }
+  return NO;
+}
+
+- (void)notifyDismissedIfNeeded
+{
+  if (_hasNotifiedDismissed || self.screenView.preventNativeDismiss) {
+    return;
+  }
+  if (![self isNativelyDismissedFromContainer]) {
+    return;
+  }
+  _hasNotifiedDismissed = YES;
+  _isRemovedFromParent = YES;
+  [self.screenView notifyDismissedWithCount:_dismissCount];
+}
+
 #pragma mark - transition progress related methods
 
 - (void)setupProgressNotification
@@ -1720,12 +1750,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     };
 
+    BOOL notifyDismissWhenTransitionEnds = _closing;
     [self.transitionCoordinator
         animateAlongsideTransition:animation
                         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
                           [self->_animationTimer setPaused:YES];
                           [self->_animationTimer invalidate];
                           [self->_fakeView removeFromSuperview];
+                          // iOS 27 can skip viewDidDisappear when a tab switch
+                          // interrupts popToRoot. If this screen was popped,
+                          // notify JS when the transition ends.
+                          if (notifyDismissWhenTransitionEnds) {
+                            [self notifyDismissedIfNeeded];
+                          }
                         }];
   }
 }
