@@ -61,6 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
 @property (nonatomic, readonly) UITabBarControllerMode tabBarControllerMode API_AVAILABLE(ios(18.0));
 #endif // Check for iOS >= 18
+
+@property (nonatomic, copy, readonly, nullable) NSString *prominentTabScreenKey;
 @end
 
 #pragma mark - React Events

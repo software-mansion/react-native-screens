@@ -289,7 +289,9 @@ export interface TabsScreenPropsIOS {
    * changed between OS versions - observed on simulators: iOS 26.x detaches a
    * `UISearchTab` unconditionally, iOS 27.0 only while `automaticallyActivatesSearch`
    * is enabled. This prop does not affect the tab bar item's icon or title - combine
-   * it with `systemItem: 'search'` for the system magnifier item.
+   * it with `systemItem: 'search'` for the system magnifier item. On iOS 27+ the detached
+   * (prominent) placement can be given to any tab instead through `TabsHost`
+   * `ios.prominentTabScreenKey`.
    *
    * The native tab class cannot change during the screen's lifetime - changing
    * `searchRole` on a mounted tab screen is not supported and triggers an assertion

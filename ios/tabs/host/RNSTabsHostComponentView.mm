@@ -100,6 +100,7 @@ namespace react = facebook::react;
   _rejectStaleNavStateUpdates = NO;
   _tabBarHiddenAnimationEnabled = YES;
   _bottomAccessoryHidden = NO;
+  _prominentTabScreenKey = nil;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -303,6 +304,18 @@ namespace react = facebook::react;
 #endif // Check for iOS >= 18
       if (newComponentProps.tabBarControllerMode != react::RNSTabsHostIOSTabBarControllerMode::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
+      }
+  }
+
+  if (newComponentProps.prominentTabScreenKey != oldComponentProps.prominentTabScreenKey) {
+    _prominentTabScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.prominentTabScreenKey);
+#if RNS_TABS_PROMINENT_TAB_AVAILABLE
+    if (@available(iOS 27.0, *)) {
+      [_controller setProminentTabScreenKey:_prominentTabScreenKey];
+    } else
+#endif // RNS_TABS_PROMINENT_TAB_AVAILABLE
+      if (_prominentTabScreenKey != nil) {
+        RCTLogWarn(@"[RNScreens] prominentTabScreenKey is supported for iOS >= 27");
       }
   }
 
