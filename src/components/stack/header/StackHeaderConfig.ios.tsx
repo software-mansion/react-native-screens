@@ -257,6 +257,23 @@ function mapAppearanceToNativeProp(
     prominentButtonFocusedFontWeight: toNativeFontWeight(
       appearance.prominentButtonFocusedFontWeight,
     ),
+
+    backButtonFontColor: processColor(appearance.backButtonFontColor),
+    backButtonFontWeight: toNativeFontWeight(appearance.backButtonFontWeight),
+
+    backButtonHighlightedFontColor: processColor(
+      appearance.backButtonHighlightedFontColor,
+    ),
+    backButtonHighlightedFontWeight: toNativeFontWeight(
+      appearance.backButtonHighlightedFontWeight,
+    ),
+
+    backButtonFocusedFontColor: processColor(
+      appearance.backButtonFocusedFontColor,
+    ),
+    backButtonFocusedFontWeight: toNativeFontWeight(
+      appearance.backButtonFocusedFontWeight,
+    ),
   };
 }
 
