@@ -1,0 +1,126 @@
+# QA e2e flow — Tabs · tab bar item title (title / truncation, tabBarItemTitleFontColor,
+# font family/size/style/weight, iOS tabBarItemTitlePositionAdjustment)
+#
+# Source of truth: apps/src/tests/single-feature-tests/tabs/test-tabs-item-title/index.tsx
+# Scenario:        apps/src/tests/single-feature-tests/tabs/test-tabs-item-title/scenario.md
+#
+# Covers scenario steps 1, 2, 4, 5, 6, 7 on iPhone and Android. Step 3 (Android: keyboard
+# Tab-key focus turns the focused title yellow) is MANUAL — it needs a hardware keyboard focus
+# traversal the runner cannot drive deterministically. The iOS 18 known issues (no truncation,
+# normal-state color not applied on iOS 26) are platform-version facts: baselines are keyed by
+# device class, so each CI device class freezes its own expected rendering.
+#
+# Evidence model (every observable outcome here is pixels — color, typography, label position —
+# which structural tooling cannot read):
+#   - Which tab is selected: `await: { visible: { text: … } }` on a text unique to that tab's CONTENT
+#     ("Long Title" / "RedLight100" / "tabBarItemTitleFontFamily" — identical copy on both platforms).
+#   - The tab bar itself (three items, truncated long title, title color/font/offset, icon tint):
+#     one `snapshot` per tab state, cropped on that tab's tab-bar band — an invisible view covering
+#     the bottom third of the tab's app-area wrapper (ids test-tabs-item-title-{long-title,color,font}-tab-bar-band;
+#     above the Android nav bar, tab bar in frame, tab content text out of frame; see
+#     .argent/skills/argent-flow-snapshot-crop). Tab content is proven by the text `await`s instead.
+#   - "Reproduced exactly on re-selection" (steps 4, 6) and "no artifact after cycling" (step 7)
+#     are proven by re-using the SAME snapshot name: the second capture must match the first
+#     baseline within maxMismatch 1.0.
+#
+# Selectors: tab bar items are tapped by their exact title text — exact text outranks the
+# substring matches in the tab content ("Title Color", "Font and Position", the hint quoting the
+# long title). The Android Font tab heading reads "Font Config" for that reason.
+#
+# Known warning (iOS 26 only): every `await: { idle: true }` after a tab tap reports "a small part of
+# the screen was still changing" — the liquid-glass selection pill keeps animating briefly. The
+# next action always gates on the destination tab's content text, and each snapshot sits behind a
+# 700 ms settle; seed + two fresh-service passes matched at 0.00%.
+#
+# Runner:  argent flow run test-tabs-item-title --platform ios        # or --platform android
+#          argent flow run test-tabs-item-title --platform ios --update-baselines   # reseed (review PNGs!)
+steps:
+  - echo: Restart FabricExample (in-memory tabs config resets); expect the root examples list
+  - launch: { ios: org.reactjs.native.example.FabricExample, android: com.fabricexample }
+  - await: { visible: { id: root-screen-switch-rtl }, timeout: 30000 }
+  - await: { idle: true }
+
+  - echo: On the root examples list; scroll down to Single Feature Tests and open it
+  - scroll-to: { target: { id: root-screen-single-feature-tests }, direction: down }
+  - tap: { id: root-screen-single-feature-tests }
+  - await: { visible: { id: single-feature-tests-Tabs }, timeout: 10000 }
+  - await: { idle: true }
+
+  - echo: On the Single Feature Tests list; open the Tabs group
+  - tap: { id: single-feature-tests-Tabs }
+  - await: { visible: { id: test-tabs-simple-nav }, timeout: 10000 }
+  - await: { idle: true }
+
+  - echo: On the Tabs scenarios list; scroll down to Tab Bar Item Title and open it
+  - scroll-to: { target: { id: test-tabs-item-title }, direction: down }
+  - tap: { id: test-tabs-item-title }
+  - await: { visible: { text: Long Title }, timeout: 10000 }
+  - await: { idle: true }
+
+  # --- Scenario step 1: title prop + long-string truncation ---
+  - echo: "BASELINE (scenario step 1) — Tab Bar Item Title opened: long-title tab selected by default, tab bar shows the long title + Color + Font"
+  - await: { visible: { text: A Very Long Tab Title That Should Truncate }, timeout: 10000 }
+  - await: { visible: { text: Color }, timeout: 10000 }
+  - await: { visible: { text: Font }, timeout: 10000 }
+  - snapshot: { name: long-title-selected, cropOn: { id: test-tabs-item-title-long-title-tab-bar-band }, maxMismatch: 0.01 }
+
+  # --- Scenario step 2: tabBarItemTitleFontColor states ---
+  - echo: Scenario step 2 — tap the Color tab; expect the Color tab content (tabBarItemTitleFontColor red selected / blue normal)
+  - tap: { text: Color }
+  - await: { visible: { text: RedLight100 }, timeout: 10000 }
+  - await: { idle: true }
+  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - snapshot: { name: color-selected, cropOn: { id: test-tabs-item-title-color-tab-bar-band }, maxMismatch: 0.01 }
+
+  - echo: "MANUAL (scenario step 3, Android only): keyboard Tab-key focus turns the focused tab title yellow while selected stays red and unselected stay blue"
+
+  # --- Scenario step 4: re-selection reproduces the split appearance ---
+  - echo: Scenario step 4 — tap the long-title tab, then Color again; the split appearance must reproduce exactly
+  - tap: { text: A Very Long Tab Title That Should Truncate }
+  - await: { visible: { text: Long Title }, timeout: 10000 }
+  - await: { idle: true }
+  - tap: { text: Color }
+  - await: { visible: { text: RedLight100 }, timeout: 10000 }
+  - await: { idle: true }
+  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - snapshot: { name: color-selected, cropOn: { id: test-tabs-item-title-color-tab-bar-band }, maxMismatch: 0.01 }
+
+  # --- Scenario step 5: font and position ---
+  - echo: Scenario step 5 — tap the Font tab; expect the Font tab content (custom family/size/style/weight, iOS position offset)
+  - tap: { text: Font }
+  - await: { visible: { text: tabBarItemTitleFontFamily }, timeout: 10000 }
+  - await: { idle: true }
+  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - snapshot: { name: font-selected, cropOn: { id: test-tabs-item-title-font-tab-bar-band }, maxMismatch: 0.01 }
+
+  # --- Scenario step 6: typography/position reappear on re-selection ---
+  - echo: Scenario step 6 — tap another tab (Color), then Font again; custom typography/position must reappear
+  - tap: { text: Color }
+  - await: { visible: { text: RedLight100 }, timeout: 10000 }
+  - await: { idle: true }
+  - tap: { text: Font }
+  - await: { visible: { text: tabBarItemTitleFontFamily }, timeout: 10000 }
+  - await: { idle: true }
+  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - snapshot: { name: font-selected, cropOn: { id: test-tabs-item-title-font-tab-bar-band }, maxMismatch: 0.01 }
+
+  # --- Scenario step 7: stability — cycle forward, then back ---
+  - echo: "Scenario step 7 — stability: cycle long-title → Color → Font, then Font → Color → long-title; no crash/freeze, styling applies on each selection"
+  - tap: { text: A Very Long Tab Title That Should Truncate }
+  - await: { visible: { text: Long Title }, timeout: 10000 }
+  - await: { idle: true }
+  - tap: { text: Color }
+  - await: { visible: { text: RedLight100 }, timeout: 10000 }
+  - await: { idle: true }
+  - tap: { text: Font }
+  - await: { visible: { text: tabBarItemTitleFontFamily }, timeout: 10000 }
+  - await: { idle: true }
+  - tap: { text: Color }
+  - await: { visible: { text: RedLight100 }, timeout: 10000 }
+  - await: { idle: true }
+  - tap: { text: A Very Long Tab Title That Should Truncate }
+  - await: { visible: { text: Long Title }, timeout: 10000 }
+  - await: { idle: true }
+  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - snapshot: { name: long-title-selected, cropOn: { id: test-tabs-item-title-long-title-tab-bar-band }, maxMismatch: 0.01 }
+  - echo: End state = baseline (long-title tab selected); next run starts clean via launch
