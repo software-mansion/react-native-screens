@@ -284,17 +284,15 @@ export interface TabsScreenPropsIOS {
    *
    * On iOS 26.1+ (where tabs are managed through the `UITab` API) a tab screen with
    * `searchRole: true` is backed natively by `UISearchTab`, which enables the system
-   * search treatment: `automaticallyActivatesSearch` and the detached trailing
-   * placement UIKit gives search tabs. When the item detaches is up to UIKit and has
-   * changed between OS versions - observed on simulators: iOS 26.x detaches a
-   * `UISearchTab` unconditionally, iOS 27.0 only while `automaticallyActivatesSearch`
+   * search behavior: `automaticallyActivatesSearch` and the detached trailing
+   * placement UIKit gives search tabs. Behavior differs between OS versions: iOS 26.x
+   * detaches `UISearchTab` unconditionally, iOS 27.0 only while `automaticallyActivatesSearch`
    * is enabled. This prop does not affect the tab bar item's icon or title - combine
    * it with `systemItem: 'search'` for the system magnifier item.
    *
    * The native tab class cannot change during the screen's lifetime - changing
    * `searchRole` on a mounted tab screen is not supported and triggers an assertion
-   * in development builds. To change it at runtime, remount the tab screen (e.g. by
-   * changing its React `key`).
+   * in development builds.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab|UISearchTab}
    *

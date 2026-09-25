@@ -596,11 +596,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #if RNS_UITAB_API_SDK_AVAILABLE
   RNS_UITAB_API_AVAILABLE_BEGIN
-  UIViewController *_Nullable previouslySelectedController = self.selectedTab.viewController;
+  UITab *_Nullable previouslySelectedTab = self.selectedTab;
 
-  // Restoring the stale selection while More is active would yank the selection away.
-  BOOL shouldRestoreSelectedTab =
-      previouslySelectedController != nil && ![self isMoreNavigationControllerTabBarItemSelected];
+  // Restoring the stale `selectedTab` while More is active would yank the selection away.
+  BOOL shouldRestoreSelectedTab = previouslySelectedTab != nil && ![self isMoreNavigationControllerTabBarItemSelected];
 
   NSMutableArray<__kindof UITab *> *tabs = [NSMutableArray arrayWithCapacity:screenControllers.count];
   for (RNSTabsScreenViewController *screenController in screenControllers) {
@@ -608,15 +607,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
   self.tabs = tabs;
 
-  if (shouldRestoreSelectedTab) {
-    // Match by view controller rather than tab instance - robust against the backing tab
-    // being a different object than the one selected before the update.
-    for (UITab *tab in tabs) {
-      if (tab.viewController == previouslySelectedController) {
-        self.selectedTab = tab;
-        break;
-      }
-    }
+  if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
+    self.selectedTab = previouslySelectedTab;
   }
   return;
   RNS_UITAB_API_AVAILABLE_END
@@ -669,13 +661,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #if RNS_UITAB_API_SDK_AVAILABLE
 
-/// Returns the `UITab` backing the screen controller, creating it on first use. The tab class is
-/// fixed at creation: `searchRole` screens are backed by `UISearchTab` (drives the system search
-/// treatment), all others by a plain `UITab`. Changing the search role of a live screen is
-/// unsupported - a live tab is never rebuilt, because UIKit asserts when a view controller is
-/// resolved by a second `UITab` instance (even one replacing the original in the tabs array).
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
+  // Return existing tab if present. Note that this "latches"
+  // the type of the tab: you cannot swap regular UITab with UISearchTab;
+  // and we want it this way because tabs hold view controller references
+  // and UIKit asserts they are unique even for the detached, not-deallocated tabs
   if (screenController.tab) {
     return screenController.tab;
   }
@@ -878,10 +869,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
-/// Syncs the `automaticallyActivatesSearch` prop onto live `UISearchTab` instances.
-/// The search controller itself needs no syncing: UIKit resolves it on its own from the
-/// navigation item of the ROOT view controller of the nested navigation controller (and hosts
-/// its search bar only while the nested stack is at its root).
 - (void)updateSearchTabsIfNeeded
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION

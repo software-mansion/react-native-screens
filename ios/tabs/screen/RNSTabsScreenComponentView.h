@@ -85,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Whether selecting the search tab should automatically activate its search controller.
- * Effective only on iOS 26.1+ for screens with `searchRole` set (backed by `UISearchTab`).
+ * Effective only on iOS 26.1+ for screens with `searchRole` set.
  */
 @property (nonatomic, readonly) BOOL automaticallyActivatesSearch;
 
