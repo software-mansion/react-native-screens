@@ -184,9 +184,10 @@ RNS_IGNORE_SUPER_CALL_END
 
 /**
  * TODO: This is an ugly workaround and I would love to see it replaced.
- * With UITab-managed children (iOS >= 26.1) a replacement item does not repaint first time.
- * Assigning a throwaway item first flips the internal logic so that the real assignment
- * that follows paints synchronously. Remove once UIKit internals no longer require it.
+ * With UITab-managed children (iOS >= 26.1) any change to the systemItem for the first time
+ * results in missing icon and wrong title. Assigning a throwaway item first flips the internal logic
+ * so that the real assignment that follows paints synchronously.
+ * Remove once UIKit internals no longer require it.
  */
 - (void)applyTabBarItemRepaintWorkaround
 {
