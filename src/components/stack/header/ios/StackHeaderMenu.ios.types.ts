@@ -53,6 +53,22 @@ export interface StackHeaderMenuItemIOS {
    */
   itemType?: 'action' | 'toggle' | 'automatic' | undefined;
   /**
+   * @summary Application-controlled state displayed next to an action.
+   *
+   * @description
+   * Applies only when `itemType` resolves to `action`. Tapping the item fires
+   * `onPress` without changing this state or emitting `onSelectionChange`.
+   * Update the definition or use `setMenuItemOptions` to change it.
+   *
+   * Ignored for native toggles, including automatic items under `singleSelection`.
+   * Use `initialToggleState`, selection callbacks, and the `toggleState` command
+   * option for those items.
+   *
+   * @default off
+   * @platform ios
+   */
+  state?: 'off' | 'on' | 'mixed' | undefined;
+  /**
    * @summary Initial on/off state of a toggle item.
    *
    * @description

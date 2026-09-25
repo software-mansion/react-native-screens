@@ -10,6 +10,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable RNSStackHeaderMenuData *)menuFromDictionary:(nullable id)dictionary;
 
++ (UIMenuElementState)menuItemStateFromString:(nullable NSString *)string;
+
 @end
 
 NS_ASSUME_NONNULL_END
