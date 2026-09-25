@@ -1,6 +1,6 @@
 #import "RNSStackHeaderConfigComponentView.h"
-#import "RNSConversions.h"
 #import "RNSConversions-Stack.h"
+#import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
@@ -21,8 +21,8 @@
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <react/utils/ManagedObjectWrapper.h>
 #import <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
+#import <react/utils/ManagedObjectWrapper.h>
 
 namespace react = facebook::react;
 
@@ -69,6 +69,12 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
   _prompt = nil;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    _minimizationBehavior = UIBarMinimizationBehaviorAutomatic;
+    _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+  }
+#endif // Check for iOS >= 27
   _backButtonTitle = nil;
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
@@ -443,13 +449,39 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _prompt = RCTNSStringFromStringNilIfEmpty(newHeaderProps.prompt);
   }
 
+  if (oldHeaderProps.minimizationBehavior != newHeaderProps.minimizationBehavior) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    if (@available(iOS 27.0, *)) {
+      _minimizationBehavior =
+          rnscreens::conversion::UIBarMinimizationBehaviorFromReactRNSStackHeaderConfigIOSMinimizationBehavior(
+              newHeaderProps.minimizationBehavior);
+    } else
+#endif // Check for iOS >= 27
+      if (newHeaderProps.minimizationBehavior != react::RNSStackHeaderConfigIOSMinimizationBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] minimizationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (oldHeaderProps.restorationBehavior != newHeaderProps.restorationBehavior) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    if (@available(iOS 27.0, *)) {
+      _restorationBehavior = rnscreens::conversion::
+          UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationBehavior(
+              newHeaderProps.restorationBehavior);
+    } else
+#endif // Check for iOS >= 27
+      if (newHeaderProps.restorationBehavior != react::RNSStackHeaderConfigIOSRestorationBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
+  }
+
   if (oldHeaderProps.backButtonTitle != newHeaderProps.backButtonTitle) {
     _backButtonTitle = RCTNSStringFromStringNilIfEmpty(newHeaderProps.backButtonTitle);
   }
 
   if (oldHeaderProps.backButtonDisplayMode != newHeaderProps.backButtonDisplayMode) {
-    _backButtonDisplayMode =
-        rnscreens::conversion::UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+    _backButtonDisplayMode = rnscreens::conversion::
+        UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
             newHeaderProps.backButtonDisplayMode);
   }
 
