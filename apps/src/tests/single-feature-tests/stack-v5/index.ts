@@ -30,6 +30,7 @@ import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios'
 import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
 import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
 import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
+import TestStackHeaderBarColorsIOS from './test-stack-header-bar-colors-ios';
 import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
 import TestStackHeaderBackground from './test-stack-header-background-android';
 import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-android';
@@ -66,6 +67,7 @@ export { default as TestStackToolbarMenuBatchCommands } from './test-stack-toolb
 export { default as TestStackToolbarMenuA11y } from './test-stack-toolbar-menu-a11y-android';
 export { default as TestStackHeaderTitleAppearanceAndroid } from './test-stack-header-title-appearance-android';
 export { default as TestStackHeaderTitleAppearanceIOS } from './test-stack-header-title-appearance-ios';
+export { default as TestStackHeaderBarColorsIOS } from './test-stack-header-bar-colors-ios';
 export { default as TestStackHeaderContentInsets } from './test-stack-header-content-insets-android';
 export { default as TestStackHeaderBackground } from './test-stack-header-background-android';
 export { default as TestStackHeaderStatusBarScrim } from './test-stack-header-status-bar-scrim-android';
@@ -101,6 +103,7 @@ const scenarios = {
   TestStackToolbarMenuA11y,
   TestStackHeaderTitleAppearanceAndroid,
   TestStackHeaderTitleAppearanceIOS,
+  TestStackHeaderBarColorsIOS,
   TestStackToolbarMenuState,
   TestStackHeaderContentInsets,
   TestStackHeaderBackground,
