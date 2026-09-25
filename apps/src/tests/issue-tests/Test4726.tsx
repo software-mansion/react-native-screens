@@ -116,7 +116,10 @@ function FirstTab() {
       <Stack.Screen
         name="Sheet"
         component={Sheet}
-        options={{ headerShown: false, presentation: 'formSheet' }}
+        options={{
+          headerShown: false,
+          presentation: Platform.OS === 'ios' ? 'formSheet' : 'modal',
+        }}
       />
     </Stack.Navigator>
   );
