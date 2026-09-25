@@ -8,7 +8,8 @@
 
 ## E2E test
 
-Full: Covers all manual scenario steps.
+Incomplete: all steps are automated, but on iOS 27 the header item "Menu 1"
+is only checked to exist, not to be visible.
 
 ## Prerequisites
 
