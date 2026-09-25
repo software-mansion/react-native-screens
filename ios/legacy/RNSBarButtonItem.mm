@@ -89,6 +89,19 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   }
 #endif
 
+#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+  if (@available(iOS 27.0, *)) {
+    NSString *visibilityPriority = dict[@"visibilityPriority"];
+    if ([visibilityPriority isEqualToString:@"low"]) {
+      self.visibilityPriority = UIBarButtonItemVisibilityPriorityLow;
+    } else if ([visibilityPriority isEqualToString:@"high"]) {
+      self.visibilityPriority = UIBarButtonItemVisibilityPriorityHigh;
+    } else if ([visibilityPriority isEqualToString:@"standard"]) {
+      self.visibilityPriority = UIBarButtonItemVisibilityPriorityStandard;
+    }
+  }
+#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+
   NSString *variant = dict[@"variant"];
   if (variant) {
     if ([variant isEqualToString:@"done"]) {

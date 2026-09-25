@@ -4,6 +4,7 @@
 #if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
 #endif // __cplusplus
+#import "RNSDefines.h"
 #import "RNSLegacyEnums.h"
 
 #if defined(__cplusplus)
@@ -30,6 +31,11 @@ namespace react = facebook::react;
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewTypeFromCppEquivalent:
     (react::RNSScreenStackHeaderSubviewType)subviewType;
+
+#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
++ (UIBarButtonItemVisibilityPriority)UIBarButtonItemVisibilityPriorityFromCppEquivalent:
+    (react::RNSScreenStackHeaderSubviewVisibilityPriority)visibilityPriority API_AVAILABLE(ios(27.0));
+#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
 
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (react::RNSScreenReplaceAnimation)replaceAnimation;
