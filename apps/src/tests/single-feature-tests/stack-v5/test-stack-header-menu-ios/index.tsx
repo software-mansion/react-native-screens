@@ -13,6 +13,7 @@ import {
 import { StackHeaderConfigProps } from 'react-native-screens';
 import type {
   StackHeaderConfigRef,
+  StackHeaderMenuIOS,
   StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
 } from 'react-native-screens';
@@ -31,12 +32,21 @@ const ACTION_IDS = [
   'radio-1-1',
   'radio-1-2',
   'radio-1-3',
+  'repr-radio-1-1',
+  'repr-radio-1-2',
+  'repr-radio-1-3',
   'title-action-1',
   'title-action-2',
 ] as const;
 type ActionId = (typeof ACTION_IDS)[number];
 
-const MENU_IDS = ['menu-1', 'submenu-1', 'subsubmenu-1', 'title-menu'] as const;
+const MENU_IDS = [
+  'menu-1',
+  'submenu-1',
+  'subsubmenu-1',
+  'repr-menu-1',
+  'title-menu',
+] as const;
 type MenuId = (typeof MENU_IDS)[number];
 
 const TITLE_OPTIONS = [
@@ -99,10 +109,43 @@ function TestStackHeaderMenuIOS() {
   );
 }
 
+function buildMenuRepresentation(
+  index: number,
+  showToast: (text: string) => void,
+): StackHeaderMenuIOS {
+  return {
+    type: 'menu',
+    id: `repr-menu-${index}`,
+    title: `Repr ${index}`,
+    singleSelection: true,
+    onSelectionChange: selection =>
+      showToast(`Repr ${index} selected "${selection}"`),
+    children: [
+      {
+        id: `repr-radio-${index}-1`,
+        type: 'menuItem',
+        title: `Repr ${index} Radio 1`,
+        initialToggleState: true,
+      },
+      {
+        id: `repr-radio-${index}-2`,
+        type: 'menuItem',
+        title: `Repr ${index} Radio 2`,
+      },
+      {
+        id: `repr-radio-${index}-3`,
+        type: 'menuItem',
+        title: `Repr ${index} Radio 3`,
+      },
+    ],
+  };
+}
+
 function buildHeaderConfig(
   trailingItemsCount: number,
   showToast: (text: string) => void,
   keepsMenuPresented: boolean,
+  representationEnabled: boolean,
 ): StackHeaderConfigProps {
   const trailingItems: NonNullable<
     StackHeaderConfigProps['ios']
@@ -116,6 +159,9 @@ function buildHeaderConfig(
         render: () => (
           <PressableWithFeedback style={{ width: 30, height: 30 }} />
         ),
+      }),
+      ...(representationEnabled && {
+        menuRepresentation: buildMenuRepresentation(i, showToast),
       }),
       menu: {
         type: 'menu',
@@ -225,6 +271,7 @@ function ConfigScreen() {
     DEFAULT_TRAILING_ITEMS_COUNT,
   );
   const [keepsMenuPresented, setKeepsMenuPresented] = useState(false);
+  const [representationEnabled, setRepresentationEnabled] = useState(false);
 
   const showToast = useCallback(
     (text: string) => {
@@ -237,8 +284,14 @@ function ConfigScreen() {
 
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(
-    () => buildHeaderConfig(trailingItemsCount, showToast, keepsMenuPresented),
-    [trailingItemsCount, showToast, keepsMenuPresented],
+    () =>
+      buildHeaderConfig(
+        trailingItemsCount,
+        showToast,
+        keepsMenuPresented,
+        representationEnabled,
+      ),
+    [trailingItemsCount, showToast, keepsMenuPresented, representationEnabled],
   );
 
   useLayoutEffect(() => {
@@ -292,6 +345,10 @@ function ConfigScreen() {
       <Button
         title={`keepsMenuPresented: ${keepsMenuPresented}`}
         onPress={() => setKeepsMenuPresented(prev => !prev)}
+      />
+      <Button
+        title={`menuRepresentation: ${representationEnabled}`}
+        onPress={() => setRepresentationEnabled(prev => !prev)}
       />
 
       <Text style={styles.heading}>setMenuItemOptions (Menu 1)</Text>
