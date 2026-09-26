@@ -521,7 +521,10 @@ RNS_IGNORE_SUPER_CALL_END
       // flag in order to perform updates at a later point. Here we are done with all modals
       // transitions and check this flag again. If it was set, we reset the flag and execute updates.
       weakSelf.scheduleModalsUpdate = NO;
-      [weakSelf updateContainer];
+      // This runs inside UIKit's transition completion, where a dismiss is dropped as "transitioning already"
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf updateContainer];
+      });
     }
     // we trigger the update of orientation here because, when dismissing the modal from JS,
     // neither `viewWillAppear` nor `presentationControllerDidDismiss` are called, same for status bar.
