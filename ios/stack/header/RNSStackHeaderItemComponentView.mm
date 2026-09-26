@@ -53,6 +53,7 @@ namespace react = facebook::react;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
+  _paddingRemoved = NO;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -224,6 +225,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.hidesSharedBackground != newItemProps.hidesSharedBackground) {
     _hidesSharedBackground = newItemProps.hidesSharedBackground;
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.paddingRemoved != newItemProps.paddingRemoved) {
+    _paddingRemoved = newItemProps.paddingRemoved;
     needsUpdate = YES;
   }
 
