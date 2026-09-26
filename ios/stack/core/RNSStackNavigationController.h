@@ -2,7 +2,7 @@
 
 #import "RNSContainer.h"
 #include "RNSStackNavigationBarCoordinator.h"
-#include "RNSStackScreenComponentView.h"
+#include "RNSStackScreenProviding.h"
 
 @protocol RNSViewFrameChangeDelegate;
 
@@ -12,9 +12,9 @@
 
 @property (nonatomic, readonly, nonnull) RNSStackNavigationBarCoordinator *navigationBarCoordinator;
 
-- (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (void)enqueuePushOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen;
 
-- (void)enqueuePopOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (void)enqueuePopOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen;
 
 - (void)performContainerUpdateIfNeeded;
 
