@@ -133,6 +133,7 @@
     if (screenView.iconImageSource != nil) {
       [RNSImageLoadingHelper loadImageFromSource:screenView.iconImageSource
                                  withImageLoader:imageLoader
+                       prefersSynchronousLoading:NO
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
                                    [self updateTabBarItem:weakTabBarItem
@@ -148,6 +149,7 @@
     if (screenView.selectedIconImageSource != nil) {
       [RNSImageLoadingHelper loadImageFromSource:screenView.selectedIconImageSource
                                  withImageLoader:imageLoader
+                       prefersSynchronousLoading:NO
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
                                    [self updateTabBarItem:weakTabBarItem

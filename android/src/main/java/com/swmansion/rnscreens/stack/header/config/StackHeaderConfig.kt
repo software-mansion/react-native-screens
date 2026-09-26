@@ -213,16 +213,18 @@ internal class StackHeaderConfig(
     // region Back button icon resolution
 
     // Staging fields for back button icon resolution.
-    // Both props may arrive in any order within a single update batch.
+    // Icon props may arrive in any order within a single update batch.
     // Resolution happens in resolveBackButtonIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var backButtonDrawableIconResourceName: String? = null
     internal var backButtonImageIconUri: String? = null
+    internal var backButtonImageIconPreferredLoadingMode: String? = null
     private val backButtonIconResolver = createPropIconResolver(reactContext)
 
     internal fun resolveBackButtonIconIfNeeded() {
         backButtonIconResolver.resolve(
             backButtonDrawableIconResourceName,
             backButtonImageIconUri,
+            backButtonImageIconPreferredLoadingMode,
         ) { result ->
             when (result) {
                 IconResolution.Unchanged -> Unit
@@ -244,12 +246,14 @@ internal class StackHeaderConfig(
     // Resolution happens in resolveOverflowIconIfNeeded(), called from onAfterUpdateTransaction.
     internal var overflowIconDrawableIconResourceName: String? = null
     internal var overflowIconImageIconUri: String? = null
+    internal var overflowIconImageIconPreferredLoadingMode: String? = null
     private val overflowIconResolver = createPropIconResolver(reactContext)
 
     internal fun resolveOverflowIconIfNeeded() {
         overflowIconResolver.resolve(
             overflowIconDrawableIconResourceName,
             overflowIconImageIconUri,
+            overflowIconImageIconPreferredLoadingMode,
         ) { result ->
             when (result) {
                 IconResolution.Unchanged -> Unit
@@ -456,8 +460,8 @@ internal class StackHeaderConfig(
     // would be retained by every icon load still in flight.
     private companion object {
         fun createPropIconResolver(context: ThemedReactContext) =
-            PropIconResolver { name, uri, onComplete ->
-                resolveImage(context, name, uri, onComplete)
+            PropIconResolver { name, uri, mode, onComplete ->
+                resolveImage(context, name, uri, mode, onComplete)
             }
 
         fun createMenuIconResolver(context: ThemedReactContext) =
@@ -466,6 +470,7 @@ internal class StackHeaderConfig(
                     context,
                     iconSource.drawableIconResourceName,
                     iconSource.imageIconUri,
+                    iconSource.imageIconPreferredLoadingMode,
                     onResolved,
                 )
             }

@@ -151,10 +151,12 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   if (imageSourceObj != nil || templateSourceObj != nil) {
     BOOL isTemplate = imageSourceObj == nil;
     NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
-    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
-                                                 withImageLoader:imageLoader
-                                                      asTemplate:isTemplate
-                                                 completionBlock:completionBlock];
+    [RNSImageLoadingHelper
+        loadImageSyncIfPossibleFromJsonSource:source
+                              withImageLoader:imageLoader
+                    prefersSynchronousLoading:[dict[@"preferredImageLoadingMode"] isEqualToString:@"synchronous"]
+                                   asTemplate:isTemplate
+                              completionBlock:completionBlock];
     return;
   }
 
