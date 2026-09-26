@@ -1,43 +1,39 @@
 // swift-tools-version: 6.0
+import Foundation
 import PackageDescription
 
-// Header search paths for quoted cross-directory imports (SPM has no CocoaPods header maps).
-// Keep in sync when adding new ios/ subdirectories that contain headers.
-let headerSearchPaths: [String] = [
-    "ios",
-    "ios/bridging",
-    "ios/conversion",
-    "ios/helpers/container",
-    "ios/helpers/image",
-    "ios/helpers/scroll-view",
-    "ios/legacy",
-    "ios/legacy/events",
-    "ios/legacy/integrations",
-    "ios/legacy/utils",
-    "ios/modals/form-sheet",
-    "ios/modals/utils",
-    "ios/safe-area",
-    "ios/scroll-to-top-guard",
-    "ios/scroll-view-marker",
-    "ios/scroll-view-marker/conversion",
-    "ios/split",
-    "ios/split/conversion",
-    "ios/stack",
-    "ios/stack/conversion",
-    "ios/stack/header",
-    "ios/stack/host",
-    "ios/stack/screen",
-    "ios/tabs",
-    "ios/tabs/bottom-accessory",
-    "ios/tabs/conversion",
-    "ios/tabs/extensions",
-    "ios/tabs/host",
-    "ios/tabs/screen",
-    "ios/utils",
-    "ios/utils/extensions",
-    "common/cpp",
-    "cpp/legacy",
-]
+// Header search paths for quoted cross-directory imports (SPM has no CocoaPods
+// header maps, and no glob in its manifest API). Discovered at manifest-eval time
+// -- the equivalent of the podspec's `ios/**/*.h` -- so contributors never have to
+// hand-maintain this list. Every directory containing a header gets an `-I`.
+func discoverHeaderSearchPaths() -> [String] {
+    let root = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .standardizedFileURL
+        .resolvingSymlinksInPath()
+    let rootPath = root.path
+    let bases = ["ios", "common/cpp", "cpp"]
+    var dirs = Set<String>(bases)
+    for base in bases {
+        let baseURL = root.appendingPathComponent(base)
+        guard let enumerator = FileManager.default.enumerator(
+            at: baseURL, includingPropertiesForKeys: nil
+        ) else { continue }
+        for case let url as URL in enumerator
+            where url.pathExtension == "h" && !url.path.contains(".xcodeproj") {
+            let dirPath = url.deletingLastPathComponent()
+                .standardizedFileURL
+                .resolvingSymlinksInPath()
+                .path
+            guard dirPath.hasPrefix(rootPath + "/") else { continue }
+            // rootPath.count + 1 skips the root plus the separating "/".
+            dirs.insert(String(dirPath.dropFirst(rootPath.count + 1)))
+        }
+    }
+    return dirs.sorted()
+}
+
+let headerSearchPaths = discoverHeaderSearchPaths()
 
 let cSettings: [CSetting] = headerSearchPaths.map { .headerSearchPath($0) }
 
