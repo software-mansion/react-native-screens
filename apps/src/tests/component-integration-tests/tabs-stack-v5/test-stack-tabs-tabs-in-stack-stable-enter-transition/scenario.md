@@ -31,12 +31,12 @@ TBD: Planned, but will be implemented separately.
 
 2. Tap the "Go to nested tabs" button.
 
-- [ ] The stack pushes the second screen ("Nested Tabs") with a
-      standard push animation. The nested tabs content ("Home tab" with its
-      `tab routeKey`) and the tab bar (Home / Settings) are already correctly
-      laid out as the screen slides in. There is **no** flicker, no flash of an
-      empty/white screen, no layout jump, and no momentary mis-position of the
-      tab bar or tab content during the transition.
+- [ ] The stack pushes the second screen ("Nested Tabs") with the
+      platform's default push animation. The nested tabs content ("Home tab"
+      with its `tab routeKey`) and the tab bar (Home / Settings) are already
+      correctly laid out as the screen enters. There is **no** flicker, no
+      flash of an empty/white screen, no layout jump, and no momentary
+      mis-position of the tab bar or tab content during the transition.
 
 ---
 
