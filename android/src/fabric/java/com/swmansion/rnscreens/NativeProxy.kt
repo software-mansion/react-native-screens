@@ -3,12 +3,17 @@ package com.swmansion.rnscreens
 import android.util.Log
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.facebook.react.bridge.UIManager
+import com.facebook.react.bridge.UIManagerListener
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.fabric.FabricUIManager
 import com.swmansion.rnscreens.legacy.Screen
+import com.swmansion.rnscreens.legacy.ScreenDismissSnapshot
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
-class NativeProxy {
+@OptIn(UnstableReactNativeAPI::class)
+class NativeProxy : UIManagerListener {
     @DoNotStrip
     @Suppress("unused")
     private val mHybridData: HybridData
@@ -24,6 +29,11 @@ class NativeProxy {
     external fun cleanupExpiredMountingCoordinators()
 
     external fun invalidateNative()
+
+    // Screens that an upcoming, not yet executed transaction dismisses.
+    // Written on the mounting thread (notifyScreenRemoved), drained on the UI
+    // thread right before mount items execute (willMountItems).
+    private val screensAwaitingSnapshot: MutableSet<Int> = ConcurrentHashMap.newKeySet()
 
     companion object {
         // we use ConcurrentHashMap here since it will be read on the JS thread,
@@ -69,6 +79,14 @@ class NativeProxy {
             // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
             // we must set this flag synchronously here.
             screen.markAsBeingRemoved()
+
+            // The same transaction also deletes the screen's content before the
+            // exit animation starts (the differ tears removed subtrees down
+            // bottom-up), so the animation would play on an empty screen. Pin
+            // the screen's currently presented pixels as an overlay right
+            // before that transaction executes - see willMountItems.
+            screensAwaitingSnapshot.add(screenTag)
+
             val isScheduled =
                 screen.post {
                     screen.startRemovalTransition()
@@ -80,4 +98,38 @@ class NativeProxy {
             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
         }
     }
+
+    // UIManagerListener. Fabric calls willMountItems on the UI thread right
+    // before it executes a round of mount items - the last moment at which a
+    // dismissed screen's content is still intact and presented on screen.
+
+    override fun willMountItems(uiManager: UIManager) {
+        if (screensAwaitingSnapshot.isEmpty()) {
+            return
+        }
+        val iterator = screensAwaitingSnapshot.iterator()
+        while (iterator.hasNext()) {
+            val tag = iterator.next()
+            iterator.remove()
+            viewsMap[tag]?.get()?.let { screen ->
+                ScreenDismissSnapshot.pinDismissSnapshot(screen)
+                // Also start the removal transition here, synchronously, instead
+                // of relying only on the runnable posted in notifyScreenRemoved:
+                // this is the last point guaranteed to run before the deleting
+                // batch. The view retention it starts cannot fully survive a
+                // Reanimated-rebuilt transaction (which is why the snapshot
+                // exists), but it keeps the content alive for the first frames
+                // when the snapshot bails out (e.g. on a missed deadline).
+                screen.startRemovalTransition()
+            }
+        }
+    }
+
+    override fun didMountItems(uiManager: UIManager) = Unit
+
+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
+
+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
+
+    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
 }
