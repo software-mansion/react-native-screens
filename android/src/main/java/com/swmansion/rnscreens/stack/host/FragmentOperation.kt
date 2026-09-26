@@ -14,6 +14,7 @@ internal class AddAndSetAsPrimaryOp(
     val fragment: StackScreenFragment,
     val containerViewId: Int,
     val addToBackStack: Boolean,
+    val coveredFragment: StackScreenFragment?,
     val allowStateLoss: Boolean = true,
 ) : FragmentOperation() {
     override fun execute(
