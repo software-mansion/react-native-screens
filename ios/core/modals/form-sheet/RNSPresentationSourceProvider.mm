@@ -1,5 +1,5 @@
 #import "RNSPresentationSourceProvider.h"
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 
 @implementation RNSPresentationSourceProvider
 
@@ -11,7 +11,7 @@
 
   UIViewController *presentationSourceViewController = window.rootViewController;
 
-  RCTAssert(presentationSourceViewController != nil,
+  RNSAssert(presentationSourceViewController != nil,
             @"[RNScreens] Root View Controller should not be nil when trying to present a modal.");
 
   if (presentationSourceViewController == nil) {

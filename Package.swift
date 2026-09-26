@@ -5,8 +5,9 @@ import PackageDescription
 // Keep in sync when adding new ios/ subdirectories that contain headers.
 let headerSearchPaths: [String] = [
     "ios",
-    "ios/bridging",
     "ios/conversion",
+    "ios/core/modals/form-sheet",
+    "ios/core/utils",
     "ios/helpers/container",
     "ios/helpers/image",
     "ios/helpers/scroll-view",
@@ -14,8 +15,8 @@ let headerSearchPaths: [String] = [
     "ios/legacy/events",
     "ios/legacy/integrations",
     "ios/legacy/utils",
-    "ios/modals/form-sheet",
-    "ios/modals/utils",
+    "ios/react/bridging",
+    "ios/react/modals/form-sheet",
     "ios/safe-area",
     "ios/scroll-to-top-guard",
     "ios/scroll-view-marker",

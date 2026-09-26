@@ -1,6 +1,6 @@
 #import "RNSFormSheetConfigurationApplicator.h"
 
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetDetentResolver.h"
@@ -37,7 +37,7 @@
 {
 #if !TARGET_OS_TV
   UISheetPresentationController *sheet = controller.sheetPresentationController;
-  RCTAssert(
+  RNSAssert(
       sheet != nil,
       @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
 
