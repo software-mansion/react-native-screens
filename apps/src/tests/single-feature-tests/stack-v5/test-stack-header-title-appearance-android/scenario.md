@@ -146,3 +146,20 @@ color=red` and `collapsedTitle color=blue`.
 - [ ] Each removal reverts only that axis while the others remain; the
       `collapsedTitle`, `expandedSubtitle` and `collapsedSubtitle` slots stay
       default the whole time (no cross-slot bleed).
+
+### Medium — appearance change while collapsed
+
+16. Tap **Reset appearance**, set `type=medium`, then scroll until the header
+    is fully collapsed.
+
+- [ ] Only the toolbar row is left, with the collapsed title in the default
+      appearance.
+
+17. Set `expandedTitle fontSize=30`.
+
+- [ ] The header stays fully collapsed; the collapsed title does not move or
+      drift.
+
+18. Scroll back to the top.
+
+- [ ] The expanded title is larger than the default.
