@@ -4,8 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.swmansion.rnscreens.common.colorscheme.ColorScheme
@@ -17,6 +21,7 @@ import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.ext.isMeasured
 import com.swmansion.rnscreens.helpers.FragmentManagerHelper
+import com.swmansion.rnscreens.helpers.FragmentManagerWithOwner
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
@@ -35,7 +40,13 @@ internal class StackContainer(
     ColorSchemeProviding,
     StackHeaderBackPressHandler,
     StackScreenFragmentDelegate {
-    private var fragmentManager: FragmentManager? = null
+    // The FragmentManager this container drives, with the fragment it is the child FragmentManager
+    // of (null for the root one) and the dispatcher the system back veto lives on. Resolved on
+    // attach, dropped on detach.
+    private var fragmentManagerWithOwner: FragmentManagerWithOwner? = null
+
+    private val fragmentManager: FragmentManager?
+        get() = fragmentManagerWithOwner?.fragmentManager
 
     private fun requireFragmentManager(): FragmentManager =
         checkNotNull(fragmentManager) { "[RNScreens] Attempt to use nullish FragmentManager" }
@@ -103,14 +114,22 @@ internal class StackContainer(
         // We run container update to handle any pending updates requested before container was
         // attached to window.
         performContainerUpdateIfNeeded()
+
+        // Covers re-attach with a surviving stack (nothing pending above) and lets the containers
+        // above know that this subtree is back.
+        invalidateSystemBackVetoState()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
-        fragmentManager = null
+        teardownSystemBackVetoCallback()
+        fragmentManagerWithOwner = null
         parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
+        // `parent` is still set here. The containers above must stop consulting this subtree,
+        // which has just been unregistered from its parent item.
+        invalidateAncestorStackContainersSystemBackVetoState(this)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -121,12 +140,10 @@ internal class StackContainer(
     override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
     internal fun setupFragmentManger() {
-        fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }.also {
-                it.addOnBackStackChangedListener(this)
-            }
+        val fmWithOwner = FragmentManagerHelper.findFragmentManagerWithOwnerForView(this)
+        fragmentManagerWithOwner = fmWithOwner
+        fmWithOwner.fragmentManager.addOnBackStackChangedListener(this)
+        setupSystemBackVetoCallback(fmWithOwner)
     }
 
     /**
@@ -151,6 +168,7 @@ internal class StackContainer(
 
     private fun performOperations(fragmentManager: FragmentManager) {
         applyOperationsAndComputeFragmentManagerOperations()
+        invalidateSystemBackVetoState()
         fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
 
         dumpStackModel()
@@ -162,26 +180,6 @@ internal class StackContainer(
         // Handle pop operations first.
         // We don't care about pop/push duplicates, as long as we don't let the main loop progress
         // before we commit all the transactions, FragmentManager will handle that for us.
-
-        if (hasPendingOperations) {
-            // Top fragment is the primary navigation fragment. If we're going to change anything
-            // in stack model, then we also should update top fragment.
-            //
-            // This is added before other operations, to make sure that they are correctly classified
-            // as pop/non-pop by fragment manager.
-            // This relies on Fragment Manager internal behavior obviously. It classifies
-            // whole batch of transactions as "pop" (argument later passed to `onBackStackChange` commited)
-            // when last operation of the batch is "pop". Empty commit with only onCommit callback
-            // attached is not a "pop" commit, therefore JS-pop commits have not been properly
-            // recognized.
-            fragmentOps.add(
-                OnCommitCallbackOp(
-                    { updateTopFragment() },
-                    allowStateLoss = true,
-                    flushSync = false,
-                ),
-            )
-        }
 
         pendingPopOperations.forEach { operation ->
             val fragment =
@@ -224,12 +222,10 @@ internal class StackContainer(
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack model should not be empty after a native pop" }
 
-        // The primary navigation fragment should be updated when popping backstack by FragmentManager
-        // reversing the back stack record. At this point we need to just update the top fragment.
-        check(requireFragmentManager().primaryNavigationFragment !== fragment) {
-            "[RNScreens] Primary navigation fragment not updated by native pop"
-        }
-        updateTopFragment()
+        // Runs mid-transaction (see onBackStackChangeCommitted). Flipping an OnBackPressedCallback's
+        // enabled flag is safe here - FragmentManager does the same from within its own transactions.
+        // Committing anything is not.
+        invalidateSystemBackVetoState()
     }
 
     private fun dumpStackModel() {
@@ -251,21 +247,6 @@ internal class StackContainer(
         ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
-
-    private fun updateTopFragment() {
-        // We try to handle situation where other fragments might be present.
-        val fragmentManager = requireFragmentManager()
-        val fragments = fragmentManager.fragments.filterIsInstance<StackScreenFragment>()
-        check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
-        fragments.forEach { it.onResignTopFragment() }
-        fragments.last().onBecomeTopFragment()
-
-        // This assumes that the updateTopFragment is called already after primary nav frag. is updated.
-        // If this needs to be changed in the future, just remove this assertion.
-        check(fragmentManager.primaryNavigationFragment === fragments.last()) {
-            "[RNScreens] Top fragment different from primary navigation fragment"
-        }
-    }
 
     /**
      * Computes top fragment from FragmentManager's state.
@@ -341,6 +322,11 @@ internal class StackContainer(
             .asReversed()
             .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
 
+    // Fires synchronously inside the FragmentManager transaction that changes the primary
+    // navigation fragment, before any state move. Flipping an OnBackPressedCallback's enabled
+    // flag there is what FragmentManager itself does for its own callback.
+    override fun onOwnerPrimaryNavigationFragmentChanged() = recomputeSystemBackVetoState()
+
     // endregion
 
     // region Header back button
@@ -365,16 +351,7 @@ internal class StackContainer(
         // only the top item is asked - screens below the top get no vote at this level.
         val vetoingItem = topScreen.wantsToPreventStackNativeDismiss()
         if (vetoingItem != null) {
-            // Only a StackScreen can veto - TabsScreen has no own flag and only forwards.
-            val vetoingScreen = vetoingItem as? StackScreen
-            if (vetoingScreen != null) {
-                vetoingScreen.onNativeDismissPrevented()
-            } else {
-                Log.w(
-                    TAG,
-                    "[RNScreens] Unexpected vetoing item type: ${vetoingItem.javaClass.simpleName}",
-                )
-            }
+            onNativeDismissPrevented(vetoingItem)
             return
         }
 
@@ -392,7 +369,136 @@ internal class StackContainer(
 
     // endregion
 
+    // region System back veto
+
+    /**
+     * Veto-only callback on the activity's OnBackPressedDispatcher. It never pops - FragmentManager
+     * keeps doing that, which preserves its predictive back handling - it only blocks the pop when
+     * the screen about to be dismissed (or anything in its subtree) has `preventNativeDismiss` enabled.
+     *
+     * Registered with the lifecycle owner of this container's FragmentManager, i.e. the very owner
+     * FragmentManager uses for its own pop callback. Both callbacks are lifecycle-owned, so on every
+     * stop/start cycle of the activity they are re-inserted into the dispatcher in a fixed order:
+     * FragmentManager's first, ours right after it. Deeper containers register with deeper owners
+     * (started later), so they land later still. The dispatcher runs the LAST enabled callback,
+     * therefore a veto always beats the FragmentManager it shadows, and a deeper stack with
+     * something to pop beats a shallower veto. Enabled state is recomputed eagerly, because predictive
+     * back selects the callback when the gesture starts.
+     *
+     * Ordering alone is not enough, though: the last enabled callback must also belong to the active
+     * navigation branch. Lower stack screens stay resumed with their views attached, so a container
+     * nested in a covered screen would otherwise keep vetoing pops of the screens above it. Hence
+     * `isEnabled` is additionally gated on this container being on the primary-navigation path: its
+     * FragmentManager's parent fragment, and every fragment above it, must be the primary navigation
+     * fragment of its own FragmentManager - the same `isPrimaryNavigation(parent)` rule FragmentManager
+     * applies to its own callback. The gate is re-evaluated on attach and whenever that parent fragment
+     * reports a primary-navigation change (see [onOwnerPrimaryNavigationFragmentChanged]).
+     *
+     * Known limitation: a container re-attached while its owner is already started and its fragments
+     * survive in the FragmentManager lands after its own nested FragmentManagers until the next
+     * stop/start cycle (rare: Fabric remove+insert of an existing view, clipped subviews).
+     */
+    private var systemBackVetoCallback: SystemBackVetoCallback? = null
+
+    private inner class SystemBackVetoCallback(
+        private val dispatcher: OnBackPressedDispatcher,
+    ) : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            val vetoingItem = findSystemBackVetoingItem()
+            if (vetoingItem != null) {
+                onNativeDismissPrevented(vetoingItem)
+                return
+            }
+            // Enabled state went stale (e.g. the top screen was popped from JS while a predictive
+            // gesture was in flight). Mirror FragmentManager's own fallback: step aside and hand the
+            // press to the next enabled callback instead of swallowing it.
+            Log.w(TAG, "[RNScreens] System back veto fired without a vetoing screen - re-dispatching")
+            isEnabled = false
+            dispatcher.onBackPressed()
+            recomputeSystemBackVetoState()
+        }
+    }
+
+    private fun setupSystemBackVetoCallback(fmWithOwner: FragmentManagerWithOwner) {
+        check(systemBackVetoCallback == null) { "[RNScreens] System back veto callback is already registered" }
+        systemBackVetoCallback =
+            SystemBackVetoCallback(fmWithOwner.onBackPressedDispatcher).also {
+                fmWithOwner.onBackPressedDispatcher.addCallback(fmWithOwner.lifecycleOwner, it)
+            }
+    }
+
+    private fun teardownSystemBackVetoCallback() {
+        systemBackVetoCallback?.remove()
+        systemBackVetoCallback = null
+    }
+
+    // System back pops this container's top screen (together with its subtree), therefore only
+    // the top item is asked - the same rule as for the header chevron. Unlike the chevron path there
+    // is no `size <= 1` guard on purpose: a lone root screen with the flag vetoes too, which for the
+    // app's root stack blocks the activity from finishing and reports `onNativeDismissPrevented`.
+    private fun findSystemBackVetoingItem(): ContainerItem? = stackModel.lastOrNull()?.stackScreen?.wantsToPreventStackNativeDismiss()
+
+    /**
+     * Mirrors FragmentManager's `isPrimaryNavigation(parent)`: every fragment from this container's
+     * FragmentManager's parent up to the root has to be the primary navigation fragment of its own
+     * FragmentManager. Stacks set it on push (FragmentManager restores the previous one on pop), tabs
+     * on selection. A fragment that is not added is never primary; checking that first keeps
+     * `parentFragmentManager` from throwing.
+     */
+    private fun isOnPrimaryNavigationPath(): Boolean {
+        var fragment = fragmentManagerWithOwner?.parentFragment
+        while (fragment != null) {
+            if (!fragment.isAdded || fragment.parentFragmentManager.primaryNavigationFragment !== fragment) {
+                return false
+            }
+            fragment = fragment.parentFragment
+        }
+        return true
+    }
+
+    /**
+     * Recomputes this container's veto state. Call whenever the top item's answer to
+     * `wantsToPreventStackNativeDismiss` or the container's primary-navigation status might have
+     * changed. No-op while detached.
+     */
+    internal fun recomputeSystemBackVetoState() {
+        systemBackVetoCallback?.isEnabled = isOnPrimaryNavigationPath() && findSystemBackVetoingItem() != null
+    }
+
+    // This container and every StackContainer above it - their answers depend on this subtree.
+    internal fun invalidateSystemBackVetoState() {
+        recomputeSystemBackVetoState()
+        invalidateAncestorStackContainersSystemBackVetoState(this)
+    }
+
+    private fun onNativeDismissPrevented(vetoingItem: ContainerItem) {
+        // Only a StackScreen can veto - TabsScreen has no own flag and only forwards.
+        val vetoingScreen = vetoingItem as? StackScreen
+        if (vetoingScreen != null) {
+            vetoingScreen.onNativeDismissPrevented()
+        } else {
+            Log.w(TAG, "[RNScreens] Unexpected vetoing item type: ${vetoingItem.javaClass.simpleName}")
+        }
+    }
+
+    // endregion
+
     companion object {
         const val TAG = "StackContainer"
+    }
+}
+
+/**
+ * Recomputes the system back veto state of every [StackContainer] above [view] ([view] itself
+ * excluded). Follows `parent` links, which are still intact inside `onDetachedFromWindow`.
+ * The whole chain is walked, because a grand-ancestor's answer depends on the ancestor's.
+ */
+internal fun invalidateAncestorStackContainersSystemBackVetoState(view: View) {
+    var parent: ViewParent? = view.parent
+    while (parent != null) {
+        if (parent is StackContainer) {
+            parent.recomputeSystemBackVetoState()
+        }
+        parent = parent.parent
     }
 }

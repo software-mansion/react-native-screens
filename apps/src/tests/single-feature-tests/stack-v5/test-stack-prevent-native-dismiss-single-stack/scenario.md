@@ -11,8 +11,9 @@ those same native gestures pop the stack normally. The on-screen **Pop**
 button is JS-driven and always pops regardless of the flag. The stack starts
 on **Home** and pushes **A** (`preventNativeDismiss` disabled) and **B**
 (`preventNativeDismiss` enabled, with a **Toggle Prevent Native Dismiss**
-button). See the Notes for `Key` behavior and how Android is launched
-directly to work around issue #1459.
+button). **Home** carries a Toggle too, to exercise the flag on the root
+screen of the app's root stack (steps 16-17). See the Notes for `Key`
+behavior and how Android is launched directly to work around issue #1459.
 
 **OS test creation version:** Android API Level 36.
 
@@ -180,3 +181,20 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
     Tap on the back button chevron.
 
 - [ ] A green toast appears and the app remains on **B**.
+
+### Android: a lone root screen with the flag blocks leaving the app
+
+16. On **B**, tap the on-screen **Pop** button to return to **Home**. On
+    **Home** (prevent Disabled by default), tap **Toggle Prevent Native
+    Dismiss** so the label reads **Enabled**, then perform a system
+    gesture-back.
+
+- [ ] The gesture is intercepted: the green toast appears and the app stays on
+      **Home**; it does **not** leave to the launcher. `preventNativeDismiss`
+      on the root of the app's root stack blocks the activity from finishing
+      and reports `onNativeDismissPrevented` instead.
+
+17. On **Home**, tap **Toggle Prevent Native Dismiss** back to **Disabled**,
+    then perform a system gesture-back.
+
+- [ ] The app leaves to the launcher (the activity finishes). No toast.

@@ -35,7 +35,11 @@ class StackScreen(
 
     internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
+            // The owning stack container (and the ones above it) may answer differently now. Routed
+            // through the host rather than the view parents: until the fragment view exists this
+            // screen has no parent at all, while the host knows its container from the start. Before
+            // the screen is mounted into a host the push itself recomputes.
+            stackHost.get()?.container?.invalidateSystemBackVetoState()
         }
     }
 
@@ -137,11 +141,6 @@ class StackScreen(
     // endregion
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
-
-    /**
-     * Use this to set/unset the observer.
-     */
-    internal var preventNativeDismissChangeObserver: PreventNativeDismissChangeObserver? = null
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
