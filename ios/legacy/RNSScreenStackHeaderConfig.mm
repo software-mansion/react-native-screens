@@ -90,6 +90,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
   if (@available(iOS 27.0, *)) {
     _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+    _safeAreaAdjustment = UIBarMinimizationSafeAreaAdjustmentAutomatic;
   }
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
   _synchronousShadowStateUpdatesEnabled = YES;
@@ -646,6 +647,7 @@ RNS_IGNORE_SUPER_CALL_END
     UIBarMinimization *minimization = [UIBarMinimization new];
     minimization.minimizationBehavior = [config resolvedMinimizationBehavior];
     minimization.restorationBehavior = config.restorationBehavior;
+    minimization.safeAreaAdjustment = config.safeAreaAdjustment;
     navitem.navigationBarMinimization = minimization;
   }
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
@@ -1237,6 +1239,18 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
       if (newScreenProps.restorationBehavior != react::RNSScreenStackHeaderConfigRestorationBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (newScreenProps.safeAreaAdjustment != oldScreenProps.safeAreaAdjustment) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _safeAreaAdjustment =
+          [RNSConvert UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:newScreenProps.safeAreaAdjustment];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.safeAreaAdjustment != react::RNSScreenStackHeaderConfigSafeAreaAdjustment::Automatic) {
+        RCTLogWarn(@"[RNScreens] safeAreaAdjustment is supported for iOS >= 27");
       }
   }
 

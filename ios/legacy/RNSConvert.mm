@@ -364,6 +364,20 @@
       return UIBarMinimizationRestorationBehaviorAtScrollEdge;
   }
 }
+
++ (UIBarMinimizationSafeAreaAdjustment)UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigSafeAreaAdjustment)safeAreaAdjustment
+{
+  switch (safeAreaAdjustment) {
+    using enum react::RNSScreenStackHeaderConfigSafeAreaAdjustment;
+    case Automatic:
+      return UIBarMinimizationSafeAreaAdjustmentAutomatic;
+    case Enabled:
+      return UIBarMinimizationSafeAreaAdjustmentEnabled;
+    case Disabled:
+      return UIBarMinimizationSafeAreaAdjustmentDisabled;
+  }
+}
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
