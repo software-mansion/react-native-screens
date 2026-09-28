@@ -491,9 +491,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 #pragma mark - UITabBarControllerDelegate
 
-// Not called when children are managed through the `UITab` API. Fires only on user taps,
-// never on programmatic selection.
-
 - (BOOL)tabBarController:(UITabBarController *)tabBarController
     shouldSelectViewController:(UIViewController *)viewController
 {
@@ -517,7 +514,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   // In such case, we want to pop to root.
   // We do it here, because in `tabBarController:didSelectViewController:` we won't receive
   // `moreNavigationController` in case there is already a tab pushed on the stack.
-  if ([self isViewControllerTheMoreNavigationController:viewController]) {
+  // Legacy path only - on the UITab path More never arrives here; `tabBar:didSelectItem:` covers it.
+  if (![self usesUITabAPI] && [self isViewControllerTheMoreNavigationController:viewController]) {
     auto *poppedViewController = [self popToRootInMoreNavigationControllerRespectSelectionPrevention:YES animated:NO];
     if (poppedViewController != nil) {
       // We actually popped something -> let's notify JS realm of this fact.
@@ -550,37 +548,22 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectTab:(UITab *)tab API_AVAILABLE(ios(18.0))
 {
-  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected instance of TabBarController");
-
-  UIViewController *viewController = tab.viewController;
-  RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Unexpected type of controller: %@",
-            viewController.class);
-
-  BOOL selectionWasIntercepted = [self interceptUserSelectionOfViewController:viewController];
-  if (selectionWasIntercepted) {
-    return NO;
-  }
-
-  _isHandlingExplicitSelectionUpdate = YES;
-  _isHandlingUserTabSelection = YES;
-  return YES;
+  BOOL shouldSelect = [self tabBarController:tabBarController shouldSelectViewController:tab.viewController];
+  _isHandlingUserTabSelection = shouldSelect;
+  return shouldSelect;
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
             didSelectTab:(UITab *)selectedTab
              previousTab:(nullable UITab *)previousTab API_AVAILABLE(ios(18.0))
 {
-  RCTAssert(self == tabBarController, @"[RNScreens] Unexpected instance of TabBarController");
-
   if (!_isHandlingUserTabSelection) {
     return;
   }
   _isHandlingUserTabSelection = NO;
 
   RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
-  [self userDidSelectViewController:selectedTab.viewController];
-  _isHandlingExplicitSelectionUpdate = NO;
+  [self tabBarController:tabBarController didSelectViewController:selectedTab.viewController];
 }
 
 #endif // RNS_UITAB_API_SDK_AVAILABLE
