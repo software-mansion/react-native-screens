@@ -42,6 +42,8 @@ class FormSheetHost(
         FormSheetDialogManager(
             context = context,
             contentView = sheetContentView,
+            // ReactContext wraps the application context, not the activity.
+            activityProvider = { reactContext.currentActivity },
         )
 
     init {
