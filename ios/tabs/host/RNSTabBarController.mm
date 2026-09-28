@@ -663,7 +663,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
 
-  return [[UITab alloc] initWithTitle:screenController.title ?: @""
+  return [[UITab alloc] initWithTitle:[screenController.tabScreenComponentView title] ?: @""
                                 image:nil
                            identifier:[screenController.tabScreenComponentView screenKey]
                viewControllerProvider:^UIViewController *(UITab *) {
