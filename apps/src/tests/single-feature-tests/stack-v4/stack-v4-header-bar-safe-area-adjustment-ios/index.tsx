@@ -4,7 +4,6 @@ import {
   Screen,
   ScreenStack,
   ScreenStackHeaderConfig,
-  type HeaderMinimizationBehavior,
   type HeaderSafeAreaAdjustment,
 } from 'react-native-screens';
 import { SafeAreaView } from 'react-native-screens/experimental';
@@ -13,13 +12,6 @@ import { Colors } from '@apps/shared/styling';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
-const MINIMIZATION_BEHAVIORS: HeaderMinimizationBehavior[] = [
-  'automatic',
-  'never',
-  'onScrollDown',
-  'onScrollUp',
-];
-
 const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
   'automatic',
   'enabled',
@@ -27,8 +19,6 @@ const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
 ];
 
 function TestStackV4HeaderBarSafeAreaAdjustmentIOS() {
-  const [minimizationBehavior, setMinimizationBehavior] =
-    React.useState<HeaderMinimizationBehavior>('onScrollDown');
   const [safeAreaAdjustment, setSafeAreaAdjustment] =
     React.useState<HeaderSafeAreaAdjustment>('automatic');
 
@@ -39,17 +29,12 @@ function TestStackV4HeaderBarSafeAreaAdjustmentIOS() {
             the yellow background is the inset it currently applies. */}
         <SafeAreaView edges={{ top: true }} style={styles.safeArea}>
           <ScrollView contentInsetAdjustmentBehavior="never">
-            <SettingsPicker<HeaderMinimizationBehavior>
-              label="minimizationBehavior"
-              value={minimizationBehavior}
-              onValueChange={setMinimizationBehavior}
-              items={MINIMIZATION_BEHAVIORS}
-            />
             <SettingsPicker<HeaderSafeAreaAdjustment>
               label="safeAreaAdjustment"
               value={safeAreaAdjustment}
               onValueChange={setSafeAreaAdjustment}
               items={SAFE_AREA_ADJUSTMENTS}
+              style={styles.firstPicker}
             />
             {Array.from({ length: 100 }, (_, index) => (
               <ThemedText key={index} style={styles.row}>
@@ -67,7 +52,7 @@ function TestStackV4HeaderBarSafeAreaAdjustmentIOS() {
           // and its safe area includes the navigation bar.
           translucent
           backgroundColor="transparent"
-          minimizationBehavior={minimizationBehavior}
+          minimizationBehavior="onScrollDown"
           safeAreaAdjustment={safeAreaAdjustment}
         />
       </Screen>
@@ -87,6 +72,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: Colors.YellowLight100,
+  },
+  firstPicker: {
+    marginTop: 6,
   },
   row: {
     padding: 16,
