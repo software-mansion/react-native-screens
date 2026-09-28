@@ -49,6 +49,7 @@ namespace react = facebook::react;
   [self setTitleProp:nil];
   [self setIconProp:nil];
   [self setMenuProp:nil];
+  [self setMenuRepresentationProp:nil];
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
@@ -73,6 +74,12 @@ namespace react = facebook::react;
   _menu = menuProp;
 }
 
+- (void)setMenuRepresentationProp:(RNSStackHeaderMenuData *)menuRepresentationProp
+{
+  _menuRepresentationProp = menuRepresentationProp;
+  _menuRepresentation = menuRepresentationProp;
+}
+
 - (void)emitOnPress
 {
   [_headerItemEventEmitter emitOnPress];
@@ -81,11 +88,22 @@ namespace react = facebook::react;
 - (void)updateMenuElementWithId:(NSString *)elementId
                     withElement:(id<RNSStackHeaderMenuElement>)newElement
                      parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+           inMenuRepresentation:(BOOL)inMenuRepresentation
 {
-  if (parentMenu == nil) {
-    _menu = (RNSStackHeaderMenuData *)newElement;
+  if (inMenuRepresentation) {
+    if (parentMenu == nil) {
+      _menuRepresentation = (RNSStackHeaderMenuData *)newElement;
+    } else {
+      _menuRepresentation = [RNSStackHeaderMenuCoordinator menu:_menuRepresentation
+                                           replacingChildWithId:elementId
+                                                    withElement:newElement];
+    }
   } else {
-    _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
+    if (parentMenu == nil) {
+      _menu = (RNSStackHeaderMenuData *)newElement;
+    } else {
+      _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
+    }
   }
   [_invalidationDelegate headerItemMenuDidUpdateFromCommandWithId:_itemId];
 }
@@ -214,6 +232,15 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.menu != newItemProps.menu) {
     [self setMenuProp:[RNSStackHeaderMenuMapper
                           menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)]];
+    menuDidChange = YES;
+  }
+
+  if (oldItemProps.menuRepresentation != newItemProps.menuRepresentation) {
+    [self setMenuRepresentationProp:[RNSStackHeaderMenuMapper
+                                        menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                               newItemProps.menuRepresentation)]];
+    // menu representation is applied together with the menu & shares its toggle state tracker,
+    // so it follows the same invalidation path
     menuDidChange = YES;
   }
 

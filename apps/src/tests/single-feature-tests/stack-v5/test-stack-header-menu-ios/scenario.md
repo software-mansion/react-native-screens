@@ -8,15 +8,18 @@
 
 ## E2E test
 
-Full: Covers all manual scenario steps.
+Incomplete: Covers all manual scenario steps except the **Menu representation** section.
 
 ## Prerequisites
 
-- iOS / iPadOS emulator
+- iOS simulator or device
 
 ## Note
 
 - For now, menus don't appear on items with custom views
+- Menu representation section requires iOS >= 16
+- There is a bug present when you send change item command, and change the number of items
+  before displaying the menu, then the checkmark doesn't change despite the toast showing.
 
 ## Steps on iPhone
 
@@ -51,6 +54,24 @@ Full: Covers all manual scenario steps.
 10. Click on screen title
   - [ ] The title should transform into a menu with two actions
   - [ ] Clicking either actions should display a toast
+
+### Menu representation (iOS 26)
+
+1. Relaunch the app and navigate to the **Stack Header Menu (iOS)** screen.
+2. Toggle `menuRepresentation`
+3. Click `Toggle trailing items count` to get 4 items present
+  - [ ] Two items moved to overflow menu
+4. Open the overflow menu
+  - [ ] Overflowed regular items appear as **Repr #** submenus
+  - [ ] Custom items are present and represented in the same way as regular items
+5. Open Repr 1
+  - [ ] It contains three radio items, Repr 1 Radio 1 is selected by default
+6. Click Repr 0 Radio 2
+  - [ ] A toast "Repr 0 selected "repr-radio-0-2"" is displayed
+  - [ ] When reopened, Repr 0 Radio 2 is checked and Radio 1 is not
+6. Under `setMenuItemOptions`, select "repr-radio-1-3", `title`: "New Title", `toggleState`: "true". Click "Send setMenuItemOptions". Open Repr 1.
+  - [ ] It contains three radio items: "Repr 1 Radio 1", "Repr 1 Radio 2", "New Title"
+  - [ ] "New Title" item is selected
 
 ### setMenuItemOptions view command
 
