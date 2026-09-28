@@ -30,12 +30,11 @@
 
 namespace react = facebook::react;
 
-@interface RNSScreenStackView () <
-    UINavigationControllerDelegate,
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate,
-    RCTMountingTransactionObserving>
+@interface RNSScreenStackView () <UINavigationControllerDelegate,
+                                  UIAdaptivePresentationControllerDelegate,
+                                  UIGestureRecognizerDelegate,
+                                  UIViewControllerTransitioningDelegate,
+                                  RCTMountingTransactionObserving>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -49,6 +48,19 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSNavigationController
+
+- (instancetype)init
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+  self = [super initWithNavigationBarClass:RNSNavigationBar.class toolbarClass:nil];
+  if (self != nil && [self.navigationBar isKindOfClass:RNSNavigationBar.class]) {
+    static_cast<RNSNavigationBar *>(self.navigationBar).layoutDelegate = self;
+  }
+#else // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+  self = [super init];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+  return self;
+}
 
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -71,22 +83,42 @@ namespace react = facebook::react;
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
-    BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
-        (screenController.presentedViewController != nil &&
-         ![screenController.presentedViewController isBeingDismissed]);
-    BOOL isPresentingSearchController =
-        [screenController.presentedViewController isKindOfClass:UISearchController.class];
-
-    // Calculate header height during simple transition from one screen to another.
-    // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
-    // header height, as it could have nested stack.
-    if (![screenController hasNestedStack] && (isPresentingSearchController || isNotDismissingModal)) {
-      [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
-    }
-
+    [self notifyHeaderHeightChangeToScreen:screenController];
     [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
   }
 }
+
+- (void)notifyHeaderHeightChangeToScreen:(RNSScreen *)screenController
+{
+  BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
+      (screenController.presentedViewController != nil && ![screenController.presentedViewController isBeingDismissed]);
+  BOOL isPresentingSearchController = [screenController.presentedViewController isKindOfClass:UISearchController.class];
+
+  // Calculate header height during simple transition from one screen to another.
+  // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
+  // header height, as it could have nested stack.
+  if (![screenController hasNestedStack] && (isPresentingSearchController || isNotDismissingModal)) {
+    [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+#pragma mark - Navigation bar layout observation (iOS 27 bar minimization)
+
+- (void)navigationBarContentDidChangeLayout
+{
+  if (@available(iOS 27.0, *)) {
+    if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
+      [self notifyHeaderHeightChangeToScreen:(RNSScreen *)self.topViewController];
+    }
+  }
+}
+
+- (void)navigationBarDidLayoutSubviews:(UINavigationBar *)navigationBar
+{
+  [self navigationBarContentDidChangeLayout];
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
@@ -1124,8 +1156,8 @@ RNS_IGNORE_SUPER_CALL_END
   float bottom = [gestureResponseDistanceValues[@"bottom"] floatValue];
 
   // we check if any of the constraints are violated and return NO if so
-  return !(
-      (start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) || (bottom != -1 && y > bottom));
+  return !((start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) ||
+           (bottom != -1 && y > bottom));
 }
 
 // By default, the header buttons that are not inside the native hit area
@@ -1388,13 +1420,12 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RCTAssert(
-      childComponentView.reactSuperview == nil,
-      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-      self,
-      childComponentView,
-      @(index),
-      @([childComponentView.superview tag]));
+  RCTAssert(childComponentView.reactSuperview == nil,
+            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+            self,
+            childComponentView,
+            @(index),
+            @([childComponentView.superview tag]));
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
@@ -1417,12 +1448,11 @@ RNS_IGNORE_SUPER_CALL_END
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [screenChildComponent.controller addSnapshotToView];
 
-  RCTAssert(
-      screenChildComponent.reactSuperview == self,
-      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-      self,
-      screenChildComponent,
-      @(index));
+  RCTAssert(screenChildComponent.reactSuperview == self,
+            @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+            self,
+            screenChildComponent,
+            @(index));
   RCTAssert(
       (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
       @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",

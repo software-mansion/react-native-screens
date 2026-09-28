@@ -22,6 +22,8 @@ import {
   SearchBar,
   SearchBarPlacement,
   StackPresentationTypes,
+  type HeaderMinimizationBehavior,
+  type HeaderRestorationBehavior,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
@@ -39,6 +41,10 @@ import {
   type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 interface ScreensNavigationProps {
   push?: () => void;
@@ -66,6 +72,8 @@ interface Config {
   content: 'regularView' | 'scrollView' | 'config';
   headerHeight: number;
   headerHeightApi: 'react-native-screens' | 'react-navigation';
+  minimizationBehavior: HeaderMinimizationBehavior;
+  restorationBehavior: HeaderRestorationBehavior;
 }
 
 export interface ConfigContextInterface {
@@ -93,6 +101,7 @@ function HeaderHeightInfoComponent({
   positionAbsolute?: boolean;
 }) {
   const { config } = useConfigContext();
+  const { right } = useSafeAreaInsets();
   return (
     <View
       style={[
@@ -106,7 +115,7 @@ function HeaderHeightInfoComponent({
           backgroundColor: '#D4EEE8CC',
         },
         positionAbsolute
-          ? { position: 'absolute', top: config.headerHeight, right: 10 }
+          ? { position: 'absolute', top: config.headerHeight, right: right }
           : undefined,
       ]}>
       <Text style={{ fontSize: 20 }}>{config.headerHeight.toFixed(1)}</Text>
@@ -176,6 +185,31 @@ function ConfigScreen(props: NavigationProps) {
           'formSheet',
           'pageSheet',
         ]}
+      />
+      <Text style={styles.title}>
+        Header minimization (iOS 27+, react-native-screens only)
+      </Text>
+      <SettingsPicker<Config['minimizationBehavior']>
+        label="minimizationBehavior"
+        value={config.minimizationBehavior}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            minimizationBehavior: value,
+          })
+        }
+        items={['automatic', 'never', 'onScrollDown', 'onScrollUp']}
+      />
+      <SettingsPicker<Config['restorationBehavior']>
+        label="restorationBehavior"
+        value={config.restorationBehavior}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            restorationBehavior: value,
+          })
+        }
+        items={['automatic', 'atScrollEdge']}
       />
       <Text style={styles.title}>Search bar configuration</Text>
       <SettingsPicker<Config['searchBarPlacement']>
@@ -297,7 +331,7 @@ function ReactNativeScreensNavigation() {
   };
 
   return (
-    <>
+    <SafeAreaProvider>
       <ScreenStack style={{ flex: 1 }}>
         <ScreenStackItem
           screenId="config"
@@ -339,6 +373,8 @@ function ReactNativeScreensNavigation() {
               largeTitle: config.headerLargeTitle,
               title: 'Test Screen',
               hideBackButton: true,
+              minimizationBehavior: config.minimizationBehavior,
+              restorationBehavior: config.restorationBehavior,
               backgroundColor: config.headerTransparent
                 ? 'transparent'
                 : Colors.cardBackground,
@@ -360,7 +396,7 @@ function ReactNativeScreensNavigation() {
       {showTestScreen && config.presentation === 'push' && (
         <HeaderHeightInfoComponent />
       )}
-    </>
+    </SafeAreaProvider>
   );
 }
 
@@ -434,6 +470,8 @@ function HeaderHeightTest() {
     content: 'regularView',
     headerHeight: 0,
     headerHeightApi: 'react-native-screens',
+    minimizationBehavior: 'automatic',
+    restorationBehavior: 'automatic',
   });
 
   return (
