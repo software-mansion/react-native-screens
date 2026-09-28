@@ -635,15 +635,18 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 /// Whether `screenController` is already the effective current selection.
-///
-/// While the More controller is active `self.selectedViewController` is the More controller itself,
-/// so the current selection is what its stack tops; otherwise it is `self.selectedViewController`
-/// (which, at container-update time, is settled and matches the `UITab` selection).
 - (BOOL)isScreenControllerCurrentlySelected:(nonnull UIViewController *)screenController
 {
-  return [self isMoreNavigationControllerTabBarItemSelected]
-      ? screenController == [self resolveMoreNavigationController].topViewController
-      : screenController == self.selectedViewController;
+  if ([self isMoreNavigationControllerTabBarItemSelected]) {
+    return screenController == [self resolveMoreNavigationController].topViewController;
+  }
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return screenController == self.selectedTab.viewController;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return screenController == self.selectedViewController;
 }
 
 #if RNS_UITAB_API_SDK_AVAILABLE
