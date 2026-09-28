@@ -22,7 +22,6 @@ import TestTabsItemIcon from './test-tabs-item-icon';
 import TestTabsItemTitle from './test-tabs-item-title';
 import TestTabsItemBadge from './test-tabs-item-badge';
 import TestTabsSystemItem from './test-tabs-system-item-ios';
-import TestTabsSearchTabActivation from './test-tabs-search-tab-activation-ios';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
@@ -52,7 +51,6 @@ export { default as TestTabsItemIcon } from './test-tabs-item-icon';
 export { default as TestTabsItemTitle } from './test-tabs-item-title';
 export { default as TestTabsItemBadge } from './test-tabs-item-badge';
 export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
-export { default as TestTabsSearchTabActivation } from './test-tabs-search-tab-activation-ios';
 export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
 export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
 export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
@@ -82,7 +80,6 @@ const scenarios = {
   TestTabsItemTitle,
   TestTabsItemBadge,
   TestTabsSystemItem,
-  TestTabsSearchTabActivation,
   TestTabsMoreNavigationController,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
