@@ -21,6 +21,7 @@ jobs:
     timeout-minutes: 90
     env:
       WORKING_DIRECTORY: FabricExample
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     concurrency:
       group: ios-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -32,10 +33,6 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '27.0'
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install AppleSimulatorUtils
@@ -45,13 +42,6 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
-        # This step is required due to the bug introduced in 1.15.0 version of cocoapods
-        # that breaks the pod installation for cached packages.
-        # see https://github.com/facebook/react-native/issues/42698
-        # This step should be removed once this issue will be resolved:
-        # https://github.com/actions/runner-images/issues/9308
-      - name: Install Ruby gems
-        run: gem install cocoapods -v 1.15.2
       - name: Install pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
