@@ -16,7 +16,11 @@ internal class StackContainerUpdateCoordinator {
         pendingPopOperations.add(PopOperation(stackScreen))
     }
 
-    internal fun executePendingOperationsIfNeeded(
+    /**
+     * Hands the pending operations to the container in stack order. The container applies
+     * them on its next update.
+     */
+    internal fun enqueuePendingOperations(
         container: StackContainer,
         renderedScreens: List<StackScreen>,
     ) {
@@ -34,8 +38,6 @@ internal class StackContainerUpdateCoordinator {
             .map { Pair(renderedScreens.indexOf(it.screen), it) }
             .sortedBy { it.first }
             .forEach { (_, operation) -> container.enqueuePushOperation(operation.screen) }
-
-        container.performContainerUpdateIfNeeded()
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()
