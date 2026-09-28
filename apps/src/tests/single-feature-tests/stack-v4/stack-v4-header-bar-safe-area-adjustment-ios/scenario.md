@@ -5,9 +5,8 @@
 **Description:** Tests the `safeAreaAdjustment` header config prop, which
 controls whether the safe area adjusts while the navigation bar minimizes.
 A single stack screen with a translucent header hosts a long scroll view with
-the pickers at its top. The safe area is consumed either by `SafeAreaView`
-(`insetConsumer: safeAreaView`) or by the scroll view content inset adjustment
-(`insetConsumer: scrollView`).
+the pickers at its top. The safe area is consumed by `SafeAreaView`, which wraps
+the scroll view.
 
 **OS test creation version:** 27.2
 
@@ -33,7 +32,6 @@ background is the inset it currently applies.
 
     - [ ] The `minimizationBehavior` picker is set to `onScrollDown`.
     - [ ] The `safeAreaAdjustment` picker is set to `automatic`.
-    - [ ] The `insetConsumer` picker is set to `safeAreaView`.
     - [ ] The yellow background starts right below the header.
 
 2. Scroll down to around row 20.
@@ -53,9 +51,3 @@ background is the inset it currently applies.
 
     - [ ] The header minimizes.
     - [ ] The content moves up and starts right below the status bar.
-
-5. Scroll to the top, set `insetConsumer` to `scrollView` and scroll down to
-   around row 20.
-
-    - [ ] The header minimizes.
-    - [ ] The content scrolls under the status bar.

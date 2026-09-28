@@ -13,8 +13,6 @@ import { Colors } from '@apps/shared/styling';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 
-type InsetConsumer = 'safeAreaView' | 'scrollView';
-
 const MINIMIZATION_BEHAVIORS: HeaderMinimizationBehavior[] = [
   'automatic',
   'never',
@@ -28,79 +26,38 @@ const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
   'disabled',
 ];
 
-const INSET_CONSUMERS: InsetConsumer[] = ['safeAreaView', 'scrollView'];
-
-interface ContentProps {
-  minimizationBehavior: HeaderMinimizationBehavior;
-  setMinimizationBehavior: (value: HeaderMinimizationBehavior) => void;
-  safeAreaAdjustment: HeaderSafeAreaAdjustment;
-  setSafeAreaAdjustment: (value: HeaderSafeAreaAdjustment) => void;
-  insetConsumer: InsetConsumer;
-  setInsetConsumer: (value: InsetConsumer) => void;
-}
-
-function ScrollContent(props: ContentProps) {
-  return (
-    <>
-      <SettingsPicker<HeaderMinimizationBehavior>
-        label="minimizationBehavior"
-        value={props.minimizationBehavior}
-        onValueChange={props.setMinimizationBehavior}
-        items={MINIMIZATION_BEHAVIORS}
-      />
-      <SettingsPicker<HeaderSafeAreaAdjustment>
-        label="safeAreaAdjustment"
-        value={props.safeAreaAdjustment}
-        onValueChange={props.setSafeAreaAdjustment}
-        items={SAFE_AREA_ADJUSTMENTS}
-      />
-      <SettingsPicker<InsetConsumer>
-        label="insetConsumer"
-        value={props.insetConsumer}
-        onValueChange={props.setInsetConsumer}
-        items={INSET_CONSUMERS}
-      />
-      {Array.from({ length: 100 }, (_, index) => (
-        <ThemedText key={index} style={styles.row}>
-          Row {index}
-        </ThemedText>
-      ))}
-    </>
-  );
-}
-
 function TestStackV4HeaderBarSafeAreaAdjustmentIOS() {
   const [minimizationBehavior, setMinimizationBehavior] =
     React.useState<HeaderMinimizationBehavior>('onScrollDown');
   const [safeAreaAdjustment, setSafeAreaAdjustment] =
     React.useState<HeaderSafeAreaAdjustment>('automatic');
-  const [insetConsumer, setInsetConsumer] =
-    React.useState<InsetConsumer>('safeAreaView');
-
-  const contentProps: ContentProps = {
-    minimizationBehavior,
-    setMinimizationBehavior,
-    safeAreaAdjustment,
-    setSafeAreaAdjustment,
-    insetConsumer,
-    setInsetConsumer,
-  };
 
   return (
     <ScreenStack style={styles.container}>
       <Screen key="scroll" activityState={2} isNativeStack>
-        {insetConsumer === 'safeAreaView' ? (
-          // The yellow background marks the top padding applied by SafeAreaView.
-          <SafeAreaView edges={{ top: true }} style={styles.safeArea}>
-            <ScrollView contentInsetAdjustmentBehavior="never">
-              <ScrollContent {...contentProps} />
-            </ScrollView>
-          </SafeAreaView>
-        ) : (
-          <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <ScrollContent {...contentProps} />
+        {/* SafeAreaView applies the top inset as a margin, so the area above
+            the yellow background is the inset it currently applies. */}
+        <SafeAreaView edges={{ top: true }} style={styles.safeArea}>
+          <ScrollView contentInsetAdjustmentBehavior="never">
+            <SettingsPicker<HeaderMinimizationBehavior>
+              label="minimizationBehavior"
+              value={minimizationBehavior}
+              onValueChange={setMinimizationBehavior}
+              items={MINIMIZATION_BEHAVIORS}
+            />
+            <SettingsPicker<HeaderSafeAreaAdjustment>
+              label="safeAreaAdjustment"
+              value={safeAreaAdjustment}
+              onValueChange={setSafeAreaAdjustment}
+              items={SAFE_AREA_ADJUSTMENTS}
+            />
+            {Array.from({ length: 100 }, (_, index) => (
+              <ThemedText key={index} style={styles.row}>
+                Row {index}
+              </ThemedText>
+            ))}
           </ScrollView>
-        )}
+        </SafeAreaView>
         {/* HeaderConfig must not be the first child of a Screen, otherwise
             UIKit does not find the scroll view that drives bar minimization.
             See https://github.com/software-mansion/react-native-screens/pull/1825 */}
