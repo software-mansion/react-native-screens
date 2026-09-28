@@ -79,9 +79,9 @@
 - (void)applyTabBarItemRepaintWorkaroundForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
 {
 #if RNS_UITAB_API_SDK_AVAILABLE
-  RNS_UITAB_API_AVAILABLE_BEGIN
-  tabScreenCtrl.tabBarItem = [[UITabBarItem alloc] init];
-  RNS_UITAB_API_AVAILABLE_END
+  if (RNS_UITAB_API_ENABLED) {
+    tabScreenCtrl.tabBarItem = [[UITabBarItem alloc] init];
+  }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
 }
 
@@ -127,9 +127,9 @@
     // The badge must land on both the item (viewController API) and the tab (UITab API) to render.
     tabScreenCtrl.tabBarItem.badgeValue = badgeValue;
 #if RNS_UITAB_API_SDK_AVAILABLE
-    RNS_UITAB_API_AVAILABLE_BEGIN
-    tabScreenCtrl.tab.badgeValue = badgeValue;
-    RNS_UITAB_API_AVAILABLE_END
+    if (RNS_UITAB_API_ENABLED) {
+      tabScreenCtrl.tab.badgeValue = badgeValue;
+    }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
   }
 }
