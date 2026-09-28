@@ -22,6 +22,8 @@ import {
   SearchBar,
   SearchBarPlacement,
   StackPresentationTypes,
+  type HeaderMinimizationBehavior,
+  type HeaderRestorationBehavior,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
@@ -66,6 +68,8 @@ interface Config {
   content: 'regularView' | 'scrollView' | 'config';
   headerHeight: number;
   headerHeightApi: 'react-native-screens' | 'react-navigation';
+  minimizationBehavior: HeaderMinimizationBehavior;
+  restorationBehavior: HeaderRestorationBehavior;
 }
 
 export interface ConfigContextInterface {
@@ -176,6 +180,31 @@ function ConfigScreen(props: NavigationProps) {
           'formSheet',
           'pageSheet',
         ]}
+      />
+      <Text style={styles.title}>
+        Header minimization (iOS 27+, react-native-screens only)
+      </Text>
+      <SettingsPicker<Config['minimizationBehavior']>
+        label="minimizationBehavior"
+        value={config.minimizationBehavior}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            minimizationBehavior: value,
+          })
+        }
+        items={['automatic', 'never', 'onScrollDown', 'onScrollUp']}
+      />
+      <SettingsPicker<Config['restorationBehavior']>
+        label="restorationBehavior"
+        value={config.restorationBehavior}
+        onValueChange={value =>
+          setConfig({
+            ...config,
+            restorationBehavior: value,
+          })
+        }
+        items={['automatic', 'atScrollEdge']}
       />
       <Text style={styles.title}>Search bar configuration</Text>
       <SettingsPicker<Config['searchBarPlacement']>
@@ -339,6 +368,8 @@ function ReactNativeScreensNavigation() {
               largeTitle: config.headerLargeTitle,
               title: 'Test Screen',
               hideBackButton: true,
+              minimizationBehavior: config.minimizationBehavior,
+              restorationBehavior: config.restorationBehavior,
               backgroundColor: config.headerTransparent
                 ? 'transparent'
                 : Colors.cardBackground,
@@ -434,6 +465,8 @@ function HeaderHeightTest() {
     content: 'regularView',
     headerHeight: 0,
     headerHeightApi: 'react-native-screens',
+    minimizationBehavior: 'automatic',
+    restorationBehavior: 'automatic',
   });
 
   return (

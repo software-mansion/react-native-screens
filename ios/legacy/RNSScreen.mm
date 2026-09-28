@@ -1622,6 +1622,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     return 0;
   }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    return [self calculateMinimizationAwareHeaderHeightInNavigationController:navctr];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
 #if !TARGET_OS_TV
   CGFloat navbarInset = navctr.navigationBar.frame.origin.y;
@@ -1632,6 +1638,35 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   return navbarHeight + navbarInset;
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+// On iOS 27 the navigation bar can minimize in response to scrolling (`UIBarMinimization`). The frame of
+// `UINavigationBar` does not follow the minimization, only its subviews (background, content view, large title,
+// search bar) do - they are shifted up within the bar. Therefore we measure the bottom edge of the subviews
+// instead, in the coordinate space of the navigation controller's view. The value is clamped to the bar's frame,
+// which is the maximum extent of the bar in the expanded state.
+- (CGFloat)calculateMinimizationAwareHeaderHeightInNavigationController:(UINavigationController *)navctr
+    API_AVAILABLE(ios(27.0))
+{
+  UINavigationBar *navbar = navctr.navigationBar;
+  CGFloat navbarMaxY = CGRectGetMaxY([navbar convertRect:navbar.bounds toView:navctr.view]);
+  CGFloat maxY = -CGFLOAT_MAX;
+
+  for (UIView *subview in navbar.subviews) {
+    if (subview.isHidden || CGRectIsEmpty(subview.frame)) {
+      continue;
+    }
+    maxY = MAX(maxY, CGRectGetMaxY([navbar convertRect:subview.frame toView:navctr.view]));
+  }
+
+  if (maxY == -CGFLOAT_MAX) {
+    // No measurable subviews, same as the pre-iOS 27 formula.
+    return navbarMaxY;
+  }
+
+  return MIN(maxY, navbarMaxY);
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
 
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
 {
