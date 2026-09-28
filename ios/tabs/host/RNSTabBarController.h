@@ -4,6 +4,7 @@
 #import "RNSContainer.h"
 #import "RNSReactMountingTransactionObserving.h"
 #import "RNSTabBarAppearanceCoordinator.h"
+#import "RNSTabBarItemCoordinator.h"
 #import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
 
@@ -116,6 +117,8 @@ NS_ASSUME_NONNULL_BEGIN
  * update flush or flush it manually.
  */
 @property (nonatomic, readonly, strong, nonnull) RNSTabBarAppearanceCoordinator *tabBarAppearanceCoordinator;
+
+@property (nonatomic, readonly, strong, nonnull) RNSTabBarItemCoordinator *tabBarItemCoordinator;
 
 /**
  * If true, the controller will reject any navigation state updates if the provenance of the

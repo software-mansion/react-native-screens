@@ -107,6 +107,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _tabScreenControllers = nil;
     _installedScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
+    _tabBarItemCoordinator = [RNSTabBarItemCoordinator new];
     _tabsHostComponentView = nil;
     _navigationState = nil;
     _pendingStateUpdate = nil;
@@ -311,10 +312,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)performContainerUpdate
 {
   _isHandlingExplicitSelectionUpdate = YES;
+  [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
 
+  [self updateTabBarItemsIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
   [self updateOrientationIfNeeded];
@@ -675,17 +678,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
 
-  UITab *tab = [[UITab alloc] initWithTitle:screenController.title ?: @""
-                                      image:nil
-                                 identifier:[screenController.tabScreenComponentView screenKey]
-                     viewControllerProvider:^UIViewController *(UITab *) {
-                       return weakScreenController;
-                     }];
-
-  // A badge set from props before the tab existed could not land on it - seed it now.
-  tab.badgeValue = screenController.tabScreenComponentView.badgeValue;
-
-  return tab;
+  return [[UITab alloc] initWithTitle:screenController.title ?: @""
+                                image:nil
+                           identifier:[screenController.tabScreenComponentView screenKey]
+               viewControllerProvider:^UIViewController *(UITab *) {
+                 return weakScreenController;
+               }];
 }
 
 #endif // RNS_UITAB_API_SDK_AVAILABLE
@@ -813,6 +811,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (hasStateProgressed) {
     [self emitSelectionUpdateWithOrigin:_pendingStateUpdate.actionOrigin repeated:NO hasTriggeredSpecialEffect:NO];
   }
+}
+
+- (void)createTabBarItemsIfNeeded
+{
+  [_tabBarItemCoordinator createTabBarItemsForTabScreenControllers:_tabScreenControllers];
+}
+
+- (void)updateTabBarItemsIfNeeded
+{
+  [_tabBarItemCoordinator updateTabBarItemsForTabScreenControllers:_tabScreenControllers];
 }
 
 - (void)updateTabBarAppearanceIfNeeded

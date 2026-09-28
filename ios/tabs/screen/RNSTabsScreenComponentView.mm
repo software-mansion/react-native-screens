@@ -159,91 +159,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-#pragma mark - Prop update utils
-
-- (void)createTabBarItem
-{
-  UITabBarItem *tabBarItem = nil;
-  if (_systemItem != RNSTabsScreenSystemItemNone) {
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    if (!systemItem) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)_systemItem);
-      return;
-    }
-    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
-  } else {
-    tabBarItem = [[UITabBarItem alloc] init];
-  }
-
-  [self applyTabBarItemRepaintWorkaround];
-  _controller.tabBarItem = tabBarItem;
-}
-
-/**
- * TODO: This is an ugly workaround and I would love to see it replaced.
- * With UITab-managed children (iOS >= 26.1) any change to the systemItem for the first time
- * results in missing icon and wrong title. Assigning a throwaway item first flips the internal logic
- * so that the real assignment that follows paints synchronously.
- * Remove once UIKit internals no longer require it.
- */
-- (void)applyTabBarItemRepaintWorkaround
-{
-#if RNS_UITAB_API_SDK_AVAILABLE
-  RNS_UITAB_API_AVAILABLE_BEGIN
-  _controller.tabBarItem = [[UITabBarItem alloc] init];
-  RNS_UITAB_API_AVAILABLE_END
-#endif // RNS_UITAB_API_SDK_AVAILABLE
-}
-
-- (void)updateTabBarItem
-{
-  NSString *evaluatedTitle = _title;
-  if (_title == nil && _systemItem != RNSTabsScreenSystemItemNone) {
-    // Restore default system item title
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    if (!systemItem) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)_systemItem);
-      return;
-    }
-    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].title;
-  }
-
-  [self updateTabBarItemTitle:evaluatedTitle];
-  [self updateTabBarItemBadge:_badgeValue];
-}
-
-- (void)updateTabBarItemTitle:(NSString *)newTitle
-{
-  // Setting _controller.title updates also _controller.tabBarItem.title but only if there
-  // is a change to _controller.title. After creating new tabBarItem, _controller.title
-  // remains the same but _controller.tabBarItem.title is nil. For consistency, we always
-  // update both.
-  if (![_controller.tabBarItem.title isEqualToString:newTitle] || ![_controller.title isEqualToString:newTitle]) {
-    _controller.title = newTitle;
-    _controller.tabBarItem.title = newTitle;
-  }
-}
-
-- (void)updateTabBarItemBadge:(NSString *)badgeValue
-{
-  if (![_controller.tabBarItem.badgeValue isEqualToString:badgeValue]) {
-    // item badge value is needed for both viewController and UITab APIs. For the latter,
-    // it is read after building the tab and reassigned (it wouldn't be rendered otherwise)
-    _controller.tabBarItem.badgeValue = badgeValue;
-#if RNS_UITAB_API_SDK_AVAILABLE
-    RNS_UITAB_API_AVAILABLE_BEGIN
-    _controller.tab.badgeValue = badgeValue;
-    RNS_UITAB_API_AVAILABLE_END
-#endif // RNS_UITAB_API_SDK_AVAILABLE
-  }
-}
-
 #pragma mark - RNSSafeAreaProviding
 
 - (UIEdgeInsets)providerSafeAreaInsets
@@ -276,8 +191,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
-  bool tabBarItemNeedsRecreation{false};
-  bool tabBarItemNeedsUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title ||
       newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
@@ -289,7 +202,7 @@ RNS_IGNORE_SUPER_CALL_END
       _title = RCTNSStringFromString(newComponentProps.title);
     }
 
-    tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.orientation != oldComponentProps.orientation) {
@@ -304,7 +217,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
-    tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
@@ -405,7 +318,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
     _systemItem =
         rnscreens::conversion::RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(newComponentProps.systemItem);
-    tabBarItemNeedsRecreation = YES;
+    _tabBarItemNeedsRecreation = YES;
   }
 
   if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {
@@ -413,15 +326,12 @@ RNS_IGNORE_SUPER_CALL_END
         rnscreens::conversion::UIUserInterfaceStyleFromTabsScreenCppEquivalent(newComponentProps.userInterfaceStyle);
   }
 
-  if (tabBarItemNeedsRecreation) {
-    [self createTabBarItem];
-    tabBarItemNeedsUpdate = YES;
+  if (_tabBarItemNeedsRecreation) {
+    _tabBarItemNeedsUpdate = YES;
     _tabBarItemNeedsA11yUpdate = YES;
   }
 
-  if (tabBarItemNeedsUpdate) {
-    [self updateTabBarItem];
-
+  if (_tabBarItemNeedsUpdate) {
     // Force appearance update to make sure correct image for tab bar item is used
     tabItemNeedsAppearanceUpdate = YES;
   }
