@@ -64,6 +64,9 @@ namespace react = facebook::react;
 
 + (UIBarMinimizationRestorationBehavior)UIBarMinimizationRestorationBehaviorFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigRestorationBehavior)restorationBehavior API_AVAILABLE(ios(27.0));
+
++ (UIBarMinimizationSafeAreaAdjustment)UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigSafeAreaAdjustment)safeAreaAdjustment API_AVAILABLE(ios(27.0));
 #endif // Check for iOS >= 27
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
