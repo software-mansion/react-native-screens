@@ -41,6 +41,10 @@ import {
   type NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { useHeaderHeight } from '@react-navigation/elements';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 interface ScreensNavigationProps {
   push?: () => void;
@@ -97,6 +101,7 @@ function HeaderHeightInfoComponent({
   positionAbsolute?: boolean;
 }) {
   const { config } = useConfigContext();
+  const { right } = useSafeAreaInsets();
   return (
     <View
       style={[
@@ -110,7 +115,7 @@ function HeaderHeightInfoComponent({
           backgroundColor: '#D4EEE8CC',
         },
         positionAbsolute
-          ? { position: 'absolute', top: config.headerHeight, right: 10 }
+          ? { position: 'absolute', top: config.headerHeight, right: right }
           : undefined,
       ]}>
       <Text style={{ fontSize: 20 }}>{config.headerHeight.toFixed(1)}</Text>
@@ -326,7 +331,7 @@ function ReactNativeScreensNavigation() {
   };
 
   return (
-    <>
+    <SafeAreaProvider>
       <ScreenStack style={{ flex: 1 }}>
         <ScreenStackItem
           screenId="config"
@@ -391,7 +396,7 @@ function ReactNativeScreensNavigation() {
       {showTestScreen && config.presentation === 'push' && (
         <HeaderHeightInfoComponent />
       )}
-    </>
+    </SafeAreaProvider>
   );
 }
 
