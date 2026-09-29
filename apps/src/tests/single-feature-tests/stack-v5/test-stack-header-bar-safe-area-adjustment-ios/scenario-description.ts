@@ -6,7 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests the safeAreaAdjustment header config prop: whether the safe area ' +
     'adjusts while the navigation bar minimizes. The safe area is consumed ' +
-    'either by SafeAreaView or by the ScrollView content inset adjustment.',
+    'by SafeAreaView.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
