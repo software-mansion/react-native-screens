@@ -20,7 +20,8 @@ package com.swmansion.rnscreens.tabs.container
  */
 internal class TabsNavigationStateObserverRegistry {
     private val observers: MutableList<TabsNavigationStateObserver> = mutableListOf()
-    private var isEmitting: Boolean = false
+    var isEmitting: Boolean = false
+        private set
 
     /**
      * Register an observer. Returns `false` if the observer is already registered or
