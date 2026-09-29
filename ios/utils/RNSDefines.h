@@ -20,7 +20,7 @@
 #define RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 // UITab-based UITabBarController children API.
-// Compile-time check for for SDK availability and whether we want to actually use it.
+// Compile-time check for SDK availability and whether we want to actually use it.
 #define RNS_UITAB_API_SDK_AVAILABLE (RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION)
 // Runtime check deciding since which version we want to use it.
 // Keep in mind that UITab api has been added in iOS 18,
