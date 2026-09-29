@@ -25,6 +25,7 @@ import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
+import TestTabsProminentScreenKey from './test-tabs-prominent-screen-key-ios';
 import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
@@ -54,6 +55,7 @@ export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
 export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
 export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
 export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
+export { default as TestTabsProminentScreenKey } from './test-tabs-prominent-screen-key-ios';
 export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-accessory-layout-ios';
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
@@ -83,6 +85,7 @@ const scenarios = {
   TestTabsMoreNavigationController,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
+  TestTabsProminentScreenKey,
   TestTabsBottomAccessoryLayout,
   TestTabsBottomAccessoryVisibility,
   TestTabsScreenOrientation,
