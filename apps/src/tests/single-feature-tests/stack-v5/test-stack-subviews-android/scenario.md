@@ -21,7 +21,9 @@ This feature is still WIP.
 ### Known Issues/Important Observations
 
 - entire hierarchy is rebuild when number of subviews is changed in runtime
-- hierarchy rebuild causes a flash and resets scroll position
+- hierarchy rebuild causes a flash; the content scroll position is kept, and
+  a fully collapsed header stays collapsed across the rebuild (a partially
+  collapsed one re-expands)
 - text ellipsize in RTL does not work with subviews
 
 ## Steps
