@@ -43,6 +43,22 @@ function compareVersions(
   }
 }
 
+/**
+ * `true` when `version` is the release `targetVersion` names: any minor of it
+ * for a MAJOR target, that exact minor for a MAJOR.MINOR one.
+ */
+function isVersionMatching(version: string, targetVersion: string) {
+  assertSupportedVersionString(version);
+  assertSupportedVersionString(targetVersion);
+
+  const [major, minor = '0'] = version.split('.');
+  const [targetMajor, targetMinor] = targetVersion.split('.');
+  return (
+    Number(major) === Number(targetMajor) &&
+    (targetMinor === undefined || Number(minor) === Number(targetMinor))
+  );
+}
+
 /** `true` when `version` is at least `minimumVersion`. */
 function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
   assertSupportedVersionString(version);
@@ -91,6 +107,15 @@ export const describeIfIOSAtLeast = (version: string) =>
  */
 export const describeIfIOSBelow = (version: string) =>
   isIOS && !isIOSVersionAtLeast(version) ? describe : describe.skip;
+
+/**
+ * Suites for behavior that exists on iOS `version` only; skipped on Android and
+ * every other release. `'26'` runs on any 26.x, `'26.2'` on 26.2 only.
+ */
+export const describeIfIOSVersion = (version: string) =>
+  isIOS && isVersionMatching(getIOSVersionNumber(), version)
+    ? describe
+    : describe.skip;
 
 /** Suites for iPad-only features added in iPadOS `version`. */
 export const describeIfIPadOSAtLeast = (version: string) =>
