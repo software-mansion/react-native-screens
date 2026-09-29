@@ -81,7 +81,7 @@ export function TabsContainer<
 
   const navMethods = useTabsNavigationMethods(dispatch);
 
-  const hostIOSProps = useTabsHostIOSProps(ios, prominentRouteName);
+  const hostIOSProps = getTabsHostIOSProps(ios, prominentRouteName);
 
   return (
     <Tabs.Host
@@ -131,20 +131,18 @@ function useTabsHostNavStateRequest(
   return hostNavStateRequest;
 }
 
-function useTabsHostIOSProps(
+function getTabsHostIOSProps(
   ios: TabsHostProps['ios'],
   prominentRouteName: string | undefined,
 ): TabsHostProps['ios'] {
-  return React.useMemo(() => {
-    if (prominentRouteName == null) {
-      return ios;
-    }
+  if (prominentRouteName == null) {
+    return ios;
+  }
 
-    return {
-      ...ios,
-      prominentScreenKey: screenKeyFromRouteName(prominentRouteName),
-    };
-  }, [ios, prominentRouteName]);
+  return {
+    ...ios,
+    prominentScreenKey: screenKeyFromRouteName(prominentRouteName),
+  };
 }
 
 function useSanitizeRouteConfigs(routeConfigs: readonly TabRouteConfig[]) {
