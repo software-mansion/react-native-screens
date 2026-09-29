@@ -527,6 +527,13 @@ class Screen(
             super.onTouchEvent(event)
         }
 
+    // TalkBack's explore-by-touch arrives as hover events. Without consuming them as well, touching
+    // a non-clickable part of the sheet moves accessibility focus to the DimmingView behind it.
+    override fun onHoverEvent(event: MotionEvent?): Boolean {
+        val handled = super.onHoverEvent(event)
+        return usesFormSheetPresentation() || handled
+    }
+
     internal fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
