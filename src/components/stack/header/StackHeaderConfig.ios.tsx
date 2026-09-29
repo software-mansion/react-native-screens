@@ -60,6 +60,7 @@ function StackHeaderConfig(
     prompt,
     minimizationBehavior,
     restorationBehavior,
+    safeAreaAdjustment,
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
@@ -170,6 +171,7 @@ function StackHeaderConfig(
       prompt={prompt}
       minimizationBehavior={minimizationBehavior}
       restorationBehavior={restorationBehavior}
+      safeAreaAdjustment={safeAreaAdjustment}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       titleMenu={resolvedTitleMenu}
