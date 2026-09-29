@@ -1,7 +1,7 @@
 require 'plist'
 require 'shellwords'
 
-def rns_add_scene_manifest_to_info_plist(info_plist_path:)
+def rns_add_scene_manifest_to_info_plist(info_plist_path:, supports_multiple_scenes: true)
   unless File.exist?(info_plist_path)
     puts "Info.plist not found at: #{info_plist_path}"
     return
@@ -10,7 +10,7 @@ def rns_add_scene_manifest_to_info_plist(info_plist_path:)
   plist = Plist.parse_xml(info_plist_path) || {}
 
   scene_manifest = {
-    'UIApplicationSupportsMultipleScenes' => true,
+    'UIApplicationSupportsMultipleScenes' => supports_multiple_scenes,
     'UISceneConfigurations' => {
       'UIWindowSceneSessionRoleApplication' => [
         {
