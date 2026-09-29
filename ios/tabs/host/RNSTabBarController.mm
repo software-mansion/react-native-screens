@@ -320,6 +320,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)performContainerUpdate
 {
+  _isHandlingUserTabSelection = NO;
   _isHandlingExplicitSelectionUpdate = YES;
   [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
