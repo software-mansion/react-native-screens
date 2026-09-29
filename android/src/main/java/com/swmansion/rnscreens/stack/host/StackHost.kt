@@ -161,13 +161,16 @@ class StackHost(
         container.layout(left, top, right, bottom)
     }
 
+    override fun willMountItems(uiManager: UIManager) {
+        container.beginUpdateBatch()
+    }
+
     override fun didMountItems(uiManager: UIManager) {
-        containerUpdateCoordinator.executePendingOperationsIfNeeded(container, renderedScreens)
+        containerUpdateCoordinator.enqueuePendingOperations(container, renderedScreens)
+        container.endUpdateBatch()
     }
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
-
-    override fun willMountItems(uiManager: UIManager) = Unit
 
     override fun didDispatchMountItems(uiManager: UIManager) = Unit
 
