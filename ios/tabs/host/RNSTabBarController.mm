@@ -5,6 +5,7 @@
 #import <objc/runtime.h>
 #import <limits>
 #import "NSString+RNSUtility.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSScreenWindowTraits.h"
@@ -89,6 +90,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
 
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  /// See `updateReactChildrenControllers`.
+  BOOL _needsTabBarItemTitlesRefit;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (instancetype)init
@@ -176,6 +182,25 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 #pragma mark - UIKit callbacks
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (_needsTabBarItemTitlesRefit && self.tabBar.window != nil) {
+    _needsTabBarItemTitlesRefit = NO;
+    // The tab bar is laid out after this view, so lay it out now. Then make each item fit its title again; setting an
+    // equal title does nothing, hence the `nil` in between.
+    [self.tabBar layoutIfNeeded];
+    for (UITabBarItem *item in self.tabBar.items) {
+      NSString *title = item.title;
+      item.title = nil;
+      item.title = title;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
@@ -502,6 +527,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   [self setViewControllers:_tabScreenControllers animated:[[self viewControllers] count] != 0];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    // On iOS 26 the tab bar fits the title of each item once, on its first layout with that item. An item update that
+    // lands before that layout (e.g. an icon or badge set in the next commit) leaves the titles truncated or misplaced
+    // (FB24250687, #4749). Fit them again right after that layout, see `viewDidLayoutSubviews`.
+    _needsTabBarItemTitlesRefit = YES;
+    [self.view setNeedsLayout];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (void)updateSelectedViewControllerIfNeeded
