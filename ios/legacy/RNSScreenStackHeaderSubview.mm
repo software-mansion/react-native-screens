@@ -311,9 +311,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   // Changing the priority of an item that is already in the bar is not enough:
   // the bar only re-evaluates which items fit when it is handed its items again,
-  // which the header does whenever it re-applies its config.
+  // which the header does whenever it re-applies its config. We defer that until
+  // the end of the mounting transaction, so that sibling subviews updated in the
+  // same transaction are taken into account & the config is re-applied only once.
   if (_barButtonItem != nil) {
-    [[self getHeaderConfig] updateViewControllerIfNeeded];
+    [[self getHeaderConfig] setNeedsViewControllerUpdate];
   }
 }
 

@@ -100,10 +100,12 @@ NS_ASSUME_NONNULL_END
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
 
 /**
- * Re-applies this config onto its view controller's navigation item, if that
- * view controller is the one currently shown.
+ * Requests `updateViewControllerIfNeeded` to be called once, after the current
+ * mounting transaction finishes. Use this instead of calling `updateViewControllerIfNeeded`
+ * directly from subviews, so that a single transaction updating several subviews
+ * re-applies the config only once, with all subviews already updated.
  */
-- (void)updateViewControllerIfNeeded;
+- (void)setNeedsViewControllerUpdate;
 
 @end
 
