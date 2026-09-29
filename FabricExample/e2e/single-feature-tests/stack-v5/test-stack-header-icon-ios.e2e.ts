@@ -75,28 +75,28 @@ describeIfIOS('Stack Header Icon (iOS)', () => {
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('xcasset'))),
-      ).toExist();
+      ).toBeVisible();
       await expect(barButtonIcon(ICON_IDS.sfSymbol)).not.toExist();
       await expectBarButtonIconShown(ICON_IDS.xcasset);
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('imageSource'))),
-      ).toExist();
+      ).toBeVisible();
       await expectBarButtonIconShown(ICON_IDS.imageSource);
       await expect(barButtonIcon(ICON_IDS.xcasset)).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('templateSource'))),
-      ).toExist();
+      ).toBeVisible();
       await expectBarButtonIconShown(ICON_IDS.templateSource);
       await expect(barButtonIcon(ICON_IDS.imageSource)).not.toExist();
 
       await element(by.id('cycle-item-icon-button')).tap();
       await expect(
         element(by.id('current-item-icon').and(by.text('sfSymbol'))),
-      ).toExist();
+      ).toBeVisible();
       await expectBarButtonIconShown(ICON_IDS.sfSymbol);
       await expect(barButtonIcon(ICON_IDS.templateSource)).not.toExist();
     });
