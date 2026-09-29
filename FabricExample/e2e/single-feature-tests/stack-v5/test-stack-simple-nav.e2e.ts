@@ -33,7 +33,7 @@ import { waitUntil } from '@e2e/framework/wait';
  *   launch documented in the scenario.
  */
 
-describeIfIOS('Stack v5: simple navigation', () => {
+describeIfIOS('@smoke Stack v5: simple navigation', () => {
   /**
    * Reads the currently-visible route's `Key` label. Because
    * react-native-screens detaches covered screens, only the top screen's
