@@ -81,7 +81,10 @@ export type TabsNavigationAction =
 export type TabsHostConfig = Omit<
   TabsHostProps,
   'children' | 'navStateRequest'
->;
+> & {
+  /** @see {@link TabsContainerProps#prominentRouteName} */
+  prominentRouteName?: string | undefined;
+};
 
 export type TabsContainerProps<
   TRouteConfigs extends readonly TabRouteConfig[] = TabRouteConfig[],
@@ -93,6 +96,15 @@ export type TabsContainerProps<
    * Defaults to the first tab if not provided.
    */
   defaultRouteName?: NoInfer<RouteNameFromConfigs<TRouteConfigs>> | undefined;
+  /**
+   * @summary
+   * Name of the tab that should receive the prominent treatment.
+   * Takes precedence over `ios.prominentScreenKey`.
+   *
+   * @platform ios
+   * @supported iOS 27 or higher
+   */
+  prominentRouteName?: string | undefined;
 };
 
 export type SetTabOptionsMethod = (
