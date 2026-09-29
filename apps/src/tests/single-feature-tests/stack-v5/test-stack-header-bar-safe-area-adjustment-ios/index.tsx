@@ -29,8 +29,6 @@ function buildHeaderConfig(
 ): StackHeaderConfigProps {
   return {
     title: 'Safe area',
-    // Transparent header, so that the screen is laid out under the bar
-    // and its safe area includes the navigation bar.
     transparent: true,
     ios: {
       minimizationBehavior: 'onScrollDown',

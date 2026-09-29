@@ -23,9 +23,6 @@ TBD.
 On iOS < 27 the prop is ignored and a warning is logged for any value other
 than `automatic`.
 
-`SafeAreaView` applies the top inset as a margin, so the area above the yellow
-background is the inset it currently applies.
-
 `minimizationBehavior` is fixed to `onScrollDown`, so scrolling down always
 minimizes the header.
 
