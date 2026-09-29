@@ -32,10 +32,10 @@ namespace react = facebook::react;
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewTypeFromCppEquivalent:
     (react::RNSScreenStackHeaderSubviewType)subviewType;
 
-#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 + (UIBarButtonItemVisibilityPriority)UIBarButtonItemVisibilityPriorityFromCppEquivalent:
     (react::RNSScreenStackHeaderSubviewVisibilityPriority)visibilityPriority API_AVAILABLE(ios(27.0));
-#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (react::RNSScreenReplaceAnimation)replaceAnimation;

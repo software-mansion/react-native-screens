@@ -118,7 +118,7 @@
   }
 }
 
-#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 + (UIBarButtonItemVisibilityPriority)UIBarButtonItemVisibilityPriorityFromCppEquivalent:
     (react::RNSScreenStackHeaderSubviewVisibilityPriority)visibilityPriority
 {
@@ -133,7 +133,7 @@
       return UIBarButtonItemVisibilityPriorityStandard;
   }
 }
-#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (react::RNSScreenReplaceAnimation)replaceAnimation
