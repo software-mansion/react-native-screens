@@ -1,0 +1,67 @@
+# Test Scenario: Stack Header Bar Safe Area Adjustment (iOS)
+
+## Details
+
+**Description:** Tests the `safeAreaAdjustment` header config prop, which
+controls whether the safe area adjusts while the navigation bar minimizes.
+A single stack screen hosts a long scroll view with the pickers at its top.
+The safe area is consumed either by `SafeAreaView`
+(`insetConsumer: safeAreaView`) or by the scroll view content inset adjustment
+(`insetConsumer: scrollView`).
+
+**OS test creation version:** 27.2
+
+## E2E test
+
+TBD.
+
+## Prerequisites
+
+- iOS simulator with iOS 27 or higher
+
+## Note
+
+On iOS < 27 the prop is ignored and a warning is logged for any value other
+than `automatic`.
+
+`SafeAreaView` applies the top inset as a margin, so the area above the yellow
+background is the inset it currently applies.
+
+Known limitation: the Stack v5 screen does not provide safe area insets to
+`SafeAreaView` (it does not implement `RNSSafeAreaProviding`). `SafeAreaView`
+therefore takes the insets of an outer provider, does not account for the
+navigation bar of this stack and does not react to its minimization. Steps 2–4
+describe the expected behavior once the screen provides its insets.
+
+## Steps
+
+1. Navigate to **Stack v5 → Stack Header Bar Safe Area Adjustment (iOS)**.
+
+    - [ ] The `minimizationBehavior` picker is set to `onScrollDown`.
+    - [ ] The `safeAreaAdjustment` picker is set to `automatic`.
+    - [ ] The `insetConsumer` picker is set to `safeAreaView`.
+    - [ ] The yellow background starts right below the header.
+
+2. Scroll down to around row 20.
+
+    - [ ] The header minimizes.
+    - [ ] The content moves up and starts right below the status bar.
+
+3. Scroll to the top, set `safeAreaAdjustment` to `disabled` and scroll down
+   to around row 20.
+
+    - [ ] The header minimizes.
+    - [ ] The content does NOT move up; an empty gap remains where the header
+          was.
+
+4. Scroll to the top, set `safeAreaAdjustment` to `enabled` and scroll down
+   to around row 20.
+
+    - [ ] The header minimizes.
+    - [ ] The content moves up and starts right below the status bar.
+
+5. Scroll to the top, set `insetConsumer` to `scrollView` and scroll down to
+   around row 20.
+
+    - [ ] The header minimizes.
+    - [ ] The content scrolls under the status bar.
