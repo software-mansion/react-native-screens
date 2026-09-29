@@ -595,7 +595,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     for (RNSTabsScreenViewController *screenController in screenControllers) {
       [tabs addObject:[self tabForTabScreenController:screenController]];
     }
-    self.tabs = tabs;
+    [self setTabs:tabs animated:animated];
 
     if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
       self.selectedTab = previouslySelectedTab;
