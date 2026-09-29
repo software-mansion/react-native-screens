@@ -89,7 +89,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   }
 #endif
 
-#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
   if (@available(iOS 27.0, *)) {
     NSString *visibilityPriority = dict[@"visibilityPriority"];
     if ([visibilityPriority isEqualToString:@"low"]) {
@@ -100,7 +100,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
       self.visibilityPriority = UIBarButtonItemVisibilityPriorityStandard;
     }
   }
-#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
   NSString *variant = dict[@"variant"];
   if (variant) {
