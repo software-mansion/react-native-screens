@@ -17,7 +17,7 @@ TBD.
 
 ## Prerequisites
 
-- iOS simulator
+- iOS 27+ simulator
 
 ## Steps
 
