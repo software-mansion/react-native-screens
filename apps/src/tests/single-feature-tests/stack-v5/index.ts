@@ -14,6 +14,7 @@ import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
 import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
 import TestStackBackButtonIOS from './test-stack-back-button-ios';
 import TestStackHeaderBarMinimizationIOS from './test-stack-header-bar-minimization-ios';
+import TestStackHeaderBarSafeAreaAdjustmentIOS from './test-stack-header-bar-safe-area-adjustment-ios';
 import TestStackBackButtonAndroid from './test-stack-back-button-android';
 import TestStackOverflowIcon from './test-stack-overflow-icon-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
@@ -60,6 +61,7 @@ export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-head
 export { default as TestStackHeaderSubviewOnPressIOS } from './test-stack-header-subview-onpress-ios';
 export { default as TestStackBackButtonIOS } from './test-stack-back-button-ios';
 export { default as TestStackHeaderBarMinimizationIOS } from './test-stack-header-bar-minimization-ios';
+export { default as TestStackHeaderBarSafeAreaAdjustmentIOS } from './test-stack-header-bar-safe-area-adjustment-ios';
 export { default as TestStackBackButtonAndroid } from './test-stack-back-button-android';
 export { default as TestStackOverflowIcon } from './test-stack-overflow-icon-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
@@ -99,6 +101,7 @@ const scenarios = {
   TestStackHeaderMenuOptionsIOS,
   TestStackBackButtonIOS,
   TestStackHeaderBarMinimizationIOS,
+  TestStackHeaderBarSafeAreaAdjustmentIOS,
   TestStackBackButtonAndroid,
   TestStackOverflowIcon,
   TestStackToolbarMenuCommands,
