@@ -12,7 +12,7 @@ import { getMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '@e2e/framework/native-classes-ios';
 import {
   describeIfIOSAtLeast,
-  describeIfIOSBelow,
+  describeIfIOSVersion,
 } from '@e2e/framework/platform';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
@@ -109,12 +109,6 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
   expectAscending(frames.map(frame => frame.x));
 }
 
-// On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
-// that `by.type` resolves only by its unstable mangled name, and the iOS 26
-// class `_UINavigationBarPlatterView` no longer exists, so per-item platters
-// are checked on iOS 26 only (see scenario.md, "E2E test").
-const describeIfIOS26Only = describeIfIOSBelow('27.0');
-
 // The identifier-driven item-matching behavior under test only exists on
 // iOS 26+ (see scenario.md, "OS test creation version").
 describeIfIOSAtLeast('26.0')('Stack Header Item Identifier (iOS)', () => {
@@ -178,7 +172,11 @@ describeIfIOSAtLeast('26.0')('Stack Header Item Identifier (iOS)', () => {
     });
   });
 
-  describeIfIOS26Only('separators enabled', () => {
+  // On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
+  // that `by.type` resolves only by its unstable mangled name, and the iOS 26
+  // class `_UINavigationBarPlatterView` no longer exists, so per-item platters
+  // are checked on iOS 26 only (see scenario.md, "E2E test").
+  describeIfIOSVersion('26')('separators enabled', () => {
     beforeAll(async () => {
       await device.reloadReactNative();
       await selectSingleFeatureTestsScreen(
