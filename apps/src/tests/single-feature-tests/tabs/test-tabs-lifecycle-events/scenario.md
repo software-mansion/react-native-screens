@@ -15,11 +15,14 @@ differs, so it is not verified — see **Note**.
 Incomplete: The E2E test covers steps 1–4 on both iPhone and
 Android, verifying baseline appearance events and all three tab-switch
 transitions. On both platforms toasts are matched by message only, so the
-event set is asserted without the interleaving. The re-tap (step 5) is covered
+automated run asserts just the event set. The re-tap (step 5) is covered
 only for Android as for iOS 26+ Detox is not able to re-tap a tab bar item.
 
 Not automated:
 
+- Event order, in every step — neither the interleaving between tabs nor each
+  tab's own `onWill*` → `onDid*` order. Matching by message ignores the `<n>.`
+  prefix, so every "before" check in the steps below is a manual one.
 - Rapid switching (step 6) — cannot be reliably triggered through Detox's
   synchronous interaction model.
 - Full 12-toast sequence (step 7) — too fragile due to shifting toast indices
