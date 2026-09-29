@@ -5,7 +5,15 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+require_relative '../../scripts/ios/rns_update_info_plist'
 require_relative '../../scripts/ios/rns_set_swift_compilation_flags'
+
+# Apple deprecated the UIApplicationDelegate app lifecycle in iOS 26 / tvOS 26, so the
+# UIScene lifecycle is the default here. Set RNS_USE_SCENE_DELEGATE=0 to build the legacy
+# AppDelegate path (useful for reproducing issues from apps that have not adopted scenes).
+def rns_scene_delegate_enabled?
+  !%w[0 false].include?(ENV['RNS_USE_SCENE_DELEGATE'].to_s.strip.downcase)
+end
 
 platform :tvos, min_ios_version_supported
 prepare_react_native_project!
@@ -32,5 +40,28 @@ target 'TVOSExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    project_path = File.join(__dir__, 'TVOSExample.xcodeproj')
+    info_plist_path = File.join(__dir__, 'TVOSExample', 'Info.plist')
+
+    if rns_scene_delegate_enabled?
+      # tvOS only ever has a single window scene, unlike iPadOS.
+      rns_add_scene_manifest_to_info_plist(
+        info_plist_path: info_plist_path,
+        supports_multiple_scenes: false
+      )
+      rns_set_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: 'RNS_USE_SCENE_DELEGATE'
+      )
+    else
+      rns_remove_scene_manifest_from_info_plist(
+        info_plist_path: info_plist_path
+      )
+      rns_unset_swift_active_compilation_flag(
+        project_path: project_path,
+        flag: 'RNS_USE_SCENE_DELEGATE'
+      )
+    end
   end
 end
