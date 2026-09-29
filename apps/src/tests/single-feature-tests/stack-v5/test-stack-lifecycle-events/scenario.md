@@ -10,8 +10,8 @@ push and pop checks are then repeated **inside a nested stack** and **across
 the nested-stack boundary** (popping the whole container back to the outer
 stack), exercising every dismissal method available at each level. The
 interleaving of the participating screens' events is not verified on either
-platform — only the event set and each screen's own `onWill*` → `onDid*`
-order (see **Note**).
+platform — only the event set (automated) and each screen's own
+`onWill*` → `onDid*` order (manual only; see **Note**).
 
 **OS test creation version:** iOS: 18.6 and 26.2, Android: API Level 36.
 
@@ -27,6 +27,11 @@ Incomplete.
 
 - Android: Steps 3, 4, 8, 9, 11, 12, and 14 (the native header back button, the
   edge-swipe / system gesture-back, and the outer-back boundary case).
+- Event order, on both platforms and in every step. The automated run matches
+  toasts by message and ignores the `<n>.` prefix, so it asserts only that the
+  expected set fired — neither the interleaving between screens nor each
+  screen's own `onWill*` → `onDid*` order. Every "before" check in the steps
+  below is a manual one.
   
 ## Prerequisites
 
