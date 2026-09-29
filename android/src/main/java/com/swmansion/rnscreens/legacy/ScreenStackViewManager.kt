@@ -77,6 +77,12 @@ class ScreenStackViewManager :
         value: Int?,
     ) = Unit
 
+    // tvOS-only: UIKit Menu back gesture handling lives on iOS/tvOS.
+    override fun setDisableDefaultMenuAction(
+        view: ScreenStack,
+        value: Boolean,
+    ) = Unit
+
     companion object {
         const val REACT_CLASS = "RNSScreenStack"
     }

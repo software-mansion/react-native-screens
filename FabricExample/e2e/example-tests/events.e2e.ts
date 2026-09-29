@@ -1,8 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import {
-  CLASS_NAME_UI_BUTTON_BAR_BUTTON,
-  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
-} from '../native-class-names';
+import { CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON } from '@e2e/framework/native-classes-android';
+import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
 
 const pressBack = async () => {
   if (device.getPlatform() === 'android') {

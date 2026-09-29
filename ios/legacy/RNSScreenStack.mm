@@ -24,6 +24,10 @@
 #import "UIView+RNSUtility.h"
 #import "integrations/RNSDismissibleModalProtocol.h"
 
+#if TARGET_OS_TV
+#import <React/RCTTVRemoteHandler.h>
+#endif // TARGET_OS_TV
+
 namespace react = facebook::react;
 
 @interface RNSScreenStackView () <UINavigationControllerDelegate,
@@ -35,6 +39,11 @@ namespace react = facebook::react;
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
 @property (nonatomic) BOOL scheduleModalsUpdate;
+
+#if TARGET_OS_TV
+@property (nonatomic, assign) BOOL disableDefaultMenuAction;
+@property (nonatomic, assign) BOOL observingTVMenuKeyNotifications;
+#endif // TARGET_OS_TV
 
 @end
 
@@ -283,7 +292,80 @@ RNS_IGNORE_SUPER_CALL_END
   [super didMoveToWindow];
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
+#if TARGET_OS_TV
+  if (self.window != nil) {
+    [self registerForTVMenuKeyNotificationsIfNeeded];
+    [self syncTVMenuKeyHandling];
+  } else {
+    [self unregisterForTVMenuKeyNotificationsIfNeeded];
+  }
+#endif // TARGET_OS_TV
 }
+
+#if TARGET_OS_TV
+
+- (void)registerForTVMenuKeyNotificationsIfNeeded
+{
+  if (_observingTVMenuKeyNotifications) {
+    return;
+  }
+  _observingTVMenuKeyNotifications = YES;
+  NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+  [center addObserver:self
+             selector:@selector(handleTVMenuKeyNotification:)
+                 name:RCTTVEnableMenuKeyNotification
+               object:nil];
+  [center addObserver:self
+             selector:@selector(handleTVMenuKeyNotification:)
+                 name:RCTTVDisableMenuKeyNotification
+               object:nil];
+}
+
+- (void)unregisterForTVMenuKeyNotificationsIfNeeded
+{
+  if (!_observingTVMenuKeyNotifications) {
+    return;
+  }
+  _observingTVMenuKeyNotifications = NO;
+  NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+  [center removeObserver:self name:RCTTVEnableMenuKeyNotification object:nil];
+  [center removeObserver:self name:RCTTVDisableMenuKeyNotification object:nil];
+}
+
+- (void)handleTVMenuKeyNotification:(NSNotification *)notification
+{
+  [self syncTVMenuKeyHandling];
+}
+
+- (BOOL)shouldDisableUIKitMenuBackGesture
+{
+  return _disableDefaultMenuAction && [RCTTVRemoteHandler useMenuKey];
+}
+
+- (nullable UITapGestureRecognizer *)uiKitMenuBackGestureRecognizer
+{
+  for (UIGestureRecognizer *recognizer in _controller.view.gestureRecognizers) {
+    if (![recognizer isKindOfClass:UITapGestureRecognizer.class]) {
+      continue;
+    }
+    UITapGestureRecognizer *tapRecognizer = (UITapGestureRecognizer *)recognizer;
+    if ([tapRecognizer.allowedPressTypes containsObject:@(UIPressTypeMenu)]) {
+      return tapRecognizer;
+    }
+  }
+  return nil;
+}
+
+- (void)syncTVMenuKeyHandling
+{
+  UITapGestureRecognizer *menuBackGesture = [self uiKitMenuBackGestureRecognizer];
+  if (menuBackGesture == nil) {
+    return;
+  }
+  menuBackGesture.enabled = ![self shouldDisableUIKitMenuBackGesture];
+}
+
+#endif // TARGET_OS_TV
 
 - (void)maybeAddToParentAndUpdateContainer
 {
@@ -997,6 +1079,15 @@ RNS_IGNORE_SUPER_CALL_END
 }
 #endif
 
+#if TARGET_OS_TV
+- (void)navigationController:(UINavigationController *)navigationController
+       didShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated
+{
+  [self syncTVMenuKeyHandling];
+}
+#endif // TARGET_OS_TV
+
 - (void)markChildUpdated
 {
   // In native stack this should be called only for `preload` purposes.
@@ -1279,6 +1370,13 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.view.backgroundColor = _nativeContainerBackgroundColor;
   }
 
+#if TARGET_OS_TV
+  if (newScreenProps.disableDefaultMenuAction != oldScreenProps.disableDefaultMenuAction) {
+    _disableDefaultMenuAction = newScreenProps.disableDefaultMenuAction;
+    [self syncTVMenuKeyHandling];
+  }
+#endif // TARGET_OS_TV
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -1375,6 +1473,9 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)prepareForRecycle
 {
   [super prepareForRecycle];
+#if TARGET_OS_TV
+  [self unregisterForTVMenuKeyNotificationsIfNeeded];
+#endif // TARGET_OS_TV
   _reactSubviews = [NSMutableArray new];
 
   for (UIViewController *controller in _presentedModals) {

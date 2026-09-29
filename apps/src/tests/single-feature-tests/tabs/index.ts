@@ -9,6 +9,8 @@ import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defin
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
 import TestTabsTabBarHidden from './test-tabs-tab-bar-hidden';
+import TestTabsTabBarHiddenPressableInteraction from './test-tabs-tab-bar-hidden-pressable-interaction';
+import TestTabsTabBarInitiallyHidden from './test-tabs-tab-bar-initially-hidden';
 import TestTabsTabBarLayoutDirection from './test-tabs-tab-bar-layout-direction';
 import TestTabsIMEInsets from './test-tabs-ime-insets-android';
 import TestTabsSpecialEffectsScrollToTop from './test-tabs-special-effects-scroll-to-top';
@@ -24,11 +26,11 @@ import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
+import TestTabsTabBarSidebarPreferredPlacement from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
-
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
@@ -38,6 +40,8 @@ export { default as TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-a
 export { default as TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
 export { default as TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
 export { default as TestTabsTabBarHidden } from './test-tabs-tab-bar-hidden';
+export { default as TestTabsTabBarHiddenPressableInteraction } from './test-tabs-tab-bar-hidden-pressable-interaction';
+export { default as TestTabsTabBarInitiallyHidden } from './test-tabs-tab-bar-initially-hidden';
 export { default as TestTabsTabBarLayoutDirection } from './test-tabs-tab-bar-layout-direction';
 export { default as TestTabsIMEInsets } from './test-tabs-ime-insets-android';
 export { default as TestTabsSpecialEffectsScrollToTop } from './test-tabs-special-effects-scroll-to-top';
@@ -53,6 +57,7 @@ export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
 export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
 export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
 export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
+export { default as TestTabsTabBarSidebarPreferredPlacement } from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-accessory-layout-ios';
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
@@ -66,6 +71,8 @@ const scenarios = {
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
   TestTabsTabBarHidden,
+  TestTabsTabBarHiddenPressableInteraction,
+  TestTabsTabBarInitiallyHidden,
   TestTabsTabBarLayoutDirection,
   TestTabsIMEInsets,
   TestTabsSpecialEffectsScrollToTop,
@@ -81,6 +88,7 @@ const scenarios = {
   TestTabsMoreNavigationController,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
+  TestTabsTabBarSidebarPreferredPlacement,
   TestTabsBottomAccessoryLayout,
   TestTabsBottomAccessoryVisibility,
   TestTabsScreenOrientation,

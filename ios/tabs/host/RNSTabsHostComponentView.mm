@@ -250,7 +250,9 @@ namespace react = facebook::react;
     _tabBarHidden = newComponentProps.tabBarHidden;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     if (@available(iOS 18.0, *)) {
-      [_controller setTabBarHidden:_tabBarHidden animated:_tabBarHiddenAnimationEnabled];
+      // Do not animate during the first render / when it's detached from the UI.
+      const BOOL shouldAnimate = [[_controller tabBar] window] != nil && _tabBarHiddenAnimationEnabled;
+      [_controller setTabBarHidden:_tabBarHidden animated:shouldAnimate];
     } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
     {
@@ -301,6 +303,20 @@ namespace react = facebook::react;
 #endif // Check for iOS >= 18
       if (newComponentProps.tabBarControllerMode != react::RNSTabsHostIOSTabBarControllerMode::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarControllerMode is supported for iOS >= 18");
+      }
+  }
+
+  if (newComponentProps.tabBarSidebarPreferredPlacement != oldComponentProps.tabBarSidebarPreferredPlacement) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _controller.sidebar.preferredPlacement =
+          rnscreens::conversion::UITabBarControllerSidebarPlacementFromRNSTabsHostTabBarSidebarPreferredPlacement(
+              newComponentProps.tabBarSidebarPreferredPlacement);
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_TV
+      if (newComponentProps.tabBarSidebarPreferredPlacement !=
+          react::RNSTabsHostIOSTabBarSidebarPreferredPlacement::Automatic) {
+        RCTLogWarn(@"[RNScreens] tabBarSidebarPreferredPlacement is supported for iOS >= 27");
       }
   }
 
