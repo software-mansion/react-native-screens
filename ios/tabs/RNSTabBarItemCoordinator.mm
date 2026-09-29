@@ -117,6 +117,12 @@
   if (![tabScreenCtrl.tabBarItem.title isEqualToString:newTitle] || ![tabScreenCtrl.title isEqualToString:newTitle]) {
     tabScreenCtrl.title = newTitle;
     tabScreenCtrl.tabBarItem.title = newTitle;
+#if RNS_UITAB_API_SDK_AVAILABLE
+    if (RNS_UITAB_API_ENABLED) {
+      // iPad sources the rendered title from the tab, not the item.
+      tabScreenCtrl.tab.title = newTitle;
+    }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
   }
 }
 
