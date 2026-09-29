@@ -21,10 +21,10 @@ TBD.
 
 1. Navigate to **Stack v5 → Stack SafeAreaView (iOS)**.
 
-   - [ ] The header "Safe Area View" is visible.
-   - [ ] At the top, the red rectangle starts right below the header and is
-         not covered by it.
-   - [ ] At the top, the red and green rectangles are the same size.
-   - [ ] At the bottom, the magenta rectangle ends right above the home
-         indicator.
-   - [ ] At the bottom, the blue and magenta rectangles are the same size.
+    - [ ] The header "Safe Area View" is visible.
+    - [ ] At the top, the red rectangle starts right below the header and is
+          not covered by it.
+    - [ ] At the top, the red and green rectangles are the same size.
+    - [ ] At the bottom, the magenta rectangle ends right above the home
+          indicator.
+    - [ ] At the bottom, the blue and magenta rectangles are the same size.
