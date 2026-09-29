@@ -99,8 +99,22 @@ UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationB
   }
 }
 
-#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+UIBarMinimizationSafeAreaAdjustment
+UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjustment(
+    react::RNSStackHeaderConfigIOSSafeAreaAdjustment safeAreaAdjustment)
+{
+  switch (safeAreaAdjustment) {
+    case react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Automatic:
+      return UIBarMinimizationSafeAreaAdjustmentAutomatic;
+    case react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Enabled:
+      return UIBarMinimizationSafeAreaAdjustmentEnabled;
+    case react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Disabled:
+      return UIBarMinimizationSafeAreaAdjustmentDisabled;
+  }
+}
 
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+  
 RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
 {
