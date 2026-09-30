@@ -208,6 +208,24 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)setNeedsLayoutForHeaderSubviewsInNavigationBar:(nonnull UINavigationBar *)navigationBar
+{
+  // During the bar minimization (iOS 27+) UIKit moves the content view of the navigation bar above the bar, on each
+  // frame of the scroll. The header subviews are not visible then, therefore we do not follow their position, to
+  // avoid state update on each frame. When the bar is restored, its content view is back at the origin of the bar.
+  if (CGRectGetMinY(navigationBar.rnscreens_findContentView.frame) < 0) {
+    return;
+  }
+
+  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+    if (subview.window != nil) {
+      [subview setNeedsLayout];
+    }
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
   NSDirectionalEdgeInsets navBarMargins = [navigationBar directionalLayoutMargins];
