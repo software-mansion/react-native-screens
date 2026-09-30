@@ -12,8 +12,8 @@ import { Colors } from '@apps/shared/styling';
 
 // "App area" wrappers, one per tab: start below the status bar and (on Android)
 // end above the system navigation bar, keeping the tab bar in frame. Argent
-// flows crop their snapshots on them — see
-// .argent/skills/argent-flow-snapshot-crop/SKILL.md.
+// flows crop their snapshots on them, so the status bar and the Android
+// navigation bar stay out of the images.
 const LONG_TITLE_APP_AREA_TEST_ID = 'test-tabs-item-title-long-title-area';
 const COLOR_APP_AREA_TEST_ID = 'test-tabs-item-title-color-area';
 const FONT_APP_AREA_TEST_ID = 'test-tabs-item-title-font-area';

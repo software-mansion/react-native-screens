@@ -34,7 +34,8 @@ internal class StackContainer(
     FragmentManager.OnBackStackChangedListener,
     ColorSchemeProviding,
     StackHeaderBackPressHandler,
-    StackScreenFragmentDelegate {
+    StackScreenFragmentDelegate,
+    StackUpdateBatchStateProviding {
     private var fragmentManager: FragmentManager? = null
 
     private fun requireFragmentManager(): FragmentManager =
@@ -129,16 +130,41 @@ internal class StackContainer(
             }
     }
 
+    // region Update batch
+
+    override var isUpdatePending: Boolean = false
+        private set
+
     /**
-     * Call this function to trigger container update
+     * Announces that more updates are coming. Header updates raised until [endUpdateBatch]
+     * are held and applied together with the navigation operations of the batch.
+     */
+    internal fun beginUpdateBatch() {
+        isUpdatePending = true
+    }
+
+    internal fun endUpdateBatch() {
+        isUpdatePending = false
+        performContainerUpdateIfNeeded()
+    }
+
+    // endregion
+
+    /**
+     * Applies pending navigation operations and then pending header updates of the screens
+     * remaining in the stack.
      */
     internal fun performContainerUpdateIfNeeded() {
         // If container update is requested before container is attached to window, we ignore
         // the call because we don't have valid fragmentManager yet.
         // Update will be eventually executed in onAttachedToWindow().
-        if (hasPendingOperations && isAttachedToWindow) {
+        if (!isAttachedToWindow) {
+            return
+        }
+        if (hasPendingOperations) {
             performOperations(requireFragmentManager())
         }
+        stackModel.forEach { it.flushPendingHeaderUpdates() }
     }
 
     internal fun enqueuePushOperation(stackScreen: StackScreen) {
@@ -209,6 +235,7 @@ internal class StackContainer(
                     newFragment,
                     containerViewId = this.id,
                     addToBackStack = stackModel.isNotEmpty(),
+                    coveredFragment = stackModel.lastOrNull(),
                 ),
             )
             stackModel.add(newFragment)
@@ -248,21 +275,21 @@ internal class StackContainer(
             canNavigateBack,
             WeakReference(this),
             backPressHandler = WeakReference(this),
+            updateBatchStateProvider = WeakReference(this),
         ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
     private fun updateTopFragment() {
-        // We try to handle situation where other fragments might be present.
-        val fragmentManager = requireFragmentManager()
-        val fragments = fragmentManager.fragments.filterIsInstance<StackScreenFragment>()
-        check(fragments.isNotEmpty()) { "[RNScreens] Empty fragment manager while attempting to update top fragment" }
-        fragments.forEach { it.onResignTopFragment() }
-        fragments.last().onBecomeTopFragment()
+        // Covered fragments are detached, so FragmentManager's added list holds only the top
+        // fragment - the model is the only place all of them can be resigned from.
+        check(stackModel.isNotEmpty()) { "[RNScreens] Empty stack model while attempting to update top fragment" }
+        stackModel.forEach { it.onResignTopFragment() }
+        stackModel.last().onBecomeTopFragment()
 
         // This assumes that the updateTopFragment is called already after primary nav frag. is updated.
         // If this needs to be changed in the future, just remove this assertion.
-        check(fragmentManager.primaryNavigationFragment === fragments.last()) {
+        check(requireFragmentManager().primaryNavigationFragment === stackModel.last()) {
             "[RNScreens] Top fragment different from primary navigation fragment"
         }
     }
