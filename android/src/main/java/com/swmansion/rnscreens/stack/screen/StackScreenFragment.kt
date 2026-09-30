@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
+import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
 import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
@@ -20,6 +21,7 @@ internal class StackScreenFragment(
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
+    private val colorSchemeProvider: WeakReference<ColorSchemeProviding>,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -68,6 +70,7 @@ internal class StackScreenFragment(
             stackScreen,
             canNavigateBack,
             updateBatchStateProvider,
+            colorSchemeProvider,
         ) { pressedScreen ->
             backPressHandler.get()?.handleHeaderBackButtonPress(pressedScreen)
                 ?: Log.w(TAG, "[RNScreens] Header back button press dropped - handler is gone")

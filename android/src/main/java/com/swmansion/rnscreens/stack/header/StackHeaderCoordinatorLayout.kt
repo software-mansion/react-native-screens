@@ -36,6 +36,7 @@ internal class StackHeaderCoordinatorLayout(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
+    parentColorSchemeProvider: WeakReference<ColorSchemeProviding>,
     private val backPressHandler: StackHeaderBackPressHandler,
 ) : CoordinatorLayout(context),
     ColorSchemeProviding {
@@ -280,7 +281,11 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Color scheme
 
-    private val colorSchemeCoordinator = ColorSchemeCoordinator()
+    // As the fragment's root view, this layout gets reparented into the container's
+    // ViewGroupOverlay for exit transitions, where a parent walk finds no provider -
+    // hence the ownership-injected one.
+    private val colorSchemeCoordinator =
+        ColorSchemeCoordinator().apply { explicitParentProvider = parentColorSchemeProvider }
 
     // Night mode the header visuals were last applied against. Unlike the coordinator's
     // internal dedupe (reset on every setup()), this survives detach/reattach, skipping
