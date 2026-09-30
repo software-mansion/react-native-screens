@@ -3,7 +3,7 @@
 #import "RNSFormSheetPresentationState.h"
 #import "RNSPresentationSourceProvider.h"
 
-#import <React/RCTLog.h>
+#import "RNSLog.h"
 
 @implementation RNSFormSheetPresentationManager {
   RNSFormSheetPresentationState _state;
@@ -44,7 +44,7 @@
   UIViewController *presentationSourceViewController =
       [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
   if (presentationSourceViewController == nil) {
-    RCTLogError(
+    RNSLogError(
         @"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
     return;
   }

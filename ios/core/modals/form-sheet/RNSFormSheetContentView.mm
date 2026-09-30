@@ -7,20 +7,20 @@
   if (self = [super initWithFrame:frame]) {
     // Explicitly set to clearColor since this UIView is manually added
     // into the view hierarchy. This ensures it doesn't interfere with
-    // any background colors defined by child React subviews.
+    // any background colors defined by the content subviews.
     self.backgroundColor = [UIColor clearColor];
   }
   return self;
 }
 
-#pragma mark - RN Subviews Management
+#pragma mark - Content subviews
 
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
+- (void)insertContentSubview:(UIView *)subview atIndex:(NSInteger)index
 {
   [self insertSubview:subview atIndex:index];
 }
 
-- (void)removeReactSubview:(UIView *)subview
+- (void)removeContentSubview:(UIView *)subview
 {
   [subview removeFromSuperview];
 }
