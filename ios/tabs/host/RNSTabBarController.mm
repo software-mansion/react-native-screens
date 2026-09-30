@@ -96,10 +96,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// `didSelectTab:` - which fires also for programmatic selection and this flag allows for filtering the latter.
   BOOL _isHandlingUserTabSelection;
 
-  /// UITab path only. Set in `tabBar:didSelectItem:` when a More selection lands on a stack that
-  /// retains a hosted screen - the display outcome is version-dependent (iOS 26.x re-displays the
-  /// hosted screen, iOS 27 pops to the More list), so the `onMoreTabSelected` emit decision is
-  /// deferred to `willShowViewController:`, which reports what actually shows.
+  /// UITab path only. Set in `tabBar:didSelectItem:` when the user selects the More tab while
+  /// another tab is active. Tapping More does not necessarily show the More list - the stack may
+  /// re-display a hosted screen retained from a previous visit - so the decision between emitting
+  /// `onMoreTabSelected` and progressing state to the re-displayed screen is deferred to
+  /// `willShowViewController:`, which reports what actually shows.
   BOOL _pendingMoreTabSelectedEmit;
 
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
