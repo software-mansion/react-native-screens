@@ -36,13 +36,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      build-uploaded: ${{ steps.upload-build.outcome == 'success' }}
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
       AVD_PROFILE: pixel_7
     concurrency:
-      group: android-e2e-fabric-${{ github.ref }}
+      # Manual runs get their own group, so dispatching twice does not cancel
+      # the first run.
+      group: android-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -95,6 +99,7 @@ jobs:
       # Hands the release build to the `argent` job (jobs run on separate
       # machines). Internal only — nothing to download from the run page.
       - name: Upload APK for Argent
+        id: upload-build
         uses: actions/upload-artifact@v4
         with:
           name: build-android-apk
@@ -158,9 +163,11 @@ jobs:
   argent:
     # Separate job so the Argent flows get their own time budget and a fresh
     # emulator, whatever state the Detox run left behind. Runs even when Detox
-    # failed, as long as the APK artifact was uploaded.
+    # failed.
     needs: test
-    if: ${{ !cancelled() }}
+    # Runs when the build was uploaded, whether Detox then passed or failed;
+    # skipped when the test job was cancelled or failed before the upload.
+    if: ${{ !cancelled() && needs.test.outputs.build-uploaded == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -171,7 +178,9 @@ jobs:
       # backend looks for it. The variable is unset on runners, so pin it.
       XDG_RUNTIME_DIR: /tmp/xdg-runtime
     concurrency:
-      group: android-argent-fabric-${{ github.ref }}
+      # Manual runs get their own group, so dispatching twice does not cancel
+      # the first run.
+      group: android-argent-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
       cancel-in-progress: true
     steps:
       - name: Checkout

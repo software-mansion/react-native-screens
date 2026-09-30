@@ -26,11 +26,15 @@ on:
 jobs:
   test:
     runs-on: macos-26-xlarge
+    outputs:
+      build-uploaded: ${{ steps.upload-build.outcome == 'success' }}
     timeout-minutes: 90
     env:
       WORKING_DIRECTORY: FabricExample
     concurrency:
-      group: ios-e2e-fabric-${{ github.ref }}
+      # Manual runs get their own group, so dispatching twice does not cancel
+      # the first run.
+      group: ios-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
       cancel-in-progress: true
     steps:
       - name: checkout
@@ -73,6 +77,7 @@ jobs:
           tar -czf "$RUNNER_TEMP/FabricExample-app.tar.gz" \
             -C "$WORKING_DIRECTORY/ios/build/Build/Products/Release-iphonesimulator" FabricExample.app
       - name: Upload app for Argent
+        id: upload-build
         uses: actions/upload-artifact@v4
         with:
           name: build-ios-app
@@ -91,13 +96,17 @@ jobs:
   argent:
     # Separate job so the Argent flows get their own time budget and a fresh
     # simulator, whatever state the Detox run left behind. Runs even when Detox
-    # failed, as long as the app artifact was uploaded.
+    # failed.
     needs: test
-    if: ${{ !cancelled() }}
+    # Runs when the build was uploaded, whether Detox then passed or failed;
+    # skipped when the test job was cancelled or failed before the upload.
+    if: ${{ !cancelled() && needs.test.outputs.build-uploaded == 'true' }}
     runs-on: macos-26-xlarge
     timeout-minutes: 30
     concurrency:
-      group: ios-argent-fabric-${{ github.ref }}
+      # Manual runs get their own group, so dispatching twice does not cancel
+      # the first run.
+      group: ios-argent-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
       cancel-in-progress: true
     steps:
       - name: checkout
