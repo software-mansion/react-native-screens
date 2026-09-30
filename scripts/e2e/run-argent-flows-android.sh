@@ -30,14 +30,8 @@ adb -s "$SERIAL" shell settings put global animator_duration_scale 0.0
 # lives as long as this script.
 OUT="${RUNNER_TEMP:-/tmp}/argent-out"
 mkdir -p "$OUT"
-# ARGENT_UPDATE_BASELINES=true (workflow_dispatch input) writes the baselines
-# under .argent/flows/__baselines__ instead of comparing against them.
-EXTRA=()
-if [ "${ARGENT_UPDATE_BASELINES:-false}" = true ]; then
-  EXTRA+=(--update-baselines)
-fi
 set +e
-argent flow run ./.argent/flows --device "$SERIAL" "${EXTRA[@]}" \
+argent flow run ./.argent/flows --device "$SERIAL" \
   --output "$OUT/snapshots" 2>&1 | tee "$OUT/argent-flows.log"
 RC=${PIPESTATUS[0]}
 set -e
