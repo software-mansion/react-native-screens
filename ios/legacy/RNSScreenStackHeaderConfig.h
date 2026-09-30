@@ -59,6 +59,17 @@ NS_ASSUME_NONNULL_END
                     withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
 
 /**
+ * Returns `YES` when screens in the legacy stack are always laid out under the navigation bar
+ * (`edgesForExtendedLayout = UIRectEdgeAll`), also when the header is opaque. In that case the content is inset below
+ * an opaque bar by the `SafeAreaView` rendered by `ScreenStackItem` (JS) and the screen's origin in the navigation
+ * controller's view is always 0. Otherwise (iOS < 26, tvOS, visionOS) a screen with a visible, opaque header is laid
+ * out below the bar (`UIRectEdgeAll - UIRectEdgeTop`).
+ *
+ * Keep in sync with `getSafeAreaEdges` in `src/legacy/components/ScreenStackItem.tsx`.
+ */
++ (BOOL)screensExtendUnderOpaqueNavigationBar;
+
+/**
  * Returns true iff subview of given `type` is present.
  *
  *  **Please note that the subviews are not mounted under the header config in HostTree**
