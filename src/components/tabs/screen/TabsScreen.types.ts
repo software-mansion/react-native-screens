@@ -38,6 +38,22 @@ export interface TabsScreenPropsBase {
    * @platform android, ios
    */
   preventNativeSelection?: boolean | undefined;
+  /**
+   * @summary Defers the first native tab transition until JavaScript acknowledges the navigation state update.
+   *
+   * When a screen is rendered lazily, i.e. on first visit,
+   * it can be blank for a short moment as the JS state lags behind native transition.
+   * This is especially visible when the screen is heavy and takes time to render,
+   * or when the JS thread is busy.
+   *
+   * When this is set to `true`, the native transition waits for JS to acknowledge
+   * the state update before completing the transition for the first visit.
+   *
+   * @default false
+   *
+   * @platform ios
+   */
+  deferTransitionUntilFirstStateUpdate?: boolean | undefined;
 
   // General
   children?: ViewProps['children'] | undefined;
