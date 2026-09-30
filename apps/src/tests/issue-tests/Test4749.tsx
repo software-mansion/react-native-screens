@@ -17,6 +17,7 @@ import { Colors } from '@apps/shared/styling';
 // lands before that first layout. When this test is the app's root, the
 // SafeAreaView's state update from the UI thread makes it land there too.
 
+/** The selected tab. Changes its own icon in an effect right after mount. */
 function HomeTab() {
   const { routeKey, setRouteOptions } = useTabsNavigationContext();
 
@@ -33,6 +34,7 @@ function HomeTab() {
   );
 }
 
+/** Empty screen for the tabs whose titles get truncated. */
 function OtherTab() {
   return <View style={styles.screen} />;
 }
@@ -73,6 +75,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
 ];
 
+/** Four tabs with SF Symbol icons, Home selected. */
 export default function App() {
   return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
 }
