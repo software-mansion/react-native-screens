@@ -1,6 +1,6 @@
 #import "RNSStackHeaderConfigComponentView.h"
-#import "RNSConversions.h"
 #import "RNSConversions-Stack.h"
+#import "RNSConversions.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
@@ -21,19 +21,20 @@
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <react/utils/ManagedObjectWrapper.h>
 #import <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
+#import <react/utils/ManagedObjectWrapper.h>
 
 namespace react = facebook::react;
 
 static void RNSAssertIsValidHeaderChild(UIView *child)
 {
-  RCTAssert([child isKindOfClass:RNSStackHeaderItemComponentView.class] ||
-                [child isKindOfClass:RNSStackHeaderItemSpacerComponentView.class],
-            @"[RNScreens] Unexpected child of type: %@, expected %@ or %@",
-            child.class,
-            RNSStackHeaderItemComponentView.class,
-            RNSStackHeaderItemSpacerComponentView.class);
+  RCTAssert(
+      [child isKindOfClass:RNSStackHeaderItemComponentView.class] ||
+          [child isKindOfClass:RNSStackHeaderItemSpacerComponentView.class],
+      @"[RNScreens] Unexpected child of type: %@, expected %@ or %@",
+      child.class,
+      RNSStackHeaderItemComponentView.class,
+      RNSStackHeaderItemSpacerComponentView.class);
 }
 
 @interface RNSStackHeaderConfigComponentView () <RCTRNSStackHeaderConfigIOSViewProtocol>
@@ -300,8 +301,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   switch (locator.position) {
     case RNSMenuElementPositionItem:
-      RCTAssert([locator.headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
-                @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
+      RCTAssert(
+          [locator.headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
+          @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
       [static_cast<RNSStackHeaderItemComponentView *>(locator.headerItem)
           updateMenuElementWithId:menuItemId
                       withElement:newItemData
@@ -346,8 +348,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   switch (locator.position) {
     case RNSMenuElementPositionItem:
-      RCTAssert([locator.headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
-                @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
+      RCTAssert(
+          [locator.headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
+          @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
       [static_cast<RNSStackHeaderItemComponentView *>(locator.headerItem)
           updateMenuElementWithId:menuElementId
                       withElement:newMenuItem
@@ -448,8 +451,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   if (oldHeaderProps.backButtonDisplayMode != newHeaderProps.backButtonDisplayMode) {
-    _backButtonDisplayMode =
-        rnscreens::conversion::UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+    _backButtonDisplayMode = rnscreens::conversion::
+        UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
             newHeaderProps.backButtonDisplayMode);
   }
 
@@ -519,21 +522,24 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (self.superview == nil) {
     return nil;
   }
-  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
-            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
+  RCTAssert(
+      [self.superview isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
   RNSStackScreenComponentView *screen = (RNSStackScreenComponentView *)self.superview;
   return screen.controller.headerCoordinator;
 }
 
 - (RNSStackNavigationController *)requireNavigationController
 {
-  RCTAssert([self.superview isKindOfClass:RNSStackScreenComponentView.class],
-            @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
+  RCTAssert(
+      [self.superview isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Header Config should be a direct child of RNSStackScreenComponentView");
   RNSStackScreenController *screenController = static_cast<RNSStackScreenComponentView *>(self.superview).controller;
   UINavigationController *navController = screenController.navigationController;
   RCTAssert(navController != nil, @"[RNScreens] NavigationController should be initialized at this point");
-  RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
-            @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
+  RCTAssert(
+      [navController isKindOfClass:RNSStackNavigationController.class],
+      @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
   return (RNSStackNavigationController *)navController;
 }
 

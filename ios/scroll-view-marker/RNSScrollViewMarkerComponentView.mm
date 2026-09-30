@@ -62,9 +62,10 @@ namespace react = facebook::react;
 - (nullable UIScrollView *)findScrollView
 {
   // It allows 0 for cases where the child is unmounted
-  RCTAssert(self.subviews.count <= 1,
-            @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
-            self.subviews);
+  RCTAssert(
+      self.subviews.count <= 1,
+      @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
+      self.subviews);
 
   UIScrollView *_Nullable foundScrollView = [self resolveScrollViewFromChildView:self.subviews.firstObject];
 
@@ -230,9 +231,10 @@ namespace react = facebook::react;
   }
 
   // It allows 0 for cases where the child is unmounted
-  RCTAssert(self.subviews.count <= 1,
-            @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
-            self.subviews);
+  RCTAssert(
+      self.subviews.count <= 1,
+      @"[RNScreens] ScrollViewMarker expects at most a single child. Subviews: %@",
+      self.subviews);
 
   [super finalizeUpdates:updateMask];
 }

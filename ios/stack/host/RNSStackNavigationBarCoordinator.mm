@@ -14,8 +14,9 @@
 #if !TARGET_OS_TV
 - (void)setBackButtonMenuEnabled:(BOOL)enabled forNavigationController:(UINavigationController *)navigationController
 {
-  RCTAssert([navigationController.navigationBar isKindOfClass:RNSStackNavigationBar.class],
-            @"An instance of RNSStackNavigationBar is expected for navigation bar implementation");
+  RCTAssert(
+      [navigationController.navigationBar isKindOfClass:RNSStackNavigationBar.class],
+      @"An instance of RNSStackNavigationBar is expected for navigation bar implementation");
   static_cast<RNSStackNavigationBar *>(navigationController.navigationBar).backButtonMenuEnabled = enabled;
 }
 #endif // !TARGET_OS_TV

@@ -23,9 +23,8 @@ static NSString *_Nullable RNSResolveStringFromDict(NSDictionary *dict, NSString
   return fallback;
 }
 
-static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *dict,
-                                                                NSString *key,
-                                                                RNSStackHeaderIconData *_Nullable fallback)
+static RNSStackHeaderIconData
+    *_Nullable RNSResolveIconFromDict(NSDictionary *dict, NSString *key, RNSStackHeaderIconData *_Nullable fallback)
 {
   id value = dict[key];
   if (value == nil) {

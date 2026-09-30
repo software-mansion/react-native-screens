@@ -415,8 +415,9 @@
     return nil;
   }
 
-  RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
-            @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
+  RCTAssert(
+      [navController isKindOfClass:RNSStackNavigationController.class],
+      @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
   return (RNSStackNavigationController *)navController;
 }
 

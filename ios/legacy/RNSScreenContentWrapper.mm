@@ -116,8 +116,8 @@ namespace react = facebook::react;
   // Directly search subviews
   for (UIView *subview in self.subviews) {
     if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
-      return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RCTScrollViewComponentView *>(subview),
-                                         .contentContainerView = self};
+      return (RNSScrollViewSearchResult){
+          .scrollViewComponent = static_cast<RCTScrollViewComponentView *>(subview), .contentContainerView = self};
     }
   }
 
@@ -128,8 +128,9 @@ namespace react = facebook::react;
     if ([maybeSafeAreaView isKindOfClass:RNSSafeAreaViewComponentView.class]) {
       for (UIView *subview in maybeSafeAreaView.subviews) {
         if ([subview isKindOfClass:RCTScrollViewComponentView.class]) {
-          return (RNSScrollViewSearchResult){.scrollViewComponent = static_cast<RCTScrollViewComponentView *>(subview),
-                                             .contentContainerView = maybeSafeAreaView};
+          return (RNSScrollViewSearchResult){
+              .scrollViewComponent = static_cast<RCTScrollViewComponentView *>(subview),
+              .contentContainerView = maybeSafeAreaView};
         }
       }
     }

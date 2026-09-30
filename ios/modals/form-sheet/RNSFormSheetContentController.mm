@@ -9,13 +9,14 @@
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
 
-@interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
-                                             UIGestureRecognizerDelegate
+@interface RNSFormSheetContentController () <
+    UIAdaptivePresentationControllerDelegate,
+    UIGestureRecognizerDelegate
 #if !TARGET_OS_TV
-                                             ,
-                                             UISheetPresentationControllerDelegate
+    ,
+    UISheetPresentationControllerDelegate
 #endif // !TARGET_OS_TV
-                                             >
+    >
 @end
 
 @implementation RNSFormSheetContentController {
@@ -38,8 +39,9 @@
 
 - (RNSFormSheetContentView *)contentView
 {
-  RCTAssert([self.view isKindOfClass:[RNSFormSheetContentView class]],
-            @"[RNScreens] ContentView must be of type RNSFormSheetContentView");
+  RCTAssert(
+      [self.view isKindOfClass:[RNSFormSheetContentView class]],
+      @"[RNScreens] ContentView must be of type RNSFormSheetContentView");
   return static_cast<RNSFormSheetContentView *>(self.view);
 }
 
@@ -112,8 +114,9 @@
 {
   id<RNSFormSheetPresentationProvider> presentationProvider = self.presentationProvider;
 
-  RCTAssert(presentationProvider != nil,
-            @"[RNScreens] Presentation provider must be set before updating presentation state.");
+  RCTAssert(
+      presentationProvider != nil,
+      @"[RNScreens] Presentation provider must be set before updating presentation state.");
 
   if (presentationProvider == nil) {
     return;

@@ -110,8 +110,9 @@
 
   for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
     RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-    RCTAssert(self.topViewController == static_cast<UIViewController *>(op.stackScreen.controller),
-              @"[RNScreens] Attempt to pop non-top screen");
+    RCTAssert(
+        self.topViewController == static_cast<UIViewController *>(op.stackScreen.controller),
+        @"[RNScreens] Attempt to pop non-top screen");
     [self popViewControllerAnimated:YES];
   }
 

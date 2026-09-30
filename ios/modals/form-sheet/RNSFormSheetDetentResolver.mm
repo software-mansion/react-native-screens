@@ -126,9 +126,10 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
   NSInteger initialIndex = requestedIndex == kRNSFormSheetLastDetent ? (NSInteger)detents.count - 1 : requestedIndex;
 
   if (initialIndex < 0 || initialIndex >= (NSInteger)detents.count) {
-    RCTLogError(@"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
-                (long)requestedIndex,
-                (unsigned long)detents.count);
+    RCTLogError(
+        @"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
+        (long)requestedIndex,
+        (unsigned long)detents.count);
     initialIndex = 0;
   }
 

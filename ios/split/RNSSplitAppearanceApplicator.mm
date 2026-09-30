@@ -172,10 +172,11 @@
   // Compare values only if both are non-negative.
   // The default value, which is -1, indicates that the constraint was not provided.
   if (minWidth >= 0 && maxWidth >= 0) {
-    RCTAssert(minWidth <= maxWidth,
-              @"[RNScreens] Split column constraints are invalid: minWidth %f cannot be greater than maxWidth %f",
-              minWidth,
-              maxWidth);
+    RCTAssert(
+        minWidth <= maxWidth,
+        @"[RNScreens] Split column constraints are invalid: minWidth %f cannot be greater than maxWidth %f",
+        minWidth,
+        maxWidth);
   }
 }
 

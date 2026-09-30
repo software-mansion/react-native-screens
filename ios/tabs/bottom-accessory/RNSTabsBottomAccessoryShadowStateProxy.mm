@@ -31,8 +31,8 @@
     if (_bottomAccessoryView.state != nullptr) {
       auto newState =
           react::RNSTabsBottomAccessoryState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-      _bottomAccessoryView.state->updateState(std::move(newState),
-                                              facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+      _bottomAccessoryView.state->updateState(
+          std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
       _previousFrame = frame;
     }
   }

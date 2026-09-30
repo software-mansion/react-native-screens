@@ -94,15 +94,17 @@
       if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
         UIImage *selectedImage = [UIImage systemImageNamed:screenView.selectedIconResourceName];
         if (selectedImage == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
-                     screenView.selectedIconResourceName);
+          RCTLogWarn(
+              @"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
+              screenView.selectedIconResourceName);
         }
         tabBarItem.selectedImage = selectedImage;
       } else {
         UIImage *selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
         if (selectedImage == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for selected tab bar item",
-                     screenView.selectedIconResourceName);
+          RCTLogWarn(
+              @"[RNScreens] Failed to load xcasset \"%@\" for selected tab bar item",
+              screenView.selectedIconResourceName);
         }
         tabBarItem.selectedImage = selectedImage;
       }

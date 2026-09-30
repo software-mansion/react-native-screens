@@ -44,13 +44,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Members under `#pragma mark - Internal API` are host-only (`RNSTabsHostComponentView`)
  * implementation detail and may change without notice. Do not call from third-party code.
  */
-@interface RNSTabBarController : UITabBarController <RNSReactMountingTransactionObserving,
-                                                     RNSContainer
+@interface RNSTabBarController : UITabBarController <
+                                     RNSReactMountingTransactionObserving,
+                                     RNSContainer
 #if !TARGET_OS_TV
-                                                     ,
-                                                     RNSOrientationProviding
+                                     ,
+                                     RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                                                     >
+                                     >
 
 #pragma mark - Public API
 

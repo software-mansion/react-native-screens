@@ -97,10 +97,11 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-            @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-            childComponentView.class,
-            RNSStackScreenComponentView.class);
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
@@ -110,10 +111,11 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert([childComponentView isKindOfClass:RNSStackScreenComponentView.class],
-            @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-            childComponentView.class,
-            RNSStackScreenComponentView.class);
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSStackScreenComponentView.class],
+      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSStackScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
@@ -127,8 +129,8 @@ namespace react = facebook::react;
     // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
     [_stackOperationCoordinator addPopOperation:stackScreen];
   } else {
-    RNSLog(@"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed",
-           stackScreen.screenKey);
+    RNSLog(
+        @"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed", stackScreen.screenKey);
   }
 }
 
@@ -167,8 +169,9 @@ namespace react = facebook::react;
 
 - (RNSStackHeaderConfigComponentView *)requireTopScreenHeaderConfig
 {
-  RCTAssert([_stackNavigationController.topViewController.view isKindOfClass:[RNSStackScreenComponentView class]],
-            @"[RNScreens] Expected top screen to be a react component view of type RNSStackScreenComponentView");
+  RCTAssert(
+      [_stackNavigationController.topViewController.view isKindOfClass:[RNSStackScreenComponentView class]],
+      @"[RNScreens] Expected top screen to be a react component view of type RNSStackScreenComponentView");
   auto screenView = (RNSStackScreenComponentView *)_stackNavigationController.topViewController.view;
 
   return screenView.headerConfig;

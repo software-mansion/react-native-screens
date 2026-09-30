@@ -11,12 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSTabsScreenViewController : UIViewController <RNSContainerItem
+@interface RNSTabsScreenViewController : UIViewController <
+                                             RNSContainerItem
 #if !TARGET_OS_TV
-                                                           ,
-                                                           RNSOrientationProviding
+                                             ,
+                                             RNSOrientationProviding
 #endif // !TARGET_OS_TV
-                                                           >
+                                             >
 
 @property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;

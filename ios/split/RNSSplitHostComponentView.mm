@@ -20,9 +20,10 @@ static const CGFloat epsilon = 1e-6;
 #define COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
   (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
 
-@interface RNSSplitHostComponentView () <RCTMountingTransactionObserving,
-                                         RCTRNSSplitHostViewProtocol,
-                                         RNSSplitHostControllerEventsDelegate>
+@interface RNSSplitHostComponentView () <
+    RCTMountingTransactionObserving,
+    RCTRNSSplitHostViewProtocol,
+    RNSSplitHostControllerEventsDelegate>
 @end
 
 @implementation RNSSplitHostComponentView {
@@ -143,9 +144,10 @@ static const CGFloat epsilon = 1e-6;
 RNS_IGNORE_SUPER_CALL_BEGIN
 - (nonnull NSMutableArray<RNSSplitScreenComponentView *> *)reactSubviews
 {
-  RCTAssert(_reactSubviews != nil,
-            @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
-            self);
+  RCTAssert(
+      _reactSubviews != nil,
+      @"[RNScreens] Attempt to work with non-initialized list of RNSSplitScreenComponentView subviews. (for: %@)",
+      self);
   return _reactSubviews;
 }
 RNS_IGNORE_SUPER_CALL_END
@@ -160,10 +162,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert([childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
-            @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
-            childComponentView.class,
-            RNSSplitScreenComponentView.class);
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+      @"[RNScreens] Attempt to mount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSSplitScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
   childScreen.splitHost = self;
@@ -173,10 +176,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RCTAssert([childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
-            @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
-            childComponentView.class,
-            RNSSplitScreenComponentView.class);
+  RCTAssert(
+      [childComponentView isKindOfClass:RNSSplitScreenComponentView.class],
+      @"[RNScreens] Attempt to unmount child of unsupported type: %@, expected %@",
+      childComponentView.class,
+      RNSSplitScreenComponentView.class);
 
   auto *childScreen = static_cast<RNSSplitScreenComponentView *>(childComponentView);
   childScreen.splitHost = nil;

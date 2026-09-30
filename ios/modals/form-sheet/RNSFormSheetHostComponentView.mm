@@ -17,12 +17,13 @@
 
 namespace react = facebook::react;
 
-@interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving,
-                                             RNSFormSheetContentControllerDelegate,
-                                             RNSFormSheetContentWrapperDelegate,
-                                             RNSFormSheetPresentationProvider,
-                                             RNSFormSheetAppearanceProvider,
-                                             RNSFormSheetBehaviorProvider>
+@interface RNSFormSheetHostComponentView () <
+    RCTMountingTransactionObserving,
+    RNSFormSheetContentControllerDelegate,
+    RNSFormSheetContentWrapperDelegate,
+    RNSFormSheetPresentationProvider,
+    RNSFormSheetAppearanceProvider,
+    RNSFormSheetBehaviorProvider>
 @end
 
 @implementation RNSFormSheetHostComponentView {

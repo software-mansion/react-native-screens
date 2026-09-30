@@ -10,11 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHeaderConfigComponentView : RNSReactBaseView <RNSViewFrameChangeDelegate,
-                                                                 RNSStackHeaderConfigDataProviding,
-                                                                 RNSStackHeaderItemInvalidationDelegate,
-                                                                 RNSStackHeaderEventsDelegate,
-                                                                 RNSImageLoading>
+@interface RNSStackHeaderConfigComponentView : RNSReactBaseView <
+                                                   RNSViewFrameChangeDelegate,
+                                                   RNSStackHeaderConfigDataProviding,
+                                                   RNSStackHeaderItemInvalidationDelegate,
+                                                   RNSStackHeaderEventsDelegate,
+                                                   RNSImageLoading>
 
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) NSString *subtitle;

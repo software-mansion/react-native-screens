@@ -90,10 +90,10 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState =
         react::RNSScreenStackHeaderSubviewState(RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin));
-    _state->updateState(std::move(newState),
-                        _synchronousShadowStateUpdatesEnabled
-                            ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
-                            : facebook::react::EventQueue::UpdateMode::Asynchronous);
+    _state->updateState(
+        std::move(newState),
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     _lastScheduledFrame = frame;
   }
@@ -204,8 +204,9 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (UIBarButtonItem *)getUIBarButtonItem
 {
-  RCTAssert(_type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
-            @"[RNScreens] Unexpected subview type.");
+  RCTAssert(
+      _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight,
+      @"[RNScreens] Unexpected subview type.");
 
   if (_barButtonItem == nil) {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
