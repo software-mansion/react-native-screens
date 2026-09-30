@@ -375,42 +375,19 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self progressNavigationState:[self screenKeyForViewController:viewController] withOrigin:RNSTabsActionOriginUser];
 }
 
-- (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
+- (void)userDidRepeatSelectionOfScreenController:(nonnull RNSTabsScreenViewController *)screenController
 {
-  RCTAssert(self.selectedViewController == viewController,
-            @"[RNScreens] Expected UIKit to update selectedViewController");
+  RCTAssert([self isScreenControllerCurrentlySelected:screenController],
+            @"[RNScreens] Expected the repeated screen controller to be the current selection");
 
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
-    // We don't want to run neither state update nor side effects.
-    return;
-  }
-
-  [self updateNavigationStateOnModelUpdate];
+  [self progressNavigationState:[self screenKeyForViewController:screenController] withOrigin:RNSTabsActionOriginUser];
 
   // After state progression we trigger the special effect.
-  BOOL repeatedSelectionHandledBySpecialEffect = [[self selectedScreenViewController] tabScreenSelectedRepeatedly];
+  BOOL repeatedSelectionHandledBySpecialEffect = [screenController tabScreenSelectedRepeatedly];
   [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
                              repeated:YES
             hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
 }
-
-#if RNS_UITAB_API_SDK_AVAILABLE
-
-- (void)userDidRepeatSelectionOfTab:(nonnull UITab *)tab API_AVAILABLE(ios(18.0))
-{
-  RCTAssert(self.selectedTab == tab, @"[RNScreens] Expected the repeated tab to be the selected one");
-
-  [self progressNavigationState:[self screenKeyForViewController:tab.viewController]
-                     withOrigin:RNSTabsActionOriginUser];
-
-  BOOL repeatedSelectionHandledBySpecialEffect =
-      [static_cast<RNSTabsScreenViewController *>(tab.viewController) tabScreenSelectedRepeatedly];
-  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
-                             repeated:YES
-            hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
-}
-
-#endif // RNS_UITAB_API_SDK_AVAILABLE
 
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
 {
@@ -473,13 +450,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // On repeated selection we block the native *pop to root* effect (works from iOS 26) that
     // interferes with our implementation (necessary for controlled tabs). The did-select callback
     // won't fire on a blocked selection, so we trigger the state update here.
-#if RNS_UITAB_API_SDK_AVAILABLE
-    if (RNS_UITAB_API_ENABLED) {
-      [self userDidRepeatSelectionOfTab:viewController.tab];
-      return YES;
+    if (![self isViewControllerTheMoreNavigationController:viewController]) {
+      [self userDidRepeatSelectionOfScreenController:static_cast<RNSTabsScreenViewController *>(viewController)];
     }
-#endif // RNS_UITAB_API_SDK_AVAILABLE
-    [self userDidRepeatViewControllerSelection:viewController];
     return YES;
   }
 
@@ -953,18 +926,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
   return NO;
-}
-
-/**
- * Be sure to call this method IF AND ONLY IF you know that the `self.selectedViewController`
- * is not the `moreNavigationController`.
- */
-- (RNSTabsScreenViewController *)selectedScreenViewController
-{
-  RCTAssert([self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Unexpected type of selectedViewController: %@",
-            self.selectedViewController.class);
-  return static_cast<RNSTabsScreenViewController *>(self.selectedViewController);
 }
 
 - (nonnull NSString *)screenKeyForViewController:(nonnull UIViewController *)viewController
