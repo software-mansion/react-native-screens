@@ -18,9 +18,14 @@ inputs:
 runs:
   using: composite
   steps:
+    # Install the pinned CLI globally first: `npx @swmansion/argent@<v> init`
+    # only pins the installer, which then installs the latest release globally.
     - name: Install Argent
       shell: bash
-      run: npx @swmansion/argent@0.25.2 init --yes
+      run: |
+        npm install --global @swmansion/argent@0.26.0
+        argent init --yes
+        argent --version
 
     # Start the server here and export its URL, so `flow run` reuses it instead
     # of starting one in-process, which has to come up within a fixed window a

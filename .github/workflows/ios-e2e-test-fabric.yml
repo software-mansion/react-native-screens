@@ -165,11 +165,20 @@ jobs:
         run: |
           tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$RUNNER_TEMP/app"
           echo "APP_PATH=$RUNNER_TEMP/app/Release-iphonesimulator/FabricExample.app" >> "$GITHUB_ENV"
-      # iPhone 17 matches the geometry of the committed iOS baselines (1206x2622).
-      # A freshly created simulator, never one another job has used.
+      # iPhone 17 on iOS 26.5 is what the committed iOS baselines were recorded
+      # on (1206x2622). The runtime is pinned: tab bar rendering differs between
+      # iOS minor versions, so a newer runtime on the runner image would show up
+      # as snapshot diffs. A freshly created simulator, never one another job has used.
       - name: Boot iPhone 17 simulator
+        env:
+          RUNTIME: com.apple.CoreSimulator.SimRuntime.iOS-26-5
         run: |
-          RUNTIME=$(xcrun simctl list runtimes ios -j | jq -r '.runtimes | map(select(.isAvailable)) | last | .identifier')
+          if ! xcrun simctl list runtimes -j | jq -e --arg r "$RUNTIME" \
+            '.runtimes[] | select(.identifier == $r and .isAvailable)' > /dev/null; then
+            echo "iOS runtime $RUNTIME (the baselines' runtime) is not available on this runner:" >&2
+            xcrun simctl list runtimes >&2
+            exit 1
+          fi
           UDID=$(xcrun simctl create "Argent iPhone 17" com.apple.CoreSimulator.SimDeviceType.iPhone-17 "$RUNTIME")
           echo "Booting $UDID ($RUNTIME)"
           xcrun simctl boot "$UDID"
