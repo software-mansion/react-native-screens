@@ -25,14 +25,20 @@ on:
         default: false
       argent-emulator-gpu:
         description: >-
-          Emulator -gpu mode for the Argent job. Argent's screenshot over gRPC
-          returns a square 2400x2400 frame with swiftshader_indirect.
+          Emulator -gpu mode for the Argent job. Not swiftshader_indirect: with
+          it, Argent's gRPC screenshot returns a square 2400x2400 frame.
         type: choice
         options:
-          - swiftshader_indirect
           - swiftshader
           - guest
-        default: swiftshader_indirect
+          - swiftshader_indirect
+        default: swiftshader
+      argent-update-baselines:
+        description: >-
+          Write Argent snapshot baselines instead of comparing, and upload them
+          as an artifact to review and commit. Not a test pass.
+        type: boolean
+        default: false
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -236,6 +242,8 @@ jobs:
       # $XDG_RUNTIME_DIR.
       - name: Run Argent flows
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ARGENT_UPDATE_BASELINES: ${{ inputs.argent-update-baselines }}
         with:
           api-level: ${{ env.API_LEVEL }}
           target: default
@@ -244,10 +252,17 @@ jobs:
           disk-size: '10G'
           disable-animations: false
           force-avd-creation: false
-          emulator-options: -no-window -gpu ${{ inputs.argent-emulator-gpu || 'swiftshader_indirect' }} -noaudio -no-boot-anim -camera-back none -grpc 8554
+          emulator-options: -no-window -gpu ${{ inputs.argent-emulator-gpu || 'swiftshader' }} -noaudio -no-boot-anim -camera-back none -grpc 8554
           avd-name: e2e_emulator
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh
+
+      - name: Upload new Argent baselines
+        if: ${{ !cancelled() && inputs.argent-update-baselines }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: argent-android-baselines
+          path: .argent/flows/__baselines__
 
       # The emulator is gone after the step above, so its script already took
       # screen-at-failure.png.
