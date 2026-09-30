@@ -255,6 +255,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
+#if RNS_UITAB_API_SDK_AVAILABLE
+- (void)setSelectedTab:(UITab *)selectedTab API_AVAILABLE(ios(18.0))
+{
+  [super setSelectedTab:selectedTab];
+  if (!_isHandlingExplicitSelectionUpdate) {
+    [self reconcileNavigationStateWithUIKitState];
+  }
+}
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
   [super traitCollectionDidChange:previousTraitCollection];
