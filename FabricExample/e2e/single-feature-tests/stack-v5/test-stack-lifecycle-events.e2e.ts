@@ -37,7 +37,7 @@ import { describeIfAndroid, describeIfIOS } from '@e2e/framework/platform';
  *   scenario.
  */
 
-describeIfIOS('Stack v5: lifecycle events', () => {
+describeIfIOS('@smoke Stack v5: lifecycle events', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -269,7 +269,7 @@ describeIfIOS('Stack v5: lifecycle events', () => {
   });
 });
 
-describeIfAndroid('Stack v5: lifecycle events', () => {
+describeIfAndroid('@smoke Stack v5: lifecycle events', () => {
   // React Native's core `<Button>` uppercases its `title` on Android
   // (`title.toUpperCase()`), so buttons are matched by their rendered text.
   const PUSH_A = 'PUSH A';
