@@ -72,7 +72,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
   /// Controllers currently installed in UIKit (see `installScreenControllers:animated:`).
-  /// On the UITab path (iOS 26.1+) `UITabBarController.viewControllers` is empty once `tabs` is set,
+  /// On the UITab path `UITabBarController.viewControllers` is empty once `tabs` is set,
   /// so the installed set is tracked here; on the legacy path UIKit itself is the source of truth.
   NSArray<RNSTabsScreenViewController *> *_Nullable _installedScreenControllers;
 
