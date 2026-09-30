@@ -23,6 +23,16 @@ on:
         description: Skip the Detox tests; only build the app and run the Argent flows.
         type: boolean
         default: false
+      argent-emulator-gpu:
+        description: >-
+          Emulator -gpu mode for the Argent job. Argent's screenshot over gRPC
+          returns a square 2400x2400 frame with swiftshader_indirect.
+        type: choice
+        options:
+          - swiftshader_indirect
+          - swiftshader
+          - guest
+        default: swiftshader_indirect
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -225,7 +235,7 @@ jobs:
           disk-size: '10G'
           disable-animations: false
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -grpc 8554
+          emulator-options: -no-window -gpu ${{ inputs.argent-emulator-gpu || 'swiftshader_indirect' }} -noaudio -no-boot-anim -camera-back none -grpc 8554
           avd-name: e2e_emulator
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh
