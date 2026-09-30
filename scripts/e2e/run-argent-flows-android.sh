@@ -6,7 +6,9 @@
 #
 # Snapshots are always diffed against the baselines committed under
 # .argent/flows/__baselines__; a missing baseline fails the flow. Record new
-# baselines locally with `--update-baselines` and commit them.
+# baselines with `--update-baselines` on an emulator matching this job — pixel_7
+# AVD, API 34, 3-button navigation, `-gpu swiftshader`. A local emulator with
+# gesture navigation produces differently sized crops that fail here.
 set -euo pipefail
 
 SERIAL=$(adb devices | awk 'NR>1 && $2=="device"{print $1; exit}')

@@ -8,6 +8,7 @@ on:
       - '.github/actions/argent-server/**'
       - '.argent/**'
       - 'scripts/e2e/run-argent-flows-android.sh'
+      - 'scripts/e2e/argent-failure-summary.sh'
       - 'package.json'
       - 'android/**'
       - 'common/**'
@@ -23,16 +24,6 @@ on:
         description: Skip the Detox tests; only build the app and run the Argent flows.
         type: boolean
         default: false
-      argent-emulator-gpu:
-        description: >-
-          Emulator -gpu mode for the Argent job. Not swiftshader_indirect: with
-          it, Argent's gRPC screenshot returns a square 2400x2400 frame.
-        type: choice
-        options:
-          - swiftshader
-          - guest
-          - swiftshader_indirect
-        default: swiftshader
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -233,7 +224,9 @@ jobs:
 
       # android-emulator-runner keeps the emulator alive only for its `script:`.
       # `-grpc` makes the emulator write the grpc.port Argent reads from
-      # $XDG_RUNTIME_DIR.
+      # $XDG_RUNTIME_DIR. `-gpu swiftshader`, not swiftshader_indirect: with the
+      # latter Argent's gRPC screenshot comes back as a square 2400x2400 frame
+      # and every snapshot step errors.
       - name: Run Argent flows
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -244,7 +237,7 @@ jobs:
           disk-size: '10G'
           disable-animations: false
           force-avd-creation: false
-          emulator-options: -no-window -gpu ${{ inputs.argent-emulator-gpu || 'swiftshader' }} -noaudio -no-boot-anim -camera-back none -grpc 8554
+          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -camera-back none -grpc 8554
           avd-name: e2e_emulator
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh

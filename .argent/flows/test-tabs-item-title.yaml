@@ -17,8 +17,8 @@
 #   - The tab bar itself (three items, truncated long title, title color/font/offset, icon tint):
 #     one `snapshot` per tab state, cropped on that tab's tab-bar band — an invisible view covering
 #     the bottom third of the tab's app-area wrapper (ids test-tabs-item-title-{long-title,color,font}-tab-bar-band;
-#     above the Android nav bar, tab bar in frame, tab content text out of frame; see
-#     .argent/skills/argent-flow-snapshot-crop). Tab content is proven by the text `await`s instead.
+#     above the Android nav bar, tab bar in frame, tab content text out of frame). Tab content is
+#     proven by the text `await`s instead.
 #   - "Reproduced exactly on re-selection" (steps 4, 6) and "no artifact after cycling" (step 7)
 #     are proven by re-using the SAME snapshot name: the second capture must match the first
 #     baseline within maxMismatch 1.0.
@@ -33,7 +33,13 @@
 # 700 ms settle; seed + two fresh-service passes matched at 0.00%.
 #
 # Runner:  argent flow run test-tabs-item-title --platform ios        # or --platform android
-#          argent flow run test-tabs-item-title --platform ios --update-baselines   # reseed (review PNGs!)
+#
+# Baselines are keyed by platform and screen size and must come from a device matching CI:
+#   - iOS: iPhone 17 simulator (1206x2622).
+#   - Android: pixel_7 AVD, API 34, 3-button navigation, booted with `-gpu swiftshader` (what the
+#     CI argent job runs). A local emulator with gesture navigation has a taller app area, so its
+#     crops are a different size and CI fails with "baseline is WxH but the cropOn region is …".
+# Reseed on such a device with `--update-baselines`, open every PNG, and commit them.
 steps:
   - echo: Restart FabricExample (in-memory tabs config resets); expect the root examples list
   - launch: { ios: org.reactjs.native.example.FabricExample, android: com.fabricexample }

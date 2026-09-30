@@ -7,6 +7,7 @@ on:
       - '.github/workflows/ios-e2e-test-fabric.yml'
       - '.github/actions/argent-server/**'
       - '.argent/**'
+      - 'scripts/e2e/argent-failure-summary.sh'
       - 'RNScreens.podspec'
       - 'package.json'
       - 'ios/**'
@@ -21,12 +22,6 @@ on:
     inputs:
       argent-only:
         description: Skip the Detox tests; only build the app and run the Argent flows.
-        type: boolean
-        default: false
-      argent-update-baselines:
-        description: >-
-          Write Argent snapshot baselines instead of comparing, and upload them
-          as an artifact to review and commit. Not a test pass.
         type: boolean
         default: false
 jobs:
@@ -152,19 +147,11 @@ jobs:
         uses: ./.github/actions/argent-server
       # --output keeps baseline/current/diff PNGs of every mismatching snapshot.
       - name: Run Argent flows
-        env:
-          UPDATE_BASELINES: ${{ inputs.argent-update-baselines && '--update-baselines' || '' }}
         run: |
           set -o pipefail
           mkdir -p "$RUNNER_TEMP/argent-out"
-          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" $UPDATE_BASELINES \
+          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
             --output "$RUNNER_TEMP/argent-out/snapshots" 2>&1 | tee "$RUNNER_TEMP/argent-out/argent-flows.log"
-      - name: Upload new Argent baselines
-        if: ${{ !cancelled() && inputs.argent-update-baselines }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: argent-ios-baselines
-          path: .argent/flows/__baselines__
       - name: Capture screen at failure
         if: ${{ failure() }}
         run: |
