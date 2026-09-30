@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.PixelUtil
@@ -481,6 +482,10 @@ class Screen(
             if (childView is ViewGroup) {
                 endTransitionRecursive(childView)
             }
+
+            if (childView is RecyclerView) {
+                childView.suppressLayout(false)
+            }
         }
     }
 
@@ -507,6 +512,12 @@ class Screen(
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
                     startTransitionRecursive(child.toolbar)
+                }
+
+                if (child is RecyclerView) {
+                    // A transitioning child keeps its parent after removal, and RecyclerView
+                    // crashes when it recycles such a child while scrolling or laying out.
+                    child.suppressLayout(true)
                 }
 
                 if (child is ViewGroup) {
