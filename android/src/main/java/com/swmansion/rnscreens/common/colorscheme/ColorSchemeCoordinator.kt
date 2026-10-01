@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.common.colorscheme
 import android.content.res.Configuration
 import android.view.View
 import android.view.ViewParent
+import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 internal typealias OnUiNightModeResolvedCallback = (nightMode: Int) -> Unit
@@ -16,6 +17,15 @@ internal class ColorSchemeCoordinator :
         }
     }
     private var parentProvider: ColorSchemeProviding? = null
+
+    /**
+     * Parent provider known from ownership, taking precedence over the view-tree walk
+     * in [setup]. Set it when the owner knows its provider statically (e.g. a fragment's
+     * root view always resolves through the container that created the fragment) - the
+     * walk is unreliable there: transitions reparent an exiting fragment's view into the
+     * container's ViewGroupOverlay, whose parent chain ends in null. Survives [teardown].
+     */
+    internal var explicitParentProvider: WeakReference<ColorSchemeProviding>? = null
     private var systemUiNightMode: Int = Configuration.UI_MODE_NIGHT_NO
     private var lastAppliedUiNightMode: Int? = null
     private val childListeners = mutableListOf<ColorSchemeListener>()
@@ -60,7 +70,7 @@ internal class ColorSchemeCoordinator :
 
         systemUiNightMode =
             hostView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        parentProvider = findParentColorSchemeProvider(hostView)
+        parentProvider = explicitParentProvider?.get() ?: findParentColorSchemeProvider(hostView)
         parentProvider?.addColorSchemeListener(this)
         onUiNightModeResolved = onUiNightModeResolvedCallback
         isSetUp = true

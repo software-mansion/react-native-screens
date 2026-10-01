@@ -6,5 +6,5 @@ export const scenarioDescription: ScenarioDescription = {
   details: 'Test simple push and pop operations',
   platforms: ['android', 'ios'],
   e2eCoverage: 'incomplete',
-  smokeTest: false,
+  smokeTest: true,
 };
