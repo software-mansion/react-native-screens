@@ -4,9 +4,9 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Stack SafeAreaView (iOS)',
   key: 'test-stack-safe-area-view-ios',
   details:
-    'Tests SafeAreaView on a Stack v5 screen with a header. At the top of the ' +
-    'SafeAreaView there is a red rectangle with a green rectangle of the same ' +
-    'size below it, at the bottom a blue one with a magenta one below it.',
+    'Tests SafeAreaView on a Stack v5 screen with a header. The SafeAreaView ' +
+    'has a 6px red border, which should start right below the header and ' +
+    'end right above the home indicator.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
