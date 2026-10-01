@@ -5,6 +5,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
@@ -41,9 +42,14 @@ class ScreensModule(
 
     private external fun nativeUninstall()
 
+    @OptIn(UnstableReactNativeAPI::class)
     override fun invalidate() {
         super.invalidate()
-        proxy?.invalidateNative()
+        proxy?.let {
+            (UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as? FabricUIManager)
+                ?.removeUIManagerEventListener(it)
+            it.invalidateNative()
+        }
         proxy = null
         reactContext.removeLifecycleEventListener(this)
         nativeUninstall()
@@ -56,11 +62,16 @@ class ScreensModule(
         setupFabric()
     }
 
+    @OptIn(UnstableReactNativeAPI::class)
     private fun setupFabric() {
         val fabricUIManager =
             UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
         proxy?.apply {
             nativeAddMutationsListener(fabricUIManager)
+            // Re-adding is guarded by removing first - setupFabric runs again
+            // on every host resume.
+            fabricUIManager.removeUIManagerEventListener(this)
+            fabricUIManager.addUIManagerEventListener(this)
         }
     }
 
