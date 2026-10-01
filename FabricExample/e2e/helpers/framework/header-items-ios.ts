@@ -1,6 +1,6 @@
 import { expect, element, by } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
-import { longPressWithinFrame, tapWithinFrame } from './gestures';
+import { tapWithinFrame } from './gestures';
 import { getFrame } from './matchers';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
@@ -15,7 +15,6 @@ import { isIOSVersionAtLeast } from './platform';
 // renders blank, so its items can be neither asserted visible nor gestured on
 // as elements. There items and icons are checked for existence and gestured on
 // by coordinates.
-export const headerItemsInGlassPlatter = isIOSVersionAtLeast('27.0');
 
 export type HeaderItemOptions = {
   /**
@@ -50,7 +49,7 @@ export function headerItem(title: string, options?: HeaderItemOptions) {
  * `toExist`.
  */
 export async function expectHeaderViewShown(matcher: NativeMatcher) {
-  if (headerItemsInGlassPlatter) {
+  if (isIOSVersionAtLeast('27.0')) {
     await expect(element(matcher)).toExist();
   } else {
     await expect(element(matcher)).toBeVisible();
@@ -70,7 +69,7 @@ export async function expectHeaderItemShown(
 
 /** Taps the header item titled `title`, by coordinates on iOS 27 (see above). */
 export async function tapHeaderItem(title: string) {
-  if (headerItemsInGlassPlatter) {
+  if (isIOSVersionAtLeast('27.0')) {
     await tapWithinFrame(
       await getFrame(headerItemMatcher(title), `header item "${title}"`),
     );
@@ -96,20 +95,9 @@ export function barButtonIcon(iconId: string) {
  * on iOS 27 (see above) only `toExist`.
  */
 export async function expectBarButtonIconShown(iconId: string) {
-  if (headerItemsInGlassPlatter) {
+  if (isIOSVersionAtLeast('27.0')) {
     await expect(barButtonIcon(iconId)).toExist();
   } else {
     await expect(barButtonIcon(iconId)).toBeVisible();
   }
-}
-
-/**
- * Long-presses the header item titled `title`, by coordinates on every iOS
- * version: Detox's element `longPress` starts as a tap, so it would also fire
- * the item's `onPress`.
- */
-export async function longPressHeaderItem(title: string) {
-  await longPressWithinFrame(
-    await getFrame(headerItemMatcher(title), `header item "${title}"`),
-  );
 }
