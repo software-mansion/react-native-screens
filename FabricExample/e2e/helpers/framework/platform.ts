@@ -80,5 +80,20 @@ export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
   ? describe
   : describe.skip;
 
+/** Suites for iOS 27+ only features; skipped on Android and older iOS. */
+export const describeIfIOS27 = isIOSVersionAtLeast('27.0')
+  ? describe
+  : describe.skip;
+
+/**
+ * Suites for behavior that iOS 27 changed, kept on the versions before it.
+ * Unlike the `describeIfIOS*` guards this also runs on Android - the version
+ * check is `false` there - so nest it inside `describeIfIOS` when the suite is
+ * iOS-only.
+ */
+export const describeIfBelowIOS27 = isIOSVersionAtLeast('27.0')
+  ? describe.skip
+  : describe;
+
 export const describeIfIPadOS26 =
   isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
