@@ -3,6 +3,10 @@ package com.swmansion.rnscreens.utils
 import android.util.Log
 import com.swmansion.rnscreens.BuildConfig
 
+/**
+ * `d`, `i` and `v` are emitted only when `RNS_DEBUG_LOGGING` is enabled;
+ * `w`, `e` and `wtf` are always emitted.
+ */
 object RNSLog {
     private inline fun logIfEnabled(
         tag: String,
@@ -39,13 +43,17 @@ object RNSLog {
     fun e(
         tag: String,
         msg: String,
-    ) = logIfEnabled(tag, msg, Log::e)
+    ) {
+        Log.e(tag, msg)
+    }
 
     fun e(
         tag: String,
         msg: String,
         tr: Throwable,
-    ) = logIfEnabled(tag, msg, tr, Log::e)
+    ) {
+        Log.e(tag, msg, tr)
+    }
 
     fun i(
         tag: String,
@@ -72,22 +80,30 @@ object RNSLog {
     fun w(
         tag: String,
         msg: String,
-    ) = logIfEnabled(tag, msg, Log::w)
+    ) {
+        Log.w(tag, msg)
+    }
 
     fun w(
         tag: String,
         msg: String,
         tr: Throwable,
-    ) = logIfEnabled(tag, msg, tr, Log::w)
+    ) {
+        Log.w(tag, msg, tr)
+    }
 
     fun wtf(
         tag: String,
         msg: String,
-    ) = logIfEnabled(tag, msg, Log::wtf)
+    ) {
+        Log.wtf(tag, msg)
+    }
 
     fun wtf(
         tag: String,
         msg: String,
         tr: Throwable,
-    ) = logIfEnabled(tag, msg, tr, Log::wtf)
+    ) {
+        Log.wtf(tag, msg, tr)
+    }
 }
