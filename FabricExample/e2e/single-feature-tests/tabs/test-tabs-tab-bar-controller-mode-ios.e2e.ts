@@ -4,12 +4,17 @@ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation'
 import {
   CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW,
   CLASS_NAME_UI_TAB_SIDEBAR_COLLECTION_VIEW,
+  CLASS_NAME_UI_TAB_SIDEBAR_CELL,
   CLASS_NAME_UI_BUTTON,
   CLASS_NAME_RCT_ROOT_COMPONENT_VIEW,
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW,
 } from '@e2e/framework/native-classes-ios';
-import { describeIfIOS, describeIfIPad } from '@e2e/framework/platform';
+import {
+  describeIfIOS,
+  describeIfIPad,
+  isIOSVersionAtLeast,
+} from '@e2e/framework/platform';
 
 const PICKER_ID = 'tab-bar-controller-mode-picker';
 
@@ -65,9 +70,20 @@ describeIfIPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
     await element(
       by.label('Toggle sidebar').and(by.type(CLASS_NAME_UI_BUTTON)),
     ).tap();
-    await expect(
-      element(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW)),
-    ).not.toBeVisible();
+    // iOS 27 keeps the floating tab bar in the hierarchy at full alpha while
+    // the sidebar is open, so Detox reports it visible although it is not
+    // drawn. Assert the sidebar rows are visible instead.
+    if (isIOSVersionAtLeast('27.0')) {
+      for (const tab of ['Tab1', 'Tab2']) {
+        await expect(
+          element(by.type(CLASS_NAME_UI_TAB_SIDEBAR_CELL).and(by.label(tab))),
+        ).toBeVisible();
+      }
+    } else {
+      await expect(
+        element(by.type(CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW)),
+      ).not.toBeVisible();
+    }
     await expect(
       element(by.type(CLASS_NAME_UI_TAB_SIDEBAR_COLLECTION_VIEW)),
     ).toExist();
