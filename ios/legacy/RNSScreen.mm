@@ -141,9 +141,12 @@ RNS_IGNORE_SUPER_CALL_END
     // navigation bar, therefore there is no need to set content offset in shadow tree.
     // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
     // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
-    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent || self.isPresentedAsNativeModal
-        ? 0
-        : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+    // * Otherwise the offset must match the actual native origin of the screen. We can not derive it from the
+    // navigation bar geometry, because UIKit does not always lay out the screen right below the navigation bar
+    // (e.g. on iOS 26 `edgesForExtendedLayout` ignores the navigation bar's origin offset).
+    // See https://github.com/software-mansion/react-native-screens-labs/issues/1841
+    const CGFloat effectiveContentOffsetY =
+        config.largeTitle || config.translucent || self.isPresentedAsNativeModal ? 0 : [self originInNavigationView].y;
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
@@ -174,6 +177,17 @@ RNS_IGNORE_SUPER_CALL_END
     // height of the sheet.
     [self applyFrameCorrectionForDescendantScrollView];
   }
+}
+
+// Returns origin of the screen in the coordinate space of its navigation controller's view, which matches
+// the coordinate space of the screen stack in the shadow tree.
+- (CGPoint)originInNavigationView
+{
+  UIView *navigationView = _controller.navigationController.view;
+  if (navigationView == nil || ![self isDescendantOfView:navigationView]) {
+    return CGPointZero;
+  }
+  return [self convertPoint:CGPointZero toView:navigationView];
 }
 
 - (void)applyFrameCorrectionForDescendantScrollView
