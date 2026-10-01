@@ -84,6 +84,8 @@ typedef NS_ENUM(NSInteger, RNSTabsScreenSystemItem) {
   RNSTabsScreenSystemItemTopRated
 };
 
+typedef NS_ENUM(NSInteger, RNSTabsScreenTabRole) { RNSTabsScreenTabRoleNone, RNSTabsScreenTabRoleSearch };
+
 typedef NS_ENUM(NSInteger, RNSTabsBottomAccessoryEnvironment) {
   RNSTabsBottomAccessoryEnvironmentRegular,
   RNSTabsBottomAccessoryEnvironmentInline

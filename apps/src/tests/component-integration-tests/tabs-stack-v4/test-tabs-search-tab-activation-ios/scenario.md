@@ -3,7 +3,7 @@
 ## Details
 
 **Description:** Validates the `ios.automaticallyActivatesSearch` prop on a
-tab screen with `searchRole: true`. On iOS 26.1+ the search-role tab is backed by
+tab screen with `role: 'search'`. On iOS 26.1+ the search-role tab is backed by
 `UISearchTab` and UIKit can activate the search controller mirrored from
 the header of the stack nested in the tab. The nested stack is a legacy
 (v4) `@react-navigation/native-stack` navigator, since the v5 stack does
