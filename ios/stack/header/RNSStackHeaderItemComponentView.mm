@@ -232,12 +232,12 @@ RNS_IGNORE_SUPER_CALL_END
     _visibilityPriority =
         rnscreens::conversion::RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
             newItemProps.visibilityPriority);
-#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
     // The item is rebuilt only where the priority is actually applied to it.
     if (@available(iOS 27.0, *)) {
       needsUpdate = YES;
     }
-#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
   }
 
   [super updateProps:props oldProps:oldProps];
