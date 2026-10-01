@@ -1,5 +1,6 @@
 #import "RNSStackHeaderMenuUpdateOptions.h"
 #import "RNSStackHeaderIconMapper.h"
+#import "RNSStackHeaderMenuMapper.h"
 
 #pragma mark - Helpers
 
@@ -23,9 +24,8 @@ static NSString *_Nullable RNSResolveStringFromDict(NSDictionary *dict, NSString
   return fallback;
 }
 
-static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *dict,
-                                                                NSString *key,
-                                                                RNSStackHeaderIconData *_Nullable fallback)
+static RNSStackHeaderIconData
+    *_Nullable RNSResolveIconFromDict(NSDictionary *dict, NSString *key, RNSStackHeaderIconData *_Nullable fallback)
 {
   id value = dict[key];
   if (value == nil) {
@@ -47,6 +47,8 @@ static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *di
                       hasIcon:(BOOL)hasIcon
                hasToggleState:(BOOL)hasToggleState
                   toggleState:(BOOL)toggleState
+                     hasState:(BOOL)hasState
+                        state:(UIMenuElementState)state
 {
   if (self = [super init]) {
     _title = [title copy];
@@ -55,6 +57,8 @@ static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *di
     _hasIcon = hasIcon;
     _hasToggleState = hasToggleState;
     _toggleState = toggleState;
+    _hasState = hasState;
+    _state = state;
   }
   return self;
 }
@@ -75,12 +79,18 @@ static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *di
     toggleState = [toggleValue boolValue];
   }
 
+  BOOL hasState = RNSDictHasKey(dict, @"state");
+  UIMenuElementState state =
+      [RNSStackHeaderMenuMapper menuItemStateFromString:RNSResolveStringFromDict(dict, @"state", nil)];
+
   return [[RNSMenuItemUpdateOptions alloc] initWithTitle:title
                                                 hasTitle:hasTitle
                                                     icon:icon
                                                  hasIcon:hasIcon
                                           hasToggleState:hasToggleState
-                                             toggleState:toggleState];
+                                             toggleState:toggleState
+                                                hasState:hasState
+                                                   state:state];
 }
 
 + (RNSStackHeaderMenuItemData *)applyOptions:(RNSMenuItemUpdateOptions *)options
@@ -92,6 +102,7 @@ static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *di
   return [[RNSStackHeaderMenuItemData alloc] initWithId:old.menuElementId
                                                   title:title
                                                itemType:old.itemType
+                                                  state:options.hasState ? options.state : old.state
                                      initialToggleState:old.initialToggleState
                                      keepsMenuPresented:old.keepsMenuPresented
                                                    icon:icon];

@@ -13,6 +13,17 @@ import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
  */
 export interface StackHeaderMenuItemOptionsIOS {
   /**
+   * @summary Sets the application-controlled state displayed next to an action.
+   *
+   * @description
+   * Applies only when `itemType` resolves to `action`. Ignored for native toggles.
+   * Omission preserves the current state; explicit `undefined` resets it to `off`.
+   * Does not emit press or selection callbacks.
+   *
+   * @platform ios
+   */
+  state?: 'off' | 'on' | 'mixed' | undefined;
+  /**
    * @summary New title for the menu action.
    *
    * @platform ios
