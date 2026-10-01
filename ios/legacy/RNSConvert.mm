@@ -286,6 +286,36 @@
   }
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
++ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior
+{
+  switch (minimizationBehavior) {
+    using enum react::RNSScreenStackHeaderConfigMinimizationBehavior;
+    case Automatic:
+      return UIBarMinimizationBehaviorAutomatic;
+    case Never:
+      return UIBarMinimizationBehaviorNever;
+    case OnScrollDown:
+      return UIBarMinimizationBehaviorOnScrollDown;
+    case OnScrollUp:
+      return UIBarMinimizationBehaviorOnScrollUp;
+  }
+}
+
++ (UIBarMinimizationRestorationBehavior)UIBarMinimizationRestorationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigRestorationBehavior)restorationBehavior
+{
+  switch (restorationBehavior) {
+    using enum react::RNSScreenStackHeaderConfigRestorationBehavior;
+    case Automatic:
+      return UIBarMinimizationRestorationBehaviorAutomatic;
+    case AtScrollEdge:
+      return UIBarMinimizationRestorationBehaviorAtScrollEdge;
+  }
+}
+#endif // Check for iOS >= 27
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
