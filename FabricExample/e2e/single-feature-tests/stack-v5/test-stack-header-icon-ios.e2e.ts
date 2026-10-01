@@ -1,11 +1,13 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { menuRowIcon } from '@e2e/framework/context-menu-ios';
+import {
+  menuRowIcon,
+  openHeaderItemMenu,
+} from '@e2e/framework/context-menu-ios';
 import {
   barButtonIcon,
   expectBarButtonIconShown,
   headerTitle,
-  longPressHeaderItem,
 } from '@e2e/framework/header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
@@ -104,7 +106,7 @@ describeIfIOS('Stack Header Icon (iOS)', () => {
 
   describe('the header item menu', () => {
     it('should open the menu on long press and show its items with the star icon', async () => {
-      await longPressHeaderItem('Actions');
+      await openHeaderItemMenu('Actions', { gesture: 'longPress' });
 
       await expect(element(by.text('Toggle 1'))).toBeVisible();
       await expect(element(by.text('Toggle 2'))).toBeVisible();
