@@ -97,6 +97,15 @@ Whether the keyboard should hide when swiping to the previous screen. Defaults t
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
 
+### `preferredVerticalBarBehavior` (iOS only)
+
+Whether the screen uses the vertical bar on hardware that has one (iPhone Duo's outer display). Maps to [`UIViewController.preferredVerticalBarBehavior`](https://developer.apple.com/documentation/uikit/uiviewcontroller/preferredverticalbarbehavior). Available on iOS 27.1 and newer.
+
+- `automatic` (default) – the system decides whether the vertical bar is used.
+- `disabled` – bar items fall back to the standard horizontal top and bottom bars. For a full-height presentation, the status bar also returns to the horizontal axis.
+
+Applies to screens presented modally (`modal`, `formSheet`, etc.), since UIKit resolves the configuration per presentation. Treat it as a stable choice for the screen; Apple recommends opting out only for layouts better served by horizontal bars, such as a control-light sheet.
+
 ### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.

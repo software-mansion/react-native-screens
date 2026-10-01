@@ -112,6 +112,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) BOOL homeIndicatorHidden;
+// `preferredVerticalBarBehavior`; YES maps to `UIVerticalBarBehaviorDisabled`.
+@property (nonatomic) BOOL verticalBarDisabled;
 
 // Props controlling UISheetPresentationController
 @property (nonatomic) NSArray<NSNumber *> *sheetAllowedDetents;

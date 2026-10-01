@@ -61,6 +61,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
   RNSWindowTraitHidden,
   RNSWindowTraitOrientation,
   RNSWindowTraitHomeIndicatorHidden,
+  RNSWindowTraitVerticalBarBehavior,
 };
 
 typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
