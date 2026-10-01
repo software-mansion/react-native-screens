@@ -459,6 +459,7 @@
     UIBarMinimization *minimization = [UIBarMinimization new];
     minimization.minimizationBehavior = _configDataProvider.minimizationBehavior;
     minimization.restorationBehavior = _configDataProvider.restorationBehavior;
+    minimization.safeAreaAdjustment = _configDataProvider.safeAreaAdjustment;
     navItem.navigationBarMinimization = minimization;
   }
 #endif // Check for iOS >= 27

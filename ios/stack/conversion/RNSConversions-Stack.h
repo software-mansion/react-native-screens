@@ -40,6 +40,11 @@ UIBarMinimizationRestorationBehavior
 UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationBehavior(
     react::RNSStackHeaderConfigIOSRestorationBehavior restorationBehavior);
 
+API_AVAILABLE(ios(27.0))
+UIBarMinimizationSafeAreaAdjustment
+UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjustment(
+    react::RNSStackHeaderConfigIOSSafeAreaAdjustment safeAreaAdjustment);
+
 #endif // Check for iOS >= 27
 
 }; // namespace rnscreens::conversion

@@ -342,6 +342,24 @@ export type StackHeaderMinimizationBehaviorIOS =
  */
 export type StackHeaderRestorationBehaviorIOS = 'automatic' | 'atScrollEdge';
 
+/**
+ * @summary Controls whether the safe area adjusts while the navigation bar
+ * minimizes.
+ *
+ * @description
+ * - `automatic`: the system determines the safe area adjustment.
+ * - `enabled`: the safe area adjusts as the navigation bar minimizes, allowing
+ *   content to reflow.
+ * - `disabled`: the safe area remains unchanged as the navigation bar
+ *   minimizes.
+ *
+ * @platform iOS
+ */
+export type StackHeaderSafeAreaAdjustmentIOS =
+  | 'automatic'
+  | 'enabled'
+  | 'disabled';
+
 export interface StackHeaderAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of the header.
@@ -627,6 +645,17 @@ export interface StackHeaderConfigPropsIOS {
    * @supported iOS 27 and higher
    */
   restorationBehavior?: StackHeaderRestorationBehaviorIOS | undefined;
+  /**
+   * @summary Controls whether the safe area adjusts while the navigation bar
+   * minimizes.
+   *
+   * @default 'automatic'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  safeAreaAdjustment?: StackHeaderSafeAreaAdjustmentIOS | undefined;
   /**
    * @summary Appearance of the header when the edge of scrollable content
    * is not aligned with the edge of the header.
