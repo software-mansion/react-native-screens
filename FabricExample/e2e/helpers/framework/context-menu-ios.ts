@@ -4,10 +4,10 @@ import { longPressWithinFrame, tapWithinFrame } from './gestures';
 import { getFrame } from './matchers';
 import {
   headerItemMatcher,
-  headerItemsInGlassPlatter,
   headerTitle,
   type HeaderItemOptions,
 } from './header-items-ios';
+import { isIOSVersionAtLeast } from './platform';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
@@ -148,12 +148,12 @@ export async function openHeaderViewMenu(
     timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
   }: OpenContextMenuOptions = {},
 ) {
-  if (gesture === 'tap' && !headerItemsInGlassPlatter) {
+  if (gesture === 'tap' && !isIOSVersionAtLeast('27.0')) {
     await openContextMenu(element(matcher), { timeout });
     return;
   }
 
-  if (headerItemsInGlassPlatter) {
+  if (isIOSVersionAtLeast('27.0')) {
     await waitFor(element(matcher)).toExist().withTimeout(timeout);
   } else {
     await waitFor(element(matcher)).toBeVisible().withTimeout(timeout);
