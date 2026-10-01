@@ -23,9 +23,8 @@ static NSString *_Nullable RNSResolveStringFromDict(NSDictionary *dict, NSString
   return fallback;
 }
 
-static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *dict,
-                                                                NSString *key,
-                                                                RNSStackHeaderIconData *_Nullable fallback)
+static RNSStackHeaderIconData
+    *_Nullable RNSResolveIconFromDict(NSDictionary *dict, NSString *key, RNSStackHeaderIconData *_Nullable fallback)
 {
   id value = dict[key];
   if (value == nil) {
@@ -91,6 +90,9 @@ static RNSStackHeaderIconData *_Nullable RNSResolveIconFromDict(NSDictionary *di
 
   return [[RNSStackHeaderMenuItemData alloc] initWithId:old.menuElementId
                                                   title:title
+                                               subtitle:old.subtitle
+                                               disabled:old.disabled
+                                            destructive:old.destructive
                                                itemType:old.itemType
                                      initialToggleState:old.initialToggleState
                                      keepsMenuPresented:old.keepsMenuPresented
