@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, type ViewStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-screens/experimental';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -21,25 +21,10 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
 
 function SafeAreaViewScreen() {
   return (
-    <SafeAreaView edges={{ top: true, bottom: true }} style={styles.safeArea}>
-      <RectanglesPair upperStyle={styles.red} lowerStyle={styles.green} />
-      <RectanglesPair upperStyle={styles.blue} lowerStyle={styles.magenta} />
-    </SafeAreaView>
-  );
-}
-
-function RectanglesPair({
-  upperStyle,
-  lowerStyle,
-}: {
-  upperStyle: ViewStyle;
-  lowerStyle: ViewStyle;
-}) {
-  return (
-    <View>
-      <View style={[styles.rectangle, upperStyle]} />
-      <View style={[styles.rectangle, lowerStyle]} />
-    </View>
+    <SafeAreaView
+      edges={{ top: true, bottom: true, left: true, right: true }}
+      style={styles.safeArea}
+    />
   );
 }
 
@@ -52,21 +37,7 @@ export default createScenario(TestStackSafeAreaViewIOS, scenarioDescription);
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    justifyContent: 'space-between',
-  },
-  rectangle: {
-    height: 60,
-  },
-  green: {
-    backgroundColor: Colors.GreenDark100,
-  },
-  red: {
-    backgroundColor: Colors.RedLight100,
-  },
-  blue: {
-    backgroundColor: Colors.BlueDark100,
-  },
-  magenta: {
-    backgroundColor: 'magenta',
+    borderWidth: 6,
+    borderColor: Colors.RedLight100,
   },
 });

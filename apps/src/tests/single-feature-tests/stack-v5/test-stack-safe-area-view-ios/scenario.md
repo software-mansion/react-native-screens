@@ -3,9 +3,8 @@
 ## Details
 
 **Description:** Tests `SafeAreaView` on a Stack v5 screen with a header.
-At the top of the `SafeAreaView` (top and bottom edges enabled) there is a red
-rectangle with a green rectangle of the same size below it. At the bottom there
-is a blue rectangle with a magenta rectangle of the same size below it.
+The `SafeAreaView` (top and bottom edges enabled) has a 6px red border around
+its whole area.
 
 **OS test creation version:** 27.2
 
@@ -22,9 +21,9 @@ TBD.
 1. Navigate to **Stack v5 → Stack SafeAreaView (iOS)**.
 
     - [ ] The header "Safe Area View" is visible.
-    - [ ] At the top, the red rectangle starts right below the header and is
+    - [ ] The top edge of the red border starts right below the header and is
           not covered by it.
-    - [ ] At the top, the red and green rectangles are the same size.
-    - [ ] At the bottom, the magenta rectangle ends right above the home
-          indicator.
-    - [ ] At the bottom, the blue and magenta rectangles are the same size.
+    - [ ] The bottom edge of the border ends right above the home indicator.
+    - [ ] The left and right edges of the border touch the screen edges.
+    - [ ] The bottom corners of the border may be clipped by the rounded
+          display corners. This is expected.
