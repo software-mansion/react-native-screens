@@ -405,6 +405,15 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller showColumnNamed:column];
 }
 
+- (void)hideColumn:(NSString *)column
+{
+  if (_controller == nil) {
+    RCTLogWarn(@"[RNScreens] hideColumn called before SplitView controller was initialized. Command ignored.");
+    return;
+  }
+  [_controller hideColumnNamed:column];
+}
+
 #pragma mark - Events
 
 #pragma mark - RNSSplitHostColumnsProvider
