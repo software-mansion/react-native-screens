@@ -37,6 +37,13 @@
 #endif
 }
 
++ (void)updateScreenEdgesDeferringSystemGestures
+{
+#if !TARGET_OS_TV
+  [RCTKeyWindow().rootViewController setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
+#endif
+}
+
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
@@ -168,6 +175,7 @@
   [RNSScreenWindowTraits updateStatusBarAppearance];
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
+  [RNSScreenWindowTraits updateScreenEdgesDeferringSystemGestures];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION

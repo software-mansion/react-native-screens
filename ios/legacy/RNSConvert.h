@@ -36,6 +36,9 @@ namespace react = facebook::react;
 
 + (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:(react::RNSScreenSwipeDirection)swipeDirection;
 
++ (UIRectEdge)UIRectEdgeFromDeferredScreenEdgesCppEquivalent:
+    (react::RNSScreenScreenEdgesDeferringSystemGesturesMask)screenEdges;
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents;
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:

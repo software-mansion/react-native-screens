@@ -77,6 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL hasStatusBarStyleSet;
 @property (nonatomic) BOOL hasStatusBarAnimationSet;
 @property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
+@property (nonatomic) BOOL hasScreenEdgesDeferringSystemGesturesSet;
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
@@ -112,6 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) BOOL homeIndicatorHidden;
+@property (nonatomic) UIRectEdge screenEdgesDeferringSystemGestures;
 
 // Props controlling UISheetPresentationController
 @property (nonatomic) NSArray<NSNumber *> *sheetAllowedDetents;
