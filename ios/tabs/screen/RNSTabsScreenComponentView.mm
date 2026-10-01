@@ -324,14 +324,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (newComponentProps.tabRole != oldComponentProps.tabRole) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
-    // Only the UITab-managed path (iOS >= 26.1) fixes the tab class (`UISearchTab` vs `UITab`)
-    // at creation; below that the prop has no effect.
+#if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1) && !TARGET_OS_TV && !TARGET_OS_VISION
+    // Only the UITab-managed path fixes the tab class (`UISearchTab` vs `UITab`)
+    // at creation; outside of it the prop has no effect.
     if (@available(iOS 26.1, *)) {
-      RCTAssert(_controller.tabBarController == nil,
-                @"[RNScreens] Changing `role` on a mounted tab screen is not supported.");
+      if (RNS_UITAB_API_ENABLED) {
+        RCTAssert(_controller.tabBarController == nil,
+                  @"[RNScreens] Changing `role` on a mounted tab screen is not supported.");
+      }
     }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+#endif // RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1) && !TARGET_OS_TV && !TARGET_OS_VISION
     _tabRole = rnscreens::conversion::RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(newComponentProps.tabRole);
   }
 
