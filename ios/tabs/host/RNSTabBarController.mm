@@ -335,13 +335,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _isHandlingExplicitSelectionUpdate = YES;
   [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
+  [self updateSearchTabsIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
 
   [self updateTabBarItemsIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
-  [self updateSearchTabsIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
