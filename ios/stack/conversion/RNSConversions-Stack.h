@@ -3,8 +3,10 @@
 #if defined(__cplusplus)
 
 #import <react/renderer/components/rnscreens/Props.h>
+#import "RNSDefines.h"
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
+#import "RNSHeaderItemVisibilityPriority.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace rnscreens::conversion {
@@ -26,6 +28,17 @@ RNSHeaderItemSpacerPlacementFromReactRNSStackHeaderItemSpacerIOSPlacement(
 UINavigationItemBackButtonDisplayMode
 UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
     react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode);
+
+RNSHeaderItemVisibilityPriority
+RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+    react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority);
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+API_AVAILABLE(ios(27.0))
+UIBarButtonItemVisibilityPriority
+UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority);
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
 }; // namespace rnscreens::conversion
 

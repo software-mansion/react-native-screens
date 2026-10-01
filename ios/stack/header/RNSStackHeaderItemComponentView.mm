@@ -53,6 +53,7 @@ namespace react = facebook::react;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
+  _visibilityPriority = RNSHeaderItemVisibilityPriorityStandard;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -225,6 +226,18 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.hidesSharedBackground != newItemProps.hidesSharedBackground) {
     _hidesSharedBackground = newItemProps.hidesSharedBackground;
     needsUpdate = YES;
+  }
+
+  if (oldItemProps.visibilityPriority != newItemProps.visibilityPriority) {
+    _visibilityPriority =
+        rnscreens::conversion::RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+            newItemProps.visibilityPriority);
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    // The item is rebuilt only where the priority is actually applied to it.
+    if (@available(iOS 27.0, *)) {
+      needsUpdate = YES;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
   }
 
   [super updateProps:props oldProps:oldProps];

@@ -113,6 +113,45 @@ export interface SupportsSharedBackgroundIOS {
   hidesSharedBackground?: boolean | undefined;
 }
 
+/**
+ * @summary Priority used when the header has to decide which items to keep.
+ *
+ * @description
+ * Each value maps to the matching `UIBarButtonItemVisibilityPriority` constant.
+ *
+ * @platform iOS
+ *
+ * @supported iOS 27 and higher
+ */
+export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';
+
+export interface SupportsVisibilityPriorityIOS {
+  /**
+   * @summary Decides which items give way first when the header runs out of room.
+   *
+   * @description
+   * When the items do not fit, the header moves the ones with the lowest
+   * priority into the overflow ("...") menu, and keeps the higher ones.
+   *
+   * Accepts `'low'`, `'standard'` (the default) and `'high'`, which map to the
+   * `UIBarButtonItemVisibilityPriority` constants. Only the relative order of
+   * the items matters.
+   *
+   * When the item is placed in an implicit group of items, the group
+   * inherits this priority.
+   *
+   * A custom item ({@link StackHeaderInlineCustomItemIOS.render | render})
+   * moved into the overflow menu has no content to show there.
+   *
+   * @default 'standard'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
+}
+
 export interface SupportsIdentifierIOS {
   /**
    * @summary Stable identifier used to match the item across different screens
@@ -141,7 +180,8 @@ export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
     SupportsMenuIOS,
     SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS {
+    SupportsSharedBackgroundIOS,
+    SupportsVisibilityPriorityIOS {
   /**
    * @summary Marks this object as a header item definition.
    *
@@ -169,7 +209,8 @@ export interface StackHeaderInlineItemIOS
 export interface StackHeaderInlineCustomItemIOS
   extends SupportsMenuIOS,
     SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS {
+    SupportsSharedBackgroundIOS,
+    SupportsVisibilityPriorityIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
