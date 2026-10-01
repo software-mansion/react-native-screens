@@ -33,12 +33,12 @@ RNSHeaderItemVisibilityPriority
 RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority);
 
-#if RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 API_AVAILABLE(ios(27.0))
 UIBarButtonItemVisibilityPriority
 UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
     RNSHeaderItemVisibilityPriority visibilityPriority);
-#endif // RNS_BAR_BUTTON_ITEM_VISIBILITY_PRIORITY_AVAILABLE
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
 }; // namespace rnscreens::conversion
 
