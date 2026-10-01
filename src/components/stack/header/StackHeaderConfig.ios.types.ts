@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { TextStyle } from 'react-native';
+import type { ColorValue, TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
@@ -313,6 +313,25 @@ export type StackHeaderBackButtonDisplayModeIOS =
 
 export interface StackHeaderAppearanceIOS {
   /**
+   * @summary Specifies the background color of the navigation bar.
+   *
+   * @description Replaces the default background material. Alpha is preserved,
+   * so `transparent` removes this appearance's background. Omit to use UIKit's
+   * default for this appearance. Automatic scroll-edge effects are unaffected.
+   *
+   * @platform ios
+   */
+  backgroundColor?: ColorValue | undefined;
+  /**
+   * @summary Specifies the color of the shadow below the navigation bar.
+   *
+   * @description Use `transparent` to hide the shadow. Omit to use UIKit's
+   * default for this appearance.
+   *
+   * @platform ios
+   */
+  shadowColor?: ColorValue | undefined;
+  /**
    * @summary Specifies the font family used for the title of the header.
    *
    * @platform ios
@@ -580,9 +599,9 @@ export interface StackHeaderConfigPropsIOS {
    * @summary Appearance of the header when the edge of scrollable content
    * is aligned with the edge of the header.
    *
-   * @description If unset, derives the configuration from `standardAppearance`,
-   * otherwise becomes a standalone definition. In both cases it keeps transparent
-   * background by default (iOS <18).
+   * @description If unset, UIKit derives the configuration from `standardAppearance`.
+   * An explicit appearance is independent of `standardAppearance` and starts with
+   * a transparent background unless `backgroundColor` is set.
    *
    * @platform ios
    */

@@ -13,6 +13,7 @@
   }
 
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
+  [self applyBarColorsFromDictionary:appearanceDict toAppearance:appearance];
   [self applyTextAttributesFromDictionary:appearanceDict toAppearance:appearance];
   return appearance;
 }
@@ -31,8 +32,26 @@
   // not suddenly bring back the default bar background at the scroll edge.
   [appearance configureWithTransparentBackground];
 
+  [self applyBarColorsFromDictionary:appearanceDict toAppearance:appearance];
   [self applyTextAttributesFromDictionary:appearanceDict toAppearance:appearance];
   return appearance;
+}
+
++ (void)applyBarColorsFromDictionary:(nullable NSDictionary *)appearanceDict
+                        toAppearance:(nonnull UINavigationBarAppearance *)appearance
+{
+  UIColor *backgroundColor = [RCTConvert UIColor:appearanceDict[@"backgroundColor"]];
+  if (backgroundColor != nil) {
+    // Remove the material without resetting other appearance defaults.
+    // Assign the UIColor directly to preserve dynamic colors and alpha.
+    appearance.backgroundEffect = nil;
+    appearance.backgroundColor = backgroundColor;
+  }
+
+  UIColor *shadowColor = [RCTConvert UIColor:appearanceDict[@"shadowColor"]];
+  if (shadowColor != nil) {
+    appearance.shadowColor = shadowColor;
+  }
 }
 
 + (void)applyTextAttributesFromDictionary:(nullable NSDictionary *)appearanceDict
