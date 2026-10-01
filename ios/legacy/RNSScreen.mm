@@ -402,6 +402,17 @@ RNS_IGNORE_SUPER_CALL_END
   _homeIndicatorHidden = homeIndicatorHidden;
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
 }
+
+- (void)setVerticalBarDisabled:(BOOL)verticalBarDisabled
+{
+  _verticalBarDisabled = verticalBarDisabled;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_1)
+  if (@available(iOS 27.1, *)) {
+    [_controller setNeedsUpdateOfVerticalBarConfiguration];
+    [_controller.presentingViewController setNeedsUpdateOfVerticalBarConfiguration];
+  }
+#endif
+}
 #endif
 
 - (void)setBottomScrollEdgeEffect:(RNSScrollEdgeEffect)bottomScrollEdgeEffect
@@ -1295,6 +1306,11 @@ RNS_IGNORE_SUPER_CALL_END
     [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
   }
 
+  if (newScreenProps.preferredVerticalBarBehavior != oldScreenProps.preferredVerticalBarBehavior) {
+    [self setVerticalBarDisabled:newScreenProps.preferredVerticalBarBehavior ==
+                                 react::RNSScreenPreferredVerticalBarBehavior::Disabled];
+  }
+
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
@@ -1867,6 +1883,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     case RNSWindowTraitHomeIndicatorHidden: {
       return self.screenView.hasHomeIndicatorHiddenSet;
     }
+    case RNSWindowTraitVerticalBarBehavior: {
+      return self.screenView.verticalBarDisabled;
+    }
     default: {
       RCTLogError(@"Unknown trait passed: %d", (int)trait);
     }
@@ -1929,6 +1948,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return self.screenView.homeIndicatorHidden;
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_1)
+// UIKit resolves the vertical bar configuration per presentation, so a presented
+// screen answers for itself, and a nested stack (header shown in a modal) defers
+// to the deepest screen that opted out. The lookup does not cross into modals.
+- (UIViewController *)childViewControllerForPreferredVerticalBarBehavior
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitVerticalBarBehavior includingModals:NO];
+  return vc == self ? nil : vc;
+}
+
+- (UIVerticalBarBehavior)preferredVerticalBarBehavior
+{
+  return self.screenView.verticalBarDisabled ? UIVerticalBarBehaviorDisabled : UIVerticalBarBehaviorAutomatic;
+}
+#endif
 - (int)getParentChildrenCount
 {
   return (int)[[self.screenView.reactSuperview reactSubviews] count];

@@ -68,6 +68,8 @@ type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 
+type PreferredVerticalBarBehavior = 'automatic' | 'disabled';
+
 export interface NativeProps extends ViewProps {
   onAppear?: CT.DirectEventHandler<ScreenEvent> | undefined;
   onDisappear?: CT.DirectEventHandler<ScreenEvent> | undefined;
@@ -102,6 +104,10 @@ export interface NativeProps extends ViewProps {
   fullScreenSwipeEnabled?: CT.WithDefault<OptionalBoolean, 'undefined'>;
   fullScreenSwipeShadowEnabled?: CT.WithDefault<boolean, true>;
   homeIndicatorHidden?: boolean | undefined;
+  preferredVerticalBarBehavior?: CT.WithDefault<
+    PreferredVerticalBarBehavior,
+    'automatic'
+  >;
   preventNativeDismiss?: boolean | undefined;
   gestureEnabled?: CT.WithDefault<boolean, true>;
   statusBarColor?: ColorValue | undefined;

@@ -288,6 +288,11 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setPreferredVerticalBarBehavior(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
     override fun setPreventNativeDismiss(
         view: Screen?,
         value: Boolean,
