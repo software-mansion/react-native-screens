@@ -1,4 +1,3 @@
-# RNScreensFragmentFactory checks this marker relationship after loading fragments by name.
-# Preserve it for live implementations while still allowing shrinking and obfuscation.
--keep,allowobfuscation interface com.swmansion.rnscreens.fragment.restoration.RNScreensNonRestorableFragment
--keep,allowobfuscation,allowshrinking class * implements com.swmansion.rnscreens.fragment.restoration.RNScreensNonRestorableFragment
+# RNScreensFragmentFactory recognises library fragments by their package-name prefix when
+# restoring saved state. Keep their names so R8 can't rename or repackage them.
+-keepnames class com.swmansion.rnscreens.** extends androidx.fragment.app.Fragment

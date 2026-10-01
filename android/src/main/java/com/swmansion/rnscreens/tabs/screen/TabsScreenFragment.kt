@@ -6,13 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.swmansion.rnscreens.fragment.restoration.RNScreensNonRestorableFragment
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 
 class TabsScreenFragment(
     internal val tabsScreen: TabsScreen,
-) : Fragment(),
-    RNScreensNonRestorableFragment {
+) : Fragment() {
     internal val requireScreenKey: String by tabsScreen::requireScreenKey
     internal val isPreventNativeSelectionEnabled: Boolean by tabsScreen::preventNativeSelection
 

@@ -16,7 +16,6 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.swmansion.rnscreens.ext.recycle
-import com.swmansion.rnscreens.fragment.restoration.RNScreensNonRestorableFragment
 import com.swmansion.rnscreens.legacy.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.legacy.events.ScreenAppearEvent
 import com.swmansion.rnscreens.legacy.events.ScreenDisappearEvent
@@ -29,8 +28,7 @@ import kotlin.math.min
 
 open class ScreenFragment :
     Fragment,
-    ScreenFragmentWrapper,
-    RNScreensNonRestorableFragment {
+    ScreenFragmentWrapper {
     enum class ScreenLifecycleEvent {
         DID_APPEAR,
         WILL_APPEAR,
