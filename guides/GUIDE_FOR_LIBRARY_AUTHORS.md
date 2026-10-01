@@ -882,3 +882,44 @@ Remember to call [`LifecycleHelper.unregister`](https://github.com/software-mans
 ## Android hardware back button
 
 In order to properly handle the hardware back button on Android, you should implement the navigation logic concerning it. You can see an example of how it is done in `react-navigation` here: <https://github.com/react-navigation/react-navigation/blob/6cba517b74f5fd092db21d5574b558ef2d80897b/packages/native/src/useBackButton.tsx>.
+
+## Search in Stack v5 headers on iOS
+
+The experimental `Stack.HeaderConfig` accepts an existing `SearchBar` element in
+`ios.searchBar`:
+
+```tsx
+import React from 'react';
+import { SearchBar, Stack, type SearchBarCommands } from 'react-native-screens';
+
+function Header() {
+  const searchRef = React.useRef<SearchBarCommands>(null);
+
+  return (
+    <Stack.HeaderConfig
+      title="Results"
+      ios={{
+        searchBar: (
+          <SearchBar
+            ref={searchRef}
+            hideWhenScrolling={false}
+            onChangeText={event => console.log(event.nativeEvent.text)}
+          />
+        ),
+      }}
+    />
+  );
+}
+```
+
+Render the header as a direct child of `Stack.Screen`. Search uses the existing
+`SearchBar` props, events and ref commands, including `focus`, `blur`, `setText`,
+`clearText`, `toggleCancelButton` and `cancelSearch`. Header items and menus do not
+focus search. Removing or replacing the search element dismisses its controller.
+Leaving the screen dismisses active search using UIKit's normal dismissal
+behavior; returning does not activate the keyboard. Changes to search placement and scrolling options also
+apply while the header is mounted.
+
+Wrap scrollable content in `ScrollViewMarker` so UIKit can apply
+`hideWhenScrolling` to the screen's content scroll view. This option is ignored
+on tvOS, Android and web.
