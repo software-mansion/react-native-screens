@@ -168,3 +168,15 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 - [ ] The most recent toggle takes effect before the back press: since
       prevent is Enabled at press time, back is intercepted (toast shown, app
       stays on **B**).
+
+### Android: prevent native dismiss mechanism keeps working after activity backgrounding
+
+14. From **Home**, tap **Push B**. On **B** tap back button. 
+
+- [ ] A green toast appears and the app remains on **B**. 
+
+15. Move the app to background by moving focus to the launcher screen.
+    Open the aplication again (focus it). Screen **B** is visible.
+    Tap on the back button chevron.
+
+- [ ] A green toast appears and the app remains on **B**.

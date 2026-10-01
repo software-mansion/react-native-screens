@@ -1,10 +1,10 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'Presentation state',
+  name: 'Presentation State',
   key: 'test-form-sheet-presentation-state',
   details:
-    'Verifies the presentation state machine when subjected to rapid consecutive open/close state changes from JS.',
+    'Rapid open/close toggles from JS: the presentation state machine must stay in sync.',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,

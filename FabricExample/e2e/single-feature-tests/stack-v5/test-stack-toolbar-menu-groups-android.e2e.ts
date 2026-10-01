@@ -1,79 +1,36 @@
 import { device, expect, element, by } from 'detox';
-import { NativeMatcher } from 'detox/detox';
 import {
-  describeIfAndroid,
-  dismissNextToast,
-  expectNoToast,
-  rewindAndScrollUntilVisible,
   selectPickerOption,
-  selectSingleFeatureTestsScreen,
   toggleSettingsSwitch,
-} from '../../e2e-utils';
+} from '@e2e/app/settings-controls';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissNextToast, expectNoToast } from '@e2e/app/toast';
 import {
-  CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW,
   CLASS_NAME_ANDROID_CHECK_BOX,
-  CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW,
-  CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW,
   CLASS_NAME_ANDROID_RADIO_BUTTON,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-android';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
+  createOverflowMenuHelpers,
+  expectCheckBox,
+  expectRadioButton,
+  MENU_ANIMATION_TIMEOUT_MS,
+  menuItemImage,
+  menuItemRow,
+  menuItemToggle,
+  openOverflowMenu,
+  overflowMenuText,
+} from '@e2e/framework/toolbar-menu-android';
 
 // The cases follow `scenario.md` as one continuous flow: each starts from the
 // state the previous one left.
 
 const SCROLLVIEW_ID = 'toolbar-menu-groups-scrollview';
-const OVERFLOW_MENU_LABEL = 'More options';
-
-/** Detox's idle sync misses popup animations, so these waits are explicit. */
-const MENU_ANIMATION_TIMEOUT_MS = 5000;
-
-/** Probes a settled popup: by now the menu is either up or was never opened. */
-const MENU_PRESENCE_TIMEOUT_MS = 250;
-
-/**
- * One Back press per popup window. A submenu replaces its parent on phones and
- * stacks on it on tablets, so at most two are ever up.
- */
-const MAX_MENU_DEPTH = 3;
-
-/**
- * A multi-toggle group renders check boxes and a single-selection one radio
- * buttons, so the class asserts the group type.
- */
-type ToggleWidget =
-  | typeof CLASS_NAME_ANDROID_CHECK_BOX
-  | typeof CLASS_NAME_ANDROID_RADIO_BUTTON;
-
-function menuItemRow(title: string): NativeMatcher {
-  return by
-    .type(CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW)
-    .withDescendant(by.text(title));
-}
-
-function menuItemToggle(title: string, widget: ToggleWidget): NativeMatcher {
-  return by.type(widget).withAncestor(menuItemRow(title));
-}
 
 /** Anchors blocks made only of `not.toExist`, which a closed menu would satisfy. */
 async function expectMenuItemRow(title: string) {
   await expect(element(menuItemRow(title))).toBeVisible();
-}
-
-async function expectCheckBox(title: string, checked: boolean) {
-  await expect(
-    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
-  ).not.toExist();
-  await expect(
-    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
-  ).toHaveToggleValue(checked);
-}
-
-async function expectRadioButton(title: string, checked: boolean) {
-  await expect(
-    element(menuItemToggle(title, CLASS_NAME_ANDROID_CHECK_BOX)),
-  ).not.toExist();
-  await expect(
-    element(menuItemToggle(title, CLASS_NAME_ANDROID_RADIO_BUTTON)),
-  ).toHaveToggleValue(checked);
 }
 
 async function expectNoCheckmark(title: string) {
@@ -91,12 +48,6 @@ async function expectNoCheckmark(title: string) {
  * resource id, which Detox cannot match — so a row is asserted to hold at most
  * one visible image view at a time.
  */
-function menuItemImage(title: string): NativeMatcher {
-  return by
-    .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW)
-    .withAncestor(menuItemRow(title));
-}
-
 /** `by.type` matches visible views only, so `not.toExist` means "not visible". */
 async function expectGroupDivider(title: string, visible: boolean) {
   const divider = element(menuItemImage(title));
@@ -121,12 +72,7 @@ const SETTINGS_CONTROL = {
   pixels: SCROLL_STEP_PX,
 };
 
-async function tapById(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, {
-    pixels: SCROLL_STEP_PX,
-  });
-  await element(by.id(id)).tap();
-}
+const tapById = (id: string) => scrollToAndTap(id, SETTINGS_CONTROL);
 
 const SWITCHES = {
   singleSelection: {
@@ -188,127 +134,52 @@ async function sendCommand({ id, checked, title, hidden }: CommandSpec) {
   await tapById('send-command-button');
 }
 
-const overflowMenu = () =>
-  element(by.type(CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW));
-
-/** Nothing behind a focused popup is in the hierarchy Detox searches. */
-async function waitForScreen() {
-  await waitFor(element(by.id(SCROLLVIEW_ID)))
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
-}
-
-/** Resolves instead of throwing, so it can be used as a condition. */
-async function isMenuOpen(): Promise<boolean> {
-  return waitFor(overflowMenu())
-    .toExist()
-    .withTimeout(MENU_PRESENCE_TIMEOUT_MS)
-    .then(
-      () => true,
-      () => false,
-    );
-}
-
-/** Waits here, so a menu that never opened fails before any `try` below. */
-async function openOverflowMenu() {
-  await element(by.label(OVERFLOW_MENU_LABEL)).tap();
-  await waitFor(overflowMenu())
-    .toBeVisible()
-    .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
-}
-
 /**
- * Back only ever goes to an open popup: with no menu up the activity takes it
- * and pops the test screen, failing every later case in this stateful suite.
+ * A submenu replaces its parent on phones and stacks on it on tablets, so at
+ * most two popups are ever up — the default `maxMenuDepth` covers that.
  */
-async function closeMenuIfOpen() {
-  let pressCount = 0;
-
-  while (await isMenuOpen()) {
-    if (pressCount === MAX_MENU_DEPTH) {
-      throw new Error(
-        `The overflow menu was still open after ${MAX_MENU_DEPTH} Back presses.`,
-      );
-    }
-    await device.pressBack();
-    pressCount++;
-  }
-
-  if (pressCount > 0) {
-    await waitForScreen();
-  }
-}
-
-async function tapMenuItem(title: string) {
-  await element(by.text(title)).tap();
-}
+const { closeMenuIfOpen, closingMenuAfter, withOverflowMenu, tapMenuItem } =
+  createOverflowMenuHelpers({ scrollViewId: SCROLLVIEW_ID });
 
 /** The only submenu row no case hides or renames. */
 const SUBMENU_ANCHOR_TITLE = 'Info';
 
+/**
+ * Opens the submenu via "More". Unlike a leaf tap, this opens a popup instead
+ * of closing one, so it can't use the shared `tapMenuItem`'s "gone after tap"
+ * assertion — it waits for the submenu's own content instead.
+ */
 async function openSubmenu() {
-  await tapMenuItem('More');
+  await element(overflowMenuText('More')).tap();
   await waitFor(element(menuItemRow(SUBMENU_ANCHOR_TITLE)))
     .toBeVisible()
     .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
 }
 
-/** A leaf tap dismisses the menu; the toast it emits is on the screen behind. */
-async function tapLeafItem(title: string) {
-  await tapMenuItem(title);
-  await waitForScreen();
-}
-
 async function tapOverflowItem(title: string) {
   await openOverflowMenu();
-  await tapLeafItem(title);
+  await tapMenuItem(title);
 }
 
 async function tapSubmenuItem(title: string) {
   await openOverflowMenu();
   await openSubmenu();
-  await tapLeafItem(title);
-}
-
-/** Closes the menu even on failure; a leaked popup would fail every later case. */
-async function closingMenuAfter(assertions: () => Promise<void>) {
-  let assertionFailed = false;
-
-  try {
-    await assertions();
-  } catch (error) {
-    assertionFailed = true;
-    throw error;
-  } finally {
-    try {
-      await closeMenuIfOpen();
-    } catch (cleanupError) {
-      // A throw from `finally` would replace the error that actually failed.
-      if (!assertionFailed) {
-        throw cleanupError;
-      }
-    }
-  }
-}
-
-async function withOverflowMenu(assertions: () => Promise<void>) {
-  await openOverflowMenu();
-  await closingMenuAfter(assertions);
+  await tapMenuItem(title);
 }
 
 /**
- * Opening the submenu is inside the cleanup scope: it is a tap that can fail
- * with the parent menu already up, and that popup still has to come down.
+ * Opening both menus is inside the cleanup scope: either step can fail with a
+ * popup already up, and that popup still has to come down.
  */
 async function withSubmenu(assertions: () => Promise<void>) {
-  await openOverflowMenu();
   await closingMenuAfter(async () => {
+    await openOverflowMenu();
     await openSubmenu();
     await assertions();
   });
 }
 
-describeIfAndroid('Stack Toolbar Menu Groups', () => {
+describeIfAndroid('@smoke Stack Toolbar Menu Groups', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -408,7 +279,7 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
 
   it('should not emit when re-selecting the checked single-selection item', async () => {
     await tapOverflowItem('Large');
-    await expectNoToast();
+    await expectNoToast('size: ["large"]');
 
     await withOverflowMenu(async () => {
       await expectRadioButton('Large', true);
@@ -545,7 +416,7 @@ describeIfAndroid('Stack Toolbar Menu Groups', () => {
     await dismissNextToast('size: ["medium"]');
 
     await sendCommand({ id: 'medium', checked: 'false' });
-    await expectNoToast();
+    await expectNoToast('size: ["medium"]');
     await withOverflowMenu(async () => {
       await expectRadioButton('Medium', true);
     });

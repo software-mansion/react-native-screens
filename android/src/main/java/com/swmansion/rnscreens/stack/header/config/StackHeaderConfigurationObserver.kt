@@ -1,9 +1,8 @@
 package com.swmansion.rnscreens.stack.header.config
 
-import com.swmansion.rnscreens.stack.header.toolbar.update.StackHeaderToolbarMenuElementUpdate
-
-internal interface StackHeaderConfigurationObserver {
-    fun onConfigChanged(config: StackHeaderConfigurationProviding)
-
-    fun onMenuElementsUpdated(updates: List<StackHeaderToolbarMenuElementUpdate>)
+internal fun interface StackHeaderConfigurationObserver {
+    /**
+     * Reports that the parts of the configuration described by [flags] changed.
+     */
+    fun onInvalidated(flags: StackHeaderInvalidationFlags)
 }

@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
@@ -94,6 +95,24 @@ export interface SupportsMenuIOS {
   menu?: StackHeaderMenuIOS | undefined;
 }
 
+export interface SupportsSharedBackgroundIOS {
+  /**
+   * @summary Whether the liquid glass background for this item should be hidden.
+   *
+   * @description
+   * On iOS 26, adjacent bar button items are grouped inside a shared liquid
+   * glass background. Setting this to `true` removes the shared background
+   * from this item.
+   *
+   * @default false
+   *
+   * @platform iOS
+   *
+   * @supported iOS 26 and higher
+   */
+  hidesSharedBackground?: boolean | undefined;
+}
+
 export interface SupportsIdentifierIOS {
   /**
    * @summary Stable identifier used to match the item across different screens
@@ -121,7 +140,8 @@ export interface SupportsIdentifierIOS {
 export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
     SupportsMenuIOS,
-    SupportsIdentifierIOS {
+    SupportsIdentifierIOS,
+    SupportsSharedBackgroundIOS {
   /**
    * @summary Marks this object as a header item definition.
    *
@@ -148,7 +168,8 @@ export interface StackHeaderInlineItemIOS
  */
 export interface StackHeaderInlineCustomItemIOS
   extends SupportsMenuIOS,
-    SupportsIdentifierIOS {
+    SupportsIdentifierIOS,
+    SupportsSharedBackgroundIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
@@ -272,7 +293,172 @@ export interface StackHeaderTitleCustomItemIOS {
   render: () => ReactElement;
 }
 
+/**
+ * @summary Controls how the back button title is displayed.
+ *
+ * @description
+ * - `default`: the system chooses the title depending on available space.
+ *   On iOS < 26 options include: custom title (defaults to previous screen title),
+ *   generic "Back", no title; on iOS >= 26 it's either custom title (if set) or no title.
+ * - `generic`: on iOS < 26, the system uses a generic "Back" title or no title;
+ *   on iOS >= 26 it's the same as `minimal`.
+ * - `minimal`: no title is displayed next to the back button chevron.
+ *
+ * @platform iOS
+ */
+export type StackHeaderBackButtonDisplayModeIOS =
+  | 'default'
+  | 'generic'
+  | 'minimal';
+
+export interface StackHeaderAppearanceIOS {
+  /**
+   * @summary Specifies the font family used for the title of the header.
+   *
+   * @platform ios
+   */
+  titleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the title of the header.
+   *
+   * @platform ios
+   */
+  titleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the title of the header.
+   *
+   * @platform ios
+   */
+  titleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the title of the header.
+   *
+   * @platform ios
+   */
+  titleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the title of the header.
+   *
+   * @platform ios
+   */
+  titleFontColor?: TextStyle['color'] | undefined;
+  /**
+   * @summary Specifies the font family used for the large title of the header.
+   *
+   * @platform ios
+   */
+  largeTitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the large title of the header.
+   *
+   * @platform ios
+   */
+  largeTitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the large title of the header.
+   *
+   * @platform ios
+   */
+  largeTitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the large title of the header.
+   *
+   * @platform ios
+   */
+  largeTitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the large title of the header.
+   *
+   * @platform ios
+   */
+  largeTitleFontColor?: TextStyle['color'] | undefined;
+  /**
+   * @summary Specifies the font family used for the subtitle of the header.
+   *
+   * @description Applies to both the regular and the large subtitle.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 and higher
+   */
+  subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the subtitle of the header.
+   *
+   * @description Applies to both the regular and the large subtitle.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 and higher
+   */
+  subtitleFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the subtitle of the header.
+   *
+   * @description Applies to both the regular and the large subtitle.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 and higher
+   */
+  subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the subtitle of the header.
+   *
+   * @description Applies to both the regular and the large subtitle.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 and higher
+   */
+  subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the subtitle of the header.
+   *
+   * @description Applies to both the regular and the large subtitle.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 and higher
+   */
+  subtitleFontColor?: TextStyle['color'] | undefined;
+}
+
 export interface StackHeaderConfigPropsIOS {
+  /**
+   * @summary Title displayed next to the back button on this screen.
+   *
+   * @description
+   * Configured on the screen whose back button it applies to (the screen that
+   * is pushed on top). When unset, the system derives the back title from the
+   * previous screen's `title`.
+   *
+   * @platform iOS
+   */
+  backButtonTitle?: string | undefined;
+  /**
+   * @summary Controls how the back button title is displayed.
+   *
+   * @default 'default'
+   *
+   * @platform iOS
+   */
+  backButtonDisplayMode?: StackHeaderBackButtonDisplayModeIOS | undefined;
+  /**
+   * @summary Whether the back button shows the navigation history menu.
+   *
+   * @description
+   * Configured on the screen whose back button it applies to (the screen that
+   * is pushed on top). When `false`, the navigation history menu is not shown
+   * on either of the gestures that normally open it: long-pressing the back
+   * button and secondary-clicking it (trackpad / mouse right click); tapping
+   * it still pops the screen.
+   *
+   * @default true
+   *
+   * @platform iOS
+   */
+  backButtonMenuEnabled?: boolean | undefined;
   /**
    * @summary Custom item to display as a subtitle.
    *
@@ -373,6 +559,34 @@ export interface StackHeaderConfigPropsIOS {
    * @supported iOS 26 and higher
    */
   largeSubtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
+  /**
+   * @summary A single line of text displayed at the top of the navigation bar,
+   * above the title.
+   *
+   * @description
+   * Setting this prop increases the height of the navigation bar.
+   *
+   * @platform iOS
+   */
+  prompt?: string | undefined;
+  /**
+   * @summary Appearance of the header when the edge of scrollable content
+   * is not aligned with the edge of the header.
+   *
+   * @platform ios
+   */
+  standardAppearance?: StackHeaderAppearanceIOS | undefined;
+  /**
+   * @summary Appearance of the header when the edge of scrollable content
+   * is aligned with the edge of the header.
+   *
+   * @description If unset, derives the configuration from `standardAppearance`,
+   * otherwise becomes a standalone definition. In both cases it keeps transparent
+   * background by default (iOS <18).
+   *
+   * @platform ios
+   */
+  scrollEdgeAppearance?: StackHeaderAppearanceIOS | undefined;
 }
 
 export interface StackHeaderConfigCommandsIOS {

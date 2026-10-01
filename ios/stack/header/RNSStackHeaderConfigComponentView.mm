@@ -1,6 +1,8 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions.h"
+#import "RNSConversions-Stack.h"
 #import "RNSImageLoadingHelper.h"
+#import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
 #import "RNSStackHeaderItemComponentView.h"
@@ -12,7 +14,6 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
-#import "RNSStackScreenHeaderCoordinator.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTConvert.h>
@@ -21,7 +22,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/utils/ManagedObjectWrapper.h>
-#import <rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
 
 namespace react = facebook::react;
 
@@ -67,7 +68,13 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeTitle = nil;
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
+  _prompt = nil;
+  _backButtonTitle = nil;
+  _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  _backButtonMenuEnabled = YES;
   _titleMenu = nil;
+  _standardAppearance = nil;
+  _scrollEdgeAppearance = nil;
 }
 
 - (NSArray<id> *)children
@@ -123,18 +130,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   if (self.window != nil) {
     [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
-    RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
-    coordinator.configDataProvider = self;
-    coordinator.frameChangeDelegate = self;
-    coordinator.eventsDelegate = self;
-    coordinator.imageLoader = self;
-    [coordinator rebuild];
-  } else {
-    RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
-    coordinator.configDataProvider = nil;
-    coordinator.frameChangeDelegate = nil;
-    coordinator.eventsDelegate = nil;
-    coordinator.imageLoader = nil;
+    [self.headerCoordinator rebuild];
   }
   [super didMoveToWindow];
 }
@@ -155,7 +151,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     ((RNSStackHeaderItemSpacerComponentView *)childComponentView).invalidationDelegate = self;
   }
 
-  [[self headerCoordinator] rebuild];
+  [self.headerCoordinator rebuild];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -169,7 +165,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   [_children removeObjectAtIndex:index];
-  [[self headerCoordinator] rebuild];
+  [self.headerCoordinator rebuild];
 }
 
 #pragma mark - RNSStackHeaderItemInvalidationDelegate
@@ -178,22 +174,21 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   if (itemId == nil) {
     RCTLogWarn(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
-    [[self headerCoordinator] rebuild];
+    [self.headerCoordinator rebuild];
     return;
   }
-  [[self headerCoordinator] rebuildItemWithId:itemId];
+  [self.headerCoordinator rebuildItemWithId:itemId];
 }
 
 - (void)headerItemMenuDidChangeWithId:(NSString *)itemId
 {
   if (itemId == nil) {
     RCTLogWarn(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
-    [[self headerCoordinator] rebuild];
+    [self.headerCoordinator rebuild];
     return;
   }
-  RNSStackScreenHeaderCoordinator *coordinator = [self headerCoordinator];
-  [coordinator resetTrackerForItemWithId:itemId];
-  [coordinator reapplyMenuForItemWithId:itemId];
+  [self.headerCoordinator resetTrackerForItemWithId:itemId];
+  [self.headerCoordinator reapplyMenuForItemWithId:itemId];
 }
 
 /**
@@ -204,15 +199,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (itemId == nil) {
     RCTLogWarn(
         @"[RNScreens] headerItemMenuDidUpdateFromCommandWithId called with nil id, will run full header rebuild");
-    [[self headerCoordinator] rebuild];
+    [self.headerCoordinator rebuild];
     return;
   }
-  [[self headerCoordinator] reapplyMenuForItemWithId:itemId];
+  [self.headerCoordinator reapplyMenuForItemWithId:itemId];
 }
 
 - (void)headerItemSpacerDidInvalidate
 {
-  [[self headerCoordinator] rebuild];
+  [self.headerCoordinator rebuild];
 }
 
 #pragma mark - RNSStackHeaderEventsDelegate
@@ -295,11 +290,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
         (oldItemData.itemType == RNSMenuItemTypeAutomatic &&
          [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:menuItemId inMenu:locator.rootMenu] != nil);
     if (isToggle) {
-      [[self headerCoordinator] setToggleState:updateOptions.toggleState
-                              forMenuElementId:menuItemId
-                                 trackerItemId:locator.trackerItemId
-                                      rootMenu:locator.rootMenu
-                                    parentMenu:locator.searchResult.parentMenu];
+      [self.headerCoordinator setToggleState:updateOptions.toggleState
+                            forMenuElementId:menuItemId
+                               trackerItemId:locator.trackerItemId
+                                    rootMenu:locator.rootMenu
+                                  parentMenu:locator.searchResult.parentMenu];
     }
   }
 
@@ -318,7 +313,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                                     replacingChildWithId:menuItemId
                                              withElement:newItemData];
       }
-      [[self headerCoordinator] reapplyTitleMenu];
+      [self.headerCoordinator reapplyTitleMenu];
       break;
     case RNSMenuElementPositionOverflow:
       // TODO: handle overflow menu
@@ -366,7 +361,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
                                     replacingChildWithId:menuElementId
                                              withElement:newMenuItem];
       }
-      [[self headerCoordinator] reapplyTitleMenu];
+      [self.headerCoordinator reapplyTitleMenu];
       break;
     case RNSMenuElementPositionOverflow:
       // TODO: handle overflow menu
@@ -444,6 +439,34 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _largeTitleEnabled = newHeaderProps.largeTitleEnabled;
   }
 
+  if (oldHeaderProps.prompt != newHeaderProps.prompt) {
+    _prompt = RCTNSStringFromStringNilIfEmpty(newHeaderProps.prompt);
+  }
+
+  if (oldHeaderProps.backButtonTitle != newHeaderProps.backButtonTitle) {
+    _backButtonTitle = RCTNSStringFromStringNilIfEmpty(newHeaderProps.backButtonTitle);
+  }
+
+  if (oldHeaderProps.backButtonDisplayMode != newHeaderProps.backButtonDisplayMode) {
+    _backButtonDisplayMode =
+        rnscreens::conversion::UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+            newHeaderProps.backButtonDisplayMode);
+  }
+
+  if (oldHeaderProps.backButtonMenuEnabled != newHeaderProps.backButtonMenuEnabled) {
+    _backButtonMenuEnabled = newHeaderProps.backButtonMenuEnabled;
+  }
+
+  if (oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance) {
+    _standardAppearance = [RNSStackHeaderAppearanceMapper
+        appearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.standardAppearance]];
+  }
+
+  if (oldHeaderProps.scrollEdgeAppearance != newHeaderProps.scrollEdgeAppearance) {
+    _scrollEdgeAppearance = [RNSStackHeaderAppearanceMapper
+        scrollEdgeAppearanceFromDictionary:[self dictionaryFromAppearanceProp:newHeaderProps.scrollEdgeAppearance]];
+  }
+
   if (oldHeaderProps.titleMenu != newHeaderProps.titleMenu) {
     _titleMenu = [RNSStackHeaderMenuMapper
         menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newHeaderProps.titleMenu)];
@@ -452,14 +475,14 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   [super updateProps:props oldProps:oldProps];
 
-  [[self headerCoordinator] applyConfigProperties];
+  [self.headerCoordinator applyConfigProperties];
 
   if (titleMenuDidChange) {
     // title menu is a prop on the navigation item, not on one of the bar button items
     // thus it is not configured with matching RNSStackHeaderItemComponentView
     // but here directly
-    [[self headerCoordinator] resetTitleMenuTracker];
-    [[self headerCoordinator] reapplyTitleMenu];
+    [self.headerCoordinator resetTitleMenuTracker];
+    [self.headerCoordinator reapplyTitleMenu];
   }
 }
 
@@ -481,6 +504,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 }
 
 #pragma mark - Private
+
+- (nullable NSDictionary *)dictionaryFromAppearanceProp:(const folly::dynamic &)appearanceProp
+{
+  if (appearanceProp.type() != folly::dynamic::OBJECT) {
+    return nil;
+  }
+
+  return rnscreens::conversion::RNSConvertFollyDynamicToId(appearanceProp);
+}
 
 - (nullable RNSStackScreenHeaderCoordinator *)headerCoordinator
 {

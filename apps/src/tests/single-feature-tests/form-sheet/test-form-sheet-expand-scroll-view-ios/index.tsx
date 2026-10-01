@@ -8,17 +8,9 @@ import {
   View,
 } from 'react-native';
 import { FormSheet } from 'react-native-screens';
-import type { ScenarioDescription } from '@apps/tests/shared/helpers';
+import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-const scenarioDescription: ScenarioDescription = {
-  name: 'Expand when scrolled to edge',
-  key: 'test-form-sheet-expand-scroll-view-ios',
-  details:
-    'Allows testing the prefersScrollingExpandsWhenScrolledToEdge prop with nested ScrollView.',
-  platforms: ['ios'],
-};
 
 function TestFormSheetExpandScrollView() {
   const [isOpen, setIsOpen] = useState(false);

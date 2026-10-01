@@ -1,9 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import {
-  describeIfiOS,
-  describeIfiPad,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   CLASS_NAME_UI_FLOATING_TAB_BAR_COLLECTION_VIEW,
   CLASS_NAME_UI_TAB_SIDEBAR_COLLECTION_VIEW,
@@ -11,26 +8,21 @@ import {
   CLASS_NAME_RCT_ROOT_COMPONENT_VIEW,
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_LIST_CONTENT_IMAGE_VIEW,
-} from '../../native-class-names';
+} from '@e2e/framework/native-classes-ios';
+import { describeIfIOS, describeIfIPad } from '@e2e/framework/platform';
 
 const PICKER_ID = 'tab-bar-controller-mode-picker';
 
 type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
-function modeItemId(mode: TabBarControllerMode) {
-  return `tabbarcontrollermode-${mode.toLowerCase()}`;
-}
+const setTabBarControllerMode = (mode: TabBarControllerMode) =>
+  selectPickerOption({
+    pickerId: PICKER_ID,
+    label: 'tabBarControllerMode',
+    option: mode,
+  });
 
-async function setTabBarControllerMode(mode: TabBarControllerMode) {
-  await element(by.id(PICKER_ID)).tap();
-  await element(by.id(modeItemId(mode))).tap();
-  await expect(element(by.id(PICKER_ID))).toHaveLabel(
-    `tabBarControllerMode: ${mode}`,
-  );
-  await element(by.id(PICKER_ID)).tap();
-}
-
-describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
+describeIfIPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -103,7 +95,7 @@ describeIfiPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   });
 });
 
-describeIfiOS('Tabs: tabBarControllerMode (iPhone)', () => {
+describeIfIOS('Tabs: tabBarControllerMode (iPhone)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

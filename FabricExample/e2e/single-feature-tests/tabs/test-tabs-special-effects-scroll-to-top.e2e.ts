@@ -1,10 +1,8 @@
 import { device, expect, element, by } from 'detox';
-import {
-  scrollUntilVisible,
-  selectSingleFeatureTestsScreen,
-  forceSelectTabByLabel,
-} from '../../e2e-utils';
-import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { scrollUntilVisible } from '@e2e/framework/gestures';
+import { CLASS_NAME_UI_TAB_BAR } from '@e2e/framework/native-classes-ios';
+import { forceSelectTabByLabel } from '@e2e/framework/tab-bar';
 
 describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {

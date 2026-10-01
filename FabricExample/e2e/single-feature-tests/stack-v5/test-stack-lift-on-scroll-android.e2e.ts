@@ -2,18 +2,23 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes } from 'detox/detox';
 import {
-  countMatches,
-  describeIfAndroid,
-  getElementAttributes,
-  getMatches,
-  scrollUntilVisible,
-  selectSingleFeatureTestsScreen,
-  waitUntil,
-} from '../../e2e-utils';
+  selectPickerOption,
+  toggleSettingsSwitch,
+} from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { expectTopmostVisible } from '@e2e/framework/assertions';
+import { scrollUntilVisible } from '@e2e/framework/gestures';
 import {
-  CLASS_NAME_ANDROID_APP_BAR_LAYOUT,
-  CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
-} from '../../native-class-names';
+  countMatches,
+  getFrame,
+  getSingleMatch,
+} from '@e2e/framework/matchers';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import {
+  stackV5AppBar,
+  stackV5Toolbar,
+} from '@e2e/framework/stack-header-android';
+import { DEFAULT_TIMEOUT_MS, waitUntil } from '@e2e/framework/wait';
 import type { TriState } from '@apps/tests/single-feature-tests/stack-v5/test-stack-lift-on-scroll-android';
 
 /**
@@ -36,41 +41,20 @@ const BOTTOM_MARKER = 'lift-on-scroll-bottom-marker';
 const TOP_HEADING = 'Header config';
 const HEADER_TITLE = 'Lift on scroll';
 const LIFT_PICKER = 'liftonscroll-picker';
+/** The picker's `label` prop — option testIDs are derived from it. */
+const PICKER_LABEL = 'liftOnScroll';
 
 // Espresso's idle sync does not cover the app bar's elevation animation, so the
 // lifted state has to be polled rather than read once.
-const LIFT_TIMEOUT_MS = 3000;
+const LIFT_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 
-// The legacy headers of the outer navigator build `CustomToolbar`, which extends
-// `Toolbar` but not `MaterialToolbar`, so this stays scoped to the Stack v5
-// header under test.
-const toolbar = by.type(CLASS_NAME_ANDROID_MATERIAL_TOOLBAR);
+const appBarAttributes = () =>
+  getSingleMatch(
+    stackV5AppBar(),
+    'the Stack v5 app bar',
+  ) as Promise<AndroidElementAttributes>;
 
-// Every screen the outer navigator has stacked keeps its own `AppBarLayout` in
-// the hierarchy, so the bare class matches several. Only the Stack v5 header
-// wraps a `MaterialToolbar`.
-const appBar = by
-  .type(CLASS_NAME_ANDROID_APP_BAR_LAYOUT)
-  .withDescendant(toolbar);
-
-async function appBarAttributes(): Promise<AndroidElementAttributes> {
-  const matches = await getMatches(appBar);
-
-  // Guards against reading a sibling screen's app bar if the scoping above ever
-  // stops being unique.
-  jestExpect(matches).toHaveLength(1);
-
-  return matches[0] as AndroidElementAttributes;
-}
-
-async function contentFrame() {
-  const attributes = (await getElementAttributes({
-    by: 'id',
-    value: SCROLL_VIEW,
-  })) as AndroidElementAttributes;
-
-  return attributes.frame;
-}
+const contentFrame = () => getFrame(by.id(SCROLL_VIEW), SCROLL_VIEW);
 
 async function appBarElevation(): Promise<number> {
   return (await appBarAttributes()).elevation;
@@ -196,32 +180,30 @@ const TRANSPARENT: Switch = {
 const HIDDEN: Switch = { testID: 'hidden-switch', label: 'hidden' };
 
 // Controls live inside the scrolled content, so scroll back up before reaching
-// for one. The label assertion doubles as the wait for the re-render to land.
+// for one. No `control` is passed: this screen needs `scrollBackToTop`'s anchor,
+// which the shared scroll does not use.
 async function toggleSwitch({ testID, label }: Switch, expected: boolean) {
   await scrollBackToTop();
-  await element(by.id(testID)).tap();
-  await waitFor(element(by.text(`${label}: ${expected}`)))
-    .toBeVisible()
-    .withTimeout(3000);
+  await toggleSettingsSwitch({ switchId: testID, label, to: expected });
 }
 
-// Option ids are `SettingsPicker`'s own `<label>-<item>`, lowercased. The second
-// tap on the picker closes it again, so its options do not push the switches
-// below it off-screen.
+// Controls live inside the scrolled content, so scroll back up before reaching
+// for one. No `control` is passed: this screen needs `scrollBackToTop`'s anchor,
+// which the shared scroll does not use. `selectPickerOption` closes the picker
+// again, so its options do not push the switches below it off-screen.
 async function selectLiftOnScroll(value: TriState) {
   await scrollBackToTop();
-  await element(by.id(LIFT_PICKER)).tap();
-  await element(by.id(`liftonscroll-${value}`)).tap();
-  await element(by.id(LIFT_PICKER)).tap();
-  await expect(element(by.id(LIFT_PICKER))).toHaveText(
-    `liftOnScroll: ${value}`,
-  );
+  await selectPickerOption({
+    pickerId: LIFT_PICKER,
+    label: PICKER_LABEL,
+    option: value,
+  });
 }
 
 async function expectHeaderAttached() {
-  await waitFor(element(toolbar)).toBeVisible().withTimeout(3000);
+  await expectTopmostVisible(stackV5Toolbar);
   await expect(element(by.text(HEADER_TITLE))).toBeVisible();
-  jestExpect(await countMatches(appBar)).toBe(1);
+  jestExpect(await countMatches(stackV5AppBar())).toBe(1);
 }
 
 // A hidden or detached header is removed from the hierarchy, so its absence is
@@ -231,8 +213,8 @@ async function expectHeaderDetached() {
   await waitFor(element(by.id(SCROLL_VIEW)))
     .toBeVisible()
     .withTimeout(3000);
-  await expect(element(appBar)).not.toExist();
-  await expect(element(toolbar)).not.toExist();
+  await expect(element(stackV5AppBar())).not.toExist();
+  await expect(element(stackV5Toolbar())).not.toExist();
   // Implied by the toolbar being gone — the title is one of its children — but
   // asserted anyway: it is the part a reader of `scenario.md` actually checks
   // ("there is no header"), and it keeps holding if the title ever stops being

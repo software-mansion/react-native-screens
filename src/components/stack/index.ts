@@ -2,7 +2,11 @@ import { StackHost } from './host';
 import { StackScreen } from './screen';
 import { StackHeaderConfig } from './header';
 
-export type { StackHostProps } from './host';
+export type {
+  StackHostProps,
+  StackHostColorScheme,
+  StackHostDirection,
+} from './host';
 
 export type {
   OnDismissEventPayload,
@@ -38,7 +42,9 @@ export type {
   StackHeaderToolbarMenuItemShowAsActionAndroid,
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
+  StackHeaderBackButtonDisplayModeIOS,
   StackHeaderConfigPropsIOS,
+  StackHeaderAppearanceIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderTitleCustomItemIOS,

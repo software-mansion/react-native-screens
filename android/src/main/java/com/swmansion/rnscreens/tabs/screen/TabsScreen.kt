@@ -189,6 +189,10 @@ class TabsScreen(
 
     override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
 
+    // TabsScreen has no `preventNativeDismiss` flag of its own - it only forwards
+    // the question to its nested container.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = resolveNestedContainer()?.wantsToPreventStackNativeDismiss()
+
     // endregion
 
     companion object {

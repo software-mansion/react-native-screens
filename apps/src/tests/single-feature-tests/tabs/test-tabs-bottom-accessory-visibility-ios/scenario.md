@@ -15,7 +15,12 @@ produces a smooth animation with visible content, while toggling
 
 ## E2E test
 
-TBD: Automation is possible and planned but not yet implemented.
+Incomplete: covers the end state of steps 1-8 on iPhone - the accessory is
+present with its content (and the tab bar laid out below it) or absent after
+each `hidden` / `rendered` toggle.
+
+Not automated: animation quality - smooth slide out/in with content visible
+and no blank frame (steps 2-4, 8).
 
 ## Prerequisites
 

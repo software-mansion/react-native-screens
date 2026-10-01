@@ -1,21 +1,16 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
-import {
-  describeIfiOS,
-  forceTapByLabeliOS,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
-import { CLASS_NAME_UI_TAB_BAR } from '../../native-class-names';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { forceTapByLabelIOS } from '@e2e/framework/gestures';
+import { getFrame, getSingleMatch } from '@e2e/framework/matchers';
+import { CLASS_NAME_UI_TAB_BAR } from '@e2e/framework/native-classes-ios';
+import { describeIfIOS } from '@e2e/framework/platform';
 
-async function getScrollViewSafeAreaInsetsTop(testID: string): Promise<{
-  top: number;
-}> {
-  const attrs = (await element(
-    by.id(testID),
-  ).getAttributes()) as IosElementAttributes;
-  return { top: attrs.safeAreaInsets.top };
-}
+const getScrollViewSafeAreaInsetsTop = async (testID: string) => ({
+  top: ((await getSingleMatch(by.id(testID), testID)) as IosElementAttributes)
+    .safeAreaInsets.top,
+});
 
 function isAboveSaveAreaInset(
   itemFrame: { y: number; height: number },
@@ -24,31 +19,9 @@ function isAboveSaveAreaInset(
   return itemFrame.y + itemFrame.height <= scrollViewSAVInsetTop;
 }
 
-async function getTabBarFrame(): Promise<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}> {
-  const attrs = await element(by.type(CLASS_NAME_UI_TAB_BAR)).getAttributes();
-  return (attrs as IosElementAttributes).frame;
-}
-
-async function getElementFrame(testID: string): Promise<{
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}> {
-  const attrs = await element(by.id(testID)).getAttributes();
-
-  if ('elements' in attrs) {
-    throw new Error(
-      `Multiple elements (${attrs.elements.length}) found for testID: "${testID}".`,
-    );
-  }
-  return (attrs as IosElementAttributes).frame;
-}
+const getTabBarFrame = () =>
+  getFrame(by.type(CLASS_NAME_UI_TAB_BAR), 'the UITabBar');
+const getElementFrame = (testID: string) => getFrame(by.id(testID), testID);
 
 function isAboveTabBar(
   itemFrame: { y: number; height: number },
@@ -83,7 +56,7 @@ async function scrollToMaxTop(scrollViewId: string) {
   await element(by.id(scrollViewId)).scrollTo('top', NaN, 0.5);
 }
 
-describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
+describeIfIOS('Override Scroll View Content Inset (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -94,7 +67,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('False tab (overrideScrollViewContentInsetAdjustmentBehavior: false)', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-false');
+      await forceTapByLabelIOS('override-inset-tab-false');
     });
 
     it('should display the false tab scrollview with the tab bar visible', async () => {
@@ -117,7 +90,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('True tab (overrideScrollViewContentInsetAdjustmentBehavior: true)', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-true');
+      await forceTapByLabelIOS('override-inset-tab-true');
     });
 
     it('should display the true tab scrollview with the tab bar visible', async () => {
@@ -139,7 +112,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
   });
   describe('Default tab (prop omitted)', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-default');
+      await forceTapByLabelIOS('override-inset-tab-default');
     });
 
     it('should display the default tab scrollview with the tab bar visible', async () => {
@@ -162,7 +135,7 @@ describeIfiOS('Override Scroll View Content Inset (iOS)', () => {
 
   describe('Cross-tab comparison', () => {
     beforeAll(async () => {
-      await forceTapByLabeliOS('override-inset-tab-default');
+      await forceTapByLabelIOS('override-inset-tab-default');
     });
 
     it('should show the information text visible between True and Default tabs', async () => {

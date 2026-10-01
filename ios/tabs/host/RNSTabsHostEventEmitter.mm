@@ -3,7 +3,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
-#import "RNSConversions.h"
+#import "RNSConversions-Tabs.h"
 
 namespace react = facebook::react;
 

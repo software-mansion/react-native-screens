@@ -14,7 +14,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <rnscreens/RNSScreenComponentDescriptor.h>
+#import <react/renderer/components/rnscreens/legacy/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
@@ -178,6 +178,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applyFrameCorrectionForDescendantScrollView
 {
+  // A dismissed sheet can still receive a layout pass after React has deleted it. By then Fabric
+  // may have recycled its scroll view into the screen that replaced the sheet, and sizing that
+  // scroll view to the sheet would clip the new screen. See #4651.
+  if (_invalidated) {
+    return;
+  }
+
   RCTScrollViewComponentView *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
@@ -1421,6 +1428,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _isSwiping;
   BOOL _shouldNotify;
   BOOL _isRemovedFromParent;
+  BOOL _hasNotifiedDismissed;
 }
 
 #pragma mark - Common
@@ -1432,6 +1440,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _fakeView = [UIView new];
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
+    _hasNotifiedDismissed = NO;
   }
   return self;
 }
@@ -1528,7 +1537,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.screenView notifyDismissCancelledWithDismissCount:_dismissCount];
     } else {
       // screen dismissed, send event
-      [self.screenView notifyDismissedWithCount:_dismissCount];
+      [self notifyDismissedIfNeeded];
     }
   }
   // same flow as in viewDidAppear
@@ -1691,6 +1700,34 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   _isRemovedFromParent = YES;
 }
 
+- (BOOL)isNativelyDismissedFromContainer
+{
+  if (self.presentingViewController != nil) {
+    return NO;
+  }
+  if (self.parentViewController == nil) {
+    return YES;
+  }
+  if ([self.parentViewController isKindOfClass:UINavigationController.class]) {
+    UINavigationController *navigationController = (UINavigationController *)self.parentViewController;
+    return ![navigationController.viewControllers containsObject:self];
+  }
+  return NO;
+}
+
+- (void)notifyDismissedIfNeeded
+{
+  if (_hasNotifiedDismissed || self.screenView.preventNativeDismiss) {
+    return;
+  }
+  if (![self isNativelyDismissedFromContainer]) {
+    return;
+  }
+  _hasNotifiedDismissed = YES;
+  _isRemovedFromParent = YES;
+  [self.screenView notifyDismissedWithCount:_dismissCount];
+}
+
 #pragma mark - transition progress related methods
 
 - (void)setupProgressNotification
@@ -1713,12 +1750,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     };
 
+    BOOL notifyDismissWhenTransitionEnds = _closing;
     [self.transitionCoordinator
         animateAlongsideTransition:animation
                         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
                           [self->_animationTimer setPaused:YES];
                           [self->_animationTimer invalidate];
                           [self->_fakeView removeFromSuperview];
+                          // iOS 27 can skip viewDidDisappear when a tab switch
+                          // interrupts popToRoot. If this screen was popped,
+                          // notify JS when the transition ends.
+                          if (notifyDismissWhenTransitionEnds) {
+                            [self notifyDismissedIfNeeded];
+                          }
                         }];
   }
 }

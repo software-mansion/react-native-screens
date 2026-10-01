@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.tabs.container.TabsContainer
-import com.swmansion.rnscreens.tabs.container.menuItemIdForFragmentAtIndex
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 
@@ -28,13 +27,12 @@ internal class TabsAppearanceCoordinator(
         context: Context,
         tabsAppearance: TabsAppearance?,
     ) {
-        tabsScreenFragments.forEachIndexed { index, fragment ->
-            val menuItemId = menuItemIdForFragmentAtIndex(index)
+        tabsScreenFragments.forEach { fragment ->
+            val menuItemId = fragment.menuItemId
             val menuItem =
                 checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
                     "[RNScreens] Missing MenuItem for id: $menuItemId"
                 }
-            check(menuItem.itemId == menuItemId) { "[RNScreens] Illegal state: menu items are shuffled" }
             updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance)
         }
     }

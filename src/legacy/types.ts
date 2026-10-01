@@ -659,6 +659,12 @@ export interface ScreenStackProps extends ViewProps, GestureProps {
     | undefined;
   ref?: React.MutableRefObject<React.Ref<View>> | undefined;
   nativeContainerStyle?: ScreenStackNativeContainerStyleProps | undefined;
+  /**
+   * When true, prevents UIKit from auto-popping on Menu at stack depth > 1 so the
+   * press can reach JS. Requires `TVEventControl.enableTVMenuKey()`.
+   * @platform tvOS
+   */
+  disableDefaultMenuAction?: boolean | undefined;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {

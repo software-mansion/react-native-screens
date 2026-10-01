@@ -1,10 +1,10 @@
-# Test Scenario: Fit to contents
+# Test Scenario: Fit To Contents
 
 ## Details
 
-**Description:** Verify the `fitToContents` for the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening, and dynamically animates to a new height when the internal content size changes.
+**Description:** Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
 
-**OS test creation version:** iOS: 18.6 and 26.4, iPadOS 26.4, Android: API Level 36.
+**OS test creation version:** iOS: 18.6 and 26.5, iPadOS: 26.5, Android: API Level 36.
 
 ## E2E test
 
@@ -12,51 +12,55 @@ TBD: Planned, but will be implemented separately.
 
 ## Prerequisites
 
-- iOS device or simulator: iPhone and iPad
-- On iPad: Ensure the device is in full-screen mode, regular width, regular height size class
-- Android emulator
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
+- Android: phone device or emulator.
 
 ## Note
 
-- On iPad: The FormSheet is presented as a **centered floating panel**. The `fitToContents` behavior still applies to the height of this panel seamlessly, while its width remains fixed. Therefore, explicit separate steps for iPad are omitted.
-- On Android: While mounting/unmounting the component immediately, the sheet updates it's position to a desired state. The animation for dynamic content size update will be considered separately in a follow-up PRs.
+- **iOS:** the sheet has extra empty space at the bottom – the native bottom inset (home indicator area) is added below the content.
+- **Android:** when content is mounted/unmounted, the sheet updates its height immediately, without animation. Animating dynamic content size changes should be investigated separately.
+- **iPad:** the sheet is presented as a centered floating panel with a fixed width; `fitToContents` applies to the panel height.
 
 ## Steps
 
 ### Baseline
 
-1. Launch the app and navigate to the **Fit to contents** screen.
+1. Launch the app and navigate to the **Fit To Contents** screen.
 
-- [ ] Content with the button "Open FormSheet" is shown.
-
----
-
-### Initialization & `fitToContents` Verification
-
-2. Tap the "Open FormSheet" button.
-
-- [ ] The FormSheet opens smoothly. Its height is matched to its internal content (on iPhone, it will have an extra empty space on the bottom which is originating from native inset application). There are no visual jumps during the initial presentation animation.
+- [ ] The host screen shows the "Open FormSheet" button.
 
 ---
 
-### Dynamic Height Adaptation
+### Presentation
 
-3. Tap the "Expand Content" button inside the FormSheet.
+2. Tap "Open FormSheet".
 
-- [ ] The extra text box appears. The native FormSheet smoothly animates and grows in height to fully accommodate the newly added content without any visual glitches.
-
----
-
-### Dynamic Height Adaptation
-
-4. Tap the "Collapse Content" button.
-
-- [ ] The extra text box disappears. The native FormSheet smoothly animates and shrinks back to its original, smaller height.
+- [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
+- [ ] iPhone: the empty bottom inset area is added below the content.
+- [ ] iPad: the sheet height matches the content exactly – there is no bottom inset area below it.
+- [ ] Android: the sheet surface extends behind the navigation bar while the content sits above it.
 
 ---
 
-### Dismissal Verification
+### Dynamic height
 
-5. Tap the "Dismiss from JS" button (or swipe down completely).
+3. Tap "Expand Content" inside the sheet.
 
-- [ ] The FormSheet dismisses smoothly and returns the user to the underlying main screen.
+- [ ] The extra text box appears and the sheet grows to fully accommodate it – the whole extra text box is visible. The button now reads "Collapse Content".
+- [ ] iOS: the height change is animated smoothly, with no visual glitches.
+- [ ] Android: the sheet snaps to the new height immediately (no animation).
+
+4. Tap "Collapse Content".
+
+- [ ] The extra text box disappears and the sheet shrinks back to its original height.
+- [ ] iOS: the shrink is animated.
+- [ ] Android: the sheet snaps back immediately (no animation).
+
+---
+
+### Dismissal
+
+5. Tap "Dismiss from JS" (or swipe the sheet down).
+
+- [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.

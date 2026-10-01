@@ -3,7 +3,6 @@ on:
   pull_request:
     branches:
       - main
-      - main-labs
     paths:
       - 'android/**'
       - 'common/**'
@@ -14,7 +13,6 @@ on:
   push:
     branches:
       - main
-      - main-labs
   workflow_dispatch:
 jobs:
   build:

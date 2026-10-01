@@ -14,6 +14,13 @@ def is_rnrepo_enabled?
   ENV['DISABLE_RNREPO'].nil?
 end
 
+# Apple deprecated the UIApplicationDelegate app lifecycle in iOS 26 / tvOS 26, so the
+# UIScene lifecycle is the default here. Set RNS_USE_SCENE_DELEGATE=0 to build the legacy
+# AppDelegate path (useful for reproducing issues from apps that have not adopted scenes).
+def rns_scene_delegate_enabled?
+  !%w[0 false].include?(ENV['RNS_USE_SCENE_DELEGATE'].to_s.strip.downcase)
+end
+
 # Use RNRepo in CI builds. Set DISABLE_RNREPO to any value to disable RNRepo.
 if is_ci_enabled? && is_rnrepo_enabled?
   require Pod::Executable.execute_command('node', ['-p',
@@ -64,7 +71,7 @@ target 'FabricExample' do
     project_path = File.join(__dir__, 'FabricExample.xcodeproj')
     info_plist_path = File.join(__dir__, 'FabricExample', 'Info.plist')
 
-    if ENV['RNS_USE_SCENE_DELEGATE'] == '1'
+    if rns_scene_delegate_enabled?
       rns_add_scene_manifest_to_info_plist(
         info_plist_path: info_plist_path
       )

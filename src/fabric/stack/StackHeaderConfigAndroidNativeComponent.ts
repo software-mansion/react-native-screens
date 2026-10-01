@@ -93,6 +93,7 @@ export type StackHeaderToolbarMenuElementAndroid =
 export interface NativeProps extends ViewProps {
   title?: string | undefined;
   subtitle?: string | undefined;
+  maxLines?: CT.WithDefault<CT.Int32, 1>;
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
   backButtonHidden?: CT.WithDefault<boolean, false>;
@@ -123,6 +124,9 @@ export interface NativeProps extends ViewProps {
     StackHeaderCollapsedTitleGravityModeAndroid,
     'availableSpace'
   >;
+
+  contentInsetStart?: CT.WithDefault<CT.Float, -1.0>;
+  contentInsetEnd?: CT.WithDefault<CT.Float, -1.0>;
 
   titleColor?: ColorValue | undefined;
   titleFontFamily?: string | undefined;
@@ -174,6 +178,10 @@ export interface NativeProps extends ViewProps {
   scrollFlagSnap?: CT.WithDefault<boolean, false>;
 
   liftOnScroll?: CT.WithDefault<boolean, true>;
+
+  backgroundColor?: ColorValue | undefined;
+  scrolledBackgroundColor?: ColorValue | undefined;
+  statusBarScrimColor?: ColorValue | undefined;
 
   toolbarMenu?: UnsafeMixed<StackHeaderToolbarMenuBaseAndroid> | undefined;
   toolbarMenuGroupDividerEnabled?: CT.WithDefault<boolean, false>;

@@ -6,8 +6,9 @@
 for Android. It verifies multi-toggle (checkbox) and single-selection (radio)
 group behavior, `onSelectionChange` callbacks with correct IDs on groups of
 items, `onPress` on action items, `initialToggleState`,
-`toolbarMenuGroupDividerEnabled`, runtime props updates (group type change,
-adding/removing items, full rebuild resetting command state), and imperative
+`toolbarMenuGroupDividerEnabled`, runtime props changes (group type change,
+adding/removing items, a real `toolbarMenu` change resetting command state),
+and imperative
 `updateToolbarMenuElements` commands for setting `checked`, `title`, `hidden`,
 and hidden items preserving their selection in callbacks.
 
@@ -27,6 +28,10 @@ Full: Covers all manual scenario steps.
   groups cannot span submenus.
 - `updateToolbarMenuElements` targets elements by `id`. It works
   on items at any nesting depth.
+- Only a **real** `toolbarMenu` change resets toggle states and command
+  state. Re-sending a deep-equal menu is a no-op, and no other kind of
+  header rebuild resets them. Every **Props** control on this screen
+  rewrites `toolbarMenu`, so each one is a real change.
 
 ## Steps
 
@@ -258,9 +263,10 @@ Full: Covers all manual scenario steps.
 
 ---
 
-### Props rebuild resets command state
+### Props change resets command state
 
-32. Toggle "include Blue" OFF then back ON (props rebuild).
+32. Toggle "include Blue" OFF then back ON (two real `toolbarMenu`
+    changes).
 
 - [ ] All command state is lost. Open the overflow menu: Red
       reads "Red" again (not "Changed"). Green is visible and

@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { selectIssueTestScreen } from '../e2e-utils';
-import { CLASS_NAME_UI_CONTEXT_MENU_VIEW } from '../native-class-names';
+import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { CLASS_NAME_UI_CONTEXT_MENU_VIEW } from '@e2e/framework/native-classes-ios';
 
 const expectBackButtonMenuWithTheSameLabel = async (text: string) => {
   await element(by.text(text)).longPressAndDrag(

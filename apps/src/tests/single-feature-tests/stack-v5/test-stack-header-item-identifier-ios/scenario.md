@@ -13,7 +13,19 @@ stay put, only changing their appearance.
 
 ## E2E test
 
-TBD.
+Incomplete: covers the end state after each push for steps 1–3 and 6–7 — which
+item shows at which trailing position (asserted via horizontal frame order) for
+the sfSymbols and separators configurations, and that with separators each
+item sits in its own platter view.
+
+Not automated:
+
+- Transition quality (steps 2–4, 7): flashing / blur / crossfade — Detox
+  samples settled state, not animation frames.
+- Step 4 (custom views): automating it would only check that the custom views
+  render, not the real identifier-matching functionality.
+- Step 5 (identifiers off): end state is identical, only the transition
+  differs — Detox can't assert it.
 
 ## Prerequisites
 

@@ -3,7 +3,7 @@
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 #import <React/RCTConversions.h>
-#import <rnscreens/RNSTabsBottomAccessoryShadowNode.h>
+#import <react/renderer/components/rnscreens/RNSTabsBottomAccessoryShadowNode.h>
 
 @implementation RNSTabsBottomAccessoryShadowStateProxy {
   RNSTabsBottomAccessoryComponentView *__weak _bottomAccessoryView;
