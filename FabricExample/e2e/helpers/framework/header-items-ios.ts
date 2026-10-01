@@ -1,6 +1,6 @@
 import { expect, element, by } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
-import { longPressWithinFrame } from './gestures';
+import { longPressWithinFrame, tapWithinFrame } from './gestures';
 import { getFrame } from './matchers';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
@@ -15,7 +15,7 @@ import { isIOSVersionAtLeast } from './platform';
 // renders blank, so its items can be neither asserted visible nor gestured on
 // as elements. There items and icons are checked for existence and gestured on
 // by coordinates.
-export const isIOS27 = isIOSVersionAtLeast('27.0');
+export const headerItemsInGlassPlatter = isIOSVersionAtLeast('27.0');
 
 export type HeaderItemOptions = {
   /**
@@ -45,6 +45,19 @@ export function headerItem(title: string, options?: HeaderItemOptions) {
 }
 
 /**
+ * Asserts the view matched by `matcher`, hosted in the header (e.g. a custom
+ * item view), is shown: `toBeVisible`, or on iOS 27 (see above) only
+ * `toExist`.
+ */
+export async function expectHeaderViewShown(matcher: NativeMatcher) {
+  if (headerItemsInGlassPlatter) {
+    await expect(element(matcher)).toExist();
+  } else {
+    await expect(element(matcher)).toBeVisible();
+  }
+}
+
+/**
  * Asserts the header item titled `title` is shown: `toBeVisible`, or on
  * iOS 27 (see above) only `toExist`.
  */
@@ -52,10 +65,17 @@ export async function expectHeaderItemShown(
   title: string,
   options?: HeaderItemOptions,
 ) {
-  if (isIOS27) {
-    await expect(headerItem(title, options)).toExist();
+  await expectHeaderViewShown(headerItemMatcher(title, options));
+}
+
+/** Taps the header item titled `title`, by coordinates on iOS 27 (see above). */
+export async function tapHeaderItem(title: string) {
+  if (headerItemsInGlassPlatter) {
+    await tapWithinFrame(
+      await getFrame(headerItemMatcher(title), `header item "${title}"`),
+    );
   } else {
-    await expect(headerItem(title, options)).toBeVisible();
+    await headerItem(title).tap();
   }
 }
 
@@ -76,20 +96,20 @@ export function barButtonIcon(iconId: string) {
  * on iOS 27 (see above) only `toExist`.
  */
 export async function expectBarButtonIconShown(iconId: string) {
-  if (isIOS27) {
+  if (headerItemsInGlassPlatter) {
     await expect(barButtonIcon(iconId)).toExist();
   } else {
     await expect(barButtonIcon(iconId)).toBeVisible();
   }
 }
 
-/** Long-presses the header item titled `title`; a tap would fire its `onPress`. */
+/**
+ * Long-presses the header item titled `title`, by coordinates on every iOS
+ * version: Detox's element `longPress` starts as a tap, so it would also fire
+ * the item's `onPress`.
+ */
 export async function longPressHeaderItem(title: string) {
-  if (isIOS27) {
-    await longPressWithinFrame(
-      await getFrame(headerItemMatcher(title), `header item "${title}"`),
-    );
-  } else {
-    await element(by.label(title)).atIndex(0).longPress();
-  }
+  await longPressWithinFrame(
+    await getFrame(headerItemMatcher(title), `header item "${title}"`),
+  );
 }
