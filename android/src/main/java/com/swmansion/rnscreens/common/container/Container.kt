@@ -17,4 +17,13 @@ interface Container {
      * in the subtree does.
      */
     fun wantsToPreventStackNativeDismiss(): ContainerItem?
+
+    /**
+     * Called by the fragment that owns this container's FragmentManager when its primary
+     * navigation status changed, i.e. the container may have moved on or off the active
+     * navigation branch. Comes from `Fragment.onPrimaryNavigationFragmentChanged`, which
+     * FragmentManager delivers only to the fragment whose status actually changed and then
+     * continues into that fragment's child FragmentManager on its own.
+     */
+    fun onOwnerPrimaryNavigationFragmentChanged()
 }
