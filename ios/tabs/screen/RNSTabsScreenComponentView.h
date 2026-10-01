@@ -75,6 +75,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *tabItemAccessibilityLabel;
 @property (nonatomic) BOOL tabBarItemNeedsA11yUpdate;
 
+@property (nonatomic) BOOL tabBarItemNeedsRecreation;
+
+@property (nonatomic) BOOL tabBarItemNeedsUpdate;
+
 @property (nonatomic, readonly) RNSTabsScreenSystemItem systemItem;
 
 @end

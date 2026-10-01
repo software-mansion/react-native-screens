@@ -159,64 +159,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-#pragma mark - Prop update utils
-
-- (void)createTabBarItem
-{
-  UITabBarItem *tabBarItem = nil;
-  if (_systemItem != RNSTabsScreenSystemItemNone) {
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    if (!systemItem) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)_systemItem);
-      return;
-    }
-    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
-  } else {
-    tabBarItem = [[UITabBarItem alloc] init];
-  }
-  _controller.tabBarItem = tabBarItem;
-}
-
-- (void)updateTabBarItem
-{
-  UITabBarItem *tabBarItem = _controller.tabBarItem;
-
-  NSString *evaluatedTitle = _title;
-  if (_title == nil && _systemItem != RNSTabsScreenSystemItemNone) {
-    // Restore default system item title
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(_systemItem);
-    if (!systemItem) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)_systemItem);
-      return;
-    }
-    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].title;
-  }
-
-  [self updateTabBarItemTitle:evaluatedTitle];
-
-  if (![tabBarItem.badgeValue isEqualToString:_badgeValue]) {
-    tabBarItem.badgeValue = _badgeValue;
-  }
-}
-
-- (void)updateTabBarItemTitle:(NSString *)newTitle
-{
-  // Setting _controller.title updates also _controller.tabBarItem.title but only if there
-  // is a change to _controller.title. After creating new tabBarItem, _controller.title
-  // remains the same but _controller.tabBarItem.title is nil. For consistency, we always
-  // update both.
-  if (![_controller.tabBarItem.title isEqualToString:newTitle] || ![_controller.title isEqualToString:newTitle]) {
-    _controller.title = newTitle;
-    _controller.tabBarItem.title = newTitle;
-  }
-}
-
 #pragma mark - RNSSafeAreaProviding
 
 - (UIEdgeInsets)providerSafeAreaInsets
@@ -249,8 +191,6 @@ RNS_IGNORE_SUPER_CALL_END
 
   bool tabItemNeedsAppearanceUpdate{false};
   bool tabScreenOrientationNeedsUpdate{false};
-  bool tabBarItemNeedsRecreation{false};
-  bool tabBarItemNeedsUpdate{false};
 
   if (newComponentProps.title != oldComponentProps.title ||
       newComponentProps.isTitleUndefined != oldComponentProps.isTitleUndefined) {
@@ -262,7 +202,7 @@ RNS_IGNORE_SUPER_CALL_END
       _title = RCTNSStringFromString(newComponentProps.title);
     }
 
-    tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.orientation != oldComponentProps.orientation) {
@@ -277,7 +217,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.badgeValue != oldComponentProps.badgeValue) {
     _badgeValue = RCTNSStringFromStringNilIfEmpty(newComponentProps.badgeValue);
-    tabBarItemNeedsUpdate = YES;
+    _tabBarItemNeedsUpdate = YES;
   }
 
   if (newComponentProps.tabBarItemTestID != oldComponentProps.tabBarItemTestID) {
@@ -378,7 +318,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.systemItem != oldComponentProps.systemItem) {
     _systemItem =
         rnscreens::conversion::RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(newComponentProps.systemItem);
-    tabBarItemNeedsRecreation = YES;
+    _tabBarItemNeedsRecreation = YES;
   }
 
   if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {
@@ -386,15 +326,12 @@ RNS_IGNORE_SUPER_CALL_END
         rnscreens::conversion::UIUserInterfaceStyleFromTabsScreenCppEquivalent(newComponentProps.userInterfaceStyle);
   }
 
-  if (tabBarItemNeedsRecreation) {
-    [self createTabBarItem];
-    tabBarItemNeedsUpdate = YES;
+  if (_tabBarItemNeedsRecreation) {
+    _tabBarItemNeedsUpdate = YES;
     _tabBarItemNeedsA11yUpdate = YES;
   }
 
-  if (tabBarItemNeedsUpdate) {
-    [self updateTabBarItem];
-
+  if (_tabBarItemNeedsUpdate) {
     // Force appearance update to make sure correct image for tab bar item is used
     tabItemNeedsAppearanceUpdate = YES;
   }

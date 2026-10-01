@@ -11,4 +11,7 @@ module.exports = {
   verbose: true,
   preset: 'ts-jest',
   setupFilesAfterEnv: ['<rootDir>/e2e/jest.setup.ts'],
+  moduleNameMapper: {
+    '^@e2e/(.*)$': '<rootDir>/e2e/helpers/$1',
+  },
 };

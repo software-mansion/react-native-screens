@@ -39,7 +39,8 @@ internal class StackContainer(
     FragmentManager.OnBackStackChangedListener,
     ColorSchemeProviding,
     StackHeaderBackPressHandler,
-    StackScreenFragmentDelegate {
+    StackScreenFragmentDelegate,
+    StackUpdateBatchStateProviding {
     // The FragmentManager this container drives, with the fragment it is the child FragmentManager
     // of (null for the root one) and the dispatcher the system back veto lives on. Resolved on
     // attach, dropped on detach.
@@ -146,16 +147,41 @@ internal class StackContainer(
         setupSystemBackVetoCallback(fmWithOwner)
     }
 
+    // region Update batch
+
+    override var isUpdatePending: Boolean = false
+        private set
+
     /**
-     * Call this function to trigger container update
+     * Announces that more updates are coming. Header updates raised until [endUpdateBatch]
+     * are held and applied together with the navigation operations of the batch.
+     */
+    internal fun beginUpdateBatch() {
+        isUpdatePending = true
+    }
+
+    internal fun endUpdateBatch() {
+        isUpdatePending = false
+        performContainerUpdateIfNeeded()
+    }
+
+    // endregion
+
+    /**
+     * Applies pending navigation operations and then pending header updates of the screens
+     * remaining in the stack.
      */
     internal fun performContainerUpdateIfNeeded() {
         // If container update is requested before container is attached to window, we ignore
         // the call because we don't have valid fragmentManager yet.
         // Update will be eventually executed in onAttachedToWindow().
-        if (hasPendingOperations && isAttachedToWindow) {
+        if (!isAttachedToWindow) {
+            return
+        }
+        if (hasPendingOperations) {
             performOperations(requireFragmentManager())
         }
+        stackModel.forEach { it.flushPendingHeaderUpdates() }
     }
 
     internal fun enqueuePushOperation(stackScreen: StackScreen) {
@@ -207,6 +233,7 @@ internal class StackContainer(
                     newFragment,
                     containerViewId = this.id,
                     addToBackStack = stackModel.isNotEmpty(),
+                    coveredFragment = stackModel.lastOrNull(),
                 ),
             )
             stackModel.add(newFragment)
@@ -244,6 +271,8 @@ internal class StackContainer(
             canNavigateBack,
             WeakReference(this),
             backPressHandler = WeakReference(this),
+            updateBatchStateProvider = WeakReference(this),
+            colorSchemeProvider = WeakReference(this),
         ).also {
             Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }

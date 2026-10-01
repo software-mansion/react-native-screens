@@ -6,8 +6,10 @@ import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents';
+import TestFormSheetFractionalDetents from './test-form-sheet-fractional-detents';
 import TestFormSheetGrabberVisible from './test-form-sheet-grabber-visible';
 import TestFormSheetInitialDetentIndex from './test-form-sheet-initial-detent-index';
+import TestFormSheetKeyboard from './test-form-sheet-keyboard';
 import TestFormSheetLargestUndimmedDetentIndex from './test-form-sheet-largest-undimmed-detent-index-ios';
 import TestFormSheetLifecycleEvents from './test-form-sheet-lifecycle-events';
 import TestFormSheetNativeContainerStyle from './test-form-sheet-native-container-style';
@@ -24,8 +26,10 @@ export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
 export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents';
+export { default as TestFormSheetFractionalDetents } from './test-form-sheet-fractional-detents';
 export { default as TestFormSheetGrabberVisible } from './test-form-sheet-grabber-visible';
 export { default as TestFormSheetInitialDetentIndex } from './test-form-sheet-initial-detent-index';
+export { default as TestFormSheetKeyboard } from './test-form-sheet-keyboard';
 export { default as TestFormSheetLargestUndimmedDetentIndex } from './test-form-sheet-largest-undimmed-detent-index-ios';
 export { default as TestFormSheetLifecycleEvents } from './test-form-sheet-lifecycle-events';
 export { default as TestFormSheetNativeContainerStyle } from './test-form-sheet-native-container-style';
@@ -41,8 +45,10 @@ const scenarios = {
   TestFormSheetDismissEvents,
   TestFormSheetExpandScrollView,
   TestFormSheetFitToContents,
+  TestFormSheetFractionalDetents,
   TestFormSheetGrabberVisible,
   TestFormSheetInitialDetentIndex,
+  TestFormSheetKeyboard,
   TestFormSheetLargestUndimmedDetentIndex,
   TestFormSheetLifecycleEvents,
   TestFormSheetNativeContainerStyle,

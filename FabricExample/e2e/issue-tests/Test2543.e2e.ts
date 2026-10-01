@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectIssueTestScreen } from '../e2e-utils';
+import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 async function testDetentsVisibility(
   testCaseName: string,
@@ -31,7 +32,7 @@ async function testDetentsVisibility(
 }
 
 // issue related to iOS formSheet initial detent
-describeIfiOS('Test2543', () => {
+describeIfIOS('Test2543', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
   });

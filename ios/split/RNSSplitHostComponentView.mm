@@ -8,8 +8,10 @@
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-SplitView.h"
 #import "RNSDefines.h"
+#import "RNSSplitHostComponentEventEmitter.h"
 #import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
+#import "RNSSplitScreenController.h"
 
 namespace react = facebook::react;
 
@@ -18,7 +20,9 @@ static const CGFloat epsilon = 1e-6;
 #define COLUMN_METRIC_CHANGED(OLD, NEW, PROPERTY_NAME, EPSILON) \
   (fabs((OLD).columnMetrics.PROPERTY_NAME - (NEW).columnMetrics.PROPERTY_NAME) > (EPSILON))
 
-@interface RNSSplitHostComponentView () <RCTMountingTransactionObserving, RCTRNSSplitHostViewProtocol>
+@interface RNSSplitHostComponentView () <RCTMountingTransactionObserving,
+                                         RCTRNSSplitHostViewProtocol,
+                                         RNSSplitHostControllerEventsDelegate>
 @end
 
 @implementation RNSSplitHostComponentView {
@@ -116,7 +120,11 @@ static const CGFloat epsilon = 1e-6;
   if (_controller == nil) {
     int numberOfColumns = [self getNumberOfColumns];
 
-    _controller = [[RNSSplitHostController alloc] initWithSplitHostComponentView:self numberOfColumns:numberOfColumns];
+    _controller = [[RNSSplitHostController alloc] initWithNumberOfColumns:numberOfColumns];
+    _controller.eventsDelegate = self;
+    _controller.appearanceProvider = self;
+    _controller.behaviorProvider = self;
+    _controller.columnsProvider = self;
   }
 }
 
@@ -399,10 +407,51 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - Events
 
-- (nonnull RNSSplitHostComponentEventEmitter *)reactEventEmitter
+#pragma mark - RNSSplitHostColumnsProvider
+
+- (NSArray<RNSSplitScreenController *> *)columnControllers
 {
-  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
-  return _reactEventEmitter;
+  return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeColumn];
+}
+
+- (NSArray<RNSSplitScreenController *> *)inspectorControllers
+{
+  return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
+}
+
+- (NSArray<RNSSplitScreenController *> *)controllersOfColumnsWithType:(RNSSplitScreenColumnType)columnType
+{
+  NSMutableArray<RNSSplitScreenController *> *controllers = [NSMutableArray array];
+  for (RNSSplitScreenComponentView *column in _reactSubviews) {
+    if (column.columnType == columnType) {
+      [controllers addObject:column.controller];
+    }
+  }
+  return controllers;
+}
+
+#pragma mark - RNSSplitHostControllerEventsDelegate
+
+- (void)splitHostControllerDidCollapse:(RNSSplitHostController *)controller
+{
+  [_reactEventEmitter emitOnCollapse];
+}
+
+- (void)splitHostControllerDidExpand:(RNSSplitHostController *)controller
+{
+  [_reactEventEmitter emitOnExpand];
+}
+
+- (void)splitHostController:(RNSSplitHostController *)controller
+    willChangeDisplayModeFrom:(UISplitViewControllerDisplayMode)fromDisplayMode
+                           to:(UISplitViewControllerDisplayMode)toDisplayMode
+{
+  [_reactEventEmitter emitOnDisplayModeWillChangeFrom:fromDisplayMode to:toDisplayMode];
+}
+
+- (void)splitHostControllerDidHideInspector:(RNSSplitHostController *)controller
+{
+  [_reactEventEmitter emitOnHideInspector];
 }
 
 #pragma mark - Dynamic frameworks support

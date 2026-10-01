@@ -1,26 +1,15 @@
 import { device, expect, element, by } from 'detox';
-import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
-import isVersionEqualOrHigherThan from '../../helpers/isVersionEqualOrHigherThan';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26,
   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
-} from '../../native-class-names';
-const {
-  getIOSVersionNumber,
-} = require('../../../../scripts/e2e/ios-devices.js');
-
-function isIOSVersionAtLeast(version: string): boolean {
-  return (
-    device.getPlatform() === 'ios' &&
-    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
-  );
-}
-
+} from '@e2e/framework/native-classes-ios';
+import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
 const tabBarBadgeViewType = isIOSVersionAtLeast('26.0')
   ? CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_IOS26
   : CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY;
 
-describeIfiOS('Tab Bar Item Badge', () => {
+describeIfIOS('Tab Bar Item Badge', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-item-badge');

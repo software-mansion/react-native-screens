@@ -1,16 +1,13 @@
 import { device, expect, element, by, waitFor } from 'detox';
-import { expect as jestExpect } from '@jest/globals';
-import type { IosElementAttributes } from 'detox/detox';
+import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+import { describeIfIOS26 } from '@e2e/framework/platform';
 import {
-  describeIfiOS26,
-  getElementAttributes,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
-} from '../../e2e-utils';
-import {
-  CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-  CLASS_NAME_UI_TAB_BAR,
-} from '../../native-class-names';
+  bottomAccessoryElement,
+  expectBottomAccessoryAboveTabBar,
+} from '@e2e/framework/tab-bar';
+import { DEFAULT_TIMEOUT_MS } from '@e2e/framework/wait';
 
 /**
  * Covers the end state of each `scenario.md` step: after every `hidden` /
@@ -25,15 +22,15 @@ const ACCESSORY_TEXT = 'bottom-accessory-text';
 const ACCESSORY_CONTENT = 'Bottom Accessory';
 
 // Grace period for the animated `setBottomAccessory:` attach / detach.
-const TRANSITION_TIMEOUT_MS = 3000;
+const TRANSITION_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
 
 const SETTINGS_CONTROL = { scrollViewId: SCROLL_VIEW };
 
 const bottomAccessory = by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY);
 
-// The text resolves twice under the same `testID`.
-const bottomAccessoryText = () =>
-  element(by.id(ACCESSORY_TEXT).withAncestor(bottomAccessory)).atIndex(0);
+// The text resolves twice under the same `testID`; the shared accessor takes
+// the first.
+const bottomAccessoryText = () => bottomAccessoryElement(ACCESSORY_TEXT);
 
 const setHidden = (to: boolean) =>
   toggleSettingsSwitch(
@@ -63,19 +60,7 @@ async function expectBottomAccessoryShown() {
   await expect(bottomAccessoryText()).toExist();
   await expect(bottomAccessoryText()).toHaveText(ACCESSORY_CONTENT);
 
-  const accessory = (await getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-  })) as IosElementAttributes;
-  const tabBar = (await getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_UI_TAB_BAR,
-    index: 0,
-  })) as IosElementAttributes;
-
-  jestExpect(tabBar.frame.y).toBeGreaterThan(
-    accessory.frame.y + accessory.frame.height,
-  );
+  await expectBottomAccessoryAboveTabBar();
 }
 
 async function expectBottomAccessoryAbsent() {
@@ -85,7 +70,7 @@ async function expectBottomAccessoryAbsent() {
   await expect(element(by.id(ACCESSORY_TEXT))).not.toExist();
 }
 
-describeIfiOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
+describeIfIOS26('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(

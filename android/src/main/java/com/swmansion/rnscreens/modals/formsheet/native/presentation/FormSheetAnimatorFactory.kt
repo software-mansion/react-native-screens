@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.View
-import androidx.core.animation.doOnStart
 
 internal class FormSheetAnimatorFactory(
     private val dimmingManager: FormSheetDimmingManager,
@@ -36,7 +35,6 @@ internal class FormSheetAnimatorFactory(
         return AnimatorSet().apply {
             playTogether(slideAnimator, alphaAnimator)
             duration = animationDuration
-            doOnStart { view.translationY = startY }
         }
     }
 
@@ -44,7 +42,9 @@ internal class FormSheetAnimatorFactory(
         view: View,
         isInterrupting: Boolean = false,
     ): Animator {
-        val startY = if (isInterrupting) view.translationY else 0f
+        // Always leave from the current translation: besides an interrupted enter animation, the sheet
+        // may be mid-way through tracking the keyboard animation when the dismissal starts.
+        val startY = view.translationY
         val startAlpha = if (isInterrupting) dimmingManager.dimmingAlpha else dimmingManager.maxAlpha
 
         val slideAnimator =

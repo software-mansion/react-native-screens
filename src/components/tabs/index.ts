@@ -19,6 +19,7 @@ export type {
   TabsBottomAccessoryComponentFactory,
   TabBarMinimizeBehavior,
   TabBarControllerMode,
+  TabBarSidebarPreferredPlacement,
   TabsHostPropsIOS,
 } from './host';
 

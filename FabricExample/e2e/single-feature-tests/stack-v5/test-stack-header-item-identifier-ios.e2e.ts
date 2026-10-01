@@ -1,25 +1,12 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
-import {
-  describeIfiOS26,
-  getMatches,
-  selectSingleFeatureTestsScreen,
-  toggleSettingsSwitch,
-} from '../../e2e-utils';
-import {
-  CLASS_NAME_UI_LABEL,
-  CLASS_NAME_UI_MODERN_BAR_BUTTON,
-  CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW,
-} from '../../native-class-names';
-
-// The icon of the header bar button item, addressed by its icon id (SF Symbol
-// name or asset path).
-function barButtonIcon(sfSymbolName: string) {
-  return element(
-    by.id(sfSymbolName).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
-  );
-}
+import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { barButtonIcon, headerTitle } from '@e2e/framework/header-items-ios';
+import { getMatches } from '@e2e/framework/matchers';
+import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '@e2e/framework/native-classes-ios';
+import { describeIfIOS26 } from '@e2e/framework/platform';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
 // screen's index.tsx).
@@ -47,7 +34,7 @@ async function expectExactBarButtonSymbols(expected: string[]) {
 }
 
 async function waitForScreen(routeName: 'One' | 'Two' | 'Three') {
-  await waitFor(element(by.type(CLASS_NAME_UI_LABEL).and(by.text(routeName))))
+  await waitFor(element(headerTitle(routeName)))
     .toExist()
     .withTimeout(3000);
 }
@@ -62,7 +49,7 @@ async function pushNext() {
 // is asserted to confirm where the pop landed.
 async function popBackFrom(routeName: 'Two' | 'Three') {
   await element(by.text('Go back')).tap();
-  await waitFor(element(by.type(CLASS_NAME_UI_LABEL).and(by.text(routeName))))
+  await waitFor(element(headerTitle(routeName)))
     .not.toExist()
     .withTimeout(3000);
   await waitForScreen(routeName === 'Three' ? 'Two' : 'One');
@@ -117,7 +104,7 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
 
 // The identifier-driven item-matching behavior under test only exists on
 // iOS 26+ (see scenario.md, "OS test creation version").
-describeIfiOS26('Stack Header Item Identifier (iOS)', () => {
+describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
   describe('sfSymbols with identifiers (default)', () => {
     beforeAll(async () => {
       await device.reloadReactNative();

@@ -1,36 +1,20 @@
 import { device, expect, element, by } from 'detox';
 import { expect as jestExpect } from '@jest/globals';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
-  describeIfiOS26,
-  describeIfiPadOS26,
-  selectSingleFeatureTestsScreen,
-  forceTapByLabeliOS,
-  getElementAttributes,
-} from '../../e2e-utils';
+  forceTapByLabelIOS,
+  scrollUntilVisible,
+} from '@e2e/framework/gestures';
+import { getMatches } from '@e2e/framework/matchers';
+import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
+import { describeIfIOS26, describeIfIPadOS26 } from '@e2e/framework/platform';
+import {
+  bottomAccessoryElement,
+  expectBottomAccessoryAboveTabBar,
+  getBottomAccessoryAttributes,
+  getTabBarAttributes,
+} from '@e2e/framework/tab-bar';
 import { IosElementAttributes } from 'detox/detox';
-import {
-  CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-  CLASS_NAME_UI_TAB_BAR,
-} from '../../native-class-names';
-
-const bottomAccessoryElement = (testID: string) =>
-  element(
-    by.id(testID).withAncestor(by.type(CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY)),
-  ).atIndex(0);
-
-const getBottomAccessoryAttributes = () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
-    index: 0,
-  }) as Promise<IosElementAttributes>;
-
-const getExtendedTabBarAttributes = async () =>
-  getElementAttributes({
-    by: 'type',
-    value: CLASS_NAME_UI_TAB_BAR,
-    index: 0,
-  }) as Promise<IosElementAttributes>;
 
 async function expectBottomAccessoryExist(testID: string) {
   await expect(bottomAccessoryElement(testID)).toExist();
@@ -38,15 +22,6 @@ async function expectBottomAccessoryExist(testID: string) {
 
 async function expectBottomAccessoryText(testID: string, text: string) {
   await expect(bottomAccessoryElement(testID)).toHaveText(text);
-}
-
-function expectBottomAccessoryExtended(
-  bottomAccessory: IosElementAttributes,
-  tabBar: IosElementAttributes,
-) {
-  jestExpect(tabBar.frame.y).toBeGreaterThan(
-    bottomAccessory.frame.y + bottomAccessory.frame.height,
-  );
 }
 
 function expectBottomAccessoryInline(
@@ -83,16 +58,17 @@ function expectBottomAccessoryAtTheBottom(
   jestExpect(bottomAccessoryBottom).toBeGreaterThanOrEqual(safeAreaLine);
 }
 
-async function scrollScrollViewToItem(
+// Small steps from low on the screen: the accessory must not swallow the swipe.
+const scrollScrollViewToItem = (
   scrollViewId: string,
   itemId: string,
   direction: 'up' | 'down',
-) {
-  await waitFor(element(by.id(itemId)))
-    .toBeVisible()
-    .whileElement(by.id(scrollViewId))
-    .scroll(150, direction, NaN, 0.3);
-}
+) =>
+  scrollUntilVisible(itemId, scrollViewId, {
+    pixels: 150,
+    startPercentage: 0.3,
+    direction,
+  });
 
 type VariantCase = {
   variantId?: string; // card to tap; omitted for the initial-load variant
@@ -161,7 +137,7 @@ async function verifyConfigTabInitialContent() {
   ).toBeVisible();
 }
 
-describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
+describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -203,12 +179,12 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
-    await forceTapByLabeliOS('scroll-down-tab-item-label');
+    await forceTapByLabelIOS('scroll-down-tab-item-label');
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
 
-    await forceTapByLabeliOS('config-tab-item-label');
+    await forceTapByLabelIOS('config-tab-item-label');
     await expect(element(by.id('config-scrollview'))).toBeVisible();
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
@@ -219,17 +195,14 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   // ---------------------------------------------------------------------------
 
   it('should display the ScrollDown tab scrollable list with extended bottom accessory', async () => {
-    await forceTapByLabeliOS('scroll-down-tab-item-label');
+    await forceTapByLabelIOS('scroll-down-tab-item-label');
 
     await expect(element(by.id('scroll-down-scrollview'))).toBeVisible();
     await expect(element(by.id('scroll-down-item-1'))).toBeVisible();
 
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 
   it('should display the bottom accessory inline when scrolling down on ScrollDown tab', async () => {
@@ -247,17 +220,14 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     expectBottomAccessoryInline(
       await getBottomAccessoryAttributes(),
       extendedAccessoryWidth,
-      await getExtendedTabBarAttributes(),
+      await getTabBarAttributes(),
     );
   });
 
   it('should display the bottom accessory above the tab bar when scrolling up on ScrollDown tab', async () => {
     await element(by.id('scroll-down-scrollview')).scrollTo('top');
 
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 
   // ---------------------------------------------------------------------------
@@ -265,16 +235,13 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
   // ---------------------------------------------------------------------------
 
   it('should display the ScrollUp tab scrollable list', async () => {
-    await forceTapByLabeliOS('scroll-up-tab-item-label');
+    await forceTapByLabelIOS('scroll-up-tab-item-label');
 
     await expect(element(by.id('scroll-up-scrollview'))).toBeVisible();
 
     await expectBottomAccessoryExist('accessory-center');
     await expectBottomAccessoryText('accessory-center', 'Center');
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 
   it('should display the bottom accessory inline when scrolling up on ScrollUp tab', async () => {
@@ -292,7 +259,7 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
     expectBottomAccessoryInline(
       await getBottomAccessoryAttributes(),
       extendedAccessoryWidth,
-      await getExtendedTabBarAttributes(),
+      await getTabBarAttributes(),
     );
   });
 
@@ -304,14 +271,11 @@ describeIfiOS26('Tabs bottomAccessory (iOS 26+)', () => {
       'down',
     );
 
-    expectBottomAccessoryExtended(
-      await getBottomAccessoryAttributes(),
-      await getExtendedTabBarAttributes(),
-    );
+    await expectBottomAccessoryAboveTabBar();
   });
 });
 
-describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
+describeIfIPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
   // The Config scroll view spans the full window height and is the same across
   // every test in this block, so read its frame + safe-area insets once and
   // reuse it as the window/safe-area reference for the bottom-anchor assertion.
@@ -324,11 +288,10 @@ describeIfiPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
       'test-tabs-bottom-accessory-layout-ios',
     );
     await expect(element(by.id('config-scrollview'))).toBeVisible();
-    configScrollView = (await getElementAttributes({
-      by: 'id',
-      value: 'config-scrollview',
-      index: 0,
-    })) as IosElementAttributes;
+    // The first match, as several copies can be attached while tabs switch.
+    configScrollView = (
+      await getMatches(by.id('config-scrollview'))
+    )[0] as IosElementAttributes;
   });
 
   it('should display the Config tab content and initial accessory on load', async () => {

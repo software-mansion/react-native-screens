@@ -1,0 +1,66 @@
+import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
+import React from 'react';
+import { Platform, ScrollView, Text } from 'react-native';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
+import {
+  TabsContainerWithHostConfigContext,
+  type TabRouteConfig,
+  useTabsHostConfig,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '@apps/shared/containers/tabs';
+
+function ConfigScreen() {
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+
+  return (
+    <ScrollView style={{ padding: 40 }} testID="tab-bar-hidden-scrollview">
+      <Text style={{ textAlign: 'center' }}>
+        Change flag value by clicking on button.
+      </Text>
+      <SettingsSwitch
+        style={{ marginTop: 20, marginBottom: 15 }}
+        label="tabBarHidden"
+        value={hostConfig.tabBarHidden ?? false}
+        onValueChange={value => updateHostConfig({ tabBarHidden: value })}
+        testID="tab-bar-hidden-switch"
+      />
+      {Platform.OS === 'ios' && (
+        <SettingsSwitch
+          style={{ marginBottom: 15 }}
+          label="ios.tabBarHiddenAnimationEnabled"
+          value={hostConfig.ios?.tabBarHiddenAnimationEnabled ?? true}
+          onValueChange={value =>
+            updateHostConfig({ ios: { tabBarHiddenAnimationEnabled: value } })
+          }
+          testID="tab-bar-hidden-animation-enabled-switch"
+        />
+      )}
+    </ScrollView>
+  );
+}
+
+const ROUTE_CONFIGS: TabRouteConfig[] = [
+  {
+    name: 'Tab1',
+    element: <ConfigScreen />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      tabBarItemTestID: 'tab-bar-item-1-id',
+      tabBarItemAccessibilityLabel: 'First Tab Item',
+      title: 'Tab1',
+    },
+  },
+];
+
+function TestTabsTabBarInitiallyHidden() {
+  return (
+    <TabsContainerWithHostConfigContext
+      routeConfigs={ROUTE_CONFIGS}
+      tabBarHidden
+      ios={{ tabBarHiddenAnimationEnabled: true }}
+    />
+  );
+}
+
+export default createScenario(TestTabsTabBarInitiallyHidden, scenarioDescription);

@@ -4,10 +4,8 @@
 #import "RNSDefines.h"
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
-#import "RNSSplitHostComponentView.h"
 #import "RNSSplitNavigationController.h"
 #import "RNSSplitNavigationControllerFrameOriginChangeDelegate.h"
-#import "RNSSplitScreenComponentView.h"
 #import "RNSSplitScreenController.h"
 
 [[maybe_unused]] static const NSInteger minNumberOfColumns = 2;
@@ -23,8 +21,6 @@
 
   RNSSplitAppearanceCoordinator *_splitAppearanceCoordinator;
   RNSSplitAppearanceApplicator *_splitAppearanceApplicator;
-
-  RNSSplitHostComponentView *_splitHostComponentView;
 
   /**
    * This variable is keeping the value of how many columns were set in the initial render. It's used for validation,
@@ -43,11 +39,9 @@
   NSMutableSet<NSNumber *> *_visibleColumns;
 }
 
-- (instancetype)initWithSplitHostComponentView:(RNSSplitHostComponentView *)splitHostComponentView
-                               numberOfColumns:(NSInteger)numberOfColumns
+- (instancetype)initWithNumberOfColumns:(NSInteger)numberOfColumns
 {
   if (self = [super initWithStyle:[RNSSplitHostController styleByNumberOfColumns:numberOfColumns]]) {
-    _splitHostComponentView = splitHostComponentView;
     _splitAppearanceCoordinator = [RNSSplitAppearanceCoordinator new];
     _splitAppearanceApplicator = [RNSSplitAppearanceApplicator new];
     _fixedColumnsCount = numberOfColumns;
@@ -58,11 +52,6 @@
   }
 
   return self;
-}
-
-- (RNSSplitHostComponentEventEmitter *)reactEventEmitter
-{
-  return [_splitHostComponentView reactEventEmitter];
 }
 
 #pragma mark - Signals
@@ -114,18 +103,16 @@
   RCTAssert(_needsChildViewControllersUpdate,
             @"[RNScreens] Child view controller must be invalidated when update is forced!");
 
-  NSArray<RNSSplitScreenComponentView *> *currentColumns = [self filterSubviewsOfType:RNSSplitScreenColumnTypeColumn
-                                                                                   in:self.splitReactSubviews];
-  NSArray<RNSSplitScreenComponentView *> *currentInspectors =
-      [self filterSubviewsOfType:RNSSplitScreenColumnTypeInspector in:self.splitReactSubviews];
+  NSArray<RNSSplitScreenController *> *currentColumns = [self.columnsProvider columnControllers];
+  NSArray<RNSSplitScreenController *> *currentInspectors = [self.columnsProvider inspectorControllers];
 
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
 
   NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
-  for (RNSSplitScreenComponentView *column in currentColumns) {
-    [currentViewControllers addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:column.controller
+  for (RNSSplitScreenController *columnController in currentColumns) {
+    [currentViewControllers addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:columnController
                                                                              frameOriginChangeDelegate:self]];
   }
 
@@ -142,7 +129,7 @@
 
 - (void)updateSplitAppearanceIfNeeded
 {
-  [_splitAppearanceApplicator updateAppearanceIfNeeded:_splitHostComponentView
+  [_splitAppearanceApplicator updateAppearanceIfNeeded:self.appearanceProvider
                                    splitHostController:self
                                  appearanceCoordinator:_splitAppearanceCoordinator];
 }
@@ -182,29 +169,6 @@
     default:
       return UISplitViewControllerStyleUnspecified;
   }
-}
-
-/**
- * @brief Filters the given subviews array by a specific column type.
- *
- * Iterates over the provided subviews array and returns only the elements that match
- * the specified RNSSplitScreenColumnType (e.g., .column, .inspector).
- *
- * @param type The target RNSSplitScreenColumnType to filter for.
- * @param subviews The array of RNSSplitScreenComponentView elements to filter.
- * @return A filtered array of RNSSplitScreenComponentView objects with the specified column type.
- */
-- (NSArray<RNSSplitScreenComponentView *> *)filterSubviewsOfType:(RNSSplitScreenColumnType)type
-                                                              in:(NSArray<RNSSplitScreenComponentView *> *)subviews
-{
-  NSMutableArray<RNSSplitScreenComponentView *> *filteredSubviews = [NSMutableArray array];
-  for (RNSSplitScreenComponentView *subview in subviews) {
-    if (subview.columnType == type) {
-      [filteredSubviews addObject:subview];
-    }
-  }
-
-  return filteredSubviews;
 }
 
 #pragma mark - Public setters
@@ -278,7 +242,7 @@
 
 - (RNSOrientation)evaluateOrientation
 {
-  return _splitHostComponentView.orientation;
+  return self.appearanceProvider.orientation;
 }
 
 #pragma mark - Validators
@@ -286,17 +250,12 @@
 /** @brief Validates that child structure meets required constraints defined for columns and the inspector. */
 - (void)validateSplitViewHierarchy
 {
-  NSArray<RNSSplitScreenComponentView *> *columns = [self filterSubviewsOfType:RNSSplitScreenColumnTypeColumn
-                                                                            in:self.splitReactSubviews];
-  NSArray<RNSSplitScreenComponentView *> *inspectors = [self filterSubviewsOfType:RNSSplitScreenColumnTypeInspector
-                                                                               in:self.splitReactSubviews];
-
-  [self validateColumns:columns];
-  [self validateInspectors:inspectors];
+  [self validateColumns:[self.columnsProvider columnControllers]];
+  [self validateInspectors:[self.columnsProvider inspectorControllers]];
 }
 
 /** @brief Ensures that number of columns is valid and hasn't changed dynamically. */
-- (void)validateColumns:(NSArray<RNSSplitScreenComponentView *> *)columns
+- (void)validateColumns:(NSArray<RNSSplitScreenController *> *)columns
 {
   RCTAssert((NSInteger)columns.count >= minNumberOfColumns && (NSInteger)columns.count <= maxNumberOfColumns,
             @"[RNScreens] Split can only have from %ld to %ld columns",
@@ -308,7 +267,7 @@
 }
 
 /** @brief Ensures that at most one inspector is present. */
-- (void)validateInspectors:(NSArray<RNSSplitScreenComponentView *> *)inspectors
+- (void)validateInspectors:(NSArray<RNSSplitScreenController *> *)inspectors
 {
   RCTAssert((NSInteger)inspectors.count <= maxNumberOfInspectors,
             @"[RNScreens] Split can only have %ld inspector",
@@ -356,33 +315,6 @@
   return splitScreenControllers;
 }
 
-/**
- * @brief Gets all React subviews of type RNSSplitScreenComponentView.
- *
- * Accesses all the subviews from the reactSubviews collection. It asserts that each one is a
- * RNSSplitScreenComponentView.
- *
- * @return An array of RNSSplitScreenComponentView subviews which are children of the host component view.
- */
-- (NSArray<RNSSplitScreenComponentView *> *)splitReactSubviews
-{
-  NSArray<RNSSplitScreenComponentView *> *reactSubviews = [_splitHostComponentView reactSubviews];
-  NSMutableArray<RNSSplitScreenComponentView *> *splitReactSubviews =
-      [NSMutableArray arrayWithCapacity:reactSubviews.count];
-
-  for (RNSSplitScreenComponentView *subview in reactSubviews) {
-    RCTAssert([subview isKindOfClass:RNSSplitScreenComponentView.class],
-              @"[RNScreens] Expected RNSSplitScreenComponentView but got %@",
-              NSStringFromClass(subview.class));
-
-    if ([subview isKindOfClass:RNSSplitScreenComponentView.class]) {
-      [splitReactSubviews addObject:subview];
-    }
-  }
-
-  return splitReactSubviews;
-}
-
 #pragma mark - RNSSplitNavigationControllerFrameOriginChangeDelegate
 
 /**
@@ -407,16 +339,16 @@
  *
  * Attaches a view controller for the inspector column.
  *
- * @param inspectors An array of inspector-type RNSSplitScreenComponentView subviews.
+ * @param inspectors An array of controllers of the inspector-type columns.
  */
-- (void)maybeSetupInspector:(NSArray<RNSSplitScreenComponentView *> *)inspectors
+- (void)maybeSetupInspector:(NSArray<RNSSplitScreenController *> *)inspectors
 {
 #if !TARGET_OS_TV
   if (@available(iOS 26.0, *)) {
-    RNSSplitScreenComponentView *inspector = inspectors.firstObject;
+    RNSSplitScreenController *inspector = inspectors.firstObject;
     if (inspector != nil) {
       RNSSplitNavigationController *inspectorViewController =
-          [[RNSSplitNavigationController alloc] initWithRootViewController:inspector.controller];
+          [[RNSSplitNavigationController alloc] initWithRootViewController:inspector];
       [self setViewController:inspectorViewController forColumn:UISplitViewControllerColumnInspector];
     }
   }
@@ -469,12 +401,12 @@
 
 - (void)splitViewControllerDidCollapse:(UISplitViewController *)svc
 {
-  [[self reactEventEmitter] emitOnCollapse];
+  [self.eventsDelegate splitHostControllerDidCollapse:self];
 }
 
 - (void)splitViewControllerDidExpand:(UISplitViewController *)svc
 {
-  [[self reactEventEmitter] emitOnExpand];
+  [self.eventsDelegate splitHostControllerDidExpand:self];
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -508,7 +440,7 @@
     UIViewController *inspectorViewController = [self viewControllerForColumn:UISplitViewControllerColumnInspector];
     if (inspectorViewController != nil) {
       if (inspectorViewController.view.window == nil) {
-        [[self reactEventEmitter] emitOnHideInspector];
+        [self.eventsDelegate splitHostControllerDidHideInspector:self];
       }
     }
   }
@@ -521,7 +453,7 @@
     willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
 {
   if (self.displayMode != displayMode) {
-    [[self reactEventEmitter] emitOnDisplayModeWillChangeFrom:self.displayMode to:displayMode];
+    [self.eventsDelegate splitHostController:self willChangeDisplayModeFrom:self.displayMode to:displayMode];
   }
 
   __weak auto weakSelf = self;
@@ -550,8 +482,8 @@
 - (UISplitViewControllerColumn)splitViewController:(UISplitViewController *)svc
          topColumnForCollapsingToProposedTopColumn:(UISplitViewControllerColumn)proposedTopColumn
 {
-  if (_splitHostComponentView.hasCustomTopColumnForCollapsing) {
-    return _splitHostComponentView.topColumnForCollapsingColumn;
+  if (self.behaviorProvider.hasCustomTopColumnForCollapsing) {
+    return self.behaviorProvider.topColumnForCollapsingColumn;
   }
 
   return proposedTopColumn;
