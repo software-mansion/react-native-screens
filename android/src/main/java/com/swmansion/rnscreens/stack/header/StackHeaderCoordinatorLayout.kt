@@ -36,6 +36,7 @@ internal class StackHeaderCoordinatorLayout(
     internal val stackScreen: StackScreen,
     private val canNavigateBack: Boolean,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
+    parentColorSchemeProvider: WeakReference<ColorSchemeProviding>,
     private val backPressHandler: StackHeaderBackPressHandler,
 ) : CoordinatorLayout(context),
     ColorSchemeProviding {
@@ -136,6 +137,26 @@ internal class StackHeaderCoordinatorLayout(
 
     // endregion
 
+    // region Layout direction
+
+    // Direction the header was last built against. In order to ensure correct
+    // layout and appearance (e.g. back button arrow direction), we rebuild the
+    // header on layout direction change.
+    private var builtLayoutDirection: Int? = null
+
+    override fun onRtlPropertiesChanged(layoutDirection: Int) {
+        super.onRtlPropertiesChanged(layoutDirection)
+
+        if (builtLayoutDirection == null || builtLayoutDirection == layoutDirection) {
+            return
+        }
+
+        invalidate(StackHeaderInvalidationFlags.STRUCTURE)
+        flushPendingUpdates()
+    }
+
+    // endregion
+
     // region Header updates
 
     private val wrappedContext =
@@ -186,6 +207,7 @@ internal class StackHeaderCoordinatorLayout(
             resetHeader()
             val appBar = applicator.rebuild(this, provider)
             appBarLayout = appBar
+            builtLayoutDirection = layoutDirection
             attachAppBarListeners(appBar)
         }
 
@@ -259,7 +281,11 @@ internal class StackHeaderCoordinatorLayout(
 
     // region Color scheme
 
-    private val colorSchemeCoordinator = ColorSchemeCoordinator()
+    // As the fragment's root view, this layout gets reparented into the container's
+    // ViewGroupOverlay for exit transitions, where a parent walk finds no provider -
+    // hence the ownership-injected one.
+    private val colorSchemeCoordinator =
+        ColorSchemeCoordinator().apply { explicitParentProvider = parentColorSchemeProvider }
 
     // Night mode the header visuals were last applied against. Unlike the coordinator's
     // internal dedupe (reset on every setup()), this survives detach/reattach, skipping
@@ -330,6 +356,7 @@ internal class StackHeaderCoordinatorLayout(
     private fun removeHeader() {
         resetHeader()
         isAppBarFullyCollapsed = null
+        builtLayoutDirection = null
         removeContentBehavior()
         requestLayout()
     }

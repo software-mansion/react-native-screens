@@ -21,7 +21,7 @@ fi
 # Reject non-iPad names even if RNS_APPLE_SIM_NAME was set by the caller.
 if [[ "${RNS_APPLE_SIM_NAME}" != iPad* ]]; then
   echo "Error: test-e2e-ios-ipad only runs on iPad simulators, but RNS_APPLE_SIM_NAME='${RNS_APPLE_SIM_NAME}'." >&2
-  echo "       Set RNS_APPLE_SIM_NAME to an iPad model (e.g. \"iPad Pro 13-inch (M4)\")." >&2
+  echo "       Set RNS_APPLE_SIM_NAME to an iPad model (e.g. \"iPad Pro 13-inch (M5)\")." >&2
   exit 1
 fi
 export RNS_APPLE_SIM_NAME
