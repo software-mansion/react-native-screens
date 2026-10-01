@@ -1,18 +1,16 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import { expectStillOnRoute, waitForTopmostRoute } from '@e2e/app/stack-route';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast, expectNoToast } from '@e2e/app/toast';
 import {
-  describeIfAndroid,
-  dismissToast,
-  expectNoToast,
   expectTopmostButtons,
   expectTopmostVisible,
-  readTopmostText,
-  selectSingleFeatureTestsScreen,
-  stackV5BackButton,
-  tapTopmost,
-  tapTopmostButton,
-  waitForTopmostRoute,
-} from '../../e2e-utils';
+} from '@e2e/framework/assertions';
+import { tapTopmost, tapTopmostButton } from '@e2e/framework/gestures';
+import { readTopmostText } from '@e2e/framework/matchers';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import { stackV5BackButton } from '@e2e/framework/stack-header-android';
 
 /**
  * Stack v5 `preventNativeDismiss` — single stack. See the scenario for what is
@@ -41,9 +39,8 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   const readPreventInfo = () => readTopmostText('prevent-native-dismiss-info');
 
   /** Asserts B is still on top with its original key — the press was swallowed. */
-  async function expectStillOnB(expectedKey: string): Promise<void> {
-    jestExpect(await waitForTopmostRoute('B')).toBe(expectedKey);
-  }
+  const expectStillOnB = (expectedKey: string) =>
+    expectStillOnRoute('B', expectedKey);
 
   /**
    * Dismisses `count` toasts newest-first — labels carry the 1-based position,

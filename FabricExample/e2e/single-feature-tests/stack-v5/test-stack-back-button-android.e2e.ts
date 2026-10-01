@@ -1,15 +1,15 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { expectTopmostVisible } from '@e2e/framework/assertions';
+import { tapTopmost } from '@e2e/framework/gestures';
+import { countMatches } from '@e2e/framework/matchers';
+import { describeIfAndroid } from '@e2e/framework/platform';
 import {
-  countMatches,
-  describeIfAndroid,
-  expectTopmostVisible,
-  pickerOptionId,
-  selectSingleFeatureTestsScreen,
   stackV5BackButton,
   stackV5Toolbar,
-  tapTopmost,
-} from '../../e2e-utils';
+} from '@e2e/framework/stack-header-android';
 
 // Icon identity and tint colors are not assertable through Detox — see
 // `scenario.md` next to the test screen for the manual-only steps.
@@ -20,18 +20,9 @@ const PUSH_ANOTHER = 'PUSH ANOTHER';
 
 const BACK_BUTTON_HIDDEN_SWITCH = 'back-button-hidden-switch';
 
-// Option ids are `SettingsPicker`'s own `<label>-<item>`, lowercased. The
-// second tap on the picker closes it, so its options do not push later
-// controls off-screen.
-async function selectOption(pickerId: string, label: string, option: string) {
-  await tapTopmost(by.id(pickerId));
-  await tapTopmost(by.id(pickerOptionId(label, option)));
-  await tapTopmost(by.id(pickerId));
-}
-
 // A hidden navigation icon leaves the hierarchy, so "hidden" is "does not
 // exist". The toolbar is asserted first, otherwise a header that never
-// rendered would pass too. Each screen builds its own toolbar, hence the index.
+// rendered would pass too.
 async function expectNoBackButton() {
   await expectTopmostVisible(stackV5Toolbar);
   await expect(element(stackV5BackButton())).not.toExist();
@@ -39,7 +30,7 @@ async function expectNoBackButton() {
 
 // The icon can lag the pushed screen's content, so wait before counting — a
 // settle race would otherwise read as "the back button is missing". The count
-// names the ambiguity a second stacked toolbar's icon would cause.
+// guards against a stray second chevron.
 async function expectSingleVisibleBackButton() {
   await expectTopmostVisible(stackV5BackButton);
   jestExpect(await countMatches(stackV5BackButton())).toBe(1);
@@ -88,8 +79,18 @@ describeIfAndroid('Stack v5: back button configured before the push', () => {
   beforeAll(openScreen);
 
   it('should keep the root screen back-button-free with an icon and tint set', async () => {
-    await selectOption('icon-picker', 'icon', 'imageSource');
-    await selectOption('tint-color-normal-picker', 'tintColorNormal', 'purple');
+    await selectPickerOption({
+      pickerId: 'icon-picker',
+      label: 'icon',
+      option: 'imageSource',
+      topmost: true,
+    });
+    await selectPickerOption({
+      pickerId: 'tint-color-normal-picker',
+      label: 'tintColorNormal',
+      option: 'purple',
+      topmost: true,
+    });
     await expectNoBackButton();
   });
 

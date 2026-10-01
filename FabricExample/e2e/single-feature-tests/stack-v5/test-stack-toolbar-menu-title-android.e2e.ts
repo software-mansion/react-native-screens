@@ -1,15 +1,15 @@
 import { device, expect, element, by } from 'detox';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '@e2e/framework/native-classes-android';
+import { describeIfAndroid } from '@e2e/framework/platform';
+import { actionMenuItem } from '@e2e/framework/stack-header-android';
 import {
   createOverflowMenuHelpers,
-  actionMenuItem,
-  describeIfAndroid,
   OVERFLOW_MENU_LABEL,
   overflowMenuText,
-  scrollToAndTap,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
-import { CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW } from '../../native-class-names';
+} from '@e2e/framework/toolbar-menu-android';
 import type {
   CmdCondensedOption,
   CmdTitleOption,

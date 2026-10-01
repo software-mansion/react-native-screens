@@ -34,6 +34,8 @@ import TestStackHeaderContentInsets from './test-stack-header-content-insets-and
 import TestStackHeaderBackground from './test-stack-header-background-android';
 import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-android';
 import TestStackColorScheme from './test-stack-color-scheme';
+import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
+import TestStackLayoutDirection from './test-stack-layout-direction-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
 
 // Scenario entry-point components — each scenario's default export re-exported
@@ -70,6 +72,8 @@ export { default as TestStackHeaderContentInsets } from './test-stack-header-con
 export { default as TestStackHeaderBackground } from './test-stack-header-background-android';
 export { default as TestStackHeaderStatusBarScrim } from './test-stack-header-status-bar-scrim-android';
 export { default as TestStackColorScheme } from './test-stack-color-scheme';
+export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
+export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
 
 const scenarios = {
@@ -106,6 +110,8 @@ const scenarios = {
   TestStackHeaderBackground,
   TestStackHeaderStatusBarScrim,
   TestStackColorScheme,
+  TestStackHeaderHiddenRestore,
+  TestStackLayoutDirection,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

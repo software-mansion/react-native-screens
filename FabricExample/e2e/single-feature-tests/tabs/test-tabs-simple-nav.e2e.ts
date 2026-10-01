@@ -1,8 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import {
-  forceTapByLabeliOS,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { forceTapByLabelIOS } from '@e2e/framework/gestures';
 
 describe('@smoke Tabs: simple navigation', () => {
   beforeAll(async () => {
@@ -66,7 +64,7 @@ describe('@smoke Tabs: simple navigation', () => {
   it('should stay on First tab when re-tapping the active First tab bar item', async () => {
     await expect(element(by.id('route-key-label'))).toHaveLabel('First');
     device.getPlatform() === 'ios'
-      ? await forceTapByLabeliOS('FirstTab')
+      ? await forceTapByLabelIOS('FirstTab')
       : await element(by.id('tab-bar-item-first')).tap();
     await expect(element(by.id('route-key-label'))).toHaveLabel('First');
   });

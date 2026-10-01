@@ -82,6 +82,9 @@ internal class FormSheetBehaviorController(
      * BottomSheet's height to extend its background behind the system bars, while the inner content remains within
      * the safe area. For fractional detents it is subtracted from the collapsed peek height, which Material resolves
      * above the inset, so the lowest detent lands at its fraction of [sheetAvailableSpace] like the other ones.
+     * @param keyboardLift - the part of the keyboard inset above [nativeContainerPaddingBottom]. Every resting position
+     * is extended by it so the sheet is pushed above the keyboard as far as [sheetAvailableSpace] allows,
+     * see [FormSheetDetents].
      * @param initialDetentIndex - the index of the detent the sheet should snap to while opening.
      * @param applyInitialDetent - whether the sheet should forcefully snap to the initial detent state.
      * This should typically be `true` only when the sheet transitions from closed to open.
@@ -91,6 +94,7 @@ internal class FormSheetBehaviorController(
         sheetAvailableSpace: Int,
         contentHeightForFitToContents: Int = 0,
         nativeContainerPaddingBottom: Int = 0,
+        keyboardLift: Int = 0,
         initialDetentIndex: Int = 0,
         applyInitialDetent: Boolean = false,
     ) {
@@ -101,15 +105,22 @@ internal class FormSheetBehaviorController(
         }
 
         if (detents.isFitToContents) {
-            configureFitToContents(detents, sheetAvailableSpace, contentHeightForFitToContents, nativeContainerPaddingBottom)
+            configureFitToContents(
+                detents,
+                sheetAvailableSpace,
+                contentHeightForFitToContents,
+                nativeContainerPaddingBottom,
+                keyboardLift,
+            )
         } else {
             when (detents.count) {
-                1 -> configureSingleDetent(detents, sheetAvailableSpace)
+                1 -> configureSingleDetent(detents, sheetAvailableSpace, keyboardLift)
                 2 ->
                     configureTwoDetents(
                         detents,
                         sheetAvailableSpace,
                         nativeContainerPaddingBottom,
+                        keyboardLift,
                         initialDetentIndex,
                         applyInitialDetent,
                     )
@@ -118,6 +129,7 @@ internal class FormSheetBehaviorController(
                         detents,
                         sheetAvailableSpace,
                         nativeContainerPaddingBottom,
+                        keyboardLift,
                         initialDetentIndex,
                         applyInitialDetent,
                     )
@@ -133,20 +145,22 @@ internal class FormSheetBehaviorController(
         sheetAvailableSpace: Int,
         contentHeight: Int,
         bottomInset: Int,
+        keyboardLift: Int,
     ) = behavior.apply {
         skipCollapsed = true
         isFitToContents = true
-        maxHeight = detents.maxAllowedHeightForFitToContents(sheetAvailableSpace, contentHeight, bottomInset)
+        maxHeight = detents.maxAllowedHeightForFitToContents(sheetAvailableSpace, contentHeight, bottomInset, keyboardLift)
         state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun configureSingleDetent(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
+        keyboardLift: Int,
     ) = behavior.apply {
         skipCollapsed = true
         isFitToContents = true
-        maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
+        maxHeight = detents.maxAllowedHeight(sheetAvailableSpace, keyboardLift)
         state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -154,13 +168,14 @@ internal class FormSheetBehaviorController(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
         bottomInset: Int,
+        keyboardLift: Int,
         initialDetentIndex: Int,
         applyInitialDetent: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
         isFitToContents = true
-        peekHeight = detents.peekHeight(sheetAvailableSpace, bottomInset)
-        maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
+        peekHeight = detents.peekHeight(sheetAvailableSpace, bottomInset, keyboardLift)
+        maxHeight = detents.maxAllowedHeight(sheetAvailableSpace, keyboardLift)
         if (applyInitialDetent) {
             state = resolveStateFromIndex(initialDetentIndex, detents.count)
         }
@@ -170,15 +185,16 @@ internal class FormSheetBehaviorController(
         detents: FormSheetDetents,
         sheetAvailableSpace: Int,
         bottomInset: Int,
+        keyboardLift: Int,
         initialDetentIndex: Int,
         applyInitialDetent: Boolean,
     ) = behavior.apply {
         skipCollapsed = false
         isFitToContents = false
-        peekHeight = detents.peekHeight(sheetAvailableSpace, bottomInset)
-        halfExpandedRatio = detents.halfExpandedRatio()
-        expandedOffset = detents.expandedOffsetFromTop(sheetAvailableSpace)
-        maxHeight = detents.maxAllowedHeight(sheetAvailableSpace)
+        peekHeight = detents.peekHeight(sheetAvailableSpace, bottomInset, keyboardLift)
+        halfExpandedRatio = detents.halfExpandedRatio(sheetAvailableSpace, keyboardLift)
+        expandedOffset = detents.expandedOffsetFromTop(sheetAvailableSpace, keyboardLift = keyboardLift)
+        maxHeight = detents.maxAllowedHeight(sheetAvailableSpace, keyboardLift)
         if (applyInitialDetent) {
             state = resolveStateFromIndex(initialDetentIndex, detents.count)
         }

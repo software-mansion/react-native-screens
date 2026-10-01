@@ -1,20 +1,19 @@
-import { device, expect, element, by } from 'detox';
+import { device, expect, element, by, waitFor } from 'detox';
+import { selectPickerOption } from '@e2e/app/settings-controls';
+import { scrollToAndTap } from '@e2e/framework/gestures';
+import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { dismissToast } from '@e2e/app/toast';
 import {
   checkmarkFor,
   contextMenu,
-  describeIfiOS,
   dismissContextMenu,
-  dismissToast,
-  headerTitle,
-  headerItem,
   menuRow,
   menuRowIcon,
   openContextMenu,
   openHeaderTitleMenu,
-  scrollToAndTap,
-  selectPickerOption,
-  selectSingleFeatureTestsScreen,
-} from '../../e2e-utils';
+} from '@e2e/framework/context-menu-ios';
+import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
+import { describeIfIOS } from '@e2e/framework/platform';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
@@ -46,7 +45,7 @@ async function openMenuOne() {
   await openContextMenu(menuOneBarButton);
 }
 
-describeIfiOS('Stack Header Menu (iOS)', () => {
+describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -184,8 +183,8 @@ describeIfiOS('Stack Header Menu (iOS)', () => {
   });
 });
 
-describeIfiOS(
-  'Stack Header Menu (iOS): setMenuItemOptions view command',
+describeIfIOS(
+  '@smoke Stack Header Menu (iOS): setMenuItemOptions view command',
   () => {
     beforeAll(async () => {
       await device.reloadReactNative();
@@ -291,38 +290,41 @@ describeIfiOS(
   },
 );
 
-describeIfiOS('Stack Header Menu (iOS): setMenuOptions view command', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-    await selectSingleFeatureTestsScreen(
-      'Stackv5',
-      'test-stack-header-menu-ios',
-    );
-  });
+describeIfIOS(
+  '@smoke Stack Header Menu (iOS): setMenuOptions view command',
+  () => {
+    beforeAll(async () => {
+      await device.reloadReactNative();
+      await selectSingleFeatureTestsScreen(
+        'Stackv5',
+        'test-stack-header-menu-ios',
+      );
+    });
 
-  it('should rename the targeted submenu', async () => {
-    await setPicker('menu-options-title-picker', 'title', 'New Title');
-    await tapSendButton('send-menu-options-button');
+    it('should rename the targeted submenu', async () => {
+      await setPicker('menu-options-title-picker', 'title', 'New Title');
+      await tapSendButton('send-menu-options-button');
 
-    await openMenuOne();
+      await openMenuOne();
 
-    await expect(element(by.text('New Title'))).toBeVisible();
-    await expect(element(by.text('Submenu with Radio'))).not.toExist();
-  });
+      await expect(element(by.text('New Title'))).toBeVisible();
+      await expect(element(by.text('Submenu with Radio'))).not.toExist();
+    });
 
-  it('should add an icon to the renamed submenu while keeping its title', async () => {
-    await expect(menuRowIcon('bell.fill', 'New Title')).not.toExist();
-    await dismissContextMenu();
+    it('should add an icon to the renamed submenu while keeping its title', async () => {
+      await expect(menuRowIcon('bell.fill', 'New Title')).not.toExist();
+      await dismissContextMenu();
 
-    await setPicker('menu-options-title-picker', 'title', 'no change');
-    await setPicker('menu-options-icon-picker', 'icon', 'bell.fill');
-    await tapSendButton('send-menu-options-button');
+      await setPicker('menu-options-title-picker', 'title', 'no change');
+      await setPicker('menu-options-icon-picker', 'icon', 'bell.fill');
+      await tapSendButton('send-menu-options-button');
 
-    await openMenuOne();
+      await openMenuOne();
 
-    await expect(element(by.text('New Title'))).toBeVisible();
-    await expect(menuRowIcon('bell.fill', 'New Title')).toBeVisible();
+      await expect(element(by.text('New Title'))).toBeVisible();
+      await expect(menuRowIcon('bell.fill', 'New Title')).toBeVisible();
 
-    await dismissContextMenu();
-  });
-});
+      await dismissContextMenu();
+    });
+  },
+);

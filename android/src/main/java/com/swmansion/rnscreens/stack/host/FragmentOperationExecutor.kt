@@ -26,6 +26,7 @@ internal class FragmentOperationExecutor {
                 tx.addToBackStack(op.fragment.stackScreen.screenKey)
             }
             tx.add(op.containerViewId, op.fragment)
+            op.coveredFragment?.let { tx.detach(it) }
             tx.setPrimaryNavigationFragment(op.fragment)
             commitTransaction(tx, op.allowStateLoss)
         }

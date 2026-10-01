@@ -8,6 +8,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetAppearanceCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetBehaviorController
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetDimensionsCoordinator
+import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetKeyboardCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.coordinator.FormSheetNativeDismissCoordinator
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer
 import com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetDialog
@@ -55,9 +56,13 @@ internal class FormSheetPresentation(
         FormSheetDimensionsCoordinator(
             dialog = dialog,
             container = container,
-            bottomSheetView = bottomSheetView,
             behaviorController = behaviorController,
         )
+
+    private val keyboardCoordinator =
+        bottomSheetView?.let {
+            FormSheetKeyboardCoordinator(bottomSheetView = it)
+        }
 
     private val nativeDismissCoordinator =
         FormSheetNativeDismissCoordinator(
@@ -71,7 +76,16 @@ internal class FormSheetPresentation(
         nativeDismissCoordinator.setup()
         appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
+        keyboardCoordinator?.setup()
         behaviorController?.setup()
+    }
+
+    /**
+     * Enables tracking the keyboard animation. Expected to be on only while the sheet rests in the
+     * PRESENTED state - the enter / exit animators own `translationY` otherwise.
+     */
+    internal fun setKeyboardTrackingEnabled(enabled: Boolean) {
+        keyboardCoordinator?.isTrackingEnabled = enabled
     }
 
     internal fun onContentHeightChanged(height: Int) {
@@ -126,6 +140,7 @@ internal class FormSheetPresentation(
         behaviorController?.destroy()
         nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
+        keyboardCoordinator?.destroy()
 
         dialog.setOnShowListener(null)
         dialog.dismiss()
