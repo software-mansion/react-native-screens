@@ -34,7 +34,7 @@ const tabBarButtonType = isIOSVersionAtLeast('26.0')
 // Throughout iOS 26.x UIKit gives a tab whose `UITabBarItem` uses the `search` system item the
 // separate platter view and a runtime switch to/from `search` moves the item. Starting with
 // iOS 27.0 a plain search item stays inline — the separation is tied to `UISearchTab`
-// (the `searchRole` prop) with `automaticallyActivatesSearch` on, covered by the separate
+// (the `role: 'search'` prop) with `automaticallyActivatesSearch` on, covered by the separate
 // `test-tabs-search-tab-activation-ios` scenario.
 const shouldMoveTabBarItemOnRuntimeSearchSwitch =
   isIOSVersionAtLeast('26.0') && !isIOSVersionAtLeast('27.0');

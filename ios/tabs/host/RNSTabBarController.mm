@@ -680,7 +680,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
 
-  if (screenController.tabScreenComponentView.searchRole) {
+  if (screenController.tabScreenComponentView.tabRole == RNSTabsScreenTabRoleSearch) {
     // The designated initializer of `UISearchTab` takes no identifier - UIKit assigns a system one.
     UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
       return weakScreenController;
