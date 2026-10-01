@@ -18,6 +18,14 @@ abstract class FabricEnabledViewGroup(
     private var lastHeight = 0f
     private var lastHeaderHeight = 0f
 
+    protected var isStateInvalidated = false
+        private set
+
+    // A detached screen can miss native layout changes while the commit hook resets its shadow state.
+    protected fun invalidateState() {
+        isStateInvalidated = true
+    }
+
     fun setStateWrapper(wrapper: StateWrapper?) {
         mStateWrapper = wrapper
     }
@@ -38,13 +46,16 @@ abstract class FabricEnabledViewGroup(
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
         val delta = 0.9f
-        if (abs(lastWidth - realWidth) < delta &&
+        if (!isStateInvalidated &&
+            abs(lastWidth - realWidth) < delta &&
             abs(lastHeight - realHeight) < delta &&
             abs(lastHeaderHeight - realHeaderHeight) < delta
         ) {
             return
         }
 
+        val stateWrapper = mStateWrapper ?: return
+        isStateInvalidated = false
         lastWidth = realWidth
         lastHeight = realHeight
         lastHeaderHeight = realHeaderHeight
@@ -55,6 +66,6 @@ abstract class FabricEnabledViewGroup(
                 putDouble("contentOffsetX", 0.0)
                 putDouble("contentOffsetY", realHeaderHeight.toDouble())
             }
-        mStateWrapper?.updateState(map)
+        stateWrapper.updateState(map)
     }
 }
