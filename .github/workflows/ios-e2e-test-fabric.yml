@@ -15,16 +15,69 @@ on:
     branches:
       - main
   workflow_dispatch:
+concurrency:
+  group: ios-e2e-fabric-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  test:
+  build:
     runs-on: xcode-27-xlarge
     timeout-minutes: 90
     env:
       WORKING_DIRECTORY: FabricExample
       DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
-    concurrency:
-      group: ios-e2e-fabric-${{ github.ref }}
-      cancel-in-progress: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Get Xcode version
+        run: xcodebuild -version
+      - name: Install root node dependencies
+        run: yarn install && yarn submodules
+      - name: Install node dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn
+      - name: Install pods
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: pod install
+      - name: Build app
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn build-e2e-ios
+        # Hands the release build to the test jobs (they run on separate
+        # machines). tar keeps the executable bit, which upload-artifact drops.
+      - name: Package app
+        run: |
+          tar -czf "$RUNNER_TEMP/FabricExample-app.tar.gz" \
+            -C "$WORKING_DIRECTORY/ios/build/Build/Products" Release-iphonesimulator/FabricExample.app
+      - name: Upload app
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ios-app
+          path: ${{ runner.temp }}/FabricExample-app.tar.gz
+          retention-days: 1
+
+  test:
+    # iPhone and iPad suites run in parallel on separate machines, both on the
+    # app built once above. fail-fast off, so one failing does not cancel the other.
+    needs: build
+    runs-on: xcode-27-xlarge
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - device: iphone
+            script: test-e2e-ios
+          - device: ipad
+            script: test-e2e-ios-ipad
+    name: test (${{ matrix.device }})
+    env:
+      WORKING_DIRECTORY: FabricExample
+      # Same Xcode as the build, so the simulator runtime matches the SDK.
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -42,17 +95,21 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
-      - name: Install pods
-        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
-        run: pod install
-      - name: Build app
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn build-e2e-ios
+      - name: Download app built by the build job
+        uses: actions/download-artifact@v4
+        with:
+          name: build-ios-app
+          path: ${{ runner.temp }}/app
+        # Unpacked where Detox's ios.release binaryPath expects it.
+      - name: Unpack app
+        run: |
+          mkdir -p "$WORKING_DIRECTORY/ios/build/Build/Products"
+          tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$WORKING_DIRECTORY/ios/build/Build/Products"
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn test-e2e-ios
+        run: yarn ${{ matrix.script }}
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
-          name: ios-fail-screen-shots
+          name: ios-fail-screen-shots-${{ matrix.device }}
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
