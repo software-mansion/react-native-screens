@@ -19,10 +19,11 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: SPMBlankExample
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     concurrency:
       group: ios-spm-${{ github.ref }}
       cancel-in-progress: true
@@ -37,10 +38,8 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: yarn.lock
 
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
+      - name: Get Xcode version
+        run: xcodebuild -version
 
       - name: Install library dependencies
         run: yarn
