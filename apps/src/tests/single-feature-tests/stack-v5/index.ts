@@ -37,6 +37,7 @@ import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-
 import TestStackColorScheme from './test-stack-color-scheme';
 import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
+import TestStackSafeAreaViewIOS from './test-stack-safe-area-view-ios';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
@@ -75,6 +76,7 @@ export { default as TestStackHeaderStatusBarScrim } from './test-stack-header-st
 export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
+export { default as TestStackSafeAreaViewIOS } from './test-stack-safe-area-view-ios';
 
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
@@ -107,6 +109,7 @@ const scenarios = {
   TestStackHeaderTitleAppearanceAndroid,
   TestStackHeaderTitleAppearanceIOS,
   TestStackToolbarMenuState,
+  TestStackSafeAreaViewIOS,
   TestStackHeaderContentInsets,
   TestStackHeaderBackground,
   TestStackHeaderStatusBarScrim,
