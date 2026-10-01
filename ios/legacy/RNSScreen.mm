@@ -134,11 +134,16 @@ RNS_IGNORE_SUPER_CALL_END
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
 
-    // * in large title, ScrollView handles the offset of content so we cannot set it here also
-    // * TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
+    // The content offset sent to the shadow tree must match the screen's native origin in the navigation controller's
+    // view. It is used by measurements & hit testing only, the size is delivered separately (`frameSize`).
+    // * On iOS 26+ (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`) the screen is always
+    // laid out under the navigation bar, so the origin is 0 and the `SafeAreaView` rendered by `ScreenStackItem`
+    // insets the content below an opaque bar. All branches below evaluate to 0 in that case.
+    // * Below iOS 26, when config.translucent == true, we use `edgesForExtendedLayout` and the screen is laid out
+    // under the navigation bar, therefore there is no need to set content offset in shadow tree.
+    // * Below iOS 26, in large title, ScrollView handles the offset of content so we cannot set it here also.
+    // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
     // used?
-    // * When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
-    // navigation bar, therefore there is no need to set content offset in shadow tree.
     // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
     // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
     // * Otherwise the offset must match the actual native origin of the screen. We can not derive it from the
@@ -1569,10 +1574,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [super viewDidLayoutSubviews];
 
   // The below code makes the screen view adapt dimensions provided by the system. We take these
-  // into account only when the view is mounted under RNSNavigationController in which case system
-  // provides additional padding to account for possible header, and in the case when screen is
-  // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
-  // screen size
+  // into account only when the view is mounted under RNSNavigationController, in which case the
+  // navigation controller sizes the screen (below iOS 26 an opaque navigation bar is excluded from
+  // the screen's frame, on iOS 26+ the screen always spans under the bar, see
+  // `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), and in the case when
+  // screen is shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter
+  // than the screen size.
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
   BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 

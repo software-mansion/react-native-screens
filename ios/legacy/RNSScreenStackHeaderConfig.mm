@@ -159,9 +159,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)layoutNavigationControllerView
 {
-  // We need to layout navigation controller view after translucent prop changes, because otherwise
-  // frame of RNSScreen will not be changed and screen content will remain the same size.
-  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
+  // We need to layout navigation controller view after `translucent` / `hidden` prop changes. Below iOS 26 the frame
+  // of RNSScreen depends on them (`edgesForExtendedLayout`), so without the layout pass the screen content would
+  // remain the same size (https://github.com/software-mansion/react-native-screens/issues/1158). On iOS 26+ the frame
+  // does not change, but the layout pass still refreshes the header layout info in the shadow tree and the safe area
+  // insets consumed by the `SafeAreaView` rendered by `ScreenStackItem`.
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
@@ -346,6 +348,18 @@ RNS_IGNORE_SUPER_CALL_END
   return nil;
 }
 
++ (BOOL)screensExtendUnderOpaqueNavigationBar
+{
+#if TARGET_OS_TV || TARGET_OS_VISION
+  return NO;
+#else // TARGET_OS_TV || TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    return YES;
+  }
+  return NO;
+#endif // TARGET_OS_TV || TARGET_OS_VISION
+}
+
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config
@@ -487,12 +501,16 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
-  if (!shouldHide && !config.translucent) {
-    // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
-    // the screen underneath navigation controllers
+  if (!shouldHide && !config.translucent && ![self screensExtendUnderOpaqueNavigationBar]) {
+    // When nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
+    // the screen underneath navigation controllers.
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
   } else {
-    // system default is UIRectEdgeAll
+    // System default is UIRectEdgeAll - the screen is laid out under the navigation bar.
+    // On iOS 26+ this is also the case for an opaque header: UIKit does not reliably lay out the screen right below
+    // the bar when the top edge is excluded (it ignores the bar's origin offset, e.g. in landscape or on iPhone Duo),
+    // so we let the screen extend under the bar and inset the content with the `SafeAreaView` rendered by
+    // `ScreenStackItem`. See https://github.com/software-mansion/react-native-screens-labs/issues/1841
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
