@@ -685,11 +685,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
     UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
       return weakScreenController;
     }];
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
     if (@available(iOS 26.0, *)) {
-      searchTab.automaticallyActivatesSearch = screenController.tabScreenComponentView.automaticallyActivatesSearch;
+      if (RNS_UITAB_API_ENABLED) {
+        searchTab.automaticallyActivatesSearch = screenController.tabScreenComponentView.automaticallyActivatesSearch;
+      }
     }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
     return searchTab;
   }
@@ -918,22 +920,24 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateSearchTabsIfNeeded
 {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 26.0, *)) {
-    for (UITab *tab in self.tabs) {
-      if (![tab isKindOfClass:UISearchTab.class]) {
-        continue;
-      }
-      auto *searchTab = static_cast<UISearchTab *>(tab);
-      auto *screenController = static_cast<RNSTabsScreenViewController *>(tab.viewController);
-      auto *screenView = screenController.tabScreenComponentView;
+    if (RNS_UITAB_API_ENABLED) {
+      for (UITab *tab in self.tabs) {
+        if (![tab isKindOfClass:UISearchTab.class]) {
+          continue;
+        }
+        auto *searchTab = static_cast<UISearchTab *>(tab);
+        auto *screenController = static_cast<RNSTabsScreenViewController *>(tab.viewController);
+        auto *screenView = screenController.tabScreenComponentView;
 
-      if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
-        searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;
+        if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
+          searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;
+        }
       }
     }
   }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Utility
