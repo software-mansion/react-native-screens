@@ -19,4 +19,16 @@ void RNSScreenStackHeaderSubviewShadowNode::applyFrameCorrections() {
   layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
 }
 
+#if !defined(ANDROID)
+void RNSScreenStackHeaderSubviewShadowNode::constrainMaxWidth(Float width) {
+  ensureUnsealed();
+
+  auto style = yogaNode_.style();
+  style.setMaxDimension(
+      yoga::Dimension::Width, yoga::StyleSizeLength::points(width));
+  yogaNode_.setStyle(style);
+  yogaNode_.setDirty(true);
+}
+#endif // !ANDROID
+
 } // namespace facebook::react

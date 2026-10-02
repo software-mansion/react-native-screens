@@ -25,6 +25,20 @@ class RNSScreenStackHeaderSubviewComponentDescriptor final
     // https://github.com/software-mansion/react-native-screens/pull/2905
 
     ConcreteComponentDescriptor::adopt(shadowNode);
+
+#if !defined(ANDROID)
+    auto &headerSubviewShadowNode =
+        static_cast<RNSScreenStackHeaderSubviewShadowNode &>(shadowNode);
+    const auto &props = headerSubviewShadowNode.getConcreteProps();
+    const auto &stateData = headerSubviewShadowNode.getStateData();
+    const bool isTitleSubview =
+        props.type == RNSScreenStackHeaderSubviewType::Center ||
+        props.type == RNSScreenStackHeaderSubviewType::Title;
+
+    if (isTitleSubview && stateData.frameSize.width > 0) {
+      headerSubviewShadowNode.constrainMaxWidth(stateData.frameSize.width);
+    }
+#endif // !ANDROID
   }
 };
 
