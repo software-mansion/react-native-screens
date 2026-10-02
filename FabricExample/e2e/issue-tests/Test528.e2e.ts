@@ -1,6 +1,7 @@
-import { device, expect, element, by } from 'detox';
+import { device, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { tapBarBackButton } from '@e2e/framework/back-button';
+import { expectHeaderViewShown } from '@e2e/framework/header-items-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 // Detox currently supports orientation only on iOS
@@ -14,11 +15,11 @@ describeIfIOS('Test528', () => {
   });
 
   it('headerRight button should be visible after orientation change', async () => {
-    await expect(element(by.text('Custom Button'))).toBeVisible(100);
+    await expectHeaderViewShown(by.text('Custom Button'), 100);
     await device.setOrientation('landscape');
-    await expect(element(by.text('Custom Button'))).toBeVisible(100);
+    await expectHeaderViewShown(by.text('Custom Button'), 100);
     await device.setOrientation('portrait');
-    await expect(element(by.text('Custom Button'))).toBeVisible(100);
+    await expectHeaderViewShown(by.text('Custom Button'), 100);
   });
 
   it('headerRight button should be visible after coming back from horizontal screen', async () => {
@@ -26,8 +27,8 @@ describeIfIOS('Test528', () => {
     await device.setOrientation('landscape');
 
     await tapBarBackButton();
-    await expect(element(by.text('Custom Button'))).toBeVisible(100);
+    await expectHeaderViewShown(by.text('Custom Button'), 100);
     await device.setOrientation('portrait');
-    await expect(element(by.text('Custom Button'))).toBeVisible(100);
+    await expectHeaderViewShown(by.text('Custom Button'), 100);
   });
 });

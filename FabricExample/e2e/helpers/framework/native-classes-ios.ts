@@ -12,6 +12,8 @@
 
 // --- react-native-screens views ---
 
+export const CLASS_NAME_RNS_SCREEN_VIEW = 'RNSScreenView';
+
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
 
