@@ -52,6 +52,7 @@
   }
 
   barButtonItem.style = item.style;
+  barButtonItem.tintColor = item.itemTintColor;
   barButtonItem.enabled = !item.disabled;
 
   if (item.icon != nil) {

@@ -52,6 +52,7 @@ namespace react = facebook::react;
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
   _style = UIBarButtonItemStylePlain;
+  _itemTintColor = nil;
   _disabled = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
@@ -221,6 +222,11 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.variant != newItemProps.variant) {
     _style = rnscreens::conversion::UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(newItemProps.variant);
+    needsUpdate = YES;
+  }
+
+  if (oldItemProps.tintColor != newItemProps.tintColor) {
+    _itemTintColor = RCTUIColorFromSharedColor(newItemProps.tintColor);
     needsUpdate = YES;
   }
 

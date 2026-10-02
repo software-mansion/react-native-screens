@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { TextStyle } from 'react-native';
+import type { ColorValue, TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
@@ -168,6 +168,18 @@ export interface StackHeaderInlineItemIOS
    * @platform iOS
    */
   variant?: StackHeaderItemVariantIOS | undefined;
+  /**
+   * @summary Tint color of the item.
+   *
+   * @description
+   * Applied to the item's title and icon. For `prominent` items on iOS 26,
+   * the tint affects the emphasized background instead.
+   *
+   * When unset, the item uses the default system tint.
+   *
+   * @platform iOS
+   */
+  tintColor?: ColorValue | undefined;
   /**
    * @summary Whether the item is disabled.
    *

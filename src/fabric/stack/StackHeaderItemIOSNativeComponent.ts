@@ -2,6 +2,7 @@
 
 import type {
   CodegenTypes as CT,
+  ColorValue,
   HostComponent,
   ImageResolvedAssetSource,
   ViewProps,
@@ -78,6 +79,7 @@ export interface NativeProps extends ViewProps {
   icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
   variant?: CT.WithDefault<Variant, 'plain'>;
+  tintColor?: ColorValue | undefined;
   disabled?: CT.WithDefault<boolean, false>;
   respondsToOnPress?: CT.WithDefault<boolean, false>;
   onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;
