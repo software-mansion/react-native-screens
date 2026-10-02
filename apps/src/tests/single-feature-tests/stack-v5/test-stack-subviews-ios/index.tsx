@@ -101,6 +101,7 @@ interface Config {
   leadingItemsCount: number;
   trailingItemsCount: number;
   hidesSharedBackground: boolean;
+  paddingRemoved: boolean;
   title: TitleOption;
   subtitle: TitleOption;
   hitSlop: HitSlopValue;
@@ -132,6 +133,7 @@ const DEFAULT_CONFIG: Config = {
   leadingItemsCount: 2,
   trailingItemsCount: 2,
   hidesSharedBackground: false,
+  paddingRemoved: false,
   title: 'short',
   subtitle: 'short',
   hitSlop: '0',
@@ -178,6 +180,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       type: 'item',
       id: `leading-${i}`,
       hidesSharedBackground: config.hidesSharedBackground,
+      paddingRemoved: config.paddingRemoved,
       render: () => <ResizingItem />,
     }));
   if (leadingItems.length > 1) {
@@ -196,6 +199,7 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
       type: 'item',
       id: `trailing-${i}`,
       hidesSharedBackground: config.hidesSharedBackground,
+      paddingRemoved: config.paddingRemoved,
       render: () => <ResizingItem />,
     }),
   );
@@ -296,6 +300,11 @@ function ConfigScreen() {
         label="hidesSharedBackground"
         value={config.hidesSharedBackground}
         onValueChange={v => updateConfig('hidesSharedBackground', v)}
+      />
+      <SettingsSwitch
+        label="paddingRemoved"
+        value={config.paddingRemoved}
+        onValueChange={v => updateConfig('paddingRemoved', v)}
       />
       <SettingsSwitch
         label="large header enabled"

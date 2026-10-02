@@ -72,6 +72,7 @@ export interface NativeProps extends ViewProps {
   itemId?: string | undefined;
   identifier?: string | undefined;
   hidesSharedBackground?: CT.WithDefault<boolean, false>;
+  paddingRemoved?: CT.WithDefault<boolean, false>;
   title?: string | undefined;
   icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
