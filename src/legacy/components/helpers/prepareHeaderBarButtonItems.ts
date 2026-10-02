@@ -37,6 +37,11 @@ const prepareMenu = (
           ...menuItem,
           sfSymbolName,
           xcassetName,
+          preferredImageLoadingMode:
+            menuItem.icon?.type === 'imageSource' ||
+            menuItem.icon?.type === 'templateSource'
+              ? menuItem.icon.preferredLoadingMode
+              : undefined,
           imageSource,
           templateSource,
           ...prepareMenu(menuItem, index, side, currentPath),
@@ -46,6 +51,11 @@ const prepareMenu = (
         ...menuItem,
         sfSymbolName,
         xcassetName,
+        preferredImageLoadingMode:
+          menuItem.icon?.type === 'imageSource' ||
+          menuItem.icon?.type === 'templateSource'
+            ? menuItem.icon.preferredLoadingMode
+            : undefined,
         imageSource,
         templateSource,
         menuId: `${currentPath}-${index}-${side}`,
@@ -86,6 +96,11 @@ export const prepareHeaderBarButtonItems = (
       : undefined;
     const processedItem = {
       ...item,
+      preferredImageLoadingMode:
+        item.icon?.type === 'imageSource' ||
+        item.icon?.type === 'templateSource'
+          ? item.icon.preferredLoadingMode
+          : undefined,
       imageSource,
       templateSource,
       sfSymbolName: item.icon?.type === 'sfSymbol' ? item.icon.name : undefined,

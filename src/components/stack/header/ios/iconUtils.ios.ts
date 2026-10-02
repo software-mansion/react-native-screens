@@ -21,6 +21,7 @@ export function resolveIconAssetSources(
 
     return {
       type: 'imageSource',
+      preferredLoadingMode: icon.preferredLoadingMode,
       imageSource: resolvedImageSource,
     };
   }
@@ -35,6 +36,7 @@ export function resolveIconAssetSources(
 
     return {
       type: 'templateSource',
+      preferredLoadingMode: icon.preferredLoadingMode,
       templateSource: resolvedTemplateSource,
     };
   }

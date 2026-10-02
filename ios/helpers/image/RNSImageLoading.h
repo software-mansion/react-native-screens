@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSImageLoading <NSObject>
 
 - (void)loadImageFromJsonSource:(NSDictionary *)jsonSource
+      prefersSynchronousLoading:(BOOL)prefersSynchronousLoading
                      asTemplate:(BOOL)isTemplate
          withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock;
 

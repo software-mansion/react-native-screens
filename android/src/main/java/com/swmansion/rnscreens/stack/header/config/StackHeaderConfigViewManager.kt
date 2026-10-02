@@ -481,6 +481,13 @@ internal open class StackHeaderConfigViewManager :
         view.backButtonDrawableIconResourceName = value
     }
 
+    override fun setBackButtonImageIconPreferredLoadingMode(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.backButtonImageIconPreferredLoadingMode = value
+    }
+
     override fun setBackButtonImageIconResource(
         view: StackHeaderConfig,
         value: ReadableMap?,
@@ -514,6 +521,13 @@ internal open class StackHeaderConfigViewManager :
         value: String?,
     ) {
         view.overflowIconDrawableIconResourceName = value
+    }
+
+    override fun setOverflowIconImageIconPreferredLoadingMode(
+        view: StackHeaderConfig,
+        value: String?,
+    ) {
+        view.overflowIconImageIconPreferredLoadingMode = value
     }
 
     override fun setOverflowIconImageIconResource(

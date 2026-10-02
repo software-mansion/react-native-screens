@@ -5,6 +5,7 @@
 
 + (void)loadImageSyncIfPossibleFromJsonSource:(nonnull NSDictionary *)jsonImageSource
                               withImageLoader:(nonnull RCTImageLoader *)imageLoader
+                    prefersSynchronousLoading:(BOOL)prefersSynchronousLoading
                                    asTemplate:(BOOL)isTemplate
                               completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock
 {
@@ -14,7 +15,7 @@
   RCTAssert(imageSource != nil, @"[RNScreens] Expected nonnil image source");
 
 #if !defined(NDEBUG) // We're in debug mode here
-  if (imageSource.packagerAsset) {
+  if (!prefersSynchronousLoading && imageSource.packagerAsset) {
     // We use `+ [RCTConvert UIImage:]` only in debug mode, because it is deprecated, however
     // we haven't found different way to load image synchronously in debug other than
     // writing the code manually.
@@ -24,19 +25,31 @@
 #endif // !defined(NDEBUG)
   {
     [self loadImageFromSource:imageSource
-              withImageLoader:imageLoader
-                   asTemplate:isTemplate
-              completionBlock:imageLoadingCompletionBlock];
+                  withImageLoader:imageLoader
+        prefersSynchronousLoading:prefersSynchronousLoading
+                       asTemplate:isTemplate
+                  completionBlock:imageLoadingCompletionBlock];
   }
 }
 
 + (void)loadImageFromSource:(nonnull RCTImageSource *)imageSource
-            withImageLoader:(nonnull RCTImageLoader *)imageLoader
-                 asTemplate:(BOOL)isTemplate
-            completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock
+              withImageLoader:(nonnull RCTImageLoader *)imageLoader
+    prefersSynchronousLoading:(BOOL)prefersSynchronousLoading
+                   asTemplate:(BOOL)isTemplate
+              completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock
 {
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
   RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
+
+  NSURL *url = imageSource.request.URL;
+  if (prefersSynchronousLoading && url.isFileURL && [url.pathExtension.lowercaseString isEqualToString:@"png"]) {
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    UIImage *image = data ? [UIImage imageWithData:data scale:imageSource.scale ?: 1.0] : nil;
+    if (image != nil) {
+      imageLoadingCompletionBlock([self handleRenderingModeForImage:image isTemplate:isTemplate]);
+      return;
+    }
+  }
 
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
