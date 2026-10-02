@@ -1,5 +1,6 @@
-import { device, expect, element, by } from 'detox';
+import { device, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { expectHeaderViewShown } from '@e2e/framework/header-items-ios';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
 
@@ -16,9 +17,7 @@ describeIfIOS('Test654', () => {
 
   it('back button should be visible on Second screen', async () => {
     await element(by.id('first-button-go-to-second')).tap();
-    await expect(element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON))).toBeVisible(
-      100,
-    );
-    await expect(element(by.id('chevron.backward'))).toBeVisible(100);
+    await expectHeaderViewShown(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON), 100);
+    await expectHeaderViewShown(by.id('chevron.backward'), 100);
   });
 });
