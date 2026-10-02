@@ -27,11 +27,6 @@ export const CLASS_NAME_ANDROID_APP_BAR_LAYOUT =
 export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
   'androidx.appcompat.view.menu.ActionMenuItemView';
 
-// One bottom navigation tab. Its title lives in two `TextView`s (small and
-// large label), so match the tab by descendant text.
-export const CLASS_NAME_ANDROID_NAVIGATION_BAR_ITEM_VIEW =
-  'com.google.android.material.navigation.NavigationBarItemView';
-
 // A row of a popup menu — the anchor for addressing its widgets by item title.
 export const CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW =
   'androidx.appcompat.view.menu.ListMenuItemView';
