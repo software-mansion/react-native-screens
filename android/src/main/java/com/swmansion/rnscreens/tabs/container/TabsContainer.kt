@@ -417,6 +417,7 @@ class TabsContainer internal constructor(
                 menuItem,
                 tabsScreen,
                 appearance,
+                appearanceCoordinator.resolveIconBoxDp(),
             )
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
         }

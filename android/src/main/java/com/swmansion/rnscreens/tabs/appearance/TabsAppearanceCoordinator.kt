@@ -14,7 +14,7 @@ internal class TabsAppearanceCoordinator(
     private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
     // Icon box is bar-wide: the largest effective size across tabs.
-    private fun resolveIconBoxDp(): Float =
+    internal fun resolveIconBoxDp(): Float =
         tabsScreenFragments.maxOfOrNull { appearanceApplicator.effectiveIconSizeDp(it.tabsScreen) }
             ?: appearanceApplicator.defaultIconSizeDp
 
@@ -50,7 +50,7 @@ internal class TabsAppearanceCoordinator(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
-        iconBoxDp: Float = resolveIconBoxDp(),
+        iconBoxDp: Float,
     ) {
         appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, iconBoxDp)
         appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
