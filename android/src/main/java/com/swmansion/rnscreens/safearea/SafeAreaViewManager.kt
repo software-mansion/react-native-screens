@@ -8,34 +8,34 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerDelegate
+import com.facebook.react.views.view.ReactViewGroup
+import com.facebook.react.views.view.ReactViewManager
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerInterface
 
 @ReactModule(name = SafeAreaViewManager.REACT_CLASS)
 class SafeAreaViewManager :
-    ViewGroupManager<SafeAreaView>(),
-    RNSSafeAreaViewManagerInterface<SafeAreaView> {
-    private val delegate: ViewManagerDelegate<SafeAreaView> = RNSSafeAreaViewManagerDelegate<SafeAreaView, SafeAreaViewManager>(this)
+    ReactViewManager(),
+    RNSSafeAreaViewManagerInterface<ReactViewGroup> {
+    private val delegate: ViewManagerDelegate<ReactViewGroup> = SafeAreaViewManagerDelegate(this)
 
     override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext): SafeAreaView = SafeAreaView(reactContext)
+    override fun createViewInstance(context: ThemedReactContext): SafeAreaView = SafeAreaView(context)
 
     override fun getDelegate() = delegate
 
     override fun setEdges(
-        view: SafeAreaView,
+        view: ReactViewGroup,
         value: ReadableMap?,
     ) {
         SafeAreaViewEdges.fromProp(value)?.let {
-            view.setEdges(it)
+            (view as SafeAreaView).setEdges(it)
         }
     }
 
     override fun setInsetType(
-        view: SafeAreaView,
+        view: ReactViewGroup,
         value: String?,
     ) {
         val insetType =
@@ -46,15 +46,15 @@ class SafeAreaViewManager :
                 else -> throw JSApplicationIllegalArgumentException("Unknown inset type $value")
             }
 
-        view.setInsetType(insetType)
+        (view as SafeAreaView).setInsetType(insetType)
     }
 
     override fun updateState(
-        view: SafeAreaView,
+        view: ReactViewGroup,
         props: ReactStylesDiffMap?,
         stateWrapper: StateWrapper?,
     ): Any? {
-        view.setStateWrapper(stateWrapper)
+        (view as SafeAreaView).setStateWrapper(stateWrapper)
         return super.updateState(view, props, stateWrapper)
     }
 
