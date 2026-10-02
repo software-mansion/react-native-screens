@@ -38,7 +38,10 @@ internal class TabsAppearanceApplicator(
 
     // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
     fun applyIconBox(iconBoxDp: Float) {
-        bottomNavigationView.itemIconSize = bottomNavigationView.dpToPx(iconBoxDp).toInt()
+        val iconBoxPx = bottomNavigationView.dpToPx(iconBoxDp).toInt()
+        if (bottomNavigationView.itemIconSize != iconBoxPx) {
+            bottomNavigationView.itemIconSize = iconBoxPx
+        }
     }
 
     // Resolved on each access: tracks the material library version and the display density.
@@ -61,10 +64,16 @@ internal class TabsAppearanceApplicator(
         iconBoxDp: Float,
     ) {
         val autoScale = iconBoxDp > defaultIconSizeDp
-        bottomNavigationView.itemActiveIndicatorWidth =
+        val widthPx =
             resolveIndicatorDimensionPx(widthDp, iconBoxDp + autoIndicatorHorizontalPaddingDp, defaultIndicatorWidthPx, autoScale)
-        bottomNavigationView.itemActiveIndicatorHeight =
+        if (bottomNavigationView.itemActiveIndicatorWidth != widthPx) {
+            bottomNavigationView.itemActiveIndicatorWidth = widthPx
+        }
+        val heightPx =
             resolveIndicatorDimensionPx(heightDp, iconBoxDp + autoIndicatorVerticalPaddingDp, defaultIndicatorHeightPx, autoScale)
+        if (bottomNavigationView.itemActiveIndicatorHeight != heightPx) {
+            bottomNavigationView.itemActiveIndicatorHeight = heightPx
+        }
     }
 
     // Explicit dp wins; else auto-scale to the enlarged icon box; else themed Material default.
