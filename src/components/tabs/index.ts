@@ -42,7 +42,10 @@ export type {
   TabsScreenPropsIOS,
 } from './screen';
 
-export type { TabsBottomAccessoryEnvironment } from './bottom-accessory';
+export type {
+  TabsBottomAccessoryEnvironment,
+  TabsBottomAccessoryEnvironmentChangeEvent,
+} from './bottom-accessory';
 
 export const Tabs = {
   Host: TabsHost,
