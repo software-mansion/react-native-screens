@@ -35,6 +35,7 @@ export type {
   TabsScreenPropsAndroid,
   // iOS
   TabsScreenBlurEffect,
+  TabsScreenRole,
   TabsScreenSystemItem,
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,

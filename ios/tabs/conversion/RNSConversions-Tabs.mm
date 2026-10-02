@@ -316,6 +316,21 @@ std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RN
   return std::nullopt;
 }
 
+RNSTabsScreenTabRole RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(react::RNSTabsScreenIOSTabRole tabRole)
+{
+  using enum facebook::react::RNSTabsScreenIOSTabRole;
+
+  switch (tabRole) {
+    case None:
+      return RNSTabsScreenTabRoleNone;
+    case Search:
+      return RNSTabsScreenTabRoleSearch;
+    default:
+      RCTLogError(@"[RNScreens] unsupported tabs screen tabRole");
+      return RNSTabsScreenTabRoleNone;
+  }
+}
+
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 API_AVAILABLE(ios(26.0))
