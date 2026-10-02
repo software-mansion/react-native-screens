@@ -64,8 +64,17 @@ export async function tapTopmost(matcher: NativeMatcher): Promise<void> {
 }
 
 /**
+ * The text React Native's core `<Button>` renders for `title`: uppercased on
+ * Android (`title.toUpperCase()`), as given on iOS.
+ */
+export function renderedButtonText(title: string): string {
+  return device.getPlatform() === 'android' ? title.toUpperCase() : title;
+}
+
+/**
  * Taps a Push/Pop/Toggle button on the topmost stacked screen. React Native's
- * core `<Button>` uppercases its `title` on Android, so pass the rendered text.
+ * core `<Button>` uppercases its `title` on Android, so pass the rendered text
+ * (see `renderedButtonText`).
  */
 export async function tapTopmostButton(title: string): Promise<void> {
   await tapTopmost(by.text(title));
