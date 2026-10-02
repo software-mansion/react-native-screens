@@ -21,8 +21,6 @@ import { StackRouteConfigContext } from './contexts/StackRouteConfigContext';
 export function StackContainerWithDynamicRouteConfigs<
   const TRouteConfigs extends readonly StackRouteConfig[],
 >(props: StackContainerProps<TRouteConfigs>) {
-  const { initialRouteNames } = props;
-
   const [routeConfigs, setRouteConfigs] = React.useState<StackRouteConfig[]>(
     () => [...props.routeConfigs],
   );
@@ -56,10 +54,7 @@ export function StackContainerWithDynamicRouteConfigs<
         routeConfigs,
         updateRouteConfigWithOptions,
       }}>
-      <StackContainer
-        routeConfigs={routeConfigs}
-        initialRouteNames={initialRouteNames}
-      />
+      <StackContainer {...props} routeConfigs={routeConfigs} />
     </StackRouteConfigContext>
   );
 }
