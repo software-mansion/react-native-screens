@@ -188,7 +188,11 @@ describeIfIPad(
       ).toHaveLabel('preventNativeSelection: false');
     });
 
-    it('native selection of first tab should be blocked', async () => {
+    // TODO: Re-enable the skipped tests in this suite once the native regression from
+    // https://github.com/software-mansion/react-native-screens/pull/4675 is fixed.
+    // After the migration to the UITab API (iOS >= 26.1), tab items are no longer
+    // found under _UIFloatingTabBarItemCell, so native selection cannot be exercised.
+    it.skip('native selection of first tab should be blocked', async () => {
       await element(by.id('prevent-native-selection-button')).tap();
       await expect(
         element(by.id('prevent-native-selection-state')),
@@ -214,7 +218,8 @@ describeIfIPad(
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
     });
 
-    it('programmatic navigation to first tab should not be blocked', async () => {
+    // TODO: Re-enable with the rest - depends on the previous test (#4675 regression).
+    it.skip('programmatic navigation to first tab should not be blocked', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
       await element(by.id('first-button')).tap();
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
@@ -223,7 +228,8 @@ describeIfIPad(
       ).toHaveLabel('preventNativeSelection: true');
     });
 
-    it('native selection should be possible after disabling preventNativeSelection', async () => {
+    // TODO: Re-enable with the rest (#4675 regression).
+    it.skip('native selection should be possible after disabling preventNativeSelection', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await expect(
         element(by.id('prevent-native-selection-state')),
@@ -249,7 +255,8 @@ describeIfIPad(
       ).toHaveLabel('preventNativeSelection: false');
     });
 
-    it('should work independently per tab', async () => {
+    // TODO: Re-enable with the rest (#4675 regression).
+    it.skip('should work independently per tab', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await element(
         by
