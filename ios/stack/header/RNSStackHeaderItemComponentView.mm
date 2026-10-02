@@ -51,6 +51,7 @@ namespace react = facebook::react;
   [self setMenuProp:nil];
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
+  _style = UIBarButtonItemStylePlain;
   _disabled = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
@@ -216,6 +217,11 @@ RNS_IGNORE_SUPER_CALL_END
     [self setMenuProp:[RNSStackHeaderMenuMapper
                           menuFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newItemProps.menu)]];
     menuDidChange = YES;
+  }
+
+  if (oldItemProps.variant != newItemProps.variant) {
+    _style = rnscreens::conversion::UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(newItemProps.variant);
+    needsUpdate = YES;
   }
 
   if (oldItemProps.disabled != newItemProps.disabled) {

@@ -18,11 +18,11 @@ const buildHeaderConfig = (
   ios: {
     trailingItems: [
       {
-        // TODO: make this item prominent once prominent style is implemented
         type: 'item',
         title: 'Prominent Disabled',
         id: 'prominent-disabled-item',
         icon: { type: 'sfSymbol', name: '4.circle' },
+        variant: 'prominent',
         disabled: true,
         onPress: () => showToast('Prominent disabled item pressed'),
       },
@@ -32,11 +32,11 @@ const buildHeaderConfig = (
         sizing: 'flexible',
       },
       {
-        // TODO: make this item prominent once prominent style is implemented
         type: 'item',
         title: 'Prominent',
         id: 'prominent-item',
         icon: { type: 'sfSymbol', name: '3.circle' },
+        variant: 'prominent',
         onPress: () => showToast('Prominent item pressed'),
       },
       {

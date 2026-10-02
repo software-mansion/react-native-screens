@@ -16,6 +16,8 @@ export type Placement =
   | 'subtitle'
   | 'largeSubtitle';
 
+export type Variant = 'plain' | 'prominent';
+
 export type StackHeaderMenuItemIOS = {
   id: string;
   type: 'menuItem';
@@ -75,6 +77,7 @@ export interface NativeProps extends ViewProps {
   title?: string | undefined;
   icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
+  variant?: CT.WithDefault<Variant, 'plain'>;
   disabled?: CT.WithDefault<boolean, false>;
   respondsToOnPress?: CT.WithDefault<boolean, false>;
   onHeaderItemPress?: CT.DirectEventHandler<HeaderItemPressEvent> | undefined;
