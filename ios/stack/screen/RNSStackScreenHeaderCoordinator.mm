@@ -12,6 +12,33 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
 
+#if !TARGET_OS_TV
+/**
+ * Back bar button item that never has a menu, so UIKit has no navigation
+ * history menu to show on long press or pointer secondary click.
+ *
+ * Used on iOS 27+, where the back button is not always a subview of the
+ * navigation bar (e.g. on iPhone Duo it can be drawn in a floating bar on
+ * the side), so `RNSStackNavigationBar` can't reach it to disable the menu.
+ */
+@interface RNSStackNoMenuBackBarButtonItem : UIBarButtonItem
+@end
+
+@implementation RNSStackNoMenuBackBarButtonItem
+
+- (nullable UIMenu *)menu
+{
+  return nil;
+}
+
+- (void)setMenu:(nullable UIMenu *)menu
+{
+  // UIKit attaches the history menu through this setter; ignore it.
+}
+
+@end
+#endif // !TARGET_OS_TV
+
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
 
@@ -467,6 +494,38 @@
   _backButtonConfigTargetItem = prevItem;
   prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
   prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
+
+  if (@available(iOS 27.0, *)) {
+    [self applyBackButtonMenuEnabledToItem:prevItem];
+  }
+}
+
+- (void)applyBackButtonMenuEnabledToItem:(UINavigationItem *)prevItem
+{
+  if (_configDataProvider.backButtonMenuEnabled) {
+    if ([prevItem.backBarButtonItem isKindOfClass:RNSStackNoMenuBackBarButtonItem.class]) {
+      prevItem.backBarButtonItem = nil;
+    }
+    return;
+  }
+
+  // UIKit takes the title from `backBarButtonItem` as-is and ignores `backButtonDisplayMode`,
+  // so the item only gets the custom title in the default mode. Without a title UIKit draws just
+  // the chevron, which is how iOS 27+ renders `generic` and `minimal` (and `default` without a
+  // custom title) anyway.
+  NSString *title = _configDataProvider.backButtonDisplayMode == UINavigationItemBackButtonDisplayModeDefault
+      ? _configDataProvider.backButtonTitle
+      : nil;
+
+  if ([prevItem.backBarButtonItem isKindOfClass:RNSStackNoMenuBackBarButtonItem.class]) {
+    prevItem.backBarButtonItem.title = title;
+    return;
+  }
+
+  prevItem.backBarButtonItem = [[RNSStackNoMenuBackBarButtonItem alloc] initWithTitle:title
+                                                                                style:UIBarButtonItemStylePlain
+                                                                               target:nil
+                                                                               action:nil];
 }
 #endif // !TARGET_OS_TV
 
@@ -477,6 +536,9 @@
   _backButtonConfigTargetItem = nil;
   targetItem.backButtonTitle = nil;
   targetItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  if ([targetItem.backBarButtonItem isKindOfClass:RNSStackNoMenuBackBarButtonItem.class]) {
+    targetItem.backBarButtonItem = nil;
+  }
 }
 #endif // !TARGET_OS_TV
 
