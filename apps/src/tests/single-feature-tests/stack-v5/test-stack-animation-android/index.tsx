@@ -5,12 +5,13 @@ import { StackContainer } from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
+import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
 
+/**
+ * Every screen can reach every other one, which is more than the scenario walks through - the
+ * spare buttons are there so the screen doubles as a playground for trying transitions by hand.
+ */
 function TestStackAnimationAndroid() {
-  return <StackSetup />;
-}
-
-function StackSetup() {
   return (
     <StackContainer
       routeConfigs={[
@@ -27,8 +28,13 @@ function StackSetup() {
           element: <RedScreen />,
         },
         {
+          // The only route with a non-default animation. A vertical slide moves over a screen
+          // that stays put, so the draw order is visible; the horizontal slides carry both
+          // screens at once and never overlap. The slides inside the host are also visibly
+          // not the host's own transition.
           name: 'NestedHost',
           element: <NestedHostScreen />,
+          options: { animation: 'slideFromBottom' },
         },
       ]}
     />
@@ -38,6 +44,7 @@ function StackSetup() {
 function HomeScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
+      <StackRouteInformation routeName="Home" />
       <StackNavigationButtons
         isPopEnabled={false}
         routeNames={['Blue', 'Red', 'NestedHost']}
@@ -49,9 +56,10 @@ function HomeScreen() {
 function BlueScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
+      <StackRouteInformation routeName="Blue" />
       <StackNavigationButtons
         isPopEnabled={true}
-        routeNames={['Red', 'Blue', 'NestedHost']}
+        routeNames={['Red', 'NestedHost']}
       />
     </CenteredLayoutView>
   );
@@ -60,9 +68,10 @@ function BlueScreen() {
 function RedScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
+      <StackRouteInformation routeName="Red" />
       <StackNavigationButtons
         isPopEnabled={true}
-        routeNames={['Blue', 'Red', 'NestedHost']}
+        routeNames={['Blue', 'NestedHost']}
       />
     </CenteredLayoutView>
   );
@@ -91,7 +100,8 @@ function NestedHostScreen() {
 
 function NestedHomeScreen() {
   return (
-    <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight100 }}>
+    <CenteredLayoutView style={{ backgroundColor: Colors.GreenLight100 }}>
+      <StackRouteInformation routeName="NestedHome" />
       <StackNavigationButtons
         isPopEnabled={true}
         routeNames={['NestedBlue', 'NestedRed']}
@@ -103,10 +113,8 @@ function NestedHomeScreen() {
 function NestedBlueScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.BlueLight100 }}>
-      <StackNavigationButtons
-        isPopEnabled={true}
-        routeNames={['NestedRed', 'NestedBlue']}
-      />
+      <StackRouteInformation routeName="NestedBlue" />
+      <StackNavigationButtons isPopEnabled={true} routeNames={['NestedRed']} />
     </CenteredLayoutView>
   );
 }
@@ -114,10 +122,8 @@ function NestedBlueScreen() {
 function NestedRedScreen() {
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.RedLight100 }}>
-      <StackNavigationButtons
-        isPopEnabled={true}
-        routeNames={['NestedBlue', 'NestedRed']}
-      />
+      <StackRouteInformation routeName="NestedRed" />
+      <StackNavigationButtons isPopEnabled={true} routeNames={['NestedBlue']} />
     </CenteredLayoutView>
   );
 }
