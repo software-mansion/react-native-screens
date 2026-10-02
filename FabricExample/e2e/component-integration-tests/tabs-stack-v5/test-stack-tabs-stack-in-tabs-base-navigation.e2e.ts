@@ -53,17 +53,11 @@ const TAB_TITLES = ['First', 'Second', 'Stack'] as const;
 
 type TabTitle = (typeof TAB_TITLES)[number];
 
-/**
- * A tab switch can outlast the default wait: on iOS the tap is a coordinate
- * tap outside Detox's sync, and the first switch into a tab loads its content.
- */
-const TAB_SWITCH_TIMEOUT_MS = 2 * DEFAULT_TIMEOUT_MS;
-
 /** Waits for a plain (non-stack) tab's content; its route key is its name. */
 async function waitForTabContent(tab: 'First' | 'Second') {
   await waitFor(element(by.text(`Key: ${tab}`)))
     .toBeVisible()
-    .withTimeout(TAB_SWITCH_TIMEOUT_MS);
+    .withTimeout(DEFAULT_TIMEOUT_MS);
 }
 
 /**

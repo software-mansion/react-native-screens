@@ -23,6 +23,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <FirstTabScreen />,
     options: {
       title: 'First',
+      tabBarItemAccessibilityLabel: 'first-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },
@@ -31,6 +32,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <SecondTabScreen />,
     options: {
       title: 'Second',
+      tabBarItemAccessibilityLabel: 'second-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },
@@ -39,6 +41,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <StackTabScreen />,
     options: {
       title: 'Stack',
+      tabBarItemAccessibilityLabel: 'stack-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },
