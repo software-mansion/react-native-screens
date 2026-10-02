@@ -128,12 +128,6 @@ function mapItemStateAppearanceToNativeProp(
   };
 }
 
-function iconTintedOf(
-  icon: PlatformIconAndroid | undefined,
-): boolean | undefined {
-  return icon?.tinted;
-}
-
 function parseIconsToNativeProps(
   icon: PlatformIconAndroid | undefined,
   selectedIcon: PlatformIconAndroid | undefined,
@@ -151,11 +145,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
-    drawableIconTinted: iconTintedOf(icon),
+    drawableIconTinted: icon?.tinted,
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
-    selectedDrawableIconTinted: iconTintedOf(selectedIcon),
+    selectedDrawableIconTinted: selectedIcon?.tinted,
   };
 }
 
