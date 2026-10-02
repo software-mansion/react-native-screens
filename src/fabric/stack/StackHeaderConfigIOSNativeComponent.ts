@@ -81,6 +81,24 @@ export type HeaderAppearance = {
   prominentButtonFocusedFontWeight?: string | undefined;
   prominentButtonFocusedFontStyle?: string | undefined;
   prominentButtonFocusedFontColor?: ProcessedColorValue | null | undefined;
+
+  backButtonFontFamily?: string | undefined;
+  backButtonFontSize?: CT.Float | undefined;
+  backButtonFontWeight?: string | undefined;
+  backButtonFontStyle?: string | undefined;
+  backButtonFontColor?: ProcessedColorValue | null | undefined;
+
+  backButtonHighlightedFontFamily?: string | undefined;
+  backButtonHighlightedFontSize?: CT.Float | undefined;
+  backButtonHighlightedFontWeight?: string | undefined;
+  backButtonHighlightedFontStyle?: string | undefined;
+  backButtonHighlightedFontColor?: ProcessedColorValue | null | undefined;
+
+  backButtonFocusedFontFamily?: string | undefined;
+  backButtonFocusedFontSize?: CT.Float | undefined;
+  backButtonFocusedFontWeight?: string | undefined;
+  backButtonFocusedFontStyle?: string | undefined;
+  backButtonFocusedFontColor?: ProcessedColorValue | null | undefined;
 };
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
