@@ -24,6 +24,7 @@ let headerSearchPaths: [String] = [
     "ios/split/conversion",
     "ios/stack",
     "ios/stack/conversion",
+    "ios/stack/core",
     "ios/stack/header",
     "ios/stack/host",
     "ios/stack/screen",
