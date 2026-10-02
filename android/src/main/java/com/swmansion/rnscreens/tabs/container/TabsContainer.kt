@@ -564,6 +564,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
+        appearanceCoordinator.invalidateMenuItemIcons()
     }
 
     private fun updateBottomNavigationViewAppearance() {

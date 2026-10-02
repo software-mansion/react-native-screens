@@ -260,20 +260,23 @@ internal class TabsAppearanceApplicator(
             menuItem.title = tabsScreen.tabTitle
         }
 
-        // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
-        // single inset computed from one child would mis-size the other when their resolutions differ.
-        val effectiveDp = effectiveIconSizeDp(tabsScreen)
-        val iconDrawable = sizeIcon(tabsScreen.icon.drawable, effectiveDp, iconBoxDp)
-        val selectedIconDrawable = sizeIcon(tabsScreen.selectedIcon.drawable, effectiveDp, iconBoxDp)
-        menuItem.icon =
-            if (selectedIconDrawable != null && iconDrawable != null) {
-                StateListDrawable().apply {
-                    addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
-                    addState(intArrayOf(), iconDrawable.mutate())
+        if (tabsScreen.isMenuItemIconInvalidated) {
+            tabsScreen.isMenuItemIconInvalidated = false
+            // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
+            // single inset computed from one child would mis-size the other when their resolutions differ.
+            val effectiveDp = effectiveIconSizeDp(tabsScreen)
+            val iconDrawable = sizeIcon(tabsScreen.icon.drawable, effectiveDp, iconBoxDp)
+            val selectedIconDrawable = sizeIcon(tabsScreen.selectedIcon.drawable, effectiveDp, iconBoxDp)
+            menuItem.icon =
+                if (selectedIconDrawable != null && iconDrawable != null) {
+                    StateListDrawable().apply {
+                        addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
+                        addState(intArrayOf(), iconDrawable.mutate())
+                    }
+                } else {
+                    iconDrawable
                 }
-            } else {
-                iconDrawable
-            }
+        }
     }
 
     internal fun updateBadgeAppearance(

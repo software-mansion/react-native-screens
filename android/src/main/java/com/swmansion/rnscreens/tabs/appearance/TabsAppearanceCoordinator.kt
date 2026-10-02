@@ -13,10 +13,16 @@ internal class TabsAppearanceCoordinator(
 ) {
     private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
+    private var appliedIconBoxDp: Float? = null
+
     // Icon box is bar-wide: the largest effective size across tabs.
     internal fun resolveIconBoxDp(): Float =
         tabsScreenFragments.maxOfOrNull { appearanceApplicator.effectiveIconSizeDp(it.tabsScreen) }
             ?: appearanceApplicator.defaultIconSizeDp
+
+    internal fun invalidateMenuItemIcons() {
+        tabsScreenFragments.forEach { it.tabsScreen.isMenuItemIconInvalidated = true }
+    }
 
     fun updateTabAppearance(
         context: Context,
@@ -24,6 +30,10 @@ internal class TabsAppearanceCoordinator(
     ) {
         val selectedTabAppearance = tabsContainer.selectedTab.tabsScreen.appearance
         val iconBoxDp = resolveIconBoxDp()
+        if (iconBoxDp != appliedIconBoxDp) {
+            appliedIconBoxDp = iconBoxDp
+            invalidateMenuItemIcons()
+        }
         appearanceApplicator.applyIconBox(iconBoxDp)
         appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden, iconBoxDp)
         updateMenuItems(context, selectedTabAppearance, iconBoxDp)

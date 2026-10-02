@@ -79,8 +79,10 @@ class TabsScreen(
 
     // region Icon
 
-    internal val icon = TabsScreenIcon(reactContext, ::onMenuItemAttributesChange)
-    internal val selectedIcon = TabsScreenIcon(reactContext, ::onMenuItemAttributesChange)
+    internal val icon = TabsScreenIcon(reactContext, ::onIconChange)
+    internal val selectedIcon = TabsScreenIcon(reactContext, ::onIconChange)
+
+    internal var isMenuItemIconInvalidated = true
 
     internal fun resolveIconsIfNeeded() {
         icon.resolveIfNeeded()
@@ -91,6 +93,7 @@ class TabsScreen(
     // The icon box is bar-wide, so a change here invalidates the whole bar, not just this item.
     var drawableIconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
         if (newValue != oldValue) {
+            isMenuItemIconInvalidated = true
             tabsScreenDelegate.get()?.onIconSizeChange(this)
         }
     }
@@ -143,6 +146,11 @@ class TabsScreen(
 
     private fun onMenuItemAttributesChange() {
         tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)
+    }
+
+    private fun onIconChange() {
+        isMenuItemIconInvalidated = true
+        onMenuItemAttributesChange()
     }
 
     internal fun onViewManagerAddEventEmitters() {
