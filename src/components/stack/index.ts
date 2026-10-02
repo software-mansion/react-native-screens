@@ -43,6 +43,8 @@ export type {
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
   StackHeaderBackButtonDisplayModeIOS,
+  StackHeaderMinimizationBehaviorIOS,
+  StackHeaderRestorationBehaviorIOS,
   StackHeaderConfigPropsIOS,
   StackHeaderAppearanceIOS,
   StackHeaderInlineItemIOS,
