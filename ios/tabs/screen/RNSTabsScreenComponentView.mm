@@ -86,9 +86,11 @@ namespace react = facebook::react;
 
   _iconType = RNSTabsIconTypeSfSymbol;
 
+  _iconRenderingMode = RNSTabsIconRenderingModeAutomatic;
   _iconImageSource = nil;
   _iconResourceName = nil;
 
+  _selectedIconRenderingMode = RNSTabsIconRenderingModeAutomatic;
   _selectedIconImageSource = nil;
   _selectedIconResourceName = nil;
 
@@ -252,6 +254,18 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.iconType != oldComponentProps.iconType) {
     _iconType = rnscreens::conversion::RNSTabsIconTypeFromIcon(newComponentProps.iconType);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.iconRenderingMode != oldComponentProps.iconRenderingMode) {
+    _iconRenderingMode =
+        rnscreens::conversion::RNSTabsIconRenderingModeFromIconRenderingMode(newComponentProps.iconRenderingMode);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconRenderingMode != oldComponentProps.selectedIconRenderingMode) {
+    _selectedIconRenderingMode = rnscreens::conversion::RNSTabsIconRenderingModeFromSelectedIconRenderingMode(
+        newComponentProps.selectedIconRenderingMode);
     tabItemNeedsAppearanceUpdate = YES;
   }
 

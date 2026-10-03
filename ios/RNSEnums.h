@@ -51,9 +51,14 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
 
 typedef NS_ENUM(NSInteger, RNSTabsIconType) {
   RNSTabsIconTypeImage,
-  RNSTabsIconTypeTemplate,
   RNSTabsIconTypeSfSymbol,
   RNSTabsIconTypeXcasset,
+};
+
+typedef NS_ENUM(NSInteger, RNSTabsIconRenderingMode) {
+  RNSTabsIconRenderingModeAutomatic,
+  RNSTabsIconRenderingModeMonochrome,
+  RNSTabsIconRenderingModeOriginal,
 };
 
 typedef NS_ENUM(NSInteger, RNSOrientation) {

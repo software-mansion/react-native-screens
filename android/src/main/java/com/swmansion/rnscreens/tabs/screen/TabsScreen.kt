@@ -91,7 +91,7 @@ class TabsScreen(
 
     // Per-tab icon size in dp; 0 means the system default.
     // The icon box is bar-wide, so a change here invalidates the whole bar, not just this item.
-    var drawableIconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+    var iconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             isMenuItemIconInvalidated = true
             tabsScreenDelegate.get()?.onIconSizeChange(this)

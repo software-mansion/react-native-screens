@@ -20,8 +20,10 @@ type GenericEmptyEvent = Readonly<{}>;
 
 // #region iOS-specific helpers
 
-// iOS-specific: SFSymbol, image as a template usage
-export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
+// iOS-specific: SFSymbol, xcasset usage
+export type IconType = 'image' | 'sfSymbol' | 'xcasset';
+
+export type IconRenderingMode = 'automatic' | 'monochrome' | 'original';
 
 export type ItemStateAppearance = {
   tabBarItemTitleFontFamily?: string | undefined;
@@ -153,8 +155,10 @@ export interface NativeProps extends ViewProps {
 
   // Icons
   iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
+  iconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
   iconImageSource?: ImageSource | undefined;
   iconResourceName?: string | undefined;
+  selectedIconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
   selectedIconImageSource?: ImageSource | undefined;
   selectedIconResourceName?: string | undefined;
 

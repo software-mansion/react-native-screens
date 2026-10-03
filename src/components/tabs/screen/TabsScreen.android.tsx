@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import TabsScreenAndroidNativeComponent, {
   type Appearance,
+  type IconRenderingMode,
   type ItemStateAppearance,
   type NativeProps as TabsScreenAndroidNativeComponentProps,
 } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
@@ -16,7 +17,7 @@ import type {
   TabsScreenItemStateAppearanceAndroid,
 } from './TabsScreen.android.types';
 import type { TabsScreenProps } from '../screen/TabsScreen.types';
-import type { PlatformIconAndroid } from '../../shared/types';
+import type { TabsScreenIconAndroid } from './TabsScreen.icon.types';
 import { useTabsScreen } from './useTabsScreen';
 import { parseAndroidIconToNativeProps } from '../../shared';
 
@@ -63,7 +64,7 @@ function TabsScreen(props: TabsScreenProps) {
       {...iconProps}
       {...filteredBaseProps}
       // Android-specific
-      drawableIconSize={android?.drawableIconSize}
+      iconSize={android?.iconSize}
       standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>
@@ -129,15 +130,15 @@ function mapItemStateAppearanceToNativeProp(
 }
 
 function parseIconsToNativeProps(
-  icon: PlatformIconAndroid | undefined,
-  selectedIcon: PlatformIconAndroid | undefined,
+  icon: TabsScreenIconAndroid | undefined,
+  selectedIcon: TabsScreenIconAndroid | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
-  drawableIconTinted?: boolean | undefined;
+  iconRenderingMode?: IconRenderingMode | undefined;
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
-  selectedDrawableIconTinted?: boolean | undefined;
+  selectedIconRenderingMode?: IconRenderingMode | undefined;
 } {
   const parsedIcon = parseAndroidIconToNativeProps(icon);
   const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
@@ -145,11 +146,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
-    drawableIconTinted: icon?.tinted,
+    iconRenderingMode: icon?.renderingMode,
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
-    selectedDrawableIconTinted: selectedIcon?.tinted,
+    selectedIconRenderingMode: selectedIcon?.renderingMode,
   };
 }
 

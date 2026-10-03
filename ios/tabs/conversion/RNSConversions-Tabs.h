@@ -52,6 +52,12 @@ react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedAct
 
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType);
 
+RNSTabsIconRenderingMode RNSTabsIconRenderingModeFromIconRenderingMode(
+    react::RNSTabsScreenIOSIconRenderingMode renderingMode);
+
+RNSTabsIconRenderingMode RNSTabsIconRenderingModeFromSelectedIconRenderingMode(
+    react::RNSTabsScreenIOSSelectedIconRenderingMode renderingMode);
+
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
     react::RNSTabsScreenIOSSystemItem systemItem);
 

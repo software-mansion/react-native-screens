@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import TabsScreenIOSNativeComponent, {
   type IconType,
+  type IconRenderingMode,
   type NativeProps as TabsScreenIOSNativeComponentProps,
   type Appearance,
   type ItemAppearance,
@@ -20,7 +21,7 @@ import type {
   TabsScreenItemStateAppearanceIOS,
 } from './TabsScreen.ios.types';
 import type { TabsScreenProps } from './TabsScreen.types';
-import type { PlatformIconIOS } from '../../shared/types';
+import type { TabsScreenIconIOS } from './TabsScreen.icon.types';
 import { useTabsScreen } from './useTabsScreen';
 
 function TabsScreen(props: TabsScreenProps) {
@@ -146,14 +147,16 @@ function mapItemStateAppearanceToNativeProp(
 }
 
 function parseIconsToNativeProps(
-  icon: PlatformIconIOS | undefined,
-  selectedIcon: PlatformIconIOS | undefined,
+  icon: TabsScreenIconIOS | undefined,
+  selectedIcon: TabsScreenIconIOS | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
   iconType?: IconType | undefined;
+  iconRenderingMode?: IconRenderingMode | undefined;
   iconImageSource?: ImageSourcePropType | undefined;
   iconResourceName?: string | undefined;
+  selectedIconRenderingMode?: IconRenderingMode | undefined;
   selectedIconImageSource?: ImageSourcePropType | undefined;
   selectedIconResourceName?: string | undefined;
 } {
@@ -165,9 +168,7 @@ function parseIconsToNativeProps(
     parsedSelectedIcon.iconType !== undefined &&
     parsedIcon.iconType !== parsedSelectedIcon.iconType
   ) {
-    throw new Error(
-      '[RNScreens] icon and selectedIcon must be same type. Note that `imageSource` icons with different `tinted` values resolve to different types.',
-    );
+    throw new Error('[RNScreens] icon and selectedIcon must be same type.');
   } else if (
     parsedIcon.iconType === undefined &&
     parsedSelectedIcon.iconType !== undefined
@@ -179,15 +180,18 @@ function parseIconsToNativeProps(
 
   return {
     iconType: parsedIcon.iconType,
+    iconRenderingMode: parsedIcon.iconRenderingMode,
     iconImageSource: parsedIcon.iconImageSource,
     iconResourceName: parsedIcon.iconResourceName,
+    selectedIconRenderingMode: parsedSelectedIcon.iconRenderingMode,
     selectedIconImageSource: parsedSelectedIcon.iconImageSource,
     selectedIconResourceName: parsedSelectedIcon.iconResourceName,
   };
 }
 
-function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
+function parseIconToNativeProps(icon: TabsScreenIconIOS | undefined): {
   iconType?: IconType | undefined;
+  iconRenderingMode?: IconRenderingMode | undefined;
   iconImageSource?: ImageSourcePropType | undefined;
   iconResourceName?: string | undefined;
 } {
@@ -198,16 +202,19 @@ function parseIconToNativeProps(icon: PlatformIconIOS | undefined): {
   if (icon.type === 'sfSymbol') {
     return {
       iconType: 'sfSymbol',
+      iconRenderingMode: icon.renderingMode,
       iconResourceName: icon.name,
     };
   } else if (icon.type === 'imageSource') {
     return {
-      iconType: icon.tinted ? 'template' : 'image',
+      iconType: 'image',
+      iconRenderingMode: icon.renderingMode,
       iconImageSource: icon.imageSource,
     };
   } else if (icon.type === 'templateSource') {
     return {
-      iconType: 'template',
+      iconType: 'image',
+      iconRenderingMode: 'monochrome',
       iconImageSource: icon.templateSource,
     };
   } else if (icon.type === 'xcasset') {

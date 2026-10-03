@@ -26,7 +26,7 @@ import com.swmansion.rnscreens.utils.resolveColorAttr
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
-    // Resolved on each access: tracks the material library version and the display density.
+    // Resolved on each access: tracks the display density of the current configuration.
     internal val defaultIconSizeDp: Float
         get() =
             bottomNavigationView.pxToDp(
@@ -34,7 +34,7 @@ internal class TabsAppearanceApplicator(
             )
 
     internal fun effectiveIconSizeDp(tabsScreen: TabsScreen): Float =
-        if (tabsScreen.drawableIconSize > 0f) tabsScreen.drawableIconSize else defaultIconSizeDp
+        if (tabsScreen.iconSize > 0f) tabsScreen.iconSize else defaultIconSizeDp
 
     // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
     fun applyIconBox(iconBoxDp: Float) {
