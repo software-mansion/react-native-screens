@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.helpers
 
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import androidx.appcompat.graphics.drawable.DrawableWrapperCompat
@@ -15,4 +16,16 @@ internal class NoTintDrawable(
     override fun setTint(tintColor: Int) = Unit
 
     override fun setTintMode(tintMode: PorterDuff.Mode?) = Unit
+
+    override fun getConstantState(): ConstantState? = drawable?.constantState?.let(::NoTintConstantState)
+
+    private class NoTintConstantState(
+        private val wrappedState: ConstantState,
+    ) : ConstantState() {
+        override fun newDrawable(): Drawable = NoTintDrawable(wrappedState.newDrawable())
+
+        override fun newDrawable(res: Resources?): Drawable = NoTintDrawable(wrappedState.newDrawable(res))
+
+        override fun getChangingConfigurations(): Int = wrappedState.changingConfigurations
+    }
 }
