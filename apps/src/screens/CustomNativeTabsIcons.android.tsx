@@ -16,18 +16,19 @@ function TabScreen() {
         ratio.
       </Text>
       <Text style={styles.hint}>
-        Sized SWM: a wide logo sized to 44dp via `drawableIconSize`.
+        Sized SWM: a wide logo sized to 44dp via `iconSize`.
       </Text>
       <Text style={styles.hint}>
         Multicolor Tint: a VectorDrawable that keeps its own colors when
-        selected (`tinted: false`) and is template(system)-tinted otherwise.
+        selected (`renderingMode: 'original'`) and is template(system)-tinted
+        otherwise.
       </Text>
       <Text style={styles.hint}>
         Sys (unaltered): a built-in star. Size unaltered defaults to 24dp.
       </Text>
       <Text style={styles.hint}>
         Image Tint: an `imageSource` icon, tinted by default and keeping its own
-        colors when selected (`tinted: false`).
+        colors when selected (`renderingMode: 'original'`).
       </Text>
       <Text style={styles.hint}>
         The active indicator is sized via `tabBarItemActiveIndicatorWidth` and
@@ -63,7 +64,7 @@ const ROUTES: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Sized SWM',
       android: {
-        drawableIconSize: 44,
+        iconSize: 44,
         icon: { type: 'drawableResource', name: 'swm_logo' },
         standardAppearance: INDICATOR,
       },
@@ -76,16 +77,16 @@ const ROUTES: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Multicolor Tint',
       android: {
-        drawableIconSize: 30,
+        iconSize: 30,
         icon: {
           type: 'drawableResource',
           name: 'person_walking',
-          tinted: true,
+          renderingMode: 'monochrome',
         },
         selectedIcon: {
           type: 'drawableResource',
           name: 'person_walking',
-          tinted: false,
+          renderingMode: 'original',
         },
         standardAppearance: INDICATOR,
       },
@@ -118,7 +119,7 @@ const ROUTES: TabRouteConfig[] = [
         selectedIcon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
-          tinted: false,
+          renderingMode: 'original',
         },
         standardAppearance: INDICATOR,
       },
