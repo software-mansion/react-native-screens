@@ -9,7 +9,7 @@ import { ScreenProps } from '../types';
 
 import {
   freezeEnabled,
-  isNativePlatformSupported,
+  nativeScreensAvailable,
   screensEnabled,
 } from '../../core';
 
@@ -115,7 +115,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
       onWillDisappear,
     } = rest;
 
-    if (enabled && isNativePlatformSupported) {
+    if (enabled && nativeScreensAvailable()) {
       const resolvedSheetAllowedDetents =
         resolveSheetAllowedDetents(sheetAllowedDetents);
       const resolvedSheetLargestUndimmedDetent =
