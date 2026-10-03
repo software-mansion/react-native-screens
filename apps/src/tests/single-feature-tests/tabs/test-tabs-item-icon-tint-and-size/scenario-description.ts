@@ -4,9 +4,10 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Tab Bar Item Icon Tint and Size',
   key: 'test-tabs-item-icon-tint-and-size',
   details:
-    'Exercises custom tab bar item icons: `tinted` on imageSource and' +
-    ' drawableResource icons; Android per-tab `drawableIconSize` with the' +
-    ' active indicator size; iOS custom SF Symbols from the asset catalog.',
+    'Exercises custom tab bar item icons: `renderingMode` on imageSource,' +
+    ' drawableResource and sfSymbol icons, per slot; Android per-tab' +
+    ' `iconSize` with the active indicator size; iOS custom SF Symbols from' +
+    ' the asset catalog.',
   platforms: ['ios', 'android'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
