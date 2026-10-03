@@ -233,7 +233,9 @@ class ScreenModalFragment :
         check(containerHeight != null) { "[RNScreens] Failed to find window height during bottom sheet behaviour configuration" }
 
         behavior.apply {
-            isHideable = true
+            // Honor gestureEnabled so gestureEnabled = false blocks drag-to-dismiss on
+            // Android, matching iOS (modalInPresentation). Still draggable between detents.
+            isHideable = screen.isGestureEnabled
             isDraggable = true
         }
 
