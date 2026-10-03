@@ -417,8 +417,20 @@ class TabsContainer internal constructor(
                 menuItem,
                 tabsScreen,
                 appearance,
+                appearanceCoordinator.resolveIconBoxDp(),
             )
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
+        }
+    }
+
+    override fun onIconSizeChange(tabsScreen: TabsScreen) {
+        // Icon box is bar-wide, so this must run even when the changed tab is not selected.
+        // Skip when detached; reattachment reapplies the full appearance anyway.
+        if (isAttachedToWindow) {
+            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+            post {
+                this.flushPendingUpdates()
+            }
         }
     }
 
@@ -552,6 +564,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
+        appearanceCoordinator.invalidateMenuItemIcons()
     }
 
     private fun updateBottomNavigationViewAppearance() {

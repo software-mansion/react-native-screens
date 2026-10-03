@@ -182,12 +182,38 @@ RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType
   switch (iconType) {
     case Image:
       return RNSTabsIconTypeImage;
-    case Template:
-      return RNSTabsIconTypeTemplate;
     case SfSymbol:
       return RNSTabsIconTypeSfSymbol;
     case Xcasset:
       return RNSTabsIconTypeXcasset;
+  }
+}
+
+RNSTabsIconRenderingMode RNSTabsIconRenderingModeFromIconRenderingMode(
+    react::RNSTabsScreenIOSIconRenderingMode renderingMode)
+{
+  using enum facebook::react::RNSTabsScreenIOSIconRenderingMode;
+  switch (renderingMode) {
+    case Automatic:
+      return RNSTabsIconRenderingModeAutomatic;
+    case Monochrome:
+      return RNSTabsIconRenderingModeMonochrome;
+    case Original:
+      return RNSTabsIconRenderingModeOriginal;
+  }
+}
+
+RNSTabsIconRenderingMode RNSTabsIconRenderingModeFromSelectedIconRenderingMode(
+    react::RNSTabsScreenIOSSelectedIconRenderingMode renderingMode)
+{
+  using enum facebook::react::RNSTabsScreenIOSSelectedIconRenderingMode;
+  switch (renderingMode) {
+    case Automatic:
+      return RNSTabsIconRenderingModeAutomatic;
+    case Monochrome:
+      return RNSTabsIconRenderingModeMonochrome;
+    case Original:
+      return RNSTabsIconRenderingModeOriginal;
   }
 }
 
@@ -202,7 +228,6 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::
       break;
 
     case RNSTabsIconTypeImage:
-    case RNSTabsIconTypeTemplate:
       iconImageSource =
           [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
                                                 size:CGSizeMake(imageSource->size.width, imageSource->size.height)

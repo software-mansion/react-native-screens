@@ -1,0 +1,435 @@
+import React, { useCallback, useState } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
+import {
+  TabsContainerWithHostConfigContext,
+  useTabsNavigationContext,
+  type TabRouteConfig,
+  type TabRouteOptions,
+  DEFAULT_TAB_ROUTE_OPTIONS,
+} from '@apps/shared/containers/tabs';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
+import { Colors } from '@apps/shared/styling';
+import type { TabsScreenIconRenderingMode } from 'react-native-screens';
+
+type IconSizeOption = 'default' | '24' | '32' | '44' | '56';
+
+const ICON_SIZE_OPTIONS: IconSizeOption[] = ['default', '24', '32', '44', '56'];
+
+const RENDERING_MODE_OPTIONS: TabsScreenIconRenderingMode[] = [
+  'monochrome',
+  'original',
+];
+
+type ControlsConfig = {
+  renderingMode: TabsScreenIconRenderingMode;
+  iconSize: IconSizeOption;
+  hasBadge: boolean;
+};
+
+const INITIAL_CONTROLS_CONFIG: ControlsConfig = {
+  renderingMode: 'monochrome',
+  iconSize: 'default',
+  hasBadge: false,
+};
+
+function controlsRouteOptions({
+  renderingMode,
+  iconSize,
+  hasBadge,
+}: ControlsConfig): Partial<TabRouteOptions> {
+  return {
+    badgeValue: hasBadge ? '1' : undefined,
+    ios: {
+      icon: {
+        type: 'imageSource',
+        imageSource: require('@assets/variableIcons/icon.png'),
+        renderingMode,
+      },
+    },
+    android: {
+      icon: {
+        type: 'drawableResource',
+        name: 'person_walking',
+        renderingMode,
+      },
+      iconSize: iconSize === 'default' ? undefined : Number(iconSize),
+    },
+  };
+}
+
+function SizedTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Per-tab icon size</Text>
+      <Text style={styles.hint}>
+        `icon`: drawableResource swm_logo (wide logo){'\n'}
+        `iconSize`: 44{'\n'}
+        {'\n'}
+        The icon box of the whole bar is 44dp, the largest size across tabs.
+        {'\n'}
+        The logo renders at 44dp.{'\n'}
+        The active indicator auto-scales to 52dp tall to wrap the 44dp box. Its
+        width is capped by the tab item width.
+      </Text>
+    </View>
+  );
+}
+
+function MulticolorTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Original colors when selected</Text>
+      <Text style={styles.hint}>
+        `icon`: drawableResource person_walking, `renderingMode` NOT set
+        (monochrome){'\n'}
+        `selectedIcon`: drawableResource person_walking, `renderingMode`:
+        original{'\n'}
+        `iconSize`: 30{'\n'}
+        {'\n'}
+        Selected: the walker keeps its own colors.{'\n'}
+        Unselected: a single-color silhouette in the system theme color.{'\n'}
+        The icon renders at 30dp, centered in the 44dp box.
+      </Text>
+    </View>
+  );
+}
+
+function ImageTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>
+        {Platform.OS === 'ios'
+          ? 'Image Source (Default)'
+          : 'Image in original colors when selected'}
+      </Text>
+      <Text style={styles.hint}>
+        {Platform.OS === 'ios' ? (
+          <>
+            `icon`: imageSource icon.png, `renderingMode` NOT set (original)
+            {'\n'}
+            {'\n'}
+            The icon renders in its original black color in both states. The
+            host <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint
+            is ignored.
+          </>
+        ) : (
+          <>
+            `icon`: imageSource icon.png, `renderingMode` NOT set (monochrome)
+            {'\n'}
+            `selectedIcon`: imageSource icon.png, `renderingMode`: original
+            {'\n'}
+            {'\n'}
+            Selected: the icon renders in its original black color.{'\n'}
+            Unselected: the icon renders in the system theme color.
+          </>
+        )}
+      </Text>
+    </View>
+  );
+}
+
+function ImageMonoTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Monochrome Image Source</Text>
+      <Text style={styles.hint}>
+        Host `tabBarTintColor`:{' '}
+        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
+        {'\n'}
+        `icon`: imageSource icon.png, `renderingMode`: monochrome{'\n'}
+        {'\n'}
+        The icon is used as a template image.{'\n'}
+        Selected: tinted{' '}
+        <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.{'\n'}
+        Unselected: the icon renders in the system theme color.
+      </Text>
+    </View>
+  );
+}
+
+function SymbolTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Custom SF Symbol</Text>
+      <Text style={styles.hint}>
+        Host `tabBarTintColor`:{' '}
+        <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
+        {'\n'}
+        `icon`: sfSymbol nano.swm, `renderingMode` NOT set{'\n'}
+        {'\n'}
+        nano.swm is a custom symbol from the app asset catalog, not a system SF
+        Symbol. It resolves via the asset catalog fallback.{'\n'}
+        Selected: tinted{' '}
+        <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.{'\n'}
+        Unselected: the icon renders in the system theme color.
+      </Text>
+    </View>
+  );
+}
+
+function MixedTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Original colors when selected</Text>
+      <Text style={styles.hint}>
+        `icon`: sfSymbol heart.fill, `renderingMode` NOT set{'\n'}
+        `selectedIcon`: sfSymbol heart.fill, `renderingMode`: original{'\n'}
+        {'\n'}
+        Selected: the system multicolor heart, RED, not tinted.{'\n'}
+        Unselected: a single-color heart in the system theme color.
+      </Text>
+    </View>
+  );
+}
+
+function IndicatorTab() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Explicit active indicator size</Text>
+      <Text style={styles.hint}>
+        `icon`: drawableResource star_big_off{'\n'}
+        `selectedIcon`: drawableResource star_big_on{'\n'}
+        `iconSize` NOT set (system default){'\n'}
+        `tabBarItemActiveIndicatorWidth`: 56{'\n'}
+        `tabBarItemActiveIndicatorHeight`: 36{'\n'}
+        {'\n'}
+        While this tab is selected, the active indicator is 56x36dp and the tab
+        bar is shorter.{'\n'}
+        On other tabs, the active indicator auto-scales to the icon box.
+      </Text>
+    </View>
+  );
+}
+
+function ControlsTab() {
+  const { routeKey, setRouteOptions } = useTabsNavigationContext();
+  const [config, setConfig] = useState<ControlsConfig>(INITIAL_CONTROLS_CONFIG);
+
+  const updateConfig = useCallback(
+    (changes: Partial<ControlsConfig>) => {
+      const nextConfig = { ...config, ...changes };
+      setConfig(nextConfig);
+      setRouteOptions(routeKey, controlsRouteOptions(nextConfig));
+    },
+    [config, routeKey, setRouteOptions],
+  );
+
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.label}>Runtime icon updates</Text>
+      <Text style={styles.hint}>
+        {Platform.OS === 'ios'
+          ? '`icon`: imageSource icon.png'
+          : '`icon`: drawableResource person_walking'}
+      </Text>
+      <SettingsPicker<TabsScreenIconRenderingMode>
+        testID="icon-tint-and-size-rendering-mode-picker"
+        label="renderingMode"
+        value={config.renderingMode}
+        onValueChange={renderingMode => updateConfig({ renderingMode })}
+        items={RENDERING_MODE_OPTIONS}
+      />
+      {Platform.OS === 'android' && (
+        <>
+          <SettingsPicker<IconSizeOption>
+            testID="icon-tint-and-size-icon-size-picker"
+            label="iconSize"
+            value={config.iconSize}
+            onValueChange={iconSize => updateConfig({ iconSize })}
+            items={ICON_SIZE_OPTIONS}
+          />
+          <SettingsSwitch
+            testID="icon-tint-and-size-badge-switch"
+            label="badgeValue"
+            value={config.hasBadge}
+            onValueChange={hasBadge => updateConfig({ hasBadge })}
+          />
+        </>
+      )}
+    </View>
+  );
+}
+
+const IOS_ROUTES: TabRouteConfig[] = [
+  {
+    name: 'Symbol',
+    element: <SymbolTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Symbol',
+      ios: {
+        icon: { type: 'sfSymbol', name: 'nano.swm' },
+      },
+    },
+  },
+  {
+    name: 'Image',
+    element: <ImageTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Image',
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+        },
+      },
+    },
+  },
+  {
+    name: 'ImageMono',
+    element: <ImageMonoTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Mono',
+      ios: {
+        icon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+          renderingMode: 'monochrome',
+        },
+      },
+    },
+  },
+  {
+    name: 'Mixed',
+    element: <MixedTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Mixed',
+      ios: {
+        icon: { type: 'sfSymbol', name: 'heart.fill' },
+        selectedIcon: {
+          type: 'sfSymbol',
+          name: 'heart.fill',
+          renderingMode: 'original',
+        },
+      },
+    },
+  },
+  {
+    name: 'Controls',
+    element: <ControlsTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      ...controlsRouteOptions(INITIAL_CONTROLS_CONFIG),
+      title: 'Controls',
+    },
+  },
+];
+
+const ANDROID_ROUTES: TabRouteConfig[] = [
+  {
+    name: 'Sized',
+    element: <SizedTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Sized',
+      android: {
+        icon: { type: 'drawableResource', name: 'swm_logo' },
+        iconSize: 44,
+      },
+    },
+  },
+  {
+    name: 'Multicolor',
+    element: <MulticolorTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Multicolor',
+      android: {
+        icon: { type: 'drawableResource', name: 'person_walking' },
+        selectedIcon: {
+          type: 'drawableResource',
+          name: 'person_walking',
+          renderingMode: 'original',
+        },
+        iconSize: 30,
+      },
+    },
+  },
+  {
+    name: 'Image',
+    element: <ImageTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Image',
+      android: {
+        icon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+        },
+        selectedIcon: {
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+          renderingMode: 'original',
+        },
+      },
+    },
+  },
+  {
+    name: 'Indicator',
+    element: <IndicatorTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      title: 'Indicator',
+      android: {
+        icon: { type: 'drawableResource', name: 'star_big_off' },
+        selectedIcon: { type: 'drawableResource', name: 'star_big_on' },
+        standardAppearance: {
+          tabBarItemActiveIndicatorWidth: 56,
+          tabBarItemActiveIndicatorHeight: 36,
+        },
+      },
+    },
+  },
+  {
+    name: 'Controls',
+    element: <ControlsTab />,
+    options: {
+      ...DEFAULT_TAB_ROUTE_OPTIONS,
+      ...controlsRouteOptions(INITIAL_CONTROLS_CONFIG),
+      title: 'Controls',
+    },
+  },
+];
+
+const ROUTE_CONFIGS = Platform.select({
+  ios: IOS_ROUTES,
+  android: ANDROID_ROUTES,
+  default: IOS_ROUTES,
+});
+
+function TestTabsItemIconTintAndSize() {
+  return (
+    <TabsContainerWithHostConfigContext
+      routeConfigs={ROUTE_CONFIGS}
+      ios={{ tabBarTintColor: Colors.GreenDark100 }}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    gap: 12,
+  },
+  label: {
+    fontSize: 17,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  hint: {
+    fontSize: 13,
+    color: Colors.LightOffNavy,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+});
+
+export default createScenario(TestTabsItemIconTintAndSize, scenarioDescription);

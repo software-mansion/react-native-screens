@@ -24,6 +24,8 @@ type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
+export type IconRenderingMode = 'automatic' | 'monochrome' | 'original';
+
 export type ItemStateAppearance = {
   tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
   tabBarItemIconColor?: ProcessedColorValue | null | undefined;
@@ -51,6 +53,9 @@ export type Appearance = {
   // TabBarItem - Active Indicator
   tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
   tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
+  // Indicator size (dp); unset = auto-scale to the icon box.
+  tabBarItemActiveIndicatorWidth?: CT.Float | undefined;
+  tabBarItemActiveIndicatorHeight?: CT.Float | undefined;
 
   // TabBarItem - Label
   tabBarItemTitleFontFamily?: string | undefined;
@@ -103,6 +108,10 @@ export interface NativeProps extends ViewProps {
   imageIconResource?: ImageSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
   selectedImageIconResource?: ImageSource | undefined;
+  iconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
+  selectedIconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
+  // Per-tab icon size (dp); 0/unset = system default.
+  iconSize?: CT.Float | undefined;
 
   // Appearance
   standardAppearance?: Appearance | undefined;

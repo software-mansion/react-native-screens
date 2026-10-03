@@ -13,19 +13,37 @@ internal class TabsAppearanceCoordinator(
 ) {
     private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
+    private var appliedIconBoxDp: Float? = null
+
+    // Icon box is bar-wide: the largest effective size across tabs.
+    internal fun resolveIconBoxDp(): Float =
+        tabsScreenFragments.maxOfOrNull { appearanceApplicator.effectiveIconSizeDp(it.tabsScreen) }
+            ?: appearanceApplicator.defaultIconSizeDp
+
+    internal fun invalidateMenuItemIcons() {
+        tabsScreenFragments.forEach { it.tabsScreen.isMenuItemIconInvalidated = true }
+    }
+
     fun updateTabAppearance(
         context: Context,
         tabsContainer: TabsContainer,
     ) {
         val selectedTabAppearance = tabsContainer.selectedTab.tabsScreen.appearance
-        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden)
-        updateMenuItems(context, selectedTabAppearance)
+        val iconBoxDp = resolveIconBoxDp()
+        if (iconBoxDp != appliedIconBoxDp) {
+            appliedIconBoxDp = iconBoxDp
+            invalidateMenuItemIcons()
+        }
+        appearanceApplicator.applyIconBox(iconBoxDp)
+        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden, iconBoxDp)
+        updateMenuItems(context, selectedTabAppearance, iconBoxDp)
         appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }
 
     private fun updateMenuItems(
         context: Context,
         tabsAppearance: TabsAppearance?,
+        iconBoxDp: Float,
     ) {
         tabsScreenFragments.forEach { fragment ->
             val menuItemId = fragment.menuItemId
@@ -33,7 +51,7 @@ internal class TabsAppearanceCoordinator(
                 checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
                     "[RNScreens] Missing MenuItem for id: $menuItemId"
                 }
-            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance)
+            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance, iconBoxDp)
         }
     }
 
@@ -42,8 +60,9 @@ internal class TabsAppearanceCoordinator(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
         appearance: TabsAppearance?,
+        iconBoxDp: Float,
     ) {
-        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen)
+        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, iconBoxDp)
         appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
     }
 }
