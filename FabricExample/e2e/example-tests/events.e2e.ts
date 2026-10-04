@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON } from '@e2e/framework/native-classes-android';
-import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
+import { tapBarBackButton } from '@e2e/framework/back-button';
 
 const pressBack = async () => {
   if (device.getPlatform() === 'android') {
@@ -75,7 +75,7 @@ describe('Events', () => {
 
     await element(by.id('events-go-to-chats')).tap();
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
     }
@@ -92,7 +92,7 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
     }
@@ -137,7 +137,7 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
     }
