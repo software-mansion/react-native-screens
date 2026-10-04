@@ -909,6 +909,50 @@ RNS_IGNORE_SUPER_CALL_END
   _addedReactSubviewsInCurrentTransaction = false;
 }
 
+// Swaps `childComponentView` for its `snapshot` inside `items`.
+//
+// On iOS 26 `- [RNSScreenStackHeaderSubview getUIBarButtonItem]` wraps the subview in a centering
+// wrapper view and makes *that* the item's customView, so comparing `item.customView` with
+// `childComponentView` never matches. The caller then removes the subview from the wrapper, taking
+// the wrapper's width/height constraints with it, and UIKit stretches the now-unconstrained
+// customView across the navigation bar for the rest of the pop transition.
+// See https://github.com/software-mansion/react-native-screens/issues/4360.
+static void RNSReplaceSubviewWithSnapshotInItems(
+    NSArray<UIBarButtonItem *> *items,
+    RNSScreenStackHeaderSubview *childComponentView,
+    UIView *snapshot)
+{
+  for (UIBarButtonItem *item in items) {
+    if (item.customView == childComponentView) {
+      item.customView = snapshot;
+    } else if (snapshot != nil && childComponentView.superview != nil &&
+               item.customView == childComponentView.superview) {
+      // Keep the wrapper and put the snapshot inside it, sized like the subview, so the wrapper keeps
+      // its size after the subview is removed.
+      UIView *wrapperView = item.customView;
+      CGSize size = childComponentView.bounds.size;
+
+      snapshot.translatesAutoresizingMaskIntoConstraints = NO;
+      [wrapperView addSubview:snapshot];
+
+      [snapshot.centerXAnchor constraintEqualToAnchor:wrapperView.centerXAnchor].active = YES;
+      [snapshot.centerYAnchor constraintEqualToAnchor:wrapperView.centerYAnchor].active = YES;
+      [snapshot.widthAnchor constraintEqualToConstant:size.width].active = YES;
+      [snapshot.heightAnchor constraintEqualToConstant:size.height].active = YES;
+
+      // Mirrors the wrapper sizing in `- [RNSScreenStackHeaderSubview getUIBarButtonItem]`: high (not
+      // required) priority, so iOS 26's 36pt minimum width can still win.
+      NSLayoutConstraint *widthEqual = [wrapperView.widthAnchor constraintEqualToAnchor:snapshot.widthAnchor];
+      widthEqual.priority = UILayoutPriorityDefaultHigh;
+      widthEqual.active = YES;
+
+      NSLayoutConstraint *heightEqual = [wrapperView.heightAnchor constraintEqualToAnchor:snapshot.heightAnchor];
+      heightEqual.priority = UILayoutPriorityDefaultHigh;
+      heightEqual.active = YES;
+    }
+  }
+}
+
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
 {
   if (childComponentView.window != nil) {
@@ -919,11 +963,7 @@ RNS_IGNORE_SUPER_CALL_END
     // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
     switch (childComponentView.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-        for (UIBarButtonItem *item in navitem.leftBarButtonItems) {
-          if (item.customView == childComponentView) {
-            item.customView = snapshot;
-          }
-        }
+        RNSReplaceSubviewWithSnapshotInItems(navitem.leftBarButtonItems, childComponentView, snapshot);
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
@@ -931,11 +971,7 @@ RNS_IGNORE_SUPER_CALL_END
         navitem.titleView = snapshot;
         break;
       case RNSScreenStackHeaderSubviewTypeRight: {
-        for (UIBarButtonItem *item in navitem.rightBarButtonItems) {
-          if (item.customView == childComponentView) {
-            item.customView = snapshot;
-          }
-        }
+        RNSReplaceSubviewWithSnapshotInItems(navitem.rightBarButtonItems, childComponentView, snapshot);
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar:
