@@ -1087,6 +1087,18 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RNSScrollViewBehaviorOverriding
 
+static BOOL RNSScreenStackPresentationCoversTabBar(RNSScreenStackPresentation presentation)
+{
+  switch (presentation) {
+    case RNSScreenStackPresentationPush:
+    case RNSScreenStackPresentationContainedModal:
+    case RNSScreenStackPresentationContainedTransparentModal:
+      return NO;
+    default:
+      return YES;
+  }
+}
+
 - (BOOL)shouldOverrideScrollViewContentInsetAdjustmentBehavior
 {
   // RNSScreenView does not have a property to control this behavior.
@@ -1095,10 +1107,17 @@ RNS_IGNORE_SUPER_CALL_END
 
   // As this method is called when RNSScreen willMoveToParentViewController
   // and view does not have superView yet, we need to use reactSuperViews.
-  UIView *parent = [self reactSuperview];
+  UIView *parent = self;
 
   while (parent != nil) {
-    if ([parent respondsToSelector:@selector(shouldOverrideScrollViewContentInsetAdjustmentBehavior)]) {
+    // A screen presented over the tab bar is not laid out under it, so the override of the enclosing tab
+    // must not reach its content or the screens nested inside it.
+    if ([parent isKindOfClass:RNSScreenView.class] &&
+        RNSScreenStackPresentationCoversTabBar(static_cast<RNSScreenView *>(parent).stackPresentation)) {
+      return NO;
+    }
+    if (parent != self &&
+        [parent respondsToSelector:@selector(shouldOverrideScrollViewContentInsetAdjustmentBehavior)]) {
       id<RNSScrollViewBehaviorOverriding> overrideProvider = static_cast<id<RNSScrollViewBehaviorOverriding>>(parent);
       return [overrideProvider shouldOverrideScrollViewContentInsetAdjustmentBehavior];
     }
