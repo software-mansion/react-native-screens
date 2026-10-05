@@ -1,11 +1,11 @@
 #import "RNSStackNavigationController.h"
 #import <React/RCTAssert.h>
 #import "RNSContainer.h"
+#import "RNSContainerItem.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSStackNavigationBar.h"
 #import "RNSStackOperation.h"
-#import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 @implementation RNSStackNavigationController {
@@ -50,10 +50,10 @@
 {
   // We assume `topViewController` corresponds to the currently presented screen.
   UIViewController *topController = self.topViewController;
-  if (![topController isKindOfClass:RNSStackScreenController.class]) {
+  if (![topController respondsToSelector:@selector(findContentScrollView)]) {
     return nil;
   }
-  return [static_cast<RNSStackScreenController *>(topController) findContentScrollView];
+  return [(id<RNSContainerItem>)topController findContentScrollView];
 }
 
 - (void)attachToParentContainerItem
@@ -84,13 +84,13 @@
   return _pendingPushOperations.count > 0 || _pendingPopOperations.count > 0;
 }
 
-- (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen
+- (void)enqueuePushOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen
 {
   RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreen:stackScreen];
   [_pendingPushOperations addObject:operation];
 }
 
-- (void)enqueuePopOperation:(nonnull RNSStackScreenComponentView *)stackScreen
+- (void)enqueuePopOperation:(nonnull UIView<RNSStackScreenProviding> *)stackScreen
 {
   RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreen:stackScreen];
   [_pendingPopOperations addObject:operation];
@@ -110,14 +110,13 @@
 
   for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
     RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-    RCTAssert(self.topViewController == static_cast<UIViewController *>(op.stackScreen.controller),
+    RCTAssert(self.topViewController == op.stackScreen.stackScreenController,
               @"[RNScreens] Attempt to pop non-top screen");
     [self popViewControllerAnimated:YES];
   }
 
   for (RNSPushOperation *op in _pendingPushOperations) {
-    RNSStackScreenController *controller = op.stackScreen.controller;
-    [self pushViewController:controller animated:YES];
+    [self pushViewController:op.stackScreen.stackScreenController animated:YES];
   }
 
   RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
@@ -135,7 +134,7 @@
 #ifdef RNS_DEBUG_LOGGING
   RNSLog(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
-    RNSLog(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
+    RNSLog(@"[RNScreens] %@", [(id<RNSStackScreenProviding>)viewController.view screenKey]);
   }
 #endif // RNS_DEBUG_LOGGING
 }

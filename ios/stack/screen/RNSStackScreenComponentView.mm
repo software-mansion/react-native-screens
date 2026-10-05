@@ -99,6 +99,18 @@ namespace react = facebook::react;
   return _contentScrollView;
 }
 
+#pragma mark - RNSStackScreenProviding
+
+- (nonnull UIViewController *)stackScreenController
+{
+  return _controller;
+}
+
+- (nullable UIView *)stackHeaderConfig
+{
+  return _headerConfig;
+}
+
 #pragma mark - Events
 
 - (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter
