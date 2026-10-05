@@ -235,7 +235,7 @@ RNS_IGNORE_SUPER_CALL_END
 // tvOS and visionOS are excluded on purpose: `visibilityPriority` exists there, but the only
 // supported value is `standard`, which is already the default.
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-    // The item is rebuilt only where the priority is actually applied to it.
+    // The item is rebuilt only on iOS 27+, where the priority is actually applied.
     if (@available(iOS 27.0, *)) {
       needsUpdate = YES;
     }
