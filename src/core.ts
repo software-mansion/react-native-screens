@@ -40,6 +40,17 @@ export function nativeScreensAvailable() {
   return isNativePlatformSupported || ENABLED_OUT_OF_TREE;
 }
 
+/**
+ * Turns native screens on or off.
+ *
+ * The default is `isNativePlatformSupported`, so on iOS, Android and Windows
+ * this is only needed to turn them off. Calling it with `true` on any other
+ * platform is how an application says that its platform provides `RNSScreen`
+ * and the rest itself, and is an assertion that those components exist: see
+ * `nativeScreensAvailable`.
+ *
+ * @param shouldEnableScreens whether screens should be used at all.
+ */
 export function enableScreens(shouldEnableScreens = true) {
   ENABLE_SCREENS = shouldEnableScreens;
 

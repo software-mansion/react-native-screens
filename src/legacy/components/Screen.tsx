@@ -70,6 +70,14 @@ interface ViewConfig extends React.ComponentRef<typeof View> {
 // An interface stops that resolution at a name this package can emit.
 export interface ScreenInstance extends React.ComponentRef<typeof View> {}
 
+/**
+ * A single screen, rendered either natively or as a plain animated view.
+ *
+ * The native path needs both halves to agree: `enabled`, which is per screen
+ * and which `ScreenStackItem` always passes, and `nativeScreensAvailable()`,
+ * which is per platform. Without the second a platform that has no native
+ * components would mount them anyway.
+ */
 export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
