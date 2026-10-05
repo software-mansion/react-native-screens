@@ -188,10 +188,11 @@ describeIfIPad(
       ).toHaveLabel('preventNativeSelection: false');
     });
 
-    // TODO: Re-enable the skipped tests in this suite once the native regression from
-    // https://github.com/software-mansion/react-native-screens/pull/4675 is fixed.
-    // After the migration to the UITab API (iOS >= 26.1), tab items are no longer
-    // found under _UIFloatingTabBarItemCell, so native selection cannot be exercised.
+    // TODO: Re-enable the skipped tests in this suite once
+    // https://github.com/software-mansion/react-native-screens-labs/issues/1886 is fixed.
+    // for iOS26+ tabBarItemTestID is not applied to tab bar items on iPad (likely a regression from
+    // https://github.com/software-mansion/react-native-screens/pull/4675), so the tab
+    // items cannot be matched by id and native selection cannot be exercised.
     it.skip('native selection of first tab should be blocked', async () => {
       await element(by.id('prevent-native-selection-button')).tap();
       await expect(
@@ -218,7 +219,7 @@ describeIfIPad(
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
     });
 
-    // TODO: Re-enable with the rest - depends on the previous test (#4675 regression).
+    // TODO: Re-enable with the rest - depends on the previous test (labs#1886: iPad tabBarItemTestID).
     it.skip('programmatic navigation to first tab should not be blocked', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('Second');
       await element(by.id('first-button')).tap();
@@ -228,7 +229,7 @@ describeIfIPad(
       ).toHaveLabel('preventNativeSelection: true');
     });
 
-    // TODO: Re-enable with the rest (#4675 regression).
+    // TODO: Re-enable with the rest (labs#1886: iPad tabBarItemTestID).
     it.skip('native selection should be possible after disabling preventNativeSelection', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await expect(
@@ -255,7 +256,7 @@ describeIfIPad(
       ).toHaveLabel('preventNativeSelection: false');
     });
 
-    // TODO: Re-enable with the rest (#4675 regression).
+    // TODO: Re-enable with the rest (labs#1886: iPad tabBarItemTestID).
     it.skip('should work independently per tab', async () => {
       await expect(element(by.id('screen-name-label'))).toHaveLabel('First');
       await element(

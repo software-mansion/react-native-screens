@@ -152,10 +152,9 @@ describeIfIOS('Tab Bar System Item', () => {
       const frameXAfterSearch = await getTabBarItemFrameX('Search');
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        // TODO: Re-enable once the native regression from
-        // https://github.com/software-mansion/react-native-screens/pull/4675 is fixed.
-        // After the migration to the UITab API (iOS >= 26.1), the search systemItem
-        // is no longer moved to the trailing search slot (needs UISearchTab).
+        // TODO: Re-enable once
+        // https://github.com/software-mansion/react-native-screens-labs/issues/1885 is fixed
+        // (likely a regression from https://github.com/software-mansion/react-native-screens/pull/4675).
         // jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
       } else {
         jestExpect(frameXAfterSearch).toEqual(frameXBeforeSearch);
@@ -182,7 +181,7 @@ describeIfIOS('Tab Bar System Item', () => {
       const frameXAfterFavorites = await getTabBarItemFrameX('Favorites');
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        // TODO: Re-enable together with the search position check above (#4675 regression).
+        // TODO: Re-enable together with the search position check above (labs#1885).
         // jestExpect(frameXAfterFavorites).toBeLessThan(frameXBeforeFavorites);
       } else {
         jestExpect(frameXAfterFavorites).toEqual(frameXBeforeFavorites);
@@ -273,10 +272,11 @@ describeIfIOS('Tab Bar System Item', () => {
     });
   });
 
-  // TODO: Re-enable once the native regression from
-  // https://github.com/software-mansion/react-native-screens/pull/4675 is fixed.
-  // After the migration to the UITab API (iOS >= 26.1), the custom icon override
-  // is not applied to the tab bar item on iPhone.
+  // TODO: Re-enable once
+  // https://github.com/software-mansion/react-native-screens-labs/issues/1885 is fixed.
+  // The tab bar item icon is rendered in the wrong variant (.fill vs outline), likely
+  // a regression from https://github.com/software-mansion/react-native-screens/pull/4675,
+  // so the icon assertions do not match.
   describe.skip('Runtime Config tab — icon override cycling', () => {
     it('should update tab bar item icon when switching to house icon', async () => {
       await tapOptionButton('house');
@@ -342,9 +342,9 @@ describeIfIOS('Tab Bar System Item', () => {
     });
   });
 
-  // TODO: Re-enable together with "icon override cycling" above - it relies on
-  // the same icon override, broken by
-  // https://github.com/software-mansion/react-native-screens/pull/4675.
+  // TODO: Re-enable together with "icon override cycling" above - blocked by the same
+  // icon rendering issue:
+  // https://github.com/software-mansion/react-native-screens-labs/issues/1885.
   describe.skip('Runtime Config tab — combined overrides', () => {
     it('should update tab bar item with combined selection of search systemItem + custom title + heart icon', async () => {
       const frameXBeforeSearch = await getTabBarItemFrameX('Favorites');
