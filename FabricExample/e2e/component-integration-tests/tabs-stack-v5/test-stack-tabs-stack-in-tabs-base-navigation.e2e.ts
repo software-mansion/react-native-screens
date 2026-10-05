@@ -2,7 +2,7 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, element, by, waitFor } from 'detox';
 import { expectStillOnRoute, waitForTopmostRoute } from '@e2e/app/stack-route';
 import { selectComponentIntegrationTestsScreen } from '@e2e/app/test-screen-navigation';
-import { renderedButtonText, tapTopmostButton } from '@e2e/framework/gestures';
+import { tapTopmostButton } from '@e2e/framework/gestures';
 import {
   expectTabBarItemByLabel,
   forceSelectTabByLabel,
@@ -37,6 +37,13 @@ const tabBarItemLabel = (tab: TabTitle) =>
 
 const selectTab = (tab: TabTitle) =>
   forceSelectTabByLabel(tabBarItemLabel(tab));
+
+/**
+ * The text React Native's core `<Button>` renders for `title`: uppercased on
+ * Android (`title.toUpperCase()`), as given on iOS.
+ */
+const renderedButtonText = (title: string) =>
+  device.getPlatform() === 'android' ? title.toUpperCase() : title;
 
 /** Waits for a plain (non-stack) tab's content; its route key is its name. */
 async function waitForTabContent(tab: 'First' | 'Second') {
