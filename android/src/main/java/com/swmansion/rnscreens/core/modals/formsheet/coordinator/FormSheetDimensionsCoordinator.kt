@@ -70,9 +70,10 @@ internal class FormSheetDimensionsCoordinator(
     }
 
     internal fun selectDetent(index: Int) {
-        if (shouldApplyInitialDetent) {
-            // The metrics haven't been resolved since the sheet was opened. The detent is selected right after
-            // the initial one is applied, so it doesn't get overridden and is mapped against the actual detents.
+        if (isGeometryDirty) {
+            // The metrics are about to be resolved again, e.g. the sheet has just been opened or its detents have
+            // changed. The detent is selected right after they're applied (after the initial detent, if pending),
+            // so it doesn't get overridden and is mapped against the up-to-date detents.
             pendingSelectedDetentIndex = index
             return
         }

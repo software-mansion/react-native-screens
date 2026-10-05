@@ -20,10 +20,7 @@ internal class FormSheetBehaviorController(
             override fun onStateChanged(
                 bottomSheet: View,
                 newState: Int,
-            ) {
-                rememberStateIfStable(newState)
-                emitDetentChangedIfNeeded(mapStateToDetentIndex(newState))
-            }
+            ) = handleStateChanged(newState)
 
             override fun onSlide(
                 bottomSheet: View,
@@ -63,9 +60,17 @@ internal class FormSheetBehaviorController(
         }
 
         behavior.state = targetState
-        // Emitted right away, because Material doesn't notify the callbacks about state changes of a sheet
-        // that hasn't been laid out yet. The callback for the settled state is deduplicated against it.
-        emitDetentChangedIfNeeded(mapStateToDetentIndex(targetState))
+        // A laid out sheet settles to the target state and reports it through the state callback, so an interrupted
+        // animation doesn't report a detent it hasn't reached. Material applies the state of a sheet that hasn't been
+        // laid out yet right away, without notifying the callbacks, so that change has to be handled here.
+        if (behavior.state == targetState) {
+            handleStateChanged(targetState)
+        }
+    }
+
+    private fun handleStateChanged(state: Int) {
+        rememberStateIfStable(state)
+        emitDetentChangedIfNeeded(mapStateToDetentIndex(state))
     }
 
     private fun emitDetentChangedIfNeeded(index: Int) {
