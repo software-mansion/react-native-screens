@@ -15,9 +15,11 @@ import {
 
 // Native components
 import ScreenNativeComponent, {
+  Commands as ScreenNativeCommands,
   NativeProps as ScreenNativeComponentProps,
 } from '../../fabric/legacy/ScreenNativeComponent';
 import ModalScreenNativeComponent, {
+  Commands as ModalScreenNativeCommands,
   NativeProps as ModalScreenNativeComponentProps,
 } from '../../fabric/legacy/ModalScreenNativeComponent';
 
@@ -27,6 +29,7 @@ import {
   resolveSheetAllowedDetents,
   resolveSheetInitialDetentIndex,
   resolveSheetLargestUndimmedDetent,
+  resolveSheetSelectedDetentIndex,
 } from './helpers/sheet';
 import { parseBooleanToOptionalBooleanNativeProp } from '../../utils';
 import featureFlags from '../../flags';
@@ -70,6 +73,23 @@ interface ViewConfig extends React.ComponentRef<typeof View> {
 // An interface stops that resolution at a name this package can emit.
 export interface ScreenInstance extends React.ComponentRef<typeof View> {}
 
+// Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens (there is a need for different
+// shadow nodes).
+function shouldUseModalScreenComponent(
+  stackPresentation: ScreenProps['stackPresentation'],
+): boolean {
+  return Platform.select({
+    ios: !(
+      stackPresentation === undefined ||
+      stackPresentation === 'push' ||
+      stackPresentation === 'containedModal' ||
+      stackPresentation === 'containedTransparentModal'
+    ),
+    android: false,
+    default: false,
+  });
+}
+
 export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
   function InnerScreen(props, ref) {
     const innerRef = React.useRef<ViewConfig | null>(null);
@@ -105,6 +125,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
       sheetInitialDetentIndex = 0,
       sheetShouldOverflowTopInset = false,
       sheetDefaultResizeAnimationEnabled = true,
+      sheetRef,
       // Other
       screenId,
       stackPresentation,
@@ -114,6 +135,43 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
       onWillAppear,
       onWillDisappear,
     } = rest;
+
+    React.useImperativeHandle(
+      sheetRef,
+      () => ({
+        selectDetent: index => {
+          if (stackPresentation !== 'formSheet') {
+            console.warn(
+              "[RNScreens] 'selectDetent' works only for screens with 'formSheet' stack presentation. Ignoring the call.",
+            );
+            return;
+          }
+
+          const detentIndex = resolveSheetSelectedDetentIndex(
+            index,
+            resolveSheetAllowedDetents(sheetAllowedDetents).length - 1,
+          );
+          if (detentIndex === undefined) {
+            return;
+          }
+
+          const nativeScreen = innerRef.current;
+          if (!nativeScreen) {
+            console.warn(
+              '[RNScreens] Reference to native screen component has not been updated yet',
+            );
+            return;
+          }
+
+          if (shouldUseModalScreenComponent(stackPresentation)) {
+            ModalScreenNativeCommands.selectDetent(nativeScreen, detentIndex);
+          } else {
+            ScreenNativeCommands.selectDetent(nativeScreen, detentIndex);
+          }
+        },
+      }),
+      [stackPresentation, sheetAllowedDetents],
+    );
 
     if (enabled && isNativePlatformSupported) {
       const resolvedSheetAllowedDetents =
@@ -128,20 +186,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
         resolvedSheetAllowedDetents.length - 1,
       );
 
-      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens (there is a need for different
-      // shadow nodes).
-      const shouldUseModalScreenComponent = Platform.select({
-        ios: !(
-          stackPresentation === undefined ||
-          stackPresentation === 'push' ||
-          stackPresentation === 'containedModal' ||
-          stackPresentation === 'containedTransparentModal'
-        ),
-        android: false,
-        default: false,
-      });
-
-      const AnimatedScreen = shouldUseModalScreenComponent
+      const AnimatedScreen = shouldUseModalScreenComponent(stackPresentation)
         ? AnimatedNativeModalScreen
         : AnimatedNativeScreen;
 
@@ -157,6 +202,8 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
         gestureResponseDistance,
         scrollEdgeEffects,
         onGestureCancel,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        sheetRef: _sheetRef,
         style,
         ...props
       } = rest;
@@ -309,6 +356,8 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
         style,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onComponentRef,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        sheetRef: _sheetRef,
         ...props
       } = rest;
 

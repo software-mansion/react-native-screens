@@ -895,6 +895,53 @@ RNS_IGNORE_SUPER_CALL_END
   return 0;
 }
 
+- (UISheetPresentationControllerDetentIdentifier)detentIdentifierAtIndex:(NSInteger)index
+                                                                forSheet:(UISheetPresentationController *)sheet
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return sheet.detents[index].identifier;
+  }
+#endif // iOS 16 check
+  // We're using system defined detents.
+  if ([sheet.detents[index] isEqual:UISheetPresentationControllerDetent.mediumDetent]) {
+    return UISheetPresentationControllerDetentIdentifierMedium;
+  }
+  return UISheetPresentationControllerDetentIdentifierLarge;
+}
+
+- (void)selectSheetDetentAtIndex:(NSInteger)index
+{
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    RCTLogWarn(@"[RNScreens] selectDetent called on a screen that isn't presented as a form sheet. Command ignored.");
+    return;
+  }
+
+  UISheetPresentationController *sheet = _controller.sheetPresentationController;
+  if (sheet == nil || _controller.presentingViewController == nil || _controller.isBeingDismissed) {
+    RCTLogWarn(@"[RNScreens] selectDetent called while the form sheet is not presented. Command ignored.");
+    return;
+  }
+
+  if (index < 0 || index >= (NSInteger)sheet.detents.count) {
+    RCTLogError(@"[RNScreens] selectDetent index (%ld) exceeds effective detents count (%lu). Command ignored.",
+                (long)index,
+                (unsigned long)sheet.detents.count);
+    return;
+  }
+
+  // Sheet with no selected detent identifier rests at its smallest detent.
+  NSInteger currentIndex =
+      sheet.selectedDetentIdentifier != nil ? [self detentIndexFromDetentIdentifier:sheet.selectedDetentIdentifier] : 0;
+  if (currentIndex == index) {
+    return;
+  }
+
+  [self setSelectedDetentForSheet:sheet to:[self detentIdentifierAtIndex:index forSheet:sheet] animate:YES];
+  // UIKit notifies UISheetPresentationControllerDelegate only about the detent changes made by the user.
+  [self notifySheetDetentChangeToIndex:index isStable:YES];
+}
+
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
     (UISheetPresentationController *)sheetPresentationController
 {
@@ -1394,6 +1441,20 @@ RNS_IGNORE_SUPER_CALL_END
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
   }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSScreenHandleCommand(self, commandName, args);
+}
+
+- (void)selectDetent:(NSInteger)index
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  [self selectSheetDetentAtIndex:index];
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 

@@ -21,6 +21,7 @@ import com.swmansion.rnscreens.legacy.KeyboardVisible
 import com.swmansion.rnscreens.legacy.Screen
 import com.swmansion.rnscreens.legacy.ScreenStackFragment
 import com.swmansion.rnscreens.legacy.utils.isSoftKeyboardVisibleOrNull
+import com.swmansion.rnscreens.utils.RNSLog
 
 class SheetDelegate(
     val screen: Screen,
@@ -141,6 +142,27 @@ class SheetDelegate(
             inputMethodManager?.showSoftInput(view, 0)
         }
         viewToRestoreFocus = null
+    }
+
+    internal fun selectDetent(index: Int) {
+        val behavior = sheetBehavior
+        // Material applies the state of a sheet that hasn't been laid out yet without notifying the callbacks,
+        // so the change wouldn't be reported and the next behaviour configuration would override it.
+        if (behavior == null || !screen.isLaidOut) {
+            RNSLog.w(TAG, "[RNScreens] selectDetent called before the form sheet has been laid out. Command ignored.")
+            return
+        }
+
+        if (index !in 0 until screen.sheetDetents.count) {
+            RNSLog.e(
+                TAG,
+                "[RNScreens] selectDetent index ($index) exceeds detents count (${screen.sheetDetents.count}). Command ignored.",
+            )
+            return
+        }
+
+        // The sheet state observer reports the detent change once the sheet settles, the same as after a user-driven change.
+        behavior.state = screen.sheetDetents.sheetStateFromIndex(index)
     }
 
     internal fun updateBottomSheetMetrics(behavior: BottomSheetBehavior<Screen>) {
