@@ -70,8 +70,8 @@ Full: Covers all manual scenario steps.
 
   ### setMenuOptions view command
 
-1. Relaunch the app and navigate to the **Stack Header Menu (iOS)** screen.
-2. In `setMenuOptions`, select `title` to be "New Title" and click `Send setMenuOptions`
+7. Relaunch the app and navigate to the **Stack Header Menu (iOS)** screen.
+8. In `setMenuOptions`, select `title` to be "New Title" and click `Send setMenuOptions`
   - [ ] When Menu 1 is opened, the submenu is named "New Title"
-3. Close the menu. Select `title` to be "no change", `icon` to be "bell.fill" and click `Send setMenuOptions`
+9. Close the menu. Select `title` to be "no change", `icon` to be "bell.fill" and click `Send setMenuOptions`
   - [ ] When Menu 1 is opened, the submenu is still named "New Title" and has bell icon

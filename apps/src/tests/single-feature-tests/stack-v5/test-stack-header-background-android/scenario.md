@@ -86,18 +86,18 @@ colors and animated transitions, neither of which Detox can read.
 
 ### Medium / large header
 
-10. Set `type` = `medium` (later repeat with `large`), colors = `default`.
+1. Set `type` = `medium` (later repeat with `large`), colors = `default`.
 
 - [ ] Expanded header shows the default surface color; collapsing it fades in
       the default content scrim color over the toolbar area.
 
-11. Set `backgroundColor` = `green` and `scrolledBackgroundColor` = `green`.
+2. Set `backgroundColor` = `green` and `scrolledBackgroundColor` = `green`.
 
 - [ ] Expanded header is light green, including the status bar area.
 - [ ] Collapsing fades in the stronger green scrim; expanding fades it out
       back to light green.
 
-12. Enable `backgroundSubview`.
+3. Enable `backgroundSubview`.
 
 - [ ] The trees image fills the trailing part of the expanded header (also
       behind the status bar) with the light green background visible next to
@@ -105,22 +105,22 @@ colors and animated transitions, neither of which Detox can read.
 - [ ] The green scrim fades in above the image when collapsed; the title and
       buttons stay above the scrim.
 
-13. Set `scrolledBackgroundColor` = `translucent` and collapse.
+4. Set `scrolledBackgroundColor` = `translucent` and collapse.
 
 - [ ] The scrim tints the image instead of fully covering it.
 
-14. Set `scrolledBackgroundColor` = `transparent` and collapse.
+5. Set `scrolledBackgroundColor` = `transparent` and collapse.
 
 - [ ] No scrim appears — the image and background color stay fully visible
       when collapsed.
 
-15. Set both colors back to `default` with the subview still enabled.
+6. Set both colors back to `default` with the subview still enabled.
 
 - [ ] Collapsed state shows the default scrim color again.
 
 ### Type changes keep colors
 
-16. Set `backgroundColor` = `red`, `scrolledBackgroundColor` = `blue`, then
+1. Set `backgroundColor` = `red`, `scrolledBackgroundColor` = `blue`, then
     switch `type` across `small` → `medium` → `large` → `small`.
 
 - [ ] After every switch the header keeps light red at rest and blue when

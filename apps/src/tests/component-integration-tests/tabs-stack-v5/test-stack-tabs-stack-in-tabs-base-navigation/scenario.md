@@ -27,15 +27,15 @@ TBD: Planned, but will be implemented separately.
 
 ### Tab navigation
 
-2. Navigate to the *Second* tab.
+1. Navigate to the *Second* tab.
 
 - [ ] Second tab is selected correctly.
 
-3. Navigate to the *Stack* tab.
+2. Navigate to the *Stack* tab.
 
 - [ ] *First* route there is displayed correctly.
 
-4. Toggle between *First* and *Stack* tabs.
+3. Toggle between *First* and *Stack* tabs.
 
 - [ ] Tabs do change "normally", there is no crash.
 
@@ -43,14 +43,14 @@ TBD: Planned, but will be implemented separately.
 
 ### Nested container state preservation
 
-5. Navigate to the *Stack* tab.
+1. Navigate to the *Stack* tab.
 
-6. Push *Second* screen.
+2. Push *Second* screen.
 
-7. Push *Third* screen.
+3. Push *Third* screen.
 
 - [ ] Both *Second* and *Third* are pushed onto the stack.
 
-8. Toggle between *First* and *Stack* tabs.
+4. Toggle between *First* and *Stack* tabs.
 
 - [ ] *Stack* tab displays nested stack with *Third* route on top.

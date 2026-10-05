@@ -88,7 +88,7 @@ a pattern that applies across all green, blue, yellow, and red tab elements.
 
 ### Tab2 appearance
 
-2. Tap **Tab2** in the native tab bar.
+1. Tap **Tab2** in the native tab bar.
 
 - [ ] The screen label changes to "Tab2".
 - [ ] The selected Tab2 icon and title change to red.
@@ -98,7 +98,7 @@ Unselected titles are rendered in the default system style.
 - [ ] **iOS 18:** The tab bar background changes to purple. Unselected tab icons
 and titles are yellow.
 
-3. Tap the **"Select tab 1"** button on the Tab2 screen.
+2. Tap the **"Select tab 1"** button on the Tab2 screen.
 
 - [ ] Tab1 becomes selected (label changes to "Tab1").
 - [ ] The selected Tab1 icon and title colors revert to green selected.
@@ -111,7 +111,7 @@ icons and titles are blue.
 
 ### Tab3 appearance
 
-4. Tap **Tab3** in the native tab bar.
+1. Tap **Tab3** in the native tab bar.
 
 - [ ] The screen label changes to "Tab3".
 - [ ] The tab badge backgrounds change to red; the values remain "123" for Tab3 and "Platform" for Tab4.
@@ -123,7 +123,7 @@ icons and titles are blue.
 
 ### Tab4 appearance — PlatformColor
 
-5. Tap **Tab4** in the native tab bar.
+1. Tap **Tab4** in the native tab bar.
 
 - [ ] The screen label changes to "Tab4".
 - [ ] The selected Tab4 icon is rendered in green and the
@@ -137,7 +137,7 @@ icons and titles are blue.
   are observable; the `systemBackground` color and the normal-state
   blue/teal colors are not applied under Liquid Glass.
 
-6. Toggle the simulator between light and dark appearance while Tab4 is
+2. Toggle the simulator between light and dark appearance while Tab4 is
    selected.
 
 - [ ] **iOS 18:** The `systemBackground` tab bar background resolves to its
@@ -149,7 +149,7 @@ icons and titles are blue.
 
 ### Stability — rapid tab switching
 
-7. Rapidly tap through Tab1 → Tab2 → Tab3 → Tab4 → Tab1 several times,
+1. Rapidly tap through Tab1 → Tab2 → Tab3 → Tab4 → Tab1 several times,
    alternating between native tab bar taps and the in-screen
    "Select tab N" buttons.
 
@@ -186,7 +186,7 @@ icons and titles are blue.
 
 ### Tab2 appearance
 
-3. Tap **Tab2** in the native tab bar.
+1. Tap **Tab2** in the native tab bar.
 
 - [ ] The screen label changes to "Tab2".
 - [ ] The tab bar background changes to purple.
@@ -198,7 +198,7 @@ icons and titles are blue.
 - [ ] The badge values for Tab3 and Tab4 are still "123" and "Platform" with white
 text on a green background.
 
-4. Press and hold a non-selected tab item in the tab bar to
+2. Press and hold a non-selected tab item in the tab bar to
    observe the ripple color while Tab2 is active.
 
 - [ ] A transient green ripple is visible during the press; it
@@ -206,7 +206,7 @@ text on a green background.
 - [ ] After releasing the long press, the tab should not switch; Tab2 remains selected.
 - [ ] (Compare to Tab1's white translucent ripple when selected.)
 
-5. Tap the **"Select tab 1"** button on the Tab2 screen.
+3. Tap the **"Select tab 1"** button on the Tab2 screen.
 
 - [ ] Tab1 becomes selected (label changes to "Tab1").
 - [ ] The tab bar background reverts to dark navy, item colors
@@ -218,7 +218,7 @@ text on a green background.
 
 ### Tab3 appearance
 
-6. Tap **Tab3** in the native tab bar.
+1. Tap **Tab3** in the native tab bar.
 
 - [ ] The screen label changes to "Tab3".
 - [ ] The tab bar background is dark navy (same as Tab1).
@@ -233,7 +233,7 @@ text on a green background.
 
 ### Tab4 appearance — PlatformColor
 
-7. Tap **Tab4** in the native tab bar.
+1. Tap **Tab4** in the native tab bar.
 
 - [ ] The screen label changes to "Tab4".
 - [ ] The selected Tab4 icon and title are both the same green — a darker,
@@ -244,7 +244,7 @@ text on a green background.
 - [ ] The badge backgrounds for Tab3 and Tab4 change to orange, while their values
   remain "123" and "Platform" with white text.
 
-8. With Tab4 selected, toggle the emulator between light and dark appearance and back.
+2. With Tab4 selected, toggle the emulator between light and dark appearance and back.
 
 - [ ] The tab bar background adapts to
   the system theme — light/near-white in light mode, near-black in dark
@@ -257,7 +257,7 @@ text on a green background.
 
 ### Stability — rapid tab switching
 
-9. Rapidly tap through Tab1 → Tab2 → Tab3 → Tab4 → Tab1 several times,
+1. Rapidly tap through Tab1 → Tab2 → Tab3 → Tab4 → Tab1 several times,
    alternating between native tab bar taps and the in-screen
    "Select tab N" buttons.
 

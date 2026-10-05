@@ -40,11 +40,27 @@ to differentiate between OS/app versions.
 You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step
 sections for different device or OS types if their execution paths differ significantly (## Steps - iOS or ## Steps - iPad).
 
+**Numbering Convention:** When steps are grouped into subsections (`###`),
+numbering restarts from 1 in each subsection. Separate subsections with a
+horizontal rule (`---`).
+
+### Baseline
+
 1. Navigate to ...
 
 - [ ] Description of expected behavior after the navigation action.
 
-2. Tap ...
+---
+
+### Subsection name
+
+1. Tap ...
 
 - [ ] iOS18: expected behavior on this OS version.
 - [ ] iOS26: expected behavior on this OS version.
+
+2. Tap ...
+
+- [ ] Description of expected behavior after the action.
+
+---

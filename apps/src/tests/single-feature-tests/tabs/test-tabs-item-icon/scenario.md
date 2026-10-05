@@ -58,7 +58,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ### `icon` vs `selectedIcon` swap
 
-2. Tap the **Override** tab.
+1. Tap the **Override** tab.
 
 - [ ] The **Override** tab's icon swaps from the outline
   star to the filled star.
@@ -69,7 +69,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ### `tabBarItemIconColor` overrides `tabBarTintColor`
 
-3. With **Override** still selected, observe the selected icon color.
+1. With **Override** still selected, observe the selected icon color.
 
 - [ ] The filled star is **red**, NOT green.
 - [ ] On iOS 18 the selected title is
@@ -77,7 +77,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 - [ ] On iOS 26 the selected title is red (override - it's native
   bug KI linked in Notes section).
 
-4. Tap the **Tint** tab, then tap **Override** again.
+2. Tap the **Tint** tab, then tap **Override** again.
 
 - [ ] On re-selection the red filled star reappears immediately with no visual glitch.
 - [ ] The **Tint** tab shows the system-theme outline template image.
@@ -86,7 +86,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ### `xcasset` icon uses host tint, no `selectedIcon`
 
-5. Tap the **Xcasset** tab.
+1. Tap the **Xcasset** tab.
 
 - [ ] The **Xcasset** tab's icon shows the `custom-icon-fill` xcasset image
   tinted **green**. Because no `selectedIcon` is configured for this
@@ -98,7 +98,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ### `imageSource` icons are non-tintable
 
-6. Tap the **Image** tab.
+1. Tap the **Image** tab.
 
 - [ ] The icon swaps from the outline image to the filled image. Both renders use the original PNG
   colors - the host `tabBarTintColor` (green) has NO effect on the selected icon.
@@ -111,7 +111,7 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ### Stability check
 
-7. Cycle through all four tabs in order
+1. Cycle through all four tabs in order
    (Tint -> Override -> Xcasset -> Image), then in reverse.
 
 - [ ] Each tab swaps between its `icon` and `selectedIcon`
@@ -137,13 +137,13 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ### Color settings for different states
 
-2. Tap the **Image** tab.
+1. Tap the **Image** tab.
 
 - [ ] The icon swaps from the outline image to
   the filled image. Unselected tab icon changes to sym_call_missed.
   Selected tab icon is **red** and unselected icon renders in **green**.
 
-3. While **Image** tab is selected, use the Tab key on keyboard to
+2. While **Image** tab is selected, use the Tab key on keyboard to
 switch focus to the **DrawableResource** tab.
 
 - [ ] Focused tab icon is dark blue while selected tab icon
@@ -153,7 +153,7 @@ remains red.
 
 ### Stability check
 
-4. Switch between two tabs few times.
+1. Switch between two tabs few times.
 
 - [ ] Each tab swaps between its `icon` and `selectedIcon` consistently on selection.
 - [ ] The correct colors are applied each time: red for **Image**'s selected state and green for

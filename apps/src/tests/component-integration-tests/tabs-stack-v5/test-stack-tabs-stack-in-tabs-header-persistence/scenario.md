@@ -47,18 +47,18 @@ TBD: Planned, but will be implemented separately.
 
 ### Header survives a tab round trip
 
-3. Switch to the "Other" tab, then back to "Stack".
+1. Switch to the "Other" tab, then back to "Stack".
 
    - [ ] The header is still there: "Home v1", "Tab persistence" and the
          overflow menu button.
    - [ ] There is no flash of a re-built header when "Stack" comes back.
 
-4. Scroll down one full screen, then back to the top.
+2. Scroll down one full screen, then back to the top.
 
    - [ ] The header still collapses on the way down and expands again at the
          top.
 
-5. Switch to the "Other" tab and back to "Stack" 3 times.
+3. Switch to the "Other" tab and back to "Stack" 3 times.
 
    - [ ] The header is present and unchanged after every one of the 3
          switches.
@@ -67,11 +67,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Collapse state survives a tab round trip
 
-6. Scroll until the header is fully collapsed.
+1. Scroll until the header is fully collapsed.
 
    - [ ] Only the toolbar row is left; the expanded title area is gone.
 
-7. Switch to the "Other" tab, then back to "Stack".
+2. Switch to the "Other" tab, then back to "Stack".
 
    - [ ] The header is still fully collapsed. It does not come back expanded.
 
@@ -79,15 +79,15 @@ TBD: Planned, but will be implemented separately.
 
 ### Menu selection survives a tab round trip
 
-8. Open the overflow menu.
+1. Open the overflow menu.
 
    - [ ] "Filter A" is checked and "Filter B" is unchecked.
 
-9. Tap "Filter B".
+2. Tap "Filter B".
 
    - [ ] "Last menu selection" reads `["filterA","filterB"]`.
 
-10. Switch to the "Other" tab, back to "Stack", then open the overflow menu.
+3. Switch to the "Other" tab, back to "Stack", then open the overflow menu.
 
     - [ ] "Filter A" and "Filter B" are both checked.
     - [ ] "Last menu selection" still reads `["filterA","filterB"]`.
@@ -96,63 +96,64 @@ TBD: Planned, but will be implemented separately.
 
 ### Configuration changed while the tab is away
 
-11. Scroll until the header is fully collapsed. Switch to the "Other" tab,
+1. Scroll until the header is fully collapsed. Switch to the "Other" tab,
     tap "Change Home title (v1 → v2)", then switch back to "Stack".
 
     - [ ] The header title reads "Home v2".
     - [ ] The header is still fully collapsed.
 
-12. Switch to the "Other" tab, set "type" to `large`, then switch back to
+2. Switch to the "Other" tab, set "type" to `large`, then switch back to
     "Stack".
 
     - [ ] The header is still fully collapsed.
 
-13. Scroll back to the top.
+3. Scroll back to the top.
 
-    - [ ] The header expands to a large header, taller than in step 4.
+    - [ ] The header expands to a large header, taller than in step 2 of
+          **Header survives a tab round trip**.
 
-14. Switch to the "Other" tab, toggle "hidden" on, then switch back to
+4. Switch to the "Other" tab, toggle "hidden" on, then switch back to
     "Stack".
 
     - [ ] The "Home" screen has no header and its content starts below the
           status bar.
 
-15. Switch to the "Other" tab, toggle "hidden" off, then switch back to
+5. Switch to the "Other" tab, toggle "hidden" off, then switch back to
     "Stack".
 
     - [ ] The header is back and expanded (see Note).
 
-16. Scroll down one full screen, then back to the top.
+6. Scroll down one full screen, then back to the top.
 
     - [ ] The header collapses on the way down and expands again at the top.
 
-17. Scroll down until "Push Details" is out of view. Switch to the "Other"
+7. Scroll down until "Push Details" is out of view. Switch to the "Other"
     tab, toggle "hidden" on, then switch back to "Stack".
 
     - [ ] The "Home" screen has no header; "Push Details" is still out of
           view.
 
-18. Switch to the "Other" tab, toggle "hidden" off, then switch back to
+8. Switch to the "Other" tab, toggle "hidden" off, then switch back to
     "Stack".
 
     - [ ] The header comes back fully collapsed (see Note); "Push Details" is
           still out of view and the content has not moved down.
 
-19. Scroll back to the top. Switch to the "Other" tab, set "type" to
+9. Scroll back to the top. Switch to the "Other" tab, set "type" to
     `medium`, then switch back to "Stack".
 
-    - [ ] The header is a medium header again, shorter than in step 13.
+    - [ ] The header is a medium header again, shorter than in step 3.
 
 ---
 
 ### Pushed screen
 
-20. Tap "Push Details", then switch to the "Other" tab and back to "Stack".
+1. Tap "Push Details", then switch to the "Other" tab and back to "Stack".
 
     - [ ] The "Details" header is still present with the title "Details" and
           a back button.
 
-21. Tap the back button.
+2. Tap the back button.
 
     - [ ] The "Details" screen is popped.
     - [ ] "Home" screen is shown again, with the title "Home v2".

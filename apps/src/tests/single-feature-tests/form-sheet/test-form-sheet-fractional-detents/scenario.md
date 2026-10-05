@@ -51,35 +51,35 @@ TBD: Planned, but will be implemented separately.
 
 ### Two detents
 
-6. Tap "[0.3, 0.6]", then "Open FormSheet".
+1. Tap "[0.3, 0.6]", then "Open FormSheet".
 
 - [ ] The sheet rests at the lowest detent. Android: the header's top edge aligns with the `0.3` guide; the `0.6` guide is above the sheet; no footer strip is visible.
 
-7. Drag the sheet up.
+2. Drag the sheet up.
 
 - [ ] The sheet settles at the larger detent. Android: the header's top edge aligns with the `0.6` guide, the `0.3` guide is visible through the sheet body, and the footer strip is visible right above the navigation bar.
 
-8. Drag the sheet down.
+3. Drag the sheet down.
 
 - [ ] The sheet settles back at the lowest detent, aligned with the `0.3` guide on Android.
 
-9. Dismiss the sheet. Tap "[0.5, 1.0]", then "Open FormSheet".
+4. Dismiss the sheet. Tap "[0.5, 1.0]", then "Open FormSheet".
 
-- [ ] The sheet rests at half of the screen, at exactly the same position as the single `[0.5]` detent from step 2 (Android: header's top edge on the `0.5` guide).
+- [ ] The sheet rests at half of the screen, at exactly the same position as the single `[0.5]` detent from step 2 of **Single detent** (Android: header's top edge on the `0.5` guide).
 
-10. Drag the sheet up, then down, then dismiss it.
+5. Drag the sheet up, then down, then dismiss it.
 
-- [ ] Up: the sheet reaches the top like in step 4. Down: it settles back at `0.5`.
+- [ ] Up: the sheet reaches the top like in step 4 of **Single detent**. Down: it settles back at `0.5`.
 
 ---
 
 ### Three detents, reaching the top
 
-11. Tap "[0.3, 0.6, 1.0]", then "Open FormSheet". Drag the sheet up twice, then down twice.
+1. Tap "[0.3, 0.6, 1.0]", then "Open FormSheet". Drag the sheet up twice, then down twice.
 
 - [ ] The sheet visits the detents in order: `0.3` → `0.6` → `1.0` → `0.6` → `0.3`. Android: the header's top edge aligns with the corresponding guide at every stop (`1.0`: header just under the status bar), the guides of the lower detents show through the sheet body, and the footer strip appears only at `1.0`.
 
-12. Dismiss the sheet. Tap "[0.2, 0.9, 1.0]" and repeat step 11.
+2. Dismiss the sheet. Tap "[0.2, 0.9, 1.0]" and repeat step 1.
 
 - [ ] The lowest detent shows only a small strip of the sheet, the middle detent is close to the top, and the largest reaches the top. All three are distinct stops of the drag.
 
@@ -87,7 +87,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Three detents, evenly spaced
 
-13. Dismiss the sheet. Tap "[0.25, 0.5, 0.75]" and repeat step 11.
+1. Dismiss the sheet. Tap "[0.25, 0.5, 0.75]" and repeat step 1 of **Three detents, reaching the top**.
 
 - [ ] The three stops are evenly spaced (a quarter of the screen apart). Android: the header's top edge aligns with the `0.25`, `0.5` and `0.75` guides; at `0.75` the sheet ends exactly at the bottom edge of the screen, with no dimmed strip below it, and the footer strip is visible right above the navigation bar.
 
@@ -95,26 +95,26 @@ TBD: Planned, but will be implemented separately.
 
 ### Middle detent close to the largest one
 
-14. Dismiss the sheet. Tap "[0.5, 0.65, 0.8]", then "Open FormSheet".
+1. Dismiss the sheet. Tap "[0.5, 0.65, 0.8]", then "Open FormSheet".
 
-- [ ] The sheet rests at `0.5`, at the same position as in steps 2 and 9.
+- [ ] The sheet rests at `0.5`, at the same position as in step 2 of **Single detent** and step 4 of **Two detents**.
 
-15. Drag the sheet up.
+2. Drag the sheet up.
 
 - [ ] The sheet settles at `0.65`. Android: the header's top edge aligns with the `0.65` guide, **below** the `0.8` guide, and the sheet ends at the bottom edge of the screen – there is no strip of dimmed background between the sheet and the bottom of the screen.
 
-16. Drag the sheet up again.
+3. Drag the sheet up again.
 
 - [ ] The sheet moves **up** to `0.8`. Android: the header's top edge aligns with the `0.8` guide, the sheet still ends exactly at the bottom edge, and the footer strip is visible right above the navigation bar.
 
-17. Drag the sheet down twice.
+4. Drag the sheet down twice.
 
 - [ ] The sheet stops at `0.65` and then at `0.5`.
 
-18. Dismiss the sheet. Tap "[0.3, 0.55, 0.8]", then "Open FormSheet". Drag the sheet up twice, then down twice.
+5. Dismiss the sheet. Tap "[0.3, 0.55, 0.8]", then "Open FormSheet". Drag the sheet up twice, then down twice.
 
 - [ ] The stops are `0.3` → `0.55` → `0.8` → `0.55` → `0.3`. Android: at `0.55` the header's top edge aligns with the `0.55` guide (previously the sheet rested noticeably higher, at about 0.69 of the screen).
 
-19. Dismiss the sheet.
+6. Dismiss the sheet.
 
 - [ ] The host screen is undimmed and "Open FormSheet" is pressable again.

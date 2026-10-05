@@ -38,16 +38,16 @@ TBD: Planned, but will be implemented separately.
 
 ### Re-render validation
 
-3. Drag the sheet up to the middle detent (0.6).
+1. Drag the sheet up to the middle detent (0.6).
 
 - [ ] The sheet settles at 0.6.
 
-4. Tap "Force Re-render (0)" inside the sheet.
+2. Tap "Force Re-render (0)" inside the sheet.
 
 - [ ] The button's counter increments.
 - [ ] The sheet stays at 0.6 – it does not snap back to the initial detent.
 
-5. Tap "Dismiss from JS" (or swipe the sheet down).
+3. Tap "Dismiss from JS" (or swipe the sheet down).
 
 - [ ] The sheet dismisses.
 
@@ -55,20 +55,20 @@ TBD: Planned, but will be implemented separately.
 
 ### Middle detent (index 1)
 
-6. Tap "Set Initial to 1 (0.6)", then "Open FormSheet".
+1. Tap "Set Initial to 1 (0.6)", then "Open FormSheet".
 
 - [ ] "Selected Initial Detent: 1" is shown before opening. The sheet presents directly at the middle detent (0.6) and the title reads "Opened at Initial Index: 1".
 
-7. Dismiss the sheet.
+2. Dismiss the sheet.
 
 ---
 
 ### 'last' detent (index N-1)
 
-8. Tap "Set Initial to 'last' (1.0)", then "Open FormSheet".
+1. Tap "Set Initial to 'last' (1.0)", then "Open FormSheet".
 
 - [ ] "Selected Initial Detent: last" is shown before opening. The sheet presents directly at the maximum height (1.0) and the title reads "Opened at Initial Index: last".
 
-9. Dismiss the sheet (tap "Dismiss from JS", swipe down).
+2. Dismiss the sheet (tap "Dismiss from JS", swipe down).
 
 - [ ] The host screen is undimmed and "Open FormSheet" is pressable again.

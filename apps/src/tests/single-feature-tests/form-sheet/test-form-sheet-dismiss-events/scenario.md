@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Native dismissal – swipe
 
-2. Tap "Open FormSheet", wait for the sheet to present, then swipe it down past the lower detent.
+1. Tap "Open FormSheet", wait for the sheet to present, then swipe it down past the lower detent.
 
 - [ ] The sheet dismisses.
 - [ ] The log shows exactly one new entry: `onNativeDismiss`.
@@ -42,7 +42,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Native dismissal – backdrop
 
-3. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area outside the sheet).
+1. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area outside the sheet).
 
 - [ ] The sheet dismisses.
 - [ ] The log shows exactly one new entry: `onNativeDismiss`.
@@ -51,11 +51,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Programmatic dismissal
 
-4. Tap "Clear Logs".
+1. Tap "Clear Logs".
 
 - [ ] The log is empty again.
 
-5. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet.
+2. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet.
 
 - [ ] The sheet dismisses.
 - [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
@@ -64,7 +64,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Android only - system back native dismissal
 
-6. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button).
+1. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button).
 
 - [ ] The sheet dismisses.
 - [ ] The log shows exactly one new entry: `onNativeDismiss`.

@@ -59,20 +59,20 @@ iOS Known Issues:
 
 ### `tabBarItemTitleFontColor` in different states
 
-2. Tap the **Color** tab.
+1. Tap the **Color** tab.
 
 - [ ] The **Color** tab is selected. The tab's `tabBarItemTitleFontColor` is red,
   so the title text "Color" renders in red.
 - [ ] For **Android and iOS 18** and lower, the title color for unselected tabs is blue.
 - [ ] On iOS: The host `tabBarTintColor` is green, so the selected icon tints green.
 
-3. Android only: While **Color** tab is selected, use the Tab key on keyboard to
+2. Android only: While **Color** tab is selected, use the Tab key on keyboard to
 switch focus to the long title tab.
 
 - [ ] Focused tab title is yellow while selected tab title
 remains red, and unselected tabs remain blue.
 
-4. Tap the long title tab, then tap **Color** again.
+3. Tap the long title tab, then tap **Color** again.
 
 - [ ] On re-selection the same split appearance (red title for selected tab,
 blue title for unselected tabs, on iOS: green icon)
@@ -82,7 +82,7 @@ is reproduced immediately with no visual glitch.
 
 ### Font and Position
 
-5. Tap the **Font** tab.
+1. Tap the **Font** tab.
 
 - [ ] When the tab is selected, the "Font" title label is
 rendered in a bold, italic font at approximately 18 pt.
@@ -93,7 +93,7 @@ italic font at approximately 8 pt.
 (by ~6 points) compared to the baseline position seen on the **Color** tab, while
 the icon position remains unchanged.
 
-6. Tap any other tab, then tap **Font** again.
+2. Tap any other tab, then tap **Font** again.
 
 - [ ] The custom typography and position reappear when the tab is
 re-selected.
@@ -103,7 +103,7 @@ re-selected.
 
 ### Stability check
 
-7. Cycle through all three tabs in order, then in reverse.
+1. Cycle through all three tabs in order, then in reverse.
 
 - [ ] Each tab's title styling applies correctly on selection, and
   no crash, layout freeze, or visual artifact occurs during rapid cycling.

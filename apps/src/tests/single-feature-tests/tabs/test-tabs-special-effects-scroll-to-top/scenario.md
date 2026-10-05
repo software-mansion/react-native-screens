@@ -44,46 +44,46 @@ Tab1 is active and displays a scrollable list of items.
 
 ### scrollToTop: false
 
-4. Tap Tab2.
+1. Tap Tab2.
 
 - [ ] Tab2 becomes active and displays a scrollable list of items.
 
-5. Scroll down several items in Tab2.
+2. Scroll down several items in Tab2.
 
 - [ ] The list scrolls down; items above the fold are no longer visible.
 
-6. Re-tap Tab2 (the already-active tab).
+3. Re-tap Tab2 (the already-active tab).
 
 - [ ] The list does **not** scroll back to the top; scroll position is
 preserved.
 
 ### no specialEffects (default)
 
-7. Tap Tab3.
+1. Tap Tab3.
 
 - [ ] Tab3 becomes active and displays a scrollable list of items.
 
-8. Scroll down several items in Tab3.
+2. Scroll down several items in Tab3.
 
 - [ ] The list scrolls down; items above the fold are no longer visible.
 
-9. Re-tap Tab3 (the already-active tab).
+3. Re-tap Tab3 (the already-active tab).
 
 - [ ] Observe and note the default behavior - back to the top of the
 scroll position (item 1 is visible).
 
 ### scrollToTop: true — switching away and back (not a repeated tap)
 
-10. Tap Tab1 and scroll down several items.
+1. Tap Tab1 and scroll down several items.
 
 - [ ] Tab1 becomes active. The list scrolls down;
 items above the fold are no longer visible.
 
-11. Tap Tab3 to switch away from Tab1.
+2. Tap Tab3 to switch away from Tab1.
 
 - [ ] Tab3 becomes active and displays its scrollable list.
 
-12. Tap Tab1 again.
+3. Tap Tab1 again.
 
 - [ ] Tab1 becomes active and the scroll position is **preserved** -
 the list does not scroll back to the top.

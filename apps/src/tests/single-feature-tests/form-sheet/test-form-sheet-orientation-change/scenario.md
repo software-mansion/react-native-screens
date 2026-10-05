@@ -49,31 +49,31 @@ TBD: Planned, but will be implemented separately.
 
 ### Opening in landscape
 
-7. Rotate the device to landscape and open the sheet.
+1. Rotate the device to landscape and open the sheet.
 
 - [ ] Android, iPad: The sheet opens at the 0.3 detent of the landscape height.
 - [ ] iPhone: The sheet covers the full screen.
 - [ ] The content is laid out to the sheet's surface.
 
-8. Rotate to portrait.
+2. Rotate to portrait.
 
 - [ ] The sheet rests at the 0.3 detent of the portrait height, with the content laid out to the sheet's surface.
 
-9. Dismiss the sheet.
+3. Dismiss the sheet.
 
 ### Rotating while dismissed
 
-10. In portrait, open the sheet and dismiss it.
-11. Rotate the device to landscape and open the sheet again.
+1. In portrait, open the sheet and dismiss it.
+2. Rotate the device to landscape and open the sheet again.
 
 - [ ] Android: The sheet is horizontally centered and rests at the 0.3 detent of the landscape height.
 - [ ] iPad: The sheet rests at the 0.3 detent of the landscape height.
 - [ ] iPhone: The sheet covers the full screen.
 
-12. Dismiss the sheet with a swipe down, rotate to portrait and open it again.
+3. Dismiss the sheet with a swipe down, rotate to portrait and open it again.
 
 - [ ] Android, iPhone: The sheet spans the full width and rests at the 0.3 detent of the portrait height.
 - [ ] iPad: The sheet rests at the 0.3 detent of the portrait height.
 - [ ] The bottom of the sheet looks the same as after the first presentation (no growing strip below the content).
 
-13. Dismiss the sheet.
+4. Dismiss the sheet.

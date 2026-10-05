@@ -29,7 +29,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Enter transition
 
-2. Tap the "Go to nested tabs" button.
+1. Tap the "Go to nested tabs" button.
 
 - [ ] The stack pushes the second screen ("Nested Tabs") with a
       standard push animation. The nested tabs content ("Home tab" with its
@@ -42,7 +42,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Tab switching after transition
 
-3. Once the transition finishes, switch between the "Home" and "Settings" tabs.
+1. Once the transition finishes, switch between the "Home" and "Settings" tabs.
 
 - [ ] Both tabs render their content centered ("Home tab" /
       "Settings tab") together with the corresponding `tab routeKey`. Switching

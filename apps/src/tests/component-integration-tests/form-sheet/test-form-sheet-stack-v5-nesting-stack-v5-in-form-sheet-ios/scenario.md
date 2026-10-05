@@ -33,11 +33,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Initialization & Layout Verification
 
-2. Tap the "Open FormSheet" button.
+1. Tap the "Open FormSheet" button.
 
 - [ ] The FormSheet opens at the initial lower detent (0.6). The "Home Screen" text is visible and centered within the sheet. The light blue background completely covers the FormSheet content area.
 
-3. Tap the "Push A" button to push Screen A.
+2. Tap the "Push A" button to push Screen A.
 
 - [ ] The stack navigates to "Screen A". The "Screen A" text is centered. The light yellow background completely covers the FormSheet content area.
 
@@ -45,7 +45,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Detent Adaptation
 
-4. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
+1. Grab the top edge of the FormSheet and swipe up to expand it to the maximum detent (1.0).
 
 - [ ] The FormSheet expands to take up the maximum available height (respecting the top inset). The layout adapts dynamically - the light yellow background stretches to cover the new full height, and the "Screen A" text dynamically re-centers itself within the newly expanded view area.
 
@@ -53,7 +53,7 @@ TBD: Planned, but will be implemented separately.
 
 ### State Persistence
 
-5. Swipe down on the FormSheet to dismiss it, then tap the "Open FormSheet" button again.
+1. Swipe down on the FormSheet to dismiss it, then tap the "Open FormSheet" button again.
 
 - [ ] The FormSheet re-opens at the initial lower detent (0.6). The stack's navigation state has been kept - the sheet immediately displays "Screen A" (with the yellow background and centered text) rather than resetting back to the Home Screen.
 
@@ -61,6 +61,6 @@ TBD: Planned, but will be implemented separately.
 
 ### Pop Action
 
-6. Tap the "Pop" button (or native header back button) to pop Screen A.
+1. Tap the "Pop" button (or native header back button) to pop Screen A.
 
 - [ ] The stack correctly navigates back to the "Home Screen". The "Home Screen" text is visible and centered, and the light blue background completely covers the FormSheet content area.

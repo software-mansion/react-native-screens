@@ -34,19 +34,19 @@ TBD: Planned, but will be implemented separately.
 
 ### Expansion enabled (default)
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lower detent (0.5). The "Drag Here to Expand" header and the scrollable list ("List Item 1", "List Item 2", …) are visible.
 
-3. Swipe up on the list.
+2. Swipe up on the list.
 
 - [ ] The sheet expands to the largest detent (1.0) first; the list does not scroll until the sheet has finished expanding.
 
-4. Swipe up on the list again.
+3. Swipe up on the list again.
 
 - [ ] The list scrolls normally and reveals further items; "Dismiss from JS" is reachable at the end of the list.
 
-5. Tap "Dismiss from JS" (or swipe down on the header).
+4. Tap "Dismiss from JS" (or swipe down on the header).
 
 - [ ] The sheet dismisses.
 
@@ -54,18 +54,18 @@ TBD: Planned, but will be implemented separately.
 
 ### Expansion disabled
 
-6. Flip the switch so the host screen reads "Expands on scroll: OFF", then tap "Open FormSheet".
+1. Flip the switch so the host screen reads "Expands on scroll: OFF", then tap "Open FormSheet".
 
 - [ ] The sheet presents at the lower detent (0.5).
 
-7. Make sure the list is scrolled to the very top, then swipe up on the list.
+2. Make sure the list is scrolled to the very top, then swipe up on the list.
 
 - [ ] The list scrolls normally and reveals further items. The sheet **does not** expand – it stays at 0.5.
 
-8. Drag the "Drag Here to Expand" header up.
+3. Drag the "Drag Here to Expand" header up.
 
 - [ ] The sheet expands to the largest detent (1.0) – manual dragging outside the list still works.
 
-9. Tap "Dismiss from JS" (or swipe down on the header).
+4. Tap "Dismiss from JS" (or swipe down on the header).
 
 - [ ] The sheet dismisses and "Open FormSheet" is pressable again.

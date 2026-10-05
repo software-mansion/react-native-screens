@@ -46,16 +46,16 @@ This test needs to be updated after such interaction is supported.
 
 ### Nested stack
 
-4. Change tab to `Stack`.
+1. Change tab to `Stack`.
 
     - [ ] The `Stack` screen should be displayed.
     - [ ] Scroll-view should be visible and scrolled to top.
 
-5. Scroll down a bit.
+2. Scroll down a bit.
 
     Doesn't really matter how much you scroll - the distance should be "noticeable".
 
-6. Press `Stack` tab item (repeated tab selection) to trigger the special effect.
+3. Press `Stack` tab item (repeated tab selection) to trigger the special effect.
 
     - [ ] *scroll-to-top* should be triggered and you should observe the scroll-view scrolling
     to its top.

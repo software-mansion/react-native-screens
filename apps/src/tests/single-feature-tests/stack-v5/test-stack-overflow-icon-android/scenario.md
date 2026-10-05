@@ -58,30 +58,30 @@ icon visible in the normal state.
 
 ### Icon: `default`
 
-3. Set tintColorNormal = `purple`.
+1. Set tintColorNormal = `purple`.
 
 - [ ] The three-dots icon changes to purple immediately.
 
-4. Set tintColorNormal = `default`.
+2. Set tintColorNormal = `default`.
 
 - [ ] The three-dots icon returns to its default tint.
 
-5. Set tintColorPressed = `red`.
+3. Set tintColorPressed = `red`.
 
 - [ ] The icon appears transparent (native limitation) but turns red when held
       down.
 
-6. Set tintColorNormal = `purple`.
+4. Set tintColorNormal = `purple`.
 
 - [ ] The icon changes to purple immediately. When pressed, it turns red.
 
-7. Set tintColorFocused = `green`.
+5. Set tintColorFocused = `green`.
 
 - [ ] Enable keyboard navigation using arrow keys. Use Ctrl+Tab to move keyboard
       focus to the toolbar and focus the overflow button — it turns green while
       focused.
 
-8. Set tintColorPressed = `default`, set tintColorFocused = `default`.
+6. Set tintColorPressed = `default`, set tintColorFocused = `default`.
 
 - [ ] Pressed and focused states return to the normal purple tint.
 
@@ -89,19 +89,19 @@ icon visible in the normal state.
 
 ### Icon: `imageSource`
 
-9. Set tintColorNormal = `default` and icon = `imageSource`.
+1. Set tintColorNormal = `default` and icon = `imageSource`.
 
 - [ ] The overflow button changes to the custom image (a black search glyph),
       no tint applied.
 - [ ] The custom image is scaled to approximately 24 dp height, visually similar
       in size to the default overflow icon.
 
-10. Set tintColorNormal = `red`.
+2. Set tintColorNormal = `red`.
 
 - [ ] The entire image is covered in red (non-transparent image is fully
       tinted).
 
-11. Set tintColorNormal = `default`.
+3. Set tintColorNormal = `default`.
 
 - [ ] The custom image returns to its original appearance.
 
@@ -109,17 +109,17 @@ icon visible in the normal state.
 
 ### Icon: `drawableResource`
 
-12. Set icon = `drawableResource`.
+1. Set icon = `drawableResource`.
 
 - [ ] The overflow button changes to the `sym_call_missed` drawable (its native
       colors).
 - [ ] The drawable icon is scaled to approximately 24 dp height.
 
-13. Set tintColorNormal = `purple`.
+2. Set tintColorNormal = `purple`.
 
 - [ ] The drawable icon changes to purple.
 
-14. Set tintColorNormal = `default`.
+3. Set tintColorNormal = `default`.
 
 - [ ] The drawable icon returns to its native appearance.
 
@@ -127,7 +127,7 @@ icon visible in the normal state.
 
 ### Restore to default
 
-15. Set icon = `default`.
+1. Set icon = `default`.
 
 - [ ] The overflow button returns to the Material 3 default three-dots icon
       (NOT a blank/empty button).
@@ -136,15 +136,15 @@ icon visible in the normal state.
 
 ### Custom icon survives menu changes
 
-16. Set icon = `imageSource`, tintColorNormal = `purple`.
+1. Set icon = `imageSource`, tintColorNormal = `purple`.
 
 - [ ] The overflow button shows the custom image with purple tint.
 
-17. Toggle showMenuItems = `false`.
+2. Toggle showMenuItems = `false`.
 
 - [ ] The overflow button disappears (no menu items to overflow).
 
-18. Toggle showMenuItems = `true`.
+3. Toggle showMenuItems = `true`.
 
 - [ ] The overflow button reappears still showing the custom `imageSource` icon
       with tint (the custom icon and its tint are not lost when the overflow

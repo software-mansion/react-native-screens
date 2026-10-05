@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Presentation
 
-2. Tap "Open FormSheet" and wait for the presentation animation to finish.
+1. Tap "Open FormSheet" and wait for the presentation animation to finish.
 
 - [ ] The sheet presents at the 0.4 detent.
 - [ ] The log shows exactly two new entries, in this order: `onWillAppear`, `onDidAppear`.
@@ -42,7 +42,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Native dismissal
 
-3. Swipe the sheet down to dismiss it and wait for the animation to finish.
+1. Swipe the sheet down to dismiss it and wait for the animation to finish.
 
 - [ ] The log shows exactly two new entries, in this order: `onWillDisappear`, `onDidDisappear`.
 
@@ -50,11 +50,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Programmatic dismissal
 
-4. Tap "Clear Logs".
+1. Tap "Clear Logs".
 
 - [ ] The log is empty again.
 
-5. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet and wait for the animation to finish.
+2. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet and wait for the animation to finish.
 
 - [ ] The sheet dismisses.
 - [ ] The log contains exactly four entries, in this order: `onWillAppear`, `onDidAppear`, `onWillDisappear`, `onDidDisappear`.
@@ -63,6 +63,6 @@ TBD: Planned, but will be implemented separately.
 
 ### Android only - system back native dismissal
 
-6. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button) and wait for the animation to finish.
+1. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button) and wait for the animation to finish.
 
 - [ ] The sheet dismisses and the log shows `onWillDisappear`, `onDidDisappear` as the last two entries.

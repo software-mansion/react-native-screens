@@ -41,11 +41,11 @@ Assumption:
 
 ### SplitHost `inherit` — follows RN/system
 
-2. Set system/RN to **light**, SplitHost colorScheme = `inherit`
+1. Set system/RN to **light**, SplitHost colorScheme = `inherit`
 
 - [ ] The split view and its background appear **light**
 
-3. Set system/RN to **dark**, keep SplitHost colorScheme = `inherit`
+2. Set system/RN to **dark**, keep SplitHost colorScheme = `inherit`
 
 - [ ] The split view appears **dark** — SplitHost defers to RN/system
 
@@ -53,15 +53,15 @@ Assumption:
 
 ### SplitHost `light` — overrides RN/system
 
-4. Set system/RN to **dark**, set SplitHost colorScheme = `light`
+1. Set system/RN to **dark**, set SplitHost colorScheme = `light`
 
 - [ ] The split view appears **light** — SplitHost overrides dark from RN/system
 
-5. Set system/RN to **light**, keep SplitHost colorScheme = `light`
+2. Set system/RN to **light**, keep SplitHost colorScheme = `light`
 
 - [ ] The split view stays **light**
 
-6. Cycle through `inherit` → `dark` → `light` → `dark` → `inherit`
+3. Cycle through `inherit` → `dark` → `light` → `dark` → `inherit`
 
 - [ ] Split view color scheme updates immediately with each change, no crash or layout freeze
 
@@ -69,15 +69,15 @@ Assumption:
 
 ### SplitHost `dark` — overrides RN/system
 
-7. Set system/RN to **light**, set SplitHost colorScheme = `dark`
+1. Set system/RN to **light**, set SplitHost colorScheme = `dark`
 
 - [ ] The split view appears **dark** — SplitHost overrides light from RN/system
 
-8. Set system/RN to **dark**, keep SplitHost colorScheme = `dark`
+2. Set system/RN to **dark**, keep SplitHost colorScheme = `dark`
 
 - [ ] The split view stays **dark**
 
-9. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
+3. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
 - [ ] Split view color scheme updates immediately with each change, no crash or layout freeze
 
@@ -85,6 +85,6 @@ Assumption:
 
 ### Keyboard — native subview check
 
-10. Switch focus to the `TextInput` in the right column, open the keyboard (or `Cmd+K` on iOS simulator)
+1. Switch focus to the `TextInput` in the right column, open the keyboard (or `Cmd+K` on iOS simulator)
 
 - [ ] Keyboard appearance matches the currently active, resolved color scheme of the `SplitHost` (e.g., if SplitHost forces `dark` while the system is `light`, the keyboard must be dark). Verify for both light and dark values.

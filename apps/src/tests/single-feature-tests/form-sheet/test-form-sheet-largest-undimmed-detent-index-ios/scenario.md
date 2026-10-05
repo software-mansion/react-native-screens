@@ -34,11 +34,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Default `'none'`
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lowest detent (0.5) and the host screen is dimmed immediately. The title inside reads "Undimmed Index: none" and all five buttons are fully visible.
 
-3. Tap "Increment Background Counter".
+2. Tap "Increment Background Counter".
 
 - [ ] The counter does **not** change – the tap is intercepted by the dimming view and dismisses the sheet.
 
@@ -46,15 +46,15 @@ TBD: Planned, but will be implemented separately.
 
 ### Index `0`
 
-4. Tap "Open FormSheet", then "Set 0 (0.5 height)" inside the sheet.
+1. Tap "Open FormSheet", then "Set 0 (0.5 height)" inside the sheet.
 
 - [ ] The host screen becomes undimmed immediately; the title reads "Undimmed Index: 0".
 
-5. Tap "Increment Background Counter".
+2. Tap "Increment Background Counter".
 
 - [ ] The counter increments while the sheet stays open at 0.5.
 
-6. Drag the sheet up to the middle detent (0.65).
+3. Drag the sheet up to the middle detent (0.65).
 
 - [ ] As the sheet settles at 0.65 the host screen is dimmed again and "Increment Background Counter" is no longer reachable.
 
@@ -62,15 +62,15 @@ TBD: Planned, but will be implemented separately.
 
 ### `'last'`
 
-7. Tap "Set 'last'" inside the sheet.
+1. Tap "Set 'last'" inside the sheet.
 
 - [ ] The host screen becomes undimmed at 0.65; the title reads "Undimmed Index: last".
 
-8. Drag the sheet up to the largest detent (0.8), then tap "Increment Background Counter".
+2. Drag the sheet up to the largest detent (0.8), then tap "Increment Background Counter".
 
 - [ ] The host screen stays undimmed at 0.8 and the counter increments.
 
-9. Drag the sheet down to 0.5 and tap "Increment Background Counter" again.
+3. Drag the sheet down to 0.5 and tap "Increment Background Counter" again.
 
 - [ ] The counter increments – the host screen is undimmed at every detent.
 
@@ -78,7 +78,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Back to `'none'`
 
-10. Tap "Set 'none'" inside the sheet.
+1. Tap "Set 'none'" inside the sheet.
 
 - [ ] The host screen is dimmed immediately and "Increment Background Counter" is blocked again.
 
@@ -86,6 +86,6 @@ TBD: Planned, but will be implemented separately.
 
 ### Dismissal
 
-11. Tap "Dismiss from JS".
+1. Tap "Dismiss from JS".
 
 - [ ] The sheet dismisses and "Increment Background Counter" works again.

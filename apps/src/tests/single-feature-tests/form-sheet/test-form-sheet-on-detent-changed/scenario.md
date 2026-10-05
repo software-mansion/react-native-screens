@@ -34,27 +34,27 @@ TBD: Planned, but will be implemented separately.
 
 ### Track detent changes
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lowest detent (0.4). The "Active Index" card inside the sheet shows `0`.
 
-3. Drag the sheet up until it settles at the middle detent (0.7).
+2. Drag the sheet up until it settles at the middle detent (0.7).
 
 - [ ] The sheet settles at 0.7 and the card updates to `1`.
 
-4. Drag the sheet up to the maximum detent (1.0).
+3. Drag the sheet up to the maximum detent (1.0).
 
 - [ ] The sheet fills the available height and the card updates to `2`.
 
-5. Drag the sheet down until it settles at the lowest detent (0.4).
+4. Drag the sheet down until it settles at the lowest detent (0.4).
 
 - [ ] The sheet settles at 0.4 and the card updates back to `0`.
 
-6. Drag the sheet up until it settles at the middle detent (0.7) again.
+5. Drag the sheet up until it settles at the middle detent (0.7) again.
 
 - [ ] The sheet settles at 0.7 and the card updates to `1`.
 
-7. Drag the sheet a short way up towards the maximum detent (1.0) and release it before it passes the halfway point.
+6. Drag the sheet a short way up towards the maximum detent (1.0) and release it before it passes the halfway point.
 
 - [ ] The sheet settles back at 0.7 and the card still shows `1` – an aborted drag that settles at the current detent does not produce a new index.
 
@@ -62,6 +62,6 @@ TBD: Planned, but will be implemented separately.
 
 ### Dismissal
 
-8. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent).
+1. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent).
 
 - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.

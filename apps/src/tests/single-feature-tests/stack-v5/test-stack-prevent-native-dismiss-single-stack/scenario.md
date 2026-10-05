@@ -82,14 +82,14 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### Push navigation and initial state
 
-2. Tap **Push A**.
+1. Tap **Push A**.
 
 - [ ] Screen **A** is shown with a header titled "A" and
       a back-button chevron. Shows `Name: A`, an `Key`, and
       **Prevent native dismiss: Disabled**. **Push A** / **Push B** / **Pop**
       buttons are all present.
 
-3. On **A**, tap **Push B**.
+2. On **A**, tap **Push B**.
 
 - [ ] Screen **B** is shown with a header titled "B" and a
       back-button chevron. Shows `Name: B`, an `Key` with number higher than
@@ -99,19 +99,19 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### Native dismiss blocked while Enabled (screen B)
 
-4. On **B** (prevent native dismiss Enabled), tap the native header back-button chevron.
+1. On **B** (prevent native dismiss Enabled), tap the native header back-button chevron.
 
 - [ ] The tap is intercepted: a green toast reading "Native dismiss
       prevented" appears, and the app remains on **B** (no pop, `Key`
       unchanged).
 
-5. On **B**, perform a system gesture-back: swipe from the left screen edge
+2. On **B**, perform a system gesture-back: swipe from the left screen edge
    to the right.
 
 - [ ] The gesture is intercepted: the green toast appears, and the app
       remains on **B**. No pop occurs.
 
-6. Repeat tapping the header back-button chevron three or four times in
+3. Repeat tapping the header back-button chevron three or four times in
    quick succession.
 
 - [ ] Each tap is intercepted individually; a new toast appears each time;
@@ -119,7 +119,7 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### Native dismiss allowed while Disabled (screen A)
 
-7. Tap the on-screen **Pop** button to return to **A**.
+1. Tap the on-screen **Pop** button to return to **A**.
    Confirm **A** shows **Prevent native dismiss: Disabled**.
    Tap the native header back-button chevron.
 
@@ -127,7 +127,7 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
       **A**. **No toast** is shown (dismissal is not prevented while
       Disabled).
 
-8. Push **A** again so it is on top with a screen below it. On **A**,
+2. Push **A** again so it is on top with a screen below it. On **A**,
    perform a system gesture-back: swipe from the left screen edge to the
    right.
 
@@ -135,17 +135,17 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### Toggling the flag at runtime (screen B)
 
-9. From **Home**, tap **Push B** so **B** (Prevent native dismiss Enabled)
+1. From **Home**, tap **Push B** so **B** (Prevent native dismiss Enabled)
    is directly above Home. Tap **Toggle Prevent Native Dismiss**.
 
 - [ ] The label updates to **Prevent native dismiss: Disabled**.
 
-10. With **B** now Disabled, tap the native header back-button chevron.
+2. With **B** now Disabled, tap the native header back-button chevron.
 
 - [ ] The chevron pops **B** normally and returns to **Home**. No toast is
       shown.
 
-11. From **Home**, tap **Push B** again so **B** (Prevent native dismiss
+3. From **Home**, tap **Push B** again so **B** (Prevent native dismiss
     Enabled) is on top. Tap the native header back-button chevron.
 
 - [ ] The chevron is intercepted: the green toast appears and the app remains
@@ -153,7 +153,7 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### JS-driven Pop always works regardless of the flag
 
-12. On **B** (prevent native dismiss Enabled), tap the on-screen **Pop**
+1. On **B** (prevent native dismiss Enabled), tap the on-screen **Pop**
     button.
 
 - [ ] App pops back to **Home** normally. **No toast** is shown - the on-screen
@@ -161,7 +161,7 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### Edge case: toggling immediately before a native dismiss
 
-13. From **Home**, tap **Push B**. On **B**, tap **Toggle Prevent Native
+1. From **Home**, tap **Push B**. On **B**, tap **Toggle Prevent Native
     Dismiss** to Disabled, then immediately toggle it back to Enabled, then
     immediately press the native header back-button chevron.
 
@@ -171,11 +171,11 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
 ### Android: prevent native dismiss mechanism keeps working after activity backgrounding
 
-14. From **Home**, tap **Push B**. On **B** tap back button. 
+1. From **Home**, tap **Push B**. On **B** tap back button. 
 
 - [ ] A green toast appears and the app remains on **B**. 
 
-15. Move the app to background by moving focus to the launcher screen.
+2. Move the app to background by moving focus to the launcher screen.
     Open the aplication again (focus it). Screen **B** is visible.
     Tap on the back button chevron.
 

@@ -33,23 +33,23 @@ TBD: Planned, but will be implemented separately.
 
 ### Build the full stack
 
-2. Tap "Open First FormSheet".
+1. Tap "Open First FormSheet".
 
 - [ ] The blue First sheet presents at 0.4 and the host screen is dimmed. Its title reads "First FormSheet" and the "Open Second FormSheet" / "Dismiss First FormSheet" buttons are visible.
 
-3. Drag the First sheet up to 1.0.
+2. Drag the First sheet up to 1.0.
 
 - [ ] The First sheet expands to the maximum available height.
 
-4. Tap "Open Second FormSheet".
+3. Tap "Open Second FormSheet".
 
 - [ ] The green Second sheet presents over the First one at 0.4. The First sheet stays visible behind it, still at 1.0, and is dimmed.
 
-5. Drag the Second sheet up to 1.0.
+4. Drag the Second sheet up to 1.0.
 
 - [ ] The Second sheet expands to the maximum available height.
 
-6. Tap "Open Third FormSheet".
+5. Tap "Open Third FormSheet".
 
 - [ ] The yellow Third sheet presents over the Second one at 0.4. The Second and First sheets stay behind it at their previous detents.
 
@@ -57,16 +57,16 @@ TBD: Planned, but will be implemented separately.
 
 ### Top dismissal
 
-7. Tap "Dismiss Third FormSheet" inside the Third sheet.
+1. Tap "Dismiss Third FormSheet" inside the Third sheet.
 
 - [ ] Only the Third sheet dismisses. The Second sheet is on top again, still at 1.0, no longer dimmed, and its buttons are pressable.
 - [ ] The First sheet is still present behind the Second one.
 
-8. Swipe the Second sheet (now the top one) down past its lower detent.
+2. Swipe the Second sheet (now the top one) down past its lower detent.
 
 - [ ] The Second sheet dismisses natively. The First sheet is on top again, still at 1.0, and its buttons are pressable.
 
-9. Tap "Dismiss First FormSheet" inside the First sheet.
+3. Tap "Dismiss First FormSheet" inside the First sheet.
 
 - [ ] The First sheet dismisses and the host screen is undimmed. "Open First FormSheet" is pressable again.
 
@@ -74,15 +74,15 @@ TBD: Planned, but will be implemented separately.
 
 ### Middle dismissal
 
-10. Rebuild the stack: tap "Open First FormSheet", then "Open Second FormSheet", then "Open Third FormSheet".
+1. Rebuild the stack: tap "Open First FormSheet", then "Open Second FormSheet", then "Open Third FormSheet".
 
 - [ ] All three sheets are stacked, the yellow Third one on top.
 
-11. Tap "Dismiss Second FormSheet" inside the Third sheet.
+2. Tap "Dismiss Second FormSheet" inside the Third sheet.
 
 - [ ] The Second **and** the Third sheet dismiss together. The blue First sheet is on top again and its buttons are pressable.
 
-12. Tap "Open Second FormSheet" inside the First sheet, then "Open Third FormSheet" inside the Second sheet.
+3. Tap "Open Second FormSheet" inside the First sheet, then "Open Third FormSheet" inside the Second sheet.
 
 - [ ] Both sheets present again, in order, on top of the First one.
 
@@ -90,7 +90,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Bottom dismissal
 
-13. With all three sheets stacked, tap "Dismiss First FormSheet" inside the Third sheet.
+1. With all three sheets stacked, tap "Dismiss First FormSheet" inside the Third sheet.
 
 - [ ] All three sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
 
@@ -98,11 +98,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Bottom dismissal from a two-sheet stack
 
-14. Tap "Open First FormSheet", then "Open Second FormSheet".
+1. Tap "Open First FormSheet", then "Open Second FormSheet".
 
 - [ ] The First and the Second sheet are stacked, the green Second one on top.
 
-15. Tap "Dismiss First FormSheet" inside the Second sheet.
+2. Tap "Dismiss First FormSheet" inside the Second sheet.
 
 - [ ] Both sheets dismiss together and the host screen is undimmed. "Open First FormSheet" is pressable again.
 
@@ -110,6 +110,6 @@ TBD: Planned, but will be implemented separately.
 
 ### Android only - System back
 
-16. Tap "Open First FormSheet", then "Open Second FormSheet", then use the system back gesture (or the back button).
+1. Tap "Open First FormSheet", then "Open Second FormSheet", then use the system back gesture (or the back button).
 
 - [ ] Only the Second (top) sheet dismisses; the First sheet stays presented and its buttons are pressable.

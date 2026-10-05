@@ -33,7 +33,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Presentation
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lower detent (0.6) with the "FormSheet content" title and the "Quickly dismiss & present" button.
 
@@ -41,11 +41,11 @@ TBD: Planned, but will be implemented separately.
 
 ### Rapid toggling
 
-3. Tap "Quickly dismiss & present".
+1. Tap "Quickly dismiss & present".
 
 - [ ] The sheet starts its dismissal animation and, as soon as it finishes, presents again automatically. The final state is a single presented sheet at 0.6; no flicker, no leftover dimming, no second sheet.
 
-4. Tap "Quickly dismiss & present" three more times in a row, waiting for the sheet to come back each time.
+2. Tap "Quickly dismiss & present" three more times in a row, waiting for the sheet to come back each time.
 
 - [ ] Every cycle ends with exactly one presented sheet.
 
@@ -53,10 +53,10 @@ TBD: Planned, but will be implemented separately.
 
 ### Final dismissal
 
-5. Swipe the sheet down past the lower detent.
+1. Swipe the sheet down past the lower detent.
 
 - [ ] The sheet dismisses and the host screen is undimmed.
 
-6. Tap "Open FormSheet".
+2. Tap "Open FormSheet".
 
 - [ ] The sheet presents again normally – the native state stayed in sync with JS.

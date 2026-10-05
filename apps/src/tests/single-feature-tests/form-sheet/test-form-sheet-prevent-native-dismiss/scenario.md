@@ -33,27 +33,27 @@ TBD: Planned, but will be implemented separately.
 
 ### Native dismissal prevented
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
 - [ ] The sheet presents at the lower detent (0.5). The text inside asks to try swiping down or tapping the backdrop.
 
-3. Drag the sheet up to 1.0, then back down to 0.5.
+2. Drag the sheet up to 1.0, then back down to 0.5.
 
 - [ ] Both drags work – detent changes are not blocked.
 
-4. Swipe the sheet down past the lower detent.
+3. Swipe the sheet down past the lower detent.
 
 - [ ] The sheet does **not** dismiss – it bounces back to 0.5 and a "Dismissal Prevented" alert appears.
 
-5. Tap "OK" on the alert.
+4. Tap "OK" on the alert.
 
 - [ ] The alert closes; the sheet is still presented.
 
-6. Tap the backdrop (the dimmed area outside the sheet).
+5. Tap the backdrop (the dimmed area outside the sheet).
 
 - [ ] The sheet does **not** dismiss and the "Dismissal Prevented" alert appears again.
 
-7. Tap "OK", then tap "Dismiss from JS".
+6. Tap "OK", then tap "Dismiss from JS".
 
 - [ ] The sheet dismisses – programmatic dismissal is not affected.
 
@@ -61,15 +61,15 @@ TBD: Planned, but will be implemented separately.
 
 ### Native dismissal allowed
 
-8. Flip the switch so the host screen reads "Prevent Native Dismiss: OFF", then tap "Open FormSheet".
+1. Flip the switch so the host screen reads "Prevent Native Dismiss: OFF", then tap "Open FormSheet".
 
 - [ ] The sheet presents at 0.5. The text inside says the sheet should close without an alert.
 
-9. Swipe the sheet down past the lower detent.
+2. Swipe the sheet down past the lower detent.
 
 - [ ] The sheet dismisses; no alert is shown.
 
-10. Tap "Open FormSheet", then tap the backdrop.
+3. Tap "Open FormSheet", then tap the backdrop.
 
 - [ ] The sheet dismisses; no alert is shown. "Open FormSheet" is pressable again.
 
@@ -77,10 +77,10 @@ TBD: Planned, but will be implemented separately.
 
 ### Android only - System back
 
-11. Flip the switch back so the host screen reads "Prevent Native Dismiss: ON", tap "Open FormSheet", then use the system back gesture (or the back button).
+1. Flip the switch back so the host screen reads "Prevent Native Dismiss: ON", tap "Open FormSheet", then use the system back gesture (or the back button).
 
 - [ ] The sheet does **not** dismiss and the "Dismissal Prevented" alert appears.
 
-12. Tap "OK", then tap "Dismiss from JS". Flip the switch so the host screen reads "Prevent Native Dismiss: OFF", tap "Open FormSheet", then use the system back gesture (or the back button) again.
+2. Tap "OK", then tap "Dismiss from JS". Flip the switch so the host screen reads "Prevent Native Dismiss: OFF", tap "Open FormSheet", then use the system back gesture (or the back button) again.
 
 - [ ] The sheet dismisses; no alert is shown. "Open FormSheet" is pressable again.

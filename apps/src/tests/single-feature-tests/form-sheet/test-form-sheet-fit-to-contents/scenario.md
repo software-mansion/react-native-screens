@@ -34,7 +34,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Presentation
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
 - [ ] The sheet presents with a height matching its content ("FormSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
 - [ ] iPhone: the empty bottom inset area is added below the content.
@@ -45,13 +45,13 @@ TBD: Planned, but will be implemented separately.
 
 ### Dynamic height
 
-3. Tap "Expand Content" inside the sheet.
+1. Tap "Expand Content" inside the sheet.
 
 - [ ] The extra text box appears and the sheet grows to fully accommodate it – the whole extra text box is visible. The button now reads "Collapse Content".
 - [ ] iOS: the height change is animated smoothly, with no visual glitches.
 - [ ] Android: the sheet snaps to the new height immediately (no animation).
 
-4. Tap "Collapse Content".
+2. Tap "Collapse Content".
 
 - [ ] The extra text box disappears and the sheet shrinks back to its original height.
 - [ ] iOS: the shrink is animated.
@@ -61,6 +61,6 @@ TBD: Planned, but will be implemented separately.
 
 ### Dismissal
 
-5. Tap "Dismiss from JS" (or swipe the sheet down).
+1. Tap "Dismiss from JS" (or swipe the sheet down).
 
 - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
