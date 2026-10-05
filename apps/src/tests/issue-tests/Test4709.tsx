@@ -9,11 +9,9 @@ import type {
   HeaderBarButtonItemVisibilityPriority,
   ScreenStackHeaderConfigProps,
 } from 'react-native-screens';
-import { createScenario } from '@apps/tests/shared/helpers';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Button } from '@apps/shared';
 import { styles } from '@apps/shared/styles';
-import { scenarioDescription } from './scenario-description';
 
 const PRIORITIES: HeaderBarButtonItemVisibilityPriority[] = [
   'standard',
@@ -34,7 +32,7 @@ function ResizingItem() {
 }
 
 function buildHeaderConfig(
-  visibilityPriority: HeaderBarButtonItemVisibilityPriority,
+  squareVisibilityPriority: HeaderBarButtonItemVisibilityPriority,
   videoVisibilityPriority: HeaderBarButtonItemVisibilityPriority,
   searchVisibilityPriority: HeaderBarButtonItemVisibilityPriority,
 ): ScreenStackHeaderConfigProps {
@@ -59,24 +57,24 @@ function buildHeaderConfig(
       },
     ],
     children: (
-      <ScreenStackHeaderRightView visibilityPriority={visibilityPriority}>
+      <ScreenStackHeaderRightView visibilityPriority={squareVisibilityPriority}>
         <ResizingItem />
       </ScreenStackHeaderRightView>
     ),
   };
 }
 
-export function TestStackV4HeaderItemVisibilityPriorityIOS() {
-  const [priorityIndex, setPriorityIndex] = useState(0);
+export default function Test4709() {
+  const [squarePriorityIndex, setSquarePriorityIndex] = useState(0);
   const [videoPriorityIndex, setVideoPriorityIndex] = useState(0);
   const [searchPriorityIndex, setSearchPriorityIndex] = useState(0);
-  const priority = PRIORITIES[priorityIndex]!;
+  const squarePriority = PRIORITIES[squarePriorityIndex]!;
   const videoPriority = PRIORITIES[videoPriorityIndex]!;
   const searchPriority = PRIORITIES[searchPriorityIndex]!;
 
   const headerConfig = useMemo(
-    () => buildHeaderConfig(priority, videoPriority, searchPriority),
-    [priority, videoPriority, searchPriority],
+    () => buildHeaderConfig(squarePriority, videoPriority, searchPriority),
+    [squarePriority, videoPriority, searchPriority],
   );
 
   return (
@@ -88,9 +86,9 @@ export function TestStackV4HeaderItemVisibilityPriorityIOS() {
         <View>
           <Button
             testID="toggle-visibility-priority-button"
-            title={`square visibilityPriority: ${priority}`}
+            title={`square visibilityPriority: ${squarePriority}`}
             onPress={() =>
-              setPriorityIndex(index => (index + 1) % PRIORITIES.length)
+              setSquarePriorityIndex(index => (index + 1) % PRIORITIES.length)
             }
           />
           <Button
@@ -112,8 +110,3 @@ export function TestStackV4HeaderItemVisibilityPriorityIOS() {
     </ScreenStack>
   );
 }
-
-export default createScenario(
-  TestStackV4HeaderItemVisibilityPriorityIOS,
-  scenarioDescription,
-);
