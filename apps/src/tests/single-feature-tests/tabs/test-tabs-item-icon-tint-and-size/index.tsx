@@ -11,31 +11,44 @@ import {
 } from '@apps/shared/containers/tabs';
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import type { TabsScreenIconRenderingMode } from 'react-native-screens';
+import type {
+  TabsScreenIconAndroidTinting,
+  TabsScreenIconIOSImageRenderingMode,
+} from 'react-native-screens';
 
 type IconSizeOption = 'default' | '24' | '32' | '44' | '56';
 
 const ICON_SIZE_OPTIONS: IconSizeOption[] = ['default', '24', '32', '44', '56'];
 
-const RENDERING_MODE_OPTIONS: TabsScreenIconRenderingMode[] = [
-  'monochrome',
+const RENDERING_MODE_OPTIONS: TabsScreenIconIOSImageRenderingMode[] = [
+  'default',
+  'template',
+  'original',
+];
+
+const TINTING_OPTIONS: TabsScreenIconAndroidTinting[] = [
+  'default',
+  'tinted',
   'original',
 ];
 
 type ControlsConfig = {
-  renderingMode: TabsScreenIconRenderingMode;
+  renderingMode: TabsScreenIconIOSImageRenderingMode;
+  tinting: TabsScreenIconAndroidTinting;
   iconSize: IconSizeOption;
   hasBadge: boolean;
 };
 
 const INITIAL_CONTROLS_CONFIG: ControlsConfig = {
-  renderingMode: 'monochrome',
+  renderingMode: 'template',
+  tinting: 'tinted',
   iconSize: 'default',
   hasBadge: false,
 };
 
 function controlsRouteOptions({
   renderingMode,
+  tinting,
   iconSize,
   hasBadge,
 }: ControlsConfig): Partial<TabRouteOptions> {
@@ -52,7 +65,7 @@ function controlsRouteOptions({
       icon: {
         type: 'drawableResource',
         name: 'person_walking',
-        renderingMode,
+        tinting,
       },
       iconSize: iconSize === 'default' ? undefined : Number(iconSize),
     },
@@ -82,10 +95,11 @@ function MulticolorTab() {
     <View style={styles.screen}>
       <Text style={styles.label}>Original colors when selected</Text>
       <Text style={styles.hint}>
-        `icon`: drawableResource person_walking, `renderingMode` NOT set
-        (monochrome){'\n'}
-        `selectedIcon`: drawableResource person_walking, `renderingMode`:
-        original{'\n'}
+        `icon`: drawableResource person_walking, `tinting` NOT set (default:
+        tinted)
+        {'\n'}
+        `selectedIcon`: drawableResource person_walking, `tinting`: original
+        {'\n'}
         `iconSize`: 30{'\n'}
         {'\n'}
         Selected: the walker keeps its own colors.{'\n'}
@@ -107,7 +121,8 @@ function ImageTab() {
       <Text style={styles.hint}>
         {Platform.OS === 'ios' ? (
           <>
-            `icon`: imageSource icon.png, `renderingMode` NOT set (original)
+            `icon`: imageSource icon.png, `renderingMode` NOT set (default:
+            original colors)
             {'\n'}
             {'\n'}
             The icon renders in its original black color in both states. The
@@ -116,10 +131,9 @@ function ImageTab() {
           </>
         ) : (
           <>
-            `icon`: imageSource icon.png, `renderingMode` NOT set (monochrome)
+            `icon`: imageSource icon.png, `tinting` NOT set (default: tinted)
             {'\n'}
-            `selectedIcon`: imageSource icon.png, `renderingMode`: original
-            {'\n'}
+            `selectedIcon`: imageSource icon.png, `tinting`: original{'\n'}
             {'\n'}
             Selected: the icon renders in its original black color.{'\n'}
             Unselected: the icon renders in the system theme color.
@@ -130,15 +144,15 @@ function ImageTab() {
   );
 }
 
-function ImageMonoTab() {
+function ImageTemplateTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Monochrome Image Source</Text>
+      <Text style={styles.label}>Template Image Source</Text>
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
         {'\n'}
-        `icon`: imageSource icon.png, `renderingMode`: monochrome{'\n'}
+        `icon`: imageSource icon.png, `renderingMode`: template{'\n'}
         {'\n'}
         The icon is used as a template image.{'\n'}
         Selected: tinted{' '}
@@ -157,7 +171,7 @@ function SymbolTab() {
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
         {'\n'}
-        `icon`: sfSymbol nano.swm, `renderingMode` NOT set{'\n'}
+        `icon`: sfSymbol nano.swm, `renderingMode` NOT set (default){'\n'}
         {'\n'}
         nano.swm is a custom symbol from the app asset catalog, not a system SF
         Symbol. It resolves via the asset catalog fallback.{'\n'}
@@ -174,7 +188,7 @@ function MixedTab() {
     <View style={styles.screen}>
       <Text style={styles.label}>Original colors when selected</Text>
       <Text style={styles.hint}>
-        `icon`: sfSymbol heart.fill, `renderingMode` NOT set{'\n'}
+        `icon`: sfSymbol heart.fill, `renderingMode`: monochrome{'\n'}
         `selectedIcon`: sfSymbol heart.fill, `renderingMode`: original{'\n'}
         {'\n'}
         Selected: the system multicolor heart, RED, not tinted.{'\n'}
@@ -224,15 +238,24 @@ function ControlsTab() {
           ? '`icon`: imageSource icon.png'
           : '`icon`: drawableResource person_walking'}
       </Text>
-      <SettingsPicker<TabsScreenIconRenderingMode>
-        testID="icon-tint-and-size-rendering-mode-picker"
-        label="renderingMode"
-        value={config.renderingMode}
-        onValueChange={renderingMode => updateConfig({ renderingMode })}
-        items={RENDERING_MODE_OPTIONS}
-      />
+      {Platform.OS === 'ios' && (
+        <SettingsPicker<TabsScreenIconIOSImageRenderingMode>
+          testID="icon-tint-and-size-rendering-mode-picker"
+          label="renderingMode"
+          value={config.renderingMode}
+          onValueChange={renderingMode => updateConfig({ renderingMode })}
+          items={RENDERING_MODE_OPTIONS}
+        />
+      )}
       {Platform.OS === 'android' && (
         <>
+          <SettingsPicker<TabsScreenIconAndroidTinting>
+            testID="icon-tint-and-size-tinting-picker"
+            label="tinting"
+            value={config.tinting}
+            onValueChange={tinting => updateConfig({ tinting })}
+            items={TINTING_OPTIONS}
+          />
           <SettingsPicker<IconSizeOption>
             testID="icon-tint-and-size-icon-size-picker"
             label="iconSize"
@@ -279,16 +302,16 @@ const IOS_ROUTES: TabRouteConfig[] = [
     },
   },
   {
-    name: 'ImageMono',
-    element: <ImageMonoTab />,
+    name: 'ImageTemplate',
+    element: <ImageTemplateTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Mono',
+      title: 'Template',
       ios: {
         icon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
-          renderingMode: 'monochrome',
+          renderingMode: 'template',
         },
       },
     },
@@ -300,7 +323,11 @@ const IOS_ROUTES: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Mixed',
       ios: {
-        icon: { type: 'sfSymbol', name: 'heart.fill' },
+        icon: {
+          type: 'sfSymbol',
+          name: 'heart.fill',
+          renderingMode: 'monochrome',
+        },
         selectedIcon: {
           type: 'sfSymbol',
           name: 'heart.fill',
@@ -344,7 +371,7 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
         selectedIcon: {
           type: 'drawableResource',
           name: 'person_walking',
-          renderingMode: 'original',
+          tinting: 'original',
         },
         iconSize: 30,
       },
@@ -364,7 +391,7 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
         selectedIcon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
-          renderingMode: 'original',
+          tinting: 'original',
         },
       },
     },

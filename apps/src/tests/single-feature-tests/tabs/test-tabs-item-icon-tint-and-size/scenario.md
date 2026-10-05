@@ -2,10 +2,17 @@
 
 ## Details
 
-**Description:** Validates custom tab bar item icons. On both platforms, the
-`renderingMode` icon property decides whether the tab bar renders an icon in
-`monochrome`, tinted with its state-dependent icon color, or in its `original`
-colors. `icon` and `selectedIcon` may use different values. On Android,
+**Description:** Validates custom tab bar item icons. On iOS, the
+`renderingMode` icon property decides whether the tab bar renders an icon in a
+single color, tinted with its state-dependent icon color (`template` for
+`imageSource`, `monochrome` for `sfSymbol`), or in its `original` colors. The
+`default` value, also used when the property is unset, keeps the behavior of
+previous versions: an `imageSource` icon keeps its own colors, an `sfSymbol`
+icon follows the system. On Android,
+the `tinting` icon property decides the same: `tinted` tints the icon,
+`original` keeps its own colors, and `default` (also used when unset) tints it,
+as in previous versions. `icon` and `selectedIcon` may use different
+values. On Android,
 `iconSize` sets a per-tab icon size: the icon box of the whole bar is the
 largest size across tabs, and each icon is inset to its own size within that box.
 The active indicator auto-scales to wrap an enlarged icon box, unless
@@ -52,7 +59,7 @@ Android specific notes:
 
 1. Launch the app and navigate to the **Tab Bar Item Icon Tint and Size** screen.
 
-- [ ] Five tabs are visible in the tab bar: **Symbol**, **Image**, **Mono**,
+- [ ] Five tabs are visible in the tab bar: **Symbol**, **Image**, **Template**,
   **Mixed** and **Controls**.
 - [ ] The **Symbol** tab is selected by default. Its icon is the custom
   `nano.swm` symbol (Software Mansion logo), tinted **green** by the host
@@ -69,9 +76,9 @@ Android specific notes:
 
 ---
 
-### `imageSource` icon with `renderingMode: 'monochrome'`
+### `imageSource` icon with `renderingMode: 'template'`
 
-3. Tap the **Mono** tab.
+3. Tap the **Template** tab.
 
 - [ ] The icon is tinted **green**.
 - [ ] The **Image** tab icon stays **black**.
@@ -85,10 +92,10 @@ Android specific notes:
 - [ ] The selected icon is the system `heart.fill` symbol in its own
   multicolor rendering: **red**, NOT green.
 
-5. Tap the **Mono** tab.
+5. Tap the **Template** tab.
 
-- [ ] The unselected **Mixed** icon is a single-color heart in the system theme
-  color.
+- [ ] The unselected **Mixed** icon (`renderingMode: 'monochrome'`) is a
+  single-color heart in the system theme color.
 
 ---
 
@@ -102,7 +109,12 @@ Android specific notes:
 
 - [ ] The **Controls** tab icon changes to its original **black** color.
 
-8. Select `monochrome` in the **renderingMode** picker.
+8. Select `default` in the **renderingMode** picker.
+
+- [ ] The **Controls** tab icon renders in its original **black** color, as
+  with `original`.
+
+9. Select `template` in the **renderingMode** picker.
 
 - [ ] The **Controls** tab icon is tinted **green** again.
 
@@ -110,10 +122,10 @@ Android specific notes:
 
 ### Stability check
 
-9. Cycle through all five tabs in order, then in reverse.
+10. Cycle through all five tabs in order, then in reverse.
 
 - [ ] Each tab keeps its icon and color behavior: green when selected for
-  **Symbol**, **Mono** and **Controls**; red when selected for **Mixed**;
+  **Symbol**, **Template** and **Controls**; red when selected for **Mixed**;
   always black for **Image**.
 - [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.
 
@@ -175,37 +187,41 @@ Android specific notes:
 
 ---
 
-### Runtime `renderingMode` change
+### Runtime `tinting` change
 
 8. Tap the **Controls** tab.
 
 - [ ] The icon is a single-color walker silhouette at the default 24dp.
 
-9. Select `original` in the **renderingMode** picker.
+9. Select `original` in the **tinting** picker.
 
 - [ ] The **Controls** icon changes to the walker in its own colors.
 
-10. Select `monochrome` in the **renderingMode** picker.
+10. Select `default` in the **tinting** picker.
 
 - [ ] The **Controls** icon is a single-color silhouette again.
+
+11. Select `original`, then `tinted` in the **tinting** picker.
+
+- [ ] The **Controls** icon is a single-color silhouette.
 
 ---
 
 ### Runtime `iconSize` change
 
-11. Select `32` in the **iconSize** picker.
+12. Select `32` in the **iconSize** picker.
 
 - [ ] The **Controls** icon grows to 32dp.
 - [ ] The other tab icons do NOT change size. The 44dp icon box is unchanged.
 
-12. Select `56` in the **iconSize** picker.
+13. Select `56` in the **iconSize** picker.
 
 - [ ] The **Controls** icon grows to 56dp.
 - [ ] The icon box of the whole bar grows to 56dp. All other icons keep their
   own sizes (SWM logo 44dp, walker 30dp, star 24dp) and stay centered.
 - [ ] The active indicator pill grows to 64dp tall to wrap the 56dp box.
 
-13. Select `default` in the **iconSize** picker.
+14. Select `default` in the **iconSize** picker.
 
 - [ ] The **Controls** icon returns to 24dp.
 - [ ] The icon box shrinks back to 44dp and the active indicator pill back to
@@ -215,12 +231,12 @@ Android specific notes:
 
 ### Unrelated item update keeps icons
 
-14. Tap the **badgeValue** switch so it reads `badgeValue: true`.
+15. Tap the **badgeValue** switch so it reads `badgeValue: true`.
 
 - [ ] A badge with "1" appears on the **Controls** tab.
 - [ ] All tab icons stay unchanged: same images, colors and sizes.
 
-15. Tap the **badgeValue** switch again so it reads `badgeValue: false`.
+16. Tap the **badgeValue** switch again so it reads `badgeValue: false`.
 
 - [ ] The badge disappears. All tab icons stay unchanged.
 
@@ -228,7 +244,7 @@ Android specific notes:
 
 ### Stability check
 
-16. Cycle through all five tabs in order, then in reverse.
+17. Cycle through all five tabs in order, then in reverse.
 
 - [ ] Each tab keeps its icon, size and color behavior on every selection.
 - [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.
