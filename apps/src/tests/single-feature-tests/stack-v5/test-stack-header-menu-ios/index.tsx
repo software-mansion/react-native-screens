@@ -32,9 +32,9 @@ const ACTION_IDS = [
   'radio-1-1',
   'radio-1-2',
   'radio-1-3',
-  'repr-radio-1-1',
-  'repr-radio-1-2',
-  'repr-radio-1-3',
+  'repr-radio-0-1',
+  'repr-radio-0-2',
+  'repr-radio-0-3',
   'title-action-1',
   'title-action-2',
 ] as const;
@@ -44,7 +44,7 @@ const MENU_IDS = [
   'menu-1',
   'submenu-1',
   'subsubmenu-1',
-  'repr-menu-1',
+  'repr-menu-0',
   'title-menu',
 ] as const;
 type MenuId = (typeof MENU_IDS)[number];
