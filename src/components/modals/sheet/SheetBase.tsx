@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import SheetHostNativeComponent from '../../../fabric/modals/sheet/SheetHostNativeComponent';
+import SheetHostNativeComponent, {
+  Commands as SheetHostNativeCommands,
+} from '../../../fabric/modals/sheet/SheetHostNativeComponent';
 import SheetContentWrapperNativeComponent from '../../../fabric/modals/sheet/SheetContentWrapperNativeComponent';
 import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 import type { SheetProps } from './Sheet.types';
@@ -10,7 +12,10 @@ import {
   resolveNativeBackgroundEffect,
   resolveNativeCornerRadius,
   resolveNativeDetents,
+  resolveSelectedDetentIndex,
 } from './SheetUtils';
+
+type NativeRef = React.ComponentRef<typeof SheetHostNativeComponent>;
 
 /**
  * UIKit `modalPresentationStyle` the sheet host presents with. Pinned by each
@@ -32,7 +37,9 @@ export function SheetBase(props: SheetBaseProps) {
   const { ios, ...baseProps } = props;
 
   const {
+    ref,
     children,
+    isOpen,
     detents,
     initialDetentIndex,
     largestUndimmedDetentIndex,
@@ -59,9 +66,42 @@ export function SheetBase(props: SheetBaseProps) {
 
   const isFitToContents = detents === 'fitToContents';
 
+  const nativeRef = React.useRef<NativeRef>(null);
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      selectDetent: index => {
+        const nativeIndex = resolveSelectedDetentIndex(index, detentsCount);
+        if (nativeIndex === undefined) {
+          return;
+        }
+
+        if (!isOpen) {
+          console.warn(
+            "[RNScreens] 'selectDetent' was called while the sheet is closed. Ignoring the call. Use 'initialDetentIndex' to choose the detent the sheet opens at.",
+          );
+          return;
+        }
+
+        if (!nativeRef.current) {
+          console.warn(
+            '[RNScreens] Reference to native Sheet component has not been updated yet',
+          );
+          return;
+        }
+
+        SheetHostNativeCommands.selectDetent(nativeRef.current, nativeIndex);
+      },
+    }),
+    [isOpen, detentsCount],
+  );
+
   return (
     <SheetHostNativeComponent
+      ref={nativeRef}
       style={styles.host}
+      isOpen={isOpen}
       presentationStyle={presentationStyle}
       detents={nativeDetents}
       initialDetentIndex={resolvedInitialDetentIndex}

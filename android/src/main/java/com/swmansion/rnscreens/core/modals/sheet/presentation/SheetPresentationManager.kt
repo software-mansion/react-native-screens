@@ -55,6 +55,15 @@ internal class SheetPresentationManager(
         updatePresentationState(shouldBeOpen = false, origin = SheetDismissalOrigin.USER)
     }
 
+    internal fun selectDetent(index: Int) {
+        if (state != SheetPresentationState.PRESENTING && state != SheetPresentationState.PRESENTED) {
+            Log.w("[RNScreens]", "selectDetent called while the sheet is not presented. Command ignored.")
+            return
+        }
+
+        currentPresentation?.selectDetent(index)
+    }
+
     private fun updatePresentationState(
         shouldBeOpen: Boolean,
         origin: SheetDismissalOrigin,

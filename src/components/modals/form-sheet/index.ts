@@ -1,9 +1,11 @@
 export type {
+  FormSheetCommands,
   FormSheetDetentChangedEvent,
   FormSheetDetents,
   FormSheetPreferredCornerRadius,
   FormSheetLargestUndimmedDetentIndex,
   FormSheetInitialDetentIndex,
+  FormSheetSelectDetentIndex,
   FormSheetNativeContainerStyleProps,
   FormSheetPropsBase,
   FormSheetProps,

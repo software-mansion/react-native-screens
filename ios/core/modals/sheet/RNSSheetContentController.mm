@@ -2,11 +2,13 @@
 #import "RNSPresentationSourceProvider.h"
 #import "RNSSheetConfigurationApplicator.h"
 #import "RNSSheetContentView.h"
+#import "RNSSheetDetentResolver.h"
 #import "RNSSheetPresentationManager.h"
 #import "RNSSheetUpdateCoordinator.h"
 #import "RNSSheetUpdateFlags.h"
 
 #import "RNSAssert.h"
+#import "RNSLog.h"
 
 #include <optional>
 
@@ -247,6 +249,32 @@
   [self updateConfigurationIfNeeded];
   [self updatePresentationIfNeeded];
 }
+
+#pragma mark - Commands
+
+#if !TARGET_OS_TV
+- (void)selectDetentAtIndex:(NSInteger)index
+{
+  if (self.presentingViewController == nil || self.isBeingDismissed) {
+    RNSLogW(@"[RNScreens] selectDetent called while the sheet is not presented. Command ignored.");
+    return;
+  }
+
+  UISheetPresentationController *sheet = self.sheetPresentationController;
+  UISheetPresentationControllerDetentIdentifier identifier =
+      [RNSSheetDetentResolver selectedDetentIdentifierForDetents:sheet.detents atRequestedIndex:index];
+  if (identifier == nil || [identifier isEqualToString:sheet.selectedDetentIdentifier]) {
+    return;
+  }
+
+  [sheet animateChanges:^{
+    sheet.selectedDetentIdentifier = identifier;
+  }];
+
+  // UIKit notifies UISheetPresentationControllerDelegate only about the detent changes made by the user.
+  [self.delegate sheetController:self didChangeDetentIdentifier:identifier];
+}
+#endif // !TARGET_OS_TV
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
 

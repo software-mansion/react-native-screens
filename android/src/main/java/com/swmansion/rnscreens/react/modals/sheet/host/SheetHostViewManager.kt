@@ -167,6 +167,13 @@ class SheetHostViewManager :
         // iOS only
     }
 
+    override fun selectDetent(
+        view: SheetHost,
+        index: Int,
+    ) {
+        view.selectDetent(index)
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(SheetDismissEvent),
