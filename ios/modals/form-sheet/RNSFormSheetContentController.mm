@@ -1,6 +1,7 @@
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetConfigurationApplicator.h"
 #import "RNSFormSheetContentView.h"
+#import "RNSFormSheetDetentResolver.h"
 #import "RNSFormSheetPresentationManager.h"
 #import "RNSFormSheetUpdateCoordinator.h"
 #import "RNSFormSheetUpdateFlags.h"
@@ -189,6 +190,32 @@
   [self updateConfigurationIfNeeded];
   [self updatePresentationIfNeeded];
 }
+
+#pragma mark - Commands
+
+#if !TARGET_OS_TV
+- (void)selectDetentAtIndex:(NSInteger)index
+{
+  if (self.presentingViewController == nil || self.isBeingDismissed) {
+    RCTLogWarn(@"[RNScreens] selectDetent called while the form sheet is not presented. Command ignored.");
+    return;
+  }
+
+  UISheetPresentationController *sheet = self.sheetPresentationController;
+  UISheetPresentationControllerDetentIdentifier identifier =
+      [RNSFormSheetDetentResolver selectedDetentIdentifierForDetents:sheet.detents atRequestedIndex:index];
+  if (identifier == nil || [identifier isEqualToString:sheet.selectedDetentIdentifier]) {
+    return;
+  }
+
+  [sheet animateChanges:^{
+    sheet.selectedDetentIdentifier = identifier;
+  }];
+
+  // UIKit notifies UISheetPresentationControllerDelegate only about the detent changes made by the user.
+  [self.delegate sheetController:self didChangeDetentIdentifier:identifier];
+}
+#endif // !TARGET_OS_TV
 
 #pragma mark - UIAdaptivePresentationControllerDelegate
 

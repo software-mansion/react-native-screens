@@ -104,6 +104,10 @@ class FormSheetHost(
         dialogManager.applyConfig(config)
     }
 
+    internal fun selectDetent(index: Int) {
+        dialogManager.selectDetent(index)
+    }
+
     internal fun updateStateIfNeeded(
         width: Int,
         height: Int,

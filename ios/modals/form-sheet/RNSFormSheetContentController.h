@@ -49,6 +49,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)flushPendingUpdates;
 
+#pragma mark - Commands
+
+#if !TARGET_OS_TV
+- (void)selectDetentAtIndex:(NSInteger)index;
+#endif // !TARGET_OS_TV
+
 @end
 
 NS_ASSUME_NONNULL_END

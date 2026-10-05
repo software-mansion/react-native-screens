@@ -1,4 +1,5 @@
 export type {
+  FormSheetCommands,
   FormSheetProps,
   FormSheetNativeContainerStyleProps,
 } from './FormSheet.types';
