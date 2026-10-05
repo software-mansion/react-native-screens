@@ -8,5 +8,5 @@ export const scenarioDescription: ScenarioDescription = {
     'nested menus, and menu representation in the overflow menu.',
   platforms: ['ios'],
   e2eCoverage: 'incomplete',
-  smokeTest: true,
+  smokeTest: false,
 };
