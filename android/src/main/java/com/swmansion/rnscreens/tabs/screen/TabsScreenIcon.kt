@@ -21,8 +21,8 @@ internal class TabsScreenIcon(
         if (newValue != oldValue) isInvalidated = true
     }
 
-    var renderingMode: TabsScreenIconRenderingMode by Delegates.observable(
-        TabsScreenIconRenderingMode.AUTOMATIC,
+    var tinting: TabsScreenIconTinting by Delegates.observable(
+        TabsScreenIconTinting.DEFAULT,
     ) { _, oldValue, newValue ->
         if (newValue != oldValue) isInvalidated = true
     }
@@ -42,7 +42,7 @@ internal class TabsScreenIcon(
 
     // Kept unwrapped so a tint-only change re-wraps without reloading.
     private var rawDrawable: Drawable? = null
-    private var appliedRenderingMode = TabsScreenIconRenderingMode.AUTOMATIC
+    private var appliedTinting = TabsScreenIconTinting.DEFAULT
 
     fun resolveIfNeeded() {
         if (!isInvalidated) {
@@ -51,7 +51,7 @@ internal class TabsScreenIcon(
         isInvalidated = false
         resolver.resolve(drawableResourceName, imageUri) { result ->
             when (result) {
-                IconResolution.Unchanged -> if (renderingMode != appliedRenderingMode) emit()
+                IconResolution.Unchanged -> if (tinting != appliedTinting) emit()
                 is IconResolution.Resolved -> {
                     rawDrawable = result.drawable
                     emit()
@@ -62,10 +62,10 @@ internal class TabsScreenIcon(
 
     // Tint is read at emit time, so a toggle during an in-flight image load still applies.
     private fun emit() {
-        appliedRenderingMode = renderingMode
+        appliedTinting = tinting
         val next =
             rawDrawable?.let {
-                if (renderingMode == TabsScreenIconRenderingMode.ORIGINAL) NoTintDrawable(it) else it
+                if (tinting == TabsScreenIconTinting.ORIGINAL) NoTintDrawable(it) else it
             }
         if (next !== drawable) {
             drawable = next

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import TabsScreenAndroidNativeComponent, {
   type Appearance,
-  type IconRenderingMode,
+  type IconTinting,
   type ItemStateAppearance,
   type NativeProps as TabsScreenAndroidNativeComponentProps,
 } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
@@ -135,10 +135,10 @@ function parseIconsToNativeProps(
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
-  iconRenderingMode?: IconRenderingMode | undefined;
+  iconTinting?: IconTinting | undefined;
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
-  selectedIconRenderingMode?: IconRenderingMode | undefined;
+  selectedIconTinting?: IconTinting | undefined;
 } {
   const parsedIcon = parseAndroidIconToNativeProps(icon);
   const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
@@ -146,11 +146,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
-    iconRenderingMode: icon?.renderingMode,
+    iconTinting: icon?.tinting,
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
-    selectedIconRenderingMode: selectedIcon?.renderingMode,
+    selectedIconTinting: selectedIcon?.tinting,
   };
 }
 

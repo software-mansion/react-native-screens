@@ -10,15 +10,15 @@
 #import "RNSTabsHostComponentView.h"
 #import "RNSTabsScreenViewController.h"
 
-static UIImage *_Nullable RNSImageWithIconRenderingMode(UIImage *_Nullable image,
-                                                         RNSTabsIconRenderingMode renderingMode)
+static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable image,
+                                                          RNSTabsIconSymbolRenderingMode renderingMode)
 {
   switch (renderingMode) {
-    case RNSTabsIconRenderingModeMonochrome:
+    case RNSTabsIconSymbolRenderingModeMonochrome:
       return [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    case RNSTabsIconRenderingModeOriginal:
+    case RNSTabsIconSymbolRenderingModeOriginal:
       return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    case RNSTabsIconRenderingModeAutomatic:
+    case RNSTabsIconSymbolRenderingModeDefault:
       return image;
   }
 }
@@ -102,7 +102,7 @@ static UIImage *_Nullable RNSImageWithIconRenderingMode(UIImage *_Nullable image
           RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for tab bar item", screenView.iconResourceName);
         }
       }
-      [self setNormalImage:RNSImageWithIconRenderingMode(image, screenView.iconRenderingMode)
+      [self setNormalImage:RNSImageWithSymbolRenderingMode(image, screenView.iconSymbolRenderingMode)
              forTabBarItem:tabBarItem
               ofScreenView:screenView];
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
@@ -137,7 +137,8 @@ static UIImage *_Nullable RNSImageWithIconRenderingMode(UIImage *_Nullable image
                      screenView.selectedIconResourceName);
         }
       }
-      tabBarItem.selectedImage = RNSImageWithIconRenderingMode(selectedImage, screenView.selectedIconRenderingMode);
+      tabBarItem.selectedImage =
+          RNSImageWithSymbolRenderingMode(selectedImage, screenView.selectedIconSymbolRenderingMode);
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
       std::optional<UITabBarSystemItem> systemItem =
@@ -153,8 +154,8 @@ static UIImage *_Nullable RNSImageWithIconRenderingMode(UIImage *_Nullable image
       tabBarItem.selectedImage = nil;
     }
   } else if (imageLoader != nil) {
-    bool isTemplate = screenView.iconRenderingMode == RNSTabsIconRenderingModeMonochrome;
-    bool isSelectedTemplate = screenView.selectedIconRenderingMode == RNSTabsIconRenderingModeMonochrome;
+    bool isTemplate = screenView.iconImageRenderingMode == RNSTabsIconImageRenderingModeTemplate;
+    bool isSelectedTemplate = screenView.selectedIconImageRenderingMode == RNSTabsIconImageRenderingModeTemplate;
 
     // Weak-capture to avoid updating a tab bar item whose internal
     // view hierarchy has been torn down (iOS 26 UIKit regression:

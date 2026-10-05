@@ -23,7 +23,9 @@ type GenericEmptyEvent = Readonly<{}>;
 // iOS-specific: SFSymbol, xcasset usage
 export type IconType = 'image' | 'sfSymbol' | 'xcasset';
 
-export type IconRenderingMode = 'automatic' | 'monochrome' | 'original';
+export type IconImageRenderingMode = 'default' | 'template' | 'original';
+
+export type IconSymbolRenderingMode = 'default' | 'monochrome' | 'original';
 
 export type ItemStateAppearance = {
   tabBarItemTitleFontFamily?: string | undefined;
@@ -155,10 +157,18 @@ export interface NativeProps extends ViewProps {
 
   // Icons
   iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
-  iconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
+  iconImageRenderingMode?: CT.WithDefault<IconImageRenderingMode, 'default'>;
+  iconSymbolRenderingMode?: CT.WithDefault<IconSymbolRenderingMode, 'default'>;
   iconImageSource?: ImageSource | undefined;
   iconResourceName?: string | undefined;
-  selectedIconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
+  selectedIconImageRenderingMode?: CT.WithDefault<
+    IconImageRenderingMode,
+    'default'
+  >;
+  selectedIconSymbolRenderingMode?: CT.WithDefault<
+    IconSymbolRenderingMode,
+    'default'
+  >;
   selectedIconImageSource?: ImageSource | undefined;
   selectedIconResourceName?: string | undefined;
 

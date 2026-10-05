@@ -24,7 +24,7 @@ type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
-export type IconRenderingMode = 'automatic' | 'monochrome' | 'original';
+export type IconTinting = 'default' | 'tinted' | 'original';
 
 export type ItemStateAppearance = {
   tabBarItemTitleFontColor?: ProcessedColorValue | null | undefined;
@@ -108,8 +108,8 @@ export interface NativeProps extends ViewProps {
   imageIconResource?: ImageSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
   selectedImageIconResource?: ImageSource | undefined;
-  iconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
-  selectedIconRenderingMode?: CT.WithDefault<IconRenderingMode, 'automatic'>;
+  iconTinting?: CT.WithDefault<IconTinting, 'default'>;
+  selectedIconTinting?: CT.WithDefault<IconTinting, 'default'>;
   // Per-tab icon size (dp); 0/unset = system default.
   iconSize?: CT.Float | undefined;
 

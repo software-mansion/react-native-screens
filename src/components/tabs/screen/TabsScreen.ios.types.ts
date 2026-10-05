@@ -232,25 +232,26 @@ export interface TabsScreenPropsIOS {
    * Supported values:
    * - `{ type: 'imageSource', imageSource, renderingMode? }`
    *   Uses an image from the provided resource. `renderingMode` defaults to
-   *   `original`: the image keeps its own colors. With `monochrome` it is used
-   *   as a template image and follows the state-dependent icon color.
+   *   `default`, which keeps the image's own colors. With `template` it is
+   *   used as a template image and follows the state-dependent icon color.
    * - `{ type: 'sfSymbol', name, renderingMode? }`
    *   Uses an SF Symbol with the specified name. If no system symbol
    *   matches, falls back to a custom symbol with that name from the app's
-   *   asset catalog. `renderingMode` defaults to the system behavior:
-   *   `monochrome` for system symbols, while for custom symbols the rendering
-   *   intent set in the asset catalog may change it. `original` shows the
-   *   symbol's own color layers (Apple's "multicolor" rendering).
+   *   asset catalog. `renderingMode` defaults to `default`, the system
+   *   behavior: a single color for system symbols, while for custom symbols
+   *   the rendering intent set in the asset catalog may change it. `original`
+   *   shows the symbol's own color layers (Apple's "multicolor" rendering).
    * - `{ type: 'xcasset', name }`
    *   Uses an image from the asset catalog. Its colors follow the asset's
    *   "Render As" setting in the catalog: `Original Image` keeps its own colors,
    *   `Default` and `Template Image` follow the state-dependent icon color.
    *   For custom symbols prefer `sfSymbol`, which also accepts `renderingMode`.
    * - `{ type: 'templateSource', templateSource }`
-   *   Deprecated: use `{ type: 'imageSource', imageSource, renderingMode: 'monochrome' }`
+   *   Deprecated: use `{ type: 'imageSource', imageSource, renderingMode: 'template' }`
    *   instead. Uses the provided image as a template image.
    *
-   * See `TabsScreenIconRenderingMode` for the meaning of each rendering mode.
+   * See `TabsScreenIconIOSImageRenderingMode` and
+   * `TabsScreenIconIOSSymbolRenderingMode` for the meaning of each rendering mode.
    *
    * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.

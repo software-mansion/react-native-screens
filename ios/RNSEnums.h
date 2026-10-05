@@ -55,10 +55,16 @@ typedef NS_ENUM(NSInteger, RNSTabsIconType) {
   RNSTabsIconTypeXcasset,
 };
 
-typedef NS_ENUM(NSInteger, RNSTabsIconRenderingMode) {
-  RNSTabsIconRenderingModeAutomatic,
-  RNSTabsIconRenderingModeMonochrome,
-  RNSTabsIconRenderingModeOriginal,
+typedef NS_ENUM(NSInteger, RNSTabsIconImageRenderingMode) {
+  RNSTabsIconImageRenderingModeDefault,
+  RNSTabsIconImageRenderingModeTemplate,
+  RNSTabsIconImageRenderingModeOriginal,
+};
+
+typedef NS_ENUM(NSInteger, RNSTabsIconSymbolRenderingMode) {
+  RNSTabsIconSymbolRenderingModeDefault,
+  RNSTabsIconSymbolRenderingModeMonochrome,
+  RNSTabsIconSymbolRenderingModeOriginal,
 };
 
 typedef NS_ENUM(NSInteger, RNSOrientation) {

@@ -182,22 +182,23 @@ export interface TabsScreenPropsAndroid {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource, renderingMode? }`
-   *   Uses an image from the provided resource. `renderingMode` defaults to
-   *   `monochrome`: the tab bar tints the image with the item icon color.
+   * - `{ type: 'imageSource', imageSource, tinting? }`
+   *   Uses an image from the provided resource. `tinting` defaults to
+   *   `default`: the tab bar tints the image with the item icon color.
    *   `original` keeps the image's own colors.
    *
    *   Remarks: `imageSource` type doesn't support SVGs on Android.
    *   For loading SVGs use `drawableResource` type.
    *
-   * - `{ type: 'drawableResource', name, renderingMode? }`
-   *   Uses a drawable resource with the given name. `renderingMode` defaults to
-   *   `monochrome`; `original` keeps the drawable's own colors, e.g. of a
-   *   multicolor VectorDrawable.
+   * - `{ type: 'drawableResource', name, tinting? }`
+   *   Uses a drawable resource with the given name. `tinting` defaults to
+   *   `default`: the tab bar tints the drawable with the item icon color.
+   *   `original` keeps the drawable's own colors, e.g. of a multicolor
+   *   VectorDrawable.
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
-   * See `TabsScreenIconRenderingMode` for the meaning of each rendering mode.
+   * See `TabsScreenIconAndroidTinting` for the meaning of each value.
    *
    * @platform android
    */
@@ -206,7 +207,7 @@ export interface TabsScreenPropsAndroid {
    * @summary Specifies the icon for tab bar item when it is selected.
    *
    * Supports the same values as `icon` property for given platform.
-   * `renderingMode` may differ from the one of `icon`, e.g. a drawable that is
+   * `tinting` may differ from the one of `icon`, e.g. a drawable that is
    * tinted while unselected and shows its own colors while selected.
    *
    * To use `selectedIcon`, `icon` must also be provided.
