@@ -80,6 +80,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   self.hidden = YES;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
+  _direction = UISemanticContentAttributeForceLeftToRight;
   _blurEffect = RNSBlurEffectStyleNone;
   _synchronousShadowStateUpdatesEnabled = YES;
 }
@@ -775,7 +776,7 @@ RNS_IGNORE_SUPER_CALL_END
       : UITraitEnvironmentLayoutDirectionLeftToRight;
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
-  if (@available(iOS 17.0, *)) {
+  if (@available(iOS 17.0, tvOS 17.0, *)) {
     if (navCtrl.traitCollection.layoutDirection != layoutDirection) {
       navCtrl.traitOverrides.layoutDirection = layoutDirection;
     }
