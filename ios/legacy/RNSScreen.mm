@@ -199,7 +199,7 @@ RNS_IGNORE_SUPER_CALL_END
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
   // Refreshed even for the same instance: Fabric might have recycled it back into this sheet.
-  _sheetsScrollViewTag = scrollView.tag;
+  _sheetsScrollViewTag = scrollView != nil ? scrollView.tag : 0;
   if (scrollView != nil) {
     [self correctScrollViewFrame:scrollView withHeader:nil];
   }
