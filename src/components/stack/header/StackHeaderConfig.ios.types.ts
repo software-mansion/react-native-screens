@@ -100,6 +100,7 @@ export interface SupportsMenuIOS {
    * When the system moves the item into a menu (e.g. the navigation bar
    * overflow menu), this menu is displayed in its place. Useful for custom items
    * ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS doesn't display in the overflow menu otherwise.
+   * The `id`s used in the menu are expected to be unique across every `menu` and `menuRepresentation`.
    *
    * @platform iOS
    *
