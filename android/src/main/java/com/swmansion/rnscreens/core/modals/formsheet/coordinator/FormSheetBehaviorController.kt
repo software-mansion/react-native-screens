@@ -22,12 +22,7 @@ internal class FormSheetBehaviorController(
                 newState: Int,
             ) {
                 rememberStateIfStable(newState)
-
-                val index = mapStateToDetentIndex(newState)
-                if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
-                    lastEmittedDetentIndex = index
-                    onDetentChanged?.invoke(index)
-                }
+                emitDetentChangedIfNeeded(mapStateToDetentIndex(newState))
             }
 
             override fun onSlide(
@@ -55,6 +50,29 @@ internal class FormSheetBehaviorController(
         }
 
         behavior.state = lastStableState
+    }
+
+    /**
+     * Snaps the sheet to the detent at [index]. Expected to be called once the sheet metrics have been resolved by
+     * [updateSheetBehavior], so the index is mapped against the current detents configuration.
+     */
+    internal fun selectDetent(index: Int) {
+        val targetState = resolveStateFromIndex(index, currentDetentsCount)
+        if (behavior.state == targetState) {
+            return
+        }
+
+        behavior.state = targetState
+        // Emitted right away, because Material doesn't notify the callbacks about state changes of a sheet
+        // that hasn't been laid out yet. The callback for the settled state is deduplicated against it.
+        emitDetentChangedIfNeeded(mapStateToDetentIndex(targetState))
+    }
+
+    private fun emitDetentChangedIfNeeded(index: Int) {
+        if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
+            lastEmittedDetentIndex = index
+            onDetentChanged?.invoke(index)
+        }
     }
 
     private fun rememberStateIfStable(state: Int) {

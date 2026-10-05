@@ -20,6 +20,7 @@ import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corn
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss';
 import TestFormSheetScrollStopsAtTop from './test-form-sheet-scroll-stops-at-top';
+import TestFormSheetSelectDetent from './test-form-sheet-select-detent';
 import TestFormSheetStacking from './test-form-sheet-stacking';
 
 // Scenario entry-point components — each scenario's default export re-exported
@@ -42,6 +43,7 @@ export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet
 export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
 export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss';
 export { default as TestFormSheetScrollStopsAtTop } from './test-form-sheet-scroll-stops-at-top';
+export { default as TestFormSheetSelectDetent } from './test-form-sheet-select-detent';
 export { default as TestFormSheetStacking } from './test-form-sheet-stacking';
 
 const scenarios = {
@@ -63,6 +65,7 @@ const scenarios = {
   TestFormSheetPresentationState,
   TestFormSheetPreventNativeDismiss,
   TestFormSheetScrollStopsAtTop,
+  TestFormSheetSelectDetent,
   TestFormSheetStacking,
 };
 
