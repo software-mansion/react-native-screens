@@ -232,12 +232,14 @@ RNS_IGNORE_SUPER_CALL_END
     _visibilityPriority =
         rnscreens::conversion::RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
             newItemProps.visibilityPriority);
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+// tvOS and visionOS are excluded on purpose: `visibilityPriority` exists there, but the only
+// supported value is `standard`, which is already the default.
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
     // The item is rebuilt only where the priority is actually applied to it.
     if (@available(iOS 27.0, *)) {
       needsUpdate = YES;
     }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   }
 
   [super updateProps:props oldProps:oldProps];
