@@ -288,6 +288,11 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setScreenEdgesDeferringSystemGestures(
+        view: Screen?,
+        value: ReadableArray?,
+    ) = Unit
+
     override fun setPreventNativeDismiss(
         view: Screen?,
         value: Boolean,
