@@ -19,12 +19,12 @@ const PRIORITIES: StackHeaderItemVisibilityPriorityIOS[] = [
   'low',
 ];
 
-function ResizingItem() {
+function SquareItem() {
   const [large, setLarge] = useState(false);
 
   return (
     <PressableWithFeedback
-      testID="header-resizing-item"
+      testID="header-square-item"
       onPress={() => setLarge(value => !value)}
       style={{ width: large ? 300 : 30, height: 30 }}
     />
@@ -32,7 +32,7 @@ function ResizingItem() {
 }
 
 function buildHeaderConfig(
-  visibilityPriority: StackHeaderItemVisibilityPriorityIOS,
+  squareVisibilityPriority: StackHeaderItemVisibilityPriorityIOS,
   videoVisibilityPriority: StackHeaderItemVisibilityPriorityIOS,
   searchVisibilityPriority: StackHeaderItemVisibilityPriorityIOS,
 ): StackHeaderConfigProps {
@@ -42,9 +42,9 @@ function buildHeaderConfig(
       trailingItems: [
         {
           type: 'item',
-          id: 'resizing',
-          visibilityPriority,
-          render: () => <ResizingItem />,
+          id: 'square',
+          visibilityPriority: squareVisibilityPriority,
+          render: () => <SquareItem />,
         },
         {
           type: 'item',
@@ -67,16 +67,16 @@ function buildHeaderConfig(
 
 function PriorityScreen() {
   const { setRouteOptions, routeKey } = useStackNavigationContext();
-  const [priorityIndex, setPriorityIndex] = useState(0);
+  const [squarePriorityIndex, setSquarePriorityIndex] = useState(0);
   const [videoPriorityIndex, setVideoPriorityIndex] = useState(0);
   const [searchPriorityIndex, setSearchPriorityIndex] = useState(0);
-  const priority = PRIORITIES[priorityIndex]!;
+  const squarePriority = PRIORITIES[squarePriorityIndex]!;
   const videoPriority = PRIORITIES[videoPriorityIndex]!;
   const searchPriority = PRIORITIES[searchPriorityIndex]!;
 
   const headerConfig = useMemo(
-    () => buildHeaderConfig(priority, videoPriority, searchPriority),
-    [priority, videoPriority, searchPriority],
+    () => buildHeaderConfig(squarePriority, videoPriority, searchPriority),
+    [squarePriority, videoPriority, searchPriority],
   );
 
   useLayoutEffect(() => {
@@ -86,10 +86,10 @@ function PriorityScreen() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
-        testID="toggle-visibility-priority-button"
-        title={`square visibilityPriority: ${priority}`}
+        testID="toggle-square-visibility-priority-button"
+        title={`square visibilityPriority: ${squarePriority}`}
         onPress={() =>
-          setPriorityIndex(index => (index + 1) % PRIORITIES.length)
+          setSquarePriorityIndex(index => (index + 1) % PRIORITIES.length)
         }
       />
       <Button
