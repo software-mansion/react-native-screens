@@ -222,6 +222,17 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  // The sheet's content can remove or replace its scroll view while the sheet stays presented. Fabric
+  // then recycles the old instance into another screen, so stop observing it instead of forcing it to
+  // this screen's frame.
+  if (![scrollView isDescendantOfView:self]) {
+    [scrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    if (_sheetsScrollView == scrollView) {
+      _sheetsScrollView = nil;
+    }
+    return;
+  }
+
   RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
