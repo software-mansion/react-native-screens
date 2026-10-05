@@ -20,7 +20,7 @@ function TabScreen() {
       </Text>
       <Text style={styles.hint}>
         Multicolor Tint: a VectorDrawable that keeps its own colors when
-        selected (`renderingMode: 'original'`) and is template(system)-tinted
+        selected (`tinting: 'original'`) and is template(system)-tinted
         otherwise.
       </Text>
       <Text style={styles.hint}>
@@ -28,7 +28,7 @@ function TabScreen() {
       </Text>
       <Text style={styles.hint}>
         Image Tint: an `imageSource` icon, tinted by default and keeping its own
-        colors when selected (`renderingMode: 'original'`).
+        colors when selected (`tinting: 'original'`).
       </Text>
       <Text style={styles.hint}>
         The active indicator is sized via `tabBarItemActiveIndicatorWidth` and
@@ -81,12 +81,12 @@ const ROUTES: TabRouteConfig[] = [
         icon: {
           type: 'drawableResource',
           name: 'person_walking',
-          renderingMode: 'monochrome',
+          tinting: 'tinted',
         },
         selectedIcon: {
           type: 'drawableResource',
           name: 'person_walking',
-          renderingMode: 'original',
+          tinting: 'original',
         },
         standardAppearance: INDICATOR,
       },
@@ -119,7 +119,7 @@ const ROUTES: TabRouteConfig[] = [
         selectedIcon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
-          renderingMode: 'original',
+          tinting: 'original',
         },
         standardAppearance: INDICATOR,
       },

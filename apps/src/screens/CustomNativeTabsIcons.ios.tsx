@@ -28,8 +28,8 @@ function TabScreen() {
         System: a built-in SF Symbol star with a filled selected variant.
       </Text>
       <Text style={styles.hint}>
-        Image: an `imageSource` icon rendered as a template
-        (`renderingMode: 'monochrome'`), so it follows the item icon color.
+        Image: an `imageSource` icon rendered as a template (`renderingMode:
+        'template'`), so it follows the item icon color.
       </Text>
     </View>
   );
@@ -98,7 +98,7 @@ const ROUTES: TabRouteConfig[] = [
         icon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
-          renderingMode: 'monochrome',
+          renderingMode: 'template',
         },
       },
     },
