@@ -30,12 +30,11 @@
 
 namespace react = facebook::react;
 
-@interface RNSScreenStackView () <
-    UINavigationControllerDelegate,
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate,
-    RCTMountingTransactionObserving>
+@interface RNSScreenStackView () <UINavigationControllerDelegate,
+                                  UIAdaptivePresentationControllerDelegate,
+                                  UIGestureRecognizerDelegate,
+                                  UIViewControllerTransitioningDelegate,
+                                  RCTMountingTransactionObserving>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -48,7 +47,11 @@ namespace react = facebook::react;
 
 @end
 
-@implementation RNSNavigationController
+@implementation RNSNavigationController {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  CGRect _lastNavigationBarFrame;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+}
 
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -69,6 +72,13 @@ namespace react = facebook::react;
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    [self requestLayoutIfNavigationBarFrameChanged];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
     BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
@@ -126,7 +136,28 @@ namespace react = facebook::react;
 
   [headerConfig updateHeaderStateInShadowTreeInContextOfNavigationBar:self.navigationBar];
 }
-#endif
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)requestLayoutIfNavigationBarFrameChanged API_AVAILABLE(ios(26.0))
+{
+  // UIKit positions the navigation bar during layout of our view, but on iOS 26+ it does so after it has computed
+  // the safe area insets of the top view controller. The insets are therefore derived from the previous frame of
+  // the bar and they are not corrected until the next layout pass, which nobody requests.
+  // Since on iOS 26+ the screen is always laid out under the navigation bar, anything that relies on the insets
+  // (`SafeAreaView` rendered by `ScreenStackItem`, content inset adjustment of a scroll view) is misplaced by
+  // the distance the bar has travelled.
+  //
+  // When the frame of the bar has changed, we request another layout pass, in which UIKit computes the insets with
+  // the bar already in place. It runs in the same frame. The frame of the bar does not depend on the insets of
+  // the top view controller, so the bar is not moved in the additional pass and we do not request yet another one.
+  const CGRect navigationBarFrame = self.navigationBar.frame;
+  if (!CGRectEqualToRect(navigationBarFrame, _lastNavigationBarFrame)) {
+    _lastNavigationBarFrame = navigationBarFrame;
+    [self.view setNeedsLayout];
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+#endif // !TARGET_OS_TV
 
 - (void)willMoveToParentViewController:(UIViewController *)parent
 {
@@ -1124,8 +1155,8 @@ RNS_IGNORE_SUPER_CALL_END
   float bottom = [gestureResponseDistanceValues[@"bottom"] floatValue];
 
   // we check if any of the constraints are violated and return NO if so
-  return !(
-      (start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) || (bottom != -1 && y > bottom));
+  return !((start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) ||
+           (bottom != -1 && y > bottom));
 }
 
 // By default, the header buttons that are not inside the native hit area
@@ -1388,13 +1419,12 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RCTAssert(
-      childComponentView.reactSuperview == nil,
-      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-      self,
-      childComponentView,
-      @(index),
-      @([childComponentView.superview tag]));
+  RCTAssert(childComponentView.reactSuperview == nil,
+            @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+            self,
+            childComponentView,
+            @(index),
+            @([childComponentView.superview tag]));
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
@@ -1417,12 +1447,11 @@ RNS_IGNORE_SUPER_CALL_END
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [screenChildComponent.controller addSnapshotToView];
 
-  RCTAssert(
-      screenChildComponent.reactSuperview == self,
-      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-      self,
-      screenChildComponent,
-      @(index));
+  RCTAssert(screenChildComponent.reactSuperview == self,
+            @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+            self,
+            screenChildComponent,
+            @(index));
   RCTAssert(
       (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
       @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
