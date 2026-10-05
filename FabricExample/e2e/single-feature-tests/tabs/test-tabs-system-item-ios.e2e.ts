@@ -152,10 +152,7 @@ describeIfIOS('Tab Bar System Item', () => {
       const frameXAfterSearch = await getTabBarItemFrameX('Search');
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        // TODO: Re-enable once
-        // https://github.com/software-mansion/react-native-screens-labs/issues/1885 is fixed
-        // (likely a regression from https://github.com/software-mansion/react-native-screens/pull/4675).
-        // jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
+        jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
       } else {
         jestExpect(frameXAfterSearch).toEqual(frameXBeforeSearch);
       }
