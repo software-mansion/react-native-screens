@@ -197,6 +197,7 @@ export { default as Test4064 } from './Test4064';
 export { default as Test4090 } from './Test4090';
 export { default as Test4651 } from './Test4651';
 export { default as Test4702 } from './Test4702';
+export { default as Test4785 } from './Test4785';
 export { default as Test4107 } from './Test4107';
 export { default as Test4132 } from './Test4132';
 export { default as Test4155 } from './Test4155';
@@ -216,6 +217,7 @@ export { default as Test4423 } from './Test4423';
 export { default as Test4519 } from './Test4519';
 export { default as Test4571 } from './Test4571';
 export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
+export { default as Test4709 } from './Test4709';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

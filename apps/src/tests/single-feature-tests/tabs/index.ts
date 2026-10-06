@@ -29,6 +29,7 @@ import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-io
 import TestTabsTabBarSidebarPreferredPlacement from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
+import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 // Scenario entry-point components — each scenario's default export re-exported
@@ -60,6 +61,7 @@ export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-con
 export { default as TestTabsTabBarSidebarPreferredPlacement } from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-accessory-layout-ios';
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
+export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-accessory-size-ios';
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
 export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 
@@ -91,6 +93,7 @@ const scenarios = {
   TestTabsTabBarSidebarPreferredPlacement,
   TestTabsBottomAccessoryLayout,
   TestTabsBottomAccessoryVisibility,
+  TestTabsBottomAccessorySize,
   TestTabsScreenOrientation,
   TestTabsTabBarExperimentalUserInterfaceStyle,
 };

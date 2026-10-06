@@ -43,6 +43,7 @@
     "android/src/fabric/",
     "android/src/versioned/",
     "android/build.gradle",
+    "android/consumer-rules.pro",
     "android/CMakeLists.txt",
     "ios/",
     "cpp/",
