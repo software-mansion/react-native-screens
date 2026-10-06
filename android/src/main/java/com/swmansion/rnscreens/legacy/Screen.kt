@@ -237,7 +237,7 @@ class Screen(
     ) {
         // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
         // after the attached behaviour laid out this view.
-        if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
+        if ((changed || isStateInvalidated) && isNativeStackScreen && !usesFormSheetPresentation()) {
             val width = r - l
             val height = b - t
 
@@ -574,6 +574,13 @@ class Screen(
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
         updateShadowNodeScreenSize(width, height, top + translationY.toInt())
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        // Rotation may reset the shadow state while this screen is covered. Republish it on the
+        // next layout, even if the native frame is identical to the one before detaching.
+        invalidateState()
     }
 
     override fun onAttachedToWindow() {

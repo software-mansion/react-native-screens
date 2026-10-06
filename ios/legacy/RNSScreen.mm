@@ -53,6 +53,9 @@ struct ContentWrapperBox {
 
 @implementation RNSScreenView {
   __weak RCTScrollViewComponentView *_sheetsScrollView;
+  /// Tag of `_sheetsScrollView` at the time we started observing it. Fabric changes the tag when it recycles
+  /// the view, so a mismatch means the instance now belongs to some other component.
+  NSInteger _sheetsScrollViewTag;
 
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
@@ -99,6 +102,7 @@ struct ContentWrapperBox {
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
+  _sheetsScrollViewTag = 0;
   _sheetContentHeight = 0.0;
   _markedForUnmountInCurrentTransaction = NO;
   _synchronousShadowStateUpdatesEnabled = YES;
@@ -194,6 +198,8 @@ RNS_IGNORE_SUPER_CALL_END
     // we are going to overwrite it anyway.
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
+  // Refreshed even for the same instance: Fabric might have recycled it back into this sheet.
+  _sheetsScrollViewTag = scrollView != nil ? scrollView.tag : 0;
   if (scrollView != nil) {
     [self correctScrollViewFrame:scrollView withHeader:nil];
   }
@@ -219,6 +225,16 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *scrollView = (UIView *)object;
 
   if (![scrollView isKindOfClass:RCTScrollViewComponentView.class]) {
+    return;
+  }
+
+  // The sheet's content can remove its scroll view while the sheet stays presented. Fabric then recycles
+  // the instance (possibly into another screen), which changes its tag. Stop observing it instead of
+  // forcing it to this screen's frame. See #4785.
+  if (scrollView.tag != _sheetsScrollViewTag) {
+    [scrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = nil;
+    _sheetsScrollViewTag = 0;
     return;
   }
 
@@ -784,6 +800,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (_sheetsScrollView != nil) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = nil;
+    _sheetsScrollViewTag = 0;
   }
 
   // We want to run after container updates are performed (transitions etc.)
