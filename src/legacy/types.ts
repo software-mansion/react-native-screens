@@ -204,6 +204,23 @@ export interface ScreenProps extends ViewProps {
    */
   homeIndicatorHidden?: boolean | undefined;
   /**
+   * Whether the screen uses the vertical bar on hardware that has one
+   * (iPhone Duo's outer display). `disabled` moves the screen's bar items to
+   * the standard horizontal top and bottom bars and, for a full-height
+   * presentation, returns the status bar to the horizontal axis. Maps to
+   * `UIViewController.preferredVerticalBarBehavior`.
+   *
+   * Treat it as a stable choice for the screen; Apple recommends opting out
+   * only for layouts better served by horizontal bars, such as a
+   * control-light sheet. Applies to screens presented modally (`modal`,
+   * `formSheet`, etc.); UIKit resolves the configuration per presentation.
+   *
+   * Requires iOS 27.1 or newer. Defaults to `automatic`.
+   *
+   * @platform ios
+   */
+  preferredVerticalBarBehavior?: 'automatic' | 'disabled' | undefined;
+  /**
    * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
    *
    * @platform ios
