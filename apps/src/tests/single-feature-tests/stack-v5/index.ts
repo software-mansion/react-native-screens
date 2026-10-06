@@ -28,6 +28,7 @@ import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-i
 import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
 import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
+import TestStackHeaderItemVisibilityPriorityIOS from './test-stack-header-item-visibility-priority-ios';
 import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
 import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
 import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
@@ -35,6 +36,7 @@ import TestStackHeaderBackground from './test-stack-header-background-android';
 import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-android';
 import TestStackColorScheme from './test-stack-color-scheme';
 import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
+import TestStackLayoutDirection from './test-stack-layout-direction-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
 
 // Scenario entry-point components — each scenario's default export re-exported
@@ -49,6 +51,7 @@ export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-sc
 export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
 export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
+export { default as TestStackHeaderItemVisibilityPriorityIOS } from './test-stack-header-item-visibility-priority-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
@@ -72,6 +75,7 @@ export { default as TestStackHeaderBackground } from './test-stack-header-backgr
 export { default as TestStackHeaderStatusBarScrim } from './test-stack-header-status-bar-scrim-android';
 export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
+export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
 
 const scenarios = {
@@ -86,6 +90,7 @@ const scenarios = {
   TestStackHeaderMenuIOS,
   TestStackHeaderIconIOS,
   TestStackHeaderItemIdentifierIOS,
+  TestStackHeaderItemVisibilityPriorityIOS,
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,
@@ -109,6 +114,7 @@ const scenarios = {
   TestStackHeaderStatusBarScrim,
   TestStackColorScheme,
   TestStackHeaderHiddenRestore,
+  TestStackLayoutDirection,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

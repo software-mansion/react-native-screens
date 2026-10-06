@@ -57,10 +57,14 @@ class ScreensModule(
     }
 
     private fun setupFabric() {
-        val fabricUIManager =
-            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+        // Null when the host has no live ReactInstance. In bridgeless mode this happens only while
+        // the instance owning this module is being torn down (reload / destroy): ReactHostImpl
+        // drops its instance reference before it stops the JS thread, so JS can still create this
+        // module. There is nothing to set up then, the module gets invalidated right after.
+        // See https://github.com/software-mansion/react-native-screens/issues/4699
+        val uiManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) ?: return
         proxy?.apply {
-            nativeAddMutationsListener(fabricUIManager)
+            nativeAddMutationsListener(uiManager as FabricUIManager)
         }
     }
 

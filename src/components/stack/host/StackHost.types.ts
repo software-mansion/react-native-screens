@@ -1,9 +1,11 @@
 import React from 'react';
 import type { HostInstance, ViewProps } from 'react-native';
 import { type NativeProps } from '../../../fabric/stack/StackHostNativeComponent';
-import type { ColorScheme } from '../../shared/types';
+import type { ColorScheme, Direction } from '../../shared/types';
 
 export type StackHostColorScheme = ColorScheme | 'inherit';
+
+export type StackHostDirection = Direction | 'inherit';
 
 export type StackHostProps = {
   // General
@@ -12,6 +14,28 @@ export type StackHostProps = {
   ref?:
     | React.RefObject<(React.Component<NativeProps> & HostInstance) | null>
     | undefined;
+  /**
+   * @summary Specifies the layout direction of the native container, its views
+   * and child containers.
+   *
+   * The following values are currently supported:
+   * - `inherit` - uses parent's layout direction,
+   * - `ltr` - forces left-to-right layout direction,
+   * - `rtl` - forces right-to-left layout direction.
+   *
+   * @remarks
+   * Layout direction isn't currently supported on iOS.
+   *
+   * On Android, this property relies on `react-native`'s `style.direction`
+   * (which sets the native Android `layoutDirection` View property). It is
+   * propagated via the view hierarchy, so `inherit` falls back to the direction
+   * set on one of the parent views.
+   *
+   * @default inherit
+   *
+   * @platform android
+   */
+  direction?: StackHostDirection | undefined;
   /**
    * @summary Specifies the color scheme used by the container and any child
    * containers.

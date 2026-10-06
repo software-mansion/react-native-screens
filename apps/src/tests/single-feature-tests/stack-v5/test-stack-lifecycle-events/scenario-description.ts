@@ -7,5 +7,5 @@ export const scenarioDescription: ScenarioDescription = {
     'Verify lifecycle events (onWillAppear, etc.) fire on stack navigation',
   platforms: ['android', 'ios'],
   e2eCoverage: 'incomplete',
-  smokeTest: false,
+  smokeTest: true,
 };
