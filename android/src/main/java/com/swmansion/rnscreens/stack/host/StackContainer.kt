@@ -16,7 +16,6 @@ import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.ext.isMeasured
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
@@ -86,7 +85,7 @@ internal class StackContainer(
         super.onAttachedToWindow()
 
         parentContainerRegistry.attach(this)
-        setupFragmentManger()
+        setupFragmentManager()
 
         // StackContainer only provides container-level color scheme configuration for its screens
         // but doesn't use any color scheme-dependent views, so we don't need the callback.
@@ -121,11 +120,11 @@ internal class StackContainer(
 
     override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
-    internal fun setupFragmentManger() {
+    internal fun setupFragmentManager() {
         fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }.also {
+            checkNotNull(delegate.get()) {
+                "[RNScreens] StackContainer has no delegate to resolve the fragment manager from"
+            }.resolveFragmentManager().also {
                 it.addOnBackStackChangedListener(this)
             }
     }

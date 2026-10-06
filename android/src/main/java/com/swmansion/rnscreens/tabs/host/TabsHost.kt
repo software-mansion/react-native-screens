@@ -4,21 +4,25 @@ import android.annotation.SuppressLint
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.core.graphics.drawable.toDrawable
+import androidx.fragment.app.FragmentManager
 import com.facebook.react.bridge.UIManager
 import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.tabs.container.TabsContainer
+import com.swmansion.rnscreens.tabs.container.TabsContainerDelegate
 import com.swmansion.rnscreens.tabs.container.TabsNavigationState
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateObserver
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateRejectionReason
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.RNSLog
+import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor") // Only created by us. Should never be restored
@@ -28,7 +32,8 @@ class TabsHost(
 ) : FrameLayout(reactContext),
     TabsNavigationStateObserver,
     ViewTreeObserver.OnPreDrawListener,
-    UIManagerListener {
+    UIManagerListener,
+    TabsContainerDelegate {
     private val renderedScreens: ArrayList<TabsScreen> = arrayListOf()
     private var jsNavStateRequest: TabsNavigationStateUpdateRequest? = null
     private val layoutCoordinator: TabsHostLayoutCoordinator =
@@ -37,7 +42,7 @@ class TabsHost(
     private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
-        TabsContainer(reactContext).apply {
+        TabsContainer(reactContext, WeakReference(this)).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -81,6 +86,11 @@ class TabsHost(
         hasFirstLayoutWithInsets = false
         super.onDetachedFromWindow()
     }
+
+    override fun resolveFragmentManager(): FragmentManager =
+        checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
+            "[RNScreens] Nullish fragment manager - can't run container operations"
+        }
 
     internal fun mountReactSubviewAt(
         tabsScreen: TabsScreen,
