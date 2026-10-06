@@ -582,6 +582,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
       [tabs addObject:[self tabForTabScreenController:screenController]];
     }
     [self setTabs:tabs animated:animated];
+    [self assertAtMostOneSearchTabInstalled];
 
     if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
       self.selectedTab = previouslySelectedTab;
@@ -592,6 +593,25 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   [self setViewControllers:screenControllers animated:animated];
 }
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+/// Debug-build sanity check run after the tabs are installed: UIKit gives only the system search
+/// role special placement & behavior, so more than one `role: 'search'` screen is a config error.
+- (void)assertAtMostOneSearchTabInstalled API_AVAILABLE(ios(18.0))
+{
+#if RCT_DEBUG
+  NSUInteger searchTabCount = 0;
+  for (UITab *tab in self.tabs) {
+    if ([tab isKindOfClass:UISearchTab.class]) {
+      searchTabCount += 1;
+    }
+  }
+  RCTAssert(searchTabCount <= 1,
+            @"[RNScreens] At most one tab screen can have `role: 'search'`, got %lu",
+            (unsigned long)searchTabCount);
+#endif // RCT_DEBUG
+}
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 
 // Controllers currently installed in UIKit, not including more controller.
 - (nonnull NSArray<RNSTabsScreenViewController *> *)installedScreenControllers
