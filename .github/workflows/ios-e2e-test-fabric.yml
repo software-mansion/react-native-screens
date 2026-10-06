@@ -19,7 +19,7 @@ concurrency:
   group: ios-e2e-fabric-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  test:
+  build:
     runs-on: xcode-27-xlarge
     timeout-minutes: 90
     env:
