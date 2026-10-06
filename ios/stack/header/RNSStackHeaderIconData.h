@@ -17,11 +17,13 @@ typedef NS_ENUM(NSInteger, RNSStackHeaderIconType) {
 @property (nonatomic, readonly) RNSStackHeaderIconType iconType;
 @property (nonatomic, copy, readonly, nullable) NSString *resourceName;
 @property (nonatomic, copy, readonly, nullable) NSDictionary *jsonSource;
+@property (nonatomic, readonly) BOOL prefersSynchronousLoading;
 @property (nonatomic, strong, nullable) UIImage *resolvedImage;
 
 - (instancetype)initWithType:(RNSStackHeaderIconType)iconType
-                resourceName:(nullable NSString *)resourceName
-                  jsonSource:(nullable NSDictionary *)jsonSource;
+                 resourceName:(nullable NSString *)resourceName
+                   jsonSource:(nullable NSDictionary *)jsonSource
+    prefersSynchronousLoading:(BOOL)prefersSynchronousLoading;
 
 @end
 

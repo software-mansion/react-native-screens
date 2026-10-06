@@ -204,13 +204,13 @@ internal class StackHeaderToolbarMenuController(
             try {
                 propIconResolvers
                     .getOrPut(id) {
-                        PropIconResolver { name, uri, onComplete ->
+                        PropIconResolver { name, uri, mode, onComplete ->
                             iconResolver.resolve(
-                                StackHeaderToolbarMenuItemIconSource(name, uri),
+                                StackHeaderToolbarMenuItemIconSource(name, uri, mode),
                                 onComplete,
                             )
                         }
-                    }.resolve(source.drawableIconResourceName, source.imageIconUri) { result ->
+                    }.resolve(source.drawableIconResourceName, source.imageIconUri, source.imageIconPreferredLoadingMode) { result ->
                         when (result) {
                             IconResolution.Unchanged -> Unit
                             is IconResolution.Resolved -> setItemIcon(id, source, result.drawable)

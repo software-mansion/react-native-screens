@@ -11,6 +11,8 @@ import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import { type PlatformIconIOS } from 'react-native-screens';
 
+type LoadingMode = 'automatic' | 'synchronous' | undefined;
+
 type IconVariant = 'sfSymbol' | 'xcasset' | 'imageSource' | 'templateSource';
 
 const ICON_VARIANTS: IconVariant[] = [
@@ -20,7 +22,10 @@ const ICON_VARIANTS: IconVariant[] = [
   'templateSource',
 ];
 
-function iconForVariant(variant: IconVariant): PlatformIconIOS {
+function iconForVariant(
+  variant: IconVariant,
+  preferredLoadingMode: LoadingMode,
+): PlatformIconIOS {
   switch (variant) {
     case 'sfSymbol':
       return { type: 'sfSymbol', name: 'star.fill' };
@@ -29,11 +34,13 @@ function iconForVariant(variant: IconVariant): PlatformIconIOS {
     case 'imageSource':
       return {
         type: 'imageSource',
+        ...(preferredLoadingMode !== undefined && { preferredLoadingMode }),
         imageSource: require('@assets/search_black.png'),
       };
     case 'templateSource':
       return {
         type: 'templateSource',
+        ...(preferredLoadingMode !== undefined && { preferredLoadingMode }),
         templateSource: require('@assets/variableIcons/icon.png'),
       };
   }
@@ -47,11 +54,12 @@ function nextVariant(current: IconVariant): IconVariant {
 function buildHeaderConfig(
   itemIconVariant: IconVariant,
   menuIconVariant: IconVariant,
+  preferredLoadingMode: LoadingMode,
   cycleMenuIcons: () => void,
   showToast: (text: string) => void,
 ): StackHeaderConfigProps {
-  const itemIcon = iconForVariant(itemIconVariant);
-  const menuIcon = iconForVariant(menuIconVariant);
+  const itemIcon = iconForVariant(itemIconVariant, preferredLoadingMode);
+  const menuIcon = iconForVariant(menuIconVariant, preferredLoadingMode);
 
   return {
     title: 'Header Icons',
@@ -141,14 +149,25 @@ function buildHeaderConfig(
   };
 }
 
-function ConfigScreen() {
+type ConfigScreenProps = {
+  itemIconVariant: IconVariant;
+  setItemIconVariant: React.Dispatch<React.SetStateAction<IconVariant>>;
+  menuIconVariant: IconVariant;
+  setMenuIconVariant: React.Dispatch<React.SetStateAction<IconVariant>>;
+  preferredLoadingMode: LoadingMode;
+  setPreferredLoadingMode: React.Dispatch<React.SetStateAction<LoadingMode>>;
+};
+
+function ConfigScreen({
+  itemIconVariant,
+  setItemIconVariant,
+  menuIconVariant,
+  setMenuIconVariant,
+  preferredLoadingMode,
+  setPreferredLoadingMode,
+}: ConfigScreenProps) {
   const navigation = useStackNavigationContext();
   const toast = useToast();
-
-  const [itemIconVariant, setItemIconVariant] =
-    useState<IconVariant>('sfSymbol');
-  const [menuIconVariant, setMenuIconVariant] =
-    useState<IconVariant>('sfSymbol');
 
   const showToast = useCallback(
     (text: string) => {
@@ -159,7 +178,7 @@ function ConfigScreen() {
 
   const cycleMenuIcons = useCallback(() => {
     setMenuIconVariant(v => nextVariant(v));
-  }, []);
+  }, [setMenuIconVariant]);
 
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(
@@ -167,10 +186,17 @@ function ConfigScreen() {
       buildHeaderConfig(
         itemIconVariant,
         menuIconVariant,
+        preferredLoadingMode,
         cycleMenuIcons,
         showToast,
       ),
-    [itemIconVariant, menuIconVariant, cycleMenuIcons, showToast],
+    [
+      itemIconVariant,
+      menuIconVariant,
+      preferredLoadingMode,
+      cycleMenuIcons,
+      showToast,
+    ],
   );
 
   useLayoutEffect(() => {
@@ -183,6 +209,29 @@ function ConfigScreen() {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       style={styles.container}>
+      <View style={styles.section}>
+        <Text testID="current-loading-mode" style={styles.current}>
+          {preferredLoadingMode ?? 'omitted'}
+        </Text>
+        <Button
+          testID="cycle-loading-mode-button"
+          title="Cycle image loading preference"
+          onPress={() =>
+            setPreferredLoadingMode(mode =>
+              mode === undefined
+                ? 'synchronous'
+                : mode === 'synchronous'
+                ? 'automatic'
+                : undefined,
+            )
+          }
+        />
+        <Text>
+          Use a Release build to exercise bundled PNG loading. Debug assets may
+          come from Metro over HTTP. Icon visibility alone does not prove
+          synchronous loading.
+        </Text>
+      </View>
       <View style={styles.section}>
         <Text style={styles.label}>Bar Button Item Icon</Text>
         <Text testID="current-item-icon" style={styles.current}>
@@ -217,13 +266,31 @@ function ConfigScreen() {
 }
 
 function TestStackHeaderIconIOS() {
+  // This navigator only accepts a route name when pushing. Keep the selected
+  // icons and loading preference here so each pushed screen uses the same case.
+  const [itemIconVariant, setItemIconVariant] =
+    useState<IconVariant>('sfSymbol');
+  const [menuIconVariant, setMenuIconVariant] =
+    useState<IconVariant>('sfSymbol');
+  const [preferredLoadingMode, setPreferredLoadingMode] =
+    useState<LoadingMode>();
+
   return (
     <ToastProvider>
       <StackContainer
         routeConfigs={[
           {
             name: 'Home',
-            element: <ConfigScreen />,
+            element: (
+              <ConfigScreen
+                itemIconVariant={itemIconVariant}
+                setItemIconVariant={setItemIconVariant}
+                menuIconVariant={menuIconVariant}
+                setMenuIconVariant={setMenuIconVariant}
+                preferredLoadingMode={preferredLoadingMode}
+                setPreferredLoadingMode={setPreferredLoadingMode}
+              />
+            ),
           },
         ]}
       />
