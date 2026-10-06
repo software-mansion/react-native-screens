@@ -3,7 +3,6 @@
 
 #import "RNSSafeAreaViewComponentView.h"
 #import <React/RCTConversions.h>
-#import <React/RCTUtils.h>
 #import "RNSSafeAreaProviding.h"
 #import "RNSSafeAreaViewNotifications.h"
 
@@ -13,8 +12,6 @@
 #import <react/renderer/components/rnscreens/RNSSafeAreaViewState.h>
 
 namespace react = facebook::react;
-
-static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold);
 
 #pragma mark - View implementation
 
@@ -87,7 +84,7 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
 
   UIEdgeInsets safeAreaInsets = _providerView.providerSafeAreaInsets;
 
-  if (UIEdgeInsetsEqualToEdgeInsetsWithThreshold(safeAreaInsets, _currentSafeAreaInsets, 1.0 / RCTScreenScale())) {
+  if (UIEdgeInsetsEqualToEdgeInsets(safeAreaInsets, _currentSafeAreaInsets)) {
     return;
   }
 
@@ -151,14 +148,6 @@ static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIE
 #endif // RCT_DYNAMIC_FRAMEWORKS
 
 @end
-
-#pragma mark - Utility functions
-
-static BOOL UIEdgeInsetsEqualToEdgeInsetsWithThreshold(UIEdgeInsets insets1, UIEdgeInsets insets2, CGFloat threshold)
-{
-  return ABS(insets1.left - insets2.left) <= threshold && ABS(insets1.right - insets2.right) <= threshold &&
-      ABS(insets1.top - insets2.top) <= threshold && ABS(insets1.bottom - insets2.bottom) <= threshold;
-}
 
 #pragma mark - View class exposure
 
