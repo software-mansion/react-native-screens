@@ -53,6 +53,7 @@ namespace react = facebook::react;
   _didSetHeaderItemPlacement = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
+  _visibilityPriority = RNSHeaderItemVisibilityPriorityStandard;
 }
 
 - (void)setTitleProp:(NSString *)titleProp
@@ -225,6 +226,20 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldItemProps.hidesSharedBackground != newItemProps.hidesSharedBackground) {
     _hidesSharedBackground = newItemProps.hidesSharedBackground;
     needsUpdate = YES;
+  }
+
+  if (oldItemProps.visibilityPriority != newItemProps.visibilityPriority) {
+    _visibilityPriority =
+        rnscreens::conversion::RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+            newItemProps.visibilityPriority);
+// tvOS and visionOS are excluded on purpose: `visibilityPriority` exists there, but the only
+// supported value is `standard`, which is already the default.
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    // The item is rebuilt only on iOS 27+, where the priority is actually applied.
+    if (@available(iOS 27.0, *)) {
+      needsUpdate = YES;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   }
 
   [super updateProps:props oldProps:oldProps];

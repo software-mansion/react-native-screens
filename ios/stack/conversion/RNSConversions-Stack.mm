@@ -52,4 +52,33 @@ UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonD
   }
 }
 
+RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+    react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case react::RNSStackHeaderItemIOSVisibilityPriority::Low:
+      return RNSHeaderItemVisibilityPriorityLow;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::Standard:
+      return RNSHeaderItemVisibilityPriorityStandard;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::High:
+      return RNSHeaderItemVisibilityPriorityHigh;
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case RNSHeaderItemVisibilityPriorityLow:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case RNSHeaderItemVisibilityPriorityStandard:
+      return UIBarButtonItemVisibilityPriorityStandard;
+    case RNSHeaderItemVisibilityPriorityHigh:
+      return UIBarButtonItemVisibilityPriorityHigh;
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 }; // namespace rnscreens::conversion
