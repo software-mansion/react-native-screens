@@ -17,6 +17,7 @@
 #import "RNSTabBarController.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
+#import "RNSTabsBottomAccessoryWrapperView.h"
 #import "RNSTabsScreenComponentView.h"
 
 namespace react = facebook::react;
@@ -174,7 +175,7 @@ namespace react = facebook::react;
         // corner radius. RCTViewComponentView overrides it to 0 by default and we're unable
         // to restore default value in an easy way. By wrapping it in UIView, it is clipped
         // to default corner radius.
-        UIView *wrapperView = [UIView new];
+        UIView *wrapperView = [RNSTabsBottomAccessoryWrapperView new];
         [wrapperView addSubview:bottomAccessory];
         _bottomAccessoryWrapperView = wrapperView;
       } else {
