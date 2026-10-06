@@ -612,6 +612,21 @@ export interface ScreenProps extends ViewProps {
    */
   transitionDuration?: number | undefined;
   /**
+   * Holds an iOS fade push at its initial frame until this becomes false.
+   * The destination is attached and laid out while both the native animation
+   * and transition progress remain at zero. Set on the initial render.
+   *
+   * Only applies to non-gesture pushes with stackAnimation="fade". Other
+   * animations, presentations, pops and platforms ignore this prop.
+   * A one-second native preparation timeout releases the transition if the
+   * application never becomes ready. It does not force animation completion.
+   *
+   * @default false
+   * @platform ios
+   */
+  transitionStartDeferred?: boolean | undefined;
+
+  /**
    * Footer component that can be used alongside formSheet stack presentation style.
    *
    * This option is provided, because due to implementation details it might be problematic

@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSDeferredTransitionStart.h"
 #import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
@@ -794,6 +795,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)invalidateImpl
 {
   _invalidated = YES;
+  [self.deferredTransitionStart releaseTransition];
 
   // Since the scroll view might get immediately recycled we remove ourselves
   // immediately.
@@ -1269,6 +1271,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
+  self.transitionStartDeferred = newScreenProps.transitionStartDeferred;
 
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
