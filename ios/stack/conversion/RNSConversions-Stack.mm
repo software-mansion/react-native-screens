@@ -65,7 +65,7 @@ RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStack
   }
 }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 API_AVAILABLE(ios(27.0))
 UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
     RNSHeaderItemVisibilityPriority visibilityPriority)
@@ -79,6 +79,6 @@ UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromRNSHeader
       return UIBarButtonItemVisibilityPriorityHigh;
   }
 }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 }; // namespace rnscreens::conversion
