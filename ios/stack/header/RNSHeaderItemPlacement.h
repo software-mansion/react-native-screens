@@ -5,6 +5,7 @@
 typedef NS_ENUM(NSInteger, RNSHeaderItemPlacement) {
   RNSHeaderItemPlacementLeading,
   RNSHeaderItemPlacementTrailing,
+  RNSHeaderItemPlacementToolbar,
   RNSHeaderItemPlacementTitle,
   RNSHeaderItemPlacementSubtitle,
   RNSHeaderItemPlacementLargeSubtitle,

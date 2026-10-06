@@ -8,7 +8,7 @@ import type {
 import { codegenNativeComponent } from 'react-native';
 
 type SpacerSize = 'fixed' | 'flexible';
-type Placement = 'leading' | 'trailing';
+type Placement = 'leading' | 'trailing' | 'toolbar';
 
 export interface NativeProps extends ViewProps {
   placement?: CT.WithDefault<Placement, 'trailing'>;

@@ -12,6 +12,7 @@ import { UnsafeMixed } from '../codegenUtils';
 export type Placement =
   | 'leading'
   | 'trailing'
+  | 'toolbar'
   | 'title'
   | 'subtitle'
   | 'largeSubtitle';

@@ -3466,6 +3466,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/pngjs@npm:^6.0.5":
+  version: 6.0.5
+  resolution: "@types/pngjs@npm:6.0.5"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/11979d0690e774046d3a1e8cfc613a6b53a613909d81c93831cf253800e93ba1a2d47950979b523aebd4fc023351b644d7f4aa2dfcc027c70816a2968420e7da
+  languageName: node
+  linkType: hard
+
 "@types/react-test-renderer@npm:^19.1.0":
   version: 19.1.0
   resolution: "@types/react-test-renderer@npm:19.1.0"
@@ -3816,6 +3825,7 @@ __metadata:
     "@rnrepo/build-tools": "npm:~0.1.3-beta.0"
     "@rnscreens/apps": "link:../apps"
     "@types/jest": "npm:^29.5.13"
+    "@types/pngjs": "npm:^6.0.5"
     "@types/react": "npm:^19.2.0"
     "@types/react-test-renderer": "npm:^19.1.0"
     babel-jest: "npm:^29.6.3"
@@ -3825,6 +3835,7 @@ __metadata:
     jest: "npm:^29.6.3"
     nanoid: "npm:^4.0.2"
     patch-package: "npm:^8.0.0"
+    pngjs: "npm:^7.0.0"
     prettier: "npm:2.8.8"
     react: "npm:19.2.3"
     react-native: "npm:0.87.0"

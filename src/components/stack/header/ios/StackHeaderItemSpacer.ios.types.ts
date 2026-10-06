@@ -2,7 +2,7 @@ import type { StackHeaderItemPlacement } from './StackHeaderItem.ios.types';
 
 export type StackHeaderItemSpacerPlacement = Extract<
   StackHeaderItemPlacement,
-  'leading' | 'trailing'
+  'leading' | 'trailing' | 'toolbar'
 >;
 
 export type StackHeaderItemSpacerProps = {
