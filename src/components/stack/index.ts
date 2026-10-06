@@ -47,6 +47,7 @@ export type {
   StackHeaderAppearanceIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,
+  StackHeaderItemAxisBehaviorIOS,
   StackHeaderTitleCustomItemIOS,
   StackHeaderSpacerItemIOS,
   StackHeaderConfigCommandsIOS,
