@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens.modals.formsheet.native.core
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.view.ContextThemeWrapper
 import android.view.View
 import com.swmansion.rnscreens.modals.formsheet.native.interfaces.FormSheetContentSizeChangeDelegate
@@ -11,9 +13,14 @@ import com.swmansion.rnscreens.modals.formsheet.native.presentation.FormSheetPre
 import com.swmansion.rnscreens.modals.formsheet.native.presentation.FormSheetPresentationManager
 import kotlin.properties.Delegates
 
+/**
+ * @param activityProvider returns the activity whose decor view hosts the sheet's dimming. The default walks the
+ * [ContextWrapper] chain of [context]; hosts whose context does not wrap an activity must provide their own.
+ */
 class FormSheetDialogManager(
     context: Context,
     private val contentView: View,
+    activityProvider: () -> Activity? = { context.findActivity() },
 ) {
     private var formSheetConfig = FormSheetConfig()
 
@@ -45,7 +52,7 @@ class FormSheetDialogManager(
             }
         }
 
-    private val dimmingManager = FormSheetDimmingManager(context)
+    private val dimmingManager = FormSheetDimmingManager(activityProvider)
 
     private val presentationManager =
         FormSheetPresentationManager(
@@ -86,4 +93,15 @@ class FormSheetDialogManager(
     internal fun destroy() {
         presentationManager.destroy()
     }
+}
+
+private fun Context.findActivity(): Activity? {
+    var current: Context? = this
+    while (current is ContextWrapper) {
+        if (current is Activity) {
+            return current
+        }
+        current = current.baseContext
+    }
+    return null
 }
