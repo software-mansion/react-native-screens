@@ -44,7 +44,9 @@ abstract class FabricEnabledViewGroup(
         val realHeaderHeight: Float = pxToDp(headerHeight.toFloat())
 
         // Check incoming state values. If they're already the correct value, return early to prevent
-        // infinite UpdateState/SetState loop.
+        // an infinite UpdateState/SetState loop. The state-invalidated flag forces the update when the
+        // commit hook has reset the state while the screen was detached from the native hierarchy
+        // - the screen may have missed some layout changes in the meantime (see #4336 and #4760).
         val delta = 0.9f
         if (!isStateInvalidated &&
             abs(lastWidth - realWidth) < delta &&
