@@ -279,7 +279,10 @@ open class ScreenContainer(
         setupFragmentManager()
     }
 
-    /** Removes fragments from fragment manager that are attached to this container  */
+    /**
+     * Removes fragments from fragment manager that are attached to this container, including
+     * fragments of screens already removed from it whose deferred removal hasn't run yet.
+     */
     private fun removeMyFragments(fragmentManager: FragmentManager) {
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
