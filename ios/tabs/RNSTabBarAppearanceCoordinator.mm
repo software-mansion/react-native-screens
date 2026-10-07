@@ -77,12 +77,12 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
          forTabBarItem:(nonnull UITabBarItem *)tabBarItem
           ofScreenView:(nullable RNSTabsScreenComponentView *)screenView
 {
-  tabBarItem.image = image;
 #if RNS_UITAB_API_SDK_AVAILABLE
   if (RNS_UITAB_API_ENABLED) {
     screenView.controller.tab.image = image;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
+  tabBarItem.image = image;
 }
 
 - (void)setIconsForTabBarItem:(UITabBarItem *)tabBarItem
