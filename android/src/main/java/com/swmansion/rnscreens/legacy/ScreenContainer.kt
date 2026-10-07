@@ -284,7 +284,9 @@ open class ScreenContainer(
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
-            if (fragment is ScreenFragment && fragment.screen.container === this) {
+            if (fragment is ScreenFragment &&
+                (fragment.screen.container === this || fragment.id == id)
+            ) {
                 transaction.remove(fragment)
                 hasFragments = true
             }
