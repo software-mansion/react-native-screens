@@ -26,7 +26,6 @@ import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
-import TestTabsTabBarSidebarPreferredPlacement from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
 import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
@@ -58,7 +57,6 @@ export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
 export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
 export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
 export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
-export { default as TestTabsTabBarSidebarPreferredPlacement } from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-accessory-layout-ios';
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
 export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-accessory-size-ios';
@@ -90,7 +88,6 @@ const scenarios = {
   TestTabsMoreNavigationController,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
-  TestTabsTabBarSidebarPreferredPlacement,
   TestTabsBottomAccessoryLayout,
   TestTabsBottomAccessoryVisibility,
   TestTabsBottomAccessorySize,
