@@ -42,24 +42,14 @@ export function nativeScreensAvailable() {
 /**
  * Declares that this platform supplies `RNSScreen` and the rest itself.
  *
- * For a platform this library ships no native code for. An out-of-tree React
- * Native, a desktop fork for instance, can register the same Fabric components
- * under the same names: nothing about them is tied to iOS, Android or Windows.
- * Calling this is an assertion that they are registered, and a platform where
- * they are not must not call it, because the components would then be mounted
- * and would not exist.
+ * For a platform this library ships no native code for: an out-of-tree React
+ * Native can register the same Fabric components under the same names. Calling
+ * this asserts that they are registered, so a platform where they are not must
+ * not call it.
  *
- * Deliberately not `enableScreens()`. That call is public, long-standing and
- * usually unconditional, and on a platform without native screens it means "use
- * them where they exist" and leaves the fallback in place. Overloading it into a
- * capability assertion would change what every existing caller gets: an app on
- * react-native-macos, which has no implementation here, calls `enableScreens()`
- * today and gets views, and would have started mounting components that are not
- * there. There is no way to tell such a caller from a host making a claim, so
- * the claim gets its own call.
- *
- * Screens still have to be switched on separately, `ENABLE_SCREENS` defaulting
- * to `isNativePlatformSupported`, so a host does both:
+ * Not `enableScreens()`, which applications call unconditionally and which has
+ * always left the fallback in place where there are no native components. A host
+ * does both, the two answering different questions:
  *
  *     provideNativeScreens();
  *     enableScreens();
@@ -84,6 +74,11 @@ export function provideNativeScreens(provided = true) {
 export function enableScreens(shouldEnableScreens = true) {
   ENABLE_SCREENS = shouldEnableScreens;
 
+  // The list rather than `nativeScreensAvailable()`, unlike the gates elsewhere:
+  // what follows checks this library's own autolinking, and a platform that
+  // registers the components itself may well not answer `getViewManagerConfig`
+  // for them. Telling such a host its native module is missing would be worse
+  // than saying nothing.
   if (!isNativePlatformSupported) {
     return;
   }

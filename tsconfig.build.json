@@ -3,5 +3,5 @@
   "compilerOptions": {
     "rootDir": "./src"
   },
-  "exclude": ["FabricExample", "TVOSExample"]
+  "exclude": ["FabricExample", "TVOSExample", "src/**/__tests__"]
 }
