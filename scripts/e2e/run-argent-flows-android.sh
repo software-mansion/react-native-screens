@@ -33,6 +33,17 @@ adb -s "$SERIAL" shell settings put global animator_duration_scale 0.0
 OUT="${RUNNER_TEMP:-/tmp}/argent-out"
 mkdir -p "$OUT"
 set +e
+# ARGENT_UPDATE_BASELINES=true (the workflow's `update-baselines` input)
+# records the baselines first, then replays against them to prove they hold.
+if [ "${ARGENT_UPDATE_BASELINES:-false}" = "true" ]; then
+  argent flow run ./.argent/flows --device "$SERIAL" --update-baselines \
+    2>&1 | tee "$OUT/argent-flows-record.log"
+  RC=${PIPESTATUS[0]}
+  if [ "$RC" -ne 0 ]; then
+    adb -s "$SERIAL" exec-out screencap -p > "$OUT/screen-at-failure.png" || true
+    exit "$RC"
+  fi
+fi
 argent flow run ./.argent/flows --device "$SERIAL" \
   --output "$OUT/snapshots" 2>&1 | tee "$OUT/argent-flows.log"
 RC=${PIPESTATUS[0]}
