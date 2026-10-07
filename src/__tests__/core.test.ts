@@ -39,6 +39,12 @@ describe('a platform this library ships native code for', () => {
     core.provideNativeScreens(false);
     expect(core.nativeScreensAvailable()).toBe(true);
   });
+
+  it('can freeze without claiming anything', () => {
+    const core = loadCore('ios');
+    core.enableFreeze();
+    expect(core.freezeEnabled()).toBe(true);
+  });
 });
 
 describe('a platform it does not', () => {
@@ -78,5 +84,19 @@ describe('a platform it does not', () => {
     core.enableScreens();
     expect(core.nativeScreensAvailable()).toBe(true);
     expect(core.screensEnabled()).toBe(true);
+  });
+
+  it('cannot freeze until it has claimed the components', () => {
+    // `Screen` reads `freezeEnabled()` inside the native branch, so a host able to
+    // reach that branch has to be able to turn the freeze on.
+    const core = loadCore('macos');
+    core.enableFreeze();
+    expect(core.freezeEnabled()).toBe(false);
+
+    core.provideNativeScreens();
+    core.enableFreeze();
+    expect(core.freezeEnabled()).toBe(true);
+    core.enableFreeze(false);
+    expect(core.freezeEnabled()).toBe(false);
   });
 });
