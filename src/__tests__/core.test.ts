@@ -23,6 +23,10 @@ function loadCore(os: string): Core {
     Platform: { OS: os },
     UIManager: { getViewManagerConfig: () => ({}) },
   }));
+  // `require` rather than `import`, which is the point: an import is hoisted and
+  // cached, and this needs the module re-evaluated after each `doMock`. The rule
+  // is named rather than disabled wholesale.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   return require('../core') as Core;
 }
 
