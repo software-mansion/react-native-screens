@@ -220,8 +220,9 @@ here, and whether to use them. `provideNativeScreens()` is an assertion that the
 are registered, so a platform where they are not must not call it. On iOS, Android
 and Windows it is unnecessary and does nothing.
 
-If you are writing an application rather than a platform, you want neither of
-these: `enableScreens()` alone behaves exactly as it always has.
+If you are writing an application rather than a platform, you do not need
+`provideNativeScreens()`. `enableScreens()` is unchanged and still means what it
+always has.
 
 ### Using `createNativeStackNavigator` with React Navigation
 
