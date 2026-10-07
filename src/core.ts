@@ -8,7 +8,7 @@ import { Platform, UIManager } from 'react-native';
  *
  * Not a list of platforms where they *can* work. A platform that provides the
  * `RNSScreen` and `RNSScreenStack` components out of tree says so by calling
- * `enableScreens()`; see `nativeScreensAvailable()`.
+ * `provideNativeScreens()`; see `nativeScreensAvailable()`.
  */
 export const isNativePlatformSupported =
   Platform.OS === 'ios' ||
@@ -18,15 +18,14 @@ export const isNativePlatformSupported =
 let ENABLE_SCREENS = isNativePlatformSupported;
 
 /**
- * Whether an application has asked for native screens on a platform this
- * library does not ship native code for.
+ * Whether a host has said its platform supplies the native components itself.
  *
  * Separate from `ENABLE_SCREENS` because the two answer different questions.
  * `ENABLE_SCREENS` is "should screens be used", which an app turns off on iOS
- * and Android; this is "do screens exist here at all", which only an app can
+ * and Android; this is "do screens exist here at all", which only the host can
  * know for a platform that is not in the list above.
  */
-let ENABLED_OUT_OF_TREE = false;
+let PROVIDED_OUT_OF_TREE = false;
 
 /**
  * Whether the native components can be used at all.
@@ -37,17 +36,48 @@ let ENABLED_OUT_OF_TREE = false;
  * platform without the native code from mounting components that do not exist.
  */
 export function nativeScreensAvailable() {
-  return isNativePlatformSupported || ENABLED_OUT_OF_TREE;
+  return isNativePlatformSupported || PROVIDED_OUT_OF_TREE;
+}
+
+/**
+ * Declares that this platform supplies `RNSScreen` and the rest itself.
+ *
+ * For a platform this library ships no native code for. An out-of-tree React
+ * Native, a desktop fork for instance, can register the same Fabric components
+ * under the same names: nothing about them is tied to iOS, Android or Windows.
+ * Calling this is an assertion that they are registered, and a platform where
+ * they are not must not call it, because the components would then be mounted
+ * and would not exist.
+ *
+ * Deliberately not `enableScreens()`. That call is public, long-standing and
+ * usually unconditional, and on a platform without native screens it means "use
+ * them where they exist" and leaves the fallback in place. Overloading it into a
+ * capability assertion would change what every existing caller gets: an app on
+ * react-native-macos, which has no implementation here, calls `enableScreens()`
+ * today and gets views, and would have started mounting components that are not
+ * there. There is no way to tell such a caller from a host making a claim, so
+ * the claim gets its own call.
+ *
+ * Screens still have to be switched on separately, `ENABLE_SCREENS` defaulting
+ * to `isNativePlatformSupported`, so a host does both:
+ *
+ *     provideNativeScreens();
+ *     enableScreens();
+ *
+ * @param provided whether this platform registers the native components.
+ */
+export function provideNativeScreens(provided = true) {
+  PROVIDED_OUT_OF_TREE = provided;
 }
 
 /**
  * Turns native screens on or off.
  *
- * The default is `isNativePlatformSupported`, so on iOS, Android and Windows
- * this is only needed to turn them off. Calling it with `true` on any other
- * platform is how an application says that its platform provides `RNSScreen`
- * and the rest itself, and is an assertion that those components exist: see
- * `nativeScreensAvailable()`.
+ * The default is `isNativePlatformSupported`, so on iOS, Android and Windows this
+ * is only needed to turn them off. Its meaning on any other platform is
+ * unchanged: screens are used where they exist, and a platform with no native
+ * components keeps the fallback. Saying that a platform does have them is
+ * `provideNativeScreens()`, which is a separate call for a reason given there.
  *
  * @param shouldEnableScreens whether screens should be used at all.
  */
@@ -55,11 +85,6 @@ export function enableScreens(shouldEnableScreens = true) {
   ENABLE_SCREENS = shouldEnableScreens;
 
   if (!isNativePlatformSupported) {
-    // An application on a platform this library knows nothing about, asserting
-    // that the platform supplies the native components itself. React Native
-    // forks for desktop do this; the components are ordinary Fabric C++ and
-    // nothing about them is tied to the platforms above.
-    ENABLED_OUT_OF_TREE = shouldEnableScreens;
     return;
   }
 
