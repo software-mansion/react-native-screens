@@ -178,8 +178,7 @@ describeIfIOS('Tab Bar System Item', () => {
       const frameXAfterFavorites = await getTabBarItemFrameX('Favorites');
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        // TODO: Re-enable together with the search position check above (labs#1885).
-        // jestExpect(frameXAfterFavorites).toBeLessThan(frameXBeforeFavorites);
+        jestExpect(frameXAfterFavorites).toBeLessThan(frameXBeforeFavorites);
       } else {
         jestExpect(frameXAfterFavorites).toEqual(frameXBeforeFavorites);
       }
