@@ -97,9 +97,18 @@ type WithTinting<Icon> = Icon & {
  */
 export type TabsScreenIconTemplateIOS = PlatformIconIOSTemplate;
 
+/**
+ * @deprecated Use `{ type: 'sfSymbol', name }` for custom symbols from the asset
+ * catalog, or `{ type: 'imageSource', imageSource: { uri: 'name' } }` for asset
+ * catalog images (append `.png` to names containing a dot). `imageSource` keeps
+ * the image's own colors by default, so for an asset whose "Render As" is not
+ * `Original Image`, add `renderingMode: 'template'`.
+ */
+export type TabsScreenIconXcassetIOS = PlatformIconIOSXcasset;
+
 export type TabsScreenIconIOS =
   | WithSymbolRenderingMode<PlatformIconIOSSfSymbol>
-  | PlatformIconIOSXcasset
+  | TabsScreenIconXcassetIOS
   | TabsScreenIconTemplateIOS
   | WithImageRenderingMode<PlatformIconShared>;
 

@@ -40,6 +40,7 @@ export type {
   TabsScreenIconImageRenderingModeIOS,
   TabsScreenIconSymbolRenderingModeIOS,
   TabsScreenIconTemplateIOS,
+  TabsScreenIconXcassetIOS,
   TabsScreenBlurEffect,
   TabsScreenSystemItem,
   TabsScreenAppearanceIOS,
