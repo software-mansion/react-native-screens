@@ -8,7 +8,7 @@ import { Platform, UIManager } from 'react-native';
  *
  * Not a list of platforms where they *can* work. A platform that provides the
  * `RNSScreen` and `RNSScreenStack` components out of tree says so by calling
- * `enableScreens()`; see `nativeScreensAvailable`.
+ * `enableScreens()`; see `nativeScreensAvailable()`.
  */
 export const isNativePlatformSupported =
   Platform.OS === 'ios' ||
@@ -47,7 +47,7 @@ export function nativeScreensAvailable() {
  * this is only needed to turn them off. Calling it with `true` on any other
  * platform is how an application says that its platform provides `RNSScreen`
  * and the rest itself, and is an assertion that those components exist: see
- * `nativeScreensAvailable`.
+ * `nativeScreensAvailable()`.
  *
  * @param shouldEnableScreens whether screens should be used at all.
  */

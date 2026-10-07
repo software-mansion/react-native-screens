@@ -12,9 +12,11 @@ import ScreenNavigationContainerNativeComponent from '../../fabric/legacy/Screen
 /**
  * Holds screens, natively where that is possible and as a view where it is not.
  *
- * Gated the same way as `Screen`, on `enabled` and on
- * `nativeScreensAvailable()` together, so that the two cannot disagree about
- * which implementation a tree is using.
+ * Gated on `enabled` and on `nativeScreensAvailable()` together, which is the
+ * same pair `Screen` uses. So the platform half of the decision is the same
+ * answer in both. The `enabled` half is a prop: a caller that passes different
+ * values to a container and to the screens inside it gets different
+ * implementations, and keeping those in step is the caller's.
  */
 function ScreenContainer(props: ScreenContainerProps) {
   const { enabled = screensEnabled(), hasTwoStates, ...rest } = props;
