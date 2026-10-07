@@ -224,6 +224,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />,
     options: {
       title: 'Stack',
+      tabBarItemAccessibilityLabel: 'stack-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },
@@ -232,6 +233,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <OtherTabScreen />,
     options: {
       title: 'Other',
+      tabBarItemAccessibilityLabel: 'other-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },

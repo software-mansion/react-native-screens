@@ -26,11 +26,6 @@ export const CLASS_NAME_ANDROID_APP_BAR_LAYOUT =
   'com.google.android.material.appbar.AppBarLayout';
 export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
   'androidx.appcompat.view.menu.ActionMenuItemView';
-
-// A bottom navigation tab. Its title is rendered by two `TextView`s (one of
-// them hidden), so match the item by descendant text, not the text itself.
-export const CLASS_NAME_ANDROID_NAVIGATION_BAR_ITEM_VIEW =
-  'com.google.android.material.navigation.NavigationBarItemView';
 // The medium / large Stack v5 header's title host. The title is drawn, not a
 // `TextView`, but mirrored into the content description (`by.label`).
 export const CLASS_NAME_ANDROID_COLLAPSING_TOOLBAR_LAYOUT =

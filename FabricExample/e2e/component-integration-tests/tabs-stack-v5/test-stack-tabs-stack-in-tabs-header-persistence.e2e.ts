@@ -20,9 +20,9 @@ import {
   stackV5Toolbar,
 } from '@e2e/framework/stack-header-android';
 import {
-  selectTabByTitleAndroid,
+  expectTabBarItemByLabel,
+  forceSelectTabByLabel,
   TAB_SWITCH_TIMEOUT_MS,
-  tabBarItemAndroid,
 } from '@e2e/framework/tab-bar';
 import {
   createOverflowMenuHelpers,
@@ -32,12 +32,17 @@ import {
 import { DEFAULT_TIMEOUT_MS, waitUntil } from '@e2e/framework/wait';
 
 /** Stack in Tabs: header persistence (Android). All of `scenario.md` except
- * the drawn subtitle and the no-flash check; no test IDs, driven as shown. */
+ * the drawn subtitle and the no-flash check; tabs by label, the rest as shown. */
 
 const SCENARIO_KEY = 'test-stack-tabs-stack-in-tabs-header-persistence';
 
 const STACK_TAB = 'Stack';
 const OTHER_TAB = 'Other';
+
+/** `tabBarItemAccessibilityLabel` of a tab, as set in the scenario. */
+const tabBarItemLabel = (tab: string) => `${tab.toLowerCase()}-tab-item-label`;
+
+const selectTab = (tab: string) => forceSelectTabByLabel(tabBarItemLabel(tab));
 
 const DETAILS_TITLE = 'Details';
 
@@ -185,7 +190,7 @@ async function scrollBackToTop() {
 // --- Tabs ---
 
 async function switchToOtherTab() {
-  await selectTabByTitleAndroid(OTHER_TAB);
+  await selectTab(OTHER_TAB);
   await waitFor(element(by.text(OTHER_TAB_HEADING)))
     .toBeVisible()
     .withTimeout(TAB_SWITCH_TIMEOUT_MS);
@@ -194,7 +199,7 @@ async function switchToOtherTab() {
 /** Waits for the Stack tab's content, which is up whatever the header state.
  * Not for a round trip with Details pushed. */
 async function switchToStackTab() {
-  await selectTabByTitleAndroid(STACK_TAB);
+  await selectTab(STACK_TAB);
   await waitFor(element(homeScrollView()))
     .toBeVisible()
     .withTimeout(TAB_SWITCH_TIMEOUT_MS);
@@ -291,7 +296,7 @@ describeIfAndroid(
           .toBeVisible()
           .withTimeout(TAB_SWITCH_TIMEOUT_MS);
         for (const tab of [STACK_TAB, OTHER_TAB]) {
-          await expect(element(tabBarItemAndroid(tab))).toBeVisible();
+          await expectTabBarItemByLabel(tabBarItemLabel(tab));
         }
         await expectHomeHeader('Home v1');
 
@@ -480,7 +485,7 @@ describeIfAndroid(
           .withTimeout(DEFAULT_TIMEOUT_MS);
 
         await switchToOtherTab();
-        await selectTabByTitleAndroid(STACK_TAB);
+        await selectTab(STACK_TAB);
 
         await waitFor(element(stackV5HeaderTitle(DETAILS_TITLE)))
           .toBeVisible()

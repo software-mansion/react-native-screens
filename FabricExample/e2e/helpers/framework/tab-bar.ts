@@ -1,10 +1,9 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, element, by } from 'detox';
+import { device, expect, element, by } from 'detox';
 import type { IosElementAttributes, NativeMatcher } from 'detox/detox';
 import { forceTapByLabelIOS } from './gestures';
 import { getMatches } from './matchers';
 import { DEFAULT_TIMEOUT_MS } from './wait';
-import { CLASS_NAME_ANDROID_NAVIGATION_BAR_ITEM_VIEW } from './native-classes-android';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
   CLASS_NAME_UI_TAB_BAR,
@@ -14,22 +13,25 @@ import {
  * Detox's sync, and the first switch into a tab loads its content. */
 export const TAB_SWITCH_TIMEOUT_MS = 2 * DEFAULT_TIMEOUT_MS;
 
-/** Android: the bottom navigation item titled `title`, matched by descendant
- * text (the title is two labels). A factory: `atIndex` mutates on Android. */
-export const tabBarItemAndroid = (title: string): NativeMatcher =>
-  by
-    .type(CLASS_NAME_ANDROID_NAVIGATION_BAR_ITEM_VIEW)
-    .withDescendant(by.text(title));
-
-/** Android: selects the bottom navigation item titled `title`. */
-export const selectTabByTitleAndroid = (title: string) =>
-  element(tabBarItemAndroid(title)).tap();
-
 export async function forceSelectTabByLabel(label: string) {
   if (device.getPlatform() === 'ios') {
     await forceTapByLabelIOS(label);
   } else {
     await element(by.label(label)).tap();
+  }
+}
+
+/**
+ * Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
+ * is in the tab bar. Existence only on iOS: the selected button fails Detox's
+ * visibility threshold on iOS 26.
+ */
+export async function expectTabBarItemByLabel(label: string) {
+  const item = element(by.label(label));
+  if (device.getPlatform() === 'ios') {
+    await expect(item).toExist();
+  } else {
+    await expect(item).toBeVisible();
   }
 }
 
