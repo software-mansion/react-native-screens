@@ -51,6 +51,8 @@ function ensureNkfGem(appPath, { runCommand, logPath }) {
 // connection (reload, dev menu from the Metro terminal) both read.
 // It is set on every launch, also to 8081: the value persists in the app's
 // user defaults, which outlive reinstalling the app.
+// The code goes right before React Native starts, which the template does in
+// AppDelegate and the UIScene setup
 function setIosMetroLocation(config) {
   const appDelegatePath = path.join(
     config.paths.app,
@@ -59,25 +61,26 @@ function setIosMetroLocation(config) {
     'AppDelegate.swift',
   );
   const appDelegate = fs.readFileSync(appDelegatePath, 'utf8');
-  const launchStart = /didFinishLaunchingWithOptions[^{]*\{\n/;
-  if (!launchStart.test(appDelegate)) {
+  const reactNativeStart = /^([ \t]*)let delegate = ReactNativeDelegate\(\)$/m;
+  const indent = appDelegate.match(reactNativeStart)?.[1];
+  if (indent === undefined) {
     throw new Error(
-      `Cannot find 'didFinishLaunchingWithOptions' in ${appDelegatePath}.`,
+      `Cannot find 'let delegate = ReactNativeDelegate()' in ${appDelegatePath}.`,
     );
   }
 
   const setMetroLocation = `#if DEBUG
-    let deviceIp = Bundle.main.path(forResource: "ip", ofType: "txt")
-      .flatMap { try? String(contentsOfFile: $0, encoding: .utf8) }?
-      .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-    let metroHost = deviceIp.isEmpty ? "localhost" : deviceIp
-    RCTBundleURLProvider.sharedSettings().jsLocation = "\\(metroHost):${config['metro-port']}"
+${indent}let deviceIp = Bundle.main.path(forResource: "ip", ofType: "txt")
+${indent}  .flatMap { try? String(contentsOfFile: $0, encoding: .utf8) }?
+${indent}  .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+${indent}let metroHost = deviceIp.isEmpty ? "localhost" : deviceIp
+${indent}RCTBundleURLProvider.sharedSettings().jsLocation = "\\(metroHost):${config['metro-port']}"
 #endif
 
 `;
   fs.writeFileSync(
     appDelegatePath,
-    appDelegate.replace(launchStart, match => match + setMetroLocation),
+    appDelegate.replace(reactNativeStart, match => setMetroLocation + match),
   );
 }
 
