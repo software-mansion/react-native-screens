@@ -19,6 +19,7 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
     case RNSTabsIconSymbolRenderingModeOriginal:
       return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     case RNSTabsIconSymbolRenderingModeDefault:
+    default:
       return image;
   }
 }

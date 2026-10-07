@@ -1,6 +1,6 @@
 import type { ColorValue, TextStyle } from 'react-native';
 import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
-import type { TabsScreenIconIOS } from './TabsScreen.icon.types';
+import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -250,8 +250,8 @@ export interface TabsScreenPropsIOS {
    *   Deprecated: use `{ type: 'imageSource', imageSource, renderingMode: 'template' }`
    *   instead. Uses the provided image as a template image.
    *
-   * See `TabsScreenIconIOSImageRenderingMode` and
-   * `TabsScreenIconIOSSymbolRenderingMode` for the meaning of each rendering mode.
+   * See `TabsScreenIconImageRenderingModeIOS` and
+   * `TabsScreenIconSymbolRenderingModeIOS` for the meaning of each rendering mode.
    *
    * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.

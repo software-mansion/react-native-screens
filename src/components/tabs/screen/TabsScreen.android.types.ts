@@ -1,5 +1,5 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { TabsScreenIconAndroid } from './TabsScreen.icon.types';
+import type { TabsScreenIconAndroid } from './TabsScreenIcon.types';
 
 export type TabBarItemLabelVisibilityMode =
   | 'auto'
@@ -198,7 +198,7 @@ export interface TabsScreenPropsAndroid {
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
-   * See `TabsScreenIconAndroidTinting` for the meaning of each value.
+   * See `TabsScreenIconTintingAndroid` for the meaning of each value.
    *
    * @platform android
    */

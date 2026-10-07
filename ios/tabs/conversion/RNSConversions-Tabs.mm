@@ -194,12 +194,13 @@ RNSTabsIconImageRenderingMode RNSTabsIconImageRenderingModeFromIconImageRenderin
 {
   using enum facebook::react::RNSTabsScreenIOSIconImageRenderingMode;
   switch (renderingMode) {
-    case Default:
-      return RNSTabsIconImageRenderingModeDefault;
     case Template:
       return RNSTabsIconImageRenderingModeTemplate;
     case Original:
       return RNSTabsIconImageRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconImageRenderingModeDefault;
   }
 }
 
@@ -208,12 +209,13 @@ RNSTabsIconImageRenderingMode RNSTabsIconImageRenderingModeFromSelectedIconImage
 {
   using enum facebook::react::RNSTabsScreenIOSSelectedIconImageRenderingMode;
   switch (renderingMode) {
-    case Default:
-      return RNSTabsIconImageRenderingModeDefault;
     case Template:
       return RNSTabsIconImageRenderingModeTemplate;
     case Original:
       return RNSTabsIconImageRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconImageRenderingModeDefault;
   }
 }
 
@@ -222,12 +224,13 @@ RNSTabsIconSymbolRenderingMode RNSTabsIconSymbolRenderingModeFromIconSymbolRende
 {
   using enum facebook::react::RNSTabsScreenIOSIconSymbolRenderingMode;
   switch (renderingMode) {
-    case Default:
-      return RNSTabsIconSymbolRenderingModeDefault;
     case Monochrome:
       return RNSTabsIconSymbolRenderingModeMonochrome;
     case Original:
       return RNSTabsIconSymbolRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconSymbolRenderingModeDefault;
   }
 }
 
@@ -236,12 +239,13 @@ RNSTabsIconSymbolRenderingMode RNSTabsIconSymbolRenderingModeFromSelectedIconSym
 {
   using enum facebook::react::RNSTabsScreenIOSSelectedIconSymbolRenderingMode;
   switch (renderingMode) {
-    case Default:
-      return RNSTabsIconSymbolRenderingModeDefault;
     case Monochrome:
       return RNSTabsIconSymbolRenderingModeMonochrome;
     case Original:
       return RNSTabsIconSymbolRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconSymbolRenderingModeDefault;
   }
 }
 

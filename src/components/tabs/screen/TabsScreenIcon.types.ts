@@ -19,7 +19,7 @@ import type {
  *   `tabBarTintColor`).
  * - `original` - the image keeps its own colors and ignores the item icon color.
  */
-export type TabsScreenIconIOSImageRenderingMode =
+export type TabsScreenIconImageRenderingModeIOS =
   | 'default'
   | 'template'
   | 'original';
@@ -38,7 +38,7 @@ export type TabsScreenIconIOSImageRenderingMode =
  *   rendering) and ignores the item icon color. A symbol without color layers
  *   is drawn as authored.
  */
-export type TabsScreenIconIOSSymbolRenderingMode =
+export type TabsScreenIconSymbolRenderingModeIOS =
   | 'default'
   | 'monochrome'
   | 'original';
@@ -46,26 +46,26 @@ export type TabsScreenIconIOSSymbolRenderingMode =
 type WithImageRenderingMode<Icon> = Icon & {
   /**
    * @summary How the tab bar renders this image. See
-   * `TabsScreenIconIOSImageRenderingMode`.
+   * `TabsScreenIconImageRenderingModeIOS`.
    *
    * Defaults to `default`, which keeps the image's own colors.
    *
    * `icon` and `selectedIcon` may use different values.
    */
-  renderingMode?: TabsScreenIconIOSImageRenderingMode | undefined;
+  renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
 };
 
 type WithSymbolRenderingMode<Icon> = Icon & {
   /**
    * @summary How the tab bar renders this symbol. See
-   * `TabsScreenIconIOSSymbolRenderingMode`.
+   * `TabsScreenIconSymbolRenderingModeIOS`.
    *
    * Defaults to `default`, the system behavior. Set `renderingMode`
    * explicitly to be independent of it.
    *
    * `icon` and `selectedIcon` may use different values.
    */
-  renderingMode?: TabsScreenIconIOSSymbolRenderingMode | undefined;
+  renderingMode?: TabsScreenIconSymbolRenderingModeIOS | undefined;
 };
 
 /**
@@ -78,29 +78,29 @@ type WithSymbolRenderingMode<Icon> = Icon & {
  * - `original` - the icon keeps its own colors and ignores the item icon color,
  *   e.g. a multicolor VectorDrawable.
  */
-export type TabsScreenIconAndroidTinting = 'default' | 'tinted' | 'original';
+export type TabsScreenIconTintingAndroid = 'default' | 'tinted' | 'original';
 
 type WithTinting<Icon> = Icon & {
   /**
    * @summary How the tab bar tints this icon. See
-   * `TabsScreenIconAndroidTinting`.
+   * `TabsScreenIconTintingAndroid`.
    *
    * Defaults to `default`, which tints the icon.
    *
    * `icon` and `selectedIcon` may use different values.
    */
-  tinting?: TabsScreenIconAndroidTinting | undefined;
+  tinting?: TabsScreenIconTintingAndroid | undefined;
 };
 
 /**
  * @deprecated Use `{ type: 'imageSource', imageSource, renderingMode: 'template' }` instead.
  */
-export type TabsScreenIconIOSTemplate = PlatformIconIOSTemplate;
+export type TabsScreenIconTemplateIOS = PlatformIconIOSTemplate;
 
 export type TabsScreenIconIOS =
   | WithSymbolRenderingMode<PlatformIconIOSSfSymbol>
   | PlatformIconIOSXcasset
-  | TabsScreenIconIOSTemplate
+  | TabsScreenIconTemplateIOS
   | WithImageRenderingMode<PlatformIconShared>;
 
 export type TabsScreenIconAndroid =

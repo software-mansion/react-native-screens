@@ -12,29 +12,29 @@ import {
 import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
-  TabsScreenIconAndroidTinting,
-  TabsScreenIconIOSImageRenderingMode,
+  TabsScreenIconTintingAndroid,
+  TabsScreenIconImageRenderingModeIOS,
 } from 'react-native-screens';
 
 type IconSizeOption = 'default' | '24' | '32' | '44' | '56';
 
 const ICON_SIZE_OPTIONS: IconSizeOption[] = ['default', '24', '32', '44', '56'];
 
-const RENDERING_MODE_OPTIONS: TabsScreenIconIOSImageRenderingMode[] = [
+const RENDERING_MODE_OPTIONS: TabsScreenIconImageRenderingModeIOS[] = [
   'default',
   'template',
   'original',
 ];
 
-const TINTING_OPTIONS: TabsScreenIconAndroidTinting[] = [
+const TINTING_OPTIONS: TabsScreenIconTintingAndroid[] = [
   'default',
   'tinted',
   'original',
 ];
 
 type ControlsConfig = {
-  renderingMode: TabsScreenIconIOSImageRenderingMode;
-  tinting: TabsScreenIconAndroidTinting;
+  renderingMode: TabsScreenIconImageRenderingModeIOS;
+  tinting: TabsScreenIconTintingAndroid;
   iconSize: IconSizeOption;
   hasBadge: boolean;
 };
@@ -239,7 +239,7 @@ function ControlsTab() {
           : '`icon`: drawableResource person_walking'}
       </Text>
       {Platform.OS === 'ios' && (
-        <SettingsPicker<TabsScreenIconIOSImageRenderingMode>
+        <SettingsPicker<TabsScreenIconImageRenderingModeIOS>
           testID="icon-tint-and-size-rendering-mode-picker"
           label="renderingMode"
           value={config.renderingMode}
@@ -249,7 +249,7 @@ function ControlsTab() {
       )}
       {Platform.OS === 'android' && (
         <>
-          <SettingsPicker<TabsScreenIconAndroidTinting>
+          <SettingsPicker<TabsScreenIconTintingAndroid>
             testID="icon-tint-and-size-tinting-picker"
             label="tinting"
             value={config.tinting}
