@@ -53,9 +53,6 @@ export type Appearance = {
   // TabBarItem - Active Indicator
   tabBarItemActiveIndicatorColor?: ProcessedColorValue | null | undefined;
   tabBarItemActiveIndicatorEnabled?: CT.WithDefault<boolean, true>;
-  // Indicator size (dp); unset = auto-scale to the icon box.
-  tabBarItemActiveIndicatorWidth?: CT.Float | undefined;
-  tabBarItemActiveIndicatorHeight?: CT.Float | undefined;
 
   // TabBarItem - Label
   tabBarItemTitleFontFamily?: string | undefined;

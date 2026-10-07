@@ -174,6 +174,24 @@ class TabsContainer internal constructor(
         }
     }
 
+    internal var tabBarItemActiveIndicatorWidth: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+            post {
+                flushPendingUpdates()
+            }
+        }
+    }
+
+    internal var tabBarItemActiveIndicatorHeight: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+            post {
+                flushPendingUpdates()
+            }
+        }
+    }
+
     init {
         addView(contentView)
         addView(bottomNavigationView)

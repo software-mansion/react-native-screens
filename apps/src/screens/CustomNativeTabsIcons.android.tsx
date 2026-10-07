@@ -31,18 +31,13 @@ function TabScreen() {
         colors when selected (`tinting: 'original'`).
       </Text>
       <Text style={styles.hint}>
-        The active indicator is sized via `tabBarItemActiveIndicatorWidth` and
-        `tabBarItemActiveIndicatorHeight`. Those apply to the whole bar, so
-        every route repeats the same values.
+        The active indicator is sized for the whole bar via
+        `tabBarItemActiveIndicatorWidth` and `tabBarItemActiveIndicatorHeight`
+        on the host.
       </Text>
     </View>
   );
 }
-
-const INDICATOR = {
-  tabBarItemActiveIndicatorWidth: 80,
-  tabBarItemActiveIndicatorHeight: 40,
-};
 
 const ROUTES: TabRouteConfig[] = [
   {
@@ -53,7 +48,6 @@ const ROUTES: TabRouteConfig[] = [
       title: 'OG SWM',
       android: {
         icon: { type: 'drawableResource', name: 'swm_logo' },
-        standardAppearance: INDICATOR,
       },
     },
   },
@@ -66,7 +60,6 @@ const ROUTES: TabRouteConfig[] = [
       android: {
         iconSize: 44,
         icon: { type: 'drawableResource', name: 'swm_logo' },
-        standardAppearance: INDICATOR,
       },
     },
   },
@@ -88,7 +81,6 @@ const ROUTES: TabRouteConfig[] = [
           name: 'person_walking',
           tinting: 'original',
         },
-        standardAppearance: INDICATOR,
       },
     },
   },
@@ -101,7 +93,6 @@ const ROUTES: TabRouteConfig[] = [
       android: {
         icon: { type: 'drawableResource', name: 'star_big_off' },
         selectedIcon: { type: 'drawableResource', name: 'star_big_on' },
-        standardAppearance: INDICATOR,
       },
     },
   },
@@ -121,14 +112,21 @@ const ROUTES: TabRouteConfig[] = [
           imageSource: require('@assets/variableIcons/icon.png'),
           tinting: 'original',
         },
-        standardAppearance: INDICATOR,
       },
     },
   },
 ];
 
 export default function CustomNativeTabsIcons() {
-  return <TabsContainer routeConfigs={ROUTES} />;
+  return (
+    <TabsContainer
+      routeConfigs={ROUTES}
+      android={{
+        tabBarItemActiveIndicatorWidth: 80,
+        tabBarItemActiveIndicatorHeight: 40,
+      }}
+    />
+  );
 }
 
 const styles = StyleSheet.create({

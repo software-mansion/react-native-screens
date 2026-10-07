@@ -35,7 +35,14 @@ internal class TabsAppearanceCoordinator(
             invalidateMenuItemIcons()
         }
         appearanceApplicator.applyIconBox(iconBoxDp)
-        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden, iconBoxDp)
+        appearanceApplicator.updateSharedAppearance(
+            context,
+            selectedTabAppearance,
+            tabsContainer.tabBarHidden,
+            iconBoxDp,
+            tabsContainer.tabBarItemActiveIndicatorWidth,
+            tabsContainer.tabBarItemActiveIndicatorHeight,
+        )
         updateMenuItems(context, selectedTabAppearance, iconBoxDp)
         appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }

@@ -15,10 +15,10 @@ as in previous versions. `icon` and `selectedIcon` may use different
 values. On Android,
 `iconSize` sets a per-tab icon size: the icon box of the whole bar is the
 largest size across tabs, and each icon is inset to its own size within that box.
-The active indicator auto-scales to wrap an enlarged icon box, unless
+The active indicator auto-scales to wrap an enlarged icon box, unless the host
 `tabBarItemActiveIndicatorWidth` / `tabBarItemActiveIndicatorHeight` set it
-explicitly. On iOS, an `sfSymbol` icon falls back to a custom symbol from the app
-asset catalog when no system SF Symbol matches. Verifies that runtime changes of
+explicitly for the whole bar. On iOS, an `sfSymbol` icon falls back to a custom
+symbol from the app asset catalog when no system SF Symbol matches. Verifies that runtime changes of
 these properties update the icons correctly, and that unrelated tab bar item
 updates (badge) keep the icons intact.
 
@@ -49,9 +49,8 @@ Android specific notes:
 - The active indicator width is capped by the tab item width (item width minus
   4dp margin on each side). With five tabs on a phone in portrait the cap is
   about 74dp, so an auto-scaled pill grows in height, but not in width.
-- The tab bar appearance comes from the selected tab. The tab bar height follows
-  the active indicator height, so the bar gets shorter while the **Indicator**
-  tab is selected. This is expected.
+- The active indicator size is set on the host and applies to every tab, so the
+  tab bar height does not change when switching tabs.
 
 ## Steps - iOS
 
@@ -172,16 +171,26 @@ Android specific notes:
 
 ---
 
-### Explicit active indicator size
+### Bar-wide active indicator size
 
 6. Tap the **Indicator** tab.
 
 - [ ] The selected icon is the filled star.
-- [ ] The active indicator pill has the explicit 56x36dp size: narrower and
-  shorter than the auto-scaled pill seen on the other tabs.
-- [ ] The tab bar is shorter than on the other tabs (see Note).
+- [ ] The active indicator pill is auto-scaled as on the other tabs (52dp tall).
+- [ ] The tab bar height is the same as on the other tabs.
 
-7. Tap the **Sized** tab.
+7. Select `56` in the **tabBarItemActiveIndicatorWidth** picker and `36` in the
+   **tabBarItemActiveIndicatorHeight** picker.
+
+- [ ] The active indicator pill has the explicit 56x36dp size.
+- [ ] The tab bar gets shorter.
+
+8. Tap the **Sized** tab, then the **Indicator** tab.
+
+- [ ] The active indicator pill is 56x36dp on both tabs.
+- [ ] The tab bar height does not change when switching tabs.
+
+9. Select `auto` in both indicator pickers.
 
 - [ ] The active indicator pill auto-scales to 52dp tall again.
 
@@ -189,19 +198,19 @@ Android specific notes:
 
 ### Runtime `tinting` change
 
-8. Tap the **Controls** tab.
+10. Tap the **Controls** tab.
 
 - [ ] The icon is a single-color walker silhouette at the default 24dp.
 
-9. Select `original` in the **tinting** picker.
+11. Select `original` in the **tinting** picker.
 
 - [ ] The **Controls** icon changes to the walker in its own colors.
 
-10. Select `default` in the **tinting** picker.
+12. Select `default` in the **tinting** picker.
 
 - [ ] The **Controls** icon is a single-color silhouette again.
 
-11. Select `original`, then `tinted` in the **tinting** picker.
+13. Select `original`, then `tinted` in the **tinting** picker.
 
 - [ ] The **Controls** icon is a single-color silhouette.
 
@@ -209,19 +218,19 @@ Android specific notes:
 
 ### Runtime `iconSize` change
 
-12. Select `32` in the **iconSize** picker.
+14. Select `32` in the **iconSize** picker.
 
 - [ ] The **Controls** icon grows to 32dp.
 - [ ] The other tab icons do NOT change size. The 44dp icon box is unchanged.
 
-13. Select `56` in the **iconSize** picker.
+15. Select `56` in the **iconSize** picker.
 
 - [ ] The **Controls** icon grows to 56dp.
 - [ ] The icon box of the whole bar grows to 56dp. All other icons keep their
   own sizes (SWM logo 44dp, walker 30dp, star 24dp) and stay centered.
 - [ ] The active indicator pill grows to 64dp tall to wrap the 56dp box.
 
-14. Select `default` in the **iconSize** picker.
+16. Select `default` in the **iconSize** picker.
 
 - [ ] The **Controls** icon returns to 24dp.
 - [ ] The icon box shrinks back to 44dp and the active indicator pill back to
@@ -231,12 +240,12 @@ Android specific notes:
 
 ### Unrelated item update keeps icons
 
-15. Tap the **badgeValue** switch so it reads `badgeValue: true`.
+17. Tap the **badgeValue** switch so it reads `badgeValue: true`.
 
 - [ ] A badge with "1" appears on the **Controls** tab.
 - [ ] All tab icons stay unchanged: same images, colors and sizes.
 
-16. Tap the **badgeValue** switch again so it reads `badgeValue: false`.
+18. Tap the **badgeValue** switch again so it reads `badgeValue: false`.
 
 - [ ] The badge disappears. All tab icons stay unchanged.
 
@@ -244,7 +253,7 @@ Android specific notes:
 
 ### Stability check
 
-17. Cycle through all five tabs in order, then in reverse.
+19. Cycle through all five tabs in order, then in reverse.
 
 - [ ] Each tab keeps its icon, size and color behavior on every selection.
 - [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.

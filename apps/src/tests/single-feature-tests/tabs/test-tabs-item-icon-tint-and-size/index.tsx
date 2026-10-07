@@ -5,6 +5,7 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   useTabsNavigationContext,
+  useTabsHostConfig,
   type TabRouteConfig,
   type TabRouteOptions,
   DEFAULT_TAB_ROUTE_OPTIONS,
@@ -19,6 +20,14 @@ import type {
 type IconSizeOption = 'default' | '24' | '32' | '44' | '56';
 
 const ICON_SIZE_OPTIONS: IconSizeOption[] = ['default', '24', '32', '44', '56'];
+
+type IndicatorWidthOption = 'auto' | '56' | '84';
+
+const INDICATOR_WIDTH_OPTIONS: IndicatorWidthOption[] = ['auto', '56', '84'];
+
+type IndicatorHeightOption = 'auto' | '36' | '52';
+
+const INDICATOR_HEIGHT_OPTIONS: IndicatorHeightOption[] = ['auto', '36', '52'];
 
 const RENDERING_MODE_OPTIONS: TabsScreenIconImageRenderingModeIOS[] = [
   'default',
@@ -199,20 +208,57 @@ function MixedTab() {
 }
 
 function IndicatorTab() {
+  const { hostConfig, updateHostConfig } = useTabsHostConfig();
+  const width = hostConfig.android?.tabBarItemActiveIndicatorWidth;
+  const height = hostConfig.android?.tabBarItemActiveIndicatorHeight;
+
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Explicit active indicator size</Text>
+      <Text style={styles.label}>Bar-wide active indicator size</Text>
       <Text style={styles.hint}>
         `icon`: drawableResource star_big_off{'\n'}
         `selectedIcon`: drawableResource star_big_on{'\n'}
         `iconSize` NOT set (system default){'\n'}
-        `tabBarItemActiveIndicatorWidth`: 56{'\n'}
-        `tabBarItemActiveIndicatorHeight`: 36{'\n'}
         {'\n'}
-        While this tab is selected, the active indicator is 56x36dp and the tab
-        bar is shorter.{'\n'}
-        On other tabs, the active indicator auto-scales to the icon box.
+        Host `tabBarItemActiveIndicatorWidth` / `Height` size the active
+        indicator of every tab.{'\n'}
+        `auto`: it auto-scales to the 44dp icon box.{'\n'}
+        The tab bar height does not change when switching tabs.
       </Text>
+      <SettingsPicker<IndicatorWidthOption>
+        testID="icon-tint-and-size-indicator-width-picker"
+        label="tabBarItemActiveIndicatorWidth"
+        value={
+          width === undefined ? 'auto' : (String(width) as IndicatorWidthOption)
+        }
+        onValueChange={value =>
+          updateHostConfig({
+            android: {
+              tabBarItemActiveIndicatorWidth:
+                value === 'auto' ? undefined : Number(value),
+            },
+          })
+        }
+        items={INDICATOR_WIDTH_OPTIONS}
+      />
+      <SettingsPicker<IndicatorHeightOption>
+        testID="icon-tint-and-size-indicator-height-picker"
+        label="tabBarItemActiveIndicatorHeight"
+        value={
+          height === undefined
+            ? 'auto'
+            : (String(height) as IndicatorHeightOption)
+        }
+        onValueChange={value =>
+          updateHostConfig({
+            android: {
+              tabBarItemActiveIndicatorHeight:
+                value === 'auto' ? undefined : Number(value),
+            },
+          })
+        }
+        items={INDICATOR_HEIGHT_OPTIONS}
+      />
     </View>
   );
 }
@@ -405,10 +451,6 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
       android: {
         icon: { type: 'drawableResource', name: 'star_big_off' },
         selectedIcon: { type: 'drawableResource', name: 'star_big_on' },
-        standardAppearance: {
-          tabBarItemActiveIndicatorWidth: 56,
-          tabBarItemActiveIndicatorHeight: 36,
-        },
       },
     },
   },

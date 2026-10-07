@@ -117,6 +117,8 @@ internal class TabsAppearanceApplicator(
         tabBarAppearance: TabsAppearance?,
         isTabBarHidden: Boolean,
         iconBoxDp: Float,
+        indicatorWidthDp: Float,
+        indicatorHeightDp: Float,
     ) {
         bottomNavigationView.isVisible = !isTabBarHidden
         bottomNavigationView.setBackgroundColor(
@@ -193,11 +195,7 @@ internal class TabsAppearanceApplicator(
             tabBarAppearance?.tabBarItemActiveIndicatorEnabled ?: true
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
 
-        applyActiveIndicatorSize(
-            tabBarAppearance?.tabBarItemActiveIndicatorWidth,
-            tabBarAppearance?.tabBarItemActiveIndicatorHeight,
-            iconBoxDp,
-        )
+        applyActiveIndicatorSize(indicatorWidthDp, indicatorHeightDp, iconBoxDp)
     }
 
     fun updateFontStyles(

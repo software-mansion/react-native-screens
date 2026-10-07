@@ -200,8 +200,6 @@ class TabsScreenViewManager :
             disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(context, appearance.getMap("disabled")) else null,
             tabBarItemActiveIndicatorColor = appearance.readOptionalColor(context, "tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.readOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
-            tabBarItemActiveIndicatorWidth = appearance.readOptionalFloat("tabBarItemActiveIndicatorWidth"),
-            tabBarItemActiveIndicatorHeight = appearance.readOptionalFloat("tabBarItemActiveIndicatorHeight"),
             tabBarItemTitleFontFamily = appearance.readOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
