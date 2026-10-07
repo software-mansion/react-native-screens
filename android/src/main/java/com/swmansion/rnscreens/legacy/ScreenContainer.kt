@@ -284,8 +284,13 @@ open class ScreenContainer(
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
+            // `removeScreenAt` / `removeAllScreens` clear `screen.container` immediately but defer
+            // the fragment removal, so also match such orphans by the container view id.
             if (fragment is ScreenFragment &&
-                (fragment.screen.container === this || fragment.id == id)
+                (
+                    fragment.screen.container === this ||
+                        (fragment.screen.container == null && fragment.id == id)
+                )
             ) {
                 transaction.remove(fragment)
                 hasFragments = true
