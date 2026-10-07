@@ -12,6 +12,15 @@ const pressBack = async () => {
   }
 };
 
+// `tapBarBackButton` taps the iOS 27 back button by coordinates without
+// waiting for the app to idle, so a tap during the push transition is lost.
+// Gate it on the push's last event.
+const awaitChatsPushed = async () => {
+  await waitFor(element(by.text('8. Privacy | transitionEnd | opening')))
+    .toExist()
+    .withTimeout(5000);
+};
+
 const awaitClassicalEventBehavior = async () => {
   // The order of events in this test differs from Paper.
   // Please see https://github.com/software-mansion/react-native-screens/pull/2785 for details.
@@ -75,6 +84,7 @@ describe('Events', () => {
 
     await element(by.id('events-go-to-chats')).tap();
     if (device.getPlatform() === 'ios') {
+      await awaitChatsPushed();
       await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
@@ -92,6 +102,7 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
+      await awaitChatsPushed();
       await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
@@ -137,6 +148,7 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
+      await awaitChatsPushed();
       await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
