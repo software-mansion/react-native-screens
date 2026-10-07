@@ -3,10 +3,27 @@ import { device, element, by } from 'detox';
 import type { IosElementAttributes, NativeMatcher } from 'detox/detox';
 import { forceTapByLabelIOS } from './gestures';
 import { getMatches } from './matchers';
+import { DEFAULT_TIMEOUT_MS } from './wait';
+import { CLASS_NAME_ANDROID_NAVIGATION_BAR_ITEM_VIEW } from './native-classes-android';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
   CLASS_NAME_UI_TAB_BAR,
 } from './native-classes-ios';
+
+/** A tab switch can outlast the default wait: iOS taps by coordinate outside
+ * Detox's sync, and the first switch into a tab loads its content. */
+export const TAB_SWITCH_TIMEOUT_MS = 2 * DEFAULT_TIMEOUT_MS;
+
+/** Android: the bottom navigation item titled `title`, matched by descendant
+ * text (the title is two labels). A factory: `atIndex` mutates on Android. */
+export const tabBarItemAndroid = (title: string): NativeMatcher =>
+  by
+    .type(CLASS_NAME_ANDROID_NAVIGATION_BAR_ITEM_VIEW)
+    .withDescendant(by.text(title));
+
+/** Android: selects the bottom navigation item titled `title`. */
+export const selectTabByTitleAndroid = (title: string) =>
+  element(tabBarItemAndroid(title)).tap();
 
 export async function forceSelectTabByLabel(label: string) {
   if (device.getPlatform() === 'ios') {

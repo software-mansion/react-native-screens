@@ -32,6 +32,10 @@ export async function selectIssueTestScreen(screenName: string) {
   await element(by.id(`issue-tests-${screenName}`)).tap();
 }
 
+/** @see apps/src/tests/component-integration-tests/tabs-stack-v5/index.ts */
+export const STACK_TABS_SCENARIO_GROUP =
+  'Stack V5 & Native Tabs Integration Tests';
+
 /** Root → `section` list → `scenarioGroup` list → `screenKey`. */
 async function selectTestsScreen(
   section: 'single-feature-tests' | 'component-integration-tests',
