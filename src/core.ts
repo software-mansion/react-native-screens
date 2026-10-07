@@ -93,20 +93,29 @@ export function enableScreens(shouldEnableScreens = true) {
 let ENABLE_FREEZE = false;
 
 export function enableFreeze(shouldEnableReactFreeze = true) {
-  // The same question `Screen` asks, rather than the platform list, because the
-  // freeze is applied on the native path: `Screen` reads `freezeEnabled()` inside
-  // the branch it takes when `nativeScreensAvailable()`. Gating this on the list
-  // alone would leave a host that supplies the components able to reach the freeze
-  // and unable to turn it on.
+  // Turning it off is never refused. Only enabling is gated, so that a flag which
+  // was set while the components were available cannot be left stuck on if that
+  // claim is later withdrawn: `enableScreens` is likewise able to disable on any
+  // platform, assigning before its own early return.
+  if (!shouldEnableReactFreeze) {
+    ENABLE_FREEZE = false;
+    return;
+  }
+
+  // The question `Screen` asks, rather than the platform list, because the freeze
+  // is applied on the native path: `Screen` reads `freezeEnabled()` inside the
+  // branch it takes when `nativeScreensAvailable()`. Gating on the list alone
+  // would leave a host that supplies the components able to reach the freeze and
+  // unable to turn it on.
   //
-  // Nothing changes for any platform that does not make that claim: on iOS,
-  // Android and Windows the two answers are identical, and elsewhere this still
-  // returns early until `provideNativeScreens()` has been called.
+  // Nothing changes for a platform that makes no claim: on iOS, Android and
+  // Windows the two answers are identical, and elsewhere this still returns early
+  // until `provideNativeScreens()` has been called.
   if (!nativeScreensAvailable()) {
     return;
   }
 
-  ENABLE_FREEZE = shouldEnableReactFreeze;
+  ENABLE_FREEZE = true;
 }
 
 export function screensEnabled() {

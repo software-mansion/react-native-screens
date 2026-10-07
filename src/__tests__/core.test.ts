@@ -86,6 +86,31 @@ describe('a platform it does not', () => {
     expect(core.screensEnabled()).toBe(true);
   });
 
+  it('can always turn the freeze off, including after withdrawing the claim', () => {
+    // A flag that cannot be cleared is worse than one that cannot be set. Enabling
+    // is gated; disabling is not, or a freeze switched on while the components were
+    // available would be stuck on once the claim was withdrawn.
+    const core = loadCore('macos');
+    core.provideNativeScreens();
+    core.enableFreeze();
+    expect(core.freezeEnabled()).toBe(true);
+
+    core.provideNativeScreens(false);
+    core.enableFreeze(false);
+    expect(core.freezeEnabled()).toBe(false);
+  });
+
+  it('can always turn screens off, for the same reason', () => {
+    const core = loadCore('macos');
+    core.provideNativeScreens();
+    core.enableScreens();
+    expect(core.screensEnabled()).toBe(true);
+
+    core.provideNativeScreens(false);
+    core.enableScreens(false);
+    expect(core.screensEnabled()).toBe(false);
+  });
+
   it('cannot freeze until it has claimed the components', () => {
     // `Screen` reads `freezeEnabled()` inside the native branch, so a host able to
     // reach that branch has to be able to turn the freeze on.
