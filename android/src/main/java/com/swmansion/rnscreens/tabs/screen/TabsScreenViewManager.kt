@@ -160,6 +160,20 @@ class TabsScreenViewManager :
         view.iconSize = value
     }
 
+    override fun setActiveIndicatorWidth(
+        view: TabsScreen,
+        value: Float,
+    ) {
+        view.activeIndicatorWidth = value
+    }
+
+    override fun setActiveIndicatorHeight(
+        view: TabsScreen,
+        value: Float,
+    ) {
+        view.activeIndicatorHeight = value
+    }
+
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,

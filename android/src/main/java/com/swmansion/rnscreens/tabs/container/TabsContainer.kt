@@ -174,24 +174,6 @@ class TabsContainer internal constructor(
         }
     }
 
-    internal var tabBarItemActiveIndicatorWidth: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                flushPendingUpdates()
-            }
-        }
-    }
-
-    internal var tabBarItemActiveIndicatorHeight: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                flushPendingUpdates()
-            }
-        }
-    }
-
     init {
         addView(contentView)
         addView(bottomNavigationView)
@@ -441,7 +423,7 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun onIconSizeChange(tabsScreen: TabsScreen) {
+    override fun onItemSizeChange(tabsScreen: TabsScreen) {
         // Icon box is bar-wide, so this must run even when the changed tab is not selected.
         // Skip when detached; reattachment reapplies the full appearance anyway.
         if (isAttachedToWindow) {
@@ -582,7 +564,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
-        appearanceCoordinator.invalidateMenuItemIcons()
+        appearanceCoordinator.invalidateRebuiltMenuItems()
     }
 
     private fun updateBottomNavigationViewAppearance() {

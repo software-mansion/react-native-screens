@@ -15,22 +15,4 @@ export interface TabsHostPropsAndroid {
    * @supported API 30 or higher
    */
   tabBarRespectsIMEInsets?: boolean | undefined;
-  /**
-   * @summary Active-indicator pill width in dp. If unset, it auto-scales to wrap
-   * the icon box when icons are enlarged via `iconSize`.
-   *
-   * The active indicator is shared by the whole tab bar.
-   *
-   * @platform android
-   */
-  tabBarItemActiveIndicatorWidth?: number | undefined;
-  /**
-   * @summary Active-indicator pill height in dp. If unset, it auto-scales to wrap
-   * the icon box when icons are enlarged via `iconSize`.
-   *
-   * The active indicator is shared by the whole tab bar.
-   *
-   * @platform android
-   */
-  tabBarItemActiveIndicatorHeight?: number | undefined;
 }

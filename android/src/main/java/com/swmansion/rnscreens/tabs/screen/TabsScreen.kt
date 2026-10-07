@@ -84,6 +84,12 @@ class TabsScreen(
 
     internal var isMenuItemIconInvalidated = true
 
+    internal var isMenuItemActiveIndicatorInvalidated = true
+
+    internal var appliedActiveIndicatorWidthPx: Int? = null
+
+    internal var appliedActiveIndicatorHeightPx: Int? = null
+
     internal fun resolveIconsIfNeeded() {
         icon.resolveIfNeeded()
         selectedIcon.resolveIfNeeded()
@@ -94,7 +100,22 @@ class TabsScreen(
     var iconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             isMenuItemIconInvalidated = true
-            tabsScreenDelegate.get()?.onIconSizeChange(this)
+            isMenuItemActiveIndicatorInvalidated = true
+            tabsScreenDelegate.get()?.onItemSizeChange(this)
+        }
+    }
+
+    var activeIndicatorWidth: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            isMenuItemActiveIndicatorInvalidated = true
+            tabsScreenDelegate.get()?.onItemSizeChange(this)
+        }
+    }
+
+    var activeIndicatorHeight: Float by Delegates.observable(0f) { _, oldValue, newValue ->
+        if (newValue != oldValue) {
+            isMenuItemActiveIndicatorInvalidated = true
+            tabsScreenDelegate.get()?.onItemSizeChange(this)
         }
     }
 

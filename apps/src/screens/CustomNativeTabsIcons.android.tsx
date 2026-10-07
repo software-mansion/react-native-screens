@@ -31,9 +31,8 @@ function TabScreen() {
         colors when selected (`tinting: 'original'`).
       </Text>
       <Text style={styles.hint}>
-        The active indicator is sized for the whole bar via
-        `tabBarItemActiveIndicatorWidth` and `tabBarItemActiveIndicatorHeight`
-        on the host.
+        Each tab&apos;s active indicator wraps its own icon; set
+        `activeIndicatorWidth` / `activeIndicatorHeight` on a tab to size it.
       </Text>
     </View>
   );
@@ -118,15 +117,7 @@ const ROUTES: TabRouteConfig[] = [
 ];
 
 export default function CustomNativeTabsIcons() {
-  return (
-    <TabsContainer
-      routeConfigs={ROUTES}
-      android={{
-        tabBarItemActiveIndicatorWidth: 80,
-        tabBarItemActiveIndicatorHeight: 40,
-      }}
-    />
-  );
+  return <TabsContainer routeConfigs={ROUTES} />;
 }
 
 const styles = StyleSheet.create({

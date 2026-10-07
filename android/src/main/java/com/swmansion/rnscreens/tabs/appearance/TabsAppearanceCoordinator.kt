@@ -16,12 +16,34 @@ internal class TabsAppearanceCoordinator(
     private var appliedIconBoxDp: Float? = null
 
     // Icon box is bar-wide: the largest effective size across tabs.
-    internal fun resolveIconBoxDp(): Float =
-        tabsScreenFragments.maxOfOrNull { appearanceApplicator.effectiveIconSizeDp(it.tabsScreen) }
-            ?: appearanceApplicator.defaultIconSizeDp
+    internal fun resolveIconBoxDp(): Float {
+        if (tabsScreenFragments.isEmpty()) {
+            return appearanceApplicator.defaultIconSizeDp
+        }
+        var largestIconDp = 0f
+        var tallestIndicatorDp = 0f
+        var shortestIndicatorDp = Float.MAX_VALUE
+        tabsScreenFragments.forEach {
+            largestIconDp = maxOf(largestIconDp, appearanceApplicator.effectiveIconSizeDp(it.tabsScreen))
+            val indicatorHeightDp = appearanceApplicator.effectiveIndicatorHeightDp(it.tabsScreen)
+            tallestIndicatorDp = maxOf(tallestIndicatorDp, indicatorHeightDp)
+            shortestIndicatorDp = minOf(shortestIndicatorDp, indicatorHeightDp)
+        }
+        val unevenIndicatorsOutgrowIcons = tallestIndicatorDp > largestIconDp && tallestIndicatorDp != shortestIndicatorDp
+        return if (unevenIndicatorsOutgrowIcons) tallestIndicatorDp else largestIconDp
+    }
 
     internal fun invalidateMenuItemIcons() {
         tabsScreenFragments.forEach { it.tabsScreen.isMenuItemIconInvalidated = true }
+    }
+
+    internal fun invalidateRebuiltMenuItems() {
+        invalidateMenuItemIcons()
+        tabsScreenFragments.forEach {
+            it.tabsScreen.isMenuItemActiveIndicatorInvalidated = true
+            it.tabsScreen.appliedActiveIndicatorWidthPx = null
+            it.tabsScreen.appliedActiveIndicatorHeightPx = null
+        }
     }
 
     fun updateTabAppearance(
@@ -35,14 +57,7 @@ internal class TabsAppearanceCoordinator(
             invalidateMenuItemIcons()
         }
         appearanceApplicator.applyIconBox(iconBoxDp)
-        appearanceApplicator.updateSharedAppearance(
-            context,
-            selectedTabAppearance,
-            tabsContainer.tabBarHidden,
-            iconBoxDp,
-            tabsContainer.tabBarItemActiveIndicatorWidth,
-            tabsContainer.tabBarItemActiveIndicatorHeight,
-        )
+        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden)
         updateMenuItems(context, selectedTabAppearance, iconBoxDp)
         appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
     }

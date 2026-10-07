@@ -16,6 +16,7 @@ import com.facebook.react.common.assets.ReactFontManager
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.utils.dpToPx
@@ -58,36 +59,46 @@ internal class TabsAppearanceApplicator(
     private val autoIndicatorVerticalPaddingDp: Float
         get() = bottomNavigationView.pxToDp(defaultIndicatorHeightPx.toFloat()) - defaultIconSizeDp
 
-    private fun applyActiveIndicatorSize(
-        widthDp: Float?,
-        heightDp: Float?,
-        iconBoxDp: Float,
-    ) {
-        val autoScale = iconBoxDp > defaultIconSizeDp
-        val widthPx =
-            resolveIndicatorDimensionPx(widthDp, iconBoxDp + autoIndicatorHorizontalPaddingDp, defaultIndicatorWidthPx, autoScale)
-        if (bottomNavigationView.itemActiveIndicatorWidth != widthPx) {
-            bottomNavigationView.itemActiveIndicatorWidth = widthPx
+    internal fun effectiveIndicatorWidthDp(tabsScreen: TabsScreen): Float =
+        if (tabsScreen.activeIndicatorWidth > 0f) {
+            tabsScreen.activeIndicatorWidth
+        } else {
+            effectiveIconSizeDp(tabsScreen) + autoIndicatorHorizontalPaddingDp
         }
-        val heightPx =
-            resolveIndicatorDimensionPx(heightDp, iconBoxDp + autoIndicatorVerticalPaddingDp, defaultIndicatorHeightPx, autoScale)
-        if (bottomNavigationView.itemActiveIndicatorHeight != heightPx) {
-            bottomNavigationView.itemActiveIndicatorHeight = heightPx
-        }
-    }
 
-    // Explicit dp wins; else auto-scale to the enlarged icon box; else themed Material default.
-    private fun resolveIndicatorDimensionPx(
-        explicitDp: Float?,
-        autoScaledDp: Float,
-        defaultPx: Int,
-        autoScale: Boolean,
-    ): Int =
-        when {
-            explicitDp != null && explicitDp > 0f -> bottomNavigationView.dpToPx(explicitDp).toInt()
-            autoScale -> bottomNavigationView.dpToPx(autoScaledDp).toInt()
-            else -> defaultPx
+    internal fun effectiveIndicatorHeightDp(tabsScreen: TabsScreen): Float =
+        if (tabsScreen.activeIndicatorHeight > 0f) {
+            tabsScreen.activeIndicatorHeight
+        } else {
+            effectiveIconSizeDp(tabsScreen) + autoIndicatorVerticalPaddingDp
         }
+
+    @SuppressLint("RestrictedApi")
+    private fun applyActiveIndicatorSize(
+        menuItem: MenuItem,
+        tabsScreen: TabsScreen,
+    ): Boolean {
+        val widthPx = bottomNavigationView.dpToPx(effectiveIndicatorWidthDp(tabsScreen)).toInt()
+        val heightPx = bottomNavigationView.dpToPx(effectiveIndicatorHeightDp(tabsScreen)).toInt()
+        val isAlreadyApplied =
+            widthPx == (tabsScreen.appliedActiveIndicatorWidthPx ?: defaultIndicatorWidthPx) &&
+                heightPx == (tabsScreen.appliedActiveIndicatorHeightPx ?: defaultIndicatorHeightPx)
+        if (isAlreadyApplied) {
+            return true
+        }
+        val itemView =
+            bottomNavigationView.menuViewGroup.children.firstOrNull { it.id == menuItem.itemId } as? NavigationBarItemView
+                ?: return false
+        // NavigationBarItemView is restricted Material API. Without it, Material only offers one active
+        // indicator size for the whole tab bar (BottomNavigationView.itemActiveIndicatorWidth/Height).
+        itemView.setActiveIndicatorWidth(widthPx)
+        itemView.setActiveIndicatorHeight(heightPx)
+
+        tabsScreen.appliedActiveIndicatorWidthPx = widthPx
+        tabsScreen.appliedActiveIndicatorHeightPx = heightPx
+
+        return true
+    }
 
     // Inset the icon so it renders at effectiveDp, centered within iconBoxDp.
     // Intrinsic-relative on purpose: Material FIT_CENTER-scales the drawable to the icon box,
@@ -116,9 +127,6 @@ internal class TabsAppearanceApplicator(
         context: Context,
         tabBarAppearance: TabsAppearance?,
         isTabBarHidden: Boolean,
-        iconBoxDp: Float,
-        indicatorWidthDp: Float,
-        indicatorHeightDp: Float,
     ) {
         bottomNavigationView.isVisible = !isTabBarHidden
         bottomNavigationView.setBackgroundColor(
@@ -194,8 +202,6 @@ internal class TabsAppearanceApplicator(
         bottomNavigationView.isItemActiveIndicatorEnabled =
             tabBarAppearance?.tabBarItemActiveIndicatorEnabled ?: true
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
-
-        applyActiveIndicatorSize(indicatorWidthDp, indicatorHeightDp, iconBoxDp)
     }
 
     fun updateFontStyles(
@@ -283,6 +289,10 @@ internal class TabsAppearanceApplicator(
                 } else {
                     iconDrawable
                 }
+        }
+
+        if (tabsScreen.isMenuItemActiveIndicatorInvalidated && applyActiveIndicatorSize(menuItem, tabsScreen)) {
+            tabsScreen.isMenuItemActiveIndicatorInvalidated = false
         }
     }
 

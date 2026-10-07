@@ -59,8 +59,6 @@ class TabsHost(
 
     internal var colorScheme: ColorScheme by container::colorScheme
     var tabBarRespectsIMEInsets: Boolean by container::tabBarRespectsIMEInsets
-    var tabBarItemActiveIndicatorWidth: Float by container::tabBarItemActiveIndicatorWidth
-    var tabBarItemActiveIndicatorHeight: Float by container::tabBarItemActiveIndicatorHeight
 
     init {
         addView(container)

@@ -65,6 +65,8 @@ function TabsScreen(props: TabsScreenProps) {
       {...filteredBaseProps}
       // Android-specific
       iconSize={android?.iconSize}
+      activeIndicatorWidth={android?.activeIndicatorWidth}
+      activeIndicatorHeight={android?.activeIndicatorHeight}
       standardAppearance={mapAppearanceToNativeProps(
         android?.standardAppearance,
       )}>

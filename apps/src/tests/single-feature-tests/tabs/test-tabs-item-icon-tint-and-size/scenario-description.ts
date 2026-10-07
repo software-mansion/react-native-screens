@@ -7,7 +7,7 @@ export const scenarioDescription: ScenarioDescription = {
     'Exercises custom tab bar item icons: iOS `renderingMode` on imageSource' +
     ' and sfSymbol icons, Android `tinting` on imageSource and' +
     ' drawableResource icons, per slot; Android per-tab' +
-    ' `iconSize` with the bar-wide active indicator size; iOS custom SF' +
+    ' `iconSize` and active indicator size; iOS custom SF' +
     ' Symbols from the asset catalog.',
   platforms: ['ios', 'android'],
   e2eCoverage: 'incomplete',

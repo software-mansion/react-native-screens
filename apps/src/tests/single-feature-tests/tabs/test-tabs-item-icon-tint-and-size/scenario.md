@@ -13,11 +13,10 @@ the `tinting` icon property decides the same: `tinted` tints the icon,
 `original` keeps its own colors, and `default` (also used when unset) tints it,
 as in previous versions. `icon` and `selectedIcon` may use different
 values. On Android,
-`iconSize` sets a per-tab icon size: the icon box of the whole bar is the
-largest size across tabs, and each icon is inset to its own size within that box.
-The active indicator auto-scales to wrap an enlarged icon box, unless the host
-`tabBarItemActiveIndicatorWidth` / `tabBarItemActiveIndicatorHeight` set it
-explicitly for the whole bar. On iOS, an `sfSymbol` icon falls back to a custom
+`iconSize` sets a per-tab icon size: the icon box of the whole bar fits the
+largest icon and the tallest active indicator across tabs, and each icon is inset
+to its own size within that box. Each tab's active indicator wraps its own icon,
+unless that tab sets `activeIndicatorWidth` / `activeIndicatorHeight`. On iOS, an `sfSymbol` icon falls back to a custom
 symbol from the app asset catalog when no system SF Symbol matches. Verifies that runtime changes of
 these properties update the icons correctly, and that unrelated tab bar item
 updates (badge) keep the icons intact.
@@ -49,8 +48,8 @@ Android specific notes:
 - The active indicator width is capped by the tab item width (item width minus
   4dp margin on each side). With five tabs on a phone in portrait the cap is
   about 74dp, so an auto-scaled pill grows in height, but not in width.
-- The active indicator size is set on the host and applies to every tab, so the
-  tab bar height does not change when switching tabs.
+- Each tab has its own active indicator. The icon box of the whole bar fits the
+  tallest one, so the tab bar height does not change when switching tabs.
 
 ## Steps - iOS
 
@@ -138,8 +137,8 @@ Android specific notes:
   **Image**, **Indicator** and **Controls**.
 - [ ] The **Sized** tab is selected by default. Its icon is the wide SWM logo,
   rendered at 44dp - visibly larger than the other icons.
-- [ ] The active indicator pill auto-scales to 52dp tall and wraps the enlarged
-  icon. It is NOT the default 32dp tall pill. Its width is capped (see Note).
+- [ ] The active indicator pill wraps the enlarged icon: 52dp tall, NOT the
+  default 32dp tall pill. Its width is capped (see Note).
 - [ ] The **Indicator** tab star renders at the default 24dp, centered in its slot.
 
 ---
@@ -151,6 +150,8 @@ Android specific notes:
 - [ ] The selected icon is the walker in its own colors (skin, dark clothes,
   gray box).
 - [ ] The icon renders at 30dp: smaller than the SWM logo, larger than the star.
+- [ ] Its active indicator pill wraps the 30dp icon: shorter than the **Sized**
+  pill.
 
 3. Tap the **Sized** tab.
 
@@ -171,46 +172,37 @@ Android specific notes:
 
 ---
 
-### Bar-wide active indicator size
+### Explicit active indicator size
 
 6. Tap the **Indicator** tab.
 
 - [ ] The selected icon is the filled star.
-- [ ] The active indicator pill is auto-scaled as on the other tabs (52dp tall).
+- [ ] Its active indicator pill has the explicit 56x36dp size: narrower than the
+  **Sized** pill, taller than the default 32dp pill.
 - [ ] The tab bar height is the same as on the other tabs.
 
-7. Select `56` in the **tabBarItemActiveIndicatorWidth** picker and `36` in the
-   **tabBarItemActiveIndicatorHeight** picker.
+7. Tap the **Sized** tab.
 
-- [ ] The active indicator pill has the explicit 56x36dp size.
-- [ ] The tab bar gets shorter.
-
-8. Tap the **Sized** tab, then the **Indicator** tab.
-
-- [ ] The active indicator pill is 56x36dp on both tabs.
-- [ ] The tab bar height does not change when switching tabs.
-
-9. Select `auto` in both indicator pickers.
-
-- [ ] The active indicator pill auto-scales to 52dp tall again.
+- [ ] The **Sized** pill is unchanged (52dp tall). The tab bar height does not
+  change.
 
 ---
 
 ### Runtime `tinting` change
 
-10. Tap the **Controls** tab.
+8. Tap the **Controls** tab.
 
 - [ ] The icon is a single-color walker silhouette at the default 24dp.
 
-11. Select `original` in the **tinting** picker.
+9. Select `original` in the **tinting** picker.
 
 - [ ] The **Controls** icon changes to the walker in its own colors.
 
-12. Select `default` in the **tinting** picker.
+10. Select `default` in the **tinting** picker.
 
 - [ ] The **Controls** icon is a single-color silhouette again.
 
-13. Select `original`, then `tinted` in the **tinting** picker.
+11. Select `original`, then `tinted` in the **tinting** picker.
 
 - [ ] The **Controls** icon is a single-color silhouette.
 
@@ -218,23 +210,42 @@ Android specific notes:
 
 ### Runtime `iconSize` change
 
-14. Select `32` in the **iconSize** picker.
+12. Select `32` in the **iconSize** picker.
 
 - [ ] The **Controls** icon grows to 32dp.
-- [ ] The other tab icons do NOT change size. The 44dp icon box is unchanged.
+- [ ] The other tab icons do NOT change size. The tab bar height is unchanged.
 
-15. Select `56` in the **iconSize** picker.
+13. Select `56` in the **iconSize** picker.
 
 - [ ] The **Controls** icon grows to 56dp.
-- [ ] The icon box of the whole bar grows to 56dp. All other icons keep their
-  own sizes (SWM logo 44dp, walker 30dp, star 24dp) and stay centered.
-- [ ] The active indicator pill grows to 64dp tall to wrap the 56dp box.
+- [ ] All other icons keep their own sizes (SWM logo 44dp, walker 30dp, star
+  24dp) and stay centered.
+- [ ] The **Controls** pill grows to 64dp tall to wrap its 56dp icon. The other
+  tabs keep their own pills.
+- [ ] The tab bar gets taller once, and keeps that height when switching tabs.
 
-16. Select `default` in the **iconSize** picker.
+14. Select `default` in the **iconSize** picker.
 
 - [ ] The **Controls** icon returns to 24dp.
-- [ ] The icon box shrinks back to 44dp and the active indicator pill back to
-  52dp tall.
+- [ ] The **Controls** pill returns to 64x32dp and the tab bar returns to its
+  previous height.
+
+---
+
+### Runtime per-tab active indicator size
+
+15. Select `96` in the **activeIndicatorWidth** picker and `64` in the
+    **activeIndicatorHeight** picker.
+
+- [ ] The **Controls** pill grows to 64dp tall. Its width is capped by the tab
+  item width (see Note).
+- [ ] The other tabs keep their own pills. The tab bar gets taller once, and
+  keeps that height when switching tabs.
+
+16. Select `auto` in both indicator pickers.
+
+- [ ] The **Controls** pill wraps its icon again and the tab bar returns to its
+  previous height.
 
 ---
 

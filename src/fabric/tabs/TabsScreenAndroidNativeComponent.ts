@@ -109,6 +109,8 @@ export interface NativeProps extends ViewProps {
   selectedIconTinting?: CT.WithDefault<IconTinting, 'default'>;
   // Per-tab icon size (dp); 0/unset = system default.
   iconSize?: CT.Float | undefined;
+  activeIndicatorWidth?: CT.Float | undefined;
+  activeIndicatorHeight?: CT.Float | undefined;
 
   // Appearance
   standardAppearance?: Appearance | undefined;

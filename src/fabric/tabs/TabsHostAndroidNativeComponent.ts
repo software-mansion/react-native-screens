@@ -66,8 +66,6 @@ export interface NativeProps extends ViewProps {
 
   // Android-specific props
   tabBarRespectsIMEInsets?: CT.WithDefault<boolean, false>;
-  tabBarItemActiveIndicatorWidth?: CT.Float | undefined;
-  tabBarItemActiveIndicatorHeight?: CT.Float | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostAndroid', {

@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   TabsContainerWithHostConfigContext,
   useTabsNavigationContext,
-  useTabsHostConfig,
   type TabRouteConfig,
   type TabRouteOptions,
   DEFAULT_TAB_ROUTE_OPTIONS,
@@ -21,13 +20,27 @@ type IconSizeOption = 'default' | '24' | '32' | '44' | '56';
 
 const ICON_SIZE_OPTIONS: IconSizeOption[] = ['default', '24', '32', '44', '56'];
 
-type IndicatorWidthOption = 'auto' | '56' | '84';
+type IndicatorWidthOption = 'auto' | '40' | '56' | '64' | '84' | '96';
 
-const INDICATOR_WIDTH_OPTIONS: IndicatorWidthOption[] = ['auto', '56', '84'];
+const INDICATOR_WIDTH_OPTIONS: IndicatorWidthOption[] = [
+  'auto',
+  '40',
+  '56',
+  '64',
+  '84',
+  '96',
+];
 
-type IndicatorHeightOption = 'auto' | '36' | '52';
+type IndicatorHeightOption = 'auto' | '24' | '32' | '36' | '52' | '64';
 
-const INDICATOR_HEIGHT_OPTIONS: IndicatorHeightOption[] = ['auto', '36', '52'];
+const INDICATOR_HEIGHT_OPTIONS: IndicatorHeightOption[] = [
+  'auto',
+  '24',
+  '32',
+  '36',
+  '52',
+  '64',
+];
 
 const RENDERING_MODE_OPTIONS: TabsScreenIconImageRenderingModeIOS[] = [
   'default',
@@ -45,6 +58,8 @@ type ControlsConfig = {
   renderingMode: TabsScreenIconImageRenderingModeIOS;
   tinting: TabsScreenIconTintingAndroid;
   iconSize: IconSizeOption;
+  indicatorWidth: IndicatorWidthOption;
+  indicatorHeight: IndicatorHeightOption;
   hasBadge: boolean;
 };
 
@@ -52,6 +67,8 @@ const INITIAL_CONTROLS_CONFIG: ControlsConfig = {
   renderingMode: 'template',
   tinting: 'tinted',
   iconSize: 'default',
+  indicatorWidth: 'auto',
+  indicatorHeight: 'auto',
   hasBadge: false,
 };
 
@@ -59,6 +76,8 @@ function controlsRouteOptions({
   renderingMode,
   tinting,
   iconSize,
+  indicatorWidth,
+  indicatorHeight,
   hasBadge,
 }: ControlsConfig): Partial<TabRouteOptions> {
   return {
@@ -77,6 +96,10 @@ function controlsRouteOptions({
         tinting,
       },
       iconSize: iconSize === 'default' ? undefined : Number(iconSize),
+      activeIndicatorWidth:
+        indicatorWidth === 'auto' ? undefined : Number(indicatorWidth),
+      activeIndicatorHeight:
+        indicatorHeight === 'auto' ? undefined : Number(indicatorHeight),
     },
   };
 }
@@ -89,11 +112,11 @@ function SizedTab() {
         `icon`: drawableResource swm_logo (wide logo){'\n'}
         `iconSize`: 44{'\n'}
         {'\n'}
-        The icon box of the whole bar is 44dp, the largest size across tabs.
-        {'\n'}
+        The icon box of the whole bar fits the largest icon and the tallest
+        active indicator across tabs.{'\n'}
         The logo renders at 44dp.{'\n'}
-        The active indicator auto-scales to 52dp tall to wrap the 44dp box. Its
-        width is capped by the tab item width.
+        This tab&apos;s active indicator wraps the logo: 52dp tall, its width
+        capped by the tab item width.
       </Text>
     </View>
   );
@@ -113,7 +136,8 @@ function MulticolorTab() {
         {'\n'}
         Selected: the walker keeps its own colors.{'\n'}
         Unselected: a single-color silhouette in the system theme color.{'\n'}
-        The icon renders at 30dp, centered in the 44dp box.
+        The icon renders at 30dp, centered in the shared icon box. This
+        tab&apos;s active indicator wraps the 30dp icon.
       </Text>
     </View>
   );
@@ -208,57 +232,21 @@ function MixedTab() {
 }
 
 function IndicatorTab() {
-  const { hostConfig, updateHostConfig } = useTabsHostConfig();
-  const width = hostConfig.android?.tabBarItemActiveIndicatorWidth;
-  const height = hostConfig.android?.tabBarItemActiveIndicatorHeight;
-
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Bar-wide active indicator size</Text>
+      <Text style={styles.label}>Explicit active indicator size</Text>
       <Text style={styles.hint}>
         `icon`: drawableResource star_big_off{'\n'}
         `selectedIcon`: drawableResource star_big_on{'\n'}
         `iconSize` NOT set (system default){'\n'}
+        `activeIndicatorWidth`: 56{'\n'}
+        `activeIndicatorHeight`: 36{'\n'}
         {'\n'}
-        Host `tabBarItemActiveIndicatorWidth` / `Height` size the active
-        indicator of every tab.{'\n'}
-        `auto`: it auto-scales to the 44dp icon box.{'\n'}
-        The tab bar height does not change when switching tabs.
+        This tab&apos;s active indicator is 56x36dp. The other tabs&apos; active
+        indicators wrap their own icons.{'\n'}
+        The tab bar height does not change when switching tabs. Use the Controls
+        tab to change the sizes at runtime.
       </Text>
-      <SettingsPicker<IndicatorWidthOption>
-        testID="icon-tint-and-size-indicator-width-picker"
-        label="tabBarItemActiveIndicatorWidth"
-        value={
-          width === undefined ? 'auto' : (String(width) as IndicatorWidthOption)
-        }
-        onValueChange={value =>
-          updateHostConfig({
-            android: {
-              tabBarItemActiveIndicatorWidth:
-                value === 'auto' ? undefined : Number(value),
-            },
-          })
-        }
-        items={INDICATOR_WIDTH_OPTIONS}
-      />
-      <SettingsPicker<IndicatorHeightOption>
-        testID="icon-tint-and-size-indicator-height-picker"
-        label="tabBarItemActiveIndicatorHeight"
-        value={
-          height === undefined
-            ? 'auto'
-            : (String(height) as IndicatorHeightOption)
-        }
-        onValueChange={value =>
-          updateHostConfig({
-            android: {
-              tabBarItemActiveIndicatorHeight:
-                value === 'auto' ? undefined : Number(value),
-            },
-          })
-        }
-        items={INDICATOR_HEIGHT_OPTIONS}
-      />
     </View>
   );
 }
@@ -277,7 +265,7 @@ function ControlsTab() {
   );
 
   return (
-    <View style={styles.screen}>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
       <Text style={styles.label}>Runtime icon updates</Text>
       <Text style={styles.hint}>
         {Platform.OS === 'ios'
@@ -309,6 +297,20 @@ function ControlsTab() {
             onValueChange={iconSize => updateConfig({ iconSize })}
             items={ICON_SIZE_OPTIONS}
           />
+          <SettingsPicker<IndicatorWidthOption>
+            testID="icon-tint-and-size-controls-indicator-width-picker"
+            label="activeIndicatorWidth"
+            value={config.indicatorWidth}
+            onValueChange={indicatorWidth => updateConfig({ indicatorWidth })}
+            items={INDICATOR_WIDTH_OPTIONS}
+          />
+          <SettingsPicker<IndicatorHeightOption>
+            testID="icon-tint-and-size-controls-indicator-height-picker"
+            label="activeIndicatorHeight"
+            value={config.indicatorHeight}
+            onValueChange={indicatorHeight => updateConfig({ indicatorHeight })}
+            items={INDICATOR_HEIGHT_OPTIONS}
+          />
           <SettingsSwitch
             testID="icon-tint-and-size-badge-switch"
             label="badgeValue"
@@ -317,7 +319,7 @@ function ControlsTab() {
           />
         </>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -451,6 +453,8 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
       android: {
         icon: { type: 'drawableResource', name: 'star_big_off' },
         selectedIcon: { type: 'drawableResource', name: 'star_big_on' },
+        activeIndicatorWidth: 56,
+        activeIndicatorHeight: 36,
       },
     },
   },
@@ -483,6 +487,13 @@ function TestTabsItemIconTintAndSize() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    gap: 12,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,

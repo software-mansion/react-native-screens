@@ -45,11 +45,7 @@ function TabsHost(props: TabsHostProps) {
       ref={componentNodeRef}
       {...filteredBaseProps}
       // Android-specific
-      tabBarRespectsIMEInsets={android?.tabBarRespectsIMEInsets}
-      tabBarItemActiveIndicatorWidth={android?.tabBarItemActiveIndicatorWidth}
-      tabBarItemActiveIndicatorHeight={
-        android?.tabBarItemActiveIndicatorHeight
-      }>
+      tabBarRespectsIMEInsets={android?.tabBarRespectsIMEInsets}>
       {children}
     </TabsHostAndroidNativeComponent>
   );

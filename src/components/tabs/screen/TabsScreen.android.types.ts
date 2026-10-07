@@ -198,11 +198,30 @@ export interface TabsScreenPropsAndroid {
   /**
    * @summary Per-tab icon size in dp.
    *
-   * The bottom bar's icon box is the largest `iconSize` across all tabs;
-   * each tab's icon is inset to its own size within that box. Tabs without a value
-   * use the system default.
+   * The bottom bar's icon box fits the largest `iconSize` (and, when needed, the
+   * tallest active indicator) across all tabs; each tab's icon is inset to its
+   * own size within that box. Tabs without a value use the system default.
    *
    * @platform android
    */
   iconSize?: number | undefined;
+  /**
+   * @summary Width of this tab's active indicator in dp. If unset, it wraps
+   * this tab's icon with the default Material padding.
+   *
+   * Material caps the width at the tab item width.
+   *
+   * @platform android
+   */
+  activeIndicatorWidth?: number | undefined;
+  /**
+   * @summary Height of this tab's active indicator in dp. If unset, it wraps
+   * this tab's icon with the default Material padding.
+   *
+   * The tab bar is as tall as its tallest active indicator, so its height does
+   * not change when switching tabs.
+   *
+   * @platform android
+   */
+  activeIndicatorHeight?: number | undefined;
 }

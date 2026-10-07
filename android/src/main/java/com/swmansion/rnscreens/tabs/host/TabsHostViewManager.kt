@@ -122,20 +122,6 @@ class TabsHostViewManager :
         view.tabBarRespectsIMEInsets = value
     }
 
-    override fun setTabBarItemActiveIndicatorWidth(
-        view: TabsHost,
-        value: Float,
-    ) {
-        view.tabBarItemActiveIndicatorWidth = value
-    }
-
-    override fun setTabBarItemActiveIndicatorHeight(
-        view: TabsHost,
-        value: Float,
-    ) {
-        view.tabBarItemActiveIndicatorHeight = value
-    }
-
     override fun setColorScheme(
         view: TabsHost,
         value: String?,
