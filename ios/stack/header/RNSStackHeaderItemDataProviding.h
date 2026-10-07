@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSHeaderItemPlacement.h"
+#import "RNSHeaderItemVisibilityPriority.h"
 #import "RNSStackHeaderIconData.h"
 #import "RNSStackHeaderMenuData.h"
 
@@ -16,9 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) RNSStackHeaderIconData *icon;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
+@property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menuRepresentation;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) BOOL respondsToOnPress;
 @property (nonatomic, readonly) BOOL hidesSharedBackground;
+@property (nonatomic, readonly) RNSHeaderItemVisibilityPriority visibilityPriority;
 
 @end
 

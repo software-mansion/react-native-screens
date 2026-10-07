@@ -6,6 +6,7 @@
 #import "RNSDefines.h"
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
+#import "RNSHeaderItemVisibilityPriority.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace rnscreens::conversion {
@@ -41,6 +42,17 @@ UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationB
     react::RNSStackHeaderConfigIOSRestorationBehavior restorationBehavior);
 
 #endif // Check for iOS >= 27
+  
+RNSHeaderItemVisibilityPriority
+RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+    react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority);
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+UIBarButtonItemVisibilityPriority
+UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority);
+#endif // Check for iOS >= 27 && !TARGET_OS_TV && !TARGET_OS_VISION
 
 }; // namespace rnscreens::conversion
 

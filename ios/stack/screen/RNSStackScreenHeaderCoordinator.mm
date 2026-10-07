@@ -1,6 +1,7 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
+#import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
@@ -377,19 +378,52 @@
 
   if (item.menu == nil) {
     barButtonItem.menu = nil;
+  } else {
+    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
+    __weak auto weakSelf = self;
+    [RNSStackHeaderMenuCoordinator applyMenu:item.menu
+                             toBarButtonItem:barButtonItem
+                    withHeaderEventsDelegate:_eventsDelegate
+                                stateTracker:tracker
+                             withImageLoader:_imageLoader
+                     menuInvalidatedCallback:^{
+                       [weakSelf reapplyMenuForItemWithId:itemId];
+                     }];
+  }
+
+  [self reapplyMenuRepresentationForItemWithId:itemId];
+}
+
+/**
+ Finds an existing barButtonItem and its corresponding config, then applies the menu
+ representation again. If the config is missing, it clears the representation.
+ */
+- (void)reapplyMenuRepresentationForItemWithId:(NSString *)itemId
+{
+  if (_configDataProvider == nil || itemId == nil) {
+    return;
+  }
+
+  UIBarButtonItem *barButtonItem = _barButtonItemsByItemId[itemId];
+  if (barButtonItem == nil) {
+    return;
+  }
+
+  id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
+  if (item == nil) {
     return;
   }
 
   RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
   __weak auto weakSelf = self;
-  [RNSStackHeaderMenuCoordinator applyMenu:item.menu
-                           toBarButtonItem:barButtonItem
-                  withHeaderEventsDelegate:_eventsDelegate
-                              stateTracker:tracker
-                           withImageLoader:_imageLoader
-                   menuInvalidatedCallback:^{
-                     [weakSelf reapplyMenuForItemWithId:itemId];
-                   }];
+  [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
+                                         toBarButtonItem:barButtonItem
+                                withHeaderEventsDelegate:_eventsDelegate
+                                            stateTracker:tracker
+                                         withImageLoader:_imageLoader
+                                 menuInvalidatedCallback:^{
+                                   [weakSelf reapplyMenuRepresentationForItemWithId:itemId];
+                                 }];
 }
 
 - (nullable id<RNSStackHeaderItemDataProviding>)findItemWithId:(NSString *)itemId
@@ -568,6 +602,16 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+// tvOS and visionOS are excluded on purpose: `visibilityPriority` exists there, but the only
+// supported value is `standard`, which is already the default.
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.0, *)) {
+    barButtonItem.visibilityPriority =
+        rnscreens::conversion::UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+            item.visibilityPriority);
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
   if (item.menu != nil && item.itemId != nil) {
     RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
     __weak auto weakSelf = self;
@@ -580,6 +624,20 @@
                      menuInvalidatedCallback:^{
                        [weakSelf reapplyMenuForItemWithId:capturedItemId];
                      }];
+  }
+
+  if (item.menuRepresentation != nil && item.itemId != nil) {
+    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
+    __weak auto weakSelf = self;
+    NSString *capturedItemId = item.itemId;
+    [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
+                                           toBarButtonItem:barButtonItem
+                                  withHeaderEventsDelegate:_eventsDelegate
+                                              stateTracker:tracker
+                                           withImageLoader:_imageLoader
+                                   menuInvalidatedCallback:^{
+                                     [weakSelf reapplyMenuRepresentationForItemWithId:capturedItemId];
+                                   }];
   }
 
   if (item.itemId != nil) {
