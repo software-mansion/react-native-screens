@@ -12,12 +12,15 @@
  * the claim has its own call and this says so.
  */
 
-type Core = typeof import('../core');
+// Type-only, so it is erased and does not defeat the `resetModules` below. It
+// names the shape of the module rather than importing its values, which is what
+// `import type` is for and what this repository uses everywhere else.
+import type * as CoreModule from '../core';
 
 // `isNativePlatformSupported` is a module-level const read from `Platform.OS` at
 // import time, so each platform needs its own fresh copy of the module. core.ts
 // uses exactly these two imports, which is why the mock can be this small.
-function loadCore(os: string): Core {
+function loadCore(os: string): typeof CoreModule {
   jest.resetModules();
   jest.doMock('react-native', () => ({
     Platform: { OS: os },
@@ -27,7 +30,7 @@ function loadCore(os: string): Core {
   // cached, and this needs the module re-evaluated after each `doMock`. The rule
   // is named rather than disabled wholesale.
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  return require('../core') as Core;
+  return require('../core') as typeof CoreModule;
 }
 
 afterEach(() => {
