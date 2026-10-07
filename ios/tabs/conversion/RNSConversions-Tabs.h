@@ -1,7 +1,9 @@
 #pragma once
 
 #if defined(__cplusplus)
+
 #import <React/RCTImageSource.h>
+#import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <optional>
@@ -9,22 +11,13 @@
 #import "RNSEnums.h"
 #import "RNSTabsNavigationState.h"
 
-#import <folly/dynamic.h>
-
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-// copied from FollyConvert.mm
-id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
-
 std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromString(NSString *blurEffectString);
 
 UIBlurEffect *RNSUIBlurEffectFromString(NSString *blurEffectString);
-
-std::optional<UIBlurEffectStyle> RNSMaybeUIBlurEffectStyleFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
-
-UIBlurEffect *RNSUIBlurEffectFromRNSBlurEffectStyle(RNSBlurEffectStyle blurEffect);
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
@@ -85,55 +78,11 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::
 
 RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation);
 
-#if !TARGET_OS_TV
-UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(RNSOrientation orientation);
-
-RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(UIInterfaceOrientationMask orientationMask);
-#endif // !TARGET_OS_TV
-
 UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
     react::RNSTabsHostIOSLayoutDirection layoutDirection);
 
 UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSTabsHostIOSColorScheme colorScheme);
 
-#pragma mark SplitHost props
-
-UISplitViewControllerSplitBehavior SplitViewPreferredSplitBehaviorFromHostProp(
-    react::RNSSplitHostPreferredSplitBehavior behavior);
-
-UISplitViewControllerPrimaryEdge SplitViewPrimaryEdgeFromHostProp(react::RNSSplitHostPrimaryEdge primaryEdge);
-
-UISplitViewControllerDisplayMode SplitViewPreferredDisplayModeFromHostProp(
-    react::RNSSplitHostPreferredDisplayMode displayMode);
-
-#if !TARGET_OS_TV
-UISplitViewControllerBackgroundStyle SplitViewPrimaryBackgroundStyleFromHostProp(
-    react::RNSSplitHostPrimaryBackgroundStyle primaryBackgroundStyle);
-#endif // !TARGET_OS_TV
-
-UISplitViewControllerDisplayModeButtonVisibility SplitViewDisplayModeButtonVisibilityFromHostProp(
-    react::RNSSplitHostDisplayModeButtonVisibility displayModeButtonVisibility);
-
-std::string UISplitViewControllerDisplayModeToString(UISplitViewControllerDisplayMode displayMode);
-
-std::optional<UISplitViewControllerColumn> SplitViewTopColumnForCollapsingFromHostProp(
-    react::RNSSplitHostTopColumnForCollapsing topColumnForCollapsing);
-
-RNSOrientation RNSOrientationFromRNSSplitHostOrientation(react::RNSSplitHostOrientation orientation);
-
-UIUserInterfaceStyle UIUserInterfaceStyleFromHostProp(react::RNSSplitHostColorScheme colorScheme);
-
-#pragma mark SplitScreen props
-
-RNSSplitScreenColumnType RNSSplitScreenColumnTypeFromScreenProp(react::RNSSplitScreenColumnType columnType);
-
 }; // namespace rnscreens::conversion
-
-#if RNS_GAMMA_ENABLED
-
-#import "RNSConversions-ScrollViewMarker.h"
-#import "RNSConversions-Stack.h"
-
-#endif // RNS_GAMMA_ENABLED
 
 #endif // defined(__cplusplus)

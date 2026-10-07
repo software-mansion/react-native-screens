@@ -96,6 +96,8 @@ namespace react = facebook::react;
   _selectedIconResourceName = nil;
 
   _systemItem = RNSTabsScreenSystemItemNone;
+  _tabRole = RNSTabsScreenTabRoleNone;
+  _automaticallyActivatesSearch = NO;
 
   _userInterfaceStyle = UIUserInterfaceStyleUnspecified;
 }
@@ -324,6 +326,22 @@ RNS_IGNORE_SUPER_CALL_END
     _systemItem =
         rnscreens::conversion::RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(newComponentProps.systemItem);
     _tabBarItemNeedsRecreation = YES;
+  }
+
+  if (newComponentProps.tabRole != oldComponentProps.tabRole) {
+#if RNS_UITAB_API_SDK_AVAILABLE
+    // Only the UITab-managed path fixes the tab class (`UISearchTab` vs `UITab`)
+    // at creation; outside of it the prop has no effect.
+    if (RNS_UITAB_API_ENABLED) {
+      RCTAssert(_controller.tabBarController == nil,
+                @"[RNScreens] Changing `role` on a mounted tab screen is not supported.");
+    }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+    _tabRole = rnscreens::conversion::RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(newComponentProps.tabRole);
+  }
+
+  if (newComponentProps.automaticallyActivatesSearch != oldComponentProps.automaticallyActivatesSearch) {
+    _automaticallyActivatesSearch = newComponentProps.automaticallyActivatesSearch;
   }
 
   if (newComponentProps.userInterfaceStyle != oldComponentProps.userInterfaceStyle) {

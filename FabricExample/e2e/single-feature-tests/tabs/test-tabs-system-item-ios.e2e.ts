@@ -49,6 +49,14 @@ const tabBarButtonType = isIOSVersionAtLeast('26.0')
   ? CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26
   : CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY;
 
+// Throughout iOS 26.x UIKit gives a tab whose `UITabBarItem` uses the `search` system item the
+// separate platter view and a runtime switch to/from `search` moves the item. Starting with
+// iOS 27.0 a plain search item stays inline — the separation is tied to `UISearchTab`
+// (the `role: 'search'` prop) with `automaticallyActivatesSearch` on, covered by the separate
+// `test-tabs-search-tab-activation-ios` scenario.
+const shouldMoveTabBarItemOnRuntimeSearchSwitch =
+  isIOSVersionAtLeast('26.0') && !isIOSVersionAtLeast('27.0');
+
 describeIfiOS('Tab Bar System Item', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -169,7 +177,7 @@ describeIfiOS('Tab Bar System Item', () => {
 
       const frameXAfterSearch = await getTabBarItemFrameX('Search');
 
-      if (isIOSVersionAtLeast(`26.0`)) {
+      if (shouldMoveTabBarItemOnRuntimeSearchSwitch) {
         jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
       } else {
         jestExpect(frameXAfterSearch).toEqual(frameXBeforeSearch);
@@ -195,7 +203,7 @@ describeIfiOS('Tab Bar System Item', () => {
 
       const frameXAfterFavorites = await getTabBarItemFrameX('Favorites');
 
-      if (isIOSVersionAtLeast(`26.0`)) {
+      if (shouldMoveTabBarItemOnRuntimeSearchSwitch) {
         jestExpect(frameXAfterFavorites).toBeLessThan(frameXBeforeFavorites);
       } else {
         jestExpect(frameXAfterFavorites).toEqual(frameXBeforeFavorites);
@@ -384,7 +392,7 @@ describeIfiOS('Tab Bar System Item', () => {
 
       const frameXAfterSearch = await getTabBarItemFrameX('Custom');
 
-      if (isIOSVersionAtLeast(`26.0`)) {
+      if (shouldMoveTabBarItemOnRuntimeSearchSwitch) {
         jestExpect(frameXAfterSearch).toBeGreaterThan(frameXBeforeSearch);
       } else {
         jestExpect(frameXAfterSearch).toEqual(frameXBeforeSearch);
@@ -447,7 +455,7 @@ describeIfiOS('Tab Bar System Item', () => {
 
       const frameXAfterHistory = await getTabBarItemFrameX('Custom');
 
-      if (isIOSVersionAtLeast(`26.0`)) {
+      if (shouldMoveTabBarItemOnRuntimeSearchSwitch) {
         jestExpect(frameXAfterHistory).toBeLessThan(frameXBeforeHistory);
       } else {
         jestExpect(frameXAfterHistory).toEqual(frameXBeforeHistory);
