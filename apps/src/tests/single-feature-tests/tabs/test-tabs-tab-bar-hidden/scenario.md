@@ -9,7 +9,7 @@ On iOS, it also validates the `ios.tabBarHiddenAnimationEnabled` property, which
 
 ## E2E test
 
-Incomplete: Steps 4-5 are not covered.
+Incomplete: All steps of **(iOS only) Hiding animation can be enabled and disabled dynamically** are not covered.
 
 ## Prerequisites
 
@@ -22,24 +22,24 @@ Incomplete: Steps 4-5 are not covered.
 
 1. Launch the app and navigate to the screen Tab Bar Hidden.
 
-- [ ] Screen with one Tab in tab bar should be displayed.
+    - [ ] Screen with one Tab in tab bar should be displayed.
 
 2. Toggle `tabBarHidden` to `true`.
 
-- [ ] Tab bar should disappear. On iOS 18+, the transition should be animated (`ios.tabBarHiddenAnimationEnabled` defaults to `true`); on Android and iOS < 18 the tab bar disappears immediately.
+    - [ ] Tab bar should disappear. On iOS 18+, the transition should be animated (`ios.tabBarHiddenAnimationEnabled` defaults to `true`); on Android and iOS < 18 the tab bar disappears immediately.
 
 3. Toggle `tabBarHidden` back to `false`.
 
-- [ ] Tab bar should reappear, with the same animation behavior as in step 2.
+    - [ ] Tab bar should reappear, with the same animation behavior as in step 2.
 
 ---
 
 ### (iOS only) Hiding animation can be enabled and disabled dynamically
 
-4. (iOS only) Toggle `ios.tabBarHiddenAnimationEnabled` to `false`, then repeat steps 2-3.
+1. (iOS only) Toggle `ios.tabBarHiddenAnimationEnabled` to `false`, then repeat steps 2-3 of **Basic functionality**.
 
-- [ ] Tab bar should disappear and reappear immediately, without animation.
+    - [ ] Tab bar should disappear and reappear immediately, without animation.
 
-5. (iOS only) Toggle `ios.tabBarHiddenAnimationEnabled` back to `true`, then repeat steps 2-3.
+2. (iOS only) Toggle `ios.tabBarHiddenAnimationEnabled` back to `true`, then repeat steps 2-3 of **Basic functionality**.
 
-- [ ] Tab bar should disappear and reappear with animation again.
+    - [ ] Tab bar should disappear and reappear with animation again.

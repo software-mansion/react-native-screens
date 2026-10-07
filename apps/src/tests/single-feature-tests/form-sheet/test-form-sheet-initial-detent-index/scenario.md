@@ -28,11 +28,11 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Initial Detent Index** screen.
 
-- [ ] The host screen shows "Selected Initial Detent: 0", the three "Set Initial to …" buttons and the "Open FormSheet" button.
+    - [ ] The host screen shows "Selected Initial Detent: 0", the three "Set Initial to …" buttons and the "Open FormSheet" button.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents directly at the lowest detent (0.3). The title inside reads "Opened at Initial Index: 0"; the "Force Re-render (0)" and "Dismiss from JS" buttons are fully visible (centered on iOS, anchored to the top on Android).
+    - [ ] The sheet presents directly at the lowest detent (0.3). The title inside reads "Opened at Initial Index: 0"; the "Force Re-render (0)" and "Dismiss from JS" buttons are fully visible (centered on iOS, anchored to the top on Android).
 
 ---
 
@@ -40,16 +40,16 @@ TBD: Planned, but will be implemented separately.
 
 1. Drag the sheet up to the middle detent (0.6).
 
-- [ ] The sheet settles at 0.6.
+    - [ ] The sheet settles at 0.6.
 
 2. Tap "Force Re-render (0)" inside the sheet.
 
-- [ ] The button's counter increments.
-- [ ] The sheet stays at 0.6 – it does not snap back to the initial detent.
+    - [ ] The button's counter increments.
+    - [ ] The sheet stays at 0.6 – it does not snap back to the initial detent.
 
 3. Tap "Dismiss from JS" (or swipe the sheet down).
 
-- [ ] The sheet dismisses.
+    - [ ] The sheet dismisses.
 
 ---
 
@@ -57,7 +57,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Set Initial to 1 (0.6)", then "Open FormSheet".
 
-- [ ] "Selected Initial Detent: 1" is shown before opening. The sheet presents directly at the middle detent (0.6) and the title reads "Opened at Initial Index: 1".
+    - [ ] "Selected Initial Detent: 1" is shown before opening. The sheet presents directly at the middle detent (0.6) and the title reads "Opened at Initial Index: 1".
 
 2. Dismiss the sheet.
 
@@ -67,8 +67,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Set Initial to 'last' (1.0)", then "Open FormSheet".
 
-- [ ] "Selected Initial Detent: last" is shown before opening. The sheet presents directly at the maximum height (1.0) and the title reads "Opened at Initial Index: last".
+    - [ ] "Selected Initial Detent: last" is shown before opening. The sheet presents directly at the maximum height (1.0) and the title reads "Opened at Initial Index: last".
 
 2. Dismiss the sheet (tap "Dismiss from JS", swipe down).
 
-- [ ] The host screen is undimmed and "Open FormSheet" is pressable again.
+    - [ ] The host screen is undimmed and "Open FormSheet" is pressable again.

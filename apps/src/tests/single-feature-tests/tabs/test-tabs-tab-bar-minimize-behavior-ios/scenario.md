@@ -27,7 +27,7 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 1. Launch the app and navigate to the **Tab Bar Minimize Behavior** screen.
 
-- [ ] **Tab1** is selected. The `tabBarMinimizeBehavior` picker defaults to `automatic`.
+    - [ ] **Tab1** is selected. The `tabBarMinimizeBehavior` picker defaults to `automatic`.
 
 ---
 
@@ -35,11 +35,11 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 1. Ensure `tabBarMinimizeBehavior` is set to `automatic`. Switch to **Tab2** and scroll **down** through the list.
 
-- [ ] Tab bar behave according to the system default behavior - typically remains fully visible throughout.
+    - [ ] Tab bar behave according to the system default behavior - typically remains fully visible throughout.
 
 2. Scroll back **up** on **Tab2**.
 
-- [ ] Tab bar behave according to the system default behavior - typically remains fully visible throughout.
+    - [ ] Tab bar behave according to the system default behavior - typically remains fully visible throughout.
 
 ---
 
@@ -47,11 +47,11 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 1. Switch to **Tab1**, set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2** and scroll **down**.
 
-- [ ] Tab bar minimizes as the user scrolls down.
+    - [ ] Tab bar minimizes as the user scrolls down.
 
 2. Scroll back **up** on **Tab2**.
 
-- [ ] Tab bar reappears when scrolling up.
+    - [ ] Tab bar reappears when scrolling up.
 
 ---
 
@@ -59,11 +59,11 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 1. Switch to **Tab1**, set `tabBarMinimizeBehavior` = `onScrollUp`. Switch to **Tab2** and scroll **up** (toward the top of the list).
 
-- [ ] Tab bar minimizes/hides as the user scrolls up.
+    - [ ] Tab bar minimizes/hides as the user scrolls up.
 
 2. Scroll **down** on **Tab2**.
 
-- [ ] Tab bar reappears when scrolling down.
+    - [ ] Tab bar reappears when scrolling down.
 
 ---
 
@@ -71,11 +71,11 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 1. Switch to **Tab1**, set `tabBarMinimizeBehavior` = `never`. Switch to **Tab2** and scroll **down** through the entire list.
 
-- [ ] Tab bar remains fully visible throughout — it does not minimize or hide at any point.
+    - [ ] Tab bar remains fully visible throughout — it does not minimize or hide at any point.
 
 2. Scroll **up** through the entire list on **Tab2**.
 
-- [ ] Tab bar remains fully visible — still no minimization.
+    - [ ] Tab bar remains fully visible — still no minimization.
 
 ---
 
@@ -83,8 +83,8 @@ Incomplete: Not automated. Standard view-hierarchy testing is insufficient becau
 
 1. Set `tabBarMinimizeBehavior` = `onScrollDown`. Switch to **Tab2**, scroll down so the tab bar minimizes. Then tap the minimized tab bar.
 
-- [ ] Tab bar should reappear, showing two tabs.
+    - [ ] Tab bar should reappear, showing two tabs.
 
 2. Navigate to **Tab1** and switch back to **Tab2**.
 
-- [ ] **Tab2** scroll position is preserved — no crash or blank screen.
+    - [ ] **Tab2** scroll position is preserved — no crash or blank screen.

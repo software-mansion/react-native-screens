@@ -38,13 +38,13 @@ TBD: planned, will be implemented separately.
 
 1. Launch the app and navigate to the **Stack header hidden restore** screen.
 
-   - [ ] The "Home" screen shows a large header titled "Hidden restore" with
-         the controls right below it.
+    - [ ] The "Home" screen shows a large header titled "Hidden restore" with
+          the controls right below it.
 
 2. Scroll down one full screen, then back to the top.
 
-   - [ ] The header collapses on the way down and is expanded again at the
-         top; the controls stay pinned below it and never scroll away.
+    - [ ] The header collapses on the way down and is expanded again at the
+          top; the controls stay pinned below it and never scroll away.
 
 ---
 
@@ -53,22 +53,22 @@ TBD: planned, will be implemented separately.
 1. Drag up by more than half of the header height but less than its full
    height, then release.
 
-   - [ ] The header snaps to fully collapsed; the text below the controls has
-         not moved.
+    - [ ] The header snaps to fully collapsed; the text below the controls has
+          not moved.
 
 2. Toggle "hidden" on.
 
-   - [ ] There is no header and the controls start below the status bar.
+    - [ ] There is no header and the controls start below the status bar.
 
 3. Toggle "hidden" off.
 
-   - [ ] The header is back and expanded (see Note).
+    - [ ] The header is back and expanded (see Note).
 
 4. Set "scroll flags" to `no snap`, drag up by less than the header height
    and release so that the header rests part-way, then toggle "hidden" on
    and off.
 
-   - [ ] The header comes back expanded (see Note).
+    - [ ] The header comes back expanded (see Note).
 
 ---
 
@@ -77,17 +77,17 @@ TBD: planned, will be implemented separately.
 1. Set "scroll flags" to `default`, scroll down one full screen, then toggle
    "hidden" on and off.
 
-   - [ ] The header comes back fully collapsed and the text below the controls
-         has not moved.
+    - [ ] The header comes back fully collapsed and the text below the controls
+          has not moved.
 
 2. Scroll back to the top, toggle "hidden" on, scroll down one full screen,
    then toggle "hidden" off.
 
-   - [ ] The header comes back fully collapsed.
+    - [ ] The header comes back fully collapsed.
 
 3. Toggle "hidden" on, scroll back to the top, then toggle "hidden" off.
 
-   - [ ] The header comes back expanded.
+    - [ ] The header comes back expanded.
 
 ---
 

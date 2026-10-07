@@ -28,7 +28,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Native Container Style** screen.
 
-- [ ] The host screen shows the "Select Native Background Color:" chips with "NAVY" selected, and the "Open FormSheet" button.
+    - [ ] The host screen shows the "Select Native Background Color:" chips with "NAVY" selected, and the "Open FormSheet" button.
 
 ---
 
@@ -36,10 +36,10 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet".
 
-- [ ] The sheet presents with a height matching its content. The navy background fills the whole sheet – no default-colored gap anywhere.
-- [ ] iPhone: the navy background also covers the area under the home indicator (the bottom safe area).
-- [ ] iPad: the navy background fills the sheet up to its rounded corners – there is no bottom safe-area strip to cover.
-- [ ] Android: the navy background extends behind the navigation bar to the bottom edge of the screen.
+    - [ ] The sheet presents with a height matching its content. The navy background fills the whole sheet – no default-colored gap anywhere.
+    - [ ] iPhone: the navy background also covers the area under the home indicator (the bottom safe area).
+    - [ ] iPad: the navy background fills the sheet up to its rounded corners – there is no bottom safe-area strip to cover.
+    - [ ] Android: the navy background extends behind the navigation bar to the bottom edge of the screen.
 
 ---
 
@@ -47,13 +47,13 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Expand Content" inside the sheet.
 
-- [ ] The sheet grows to accommodate the extra text box. The navy background covers the new bounds throughout – no flashes or white gaps.
-- [ ] iOS: the height change is animated smoothly.
-- [ ] Android: the sheet snaps to the taller height immediately (no animation).
+    - [ ] The sheet grows to accommodate the extra text box. The navy background covers the new bounds throughout – no flashes or white gaps.
+    - [ ] iOS: the height change is animated smoothly.
+    - [ ] Android: the sheet snaps to the taller height immediately (no animation).
 
 2. Tap "Dismiss from JS".
 
-- [ ] The sheet dismisses.
+    - [ ] The sheet dismisses.
 
 ---
 
@@ -61,8 +61,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap the "PURPLE" chip, then "Open FormSheet".
 
-- [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet (including the bottom safe area on iPhone and the navigation bar area on Android), exactly like navy did.
+    - [ ] "PURPLE" is highlighted before opening. The sheet presents with a purple background that fills the whole sheet (including the bottom safe area on iPhone and the navigation bar area on Android), exactly like navy did.
 
 2. Swipe the sheet down.
 
-- [ ] The sheet dismisses and "Open FormSheet" is pressable again.
+    - [ ] The sheet dismisses and "Open FormSheet" is pressable again.

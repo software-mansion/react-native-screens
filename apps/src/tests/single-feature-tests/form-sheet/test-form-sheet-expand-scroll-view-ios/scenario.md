@@ -28,7 +28,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Expand On Scroll To Edge (iOS)** screen.
 
-- [ ] The host screen shows "Expands on scroll: ON", a switch (on) and the "Open FormSheet" button.
+    - [ ] The host screen shows "Expands on scroll: ON", a switch (on) and the "Open FormSheet" button.
 
 ---
 
@@ -36,19 +36,19 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.5). The "Drag Here to Expand" header and the scrollable list ("List Item 1", "List Item 2", …) are visible.
+    - [ ] The sheet presents at the lower detent (0.5). The "Drag Here to Expand" header and the scrollable list ("List Item 1", "List Item 2", …) are visible.
 
 2. Swipe up on the list.
 
-- [ ] The sheet expands to the largest detent (1.0) first; the list does not scroll until the sheet has finished expanding.
+    - [ ] The sheet expands to the largest detent (1.0) first; the list does not scroll until the sheet has finished expanding.
 
 3. Swipe up on the list again.
 
-- [ ] The list scrolls normally and reveals further items; "Dismiss from JS" is reachable at the end of the list.
+    - [ ] The list scrolls normally and reveals further items; "Dismiss from JS" is reachable at the end of the list.
 
 4. Tap "Dismiss from JS" (or swipe down on the header).
 
-- [ ] The sheet dismisses.
+    - [ ] The sheet dismisses.
 
 ---
 
@@ -56,16 +56,16 @@ TBD: Planned, but will be implemented separately.
 
 1. Flip the switch so the host screen reads "Expands on scroll: OFF", then tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.5).
+    - [ ] The sheet presents at the lower detent (0.5).
 
 2. Make sure the list is scrolled to the very top, then swipe up on the list.
 
-- [ ] The list scrolls normally and reveals further items. The sheet **does not** expand – it stays at 0.5.
+    - [ ] The list scrolls normally and reveals further items. The sheet **does not** expand – it stays at 0.5.
 
 3. Drag the "Drag Here to Expand" header up.
 
-- [ ] The sheet expands to the largest detent (1.0) – manual dragging outside the list still works.
+    - [ ] The sheet expands to the largest detent (1.0) – manual dragging outside the list still works.
 
 4. Tap "Dismiss from JS" (or swipe down on the header).
 
-- [ ] The sheet dismisses and "Open FormSheet" is pressable again.
+    - [ ] The sheet dismisses and "Open FormSheet" is pressable again.

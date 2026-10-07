@@ -27,7 +27,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Dismiss Events** screen.
 
-- [ ] The host screen shows the "Open FormSheet" and "Clear Logs" buttons and an empty "Event Logs" panel ("No events recorded yet.").
+    - [ ] The host screen shows the "Open FormSheet" and "Clear Logs" buttons and an empty "Event Logs" panel ("No events recorded yet.").
 
 ---
 
@@ -35,8 +35,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet", wait for the sheet to present, then swipe it down past the lower detent.
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one new entry: `onNativeDismiss`.
 
 ---
 
@@ -44,8 +44,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area outside the sheet).
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one new entry: `onNativeDismiss`.
 
 ---
 
@@ -53,12 +53,12 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Clear Logs".
 
-- [ ] The log is empty again.
+    - [ ] The log is empty again.
 
 2. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet.
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
 
 ---
 
@@ -66,5 +66,5 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button).
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one new entry: `onNativeDismiss`.

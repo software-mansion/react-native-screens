@@ -41,11 +41,11 @@ screen and the `BottomNavigationView`.
 
 1. Launch the app and navigate to **Native Container Style**.
 
-- [ ] The **Config** tab is active. The `backgroundColor`
-  picker shows `unset`.
-- [ ] The container background is the system default (no custom color visible).
-- [ ] **Android/iOS 18:** Tab bar background is red.
-- [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
+    - [ ] The **Config** tab is active. The `backgroundColor`
+          picker shows `unset`.
+    - [ ] The container background is the system default (no custom color visible).
+    - [ ] **Android/iOS 18:** Tab bar background is red.
+    - [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
 
 ---
 
@@ -53,35 +53,35 @@ screen and the `BottomNavigationView`.
 
 1. On the **Config** tab, set the `backgroundColor` picker to `blue`.
 
-- [ ] The picker displays `blue`. The native container's background changes to blue.
-- [ ] The blue color is visible behind the tab content area.
-- [ ] **Android/iOS 18:** The tab bar retains red color.
-- [ ] **iOS 26:** The blue color is visible through the liquid glass tab bar.
+    - [ ] The picker displays `blue`. The native container's background changes to blue.
+    - [ ] The blue color is visible behind the tab content area.
+    - [ ] **Android/iOS 18:** The tab bar retains red color.
+    - [ ] **iOS 26:** The blue color is visible through the liquid glass tab bar.
 
 2. Tap the **Transparent** tab in the tab bar.
 
-- [ ] The **Transparent** screen content is displayed (featuring the "Transparent Tab" label and
-  hint text).
-- [ ] The container background remains blue.
-- [ ] **Android/iOS 18:** The tab bar is transparent, making the blue background visible behind the tabs.
-- [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
+    - [ ] The **Transparent** screen content is displayed (featuring the "Transparent Tab" label and
+          hint text).
+    - [ ] The container background remains blue.
+    - [ ] **Android/iOS 18:** The tab bar is transparent, making the blue background visible behind the tabs.
+    - [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 3. Tap the **Config** tab to switch back.
 
-- [ ] The **Config** tab is shown again.
-- [ ] The blue container background persists.
+    - [ ] The **Config** tab is shown again.
+    - [ ] The blue container background persists.
 
 4. Set the `backgroundColor` picker to `yellow`.
 
-- [ ] The yellow color is visible behind the tab content area.
-- [ ] **Android/iOS 18:** The tab bar retains red color.
-- [ ] **iOS 26:** The yellow color is visible through the liquid glass tab bar.
+    - [ ] The yellow color is visible behind the tab content area.
+    - [ ] **Android/iOS 18:** The tab bar retains red color.
+    - [ ] **iOS 26:** The yellow color is visible through the liquid glass tab bar.
 
 5. Tap the **Transparent** tab, observe the background, then return to **Config**.
 
-- [ ] The container background remains yellow.
-- [ ] **Android/iOS 18:** The tab bar is transparent, making the yellow background visible behind the tabs.
-- [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
+    - [ ] The container background remains yellow.
+    - [ ] **Android/iOS 18:** The tab bar is transparent, making the yellow background visible behind the tabs.
+    - [ ] **iOS 26:** The appearance of the tab bar area is identical to the previous step.
 
 ---
 
@@ -89,14 +89,14 @@ screen and the `BottomNavigationView`.
 
 1. Return to **Config** and set the `backgroundColor` picker back to `unset`.
 
-- [ ] The container background returns to the system default.
-- [ ] **Android/iOS 18:** The tab bar retains red color.
-- [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
+    - [ ] The container background returns to the system default.
+    - [ ] **Android/iOS 18:** The tab bar retains red color.
+    - [ ] **iOS 26:** The system default color is visible through the liquid glass tab bar.
 
 2. Tap the **Transparent** tab and observe the background.
 
-- [ ] The **Transparent** screen appears with the system-default container background.
-- [ ] No color remnant from the previous `yellow` value is visible.
+    - [ ] The **Transparent** screen appears with the system-default container background.
+    - [ ] No color remnant from the previous `yellow` value is visible.
 
 ---
 
@@ -105,6 +105,6 @@ screen and the `BottomNavigationView`.
 1. From the **Config** tab, cycle the `backgroundColor` picker rapidly
     through `blue` → `yellow` → `purple` → `unset` → `blue`.
 
-- [ ] The container background updates with each selection.
-- [ ] No crash, no layout freeze, and no color bleed between selections.
-- [ ] The final displayed color is blue.
+    - [ ] The container background updates with each selection.
+    - [ ] No crash, no layout freeze, and no color bleed between selections.
+    - [ ] The final displayed color is blue.

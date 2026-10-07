@@ -20,16 +20,22 @@ Notes for `routeKey` behavior and how the two platforms are launched
 
 Incomplete.
 
-- iOS: Steps 1–10, including the native header back button (step 8). For step 9,
-  only the edge-swipe pop gesture is automated.
-- Android (`describeIfAndroid`): steps 1–7 and 10 only.
+- iOS: all steps except **Rapid tapping (edge case)**, including the native
+  header back button (step 1 of **Native header back button**). For step 1 of
+  **Edge-swipe / system gesture-back**, only the edge-swipe pop gesture is
+  automated.
+- Android (`describeIfAndroid`): all steps of **Baseline**, **Push
+  navigation**, **Re-pushing an already-present route**, **Pop via the
+  on-screen button** and **Route key uniqueness (edge case)** only.
 
 **Manual only (not automated):**
 
-- Android: Steps 8 and 9.
-- iOS: Step 9 (canceling the swipe gesture before the halfway threshold cannot
-  be automated with Detox).
-- Both platforms: Steps 11–12 (rapid tapping prior to transition completion).
+- Android: step 1 of **Native header back button** and step 1 of
+  **Edge-swipe / system gesture-back**.
+- iOS: step 1 of **Edge-swipe / system gesture-back** (canceling the swipe
+  gesture before the halfway threshold cannot be automated with Detox).
+- Both platforms: all steps of **Rapid tapping (edge case)** (rapid tapping
+  prior to transition completion).
   Because Detox synchronizes on UI idle states between actions, it cannot dispatch taps mid-animation.
 
 ## Prerequisites
@@ -84,92 +90,94 @@ Incomplete.
    the selection menu, Android directly via `App.tsx`) so the **Home**
    screen of the Simple stack navigation is shown.
 
-- [ ] The **Home** screen is shown with `Name:
-  Home`, and a `Key`. No back button is visible in
-  the header. No **Pop** button is shown, only **Push A** and **Push B**.
-  Note the displayed `Key` value to compare against later steps.
+    - [ ] The **Home** screen is shown with `Name:
+          Home`, and a `Key`. No back button is visible in
+          the header. No **Pop** button is shown, only **Push A** and **Push B**.
+          Note the displayed `Key` value to compare against later steps.
 
 ### Push navigation
 
-2. Tap **Push A**.
+1. Tap **Push A**.
 
-- [ ] Screen **A** is pushed. The screen displays `Name: A` and a `Key` with a
-  new value distinct from the Home screen's key.
-  A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
-  buttons are all shown. Note this `Key` value.
+    - [ ] Screen **A** is pushed. The screen displays `Name: A` and a `Key` with a
+          new value distinct from the Home screen's key.
+          A native back button is visible in the header. **Push A**, **Push B**, and **Pop**
+          buttons are all shown. Note this `Key` value.
 
-3. While on **A**, tap **Push B**.
+2. While on **A**, tap **Push B**.
 
-- [ ] Screen **B** is pushed on top of **A**. Displays `Name:
-  B`, and a new `Key`.
-  A native back button is visible in the header. Note this `Key` value.
+    - [ ] Screen **B** is pushed on top of **A**. Displays `Name:
+          B`, and a new `Key`.
+          A native back button is visible in the header. Note this `Key` value.
 
 ### Re-pushing an already-present route
 
-4. While on **B**, tap **Push A** again.
+1. While on **B**, tap **Push A** again.
 
-- [ ] A new instance of screen **A** is pushed on top of the stack (stack
-  is now Home, A, B, A). Displays `Name: A` and a new
-  `Key` that is **different** from the `Key` shown in step 2.
+    - [ ] A new instance of screen **A** is pushed on top of the stack (stack
+          is now Home, A, B, A). Displays `Name: A` and a new
+          `Key` that is **different** from the `Key` shown in step 1 of **Push
+          navigation**.
 
 ### Pop via the on-screen button
 
-5. Tap **Pop**.
+1. Tap **Pop**.
 
-- [ ] Returns to screen **B**. `Name: B` and the **same** `Key` value
-  observed in step 3 (the instance was preserved, not recreated).
+    - [ ] Returns to screen **B**. `Name: B` and the **same** `Key` value
+          observed in step 2 of **Push navigation** (the instance was preserved, not
+          recreated).
 
-6. Tap **Pop** again.
+2. Tap **Pop** again.
 
-- [ ] Returns to the original screen **A**. `Name: A` and the **same** `Key`
-  value observed in step 2.
+    - [ ] Returns to the original screen **A**. `Name: A` and the **same** `Key`
+          value observed in step 1 of **Push navigation**.
 
-7. Tap **Pop** again.
+3. Tap **Pop** again.
 
-- [ ] Returns to **Home**. No **Pop** button is shown and no header back
-  button appears (root screen reached).
+    - [ ] Returns to **Home**. No **Pop** button is shown and no header back
+          button appears (root screen reached).
 
 ### Native header back button
 
-8. Tap **Push A**, then tap **Push B**. Then tap the native back button in the header.
+1. Tap **Push A**, then tap **Push B**. Then tap the native back button in the header.
 
-- [ ] Tapping the native back button behaves the same as tapping **Pop**:
-  returns to screen **A** with its `Key` unchanged. No crash and no
-  inconsistent state.
+    - [ ] Tapping the native back button behaves the same as tapping **Pop**:
+          returns to screen **A** with its `Key` unchanged. No crash and no
+          inconsistent state.
 
 ### Edge-swipe / system gesture-back
 
-9. While on screen **A** or **B**, swipe from the left screen edge
+1. While on screen **A** or **B**, swipe from the left screen edge
    to the right to trigger the interactive pop gesture.
 
-- [ ] Completing the swipe/gesture pops the current screen, identical in
-  effect to tapping **Pop**. The screen below is shown with its original,
-  unchanged `Key`.
-- [ ] Starting the swipe/gesture and releasing before the halfway point
-  cancels it: the current screen returns to place and no navigation change
-  occurs.
+    - [ ] Completing the swipe/gesture pops the current screen, identical in
+          effect to tapping **Pop**. The screen below is shown with its original,
+          unchanged `Key`.
+    - [ ] Starting the swipe/gesture and releasing before the halfway point
+          cancels it: the current screen returns to place and no navigation change
+          occurs.
 
 ### Route key uniqueness (edge case)
 
-10. From **Home**, tap **Push A**. While on the newly pushed **A**, tap
+1. From **Home**, tap **Push A**. While on the newly pushed **A**, tap
     **Push A** again. While on that new **A**, tap **Push A** once more,
     without popping in between.
 
-- [ ] Three separate **A** instances are stacked. Each shows `Name: A`,
-  but the `Key` value is different every time you land on a new push.
+    - [ ] Three separate **A** instances are stacked. Each shows `Name: A`,
+          but the `Key` value is different every time you land on a new push.
 
 ### Rapid tapping (edge case)
 
-11. From any screen, rapidly tap **Push A** several times in quick
+1. From any screen, rapidly tap **Push A** several times in quick
     succession, before each push transition finishes animating.
 
-- [ ] Each tap results in exactly one additional **A** screen being
-  pushed. No crash, no dropped pushes, and no duplicate `Key` values.
+    - [ ] Each tap results in exactly one additional **A** screen being
+          pushed. No crash, no dropped pushes, and no duplicate `Key` values.
 
-12. From the deepest screen reached in step 11, rapidly tap **Pop**
+2. From the deepest screen reached in step 1, rapidly tap **Pop**
     several times in quick succession, before each pop transition
     finishes animating.
 
-- [ ] The stack pops one screen per completed transition, eventually
-  stabilizing on **Home**. No crash occurs, and no attempt is made to pop
-  past the root screen.
+    - [ ] The stack pops one screen per completed transition, eventually
+          stabilizing on **Home**. No crash occurs, and no attempt is made to pop
+          past the root screen.

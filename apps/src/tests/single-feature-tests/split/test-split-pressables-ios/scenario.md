@@ -20,8 +20,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the **TestSplitPressables** SFT from the top-level of the application.
 
-- [ ] The `Split.Host` is rendered. Depending on the device orientation and size, the "Supplementary column" and/or "Secondary column" are visible.
-- [ ] The "Primary column" is initially hidden or collapsed (based on the `oneBesideSecondary` preferred display mode).
+    - [ ] The `Split.Host` is rendered. Depending on the device orientation and size, the "Supplementary column" and/or "Secondary column" are visible.
+    - [ ] The "Primary column" is initially hidden or collapsed (based on the `oneBesideSecondary` preferred display mode).
 
 ---
 
@@ -29,8 +29,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap display mode change button in the top left corner.
 
-- [ ] The Primary column is revealed.
+    - [ ] The Primary column is revealed.
 
 2. Once the animation is fully completed, tap the "Primary column" text inside the newly revealed column.
 
-- [ ] The `PressableWithFeedback` correctly registers the touch and provides visual feedback. The press must NOT be ignored or cancelled.
+    - [ ] The `PressableWithFeedback` correctly registers the touch and provides visual feedback. The press must NOT be ignored or cancelled.

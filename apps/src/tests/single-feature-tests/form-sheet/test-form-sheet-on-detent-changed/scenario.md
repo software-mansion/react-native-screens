@@ -28,7 +28,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Detent Changed Event** screen.
 
-- [ ] The host screen shows the "Open FormSheet" button.
+    - [ ] The host screen shows the "Open FormSheet" button.
 
 ---
 
@@ -36,27 +36,27 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lowest detent (0.4). The "Active Index" card inside the sheet shows `0`.
+    - [ ] The sheet presents at the lowest detent (0.4). The "Active Index" card inside the sheet shows `0`.
 
 2. Drag the sheet up until it settles at the middle detent (0.7).
 
-- [ ] The sheet settles at 0.7 and the card updates to `1`.
+    - [ ] The sheet settles at 0.7 and the card updates to `1`.
 
 3. Drag the sheet up to the maximum detent (1.0).
 
-- [ ] The sheet fills the available height and the card updates to `2`.
+    - [ ] The sheet fills the available height and the card updates to `2`.
 
 4. Drag the sheet down until it settles at the lowest detent (0.4).
 
-- [ ] The sheet settles at 0.4 and the card updates back to `0`.
+    - [ ] The sheet settles at 0.4 and the card updates back to `0`.
 
 5. Drag the sheet up until it settles at the middle detent (0.7) again.
 
-- [ ] The sheet settles at 0.7 and the card updates to `1`.
+    - [ ] The sheet settles at 0.7 and the card updates to `1`.
 
 6. Drag the sheet a short way up towards the maximum detent (1.0) and release it before it passes the halfway point.
 
-- [ ] The sheet settles back at 0.7 and the card still shows `1` – an aborted drag that settles at the current detent does not produce a new index.
+    - [ ] The sheet settles back at 0.7 and the card still shows `1` – an aborted drag that settles at the current detent does not produce a new index.
 
 ---
 
@@ -64,4 +64,4 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Dismiss from JS" (or swipe the sheet down past the lowest detent).
 
-- [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
+    - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.

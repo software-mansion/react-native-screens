@@ -27,7 +27,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Lifecycle Events** screen.
 
-- [ ] The host screen shows the "Open FormSheet" button and a "Clear Logs" button and an empty "Event Logs" panel ("No events recorded yet.").
+    - [ ] The host screen shows the "Open FormSheet" button and a "Clear Logs" button and an empty "Event Logs" panel ("No events recorded yet.").
 
 ---
 
@@ -35,8 +35,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet" and wait for the presentation animation to finish.
 
-- [ ] The sheet presents at the 0.4 detent.
-- [ ] The log shows exactly two new entries, in this order: `onWillAppear`, `onDidAppear`.
+    - [ ] The sheet presents at the 0.4 detent.
+    - [ ] The log shows exactly two new entries, in this order: `onWillAppear`, `onDidAppear`.
 
 ---
 
@@ -44,7 +44,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Swipe the sheet down to dismiss it and wait for the animation to finish.
 
-- [ ] The log shows exactly two new entries, in this order: `onWillDisappear`, `onDidDisappear`.
+    - [ ] The log shows exactly two new entries, in this order: `onWillDisappear`, `onDidDisappear`.
 
 ---
 
@@ -52,12 +52,12 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Clear Logs".
 
-- [ ] The log is empty again.
+    - [ ] The log is empty again.
 
 2. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet and wait for the animation to finish.
 
-- [ ] The sheet dismisses.
-- [ ] The log contains exactly four entries, in this order: `onWillAppear`, `onDidAppear`, `onWillDisappear`, `onDidDisappear`.
+    - [ ] The sheet dismisses.
+    - [ ] The log contains exactly four entries, in this order: `onWillAppear`, `onDidAppear`, `onWillDisappear`, `onDidDisappear`.
 
 ---
 
@@ -65,4 +65,4 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button) and wait for the animation to finish.
 
-- [ ] The sheet dismisses and the log shows `onWillDisappear`, `onDidDisappear` as the last two entries.
+    - [ ] The sheet dismisses and the log shows `onWillDisappear`, `onDidDisappear` as the last two entries.

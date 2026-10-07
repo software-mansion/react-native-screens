@@ -33,7 +33,7 @@ Assumption:
 
 1. Launch the app and navigate to the **Tab Bar Color Scheme** screen.
 
-- [ ] Config tab is shown. Pickers default to `auto` / `inherit`
+    - [ ] Config tab is shown. Pickers default to `auto` / `inherit`
 
 ---
 
@@ -41,11 +41,11 @@ Assumption:
 
 1. Set system/RN to **light**, TabsHost colorScheme = `inherit`
 
-- [ ] Tab bar appears **light**
+    - [ ] Tab bar appears **light**
 
 2. Set system/RN to **dark**, keep TabsHost colorScheme = `inherit`
 
-- [ ] Tab bar appears **dark** — TabsHost defers to RN/system
+    - [ ] Tab bar appears **dark** — TabsHost defers to RN/system
 
 ---
 
@@ -53,15 +53,15 @@ Assumption:
 
 1. Set system/RN to **dark**, set TabsHost colorScheme = `light`
 
-- [ ] Tab bar appears **light** — TabsHost overrides dark from RN/system
+    - [ ] Tab bar appears **light** — TabsHost overrides dark from RN/system
 
 2. Set system/RN to **light**, keep TabsHost colorScheme = `light`
 
-- [ ] Tab bar stays **light**
+    - [ ] Tab bar stays **light**
 
 3. Cycle through `inherit` → `dark` → `light` → `dark` → `inherit`
 
-- [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
+    - [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
 
 ---
 
@@ -69,15 +69,15 @@ Assumption:
 
 1. Set system/RN to **light**, set TabsHost colorScheme = `dark`
 
-- [ ] Tab bar appears **dark** — TabsHost overrides light from RN/system
+    - [ ] Tab bar appears **dark** — TabsHost overrides light from RN/system
 
 2. Set system/RN to **dark**, keep TabsHost colorScheme = `dark`
 
-- [ ] Tab bar stays **dark**
+    - [ ] Tab bar stays **dark**
 
 3. Cycle through `inherit` → `light` → `dark` → `light` → `inherit`
 
-- [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
+    - [ ] Tab bar color scheme updates immediately with each change, no crash or layout freeze
 
 ---
 
@@ -85,5 +85,5 @@ Assumption:
 
 1. Switch to the **Keyboard** tab, open the keyboard via TextInput (or Cmd+K on iOS simulator)
 
-- [ ] iOS: Keyboard appearance matches the currently active color scheme — verify for both light and dark values.
-- [ ] Android: Keyboard appearance matches the system color scheme.
+    - [ ] iOS: Keyboard appearance matches the currently active color scheme — verify for both light and dark values.
+    - [ ] Android: Keyboard appearance matches the system color scheme.

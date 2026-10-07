@@ -20,8 +20,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Stack in Tabs - basic navigation scenarios** screen.
 
-- [ ] A tab navigation bar is visible with three destinations: *First*, *Second*, *Stack*.
-- [ ] *First* is selected.
+    - [ ] A tab navigation bar is visible with three destinations: *First*, *Second*, *Stack*.
+    - [ ] *First* is selected.
 
 ---
 
@@ -29,15 +29,15 @@ TBD: Planned, but will be implemented separately.
 
 1. Navigate to the *Second* tab.
 
-- [ ] Second tab is selected correctly.
+    - [ ] Second tab is selected correctly.
 
 2. Navigate to the *Stack* tab.
 
-- [ ] *First* route there is displayed correctly.
+    - [ ] *First* route there is displayed correctly.
 
 3. Toggle between *First* and *Stack* tabs.
 
-- [ ] Tabs do change "normally", there is no crash.
+    - [ ] Tabs do change "normally", there is no crash.
 
 ---
 
@@ -49,8 +49,8 @@ TBD: Planned, but will be implemented separately.
 
 3. Push *Third* screen.
 
-- [ ] Both *Second* and *Third* are pushed onto the stack.
+    - [ ] Both *Second* and *Third* are pushed onto the stack.
 
 4. Toggle between *First* and *Stack* tabs.
 
-- [ ] *Stack* tab displays nested stack with *Third* route on top.
+    - [ ] *Stack* tab displays nested stack with *Third* route on top.

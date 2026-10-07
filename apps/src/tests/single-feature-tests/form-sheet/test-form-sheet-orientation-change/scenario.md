@@ -27,23 +27,23 @@ TBD: Planned, but will be implemented separately.
 1. Launch the app and navigate to the **Sheet orientation change** screen.
 2. Tap "Open FormSheet".
 
-- [ ] The sheet opens at the 0.3 detent.
+    - [ ] The sheet opens at the 0.3 detent.
 
 3. Rotate the device to landscape.
 
-- [ ] Android, iPad: The sheet rests at the 0.3 detent of the landscape height.
-- [ ] iPhone: The sheet covers the full screen.
-- [ ] The content is laid out to the sheet's surface (no gaps, nothing cut off).
+    - [ ] Android, iPad: The sheet rests at the 0.3 detent of the landscape height.
+    - [ ] iPhone: The sheet covers the full screen.
+    - [ ] The content is laid out to the sheet's surface (no gaps, nothing cut off).
 
 4. Android, iPad: Drag the sheet up to the 1.0 detent.
 
-- [ ] The sheet expands to take up the maximum available height (respecting the top inset) and the content follows.
+    - [ ] The sheet expands to take up the maximum available height (respecting the top inset) and the content follows.
 
 5. Rotate the device back to portrait.
 
-- [ ] Android, iPad: The sheet stays expanded to the top of the screen (1.0 detent of the portrait height).
-- [ ] iPhone: The sheet returns to the 0.3 detent of the portrait height.
-- [ ] The content is fully visible and laid out to the portrait dimensions.
+    - [ ] Android, iPad: The sheet stays expanded to the top of the screen (1.0 detent of the portrait height).
+    - [ ] iPhone: The sheet returns to the 0.3 detent of the portrait height.
+    - [ ] The content is fully visible and laid out to the portrait dimensions.
 
 6. Drag the sheet down to dismiss it.
 
@@ -51,13 +51,13 @@ TBD: Planned, but will be implemented separately.
 
 1. Rotate the device to landscape and open the sheet.
 
-- [ ] Android, iPad: The sheet opens at the 0.3 detent of the landscape height.
-- [ ] iPhone: The sheet covers the full screen.
-- [ ] The content is laid out to the sheet's surface.
+    - [ ] Android, iPad: The sheet opens at the 0.3 detent of the landscape height.
+    - [ ] iPhone: The sheet covers the full screen.
+    - [ ] The content is laid out to the sheet's surface.
 
 2. Rotate to portrait.
 
-- [ ] The sheet rests at the 0.3 detent of the portrait height, with the content laid out to the sheet's surface.
+    - [ ] The sheet rests at the 0.3 detent of the portrait height, with the content laid out to the sheet's surface.
 
 3. Dismiss the sheet.
 
@@ -66,14 +66,14 @@ TBD: Planned, but will be implemented separately.
 1. In portrait, open the sheet and dismiss it.
 2. Rotate the device to landscape and open the sheet again.
 
-- [ ] Android: The sheet is horizontally centered and rests at the 0.3 detent of the landscape height.
-- [ ] iPad: The sheet rests at the 0.3 detent of the landscape height.
-- [ ] iPhone: The sheet covers the full screen.
+    - [ ] Android: The sheet is horizontally centered and rests at the 0.3 detent of the landscape height.
+    - [ ] iPad: The sheet rests at the 0.3 detent of the landscape height.
+    - [ ] iPhone: The sheet covers the full screen.
 
 3. Dismiss the sheet with a swipe down, rotate to portrait and open it again.
 
-- [ ] Android, iPhone: The sheet spans the full width and rests at the 0.3 detent of the portrait height.
-- [ ] iPad: The sheet rests at the 0.3 detent of the portrait height.
-- [ ] The bottom of the sheet looks the same as after the first presentation (no growing strip below the content).
+    - [ ] Android, iPhone: The sheet spans the full width and rests at the 0.3 detent of the portrait height.
+    - [ ] iPad: The sheet rests at the 0.3 detent of the portrait height.
+    - [ ] The bottom of the sheet looks the same as after the first presentation (no growing strip below the content).
 
 4. Dismiss the sheet.

@@ -28,7 +28,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Largest Undimmed Detent Index (iOS)** screen, then tap "Increment Background Counter" a few times.
 
-- [ ] "Background clicks" increases with every tap.
+    - [ ] "Background clicks" increases with every tap.
 
 ---
 
@@ -36,11 +36,11 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lowest detent (0.5) and the host screen is dimmed immediately. The title inside reads "Undimmed Index: none" and all five buttons are fully visible.
+    - [ ] The sheet presents at the lowest detent (0.5) and the host screen is dimmed immediately. The title inside reads "Undimmed Index: none" and all five buttons are fully visible.
 
 2. Tap "Increment Background Counter".
 
-- [ ] The counter does **not** change – the tap is intercepted by the dimming view and dismisses the sheet.
+    - [ ] The counter does **not** change – the tap is intercepted by the dimming view and dismisses the sheet.
 
 ---
 
@@ -48,15 +48,15 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet", then "Set 0 (0.5 height)" inside the sheet.
 
-- [ ] The host screen becomes undimmed immediately; the title reads "Undimmed Index: 0".
+    - [ ] The host screen becomes undimmed immediately; the title reads "Undimmed Index: 0".
 
 2. Tap "Increment Background Counter".
 
-- [ ] The counter increments while the sheet stays open at 0.5.
+    - [ ] The counter increments while the sheet stays open at 0.5.
 
 3. Drag the sheet up to the middle detent (0.65).
 
-- [ ] As the sheet settles at 0.65 the host screen is dimmed again and "Increment Background Counter" is no longer reachable.
+    - [ ] As the sheet settles at 0.65 the host screen is dimmed again and "Increment Background Counter" is no longer reachable.
 
 ---
 
@@ -64,15 +64,15 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Set 'last'" inside the sheet.
 
-- [ ] The host screen becomes undimmed at 0.65; the title reads "Undimmed Index: last".
+    - [ ] The host screen becomes undimmed at 0.65; the title reads "Undimmed Index: last".
 
 2. Drag the sheet up to the largest detent (0.8), then tap "Increment Background Counter".
 
-- [ ] The host screen stays undimmed at 0.8 and the counter increments.
+    - [ ] The host screen stays undimmed at 0.8 and the counter increments.
 
 3. Drag the sheet down to 0.5 and tap "Increment Background Counter" again.
 
-- [ ] The counter increments – the host screen is undimmed at every detent.
+    - [ ] The counter increments – the host screen is undimmed at every detent.
 
 ---
 
@@ -80,7 +80,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Set 'none'" inside the sheet.
 
-- [ ] The host screen is dimmed immediately and "Increment Background Counter" is blocked again.
+    - [ ] The host screen is dimmed immediately and "Increment Background Counter" is blocked again.
 
 ---
 
@@ -88,4 +88,4 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Dismiss from JS".
 
-- [ ] The sheet dismisses and "Increment Background Counter" works again.
+    - [ ] The sheet dismisses and "Increment Background Counter" works again.

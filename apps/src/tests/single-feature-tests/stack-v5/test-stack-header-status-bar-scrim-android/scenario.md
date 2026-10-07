@@ -41,84 +41,84 @@ colors and animated transitions, neither of which Detox can read.
 1. Navigate to **Stack v5 → Header status bar scrim (Android)**. Leave
    defaults and observe the header at rest.
 
-- [ ] The status-bar area matches the header background exactly — no visible
-      seam or band.
+    - [ ] The status-bar area matches the header background exactly — no visible
+          seam or band.
 
 2. Scroll up so the toolbar scrolls off the screen.
 
-- [ ] The title and buttons passing under the status bar are masked by a
-      solid strip; the status bar icons sit on that strip, not on the list
-      content.
-- [ ] The strip color matches the scrolled (lifted) header color.
+    - [ ] The title and buttons passing under the status bar are masked by a
+          solid strip; the status bar icons sit on that strip, not on the list
+          content.
+    - [ ] The strip color matches the scrolled (lifted) header color.
 
 3. Set `backgroundColor` = `red` and `scrolledBackgroundColor` = `blue`, then
    scroll slowly up and down.
 
-- [ ] The strip animates between light red (at rest) and blue (scrolled) in
-      sync with the header's own color transition — it is never frozen at a
-      stale color.
+    - [ ] The strip animates between light red (at rest) and blue (scrolled) in
+          sync with the header's own color transition — it is never frozen at a
+          stale color.
 
 4. While scrolled (strip in the scrolled color), set `backgroundColor` =
    `green`.
 
-- [ ] The strip immediately shows the scrolled color without animating from
-      the resting color; scrolling to the top reveals the light green strip.
+    - [ ] The strip immediately shows the scrolled color without animating from
+          the resting color; scrolling to the top reveals the light green strip.
 
 5. Set `statusBarScrimColor` = `red`.
 
-- [ ] A constant strong-red strip covers the status-bar area at rest and
-      while scrolled, regardless of the background colors.
+    - [ ] A constant strong-red strip covers the status-bar area at rest and
+          while scrolled, regardless of the background colors.
 
 6. Set `statusBarScrimColor` = `transparent`, then scroll the toolbar off.
 
-- [ ] No strip: toolbar content is visible through the status-bar area.
+    - [ ] No strip: toolbar content is visible through the status-bar area.
 
 7. Set `statusBarScrimColor` back to `default` and `backgroundColor` =
    `translucent`.
 
-- [ ] No default strip appears: the translucent header shows a uniform tint
-      with no darker double-composited band in the status-bar area.
+    - [ ] No default strip appears: the translucent header shows a uniform tint
+          with no darker double-composited band in the status-bar area.
 
 8. Keep `backgroundColor` = `translucent` and set `statusBarScrimColor` =
    `blue`.
 
-- [ ] The explicit blue strip is applied over the translucent background.
+    - [ ] The explicit blue strip is applied over the translucent background.
 
 ### Medium / large header
 
 1. Set `type` = `medium` (later repeat with `large`), all colors `default`,
    `scrollFlagExitUntilCollapsed` ON. Collapse the header.
 
-- [ ] The scrim fades in with the collapse; with the default color it is
-      seamless — the status-bar area matches the collapsed toolbar color.
+    - [ ] The scrim fades in with the collapse; with the default color it is
+          seamless — the status-bar area matches the collapsed toolbar color.
 
 2. Turn `scrollFlagExitUntilCollapsed` OFF and scroll the header fully away.
 
-- [ ] While the toolbar and title pass under the status bar they are masked
-      by the scrim; the mask fades out again when the header re-expands.
+    - [ ] While the toolbar and title pass under the status bar they are masked
+          by the scrim; the mask fades out again when the header re-expands.
 
 3. Set `scrolledBackgroundColor` = `green` and collapse.
 
-- [ ] The status-bar area matches the strong green content scrim while
-      collapsed; both fade out together when expanding.
+    - [ ] The status-bar area matches the strong green content scrim while
+          collapsed; both fade out together when expanding.
 
 4. Set `statusBarScrimColor` = `red` and collapse.
 
-- [ ] A red scrim fades in over the status-bar area together with the green
-      content scrim below it; no red is visible while expanded.
-- [ ] Mid-fade the status-bar area is not darker than the fading scrims — the
-      status bar scrim never stacks on top of the content scrim.
+    - [ ] A red scrim fades in over the status-bar area together with the green
+          content scrim below it; no red is visible while expanded.
+    - [ ] Mid-fade the status-bar area is not darker than the fading scrims — the
+          status bar scrim never stacks on top of the content scrim.
 
 5. Set `statusBarScrimColor` = `transparent`, `scrollFlagExitUntilCollapsed`
     OFF, and scroll the header away.
 
-- [ ] Toolbar content is visible through the status-bar area (no mask).
+    - [ ] Toolbar content is visible through the status-bar area (no mask).
 
 6. Set `statusBarScrimColor` back to `default` and `scrolledBackgroundColor`
     = `translucent`, then collapse.
 
-- [ ] No default status-bar scrim: the translucent content scrim shows
-      without an extra darker band in the status-bar area.
+    - [ ] No default status-bar scrim: the translucent content scrim shows
+          without an extra darker band in the status-bar area.
 
 ### Type changes keep settings
 
@@ -126,6 +126,6 @@ colors and animated transitions, neither of which Detox can read.
     `statusBarScrimColor` = `green`, then switch `type` across `small` →
     `medium` → `large` → `small`.
 
-- [ ] After every switch the scrim behavior matches the current type with the
-      same colors: constant green strip on `small`, green scrim fading with
-      collapse on `medium`/`large`.
+    - [ ] After every switch the scrim behavior matches the current type with the
+          same colors: constant green strip on `small`, green scrim fading with
+          collapse on `medium`/`large`.

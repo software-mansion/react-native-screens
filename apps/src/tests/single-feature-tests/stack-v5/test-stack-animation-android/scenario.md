@@ -73,85 +73,85 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
 1. Launch the app directly via `App.tsx` (see Android launch) so the **Home**
    screen is shown.
 
-- [ ] **Home** is shown with **Push Blue** /
-      **Push Red** / **Push NestedHost** buttons. No **Pop** button is shown.
+    - [ ] **Home** is shown with **Push Blue** /
+          **Push Red** / **Push NestedHost** buttons. No **Pop** button is shown.
 
 ### Push animation
 
-2. Tap **Push Blue**.
+1. Tap **Push Blue**.
 
-- [ ] The **Blue** screen slides from right to left
-      in over **Home** with a smooth, continuous
-      animation. Button shadows persist during and after the transition.
-      Neither screen's content jumps; both move as rigid blocks.
+    - [ ] The **Blue** screen slides from right to left
+          in over **Home** with a smooth, continuous
+          animation. Button shadows persist during and after the transition.
+          Neither screen's content jumps; both move as rigid blocks.
 
-3. On **Blue**, tap **Push Red**.
+2. On **Blue**, tap **Push Red**.
 
-- [ ] The **Red** screen slides in over **Blue**, same as step 2 — smooth,
-      button shadows present, no content jump.
+    - [ ] The **Red** screen slides in over **Blue**, same as step 1 — smooth,
+          button shadows present, no content jump.
 
 ### Pop animation (on-screen button)
 
-4. On **Red**, tap **Pop**.
+1. On **Red**, tap **Pop**.
 
-- [ ] **Red** slides back out and **Blue** is revealed with a smooth
-      animation (the reverse of the push). The button shadows stay visible;
-      no content jump occurs.
+    - [ ] **Red** slides back out and **Blue** is revealed with a smooth
+          animation (the reverse of the push). The button shadows stay visible;
+          no content jump occurs.
 
 ### Predictive back gesture (interactive)
 
-5. On **Blue**, tap **Push Red**.
+1. On **Blue**, tap **Push Red**.
 
-- [ ] The **Red** screen slides in over **Blue**, same as step 2 — smooth,
-      button shadows present, no content jump.
+    - [ ] The **Red** screen slides in over **Blue**, same as step 1 of
+          **Push animation** — smooth, button shadows present, no content jump.
 
-6. On **Red** slowly swipe inward from the **left screen edge** and **hold** without
+2. On **Red** slowly swipe inward from the **left screen edge** and **hold** without
    releasing.
 
-- [ ] The gesture is **interactive and continuous**: **Red** follows your
-      finger and the screen underneath (**Blue**) is progressively revealed,
-      tracking the drag position. The animation is not stepped or frozen, and
-      the button shadows remain visible.
+    - [ ] The gesture is **interactive and continuous**: **Red** follows your
+          finger and the screen underneath (**Blue**) is progressively revealed,
+          tracking the drag position. The animation is not stepped or frozen, and
+          the button shadows remain visible.
 
-7. Continue the swipe **past** the commit threshold and release.
+3. Continue the swipe **past** the commit threshold and release.
 
-- [ ] The pop **completes smoothly from the current gesture position** to
-      fully showing **Blue** — the animation continues to completion rather
-      than snapping instantly.
+    - [ ] The pop **completes smoothly from the current gesture position** to
+          fully showing **Blue** — the animation continues to completion rather
+          than snapping instantly.
 
-8. Push back to **Red**, start the same edge swipe, but then swipe back towards the left edge.
+4. Push back to **Red**, start the same edge swipe, but then swipe back towards the left edge.
 
-- [ ] The gesture is **cancelled smoothly**: **Red** animates back into place
-      and no navigation change occurs.
+    - [ ] The gesture is **cancelled smoothly**: **Red** animates back into place
+          and no navigation change occurs.
 
 ### Nested stack animations
 
-9. Pop/navigate back to **Home**, then tap **Push NestedHost**.
+1. Pop/navigate back to **Home**, then tap **Push NestedHost**.
 
-- [ ] The nested host slides in and shows **NestedHome** with **Push
-      NestedBlue** / **Push NestedRed** / **Pop** buttons. The push is
-      animated with the same quality as the outer stack.
+    - [ ] The nested host slides in and shows **NestedHome** with **Push
+          NestedBlue** / **Push NestedRed** / **Pop** buttons. The push is
+          animated with the same quality as the outer stack.
 
-10. On **NestedHome**, tap **Push NestedBlue**, then on **NestedBlue** tap
+2. On **NestedHome**, tap **Push NestedBlue**, then on **NestedBlue** tap
     **Push NestedRed**.
 
-- [ ] Each push inside the **nested** stack slides in smoothly, with visible  
-      button shadows and no content jump — identical behaviour to the top-level stack.
+    - [ ] Each push inside the **nested** stack slides in smoothly, with visible  
+          button shadows and no content jump — identical behaviour to the top-level stack.
 
-11. Inside the nested stack, tap **Pop**, then perform a **predictive back gesture**
+3. Inside the nested stack, tap **Pop**, then perform a **predictive back gesture**
 (swipe from the left edge) twice.
 
-- [ ] Each pop inside the nested stack animates smoothly (button and interactive
-      gesture all behave as they do on the outer stack).
-      When the nested stack has only **NestedHome** left, a further back
-      pops the whole **NestedHost** route and returns to **Home**, animated.
+    - [ ] Each pop inside the nested stack animates smoothly (button and interactive
+          gesture all behave as they do on the outer stack).
+          When the nested stack has only **NestedHome** left, a further back
+          pops the whole **NestedHost** route and returns to **Home**, animated.
 
 ### Re-pushing the same route (edge case)
 
-12. From **Home**, tap **Push Blue**; on **Blue**, tap **Push Blue** again;
+1. From **Home**, tap **Push Blue**; on **Blue**, tap **Push Blue** again;
     on the new **Blue**, tap **Push Blue** once more.
 
-- [ ] Every push animates a fresh **Blue** screen sliding in over the previous
-      one (three stacked Blue instances). No transition is skipped, and no
-      screen jumps or loses its button shadows, even though consecutive screens share
-      the same color.
+    - [ ] Every push animates a fresh **Blue** screen sliding in over the previous
+          one (three stacked Blue instances). No transition is skipped, and no
+          screen jumps or loses its button shadows, even though consecutive screens share
+          the same color.

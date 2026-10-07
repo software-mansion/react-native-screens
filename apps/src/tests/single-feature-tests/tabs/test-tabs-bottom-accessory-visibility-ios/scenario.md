@@ -15,12 +15,13 @@ produces a smooth animation with visible content, while toggling
 
 ## E2E test
 
-Incomplete: covers the end state of steps 1-8 on iPhone - the accessory is
+Incomplete: covers the end state of all steps on iPhone - the accessory is
 present with its content (and the tab bar laid out below it) or absent after
 each `hidden` / `rendered` toggle.
 
 Not automated: animation quality - smooth slide out/in with content visible
-and no blank frame (steps 2-4, 8).
+and no blank frame (all steps of **Hidden prop**, step 1 of
+**Rendered prop** and step 3 of **Combined**).
 
 ## Prerequisites
 
@@ -32,41 +33,41 @@ and no blank frame (steps 2-4, 8).
 
 1. Open the test scenario.
 
-- [ ] The bottom accessory is visible above the tab bar with
-  "Bottom Accessory" text centered.
+    - [ ] The bottom accessory is visible above the tab bar with
+          "Bottom Accessory" text centered.
 
 ### Hidden prop
 
-2. Toggle `hidden` on.
+1. Toggle `hidden` on.
 
-- [ ] The bottom accessory animates out smoothly. The content
-  remains visible during the animation.
+    - [ ] The bottom accessory animates out smoothly. The content
+          remains visible during the animation.
 
-3. Toggle `hidden` off.
+2. Toggle `hidden` off.
 
-- [ ] The bottom accessory animates back in. The content is
-  immediately visible — no blank frame.
+    - [ ] The bottom accessory animates back in. The content is
+          immediately visible — no blank frame.
 
 ### Rendered prop
 
-4. Toggle `rendered` off.
+1. Toggle `rendered` off.
 
-- [ ] The bottom accessory disappears.
+    - [ ] The bottom accessory disappears.
 
-5. Toggle `rendered` on.
+2. Toggle `rendered` on.
 
-- [ ] The bottom accessory reappears with content.
+    - [ ] The bottom accessory reappears with content.
 
 ### Combined
 
-6. Toggle `hidden` on, then toggle `rendered` off.
+1. Toggle `hidden` on, then toggle `rendered` off.
 
-- [ ] No crash. The bottom accessory remains absent.
+    - [ ] No crash. The bottom accessory remains absent.
 
-7. Toggle `rendered` on.
+2. Toggle `rendered` on.
 
-- [ ] The bottom accessory does not appear (still hidden).
+    - [ ] The bottom accessory does not appear (still hidden).
 
-8. Toggle `hidden` off.
+3. Toggle `hidden` off.
 
-- [ ] The bottom accessory animates in with content visible.
+    - [ ] The bottom accessory animates in with content visible.

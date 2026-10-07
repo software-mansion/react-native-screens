@@ -45,15 +45,15 @@ iOS Known Issues:
 
 1. Launch the app and navigate to the **Tab Bar Item Title** screen.
 
-- [ ] Three tabs are visible in the tab bar.
-- [ ] The first tab is selected by default. Its title is truncated with an
-  ellipsis (e.g. "A Very Long Tab Title T...") and does not overflow
-  into adjacent items or wrap to a second line. **On iOS 18 and lower**,
-  due to the known native bug noted above, the long title may overflow
-  into adjacent items instead of showing an ellipsis.
-- [ ] The second tab is titled **Color** and the third **Font**. All labels use
-  the system default font, weight, and position.
-- [ ] On iOS the active tab title color is the host default tint (green).
+    - [ ] Three tabs are visible in the tab bar.
+    - [ ] The first tab is selected by default. Its title is truncated with an
+          ellipsis (e.g. "A Very Long Tab Title T...") and does not overflow
+          into adjacent items or wrap to a second line. **On iOS 18 and lower**,
+          due to the known native bug noted above, the long title may overflow
+          into adjacent items instead of showing an ellipsis.
+    - [ ] The second tab is titled **Color** and the third **Font**. All labels use
+          the system default font, weight, and position.
+    - [ ] On iOS the active tab title color is the host default tint (green).
 
 ---
 
@@ -61,22 +61,22 @@ iOS Known Issues:
 
 1. Tap the **Color** tab.
 
-- [ ] The **Color** tab is selected. The tab's `tabBarItemTitleFontColor` is red,
-  so the title text "Color" renders in red.
-- [ ] For **Android and iOS 18** and lower, the title color for unselected tabs is blue.
-- [ ] On iOS: The host `tabBarTintColor` is green, so the selected icon tints green.
+    - [ ] The **Color** tab is selected. The tab's `tabBarItemTitleFontColor` is red,
+          so the title text "Color" renders in red.
+    - [ ] For **Android and iOS 18** and lower, the title color for unselected tabs is blue.
+    - [ ] On iOS: The host `tabBarTintColor` is green, so the selected icon tints green.
 
 2. Android only: While **Color** tab is selected, use the Tab key on keyboard to
 switch focus to the long title tab.
 
-- [ ] Focused tab title is yellow while selected tab title
-remains red, and unselected tabs remain blue.
+    - [ ] Focused tab title is yellow while selected tab title
+          remains red, and unselected tabs remain blue.
 
 3. Tap the long title tab, then tap **Color** again.
 
-- [ ] On re-selection the same split appearance (red title for selected tab,
-blue title for unselected tabs, on iOS: green icon)
-is reproduced immediately with no visual glitch.
+    - [ ] On re-selection the same split appearance (red title for selected tab,
+          blue title for unselected tabs, on iOS: green icon)
+          is reproduced immediately with no visual glitch.
 
 ---
 
@@ -84,20 +84,20 @@ is reproduced immediately with no visual glitch.
 
 1. Tap the **Font** tab.
 
-- [ ] When the tab is selected, the "Font" title label is
-rendered in a bold, italic font at approximately 18 pt.
-- [ ] On Android: monospace font family applied. Unselected tabs display in small
-italic font at approximately 8 pt.
-- [ ] On iOS: Georgia font tinted green. Unselected tabs display in system default
-(San Francisco, non-italic, 10 pt). The title label is shifted noticeably upward
-(by ~6 points) compared to the baseline position seen on the **Color** tab, while
-the icon position remains unchanged.
+    - [ ] When the tab is selected, the "Font" title label is
+          rendered in a bold, italic font at approximately 18 pt.
+    - [ ] On Android: monospace font family applied. Unselected tabs display in small
+          italic font at approximately 8 pt.
+    - [ ] On iOS: Georgia font tinted green. Unselected tabs display in system default
+          (San Francisco, non-italic, 10 pt). The title label is shifted noticeably upward
+          (by ~6 points) compared to the baseline position seen on the **Color** tab, while
+          the icon position remains unchanged.
 
 2. Tap any other tab, then tap **Font** again.
 
-- [ ] The custom typography and position reappear when the tab is
-re-selected.
-- [ ] On iOS: The vertical offset is consistent across selections.
+    - [ ] The custom typography and position reappear when the tab is
+          re-selected.
+    - [ ] On iOS: The vertical offset is consistent across selections.
 
 ---
 
@@ -105,5 +105,5 @@ re-selected.
 
 1. Cycle through all three tabs in order, then in reverse.
 
-- [ ] Each tab's title styling applies correctly on selection, and
-  no crash, layout freeze, or visual artifact occurs during rapid cycling.
+    - [ ] Each tab's title styling applies correctly on selection, and
+          no crash, layout freeze, or visual artifact occurs during rapid cycling.

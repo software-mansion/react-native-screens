@@ -34,14 +34,14 @@ TBD: Planned, but will be implemented separately.
 1. Launch the app and navigate to the **Stack in Tabs - header persistence
    across tab switches** screen.
 
-   - [ ] The "Stack" tab is selected and shows a collapsing header titled
-         "Home v1" with the subtitle "Tab persistence" and an overflow menu
-         button.
+    - [ ] The "Stack" tab is selected and shows a collapsing header titled
+          "Home v1" with the subtitle "Tab persistence" and an overflow menu
+          button.
 
 2. Scroll down one full screen, then back to the top.
 
-   - [ ] The header collapses to the toolbar row on the way down and is
-         expanded again at the top.
+    - [ ] The header collapses to the toolbar row on the way down and is
+          expanded again at the top.
 
 ---
 
@@ -49,19 +49,19 @@ TBD: Planned, but will be implemented separately.
 
 1. Switch to the "Other" tab, then back to "Stack".
 
-   - [ ] The header is still there: "Home v1", "Tab persistence" and the
-         overflow menu button.
-   - [ ] There is no flash of a re-built header when "Stack" comes back.
+    - [ ] The header is still there: "Home v1", "Tab persistence" and the
+          overflow menu button.
+    - [ ] There is no flash of a re-built header when "Stack" comes back.
 
 2. Scroll down one full screen, then back to the top.
 
-   - [ ] The header still collapses on the way down and expands again at the
-         top.
+    - [ ] The header still collapses on the way down and expands again at the
+          top.
 
 3. Switch to the "Other" tab and back to "Stack" 3 times.
 
-   - [ ] The header is present and unchanged after every one of the 3
-         switches.
+    - [ ] The header is present and unchanged after every one of the 3
+          switches.
 
 ---
 
@@ -69,11 +69,11 @@ TBD: Planned, but will be implemented separately.
 
 1. Scroll until the header is fully collapsed.
 
-   - [ ] Only the toolbar row is left; the expanded title area is gone.
+    - [ ] Only the toolbar row is left; the expanded title area is gone.
 
 2. Switch to the "Other" tab, then back to "Stack".
 
-   - [ ] The header is still fully collapsed. It does not come back expanded.
+    - [ ] The header is still fully collapsed. It does not come back expanded.
 
 ---
 
@@ -81,11 +81,11 @@ TBD: Planned, but will be implemented separately.
 
 1. Open the overflow menu.
 
-   - [ ] "Filter A" is checked and "Filter B" is unchecked.
+    - [ ] "Filter A" is checked and "Filter B" is unchecked.
 
 2. Tap "Filter B".
 
-   - [ ] "Last menu selection" reads `["filterA","filterB"]`.
+    - [ ] "Last menu selection" reads `["filterA","filterB"]`.
 
 3. Switch to the "Other" tab, back to "Stack", then open the overflow menu.
 

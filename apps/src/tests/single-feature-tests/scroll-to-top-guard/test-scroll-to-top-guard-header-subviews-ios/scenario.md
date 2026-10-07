@@ -23,15 +23,15 @@ TBD
 
 1. Open the test. Scroll the list down so scroll-to-top is observable.
 2. With **Left** `guarded` enabled (default), tap the **Left** subview.
-  - [ ] The list does NOT scroll to top.
+    - [ ] The list does NOT scroll to top.
 3. Toggle **Left** `guarded` off. Scroll down and tap the **Left** subview.
-  - [ ] The list scrolls to top.
+    - [ ] The list scrolls to top.
 4. Scroll down and tap the **bare header area** (outside any subview).
-  - [ ] The list scrolls to top.
+    - [ ] The list scrolls to top.
 5. Repeat steps 2–3 for the **Right** subview.
-  - [ ] Guarded Right does NOT scroll to top; unguarded Right does.
+    - [ ] Guarded Right does NOT scroll to top; unguarded Right does.
 6. Repeat steps 2–3 for the **Title** subview.
-  - [ ] Guarded Title does NOT scroll to top; unguarded Title does.
+    - [ ] Guarded Title does NOT scroll to top; unguarded Title does.
 7. Set a guarded subview's `hitSlop` to `30`, scroll down, and tap just
    outside the subview.
-  - [ ] The press is registered and the list does NOT scroll to top.
+    - [ ] The press is registered and the list does NOT scroll to top.

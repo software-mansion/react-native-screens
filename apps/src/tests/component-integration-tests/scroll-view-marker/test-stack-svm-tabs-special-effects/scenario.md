@@ -42,7 +42,7 @@ This test needs to be updated after such interaction is supported.
 3. Press `Home` tab item (repeated tab selection) to trigger the special effect.
 
     - [ ] *scroll-to-top* should be triggered and you should observe the scroll-view scrolling
-    to its top.
+          to its top.
 
 ### Nested stack
 
@@ -58,4 +58,4 @@ This test needs to be updated after such interaction is supported.
 3. Press `Stack` tab item (repeated tab selection) to trigger the special effect.
 
     - [ ] *scroll-to-top* should be triggered and you should observe the scroll-view scrolling
-    to its top.
+          to its top.

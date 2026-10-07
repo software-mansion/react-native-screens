@@ -22,8 +22,8 @@ TBD: Planned, but will be implemented separately.
 1. Launch the app and navigate to the **Tabs in Stack - stable enter
    transition** screen.
 
-- [ ] The "First stack screen" is shown on a light blue background
-      with a "Go to nested tabs" button.
+    - [ ] The "First stack screen" is shown on a light blue background
+          with a "Go to nested tabs" button.
 
 ---
 
@@ -31,12 +31,12 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap the "Go to nested tabs" button.
 
-- [ ] The stack pushes the second screen ("Nested Tabs") with a
-      standard push animation. The nested tabs content ("Home tab" with its
-      `tab routeKey`) and the tab bar (Home / Settings) are already correctly
-      laid out as the screen slides in. There is **no** flicker, no flash of an
-      empty/white screen, no layout jump, and no momentary mis-position of the
-      tab bar or tab content during the transition.
+    - [ ] The stack pushes the second screen ("Nested Tabs") with a
+          standard push animation. The nested tabs content ("Home tab" with its
+          `tab routeKey`) and the tab bar (Home / Settings) are already correctly
+          laid out as the screen slides in. There is **no** flicker, no flash of an
+          empty/white screen, no layout jump, and no momentary mis-position of the
+          tab bar or tab content during the transition.
 
 ---
 
@@ -44,7 +44,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Once the transition finishes, switch between the "Home" and "Settings" tabs.
 
-- [ ] Both tabs render their content centered ("Home tab" /
-      "Settings tab") together with the corresponding `tab routeKey`. Switching
-      tab runs a slide-in animation for the active indicator and the label
-      of the selected tab.
+    - [ ] Both tabs render their content centered ("Home tab" /
+          "Settings tab") together with the corresponding `tab routeKey`. Switching
+          tab runs a slide-in animation for the active indicator and the label
+          of the selected tab.

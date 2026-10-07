@@ -52,114 +52,115 @@ Incomplete - hard to verify text appearance with Detox.
 1. Open the scenario (defaults: `type=small`, title `Title`, subtitle
    `Subtitle`, all appearance `default`).
 
-- [ ] Small header renders `Title` and `Subtitle` in the standard Material 3
-      styling (title larger/darker, subtitle smaller/muted). No custom color.
+    - [ ] Small header renders `Title` and `Subtitle` in the standard Material 3
+          styling (title larger/darker, subtitle smaller/muted). No custom color.
 
 2. Set `type=medium`, then `type=large`.
 
-- [ ] Each collapsing header renders with its own default title/subtitle
-      appearance; large title is visibly larger than medium. No custom color.
+    - [ ] Each collapsing header renders with its own default title/subtitle
+          appearance; large title is visibly larger than medium. No custom color.
 
 ### Small — combine customizations, then restore
 
-3. `type=small`. Add one axis at a time to the title: `color=red`, then
+1. `type=small`. Add one axis at a time to the title: `color=red`, then
    `fontSize=30`, then `fontFamily=serif`, then `fontWeight=700`, then
    `fontStyle=italic`.
 
-- [ ] Each new axis stacks on top of the previous ones — the title ends up red,
-      size 30, serif, bold and italic all at once. No earlier axis is lost when
-      the next is applied. (`700` renders the same as `bold`.)
+    - [ ] Each new axis stacks on top of the previous ones — the title ends up red,
+          size 30, serif, bold and italic all at once. No earlier axis is lost when
+          the next is applied. (`700` renders the same as `bold`.)
 
-4. Watch the subtitle throughout step 3.
+2. Watch the subtitle throughout step 1.
 
-- [ ] Subtitle stays completely default — the title changes never touch it.
+    - [ ] Subtitle stays completely default — the title changes never touch it.
 
-5. Set each title axis back to `default`, one at a time.
+3. Set each title axis back to `default`, one at a time.
 
-- [ ] Each axis reverts to its default while the others remain applied; after
-      the last one the title is fully default again (in particular the size is a
-      normal default, not tiny or oversized).
+    - [ ] Each axis reverts to its default while the others remain applied; after
+          the last one the title is fully default again (in particular the size is a
+          normal default, not tiny or oversized).
 
 ### Small — title vs subtitle differentiation
 
-6. Tap **Differentiation** (title and subtitle both `Same`; title red, subtitle
+1. Tap **Differentiation** (title and subtitle both `Same`; title red, subtitle
    blue).
 
-- [ ] Both lines read `Same`; the title line is red and the subtitle line is
-      blue — distinct even though the text is identical.
+    - [ ] Both lines read `Same`; the title line is red and the subtitle line is
+          blue — distinct even though the text is identical.
 
-7. Set `title=undefined` (only the subtitle remains), then set `title=same`
+2. Set `title=undefined` (only the subtitle remains), then set `title=same`
    again.
 
-- [ ] With only the subtitle present it stays blue; when the title is added back
-      it shows red on the title line, not blue. The styling maps to the correct
-      slot even though the title was added to the toolbar after the subtitle.
+    - [ ] With only the subtitle present it stays blue; when the title is added back
+          it shows red on the title line, not blue. The styling maps to the correct
+          slot even though the title was added to the toolbar after the subtitle.
 
-8. Swap: set `title color=blue` and `subtitle color=red`.
+3. Swap: set `title color=blue` and `subtitle color=red`.
 
-- [ ] Title turns blue and subtitle red — the styling follows the slot, not the
-      shared text.
+    - [ ] Title turns blue and subtitle red — the styling follows the slot, not the
+          shared text.
 
 ### Small — appearance survives the text being toggled
 
-9. Set `subtitle color=blue` (confirm it is blue), then `subtitle=undefined`,
+1. Set `subtitle color=blue` (confirm it is blue), then `subtitle=undefined`,
    then `subtitle=short`.
 
-- [ ] The subtitle returns blue — its appearance persisted across the text being
-      cleared and re-shown. (The title showed the same behavior in step 7.)
+    - [ ] The subtitle returns blue — its appearance persisted across the text being
+          cleared and re-shown. (The title showed the same behavior in step 2 of
+          **Small — title vs subtitle differentiation**.)
 
 ### Small — PlatformColor
 
-10. Tap **PlatformColor** (title and subtitle `color=platform`).
+1. Tap **PlatformColor** (title and subtitle `color=platform`).
 
-- [ ] Title and subtitle both render the OS green color.
+    - [ ] Title and subtitle both render the OS green color.
 
-11. Set `title color=default`.
+2. Set `title color=default`.
 
-- [ ] Title reverts to the default color; subtitle stays green (its
-      `PlatformColor` is unaffected).
+    - [ ] Title reverts to the default color; subtitle stays green (its
+          `PlatformColor` is unaffected).
 
 ### Medium / large — expanded vs collapsed
 
-12. Tap **Reset appearance**, set `type=large`, then set `expandedTitle
+1. Tap **Reset appearance**, set `type=large`, then set `expandedTitle
 color=red` and `collapsedTitle color=blue`.
 
-- [ ] Expanded title is red. Scroll the content up to collapse the header — the
-      collapsed toolbar title is blue. Scroll back down a little and the header
-      re-expands red. The two states are independent.
+    - [ ] Expanded title is red. Scroll the content up to collapse the header — the
+          collapsed toolbar title is blue. Scroll back down a little and the header
+          re-expands red. The two states are independent.
 
-13. Set `expandedTitle fontSize=12` and `collapsedTitle fontSize=30`.
+2. Set `expandedTitle fontSize=12` and `collapsedTitle fontSize=30`.
 
-- [ ] Expanded title is smaller and the collapsed title is larger; changing one
-      state's size does not affect the other.
+    - [ ] Expanded title is smaller and the collapsed title is larger; changing one
+          state's size does not affect the other.
 
-14. Set `expandedSubtitle color=red`, `collapsedSubtitle color=blue`, and set
+3. Set `expandedSubtitle color=red`, `collapsedSubtitle color=blue`, and set
     both title slots back to `default`.
 
-- [ ] Subtitle colors are independent of the title and independent per state
-      (expanded subtitle red, collapsed subtitle blue).
+    - [ ] Subtitle colors are independent of the title and independent per state
+          (expanded subtitle red, collapsed subtitle blue).
 
-15. Tap **Reset appearance**. Set `expandedTitle` `color=red`,
+4. Tap **Reset appearance**. Set `expandedTitle` `color=red`,
     `fontFamily=monospace`, `fontWeight=700`. Then set each of those three back
     to `default`, one at a time.
 
-- [ ] Each removal reverts only that axis while the others remain; the
-      `collapsedTitle`, `expandedSubtitle` and `collapsedSubtitle` slots stay
-      default the whole time (no cross-slot bleed).
+    - [ ] Each removal reverts only that axis while the others remain; the
+          `collapsedTitle`, `expandedSubtitle` and `collapsedSubtitle` slots stay
+          default the whole time (no cross-slot bleed).
 
 ### Medium — appearance change while collapsed
 
-16. Tap **Reset appearance**, set `type=medium`, then scroll until the header
+1. Tap **Reset appearance**, set `type=medium`, then scroll until the header
     is fully collapsed.
 
-- [ ] Only the toolbar row is left, with the collapsed title in the default
-      appearance.
+    - [ ] Only the toolbar row is left, with the collapsed title in the default
+          appearance.
 
-17. Set `expandedTitle fontSize=30`.
+2. Set `expandedTitle fontSize=30`.
 
-- [ ] The header stays fully collapsed; the collapsed title does not move or
-      drift.
+    - [ ] The header stays fully collapsed; the collapsed title does not move or
+          drift.
 
-18. Scroll back to the top.
+3. Scroll back to the top.
 
-- [ ] The expanded title is larger than the default.
+    - [ ] The expanded title is larger than the default.

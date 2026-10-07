@@ -8,17 +8,17 @@
 
 ## E2E test
 
-Incomplete: iPhone steps fully automated, iPad partially: steps 1, 2, 4, and 7.
+Incomplete: iPhone steps fully automated, iPad partially: steps 1, 2, 4, and 7 of **iPad**.
 For iPad e2e verifies: the initial `automatic` default state, `tabBar` mode keeping the floating tab bar
 visible without a sidebar toggle, and `tabSidebar` mode toggling the sidebar
 open/closed (via the "Toggle sidebar" button).
 
 Not automated:
 
-- Steps 3, 5, 8 (Split View window resizing),
-- Step 6 (landscape orientation),
-- Step 9 (mode-cycling crash check),
-- Step 10 (tab switching),
+- Steps 3, 5, 8 of **iPad** (Split View window resizing),
+- Step 6 of **iPad** (landscape orientation),
+- Step 9 of **iPad** (mode-cycling crash check),
+- Step 10 of **iPad** (tab switching),
 
 ## Prerequisites
 
@@ -30,63 +30,63 @@ Not automated:
 
 1. Launch the app and navigate to the **Tab Bar Controller Mode** screen.
 
-- [ ] Tab bar displayed at the top with Tab1 and Tab2. Picker defaults to `automatic`
+    - [ ] Tab bar displayed at the top with Tab1 and Tab2. Picker defaults to `automatic`
 
 2. Ensure that tabBarControllerMode = `automatic`
 
-- [ ] Tab bar displayed according to iPadOS default behavior for current orientation
+    - [ ] Tab bar displayed according to iPadOS default behavior for current orientation
 
 3. Change app window size to correspond to iPhone view.
 
-- [ ] Tab bar displayed at the **bottom**
+    - [ ] Tab bar displayed at the **bottom**
 
 4. Resize app to full screen.
    Set tabBarControllerMode = `tabBar`
 
-- [ ] Tab bar displayed without sidebar option - even if iPadOS would default do it
+    - [ ] Tab bar displayed without sidebar option - even if iPadOS would default do it
 
 5. Change app window size to correspond to iPhone view.
 
-- [ ] Tab bar displayed at the **bottom**
+    - [ ] Tab bar displayed at the **bottom**
 
 6. Resize app to full screen.
    Set tabBarControllerMode = `tabSidebar`, test on **iPad landscape** orientation
 
-- [ ] Navigation displayed as a **sidebar** on the leading edge
+    - [ ] Navigation displayed as a **sidebar** on the leading edge
 
 7. Keep tabBarControllerMode = `tabSidebar`, test on **iPad portrait**
 
-- [ ] Sidebar adapts or collapses — tab items still accessible
+    - [ ] Sidebar adapts or collapses — tab items still accessible
 
 8. Change app window size to correspond to iPhone view.
 
-- [ ] Tab bar displayed at the **bottom** without sidebar option.
+    - [ ] Tab bar displayed at the **bottom** without sidebar option.
 
 9. Resize app to full screen.
    Cycle through `automatic` → `tabBar` → `tabSidebar` → `automatic`
 
-- [ ] UI transitions immediately with each change, no crash or layout freeze
+    - [ ] UI transitions immediately with each change, no crash or layout freeze
 
 10. Switch tabs (Tab1 ↔ Tab2) while cycling through all modes.
 
-- [ ] Tab switching works correctly in all three modes.
+    - [ ] Tab switching works correctly in all three modes.
 
 ---
 
 ### Simple check on iPhone
 
-11. Launch the app and navigate to the **Tab Bar Controller Mode** screen.
+1. Launch the app and navigate to the **Tab Bar Controller Mode** screen.
 
-- [ ] Tab bar displayed at the bottom with Tab1 and Tab2. Picker defaults to `automatic`
+    - [ ] Tab bar displayed at the bottom with Tab1 and Tab2. Picker defaults to `automatic`
 
-12. Set tabBarControllerMode = `automatic`
+2. Set tabBarControllerMode = `automatic`
 
-- [ ] Tab bar displayed at the **bottom**
+    - [ ] Tab bar displayed at the **bottom**
 
-13. Set tabBarControllerMode = `tabBar`
+3. Set tabBarControllerMode = `tabBar`
 
-- [ ] Tab bar displayed at the **bottom**
+    - [ ] Tab bar displayed at the **bottom**
 
-14. Set tabBarControllerMode = `tabSidebar`
+4. Set tabBarControllerMode = `tabSidebar`
 
-- [ ] Tab bar displayed at the **bottom**
+    - [ ] Tab bar displayed at the **bottom**

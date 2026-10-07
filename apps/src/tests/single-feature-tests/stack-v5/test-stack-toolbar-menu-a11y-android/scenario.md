@@ -40,76 +40,77 @@ tool you chose.
 
 1. Open the **Toolbar Menu A11y** screen scenario.
 
-- [ ] The toolbar shows an action item (search icon) in the
-      toolbar.
-- [ ] The overflow menu button (three dots) is visible.
+    - [ ] The toolbar shows an action item (search icon) in the
+          toolbar.
+    - [ ] The overflow menu button (three dots) is visible.
 
 ### Action item accessibility
 
-2. Verify contentDescription of the action item in the toolbar.
+1. Verify contentDescription of the action item in the toolbar.
 
-- [ ] The content description is "Accessibility for Alpha"
-      (not the title "Alpha").
+    - [ ] The content description is "Accessibility for Alpha"
+          (not the title "Alpha").
 
 ### Overflow item accessibility
 
-3. Tap the overflow menu button (three dots).
+1. Tap the overflow menu button (three dots).
 
-- [ ] The overflow menu opens showing "Beta" and "Gamma".
+    - [ ] The overflow menu opens showing "Beta" and "Gamma".
 
-4. Verify contentDescription of the "Beta" and "Gamma" entries.
+2. Verify contentDescription of the "Beta" and "Gamma" entries.
 
-- [ ] The content description is "Accessibility for Beta" and
-      "Accessibility for Gamma" respectively.
+    - [ ] The content description is "Accessibility for Beta" and
+          "Accessibility for Gamma" respectively.
 
 ### Submenu item accessibility
 
-5. Tap "Gamma" (the overflow menu is still open from step 3).
+1. Tap "Gamma" (the overflow menu is still open from step 1 of
+   **Overflow item accessibility**).
 
-- [ ] The submenu popup opens showing "Delta".
+    - [ ] The submenu popup opens showing "Delta".
 
-6. Verify contentDescription of the "Delta" entry.
+2. Verify contentDescription of the "Delta" entry.
 
-- [ ] The content description is "Accessibility for Delta".
+    - [ ] The content description is "Accessibility for Delta".
 
-7. Dismiss all menus.
+3. Dismiss all menus.
 
 ### View command — update action item
 
-8. Set "target id" to "action-item", set "accessibilityLabel"
+1. Set "target id" to "action-item", set "accessibilityLabel"
    to "Updated label", then tap "Send Command".
 
-- [ ] The action item contentDescription is now
-      "Updated label".
+    - [ ] The action item contentDescription is now
+          "Updated label".
 
 ### View command — reset action item
 
-9. Set "accessibilityLabel" to "undefined", then tap
+1. Set "accessibilityLabel" to "undefined", then tap
    "Send Command".
 
-- [ ] The action item falls back to using the title "Alpha"
-      as content description (default behavior for icon-only
-      toolbar buttons).
+    - [ ] The action item falls back to using the title "Alpha"
+          as content description (default behavior for icon-only
+          toolbar buttons).
 
 ### View command — update overflow item
 
-10. Set "target id" to "overflow-item", set
+1. Set "target id" to "overflow-item", set
     "accessibilityLabel" to "Updated label", then tap
     "Send Command".
 
-11. Tap the overflow menu button.
+2. Tap the overflow menu button.
 
-- [ ] Verify contentDescription of "Beta" is now
-      "Updated label".
+    - [ ] Verify contentDescription of "Beta" is now
+          "Updated label".
 
-12. Dismiss the overflow menu.
+3. Dismiss the overflow menu.
 
 ### View command — reset overflow item
 
-13. Set "accessibilityLabel" to "undefined", then tap
+1. Set "accessibilityLabel" to "undefined", then tap
     "Send Command".
 
-14. Tap the overflow menu button.
+2. Tap the overflow menu button.
 
-- [ ] "Beta" has no custom content description (the default
-      for overflow items is no content description).
+    - [ ] "Beta" has no custom content description (the default
+          for overflow items is no content description).

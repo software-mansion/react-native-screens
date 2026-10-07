@@ -44,11 +44,15 @@ sections for different device or OS types if their execution paths differ signif
 numbering restarts from 1 in each subsection. Separate subsections with a
 horizontal rule (`---`).
 
+**Indentation Convention:** Expected-result checkboxes are indented with
+4 spaces (`    - [ ] Expected result`). When a checkbox wraps onto more lines,
+align the continuation lines with the checkbox text (10 spaces).
+
 ### Baseline
 
 1. Navigate to ...
 
-- [ ] Description of expected behavior after the navigation action.
+    - [ ] Description of expected behavior after the navigation action.
 
 ---
 
@@ -56,11 +60,12 @@ horizontal rule (`---`).
 
 1. Tap ...
 
-- [ ] iOS18: expected behavior on this OS version.
-- [ ] iOS26: expected behavior on this OS version.
+    - [ ] iOS18: expected behavior on this OS version.
+    - [ ] iOS26: expected behavior on this OS version.
 
 2. Tap ...
 
-- [ ] Description of expected behavior after the action.
+    - [ ] Description of expected behavior after the action, wrapped onto
+          a second line.
 
 ---

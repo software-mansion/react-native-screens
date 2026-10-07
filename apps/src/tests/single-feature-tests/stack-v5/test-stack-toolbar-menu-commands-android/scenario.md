@@ -46,120 +46,124 @@ Full: All steps are covered.
 
 1. Launch the app and navigate to **Stack Toolbar Menu Commands**.
 
-- [ ] Header title reads "Toolbar Menu Commands Test". The
-      toolbar overflow menu shows three items in order: "Title A",
-      "Title B", "Title C", all visible.
+    - [ ] Header title reads "Toolbar Menu Commands Test". The
+          toolbar overflow menu shows three items in order: "Title A",
+          "Title B", "Title C", all visible.
 
 2. Open the menu and tap "Title A".
 
-- [ ] Menu closes. "Last clicked" updates to `item-1`.
+    - [ ] Menu closes. "Last clicked" updates to `item-1`.
 
 3. Open the menu and tap "Title C".
 
-- [ ] "Last clicked" updates to `item-3`.
+    - [ ] "Last clicked" updates to `item-3`.
 
 ---
 
 ### Imperative command — "no change" is a no-op
 
-4. In the **Send Command** section, set target id = `item-1`,
+1. In the **Send Command** section, set target id = `item-1`,
    title = `no change`, hidden = `no change`. Tap **Send Command**.
 
-- [ ] No visible change. Menu still shows "Title A",
-      "Title B", "Title C".
+    - [ ] No visible change. Menu still shows "Title A",
+          "Title B", "Title C".
 
 ---
 
 ### Imperative command — change title only
 
-5. Set target id = `item-2`, title = `Changed`, hidden = `no change`.
+1. Set target id = `item-2`, title = `Changed`, hidden = `no change`.
    Tap **Send Command**.
 
-- [ ] Item 2 in the menu now reads "Changed". Items 1
-      ("Title A") and 3 ("Title C") are unchanged.
+    - [ ] Item 2 in the menu now reads "Changed". Items 1
+          ("Title A") and 3 ("Title C") are unchanged.
 
-6. Tap "Changed" in the menu.
+2. Tap "Changed" in the menu.
 
-- [ ] "Last clicked" updates to `item-2` (id is stable across
-      title changes).
+    - [ ] "Last clicked" updates to `item-2` (id is stable across
+          title changes).
 
 ---
 
 ### Imperative command — change hidden only (earlier title preserved)
 
-7. Set target id = `item-2`, title = `no change`, hidden = `true`.
+1. Set target id = `item-2`, title = `no change`, hidden = `true`.
    Tap **Send Command**.
 
-- [ ] Item 2 disappears from the menu. Only "Title A" and
-      "Title C" remain.
+    - [ ] Item 2 disappears from the menu. Only "Title A" and
+          "Title C" remain.
 
-8. Set target id = `item-2`, title = `no change`, hidden = `false`.
+2. Set target id = `item-2`, title = `no change`, hidden = `false`.
    Tap **Send Command**.
 
-- [ ] Item 2 reappears and still reads "Changed" (the title
-      set in step 5 was preserved because `title` was absent from both
-      step 7 and step 8 options).
+    - [ ] Item 2 reappears and still reads "Changed" (the title
+          set in step 1 of **Imperative command — change title only** was
+          preserved because `title` was absent from both step 1 and step 2
+          options).
 
 ---
 
 ### Imperative command — reset hidden to its regular default
 
-9. Set target id = `item-1`, title = `no change`, hidden = `true`.
+1. Set target id = `item-1`, title = `no change`, hidden = `true`.
    Tap **Send Command**.
 
-- [ ] Item 1 ("Title A") disappears. Menu shows "Changed" and
-      "Title C".
+    - [ ] Item 1 ("Title A") disappears. Menu shows "Changed" and
+          "Title C".
 
-10. Set target id = `item-1`, title = `no change`, hidden = `undefined`.
+2. Set target id = `item-1`, title = `no change`, hidden = `undefined`.
     Tap **Send Command**.
 
-- [ ] Item 1 reappears with "Title A". The `hidden` override
-      is cleared and the prop falls back to its regular default
-      (visible). Note this is the regular default, not the value
-      previously received from props — they happen to coincide in this
-      case (both result in a visible item).
+    - [ ] Item 1 reappears with "Title A". The `hidden` override
+          is cleared and the prop falls back to its regular default
+          (visible). Note this is the regular default, not the value
+          previously received from props — they happen to coincide in this
+          case (both result in a visible item).
 
 ---
 
 ### Props update — replaces command state across ALL items
 
-11. Set target id = `item-1`, title = `Long Title`, hidden = `no change`.
+1. Set target id = `item-1`, title = `Long Title`, hidden = `no change`.
     Tap **Send Command**.
 
-- [ ] Item 1 reads "Long Title". Item 2 still reads "Changed"
-      (carried over from step 5 / step 8). Item 3 reads "Title C".
+    - [ ] Item 1 reads "Long Title". Item 2 still reads "Changed"
+          (carried over from step 1 of **Imperative command — change title
+          only** / step 2 of **Imperative command — change hidden only (earlier
+          title preserved)**). Item 3 reads "Title C".
 
-12. In **Menu Items — Props**, change Slot 3 title from `Title C` to
+2. In **Menu Items — Props**, change Slot 3 title from `Title C` to
     `Long Title`.
 
-- [ ] Item 3 reads "Long Title" (direct props change). At the
-      same time, Item 1 reverts to its props-configured "Title A"
-      (losing the "Long Title" override applied in step 11) and Item 2
-      reverts to its props-configured "Title B" (losing the "Changed"
-      override applied in step 5). All command state is gone.
+    - [ ] Item 3 reads "Long Title" (direct props change). At the
+          same time, Item 1 reverts to its props-configured "Title A"
+          (losing the "Long Title" override applied in step 1) and Item 2
+          reverts to its props-configured "Title B" (losing the "Changed"
+          override applied in step 1 of **Imperative command — change title
+          only**). All command state is gone.
 
-13. Change Slot 3 title back to `Title C`.
+3. Change Slot 3 title back to `Title C`.
 
-- [ ] Item 3 reads "Title C". Items 1 and 2 still show their
-      props-configured titles ("Title A", "Title B").
+    - [ ] Item 3 reads "Title C". Items 1 and 2 still show their
+          props-configured titles ("Title A", "Title B").
 
 ---
 
 ### Excluded / unknown id — safe targeting
 
-14. In **Menu Items — Props**, toggle Slot 3 `include = false`.
+1. In **Menu Items — Props**, toggle Slot 3 `include = false`.
 
-- [ ] Item 3 ("Title C") disappears. Menu shows "Title A" and
-      "Title B".
+    - [ ] Item 3 ("Title C") disappears. Menu shows "Title A" and
+          "Title B".
 
-15. Set command target id = `item-3`, title = `Changed`,
+2. Set command target id = `item-3`, title = `Changed`,
     hidden = `false`. Tap **Send Command**.
 
-- [ ] No visible change. No crash. Items 1 and 2 are
-      unaffected.
+    - [ ] No visible change. No crash. Items 1 and 2 are
+          unaffected.
 
-16. Toggle Slot 3 `include = true`.
+3. Toggle Slot 3 `include = true`.
 
-- [ ] Item 3 reappears with "Title C" (the props-configured
-      title), NOT "Changed". The command from step 15 did not leak
-      into the re-included slot.
+    - [ ] Item 3 reappears with "Title C" (the props-configured
+          title), NOT "Changed". The command from step 2 did not leak
+          into the re-included slot.

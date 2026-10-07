@@ -17,13 +17,22 @@ stack), exercising every dismissal method available at each level.
 Incomplete.
 
 - iOS: all steps are automated.
-- Android: steps 1, 2, 5, 6, 7, 10, and 13 - the
-  Pop-button-driven push/pop path only.
+- Android: **Baseline**, **Push - Home → A**, **Pop via Pop button - A →
+  Home**, **Nested stack - push**, **Nested stack - inner push - NestedHome →
+  NestedA**, **Nested stack - inner pop via Pop button - NestedA →
+  NestedHome**, and **Nested stack - pop to Home via Pop button - NestedStack
+  → Home** - the Pop-button-driven push/pop path only.
 
 **Manual only (not automated):**
 
-- Android: Steps 3, 4, 8, 9, 11, 12, and 14 (the native header back button, the
-  edge-swipe / system gesture-back, and the outer-back boundary case).
+- Android: **Pop via header back button - A → Home**, **Pop via native back
+  gesture / system back - A → Home**, **Nested stack - inner pop via header
+  back button - NestedA → NestedHome**, **Nested stack - inner pop via native
+  gesture - NestedA → NestedHome**, **Nested stack - pop to Home via native
+  gesture - NestedStack → Home**, **Nested stack - pop to Home via NestedStack
+  header back button**, and **Nested stack - pop from NestedA via the outer
+  NestedStack back button** (the native header back button, the edge-swipe /
+  system gesture-back, and the outer-back boundary case).
   
 ## Prerequisites
 
@@ -107,7 +116,8 @@ Incomplete.
   container-pop transition even while a deeper nested screen is active,
   whereas the Android system back / gesture-back from that same screen pops
   the innermost screen - those are different transitions, each with its own
-  event set (see step 14).
+  event set (see step 1 of **Nested stack - pop from NestedA via the outer
+  NestedStack back button**).
 
 - **Android, cancelled back gesture:** predictive back prepares the pop when
   the gesture starts and reverts it on cancel, so a cancelled gesture emits
@@ -134,19 +144,19 @@ Incomplete.
 
 1. Launch the app and navigate to **Stack lifecycle events**.
 
-- [ ] The **Home** screen is visible with the header title **Home** and
-      buttons **Push A** and **Push NestedStack**. Two toasts appear for the
-      initial Home appearance (both platforms):
-  - `Home: onWillAppear`
-  - `Home: onDidAppear`
+    - [ ] The **Home** screen is visible with the header title **Home** and
+          buttons **Push A** and **Push NestedStack**. Two toasts appear for the
+          initial Home appearance (both platforms):
+      - `Home: onWillAppear`
+      - `Home: onDidAppear`
 
 ---
 
 ### Push - Home → A
 
-2. Tap **Push A**.
+1. Tap **Push A**.
 
-- [ ] Screen **A** (header title "A") is pushed.
+    - [ ] Screen **A** (header title "A") is pushed.
 
   **iOS** - four toasts:
 
@@ -166,9 +176,9 @@ Incomplete.
 
 ### Pop via header back button - A → Home
 
-3. On screen **A**, tap the **header back button** (top-left).
+1. On screen **A**, tap the **header back button** (top-left).
 
-- [ ] Screen **Home** is shown again.
+    - [ ] Screen **Home** is shown again.
 
   **iOS** - four toasts:
 
@@ -188,36 +198,39 @@ Incomplete.
 
 ### Pop via native back gesture / system back - A → Home
 
-4. Tap **Push A** again. Then dismiss screen **A** using the **native back
+1. Tap **Push A** again. Then dismiss screen **A** using the **native back
    gesture**: swipe from the left screen edge.
 
-- [ ] Screen **Home** is shown again. The same pop toasts appear as in step 3
-      (four on both platforms), confirming the native gesture / system back
-      produces the identical pop event set.
+    - [ ] Screen **Home** is shown again. The same pop toasts appear as in step 1
+          of **Pop via header back button - A → Home** (four on both platforms),
+          confirming the native gesture / system back produces the identical pop
+          event set.
 
 ---
 
 ### Pop via Pop button - A → Home
 
-5. Tap **Push A**, then on screen **A** tap the **Pop** button.
+1. Tap **Push A**, then on screen **A** tap the **Pop** button.
 
-- [ ] Screen **Home** is shown again. The same pop toasts appear as in step 3
-      (four on both platforms). The Pop button, the header back button
-      (step 3), and the native gesture (step 4) all produce the identical pop
-      event set.
+    - [ ] Screen **Home** is shown again. The same pop toasts appear as in step 1
+          of **Pop via header back button - A → Home** (four on both platforms).
+          The Pop button, the header back button (step 1 of **Pop via header back
+          button - A → Home**), and the native gesture (step 1 of **Pop via native
+          back gesture / system back - A → Home**) all produce the identical pop
+          event set.
 
 ---
 
 ### Nested stack - push
 
-6. From **Home**, tap **Push NestedStack**.
+1. From **Home**, tap **Push NestedStack**.
 
-- [ ] The **NestedStack** route is pushed and its inner stack shows
-      **NestedHome** (buttons **Push NestedA**, **Pop**). **Two stacked headers**
-      are visible - the outer **NestedStack** title (the pushed route) above the
-      inner **NestedHome** title (the nested stack's initial screen). The
-      appearance events are **duplicated** across the outer route and the nested
-      initial screen - both `NestedStack` and `NestedHome` fire.
+    - [ ] The **NestedStack** route is pushed and its inner stack shows
+          **NestedHome** (buttons **Push NestedA**, **Pop**). **Two stacked headers**
+          are visible - the outer **NestedStack** title (the pushed route) above the
+          inner **NestedHome** title (the nested stack's initial screen). The
+          appearance events are **duplicated** across the outer route and the nested
+          initial screen - both `NestedStack` and `NestedHome` fire.
 
   **iOS** - six toasts (both containers' `onWillAppear` fire before the
   previous screen's `onDidDisappear`):
@@ -242,15 +255,17 @@ Incomplete.
 
 ### Nested stack - inner push - NestedHome → NestedA
 
-7. On **NestedHome**, tap **Push NestedA**.
+1. On **NestedHome**, tap **Push NestedA**.
 
-- [ ] Screen **NestedA** (header title "NestedA") is pushed **inside the
-      nested stack**. **Two stacked headers** remain visible - the outer
-      **NestedStack** header above the inner **NestedA**
-      header - so NestedA shows **two back buttons** (the inner one pops within
-      the nested stack, the outer one pops the whole container - see step 14).
-      Only the inner screens fire - the outer `NestedStack` route and `Home` stay
-      silent - so this behaves exactly like a top-level push (step 2):
+    - [ ] Screen **NestedA** (header title "NestedA") is pushed **inside the
+          nested stack**. **Two stacked headers** remain visible - the outer
+          **NestedStack** header above the inner **NestedA**
+          header - so NestedA shows **two back buttons** (the inner one pops within
+          the nested stack, the outer one pops the whole container - see step 1 of
+          **Nested stack - pop from NestedA via the outer NestedStack back
+          button**). Only the inner screens fire - the outer `NestedStack` route
+          and `Home` stay silent - so this behaves exactly like a top-level push
+          (step 1 of **Push - Home → A**):
 
   **iOS** - four toasts:
 
@@ -270,12 +285,13 @@ Incomplete.
 
 ### Nested stack - inner pop via header back button - NestedA → NestedHome
 
-8. On screen **NestedA**, tap the **NestedA header back button** - the
+1. On screen **NestedA**, tap the **NestedA header back button** - the
    **lower** of the two back buttons, in the **NestedA** header. This pops
    within the nested stack.
 
-- [ ] Screen **NestedHome** is shown again inside the nested stack. Only the
-      inner screens fire - this is the inner mirror of the top-level pop (step 3):
+    - [ ] Screen **NestedHome** is shown again inside the nested stack. Only the
+          inner screens fire - this is the inner mirror of the top-level pop
+          (step 1 of **Pop via header back button - A → Home**):
 
   **iOS** - four toasts:
 
@@ -295,35 +311,40 @@ Incomplete.
 
 ### Nested stack - inner pop via native gesture - NestedA → NestedHome
 
-9. Tap **Push NestedA** again. Then dismiss screen **NestedA** using the
+1. Tap **Push NestedA** again. Then dismiss screen **NestedA** using the
    **native back gesture**: swipe from the left screen edge.
 
-- [ ] Screen **NestedHome** is shown again inside the nested stack. The same
-      inner pop toasts appear as in step 8 (four on both platforms), confirming
-      the native gesture produces the identical inner pop event set.
+    - [ ] Screen **NestedHome** is shown again inside the nested stack. The same
+          inner pop toasts appear as in step 1 of **Nested stack - inner pop via
+          header back button - NestedA → NestedHome** (four on both platforms),
+          confirming the native gesture produces the identical inner pop event
+          set.
 
 ---
 
 ### Nested stack - inner pop via Pop button - NestedA → NestedHome
 
-10. Tap **Push NestedA**, then on screen **NestedA** tap the **Pop** button.
+1. Tap **Push NestedA**, then on screen **NestedA** tap the **Pop** button.
 
-- [ ] Screen **NestedHome** is shown again inside the nested stack. The same
-      inner pop toasts appear as in step 8 (four on both platforms). The Pop
-      button, the header back button (step 8), and the native gesture (step 9) all
-      produce the identical inner pop event set.
+    - [ ] Screen **NestedHome** is shown again inside the nested stack. The same
+          inner pop toasts appear as in step 1 of **Nested stack - inner pop via
+          header back button - NestedA → NestedHome** (four on both platforms).
+          The Pop button, the header back button (step 1 of **Nested stack - inner
+          pop via header back button - NestedA → NestedHome**), and the native
+          gesture (step 1 of **Nested stack - inner pop via native gesture -
+          NestedA → NestedHome**) all produce the identical inner pop event set.
 
 ---
 
 ### Nested stack - pop to Home via native gesture - NestedStack → Home
 
-11. On **NestedHome**, dismiss the screen using the **native back gesture**:
+1. On **NestedHome**, dismiss the screen using the **native back gesture**:
     swipe from the left screen edge.
 
-- [ ] Screen **Home** is shown again. This pops the whole **NestedStack**
-      container, so the appearance events are **duplicated** - both `NestedStack`
-      and `NestedHome` fire their disappear events (the mirror of the push in
-      step 6):
+    - [ ] Screen **Home** is shown again. This pops the whole **NestedStack**
+          container, so the appearance events are **duplicated** - both `NestedStack`
+          and `NestedHome` fire their disappear events (the mirror of the push in
+          step 1 of **Nested stack - push**):
 
   **iOS** - six toasts (both containers' `onWillDisappear` fire before the
   entering screen's `onWillAppear`; the outer `NestedStack` fires before the
@@ -350,48 +371,57 @@ Incomplete.
 
 ### Nested stack - pop to Home via NestedStack header back button
 
-12. From **Home**, tap **Push NestedStack**. Then on **NestedHome** tap the
+1. From **Home**, tap **Push NestedStack**. Then on **NestedHome** tap the
     **NestedStack header back button** in the upper
     **NestedStack** header (on Android, the toolbar back arrow).
 
-- [ ] Screen **Home** is shown again. `NestedHome` is the nested stack's root
-      screen, so the outer NestedStack header back button pops the whole
-      **NestedStack** container from **NestedHome → Home**, producing the same
-      container-pop toasts as in step 11 (six on both platforms). The header back
-      button and the native gesture (step 11) produce the identical container-pop
-      event set.
+    - [ ] Screen **Home** is shown again. `NestedHome` is the nested stack's root
+          screen, so the outer NestedStack header back button pops the whole
+          **NestedStack** container from **NestedHome → Home**, producing the same
+          container-pop toasts as in step 1 of **Nested stack - pop to Home via
+          native gesture - NestedStack → Home** (six on both platforms). The header
+          back button and the native gesture (step 1 of **Nested stack - pop to
+          Home via native gesture - NestedStack → Home**) produce the identical
+          container-pop event set.
 
 ---
 
 ### Nested stack - pop to Home via Pop button - NestedStack → Home
 
-13. From **Home**, tap **Push NestedStack** again. Then on **NestedHome** tap
+1. From **Home**, tap **Push NestedStack** again. Then on **NestedHome** tap
     the **Pop** button.
 
-- [ ] Screen **Home** is shown again. Because `NestedHome` is the nested
-      stack's only (root) screen, the Pop button pops the whole **NestedStack**
-      container rather than a screen within it, so the same container-pop toasts
-      appear as in step 11 (six on both platforms).
+    - [ ] Screen **Home** is shown again. Because `NestedHome` is the nested
+          stack's only (root) screen, the Pop button pops the whole **NestedStack**
+          container rather than a screen within it, so the same container-pop toasts
+          appear as in step 1 of **Nested stack - pop to Home via native gesture -
+          NestedStack → Home** (six on both platforms).
 
-  The Pop button, the header back button (step 12), and the native gesture
-  (step 11) produce the identical container-pop event set.
+  The Pop button, the header back button (step 1 of **Nested stack - pop to
+  Home via NestedStack header back button**), and the native gesture (step 1
+  of **Nested stack - pop to Home via native gesture - NestedStack → Home**)
+  produce the identical container-pop event set.
 
 ---
 
 ### Nested stack - pop from NestedA via the outer NestedStack back button
 
-14. From **Home**, tap **Push NestedStack**, then on **NestedHome** tap **Push
+1. From **Home**, tap **Push NestedStack**, then on **NestedHome** tap **Push
     NestedA**. On screen **NestedA**, tap the **outer NestedStack header back
     button** - the **upper** back button, in the **NestedStack** header,
-    **not** the inner NestedA one used in step 8.
+    **not** the inner NestedA one used in step 1 of **Nested stack - inner
+    pop via header back button - NestedA → NestedHome**.
 
-- [ ] **iOS** - the outer back button pops the **whole NestedStack container**
-      in one step, going **NestedA → Home** and skipping `NestedHome`. The
-      container's disappear events fire **outer-first** (`NestedStack` before the
-      inner `NestedA`) - the same ordering as the container pop from `NestedHome`
-      (steps 11–13), but with `NestedA` (the active inner screen) firing in place
-      of `NestedHome`. `NestedHome` does **not** fire (it already disappeared when
-      `NestedA` was pushed). Six toasts:
+    - [ ] **iOS** - the outer back button pops the **whole NestedStack container**
+          in one step, going **NestedA → Home** and skipping `NestedHome`. The
+          container's disappear events fire **outer-first** (`NestedStack` before the
+          inner `NestedA`) - the same ordering as the container pop from `NestedHome`
+          (**Nested stack - pop to Home via native gesture - NestedStack → Home**,
+          **Nested stack - pop to Home via NestedStack header back button**, and
+          **Nested stack - pop to Home via Pop button - NestedStack → Home**), but
+          with `NestedA` (the active inner screen) firing in place of
+          `NestedHome`. `NestedHome` does **not** fire (it already disappeared when
+          `NestedA` was pushed). Six toasts:
 
   1. `NestedStack: onWillDisappear`
   2. `NestedA: onWillDisappear`
@@ -400,15 +430,15 @@ Incomplete.
   5. `NestedA: onDidDisappear`
   6. `Home: onDidAppear`
 
-- [ ] **Android** - the outer back arrow likewise pops the **whole NestedStack
-      container** in one step, going **NestedA → Home**. As on iOS, `NestedHome`
-      does **not** fire - it already emitted its disappear events when `NestedA`
-      was pushed. The disappears fire **inner-first** (`NestedA` before
-      `NestedStack`), will-pair then did-pair, and `Home` appears after - six
-      toasts:
-  1. `NestedA: onWillDisappear`
-  2. `NestedStack: onWillDisappear`
-  3. `NestedA: onDidDisappear`
-  4. `NestedStack: onDidDisappear`
-  5. `Home: onWillAppear`
-  6. `Home: onDidAppear`
+    - [ ] **Android** - the outer back arrow likewise pops the **whole NestedStack
+          container** in one step, going **NestedA → Home**. As on iOS, `NestedHome`
+          does **not** fire - it already emitted its disappear events when `NestedA`
+          was pushed. The disappears fire **inner-first** (`NestedA` before
+          `NestedStack`), will-pair then did-pair, and `Home` appears after - six
+          toasts:
+      1. `NestedA: onWillDisappear`
+      2. `NestedStack: onWillDisappear`
+      3. `NestedA: onDidDisappear`
+      4. `NestedStack: onDidDisappear`
+      5. `Home: onWillAppear`
+      6. `Home: onDidAppear`

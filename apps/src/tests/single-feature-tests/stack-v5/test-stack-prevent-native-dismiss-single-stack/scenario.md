@@ -76,46 +76,46 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 1. Launch the app directly via `App.tsx` so the
    **Home** screen is shown.
 
-- [ ] **Home** is shown, `Name: Home` and an
-      `Key`. No header/back button is visible. Only **Push A** /
-      **Push B** buttons are shown (no **Pop** button).
+    - [ ] **Home** is shown, `Name: Home` and an
+          `Key`. No header/back button is visible. Only **Push A** /
+          **Push B** buttons are shown (no **Pop** button).
 
 ### Push navigation and initial state
 
 1. Tap **Push A**.
 
-- [ ] Screen **A** is shown with a header titled "A" and
-      a back-button chevron. Shows `Name: A`, an `Key`, and
-      **Prevent native dismiss: Disabled**. **Push A** / **Push B** / **Pop**
-      buttons are all present.
+    - [ ] Screen **A** is shown with a header titled "A" and
+          a back-button chevron. Shows `Name: A`, an `Key`, and
+          **Prevent native dismiss: Disabled**. **Push A** / **Push B** / **Pop**
+          buttons are all present.
 
 2. On **A**, tap **Push B**.
 
-- [ ] Screen **B** is shown with a header titled "B" and a
-      back-button chevron. Shows `Name: B`, an `Key` with number higher than
-      A's, and **Prevent native dismiss: Enabled**. **Push A** / **Push
-      B** / **Pop** and a **Toggle Prevent Native Dismiss** button are all
-      present.
+    - [ ] Screen **B** is shown with a header titled "B" and a
+          back-button chevron. Shows `Name: B`, an `Key` with number higher than
+          A's, and **Prevent native dismiss: Enabled**. **Push A** / **Push
+          B** / **Pop** and a **Toggle Prevent Native Dismiss** button are all
+          present.
 
 ### Native dismiss blocked while Enabled (screen B)
 
 1. On **B** (prevent native dismiss Enabled), tap the native header back-button chevron.
 
-- [ ] The tap is intercepted: a green toast reading "Native dismiss
-      prevented" appears, and the app remains on **B** (no pop, `Key`
-      unchanged).
+    - [ ] The tap is intercepted: a green toast reading "Native dismiss
+          prevented" appears, and the app remains on **B** (no pop, `Key`
+          unchanged).
 
 2. On **B**, perform a system gesture-back: swipe from the left screen edge
    to the right.
 
-- [ ] The gesture is intercepted: the green toast appears, and the app
-      remains on **B**. No pop occurs.
+    - [ ] The gesture is intercepted: the green toast appears, and the app
+          remains on **B**. No pop occurs.
 
 3. Repeat tapping the header back-button chevron three or four times in
    quick succession.
 
-- [ ] Each tap is intercepted individually; a new toast appears each time;
-      the app never pops off of **B**.
+    - [ ] Each tap is intercepted individually; a new toast appears each time;
+          the app never pops off of **B**.
 
 ### Native dismiss allowed while Disabled (screen A)
 
@@ -123,41 +123,41 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
    Confirm **A** shows **Prevent native dismiss: Disabled**.
    Tap the native header back-button chevron.
 
-- [ ] The chevron pops the stack normally, the app returns to the screen below
-      **A**. **No toast** is shown (dismissal is not prevented while
-      Disabled).
+    - [ ] The chevron pops the stack normally, the app returns to the screen below
+          **A**. **No toast** is shown (dismissal is not prevented while
+          Disabled).
 
 2. Push **A** again so it is on top with a screen below it. On **A**,
    perform a system gesture-back: swipe from the left screen edge to the
    right.
 
-- [ ] The gesture pops the stack normally. No toast is shown.
+    - [ ] The gesture pops the stack normally. No toast is shown.
 
 ### Toggling the flag at runtime (screen B)
 
 1. From **Home**, tap **Push B** so **B** (Prevent native dismiss Enabled)
    is directly above Home. Tap **Toggle Prevent Native Dismiss**.
 
-- [ ] The label updates to **Prevent native dismiss: Disabled**.
+    - [ ] The label updates to **Prevent native dismiss: Disabled**.
 
 2. With **B** now Disabled, tap the native header back-button chevron.
 
-- [ ] The chevron pops **B** normally and returns to **Home**. No toast is
-      shown.
+    - [ ] The chevron pops **B** normally and returns to **Home**. No toast is
+          shown.
 
 3. From **Home**, tap **Push B** again so **B** (Prevent native dismiss
     Enabled) is on top. Tap the native header back-button chevron.
 
-- [ ] The chevron is intercepted: the green toast appears and the app remains
-      on **B**.
+    - [ ] The chevron is intercepted: the green toast appears and the app remains
+          on **B**.
 
 ### JS-driven Pop always works regardless of the flag
 
 1. On **B** (prevent native dismiss Enabled), tap the on-screen **Pop**
     button.
 
-- [ ] App pops back to **Home** normally. **No toast** is shown - the on-screen
-      **Pop** bypasses `preventNativeDismiss` entirely.
+    - [ ] App pops back to **Home** normally. **No toast** is shown - the on-screen
+          **Pop** bypasses `preventNativeDismiss` entirely.
 
 ### Edge case: toggling immediately before a native dismiss
 
@@ -165,18 +165,18 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
     Dismiss** to Disabled, then immediately toggle it back to Enabled, then
     immediately press the native header back-button chevron.
 
-- [ ] The most recent toggle takes effect before the back press: since
-      prevent is Enabled at press time, back is intercepted (toast shown, app
-      stays on **B**).
+    - [ ] The most recent toggle takes effect before the back press: since
+          prevent is Enabled at press time, back is intercepted (toast shown, app
+          stays on **B**).
 
 ### Android: prevent native dismiss mechanism keeps working after activity backgrounding
 
 1. From **Home**, tap **Push B**. On **B** tap back button. 
 
-- [ ] A green toast appears and the app remains on **B**. 
+    - [ ] A green toast appears and the app remains on **B**. 
 
 2. Move the app to background by moving focus to the launcher screen.
     Open the aplication again (focus it). Screen **B** is visible.
     Tap on the back button chevron.
 
-- [ ] A green toast appears and the app remains on **B**.
+    - [ ] A green toast appears and the app remains on **B**.

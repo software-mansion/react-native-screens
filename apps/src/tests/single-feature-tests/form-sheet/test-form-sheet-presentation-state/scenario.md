@@ -27,7 +27,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Presentation State** screen.
 
-- [ ] The host screen shows the "Open FormSheet" button.
+    - [ ] The host screen shows the "Open FormSheet" button.
 
 ---
 
@@ -35,7 +35,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.6) with the "FormSheet content" title and the "Quickly dismiss & present" button.
+    - [ ] The sheet presents at the lower detent (0.6) with the "FormSheet content" title and the "Quickly dismiss & present" button.
 
 ---
 
@@ -43,11 +43,11 @@ TBD: Planned, but will be implemented separately.
 
 1. Tap "Quickly dismiss & present".
 
-- [ ] The sheet starts its dismissal animation and, as soon as it finishes, presents again automatically. The final state is a single presented sheet at 0.6; no flicker, no leftover dimming, no second sheet.
+    - [ ] The sheet starts its dismissal animation and, as soon as it finishes, presents again automatically. The final state is a single presented sheet at 0.6; no flicker, no leftover dimming, no second sheet.
 
 2. Tap "Quickly dismiss & present" three more times in a row, waiting for the sheet to come back each time.
 
-- [ ] Every cycle ends with exactly one presented sheet.
+    - [ ] Every cycle ends with exactly one presented sheet.
 
 ---
 
@@ -55,8 +55,8 @@ TBD: Planned, but will be implemented separately.
 
 1. Swipe the sheet down past the lower detent.
 
-- [ ] The sheet dismisses and the host screen is undimmed.
+    - [ ] The sheet dismisses and the host screen is undimmed.
 
 2. Tap "Open FormSheet".
 
-- [ ] The sheet presents again normally – the native state stayed in sync with JS.
+    - [ ] The sheet presents again normally – the native state stayed in sync with JS.
