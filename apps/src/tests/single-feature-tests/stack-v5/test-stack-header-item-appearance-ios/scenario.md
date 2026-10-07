@@ -32,4 +32,4 @@ TBD
 
 2. Tap items "2" and "4"
 
-    - [ ] Disabled items do not react to touches (no highlight)
+    - [ ] Disabled items do not react to touches (toast doesn't display)
