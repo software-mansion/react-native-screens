@@ -82,6 +82,11 @@ class TabsHost(
         super.onDetachedFromWindow()
     }
 
+    internal val reactSubviewCount: Int
+        get() = renderedScreens.size
+
+    internal fun getReactSubviewAt(index: Int): TabsScreen? = renderedScreens.getOrNull(index)
+
     internal fun mountReactSubviewAt(
         tabsScreen: TabsScreen,
         index: Int,
