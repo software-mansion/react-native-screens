@@ -24,10 +24,6 @@ on:
         description: Skip the Detox tests; only build the app and run the Argent flows.
         type: boolean
         default: false
-      update-baselines:
-        description: Re-record the Argent snapshot baselines on the CI emulator and upload them as the argent-android-baselines artifact.
-        type: boolean
-        default: false
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -233,8 +229,6 @@ jobs:
       # and every snapshot step errors.
       - name: Run Argent flows
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          ARGENT_UPDATE_BASELINES: ${{ inputs.update-baselines && 'true' || 'false' }}
         with:
           api-level: ${{ env.API_LEVEL }}
           target: default
@@ -247,16 +241,6 @@ jobs:
           avd-name: e2e_emulator
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh
-
-      # Download, review every PNG, and commit them under
-      # .argent/flows/__baselines__/.
-      - name: Upload recorded Argent baselines
-        if: ${{ !cancelled() && inputs.update-baselines }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: argent-android-baselines
-          path: .argent/flows/__baselines__/**/*android*.png
-          if-no-files-found: error
 
       # The emulator is gone after the step above, so its script already took
       # screen-at-failure.png.
