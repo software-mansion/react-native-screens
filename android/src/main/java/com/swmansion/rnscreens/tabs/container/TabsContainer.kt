@@ -103,9 +103,11 @@ class TabsContainer internal constructor(
 
     internal var rejectStaleNavigationStateUpdates: Boolean = false
 
+    private val selectedTabOrNull: TabsScreenFragment?
+        get() = navState.takeIf { it.isNotEmpty() }?.let { getFragmentForScreenKey(it.selectedScreenKey) }
+
     internal val selectedTab: TabsScreenFragment
-        get() =
-            checkNotNull(getFragmentForScreenKey(navState.selectedScreenKey)) { "[RNScreens] No selected tab present" }
+        get() = checkNotNull(selectedTabOrNull) { "[RNScreens] No selected tab present" }
 
     internal val invalidationFlags = TabsContainerInvalidationFlags()
 
@@ -256,10 +258,7 @@ class TabsContainer internal constructor(
     }
 
     internal fun setupFragmentManager() {
-        fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }
+        fragmentManager = FragmentManagerHelper.findFragmentManagerForView(this)
     }
 
     internal fun teardownFragmentManager() {
@@ -590,6 +589,10 @@ class TabsContainer internal constructor(
         return true
     }
 
+    // The selected tab becomes the primary navigation fragment, exactly like a stack's top screen.
+    // FragmentManager enables the back callbacks of a child FragmentManager only while its parent
+    // fragment is on the primary navigation path, so without this no stack nested in a tab could
+    // ever pop on system back, and the stack's own system back veto is gated by the same rule.
     private fun applyInitialStateToFragmentManagerSync(nextSelectedFragment: TabsScreenFragment) {
         requireFragmentManager
             .createTransactionWithReordering()
@@ -599,6 +602,7 @@ class TabsContainer internal constructor(
                     it.detach(fragment)
                 }
                 it.attach(nextSelectedFragment)
+                it.setPrimaryNavigationFragment(nextSelectedFragment)
             }.commitNowAllowingStateLoss()
     }
 
@@ -611,6 +615,7 @@ class TabsContainer internal constructor(
             .let {
                 it.detach(currSelectedFragment)
                 it.attach(nextSelectedFragment)
+                it.setPrimaryNavigationFragment(nextSelectedFragment)
             }.commitNowAllowingStateLoss()
     }
 
@@ -793,13 +798,14 @@ class TabsContainer internal constructor(
     }
 
     // Only the active item is consulted - a preventing screen inside an inactive tab
-    // does not veto the dismissal.
-    override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
-        if (navState.isNotEmpty()) {
-            selectedTab.tabsScreen.wantsToPreventStackNativeDismiss()
-        } else {
-            null
-        }
+    // does not veto the dismissal. Reached through ancestor invalidation walks as well,
+    // possibly before the first tab is selected or after the selected tab was removed,
+    // hence the null-safe lookup.
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = selectedTabOrNull?.tabsScreen?.wantsToPreventStackNativeDismiss()
+
+    // Nothing to do: the tabs container takes no part in system back handling itself. Stacks nested
+    // in the selected tab are reached by FragmentManager's own recursion (see TabsScreenFragment).
+    override fun onOwnerPrimaryNavigationFragmentChanged() = Unit
 
     // endregion
 

@@ -11,6 +11,10 @@ import { Colors } from '@apps/shared/styling';
 import { ToastProvider, useToast } from '@apps/shared';
 import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
+import {
+  OuterStackNavigationProvider,
+  PushOuterStackRouteButton,
+} from '@apps/tests/shared/components/stack-v5/OuterStackNavigation';
 
 function TestStackPreventNativeDismissNestedStack() {
   return (
@@ -108,7 +112,17 @@ function BScreen() {
   );
 }
 
+// Rendered as an outer route element, so the provider captures the OUTER stack
+// context for the nested screens' "Push A (outer)" button.
 function NestedStackScreen() {
+  return (
+    <OuterStackNavigationProvider>
+      <NestedStack />
+    </OuterStackNavigationProvider>
+  );
+}
+
+function NestedStack() {
   const toast = useToast();
 
   return (
@@ -170,6 +184,8 @@ function NestedHomeScreen() {
         routeNames={['NestedA', 'NestedB']}
       />
       <TogglePreventNativeDismiss />
+      <TogglePreventNativeDismiss delayMs={3000} />
+      <PushOuterStackRouteButton routeName="A" />
     </CenteredLayoutView>
   );
 }
@@ -201,17 +217,30 @@ function NestedBScreen() {
   );
 }
 
-function TogglePreventNativeDismiss() {
+function TogglePreventNativeDismiss({ delayMs = 0 }: { delayMs?: number }) {
   const navigation = useStackNavigationContext();
+
+  // Flips relative to the value at press time - enough for a single delayed press,
+  // used to change the flag while the screen is covered by an outer push.
+  const toggle = () =>
+    navigation.setRouteOptions(navigation.routeKey, {
+      preventNativeDismiss: !navigation.routeOptions.preventNativeDismiss,
+    });
 
   return (
     <Button
-      title="Toggle Prevent Native Dismiss"
-      onPress={() =>
-        navigation.setRouteOptions(navigation.routeKey, {
-          preventNativeDismiss: !navigation.routeOptions.preventNativeDismiss,
-        })
+      title={
+        delayMs > 0
+          ? `Toggle Prevent Native Dismiss (${delayMs / 1000}s delay)`
+          : 'Toggle Prevent Native Dismiss'
       }
+      onPress={() => {
+        if (delayMs > 0) {
+          setTimeout(toggle, delayMs);
+        } else {
+          toggle();
+        }
+      }}
     />
   );
 }
