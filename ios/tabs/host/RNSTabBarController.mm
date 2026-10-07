@@ -938,6 +938,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
+/**
+ * Perform SearchTab-related updates. This should be called before tab selection update has run,
+ * otherwise the search activation may not trigger.
+ */
 - (void)updateSearchTabsIfNeeded
 {
 #if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
