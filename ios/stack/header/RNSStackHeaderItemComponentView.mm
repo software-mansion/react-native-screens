@@ -52,6 +52,7 @@ namespace react = facebook::react;
   [self setMenuRepresentationProp:nil];
   _placement = RNSHeaderItemPlacementTrailing;
   _didSetHeaderItemPlacement = NO;
+  _style = UIBarButtonItemStylePlain;
   _disabled = NO;
   _respondsToOnPress = NO;
   _hidesSharedBackground = NO;
@@ -244,6 +245,11 @@ RNS_IGNORE_SUPER_CALL_END
     // menu representation is applied together with the menu & shares its toggle state tracker,
     // so it follows the same invalidation path
     menuDidChange = YES;
+  }
+
+  if (oldItemProps.variant != newItemProps.variant) {
+    _style = rnscreens::conversion::UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(newItemProps.variant);
+    needsUpdate = YES;
   }
 
   if (oldItemProps.disabled != newItemProps.disabled) {

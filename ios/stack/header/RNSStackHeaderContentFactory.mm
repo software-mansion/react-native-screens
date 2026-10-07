@@ -51,6 +51,7 @@
                                                     action:nil];
   }
 
+  barButtonItem.style = item.style;
   barButtonItem.enabled = !item.disabled;
 
   if (item.icon != nil) {
