@@ -20,8 +20,8 @@ type GenericEmptyEvent = Readonly<{}>;
 
 // #region iOS-specific helpers
 
-// iOS-specific: SFSymbol, xcasset usage
-export type IconType = 'image' | 'sfSymbol' | 'xcasset';
+// iOS-specific: SFSymbol usage
+export type IconType = 'image' | 'sfSymbol';
 
 export type IconImageRenderingMode = 'default' | 'template' | 'original';
 

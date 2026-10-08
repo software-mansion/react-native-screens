@@ -243,17 +243,6 @@ export interface TabsScreenPropsIOS {
    *   behavior: a single color for system symbols, while for custom symbols
    *   the rendering intent set in the asset catalog may change it. `original`
    *   shows the symbol's own color layers (Apple's "multicolor" rendering).
-   * - `{ type: 'xcasset', name }`
-   *   Deprecated: use `sfSymbol` for custom symbols from the asset catalog, or
-   *   `imageSource` with `{ uri: 'name' }` for asset catalog images (append
-   *   `.png` to names containing a dot; add `renderingMode: 'template'` for an
-   *   asset whose "Render As" is not `Original Image`).
-   *   Uses an image from the asset catalog. Its colors follow the asset's
-   *   "Render As" setting in the catalog: `Original Image` keeps its own colors,
-   *   `Default` and `Template Image` follow the state-dependent icon color.
-   * - `{ type: 'templateSource', templateSource }`
-   *   Deprecated: use `{ type: 'imageSource', imageSource, renderingMode: 'template' }`
-   *   instead. Uses the provided image as a template image.
    *
    * See `TabsScreenIconImageRenderingModeIOS` and
    * `TabsScreenIconSymbolRenderingModeIOS` for the meaning of each rendering mode.

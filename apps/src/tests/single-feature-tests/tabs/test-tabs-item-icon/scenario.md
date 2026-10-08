@@ -4,7 +4,7 @@
 
 **Description:** Validates tab bar item icon properties (icon, selectedIcon) and
 tinting behaviors for iOS and Android. Covers cross-platform icon types including
-templateSource, sfSymbol, xcasset, drawableResource, and imageSource.
+sfSymbol, drawableResource, and imageSource (incl. asset catalog images).
 Verifies that per-tab appearance color configurations (selected, normal,
 Android only: focused) correctly override host-level color tints.
 
@@ -33,9 +33,9 @@ iOS specific notes:
 - On iOS26 setting tabBarItemIconColor overrides tabBarTintColor also for
 tabBarItemTitleFontColor - it's reported native bug.
 - `tabBarTintColor` is applied only to selected tab bar item icon and title.
-- **`imageSource` icons are non-tintable:** they render in their original
+- **`imageSource` icons are non-tintable by default:** they render in their original
   colors regardless of `tabBarTintColor` or `tabBarItemIconColor` (rendering as black in this scenario).
-  Conversely, `templateSource`, `xcasset` and `sfSymbol` icons are tintable.
+  Conversely, `imageSource` icons with `renderingMode: 'template'` and `sfSymbol` icons are tintable.
 - System Theme Colors: The default unselected tab title and icon color is gray on
   iOS 18 and lower, and black on iOS 26.
 
@@ -84,11 +84,11 @@ tabBarItemTitleFontColor - it's reported native bug.
 
 ---
 
-### `xcasset` icon uses host tint, no `selectedIcon`
+### Asset catalog image uses host tint, no `selectedIcon`
 
 5. Tap the **Xcasset** tab.
 
-- [ ] The **Xcasset** tab's icon shows the `custom-icon-fill` xcasset image
+- [ ] The **Xcasset** tab's icon shows the `custom-icon-fill` asset catalog image
   tinted **green**. Because no `selectedIcon` is configured for this
   tab, the same icon asset is used in both selected and unselected states.
 - [ ] The previously selected **Override** tab reverts to the

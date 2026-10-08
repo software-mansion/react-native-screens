@@ -91,19 +91,11 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                fromScreenView:(RNSTabsScreenComponentView *)screenView
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
-  if (screenView.iconType == RNSTabsIconTypeSfSymbol || screenView.iconType == RNSTabsIconTypeXcasset) {
+  if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
     if (screenView.iconResourceName != nil) {
-      UIImage *image;
-      if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        image = [RNSImageLoadingHelper symbolImageNamed:screenView.iconResourceName];
-        if (image == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for tab bar item", screenView.iconResourceName);
-        }
-      } else {
-        image = [UIImage imageNamed:screenView.iconResourceName];
-        if (image == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for tab bar item", screenView.iconResourceName);
-        }
+      UIImage *image = [RNSImageLoadingHelper symbolImageNamed:screenView.iconResourceName];
+      if (image == nil) {
+        RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for tab bar item", screenView.iconResourceName);
       }
       [self setTabImage:RNSImageWithSymbolRenderingMode(image, screenView.iconSymbolRenderingMode)
           forTabBarItem:tabBarItem
@@ -126,19 +118,10 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
     }
 
     if (screenView.selectedIconResourceName != nil) {
-      UIImage *selectedImage;
-      if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        selectedImage = [RNSImageLoadingHelper symbolImageNamed:screenView.selectedIconResourceName];
-        if (selectedImage == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
-                     screenView.selectedIconResourceName);
-        }
-      } else {
-        selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
-        if (selectedImage == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for selected tab bar item",
-                     screenView.selectedIconResourceName);
-        }
+      UIImage *selectedImage = [RNSImageLoadingHelper symbolImageNamed:screenView.selectedIconResourceName];
+      if (selectedImage == nil) {
+        RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
+                   screenView.selectedIconResourceName);
       }
       tabBarItem.selectedImage =
           RNSImageWithSymbolRenderingMode(selectedImage, screenView.selectedIconSymbolRenderingMode);

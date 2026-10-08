@@ -12,13 +12,14 @@ import { Colors } from '@apps/shared/styling';
 function TintTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Template Source (Host Tint)</Text>
+      <Text style={styles.label}>Template Image (Host Tint)</Text>
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
         {'\n'}
-        `icon`: templateSource icon.png{'\n'}
-        `selectedIcon`: templateSource icon_fill.png{'\n'}
+        `icon`: imageSource icon.png, `renderingMode`: template{'\n'}
+        `selectedIcon`: imageSource icon_fill.png, `renderingMode`: template
+        {'\n'}
         `tabBarItemIconColor` is NOT set.{'\n'}
         {'\n'}
         Selected: filled template image, tinted{' '}
@@ -62,12 +63,13 @@ function XcassetDrawableResourceTab() {
     <View style={styles.screen}>
       {Platform.OS === 'ios' ? (
         <>
-          <Text style={styles.label}>Xcasset (Host Tint)</Text>
+          <Text style={styles.label}>Asset Catalog Image (Host Tint)</Text>
           <Text style={styles.hint}>
             Host `tabBarTintColor`:{' '}
             <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
             {'\n'}
-            `icon`: Xcasset custom-icon-fill{'\n'}
+            `icon`: imageSource uri custom-icon-fill (asset catalog),
+            `renderingMode`: template{'\n'}
             `tabBarItemIconColor` is NOT set.{'\n'}
             {'\n'}
             Selected: filled template image, tinted{' '}
@@ -162,12 +164,14 @@ const IOS_ROUTES: TabRouteConfig[] = [
       title: 'Tint',
       ios: {
         icon: {
-          type: 'templateSource',
-          templateSource: require('@assets/variableIcons/icon.png'),
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+          renderingMode: 'template',
         },
         selectedIcon: {
-          type: 'templateSource',
-          templateSource: require('@assets/variableIcons/icon_fill.png'),
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
+          renderingMode: 'template',
         },
       },
     },
@@ -205,8 +209,9 @@ const IOS_ROUTES: TabRouteConfig[] = [
       title: 'Xcasset',
       ios: {
         icon: {
-          type: 'xcasset',
-          name: 'custom-icon-fill',
+          type: 'imageSource',
+          imageSource: { uri: 'custom-icon-fill' },
+          renderingMode: 'template',
         },
       },
     },
