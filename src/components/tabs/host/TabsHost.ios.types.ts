@@ -35,6 +35,22 @@ export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 export interface TabsHostPropsIOS {
   /**
+   * @summary Whether changes of `tabBarHidden` are animated.
+   *
+   * When `true`, the tab bar is hidden and shown with the system transition
+   * (`UITabBarController.setTabBarHidden(_:animated:)`). When `false`, the
+   * tab bar disappears and reappears immediately.
+   *
+   * Available starting from iOS 18. On earlier versions the tab bar visibility
+   * is never animated, regardless of this prop.
+   *
+   * @default true
+   *
+   * @platform ios
+   * @supported iOS 18 or higher
+   */
+  tabBarHiddenAnimationEnabled?: boolean | undefined;
+  /**
    * @summary Specifies the color used for selected tab's text and icon color.
    *
    * Starting from iOS 26, it also impacts glow of Liquid Glass tab

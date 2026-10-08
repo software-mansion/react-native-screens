@@ -181,6 +181,9 @@ export interface TabsHostPropsBase {
   /**
    * @summary Hides the tab bar.
    *
+   * On iOS 18+, whether the change is animated is controlled by
+   * `ios.tabBarHiddenAnimationEnabled`.
+   *
    * @default false
    *
    * @platform android, ios
