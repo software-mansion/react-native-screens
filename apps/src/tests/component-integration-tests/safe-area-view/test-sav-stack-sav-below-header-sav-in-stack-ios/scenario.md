@@ -1,4 +1,4 @@
-# Test Scenario: SafeAreaView below stack header (iOS)
+# Test Scenario: SafeAreaView in Stack - SafeAreaView below stack header (iOS)
 
 ## Details
 
