@@ -234,8 +234,8 @@ export interface TabsScreenPropsIOS {
    * Supported values:
    * - `{ type: 'imageSource', imageSource, renderingMode? }`
    *   Uses an image from the provided resource. `renderingMode` defaults to
-   *   `default`, which keeps the image's own colors. With `template` it is
-   *   used as a template image and follows the state-dependent icon color.
+   *   `default`, which tints the image with the state-dependent icon color, as
+   *   with `template`. With `original` the image keeps its own colors.
    * - `{ type: 'sfSymbol', name, renderingMode? }`
    *   Uses an SF Symbol with the specified name. If no system symbol
    *   matches, falls back to a custom symbol with that name from the app's

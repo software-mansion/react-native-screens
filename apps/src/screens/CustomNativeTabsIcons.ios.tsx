@@ -75,6 +75,7 @@ const ROUTES: TabRouteConfig[] = [
         icon: {
           type: 'imageSource',
           imageSource: { uri: 'nanomc.walker.png' },
+          renderingMode: 'original',
         },
       },
     },

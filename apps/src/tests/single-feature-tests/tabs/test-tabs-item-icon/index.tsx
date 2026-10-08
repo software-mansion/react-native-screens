@@ -111,11 +111,13 @@ function ImageTab() {
             `normal.tabBarItemIconColor`:{' '}
             <Text style={{ color: Colors.BlueDark100 }}>BlueDark100</Text>
             {'\n'}
-            `icon`: imageSource icon.png{'\n'}
-            `selectedIcon`: imageSource icon_fill.png{'\n'}
+            `icon`: imageSource icon.png, `renderingMode`: original{'\n'}
+            `selectedIcon`: imageSource icon_fill.png, `renderingMode`: original
             {'\n'}
-            `imageSource` icons render in their original colors and are NOT
-            affected by `tabBarTintColor` or `tabBarItemIconColor`.{'\n'}
+            {'\n'}
+            With `renderingMode`: original, the icons render in their own colors
+            and are NOT affected by `tabBarTintColor` or `tabBarItemIconColor`.
+            {'\n'}
             {'\n'}
             Selected: filled image in its black color (the host{' '}
             <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint is
@@ -226,10 +228,12 @@ const IOS_ROUTES: TabRouteConfig[] = [
         icon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
+          renderingMode: 'original',
         },
         selectedIcon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon_fill.png'),
+          renderingMode: 'original',
         },
         standardAppearance: {
           stacked: {

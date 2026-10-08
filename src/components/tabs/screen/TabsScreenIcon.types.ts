@@ -8,10 +8,9 @@ import type {
  * How the tab bar renders an `imageSource` icon on iOS. The names follow
  * `UIImage.RenderingMode`.
  *
- * - `default` - the tab bar's default for images, also used when
- *   `renderingMode` is unset: the image keeps its own colors, as with
- *   `original`. This is not UIKit's automatic mode, in which the tab bar would
- *   draw the image as a template image.
+ * - `default` - UIKit's automatic mode, also used when `renderingMode` is
+ *   unset: the tab bar draws the image as a template image, as with
+ *   `template`.
  * - `template` - the image is used as a template image: its shape is drawn in
  *   the state-dependent item icon color (`tabBarItemIconColor`,
  *   `tabBarTintColor`).
@@ -46,7 +45,7 @@ type WithImageRenderingMode<Icon> = Icon & {
    * @summary How the tab bar renders this image. See
    * `TabsScreenIconImageRenderingModeIOS`.
    *
-   * Defaults to `default`, which keeps the image's own colors.
+   * Defaults to `default`, which tints the image.
    *
    * `icon` and `selectedIcon` may use different values.
    */

@@ -24,6 +24,20 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
   }
 }
 
+static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable image,
+                                                         RNSTabsIconImageRenderingMode renderingMode)
+{
+  switch (renderingMode) {
+    case RNSTabsIconImageRenderingModeTemplate:
+      return [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    case RNSTabsIconImageRenderingModeOriginal:
+      return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    case RNSTabsIconImageRenderingModeDefault:
+    default:
+      return [image imageWithRenderingMode:UIImageRenderingModeAutomatic];
+  }
+}
+
 @implementation RNSTabBarAppearanceCoordinator
 
 - (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
@@ -140,8 +154,10 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
       tabBarItem.selectedImage = nil;
     }
   } else if (imageLoader != nil) {
-    bool isTemplate = screenView.iconImageRenderingMode == RNSTabsIconImageRenderingModeTemplate;
-    bool isSelectedTemplate = screenView.selectedIconImageRenderingMode == RNSTabsIconImageRenderingModeTemplate;
+    RNSTabsIconImageRenderingMode iconRenderingMode = screenView.iconImageRenderingMode;
+    RNSTabsIconImageRenderingMode selectedIconRenderingMode = screenView.selectedIconImageRenderingMode;
+    bool isTemplate = iconRenderingMode == RNSTabsIconImageRenderingModeTemplate;
+    bool isSelectedTemplate = selectedIconRenderingMode == RNSTabsIconImageRenderingModeTemplate;
 
     // Weak-capture to avoid updating a tab bar item whose internal
     // view hierarchy has been torn down (iOS 26 UIKit regression:
@@ -156,7 +172,7 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
                                    [self updateTabBarItem:weakTabBarItem
-                                                withImage:image
+                                                withImage:RNSImageWithImageRenderingMode(image, iconRenderingMode)
                                                isSelected:NO
                                             forScreenView:weakScreenView];
                                  }];
@@ -170,10 +186,11 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                                  withImageLoader:imageLoader
                                       asTemplate:isSelectedTemplate
                                  completionBlock:^(UIImage *image) {
-                                   [self updateTabBarItem:weakTabBarItem
-                                                withImage:image
-                                               isSelected:YES
-                                            forScreenView:weakScreenView];
+                                   [self
+                                       updateTabBarItem:weakTabBarItem
+                                              withImage:RNSImageWithImageRenderingMode(image, selectedIconRenderingMode)
+                                             isSelected:YES
+                                          forScreenView:weakScreenView];
                                  }];
     } else {
       tabBarItem.selectedImage = nil;
