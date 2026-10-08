@@ -28,11 +28,14 @@ function SafeAreaViewScreen() {
   );
 }
 
-function TestStackSafeAreaViewIOS() {
+function TestSavStackSavBelowHeaderSavInStackIOS() {
   return <StackContainer routeConfigs={ROUTE_CONFIGS} />;
 }
 
-export default createScenario(TestStackSafeAreaViewIOS, scenarioDescription);
+export default createScenario(
+  TestSavStackSavBelowHeaderSavInStackIOS,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   safeArea: {
