@@ -1,6 +1,6 @@
 #import "RNSTabBarItemCoordinator.h"
 #import <React/RCTLog.h>
-#import "RNSConversions-Tabs.h"
+#import "RNSConversions.h"
 #import "RNSDefines.h"
 #import "RNSTabsScreenComponentView.h"
 
