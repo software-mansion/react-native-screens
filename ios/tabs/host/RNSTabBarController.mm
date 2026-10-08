@@ -691,7 +691,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return screenController.tab;
   }
 
-  return [self makeTabForTabScreenController:screenController];
+  UITab *tab = [self makeTabForTabScreenController:screenController];
+  [self disableUserCustomizationOfTab:tab];
+  return tab;
+}
+
+/// Customizable tab would force the Edit button into the iPad sidebar,
+/// and we don't support tab editing as of now.
+- (void)disableUserCustomizationOfTab:(UITab *)tab API_AVAILABLE(ios(18.0))
+{
+  tab.preferredPlacement = UITabPlacementFixed;
 }
 
 /// Always builds a FRESH instance, seeded with current content - the bar reads a `UITab` only
