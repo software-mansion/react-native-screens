@@ -51,24 +51,27 @@ function ensureNkfGem(appPath, { runCommand, logPath }) {
 // connection (reload, dev menu from the Metro terminal) both read.
 // It is set on every launch, also to 8081: the value persists in the app's
 // user defaults, which outlive reinstalling the app.
-// The code goes right before React Native starts, which the template does in
-// AppDelegate and the UIScene setup
+// The code goes right before the React Native factory is created, so before
+// React Native starts: in AppDelegate (templates up to RN 0.87) or in
+// SceneDelegate (a separate file in the RN 0.88+ template).
 function setIosMetroLocation(config) {
-  const appDelegatePath = path.join(
-    config.paths.app,
-    'ios',
-    config.appName,
-    'AppDelegate.swift',
-  );
-  const appDelegate = fs.readFileSync(appDelegatePath, 'utf8');
-  const reactNativeStart = /^([ \t]*)let delegate = ReactNativeDelegate\(\)$/m;
-  const indent = appDelegate.match(reactNativeStart)?.[1];
-  if (indent === undefined) {
+  const iosAppDir = path.join(config.paths.app, 'ios', config.appName);
+  const factoryCreation = /^([ \t]*).*\bRCTReactNativeFactory\(/m;
+  const sourcePath = ['SceneDelegate.swift', 'AppDelegate.swift']
+    .map(file => path.join(iosAppDir, file))
+    .find(
+      file =>
+        fs.existsSync(file) &&
+        factoryCreation.test(fs.readFileSync(file, 'utf8')),
+    );
+  if (!sourcePath) {
     throw new Error(
-      `Cannot find 'let delegate = ReactNativeDelegate()' in ${appDelegatePath}.`,
+      `Cannot find where React Native starts ('RCTReactNativeFactory(') in ${iosAppDir}.`,
     );
   }
 
+  const source = fs.readFileSync(sourcePath, 'utf8');
+  const indent = source.match(factoryCreation)[1];
   const setMetroLocation = `#if DEBUG
 ${indent}let deviceIp = Bundle.main.path(forResource: "ip", ofType: "txt")
 ${indent}  .flatMap { try? String(contentsOfFile: $0, encoding: .utf8) }?
@@ -79,8 +82,8 @@ ${indent}RCTBundleURLProvider.sharedSettings().jsLocation = "\\(metroHost):${con
 
 `;
   fs.writeFileSync(
-    appDelegatePath,
-    appDelegate.replace(reactNativeStart, match => setMetroLocation + match),
+    sourcePath,
+    source.replace(factoryCreation, match => setMetroLocation + match),
   );
 }
 
