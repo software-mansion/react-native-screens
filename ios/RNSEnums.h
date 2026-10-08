@@ -166,6 +166,8 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
   RNSOptionalBooleanFalse
 };
 
+typedef NS_ENUM(NSInteger, RNSTabsScreenTabRole) { RNSTabsScreenTabRoleNone, RNSTabsScreenTabRoleSearch };
+
 typedef NS_ENUM(NSInteger, RNSTabsBottomAccessoryEnvironment) {
   RNSTabsBottomAccessoryEnvironmentRegular,
   RNSTabsBottomAccessoryEnvironmentInline

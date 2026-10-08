@@ -64,6 +64,8 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
 
 std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem);
 
+RNSTabsScreenTabRole RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(react::RNSTabsScreenIOSTabRole tabRole);
+
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 
 API_AVAILABLE(ios(26.0))
