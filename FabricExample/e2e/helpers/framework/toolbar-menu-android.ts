@@ -182,9 +182,13 @@ export async function expectOverflowMenuItems<Title extends string>(
   }
 }
 
-export type OverflowMenuControl = {
-  /** The screen's scroll view — the anchor proving the popup is gone. */
-  scrollViewId: string;
+/** The screen behind the popup: its scroll view by `testID`, or any matcher
+ * resolving to one of its views. A factory: `atIndex` mutates on Android. */
+type ScreenAnchor =
+  | { scrollViewId: string; screenMatcher?: never }
+  | { screenMatcher: () => NativeMatcher; scrollViewId?: never };
+
+export type OverflowMenuControl = ScreenAnchor & {
   /**
    * Upper bound of Back presses while a popup is still up: one per popup of
    * the deepest expected path. The default covers an overflow menu with one
@@ -193,14 +197,21 @@ export type OverflowMenuControl = {
   maxMenuDepth?: number;
 };
 
-/** Overflow-menu helpers bound to one spec's scroll view. */
+/** Overflow-menu helpers bound to one spec's screen. */
 export function createOverflowMenuHelpers({
-  scrollViewId,
   maxMenuDepth = 3,
+  ...anchor
 }: OverflowMenuControl) {
+  const screen = () =>
+    element(
+      anchor.scrollViewId !== undefined
+        ? by.id(anchor.scrollViewId)
+        : anchor.screenMatcher(),
+    );
+
   /** Detox searches the focused window only: the screen itself must be back. */
   const waitForScreen = async () => {
-    await waitFor(element(by.id(scrollViewId)))
+    await waitFor(screen())
       .toBeVisible()
       .withTimeout(MENU_ANIMATION_TIMEOUT_MS);
   };
@@ -208,7 +219,7 @@ export function createOverflowMenuHelpers({
   /** Reported rather than thrown — a stacked popup keeps it false. The short
    * probe outlasts the exit animation without stalling stacked cleanup. */
   const isScreenAddressable = () =>
-    waitFor(element(by.id(scrollViewId)))
+    waitFor(screen())
       .toBeVisible()
       .withTimeout(MENU_DISMISS_PROBE_TIMEOUT_MS)
       .then(
