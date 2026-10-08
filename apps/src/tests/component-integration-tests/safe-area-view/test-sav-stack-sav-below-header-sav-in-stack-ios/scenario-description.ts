@@ -1,7 +1,7 @@
 import type { ScenarioDescription } from '@apps/tests/shared/helpers';
 
 export const scenarioDescription: ScenarioDescription = {
-  name: 'SafeAreaView below stack header (iOS)',
+  name: 'SafeAreaView in Stack - SafeAreaView below stack header (iOS)',
   key: 'test-sav-stack-sav-below-header-sav-in-stack-ios',
   details:
     'Tests SafeAreaView on a Stack v5 screen with a header. The SafeAreaView ' +
