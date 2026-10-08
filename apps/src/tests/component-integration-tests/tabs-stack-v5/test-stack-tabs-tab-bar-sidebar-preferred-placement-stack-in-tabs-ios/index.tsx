@@ -128,11 +128,11 @@ const ROUTE_CONFIGS: TabRouteConfig[] = ['Tab1', 'Tab2', 'Tab3'].map(name => ({
   },
 }));
 
-function TestTabsTabBarSidebarPreferredPlacement() {
+function TestStackTabsTabBarSidebarPreferredPlacementStackInTabs() {
   return <TabsContainerWithHostConfigContext routeConfigs={ROUTE_CONFIGS} />;
 }
 
 export default createScenario(
-  TestTabsTabBarSidebarPreferredPlacement,
+  TestStackTabsTabBarSidebarPreferredPlacementStackInTabs,
   scenarioDescription,
 );
