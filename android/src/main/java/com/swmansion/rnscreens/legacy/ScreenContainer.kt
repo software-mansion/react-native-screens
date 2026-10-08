@@ -279,12 +279,22 @@ open class ScreenContainer(
         setupFragmentManager()
     }
 
-    /** Removes fragments from fragment manager that are attached to this container  */
+    /**
+     * Removes fragments from fragment manager that are attached to this container, including
+     * fragments of screens already removed from it whose deferred removal hasn't run yet.
+     */
     private fun removeMyFragments(fragmentManager: FragmentManager) {
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
-            if (fragment is ScreenFragment && fragment.screen.container === this) {
+            // `removeScreenAt` / `removeAllScreens` clear `screen.container` immediately but defer
+            // the fragment removal, so also match such orphans by the container view id.
+            if (fragment is ScreenFragment &&
+                (
+                    fragment.screen.container === this ||
+                        (fragment.screen.container == null && fragment.id == id)
+                )
+            ) {
                 transaction.remove(fragment)
                 hasFragments = true
             }
