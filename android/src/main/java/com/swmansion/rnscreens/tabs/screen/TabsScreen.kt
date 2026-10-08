@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.tabs.screen
 
 import android.content.res.Configuration
-import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.util.SparseArray
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import com.swmansion.rnscreens.common.FragmentProviding
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ContainerItemSupport
-import com.swmansion.rnscreens.helpers.getSystemDrawableResource
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearance
@@ -54,7 +52,11 @@ class TabsScreen(
 
     internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            tabsScreenDelegate.get()?.onAppearanceChanged(this)
+            if (invalidateMenuItemSizesIfNeeded(oldValue, newValue)) {
+                tabsScreenDelegate.get()?.onItemSizeChange(this)
+            } else {
+                tabsScreenDelegate.get()?.onAppearanceChanged(this)
+            }
         }
     }
 
@@ -80,24 +82,39 @@ class TabsScreen(
     // endregion
 
     // region Icon
-    var drawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            icon = getSystemDrawableResource(reactContext, newValue)
+
+    internal val icon = TabsScreenIcon(reactContext, ::onIconChange)
+    internal val selectedIcon = TabsScreenIcon(reactContext, ::onIconChange)
+
+    internal var isMenuItemIconInvalidated = true
+
+    internal var isMenuItemActiveIndicatorInvalidated = true
+
+    internal var appliedActiveIndicatorWidthPx: Int? = null
+
+    internal var appliedActiveIndicatorHeightPx: Int? = null
+
+    internal fun resolveIconsIfNeeded() {
+        icon.resolveIfNeeded()
+        selectedIcon.resolveIfNeeded()
+    }
+
+    private fun invalidateMenuItemSizesIfNeeded(
+        oldValue: TabsAppearance?,
+        newValue: TabsAppearance?,
+    ): Boolean {
+        val isIconSizeChanged = oldValue?.tabBarItemIconSize != newValue?.tabBarItemIconSize
+        val isActiveIndicatorSizeChanged =
+            oldValue?.tabBarItemActiveIndicatorWidth != newValue?.tabBarItemActiveIndicatorWidth ||
+                oldValue?.tabBarItemActiveIndicatorHeight != newValue?.tabBarItemActiveIndicatorHeight
+        if (isIconSizeChanged) {
+            isMenuItemIconInvalidated = true
         }
-    }
-
-    var selectedDrawableIconResourceName: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            selectedIcon = getSystemDrawableResource(reactContext, newValue)
+        if (isIconSizeChanged || isActiveIndicatorSizeChanged) {
+            isMenuItemActiveIndicatorInvalidated = true
+            return true
         }
-    }
-
-    var icon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
-
-    var selectedIcon: Drawable? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
+        return false
     }
 
     // endregion
@@ -148,6 +165,11 @@ class TabsScreen(
 
     private fun onMenuItemAttributesChange() {
         tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)
+    }
+
+    private fun onIconChange() {
+        isMenuItemIconInvalidated = true
+        onMenuItemAttributesChange()
     }
 
     internal fun onViewManagerAddEventEmitters() {

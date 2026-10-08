@@ -52,10 +52,24 @@ react::RNSTabsHostIOSEventEmitter::OnTabSelectedActionOrigin RNSOnTabSelectedAct
 
 RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType);
 
+RNSTabsIconImageRenderingMode RNSTabsIconImageRenderingModeFromIconImageRenderingMode(
+    react::RNSTabsScreenIOSIconImageRenderingMode renderingMode);
+
+RNSTabsIconImageRenderingMode RNSTabsIconImageRenderingModeFromSelectedIconImageRenderingMode(
+    react::RNSTabsScreenIOSSelectedIconImageRenderingMode renderingMode);
+
+RNSTabsIconSymbolRenderingMode RNSTabsIconSymbolRenderingModeFromIconSymbolRenderingMode(
+    react::RNSTabsScreenIOSIconSymbolRenderingMode renderingMode);
+
+RNSTabsIconSymbolRenderingMode RNSTabsIconSymbolRenderingModeFromSelectedIconSymbolRenderingMode(
+    react::RNSTabsScreenIOSSelectedIconSymbolRenderingMode renderingMode);
+
 RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
     react::RNSTabsScreenIOSSystemItem systemItem);
 
 std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem);
+
+RNSTabsScreenTabRole RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(react::RNSTabsScreenIOSTabRole tabRole);
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
 

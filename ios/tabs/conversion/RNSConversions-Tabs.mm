@@ -182,12 +182,70 @@ RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType
   switch (iconType) {
     case Image:
       return RNSTabsIconTypeImage;
-    case Template:
-      return RNSTabsIconTypeTemplate;
     case SfSymbol:
       return RNSTabsIconTypeSfSymbol;
     case Xcasset:
       return RNSTabsIconTypeXcasset;
+  }
+}
+
+RNSTabsIconImageRenderingMode RNSTabsIconImageRenderingModeFromIconImageRenderingMode(
+    react::RNSTabsScreenIOSIconImageRenderingMode renderingMode)
+{
+  using enum facebook::react::RNSTabsScreenIOSIconImageRenderingMode;
+  switch (renderingMode) {
+    case Template:
+      return RNSTabsIconImageRenderingModeTemplate;
+    case Original:
+      return RNSTabsIconImageRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconImageRenderingModeDefault;
+  }
+}
+
+RNSTabsIconImageRenderingMode RNSTabsIconImageRenderingModeFromSelectedIconImageRenderingMode(
+    react::RNSTabsScreenIOSSelectedIconImageRenderingMode renderingMode)
+{
+  using enum facebook::react::RNSTabsScreenIOSSelectedIconImageRenderingMode;
+  switch (renderingMode) {
+    case Template:
+      return RNSTabsIconImageRenderingModeTemplate;
+    case Original:
+      return RNSTabsIconImageRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconImageRenderingModeDefault;
+  }
+}
+
+RNSTabsIconSymbolRenderingMode RNSTabsIconSymbolRenderingModeFromIconSymbolRenderingMode(
+    react::RNSTabsScreenIOSIconSymbolRenderingMode renderingMode)
+{
+  using enum facebook::react::RNSTabsScreenIOSIconSymbolRenderingMode;
+  switch (renderingMode) {
+    case Monochrome:
+      return RNSTabsIconSymbolRenderingModeMonochrome;
+    case Original:
+      return RNSTabsIconSymbolRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconSymbolRenderingModeDefault;
+  }
+}
+
+RNSTabsIconSymbolRenderingMode RNSTabsIconSymbolRenderingModeFromSelectedIconSymbolRenderingMode(
+    react::RNSTabsScreenIOSSelectedIconSymbolRenderingMode renderingMode)
+{
+  using enum facebook::react::RNSTabsScreenIOSSelectedIconSymbolRenderingMode;
+  switch (renderingMode) {
+    case Monochrome:
+      return RNSTabsIconSymbolRenderingModeMonochrome;
+    case Original:
+      return RNSTabsIconSymbolRenderingModeOriginal;
+    case Default:
+    default:
+      return RNSTabsIconSymbolRenderingModeDefault;
   }
 }
 
@@ -202,7 +260,6 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::
       break;
 
     case RNSTabsIconTypeImage:
-    case RNSTabsIconTypeTemplate:
       iconImageSource =
           [[RCTImageSource alloc] initWithURLRequest:NSURLRequestFromImageSource(*imageSource)
                                                 size:CGSizeMake(imageSource->size.width, imageSource->size.height)
@@ -314,6 +371,21 @@ std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RN
       return UITabBarSystemItemTopRated;
   }
   return std::nullopt;
+}
+
+RNSTabsScreenTabRole RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(react::RNSTabsScreenIOSTabRole tabRole)
+{
+  using enum facebook::react::RNSTabsScreenIOSTabRole;
+
+  switch (tabRole) {
+    case None:
+      return RNSTabsScreenTabRoleNone;
+    case Search:
+      return RNSTabsScreenTabRoleSearch;
+    default:
+      RCTLogError(@"[RNScreens] unsupported tabs screen tabRole");
+      return RNSTabsScreenTabRoleNone;
+  }
 }
 
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE

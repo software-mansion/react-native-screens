@@ -20,13 +20,13 @@ import TestTabsGeneralAppearanceNoLiquidGlass from './test-tabs-general-appearan
 import TestTabsGeneralAppearance from './test-tabs-general-appearance-android';
 import TestTabsLayoutAppearances from './test-tabs-layout-appearances-ios';
 import TestTabsItemIcon from './test-tabs-item-icon';
+import TestTabsItemIconTintAndSize from './test-tabs-item-icon-tint-and-size';
 import TestTabsItemTitle from './test-tabs-item-title';
 import TestTabsItemBadge from './test-tabs-item-badge';
 import TestTabsSystemItem from './test-tabs-system-item-ios';
 import TestTabsMoreNavigationController from './test-tabs-more-navigation-controller-ios';
 import TestTabsTabBarMinimizeBehavior from './test-tabs-tab-bar-minimize-behavior-ios';
 import TestTabsTabBarControllerMode from './test-tabs-tab-bar-controller-mode-ios';
-import TestTabsTabBarSidebarPreferredPlacement from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 import TestTabsBottomAccessoryLayout from './test-tabs-bottom-accessory-layout-ios';
 import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visibility-ios';
 import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
@@ -52,13 +52,13 @@ export { default as TestTabsGeneralAppearanceNoLiquidGlass } from './test-tabs-g
 export { default as TestTabsGeneralAppearance } from './test-tabs-general-appearance-android';
 export { default as TestTabsLayoutAppearances } from './test-tabs-layout-appearances-ios';
 export { default as TestTabsItemIcon } from './test-tabs-item-icon';
+export { default as TestTabsItemIconTintAndSize } from './test-tabs-item-icon-tint-and-size';
 export { default as TestTabsItemTitle } from './test-tabs-item-title';
 export { default as TestTabsItemBadge } from './test-tabs-item-badge';
 export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
 export { default as TestTabsMoreNavigationController } from './test-tabs-more-navigation-controller-ios';
 export { default as TestTabsTabBarMinimizeBehavior } from './test-tabs-tab-bar-minimize-behavior-ios';
 export { default as TestTabsTabBarControllerMode } from './test-tabs-tab-bar-controller-mode-ios';
-export { default as TestTabsTabBarSidebarPreferredPlacement } from './test-tabs-tab-bar-sidebar-preferred-placement-ios';
 export { default as TestTabsBottomAccessoryLayout } from './test-tabs-bottom-accessory-layout-ios';
 export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom-accessory-visibility-ios';
 export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-accessory-size-ios';
@@ -84,13 +84,13 @@ const scenarios = {
   TestTabsGeneralAppearance,
   TestTabsLayoutAppearances,
   TestTabsItemIcon,
+  TestTabsItemIconTintAndSize,
   TestTabsItemTitle,
   TestTabsItemBadge,
   TestTabsSystemItem,
   TestTabsMoreNavigationController,
   TestTabsTabBarMinimizeBehavior,
   TestTabsTabBarControllerMode,
-  TestTabsTabBarSidebarPreferredPlacement,
   TestTabsBottomAccessoryLayout,
   TestTabsBottomAccessoryVisibility,
   TestTabsBottomAccessorySize,

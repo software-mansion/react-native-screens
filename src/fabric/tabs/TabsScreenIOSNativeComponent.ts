@@ -20,8 +20,12 @@ type GenericEmptyEvent = Readonly<{}>;
 
 // #region iOS-specific helpers
 
-// iOS-specific: SFSymbol, image as a template usage
-export type IconType = 'image' | 'template' | 'sfSymbol' | 'xcasset';
+// iOS-specific: SFSymbol, xcasset usage
+export type IconType = 'image' | 'sfSymbol' | 'xcasset';
+
+export type IconImageRenderingMode = 'default' | 'template' | 'original';
+
+export type IconSymbolRenderingMode = 'default' | 'monochrome' | 'original';
 
 export type ItemStateAppearance = {
   tabBarItemTitleFontFamily?: string | undefined;
@@ -106,6 +110,8 @@ type SystemItem =
   | 'search'
   | 'topRated';
 
+type TabRole = 'none' | 'search';
+
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 // #endregion iOS-specific helpers
@@ -146,6 +152,8 @@ export interface NativeProps extends ViewProps {
   // Tab config
   isTitleUndefined?: CT.WithDefault<boolean, true>;
   systemItem?: CT.WithDefault<SystemItem, 'none'>;
+  tabRole?: CT.WithDefault<TabRole, 'none'>;
+  automaticallyActivatesSearch?: CT.WithDefault<boolean, false>;
 
   // Appearance
   standardAppearance?: UnsafeMixed<Appearance> | undefined;
@@ -153,8 +161,18 @@ export interface NativeProps extends ViewProps {
 
   // Icons
   iconType?: CT.WithDefault<IconType, 'sfSymbol'>;
+  iconImageRenderingMode?: CT.WithDefault<IconImageRenderingMode, 'default'>;
+  iconSymbolRenderingMode?: CT.WithDefault<IconSymbolRenderingMode, 'default'>;
   iconImageSource?: ImageSource | undefined;
   iconResourceName?: string | undefined;
+  selectedIconImageRenderingMode?: CT.WithDefault<
+    IconImageRenderingMode,
+    'default'
+  >;
+  selectedIconSymbolRenderingMode?: CT.WithDefault<
+    IconSymbolRenderingMode,
+    'default'
+  >;
   selectedIconImageSource?: ImageSource | undefined;
   selectedIconResourceName?: string | undefined;
 
