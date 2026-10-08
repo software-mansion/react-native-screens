@@ -3,11 +3,11 @@ import {
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import {
   StackContainer,
   useStackNavigationContext,
-} from '@apps/shared/containers/stack';
+} from '@apps/shared/gamma/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import React, { useState } from 'react';
 import { Button, ScrollView, Text } from 'react-native';
@@ -19,7 +19,7 @@ import type {
   TabBarSidebarPreferredPlacement,
 } from 'react-native-screens';
 import { SafeAreaView } from 'react-native-screens/experimental';
-import type { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
+import type { StackHeaderConfigProps } from 'react-native-screens/components/gamma/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 
 // Header items copied from `test-stack-subviews-ios` (default: 2 leading + 2 trailing).
@@ -106,17 +106,17 @@ function DetailsScreen() {
 
 const ROUTE_CONFIGS: TabRouteConfig[] = ['Tab1', 'Tab2', 'Tab3'].map(name => ({
   name,
-  element: (
+  Component: () => (
     <StackContainer
       routeConfigs={[
         {
           name,
-          element: <ConfigScreen />,
+          Component: ConfigScreen,
           options: { headerConfig: buildHeaderConfig(name) },
         },
         {
           name: 'Details',
-          element: <DetailsScreen />,
+          Component: DetailsScreen,
           options: { headerConfig: buildHeaderConfig('Details') },
         },
       ]}
