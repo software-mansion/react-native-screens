@@ -146,6 +146,7 @@ android {
         versionName "1.0"
         buildConfigField "boolean", "RNS_GAMMA_ENABLED", isGammaEnabled().toString()
         buildConfigField "boolean", "RNS_DEBUG_LOGGING", areDebugLogsEnabled().toString()
+        consumerProguardFiles "consumer-rules.pro"
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
