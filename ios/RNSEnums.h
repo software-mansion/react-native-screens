@@ -127,9 +127,20 @@ typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
 
 typedef NS_ENUM(NSInteger, RNSTabsIconType) {
   RNSTabsIconTypeImage,
-  RNSTabsIconTypeTemplate,
   RNSTabsIconTypeSfSymbol,
   RNSTabsIconTypeXcasset,
+};
+
+typedef NS_ENUM(NSInteger, RNSTabsIconImageRenderingMode) {
+  RNSTabsIconImageRenderingModeDefault,
+  RNSTabsIconImageRenderingModeTemplate,
+  RNSTabsIconImageRenderingModeOriginal,
+};
+
+typedef NS_ENUM(NSInteger, RNSTabsIconSymbolRenderingMode) {
+  RNSTabsIconSymbolRenderingModeDefault,
+  RNSTabsIconSymbolRenderingModeMonochrome,
+  RNSTabsIconSymbolRenderingModeOriginal,
 };
 
 typedef NS_ENUM(NSInteger, RNSOrientation) {
