@@ -178,6 +178,13 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)applyFrameCorrectionForDescendantScrollView
 {
+  // A dismissed sheet can still receive a layout pass after React has deleted it. By then Fabric
+  // may have recycled its scroll view into the screen that replaced the sheet, and sizing that
+  // scroll view to the sheet would clip the new screen. See #4651.
+  if (_invalidated) {
+    return;
+  }
+
   RCTScrollViewComponentView *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
