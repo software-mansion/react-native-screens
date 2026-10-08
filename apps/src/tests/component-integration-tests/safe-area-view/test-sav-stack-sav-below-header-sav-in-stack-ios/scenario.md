@@ -18,7 +18,7 @@ TBD.
 
 ## Steps
 
-1. Navigate to **CIT → SAV → SafeAreaView below stack header (iOS)**.
+1. Navigate to **CIT → SAV → SafeAreaView in Stack - SafeAreaView below stack header (iOS)**.
 
    - [ ] The header "Safe Area View" is visible.
    - [ ] The top edge of the red border starts right below the header and is
