@@ -6,7 +6,6 @@ import android.view.ViewParent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.ReactRootView
 import com.swmansion.rnscreens.common.FragmentProviding
 
@@ -75,5 +74,3 @@ object FragmentManagerHelper {
         }
     }
 }
-
-internal fun FragmentManager.createTransactionWithReordering(): FragmentTransaction = this.beginTransaction().setReorderingAllowed(true)

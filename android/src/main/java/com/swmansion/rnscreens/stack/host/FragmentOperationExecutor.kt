@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.stack.host
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import com.swmansion.rnscreens.helpers.createTransactionWithReordering
+import com.swmansion.rnscreens.ext.createTransactionWithReordering
 
 internal class FragmentOperationExecutor {
     internal fun executeOperations(
