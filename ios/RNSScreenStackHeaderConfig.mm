@@ -58,6 +58,9 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// Whether a react subview has been added / removed in current transaction. This flag is reset after each react
   /// transaction via RCTMountingTransactionObserving protocol.
   bool _addedReactSubviewsInCurrentTransaction;
+  /// Whether a react subview requested the config to be re-applied in current transaction.
+  /// Consumed & reset in `mountingTransactionDidMount:withSurfaceTelemetry:`.
+  bool _needsViewControllerUpdateInCurrentTransaction;
   RCTImageLoader *_imageLoader;
 }
 
@@ -69,6 +72,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
     _show = YES;
     _translucent = NO;
     _addedReactSubviewsInCurrentTransaction = false;
+    _needsViewControllerUpdateInCurrentTransaction = false;
     _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
     [self initProps];
   }
@@ -155,6 +159,11 @@ RNS_IGNORE_SUPER_CALL_END
     // returned by the `onHeaderHeightChange` event is correct.
     [self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
+}
+
+- (void)setNeedsViewControllerUpdate
+{
+  _needsViewControllerUpdateInCurrentTransaction = true;
 }
 
 - (void)layoutNavigationControllerView
@@ -905,8 +914,13 @@ RNS_IGNORE_SUPER_CALL_END
     if (self.shouldHeaderBeVisible) {
       [self layoutNavigationControllerView];
     }
+  } else if (_needsViewControllerUpdateInCurrentTransaction) {
+    // Subviews (e.g. their `visibilityPriority`) changed in this transaction. Re-apply the config once,
+    // now that all of them have already received their new props.
+    [self updateViewControllerIfNeeded];
   }
   _addedReactSubviewsInCurrentTransaction = false;
+  _needsViewControllerUpdateInCurrentTransaction = false;
 }
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
