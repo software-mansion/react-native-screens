@@ -22,7 +22,8 @@ class SafeAreaView(
     private val reactContext: ThemedReactContext,
 ) : ReactViewGroup(reactContext),
     OnApplyWindowInsetsListener,
-    ViewTreeObserver.OnPreDrawListener {
+    ViewTreeObserver.OnPreDrawListener,
+    OnInterfaceInsetsChangeListener {
     private var provider = WeakReference<SafeAreaProvider>(null)
     private var currentInterfaceInsets: EdgeInsets = EdgeInsets.ZERO
     private var currentSystemInsets: EdgeInsets = EdgeInsets.ZERO
@@ -80,7 +81,7 @@ class SafeAreaView(
         return providerCandidate as? SafeAreaProvider
     }
 
-    fun onInterfaceInsetsChange(newInterfaceInsets: EdgeInsets) {
+    override fun onInterfaceInsetsChange(newInterfaceInsets: EdgeInsets) {
         if (newInterfaceInsets != currentInterfaceInsets) {
             currentInterfaceInsets = newInterfaceInsets
 
