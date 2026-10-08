@@ -28,7 +28,7 @@ With `automatic`, the tab bar is always displayed, regardless of
 
 ## Steps
 
-1. Launch the app in portrait orientation and navigate to the **Tab Bar Sidebar Preferred Placement** screen.
+1. Launch the app in portrait orientation and navigate to the **Stack in Tabs - tab bar sidebar preferred placement** screen.
 
     - [ ] Bottom tab bar with Tab1, Tab2, Tab3. Both pickers default to `automatic`.
     - [ ] Header shows the tab title with two leading and two trailing header items.
