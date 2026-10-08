@@ -31,7 +31,7 @@ export const COMPONENT_SCENARIOS = {
   TabsInStackV5: TabsInStackV5ScenarioGroup,
   TabsStackV4: TabsStackV4ScenarioGroup,
   ScrollViewMarker: SvmScenarioGroup,
-  SAV: SavScenarioGroup,
+  SafeAreaView: SavScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {
