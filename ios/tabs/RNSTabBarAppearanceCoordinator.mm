@@ -73,9 +73,9 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
 
 /// Sets the normal icon on both the item (renders the iPhone bar) and the UITab (renders the
 /// iPad floating bar / sidebar, which never reads the item).
-- (void)setNormalImage:(nullable UIImage *)image
-         forTabBarItem:(nonnull UITabBarItem *)tabBarItem
-          ofScreenView:(nullable RNSTabsScreenComponentView *)screenView
+- (void)setTabImage:(nullable UIImage *)image
+      forTabBarItem:(nonnull UITabBarItem *)tabBarItem
+         screenView:(nullable RNSTabsScreenComponentView *)screenView
 {
 #if RNS_UITAB_API_SDK_AVAILABLE
   if (RNS_UITAB_API_ENABLED) {
@@ -103,9 +103,9 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
           RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for tab bar item", screenView.iconResourceName);
         }
       }
-      [self setNormalImage:RNSImageWithSymbolRenderingMode(image, screenView.iconSymbolRenderingMode)
-             forTabBarItem:tabBarItem
-              ofScreenView:screenView];
+      [self setTabImage:RNSImageWithSymbolRenderingMode(image, screenView.iconSymbolRenderingMode)
+          forTabBarItem:tabBarItem
+             screenView:screenView];
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
       std::optional<UITabBarSystemItem> systemItem =
@@ -118,9 +118,9 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
       }
       UIImage *_Nullable systemItemImage =
           [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].image;
-      [self setNormalImage:systemItemImage forTabBarItem:tabBarItem ofScreenView:screenView];
+      [self setTabImage:systemItemImage forTabBarItem:tabBarItem screenView:screenView];
     } else {
-      [self setNormalImage:nil forTabBarItem:tabBarItem ofScreenView:screenView];
+      [self setTabImage:nil forTabBarItem:tabBarItem screenView:screenView];
     }
 
     if (screenView.selectedIconResourceName != nil) {
@@ -176,7 +176,7 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                                             forScreenView:weakScreenView];
                                  }];
     } else {
-      [self setNormalImage:nil forTabBarItem:tabBarItem ofScreenView:screenView];
+      [self setTabImage:nil forTabBarItem:tabBarItem screenView:screenView];
     }
 
     // Selected icon
@@ -218,7 +218,7 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
   if (isSelected) {
     tabBarItem.selectedImage = image;
   } else {
-    [self setNormalImage:image forTabBarItem:tabBarItem ofScreenView:screenView];
+    [self setTabImage:image forTabBarItem:tabBarItem screenView:screenView];
   }
 
   // A layout pass is required because the image might be loaded asynchronously,
