@@ -1,5 +1,5 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type { PlatformIconAndroid } from '../../../types';
+import type { TabsScreenIconAndroid } from './TabsScreenIcon.types';
 
 export type TabBarItemLabelVisibilityMode =
   | 'auto'
@@ -86,6 +86,14 @@ export interface TabsScreenAppearanceAndroid {
    */
   disabled?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
+   * @summary Specifies the icon size of this tab's item in dp.
+   *
+   * Applies to this tab only. Unset uses the system default.
+   *
+   * @platform android
+   */
+  tabBarItemIconSize?: number | undefined;
+  /**
    * @summary Specifies the background color of the active indicator.
    *
    * @platform android
@@ -99,6 +107,24 @@ export interface TabsScreenAppearanceAndroid {
    * @platform android
    */
   tabBarItemActiveIndicatorEnabled?: boolean | undefined;
+  /**
+   * @summary Specifies the width of this tab's active indicator in dp.
+   *
+   * Applies to this tab only. If unset, it is this tab's icon size plus the
+   * default Material padding.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorWidth?: number | undefined;
+  /**
+   * @summary Specifies the height of this tab's active indicator in dp.
+   *
+   * Applies to this tab only. If unset, it is this tab's icon size plus the
+   * default Material padding.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorHeight?: number | undefined;
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
@@ -162,28 +188,37 @@ export interface TabsScreenPropsAndroid {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource }`
-   *   Uses an image from the provided resource.
+   * - `{ type: 'imageSource', imageSource, tinting? }`
+   *   Uses an image from the provided resource. `tinting` defaults to
+   *   `default`: the tab bar tints the image with the item icon color.
+   *   `original` keeps the image's own colors.
    *
    *   Remarks: `imageSource` type doesn't support SVGs on Android.
    *   For loading SVGs use `drawableResource` type.
    *
-   * - `{ type: 'drawableResource', name }`
-   *   Uses a drawable resource with the given name.
+   * - `{ type: 'drawableResource', name, tinting? }`
+   *   Uses a drawable resource with the given name. `tinting` defaults to
+   *   `default`: the tab bar tints the drawable with the item icon color.
+   *   `original` keeps the drawable's own colors, e.g. of a multicolor
+   *   VectorDrawable.
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
+   * See `TabsScreenIconTintingAndroid` for the meaning of each value.
+   *
    * @platform android
    */
-  icon?: PlatformIconAndroid | undefined;
+  icon?: TabsScreenIconAndroid | undefined;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
    * Supports the same values as `icon` property for given platform.
+   * `tinting` may differ from the one of `icon`, e.g. a drawable that is
+   * tinted while unselected and shows its own colors while selected.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
    * @platform android
    */
-  selectedIcon?: PlatformIconAndroid | undefined;
+  selectedIcon?: TabsScreenIconAndroid | undefined;
 }

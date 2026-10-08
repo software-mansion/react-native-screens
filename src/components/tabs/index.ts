@@ -29,11 +29,18 @@ export type {
   TabsScreenPropsBase,
   TabsScreenProps,
   // Android
+  TabsScreenIconAndroid,
+  TabsScreenIconTintingAndroid,
   TabBarItemLabelVisibilityMode,
   TabsScreenItemStateAppearanceAndroid,
   TabsScreenAppearanceAndroid,
   TabsScreenPropsAndroid,
   // iOS
+  TabsScreenIconIOS,
+  TabsScreenIconImageRenderingModeIOS,
+  TabsScreenIconSymbolRenderingModeIOS,
+  TabsScreenIconTemplateIOS,
+  TabsScreenIconXcassetIOS,
   TabsScreenBlurEffect,
   TabsScreenRole,
   TabsScreenSystemItem,

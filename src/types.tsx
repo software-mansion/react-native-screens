@@ -105,6 +105,16 @@ export type PlatformIconShared = {
   imageSource: ImageSourcePropType;
 };
 
+export type PlatformIconAndroidDrawableResource = {
+  type: 'drawableResource';
+  name: string;
+};
+
+export type PlatformIconIOSTemplate = {
+  type: 'templateSource';
+  templateSource: ImageSourcePropType;
+};
+
 export type PlatformIconIOSSfSymbol = {
   type: 'sfSymbol';
   name: string;
@@ -118,17 +128,11 @@ export type PlatformIconIOSXcasset = {
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
   | PlatformIconIOSXcasset
-  | {
-      type: 'templateSource';
-      templateSource: ImageSourcePropType;
-    }
+  | PlatformIconIOSTemplate
   | PlatformIconShared;
 
 export type PlatformIconAndroid =
-  | {
-      type: 'drawableResource';
-      name: string;
-    }
+  | PlatformIconAndroidDrawableResource
   | PlatformIconShared;
 
 export type ScreenStackNativeContainerStyleProps = {
