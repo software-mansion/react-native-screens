@@ -62,6 +62,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 function setupSceneDelegate(config, { runTask, runCommand }) {
   const { paths, appName } = config;
+  const iosAppDir = path.join(paths.app, 'ios', appName);
+  const appDelegatePath = path.join(iosAppDir, 'AppDelegate.swift');
+  const infoPlistPath = path.join(iosAppDir, 'Info.plist');
+
+  // Templates from RN 0.88 already use UIScene: `UIApplicationSceneManifest`
+  // in Info.plist, with SceneDelegate in a separate file.
+  const infoPlist = fs.readFileSync(infoPlistPath, 'utf8');
+  if (infoPlist.includes('UIApplicationSceneManifest')) {
+    console.log(
+      config['scene-delegate']
+        ? `🔍 The template already uses UIScene. Skipping...\n`
+        : `⚠️ --no-scene-delegate has no effect: the template already uses UIScene (RN 0.88+).\n`,
+    );
+    return;
+  }
 
   if (!config['scene-delegate']) {
     console.log(
@@ -72,17 +87,9 @@ function setupSceneDelegate(config, { runTask, runCommand }) {
   }
 
   runTask('Switching iOS app to the UIScene life cycle', paths.log, () => {
-    const iosAppDir = path.join(paths.app, 'ios', appName);
-    const appDelegatePath = path.join(iosAppDir, 'AppDelegate.swift');
-    const infoPlistPath = path.join(iosAppDir, 'Info.plist');
-
     const appDelegate = fs.readFileSync(appDelegatePath, 'utf8');
-    if (appDelegate.includes('UIWindowSceneDelegate')) {
-      console.log(`🔍 The template already uses UIScene. Skipping...`);
-      return;
-    }
 
-    // The template (RN 0.79+): `@main class AppDelegate` that starts React
+    // The template (RN 0.79–0.87): `@main class AppDelegate` that starts React
     // Native, followed by `class ReactNativeDelegate`, which is kept.
     const appDelegateStart = appDelegate.indexOf('@main');
     const appDelegateEnd = appDelegate.indexOf('class ReactNativeDelegate');

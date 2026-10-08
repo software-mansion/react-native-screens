@@ -154,6 +154,8 @@ function getConfig() {
             --no-scene-delegate          Keep the template's iOS AppDelegate without the UIScene life cycle.
                                          By default the iOS app is switched to UIScene (SceneDelegate),
                                          which apps built with the iOS 27 SDK need to launch on iOS 27+.
+                                         Templates that already use UIScene (RN 0.88+) are left as they
+                                         are, also with this flag.
         -h, --help                       Display this help message
 
       Without --run: JS setup only (init, copy, screens) — no pod install, no native compile,
