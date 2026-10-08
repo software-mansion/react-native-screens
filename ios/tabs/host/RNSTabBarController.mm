@@ -696,8 +696,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   return tab;
 }
 
-/// React owns the tab set and order; a customizable tab would also force the Edit button
-/// into the iPad sidebar.
+/// Customizable tab would force the Edit button into the iPad sidebar,
+/// and we don't support tab editing as of now.
 - (void)disableUserCustomizationOfTab:(UITab *)tab API_AVAILABLE(ios(18.0))
 {
   tab.preferredPlacement = UITabPlacementFixed;
