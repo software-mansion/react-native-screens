@@ -86,9 +86,13 @@ namespace react = facebook::react;
 
   _iconType = RNSTabsIconTypeSfSymbol;
 
+  _iconImageRenderingMode = RNSTabsIconImageRenderingModeDefault;
+  _iconSymbolRenderingMode = RNSTabsIconSymbolRenderingModeDefault;
   _iconImageSource = nil;
   _iconResourceName = nil;
 
+  _selectedIconImageRenderingMode = RNSTabsIconImageRenderingModeDefault;
+  _selectedIconSymbolRenderingMode = RNSTabsIconSymbolRenderingModeDefault;
   _selectedIconImageSource = nil;
   _selectedIconResourceName = nil;
 
@@ -254,6 +258,32 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.iconType != oldComponentProps.iconType) {
     _iconType = rnscreens::conversion::RNSTabsIconTypeFromIcon(newComponentProps.iconType);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.iconImageRenderingMode != oldComponentProps.iconImageRenderingMode) {
+    _iconImageRenderingMode = rnscreens::conversion::RNSTabsIconImageRenderingModeFromIconImageRenderingMode(
+        newComponentProps.iconImageRenderingMode);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.iconSymbolRenderingMode != oldComponentProps.iconSymbolRenderingMode) {
+    _iconSymbolRenderingMode = rnscreens::conversion::RNSTabsIconSymbolRenderingModeFromIconSymbolRenderingMode(
+        newComponentProps.iconSymbolRenderingMode);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconImageRenderingMode != oldComponentProps.selectedIconImageRenderingMode) {
+    _selectedIconImageRenderingMode =
+        rnscreens::conversion::RNSTabsIconImageRenderingModeFromSelectedIconImageRenderingMode(
+            newComponentProps.selectedIconImageRenderingMode);
+    tabItemNeedsAppearanceUpdate = YES;
+  }
+
+  if (newComponentProps.selectedIconSymbolRenderingMode != oldComponentProps.selectedIconSymbolRenderingMode) {
+    _selectedIconSymbolRenderingMode =
+        rnscreens::conversion::RNSTabsIconSymbolRenderingModeFromSelectedIconSymbolRenderingMode(
+            newComponentProps.selectedIconSymbolRenderingMode);
     tabItemNeedsAppearanceUpdate = YES;
   }
 

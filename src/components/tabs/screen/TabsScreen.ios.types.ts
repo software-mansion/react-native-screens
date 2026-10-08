@@ -1,9 +1,6 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type {
-  UserInterfaceStyle,
-  BlurEffect,
-  PlatformIconIOS,
-} from '../../shared/types';
+import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
+import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -235,33 +232,52 @@ export interface TabsScreenPropsIOS {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource }`
-   *   Uses an image from the provided resource.
-   * - `{ type: 'sfSymbol', name }`
-   *   Uses an SF Symbol with the specified name.
+   * - `{ type: 'imageSource', imageSource, renderingMode? }`
+   *   Uses an image from the provided resource. `renderingMode` defaults to
+   *   `default`, which keeps the image's own colors. With `template` it is
+   *   used as a template image and follows the state-dependent icon color.
+   * - `{ type: 'sfSymbol', name, renderingMode? }`
+   *   Uses an SF Symbol with the specified name. If no system symbol
+   *   matches, falls back to a custom symbol with that name from the app's
+   *   asset catalog. `renderingMode` defaults to `default`, the system
+   *   behavior: a single color for system symbols, while for custom symbols
+   *   the rendering intent set in the asset catalog may change it. `original`
+   *   shows the symbol's own color layers (Apple's "multicolor" rendering).
    * - `{ type: 'xcasset', name }`
-   *   Uses asset from Xcassets.
+   *   Deprecated: use `sfSymbol` for custom symbols from the asset catalog, or
+   *   `imageSource` with `{ uri: 'name' }` for asset catalog images (append
+   *   `.png` to names containing a dot; add `renderingMode: 'template'` for an
+   *   asset whose "Render As" is not `Original Image`).
+   *   Uses an image from the asset catalog. Its colors follow the asset's
+   *   "Render As" setting in the catalog: `Original Image` keeps its own colors,
+   *   `Default` and `Template Image` follow the state-dependent icon color.
    * - `{ type: 'templateSource', templateSource }`
-   *   Uses the provided image as a template image.
-   *   The icon color will depend on the current state
-   *   of the tab bar item and icon color-related props.
+   *   Deprecated: use `{ type: 'imageSource', imageSource, renderingMode: 'template' }`
+   *   instead. Uses the provided image as a template image.
+   *
+   * See `TabsScreenIconImageRenderingModeIOS` and
+   * `TabsScreenIconSymbolRenderingModeIOS` for the meaning of each rendering mode.
    *
    * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: TabsScreenIconIOS | undefined;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property.
+   * Supports the same values as `icon` property. It must use the same icon
+   * `type` as `icon`; `renderingMode` may differ, e.g.
+   * `icon: { type: 'sfSymbol', name }` with
+   * `selectedIcon: { type: 'sfSymbol', name, renderingMode: 'original' }`
+   * shows the symbol tinted while unselected and in its own colors while selected.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
    * @platform ios
    */
-  selectedIcon?: PlatformIconIOS | undefined;
+  selectedIcon?: TabsScreenIconIOS | undefined;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *

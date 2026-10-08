@@ -8,7 +8,6 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
-import com.swmansion.rnscreens.helpers.loadImage
 import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.helpers.readOptionalBoolean
 import com.swmansion.rnscreens.helpers.readOptionalColor
@@ -53,6 +52,11 @@ class TabsScreenViewManager :
     ) {
         super.addEventEmitters(reactContext, view)
         view.onViewManagerAddEventEmitters()
+    }
+
+    override fun onAfterUpdateTransaction(view: TabsScreen) {
+        super.onAfterUpdateTransaction(view)
+        view.resolveIconsIfNeeded()
     }
 
     override fun setScreenKey(
@@ -125,42 +129,42 @@ class TabsScreenViewManager :
         view: TabsScreen,
         value: String?,
     ) {
-        view.drawableIconResourceName = value
+        view.icon.drawableResourceName = value
     }
 
     override fun setSelectedDrawableIconResourceName(
         view: TabsScreen,
         value: String?,
     ) {
-        view.selectedDrawableIconResourceName = value
+        view.selectedIcon.drawableResourceName = value
+    }
+
+    override fun setIconTinting(
+        view: TabsScreen,
+        value: String?,
+    ) {
+        view.icon.tinting = TabsScreenIconTinting.fromString(value)
+    }
+
+    override fun setSelectedIconTinting(
+        view: TabsScreen,
+        value: String?,
+    ) {
+        view.selectedIcon.tinting = TabsScreenIconTinting.fromString(value)
     }
 
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
     ) {
-        val uri = value?.getString("uri")
-        if (uri != null) {
-            loadImage(view.context, uri) { drawable ->
-                if (drawable != null) {
-                    view.icon = drawable
-                }
-            }
-        }
+        view.icon.imageUri = value?.getString("uri")
     }
 
     override fun setSelectedImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
     ) {
-        val uri = value?.getString("uri")
-        if (uri != null) {
-            loadImage(view.context, uri) { drawable ->
-                if (drawable != null) {
-                    view.selectedIcon = drawable
-                }
-            }
-        }
+        view.selectedIcon.imageUri = value?.getString("uri")
     }
 
     override fun setStandardAppearance(
@@ -187,8 +191,11 @@ class TabsScreenViewManager :
             selected = if (appearance.hasKey("selected")) parseItemStateAppearance(context, appearance.getMap("selected")) else null,
             focused = if (appearance.hasKey("focused")) parseItemStateAppearance(context, appearance.getMap("focused")) else null,
             disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(context, appearance.getMap("disabled")) else null,
+            tabBarItemIconSize = appearance.readOptionalFloat("tabBarItemIconSize"),
             tabBarItemActiveIndicatorColor = appearance.readOptionalColor(context, "tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.readOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
+            tabBarItemActiveIndicatorWidth = appearance.readOptionalFloat("tabBarItemActiveIndicatorWidth"),
+            tabBarItemActiveIndicatorHeight = appearance.readOptionalFloat("tabBarItemActiveIndicatorHeight"),
             tabBarItemTitleFontFamily = appearance.readOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
