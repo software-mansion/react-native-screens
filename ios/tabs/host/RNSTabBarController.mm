@@ -5,6 +5,7 @@
 #import <objc/runtime.h>
 #import <limits>
 #import "NSString+RNSUtility.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSScreenWindowTraits.h"
@@ -70,6 +71,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
+  /// Controllers currently installed in UIKit (see `installScreenControllers:animated:`).
+  /// On the UITab path `UITabBarController.viewControllers` is empty once `tabs` is set,
+  /// so the installed set is tracked here; on the legacy path UIKit itself is the source of truth.
+  NSArray<RNSTabsScreenViewController *> *_Nullable _installedScreenControllers;
+
   /// This property is nullable until first container update. Later it MUST NOT be nil.
   RNSTabsNavigationState *_Nullable _navigationState;
 
@@ -86,6 +92,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
   BOOL _isHandlingExplicitSelectionUpdate;
 
+  /// UITab path only. Set when `shouldSelectTab:` admits a user selection, consumed by
+  /// `didSelectTab:` - which fires also for programmatic selection and this flag allows for filtering the latter.
+  BOOL _isHandlingUserTabSelection;
+
+  /// UITab path only. Set in `tabBar:didSelectItem:` when the user selects the More tab while
+  /// another tab is active. Tapping More does not necessarily show the More list - the stack may
+  /// re-display a hosted screen retained from a previous visit - so the decision between emitting
+  /// `onMoreTabSelected` and progressing state to the re-displayed screen is deferred to
+  /// `willShowViewController:`, which reports what actually shows.
+  BOOL _pendingMoreTabSelectedEmit;
+
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
 
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
@@ -95,11 +112,15 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   if (self = [super init]) {
     _tabScreenControllers = nil;
+    _installedScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
+    _tabBarItemCoordinator = [RNSTabBarItemCoordinator new];
     _tabsHostComponentView = nil;
     _navigationState = nil;
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
+    _isHandlingUserTabSelection = NO;
+    _pendingMoreTabSelectedEmit = NO;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
     _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 
@@ -156,9 +177,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (nullable UIScrollView *)resolveCurrentContentScrollView
 {
-  // `selectedViewController` may be the `moreNavigationController` (a `UINavigationController`) -
+  // The effective selection may be the `moreNavigationController` (a `UINavigationController`) -
   // we only resolve for our own tab screens.
-  UIViewController *selectedController = self.selectedViewController;
+  UIViewController *selectedController = [self effectiveSelectedViewController];
   if (![selectedController isKindOfClass:RNSTabsScreenViewController.class]) {
     return nil;
   }
@@ -191,7 +212,32 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-  RNSLog(@"TabBar: %@ didSelectItem: %@", tabBar, item);
+#if RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE && RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    // The only direct "user tapped More" signal on the UITab path - no UITab delegate covers More.
+    // Mirrors the More branch of the legacy `shouldSelectViewController:`: enforce selection
+    // prevention on the More stack top before UIKit displays it.
+    if ([self isMoreNavigationControllerPresentInTabBar] && item == self.moreNavigationController.tabBarItem) {
+      [self prepareForMoreNavigationControllerHandlingIfNeeded];
+      [self disableNavigationBarInMoreNavigationController];
+      UIViewController *_Nullable poppedViewController =
+          [self popToRootInMoreNavigationControllerRespectSelectionPrevention:YES animated:NO];
+      if (poppedViewController != nil) {
+        [self
+            onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:poppedViewController]];
+      }
+
+      // At this point, the `view.selectedViewController` is not yet updated and points
+      // to previous tab's viewController, which allows us to tell if whether
+      // we've just navigated to More tab or we've been there earlier
+      // Verified on both iOS 26 and 27. There's no other simple way to check that
+      // since `didSelectTab:` doesn't fire for More tab
+      if (![self isSelectedViewControllerTheMoreNavigationController]) {
+        _pendingMoreTabSelectedEmit = YES;
+      }
+    }
+  }
+#endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE && RNS_UITAB_API_SDK_AVAILABLE
 }
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
@@ -210,16 +256,27 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
+#if RNS_UITAB_API_SDK_AVAILABLE
+- (void)setSelectedTab:(UITab *)selectedTab API_AVAILABLE(ios(18.0))
+{
+  [super setSelectedTab:selectedTab];
+  if (!_isHandlingExplicitSelectionUpdate) {
+    [self reconcileNavigationStateWithUIKitState];
+  }
+}
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
   [super traitCollectionDidChange:previousTraitCollection];
 
-  if (previousTraitCollection == nil || self.selectedViewController == nil) {
+  UIViewController *_Nullable selectedController = [self effectiveSelectedViewController];
+  if (previousTraitCollection == nil || selectedController == nil) {
     return;
   }
 
   if (self.traitCollection.horizontalSizeClass != previousTraitCollection.horizontalSizeClass &&
-      [self isViewControllerHostedByMoreNavigationController:self.selectedViewController]) {
+      [self isViewControllerHostedByMoreNavigationController:selectedController]) {
     [self disableNavigationBarInMoreNavigationController];
   }
 }
@@ -274,11 +331,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)performContainerUpdate
 {
+  _isHandlingUserTabSelection = NO;
   _isHandlingExplicitSelectionUpdate = YES;
+  [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
 
+  [self updateTabBarItemsIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
   [self updateOrientationIfNeeded];
@@ -302,18 +362,15 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return NO;
   }
 
-  UIViewController *currSelectedViewController = self.selectedViewController;
-
   RCTAssert(![NSString rnscreens_isBlankOrNull:screenKey],
             @"[RNScreens] The screenKey MUST NOT be null if the view controller is not null");
 
   [self progressNavigationState:screenKey withOrigin:actionOrigin];
 
-  if (currSelectedViewController == nextSelectedViewController) {
-    return YES;
+  if (![self isScreenControllerCurrentlySelected:nextSelectedViewController]) {
+    [self applySelectedScreenController:nextSelectedViewController];
   }
 
-  [self setSelectedViewController:nextSelectedViewController];
   return YES;
 }
 
@@ -325,30 +382,22 @@ static void rns_pushViewController(__unsafe_unretained id self,
  */
 - (void)updateNavigationStateOnModelUpdate
 {
-  [self progressNavigationState:[self screenKeyForSelectedViewController] withOrigin:RNSTabsActionOriginUser];
+  UIViewController *viewController = [self effectiveSelectedViewController];
+  [self progressNavigationState:[self screenKeyForViewController:viewController] withOrigin:RNSTabsActionOriginUser];
 }
 
-- (void)userDidRepeatViewControllerSelection:(nonnull UIViewController *)viewController
+- (void)userDidRepeatSelectionOfScreenController:(nonnull RNSTabsScreenViewController *)screenController
 {
-  RCTAssert(self.selectedViewController == viewController,
-            @"[RNScreens] Expected UIKit to update selectedViewController");
+  RCTAssert([self isScreenControllerCurrentlySelected:screenController],
+            @"[RNScreens] Expected the repeated screen controller to be the current selection");
 
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
-    // We don't want to run neither state update nor side effects.
-    return;
-  }
-
-  [self updateNavigationStateOnModelUpdate];
+  [self progressNavigationState:[self screenKeyForViewController:screenController] withOrigin:RNSTabsActionOriginUser];
 
   // After state progression we trigger the special effect.
-  BOOL repeatedSelectionHandledBySpecialEffect = [[self selectedScreenViewController] tabScreenSelectedRepeatedly];
-
-  auto *updateContext =
-      [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                         isRepeated:YES
-                                          hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect
-                                                       actionOrigin:RNSTabsActionOriginUser];
-  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
+  BOOL repeatedSelectionHandledBySpecialEffect = [screenController tabScreenSelectedRepeatedly];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser
+                             repeated:YES
+            hasTriggeredSpecialEffect:repeatedSelectionHandledBySpecialEffect];
 }
 
 - (void)userDidSelectViewController:(nonnull UIViewController *)viewController
@@ -357,7 +406,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RCTAssert(self.selectedViewController == viewController,
             @"[RNScreens] Expected UIKit to update selectedViewController");
 
-  if ([self isSelectedViewControllerTheMoreNavigationController]) {
+  if (![self usesUITabAPI] && [self isSelectedViewControllerTheMoreNavigationController]) {
     [self disableNavigationBarInMoreNavigationController];
     [self prepareForMoreNavigationControllerHandlingIfNeeded];
 
@@ -366,12 +415,19 @@ static void rns_pushViewController(__unsafe_unretained id self,
     [_observerRegistry emitDidSelectMoreTabWithCurrentState:_navigationState sender:self];
   } else {
     [self updateNavigationStateOnModelUpdate];
-    auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                                             isRepeated:NO
-                                                              hasTriggeredSpecialEffect:NO
-                                                                           actionOrigin:RNSTabsActionOriginUser];
-    [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
+    [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
   }
+}
+
+- (void)emitSelectionUpdateWithOrigin:(RNSTabsActionOrigin)actionOrigin
+                             repeated:(BOOL)repeated
+            hasTriggeredSpecialEffect:(BOOL)hasTriggeredSpecialEffect
+{
+  auto *updateContext = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
+                                                                           isRepeated:repeated
+                                                            hasTriggeredSpecialEffect:hasTriggeredSpecialEffect
+                                                                         actionOrigin:actionOrigin];
+  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:updateContext sender:self];
 }
 
 - (void)onDidPreventUserFromSelectingViewControllerWithKey:(nonnull NSString *)screenKey
@@ -390,10 +446,38 @@ static void rns_pushViewController(__unsafe_unretained id self,
   return screenViewController.isPreventNativeSelectionEnabled;
 }
 
-#pragma mark - UITabBarControllerDelegate
+/// Shared handling for the `shouldSelect` delegate callbacks - the legacy
+/// `tabBarController:shouldSelectViewController:` and the `UITab` `tabBarController:shouldSelectTab:`.
+- (BOOL)interceptUserSelectionOfViewController:(nonnull UIViewController *)viewController
+{
+  BOOL repeatedSelection = viewController == self.selectedViewController;
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    repeatedSelection = viewController.tab == self.selectedTab && ![self isMoreNavigationControllerTabBarItemSelected];
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 
-// These methods are not called on programatic selection!
-// They are called only when a user taps on tab bar.
+  if (repeatedSelection) {
+    // On repeated selection we block the native *pop to root* effect (works from iOS 26) that
+    // interferes with our implementation (necessary for controlled tabs). The did-select callback
+    // won't fire on a blocked selection, so we trigger the state update here.
+    if (![self isViewControllerTheMoreNavigationController:viewController]) {
+      [self userDidRepeatSelectionOfScreenController:static_cast<RNSTabsScreenViewController *>(viewController)];
+    }
+    return YES;
+  }
+
+  if ([self shouldPreventNativeTabSelection:viewController]) {
+    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback. As long as we
+    // emit the event asynchronously this is rather fine.
+    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+    return YES;
+  }
+
+  return NO;
+}
+
+#pragma mark - UITabBarControllerDelegate
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController
     shouldSelectViewController:(UIViewController *)viewController
@@ -408,25 +492,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   // TODO: handle enforcing orientation with natively-driven tabs
 
-  // Detect repeated selection and inform tabScreenController
-  BOOL repeatedSelection = self.selectedViewController == viewController;
-
-  if (repeatedSelection) {
-    // On repeated selection we return false to prevent native *pop to root* effect that works only starting from iOS 26
-    // and interferes with our implementation (which is necessary for controlled tabs).
-
-    // We trigger the state update from here, because `tabBarController:didSelectViewController:` won't be called.
-    [self userDidRepeatViewControllerSelection:viewController];
-
-    return NO;
-  }
-
-  BOOL shouldPreventTabSelection = [self shouldPreventNativeTabSelection:viewController];
-
-  if (shouldPreventTabSelection) {
-    // Ideally we'd call this AFTER we prevent, but there is no appropriate callback.
-    // As long as we emit the event asynchronously this is rather fine.
-    [self onDidPreventUserFromSelectingViewControllerWithKey:[self screenKeyForViewController:viewController]];
+  BOOL selectionWasIntercepted = [self interceptUserSelectionOfViewController:viewController];
+  if (selectionWasIntercepted) {
     return NO;
   }
 
@@ -435,7 +502,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
   // In such case, we want to pop to root.
   // We do it here, because in `tabBarController:didSelectViewController:` we won't receive
   // `moreNavigationController` in case there is already a tab pushed on the stack.
-  if ([self isViewControllerTheMoreNavigationController:viewController]) {
+  // Legacy path only - on the UITab path More never arrives here; `tabBar:didSelectItem:` covers it.
+  if (![self usesUITabAPI] && [self isViewControllerTheMoreNavigationController:viewController]) {
     auto *poppedViewController = [self popToRootInMoreNavigationControllerRespectSelectionPrevention:YES animated:NO];
     if (poppedViewController != nil) {
       // We actually popped something -> let's notify JS realm of this fact.
@@ -462,7 +530,162 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _isHandlingExplicitSelectionUpdate = NO;
 }
 
-#pragma mark - UINavigationControllerDelegate
+#if RNS_UITAB_API_SDK_AVAILABLE
+
+#pragma mark UITabBarControllerDelegate (UITab API)
+
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectTab:(UITab *)tab API_AVAILABLE(ios(18.0))
+{
+  BOOL shouldSelect = [self tabBarController:tabBarController shouldSelectViewController:tab.viewController];
+  _isHandlingUserTabSelection = shouldSelect;
+  return shouldSelect;
+}
+
+- (void)tabBarController:(UITabBarController *)tabBarController
+            didSelectTab:(UITab *)selectedTab
+             previousTab:(nullable UITab *)previousTab API_AVAILABLE(ios(18.0))
+{
+  if (!_isHandlingUserTabSelection) {
+    return;
+  }
+  _isHandlingUserTabSelection = NO;
+
+  RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
+  [self tabBarController:tabBarController didSelectViewController:selectedTab.viewController];
+}
+
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
+#pragma mark - UIKit configuration boundary
+
+// Every UIKit read/write related to child installation & selection goes through the methods below.
+// The legacy `viewControllers`-based API and the `UITab`-based API (iOS 26.1+) are mutually
+// exclusive - funnelling the accesses through a single boundary is what lets the rest of the
+// controller stay path-agnostic.
+
+- (void)installScreenControllers:(nonnull NSArray<RNSTabsScreenViewController *> *)screenControllers
+                        animated:(BOOL)animated
+{
+  _installedScreenControllers = screenControllers;
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    UITab *_Nullable previouslySelectedTab = self.selectedTab;
+
+    // Restoring the stale `selectedTab` while More is active would yank the selection away.
+    BOOL shouldRestoreSelectedTab =
+        previouslySelectedTab != nil && ![self isMoreNavigationControllerTabBarItemSelected];
+
+    NSMutableArray<__kindof UITab *> *tabs = [NSMutableArray arrayWithCapacity:screenControllers.count];
+    for (RNSTabsScreenViewController *screenController in screenControllers) {
+      [tabs addObject:[self tabForTabScreenController:screenController]];
+    }
+    [self setTabs:tabs animated:animated];
+
+    if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
+      self.selectedTab = previouslySelectedTab;
+    }
+    return;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
+  [self setViewControllers:screenControllers animated:animated];
+}
+
+// Controllers currently installed in UIKit, not including more controller.
+- (nonnull NSArray<RNSTabsScreenViewController *> *)installedScreenControllers
+{
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return _installedScreenControllers ?: @[];
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return self.viewControllers ?: @[];
+}
+
+- (void)applySelectedScreenController:(nonnull UIViewController *)screenController
+{
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    if (![self isMoreNavigationControllerTabBarItemSelected]) {
+      RCTAssert(screenController.tab != nil,
+                @"[RNScreens] No installed UITab for screenKey: %@",
+                [self screenKeyForViewController:screenController]);
+      self.selectedTab = screenController.tab;
+      return;
+    }
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
+  // Goes through our own setter override, so that reconciliation of implicit UIKit-driven
+  // updates keeps working.
+  [self setSelectedViewController:screenController];
+}
+
+/// Whether `screenController` is already the effective current selection.
+- (BOOL)isScreenControllerCurrentlySelected:(nonnull UIViewController *)screenController
+{
+  if ([self isMoreNavigationControllerTabBarItemSelected]) {
+    return screenController == [self resolveMoreNavigationController].topViewController;
+  }
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return screenController == self.selectedTab.viewController;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return screenController == self.selectedViewController;
+}
+
+/// Effective current selection for reads, path-agnostic. On the UITab path `selectedViewController`
+/// is not the source of truth and `selectedTab` lags behind while More is active, so More is
+/// resolved explicitly: the hosted screen when one is displayed, the More navigation controller
+/// itself otherwise.
+- (nullable UIViewController *)effectiveSelectedViewController
+{
+  if ([self isMoreNavigationControllerTabBarItemSelected]) {
+    UINavigationController *moreNavigationController = [self resolveMoreNavigationController];
+    UIViewController *_Nullable topViewController = moreNavigationController.topViewController;
+    return [topViewController isKindOfClass:RNSTabsScreenViewController.class] ? topViewController
+                                                                               : moreNavigationController;
+  }
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return self.selectedTab.viewController;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return self.selectedViewController;
+}
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+
+- (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
+{
+  if (screenController.tab) {
+    return screenController.tab;
+  }
+
+  return [self makeTabForTabScreenController:screenController];
+}
+
+/// Always builds a FRESH instance, seeded with current content - the bar reads a `UITab` only
+/// when its instance enters the tabs array.
+- (UITab *)makeTabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
+{
+  __weak RNSTabsScreenViewController *weakScreenController = screenController;
+
+  return [[UITab alloc] initWithTitle:[screenController.tabScreenComponentView title] ?: @""
+                                image:nil
+                           identifier:[screenController.tabScreenComponentView screenKey]
+               viewControllerProvider:^UIViewController *(UITab *) {
+                 return weakScreenController;
+               }];
+}
+
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+
+#pragma mark - UINavigationControllerDelegate - for More controller
 
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
@@ -478,8 +701,53 @@ static void rns_pushViewController(__unsafe_unretained id self,
       [self shouldProgressStateOnMoreNavigationControllerPush]) {
     [self userDidSelectViewController:viewController];
     [self setShouldProgressStateOnMoreNavigationControllerPush:NO];
+    return;
+  }
+
+  if ([self usesUITabAPI]) {
+    [self handleMoreNavigationControllerTransitionToViewController:viewController];
   }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
+}
+
+- (void)handleMoreNavigationControllerTransitionToViewController:(nonnull UIViewController *)viewController
+{
+  if ([viewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    // A screen retained on the More stack is being re-displayed - not a More list entry.
+    _pendingMoreTabSelectedEmit = NO;
+    [self progressStateOnMoreHostedScreenRedisplayIfNeeded:viewController];
+    return;
+  }
+
+  // Transition to the More list root.
+  if (_pendingMoreTabSelectedEmit) {
+    _pendingMoreTabSelectedEmit = NO;
+    [_observerRegistry emitDidSelectMoreTabWithCurrentState:_navigationState sender:self];
+  }
+}
+
+- (void)progressStateOnMoreHostedScreenRedisplayIfNeeded:(nonnull UIViewController *)viewController
+{
+  if (_navigationState == nil || _isHandlingExplicitSelectionUpdate ||
+      ![viewController isKindOfClass:RNSTabsScreenViewController.class]) {
+    return;
+  }
+
+  // Also skips iOS 27's stale willShow fired for the OUTGOING hosted screen when the selection
+  // moves away from More - the bar item flips synchronously before that willShow arrives.
+  if (![self isMoreNavigationControllerTabBarItemSelected]) {
+    return;
+  }
+
+  NSString *screenKey = [self screenKeyForViewController:viewController];
+  if ([_navigationState.selectedScreenKey isEqualToString:screenKey]) {
+    // Already reflected in the state, e.g. a programmatic selection progressed it before the
+    // transition fired this callback.
+    return;
+  }
+
+  [self progressNavigationState:screenKey withOrigin:RNSTabsActionOriginUser];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginUser repeated:NO hasTriggeredSpecialEffect:NO];
 }
 
 #pragma mark - Signals related
@@ -501,7 +769,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  [self setViewControllers:_tabScreenControllers animated:[[self viewControllers] count] != 0];
+  [self installScreenControllers:_tabScreenControllers animated:[self installedScreenControllers].count != 0];
 }
 
 - (void)updateSelectedViewControllerIfNeeded
@@ -513,7 +781,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateSelectedViewController
 {
-  if (_pendingStateUpdate == nil || self.viewControllers.count == 0) {
+  if (_pendingStateUpdate == nil || [self installedScreenControllers].count == 0) {
     return;
   }
 
@@ -531,10 +799,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   RCTAssert(_pendingStateUpdate != nil, @"[RNScreens] Pending update MUST NOT be nil");
 
-  UIViewController *_Nonnull currSelectedViewController = self.selectedViewController;
-
   NSString *_Nonnull nextSelectedViewControllerKey = _pendingStateUpdate.selectedScreenKey;
-  UIViewController *nextSelectedViewController = [self findChildViewControllerForKey:nextSelectedViewControllerKey];
+  RNSTabsScreenViewController *nextSelectedViewController =
+      [self findChildViewControllerForKey:nextSelectedViewControllerKey];
 
   RCTAssert(nextSelectedViewController != nil,
             @"[RNScreens] Failed to determine next selected view controller for key: %@",
@@ -553,9 +820,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  if (currSelectedViewController == nextSelectedViewController && _navigationState != nil) {
-    // Nothing to do, we don't allow for programmatic repeat selection, unless
-    // we're during first render.
+  BOOL isRepeatedSelection = [self isScreenControllerCurrentlySelected:nextSelectedViewController];
+
+  // Programmatic repeat selection is rejected, unless we're during first render.
+  if (isRepeatedSelection && _navigationState != nil) {
     [_observerRegistry emitRejectedStateUpdate:_pendingStateUpdate
                                   currentState:_navigationState
                                     withReason:RNSTabsNavigationStateRejectionReasonRepeated
@@ -563,16 +831,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  // TODO: This code MUST be moved to some callback.
-  // Should this be called only on JS updates?
-  auto *screenViewController = static_cast<RNSTabsScreenViewController *>(nextSelectedViewController);
+  // TODO: move the user interface style update to a callback; should it run only on JS updates?
   if (@available(iOS 26.0, *)) {
     // On iOS 26, we need to set user interface style 2 parent views above the tab bar
     // for this prop to take effect.
     self.tabBar.superview.superview.overrideUserInterfaceStyle =
-        screenViewController.tabScreenComponentView.userInterfaceStyle;
+        nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
   } else {
-    self.tabBar.overrideUserInterfaceStyle = screenViewController.tabScreenComponentView.userInterfaceStyle;
+    self.tabBar.overrideUserInterfaceStyle = nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
   }
 
   RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
@@ -585,13 +851,18 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   if (hasStateProgressed) {
-    RNSTabsNavigationStateUpdateContext *context =
-        [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                           isRepeated:NO
-                                            hasTriggeredSpecialEffect:NO
-                                                         actionOrigin:_pendingStateUpdate.actionOrigin];
-    [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:context sender:self];
+    [self emitSelectionUpdateWithOrigin:_pendingStateUpdate.actionOrigin repeated:NO hasTriggeredSpecialEffect:NO];
   }
+}
+
+- (void)createTabBarItemsIfNeeded
+{
+  [_tabBarItemCoordinator createTabBarItemsForTabScreenControllers:_tabScreenControllers];
+}
+
+- (void)updateTabBarItemsIfNeeded
+{
+  [_tabBarItemCoordinator updateTabBarItemsForTabScreenControllers:_tabScreenControllers];
 }
 
 - (void)updateTabBarAppearanceIfNeeded
@@ -614,8 +885,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateTabBarA11yIfNeeded
 {
-  for (UIViewController *tabViewController in self.viewControllers) {
-    auto screenView = static_cast<RNSTabsScreenViewController *>(tabViewController).tabScreenComponentView;
+  for (RNSTabsScreenViewController *tabViewController in [self installedScreenControllers]) {
+    auto screenView = tabViewController.tabScreenComponentView;
     if (!screenView.tabBarItemNeedsA11yUpdate) {
       continue;
     }
@@ -633,11 +904,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (screenKey == nil) {
     return nil;
   }
-  for (UIViewController *viewController in self.viewControllers) {
-    RCTAssert([viewController isKindOfClass:RNSTabsScreenViewController.class],
-              @"[RNScreens] Unexpected type of controller: %@",
-              viewController.class);
-    auto *screenViewController = static_cast<RNSTabsScreenViewController *>(viewController);
+  for (RNSTabsScreenViewController *screenViewController in [self installedScreenControllers]) {
     if ([screenViewController.getScreenKeyOrNull isEqualToString:screenKey]) {
       return screenViewController;
     }
@@ -662,16 +929,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
-/**
- * Be sure to call this method IF AND ONLY IF you know that the `self.selectedViewController`
- * is not the `moreNavigationController`.
- */
-- (RNSTabsScreenViewController *)selectedScreenViewController
+- (BOOL)usesUITabAPI
 {
-  RCTAssert([self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class],
-            @"[RNScreens] Unexpected type of selectedViewController: %@",
-            self.selectedViewController.class);
-  return static_cast<RNSTabsScreenViewController *>(self.selectedViewController);
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return YES;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return NO;
 }
 
 - (nonnull NSString *)screenKeyForViewController:(nonnull UIViewController *)viewController
@@ -717,14 +982,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  if (![self.selectedViewController isKindOfClass:RNSTabsScreenViewController.class]) {
-    RCTAssert(NO,
-              @"[RNScreens] Unexpected controller type during state reconciliation: %@",
-              self.selectedViewController.class);
+  UIViewController *_Nullable selectedController = [self effectiveSelectedViewController];
+  if (selectedController == nil) {
     return;
   }
 
-  NSString *selectedScreenKey = [self screenKeyForSelectedViewController];
+  if (![selectedController isKindOfClass:RNSTabsScreenViewController.class]) {
+    RCTAssert(NO, @"[RNScreens] Unexpected controller type during state reconciliation: %@", selectedController.class);
+    return;
+  }
+
+  NSString *selectedScreenKey = [self screenKeyForViewController:selectedController];
   if ([_navigationState.selectedScreenKey isEqualToString:selectedScreenKey]) {
     return;
   }
@@ -738,11 +1006,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     [self disableNavigationBarInMoreNavigationController];
   }
 
-  auto *context = [[RNSTabsNavigationStateUpdateContext alloc] initWithNavState:_navigationState
-                                                                     isRepeated:NO
-                                                      hasTriggeredSpecialEffect:NO
-                                                                   actionOrigin:RNSTabsActionOriginImplicit];
-  [_observerRegistry emitDidUpdateStateTo:_navigationState withContext:context sender:self];
+  [self emitSelectionUpdateWithOrigin:RNSTabsActionOriginImplicit repeated:NO hasTriggeredSpecialEffect:NO];
 }
 
 /**
@@ -769,7 +1033,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   // https://developer.apple.com/documentation/uikit/uitabbarcontroller?language=objc#The-More-navigation-controller
   // The count is documented. Size class check is empirical, to tighten the condition and have less
   // false positives. If we ever find it not correct, we can safely remove it.
-  return self.viewControllers.count >= kMinCountOfVCsForMoreVCPresence &&
+  return [self installedScreenControllers].count >= kMinCountOfVCsForMoreVCPresence &&
       self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
 #else
   return NO;
@@ -783,7 +1047,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   // Guard: VC must be one we manage (excludes arbitrary external VCs).
-  if ([self.viewControllers indexOfObject:viewController] == NSNotFound) {
+  if (![[self installedScreenControllers] containsObject:static_cast<RNSTabsScreenViewController *>(viewController)]) {
     return NO;
   }
 
@@ -1054,8 +1318,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (RNSOrientation)evaluateOrientation
 {
-  if ([self.selectedViewController respondsToSelector:@selector(evaluateOrientation)]) {
-    id<RNSOrientationProviding> selected = static_cast<id<RNSOrientationProviding>>(self.selectedViewController);
+  UIViewController *_Nullable selectedController = [self effectiveSelectedViewController];
+  if ([selectedController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> selected = static_cast<id<RNSOrientationProviding>>(selectedController);
     return [selected evaluateOrientation];
   }
 
