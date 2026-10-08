@@ -8,7 +8,7 @@ const scenarios = {
 };
 
 const SavScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
-  name: 'SAV',
+  name: 'SafeAreaView Integration Tests',
   details: 'Integration tests for SafeAreaView',
   scenarios,
 };
