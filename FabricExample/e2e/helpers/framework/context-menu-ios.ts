@@ -123,19 +123,38 @@ export async function openHeaderTitleMenu(
   await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
 }
 
+export type DismissContextMenuOptions = {
+  /**
+   * A non-interactive view to tap over. The dismiss tap also reaches the view
+   * beneath the overlay, so the default mid-screen point can trigger whatever
+   * control a screen has there. Pick a view clear of the presented menu.
+   */
+  over?: NativeMatcher;
+  /** Tap point within `over`'s frame, as a fraction of its width. */
+  xFraction?: number;
+  timeout?: number;
+};
+
 /**
  * Dismisses the menu at any submenu depth by tapping UIKit's dismiss overlay
- * near its leading edge (a tap on the menu itself only pops one level).
+ * (a tap on the menu itself only pops one level): over `over` when given,
+ * otherwise near the overlay's leading edge.
  */
-export async function dismissContextMenu(
+export async function dismissContextMenu({
+  over,
+  xFraction,
   timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
-) {
-  await tapWithinFrame(
-    await getFrame(
-      by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW),
-      'the context menu platter',
-    ),
-    CONTEXT_MENU_DISMISS_X_FRACTION,
-  );
+}: DismissContextMenuOptions = {}) {
+  if (over) {
+    await tapWithinFrame(await getFrame(over), xFraction);
+  } else {
+    await tapWithinFrame(
+      await getFrame(
+        by.type(CLASS_NAME_UI_CONTEXT_MENU_PLATTER_TRANSITION_VIEW),
+        'the context menu platter',
+      ),
+      xFraction ?? CONTEXT_MENU_DISMISS_X_FRACTION,
+    );
+  }
   await waitFor(contextMenu()).not.toExist().withTimeout(timeout);
 }
