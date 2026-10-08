@@ -82,6 +82,8 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
     screenView.controller.tab.image = image;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
+  // This needs to be called after tab.image assignment
+  // (see https://github.com/software-mansion/react-native-screens/pull/4813)
   tabBarItem.image = image;
 }
 
