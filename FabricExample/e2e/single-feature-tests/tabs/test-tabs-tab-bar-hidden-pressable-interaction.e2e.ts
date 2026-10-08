@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { describeIfAndroid } from '@e2e/framework/platform';
+import { selectSingleFeatureTestsScreen } from '../../e2e-utils';
+import { describeIfAndroid } from '../../e2e-utils';
 
 // The bar is hidden on Android by setting its visibility to `GONE`, which
 // leaves the bounds it was last laid out with in place. React Native hit-tests

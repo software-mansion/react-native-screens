@@ -8,7 +8,7 @@ import {
   type TabRouteConfig,
   useTabsHostConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
-} from '@apps/shared/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import { Colors } from '@apps/shared/styling';
 
 function ConfigScreen() {
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Tab1',
-    element: <ConfigScreen />,
+    Component: ConfigScreen,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       tabBarItemTestID: 'tab-bar-item-1-id',
