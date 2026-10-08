@@ -13,10 +13,11 @@ the `tinting` icon property decides the same: `tinted` tints the icon,
 `original` keeps its own colors, and `default` (also used when unset) tints it,
 as in previous versions. `icon` and `selectedIcon` may use different
 values. On Android,
-`iconSize` sets a per-tab icon size: the icon box of the whole bar fits the
-largest icon and the tallest active indicator across tabs, and each icon is inset
-to its own size within that box. Each tab's active indicator wraps its own icon,
-unless that tab sets `activeIndicatorWidth` / `activeIndicatorHeight`. On iOS, an `sfSymbol` icon falls back to a custom
+`tabBarItemIconSize` in a tab's `standardAppearance` sets its icon size: the
+icon box of the whole bar fits the largest icon and the tallest active indicator
+across tabs, and each icon is inset to its own size within that box. Each tab's
+active indicator wraps its own icon, unless that tab sets
+`tabBarItemActiveIndicatorWidth` / `tabBarItemActiveIndicatorHeight`. On iOS, an `sfSymbol` icon falls back to a custom
 symbol from the app asset catalog when no system SF Symbol matches. Verifies that runtime changes of
 these properties update the icons correctly, and that unrelated tab bar item
 updates (badge) keep the icons intact.
@@ -208,14 +209,14 @@ Android specific notes:
 
 ---
 
-### Runtime `iconSize` change
+### Runtime `tabBarItemIconSize` change
 
-12. Select `32` in the **iconSize** picker.
+12. Select `32` in the **tabBarItemIconSize** picker.
 
 - [ ] The **Controls** icon grows to 32dp.
 - [ ] The other tab icons do NOT change size. The tab bar height is unchanged.
 
-13. Select `56` in the **iconSize** picker.
+13. Select `56` in the **tabBarItemIconSize** picker.
 
 - [ ] The **Controls** icon grows to 56dp.
 - [ ] All other icons keep their own sizes (SWM logo 44dp, walker 30dp, star
@@ -224,7 +225,7 @@ Android specific notes:
   tabs keep their own pills.
 - [ ] The tab bar gets taller once, and keeps that height when switching tabs.
 
-14. Select `default` in the **iconSize** picker.
+14. Select `default` in the **tabBarItemIconSize** picker.
 
 - [ ] The **Controls** icon returns to 24dp.
 - [ ] The **Controls** pill returns to 64x32dp and the tab bar returns to its
@@ -234,8 +235,8 @@ Android specific notes:
 
 ### Runtime per-tab active indicator size
 
-15. Select `96` in the **activeIndicatorWidth** picker and `64` in the
-    **activeIndicatorHeight** picker.
+15. Select `96` in the **tabBarItemActiveIndicatorWidth** picker and `64` in the
+    **tabBarItemActiveIndicatorHeight** picker.
 
 - [ ] The **Controls** pill grows to 64dp tall. Its width is capped by the tab
   item width (see Note).

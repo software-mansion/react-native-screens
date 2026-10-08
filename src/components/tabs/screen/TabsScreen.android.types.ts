@@ -86,6 +86,14 @@ export interface TabsScreenAppearanceAndroid {
    */
   disabled?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
+   * @summary Specifies the icon size of this tab's item in dp.
+   *
+   * Applies to this tab only. Unset uses the system default.
+   *
+   * @platform android
+   */
+  tabBarItemIconSize?: number | undefined;
+  /**
    * @summary Specifies the background color of the active indicator.
    *
    * @platform android
@@ -99,6 +107,24 @@ export interface TabsScreenAppearanceAndroid {
    * @platform android
    */
   tabBarItemActiveIndicatorEnabled?: boolean | undefined;
+  /**
+   * @summary Specifies the width of this tab's active indicator in dp.
+   *
+   * Applies to this tab only. If unset, it is this tab's icon size plus the
+   * default Material padding.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorWidth?: number | undefined;
+  /**
+   * @summary Specifies the height of this tab's active indicator in dp.
+   *
+   * Applies to this tab only. If unset, it is this tab's icon size plus the
+   * default Material padding.
+   *
+   * @platform android
+   */
+  tabBarItemActiveIndicatorHeight?: number | undefined;
   /**
    * @summary Specifies the font family used for the title of each tab bar item.
    *
@@ -195,33 +221,4 @@ export interface TabsScreenPropsAndroid {
    * @platform android
    */
   selectedIcon?: TabsScreenIconAndroid | undefined;
-  /**
-   * @summary Per-tab icon size in dp.
-   *
-   * The bottom bar's icon box fits the largest `iconSize` (and, when needed, the
-   * tallest active indicator) across all tabs; each tab's icon is inset to its
-   * own size within that box. Tabs without a value use the system default.
-   *
-   * @platform android
-   */
-  iconSize?: number | undefined;
-  /**
-   * @summary Width of this tab's active indicator in dp. If unset, it wraps
-   * this tab's icon with the default Material padding.
-   *
-   * Material caps the width at the tab item width.
-   *
-   * @platform android
-   */
-  activeIndicatorWidth?: number | undefined;
-  /**
-   * @summary Height of this tab's active indicator in dp. If unset, it wraps
-   * this tab's icon with the default Material padding.
-   *
-   * The tab bar is as tall as its tallest active indicator, so its height does
-   * not change when switching tabs.
-   *
-   * @platform android
-   */
-  activeIndicatorHeight?: number | undefined;
 }

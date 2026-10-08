@@ -16,7 +16,7 @@ function TabScreen() {
         ratio.
       </Text>
       <Text style={styles.hint}>
-        Sized SWM: a wide logo sized to 44dp via `iconSize`.
+        Sized SWM: a wide logo sized to 44dp via `tabBarItemIconSize`.
       </Text>
       <Text style={styles.hint}>
         Multicolor Tint: a VectorDrawable that keeps its own colors when
@@ -32,7 +32,8 @@ function TabScreen() {
       </Text>
       <Text style={styles.hint}>
         Each tab&apos;s active indicator wraps its own icon; set
-        `activeIndicatorWidth` / `activeIndicatorHeight` on a tab to size it.
+        `tabBarItemActiveIndicatorWidth` / `tabBarItemActiveIndicatorHeight` in
+        a tab&apos;s `standardAppearance` to size it.
       </Text>
     </View>
   );
@@ -57,7 +58,7 @@ const ROUTES: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Sized SWM',
       android: {
-        iconSize: 44,
+        standardAppearance: { tabBarItemIconSize: 44 },
         icon: { type: 'drawableResource', name: 'swm_logo' },
       },
     },
@@ -69,7 +70,7 @@ const ROUTES: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Multicolor Tint',
       android: {
-        iconSize: 30,
+        standardAppearance: { tabBarItemIconSize: 30 },
         icon: {
           type: 'drawableResource',
           name: 'person_walking',

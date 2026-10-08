@@ -35,7 +35,7 @@ internal class TabsAppearanceApplicator(
             )
 
     internal fun effectiveIconSizeDp(tabsScreen: TabsScreen): Float =
-        if (tabsScreen.iconSize > 0f) tabsScreen.iconSize else defaultIconSizeDp
+        tabsScreen.appearance?.tabBarItemIconSize?.takeIf { it > 0f } ?: defaultIconSizeDp
 
     // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
     fun applyIconBox(iconBoxDp: Float) {
@@ -60,18 +60,12 @@ internal class TabsAppearanceApplicator(
         get() = bottomNavigationView.pxToDp(defaultIndicatorHeightPx.toFloat()) - defaultIconSizeDp
 
     internal fun effectiveIndicatorWidthDp(tabsScreen: TabsScreen): Float =
-        if (tabsScreen.activeIndicatorWidth > 0f) {
-            tabsScreen.activeIndicatorWidth
-        } else {
-            effectiveIconSizeDp(tabsScreen) + autoIndicatorHorizontalPaddingDp
-        }
+        tabsScreen.appearance?.tabBarItemActiveIndicatorWidth?.takeIf { it > 0f }
+            ?: (effectiveIconSizeDp(tabsScreen) + autoIndicatorHorizontalPaddingDp)
 
     internal fun effectiveIndicatorHeightDp(tabsScreen: TabsScreen): Float =
-        if (tabsScreen.activeIndicatorHeight > 0f) {
-            tabsScreen.activeIndicatorHeight
-        } else {
-            effectiveIconSizeDp(tabsScreen) + autoIndicatorVerticalPaddingDp
-        }
+        tabsScreen.appearance?.tabBarItemActiveIndicatorHeight?.takeIf { it > 0f }
+            ?: (effectiveIconSizeDp(tabsScreen) + autoIndicatorVerticalPaddingDp)
 
     @SuppressLint("RestrictedApi")
     private fun applyActiveIndicatorSize(

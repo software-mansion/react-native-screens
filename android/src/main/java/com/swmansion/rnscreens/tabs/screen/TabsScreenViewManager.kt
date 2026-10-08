@@ -153,27 +153,6 @@ class TabsScreenViewManager :
         view.selectedIcon.tinting = TabsScreenIconTinting.fromString(value)
     }
 
-    override fun setIconSize(
-        view: TabsScreen,
-        value: Float,
-    ) {
-        view.iconSize = value
-    }
-
-    override fun setActiveIndicatorWidth(
-        view: TabsScreen,
-        value: Float,
-    ) {
-        view.activeIndicatorWidth = value
-    }
-
-    override fun setActiveIndicatorHeight(
-        view: TabsScreen,
-        value: Float,
-    ) {
-        view.activeIndicatorHeight = value
-    }
-
     override fun setImageIconResource(
         view: TabsScreen,
         value: ReadableMap?,
@@ -212,8 +191,11 @@ class TabsScreenViewManager :
             selected = if (appearance.hasKey("selected")) parseItemStateAppearance(context, appearance.getMap("selected")) else null,
             focused = if (appearance.hasKey("focused")) parseItemStateAppearance(context, appearance.getMap("focused")) else null,
             disabled = if (appearance.hasKey("disabled")) parseItemStateAppearance(context, appearance.getMap("disabled")) else null,
+            tabBarItemIconSize = appearance.readOptionalFloat("tabBarItemIconSize"),
             tabBarItemActiveIndicatorColor = appearance.readOptionalColor(context, "tabBarItemActiveIndicatorColor"),
             tabBarItemActiveIndicatorEnabled = appearance.readOptionalBoolean("tabBarItemActiveIndicatorEnabled"),
+            tabBarItemActiveIndicatorWidth = appearance.readOptionalFloat("tabBarItemActiveIndicatorWidth"),
+            tabBarItemActiveIndicatorHeight = appearance.readOptionalFloat("tabBarItemActiveIndicatorHeight"),
             tabBarItemTitleFontFamily = appearance.readOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleLargeLabelFontSize"),

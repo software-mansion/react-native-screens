@@ -95,11 +95,14 @@ function controlsRouteOptions({
         name: 'person_walking',
         tinting,
       },
-      iconSize: iconSize === 'default' ? undefined : Number(iconSize),
-      activeIndicatorWidth:
-        indicatorWidth === 'auto' ? undefined : Number(indicatorWidth),
-      activeIndicatorHeight:
-        indicatorHeight === 'auto' ? undefined : Number(indicatorHeight),
+      standardAppearance: {
+        tabBarItemIconSize:
+          iconSize === 'default' ? undefined : Number(iconSize),
+        tabBarItemActiveIndicatorWidth:
+          indicatorWidth === 'auto' ? undefined : Number(indicatorWidth),
+        tabBarItemActiveIndicatorHeight:
+          indicatorHeight === 'auto' ? undefined : Number(indicatorHeight),
+      },
     },
   };
 }
@@ -110,7 +113,7 @@ function SizedTab() {
       <Text style={styles.label}>Per-tab icon size</Text>
       <Text style={styles.hint}>
         `icon`: drawableResource swm_logo (wide logo){'\n'}
-        `iconSize`: 44{'\n'}
+        `tabBarItemIconSize`: 44{'\n'}
         {'\n'}
         The icon box of the whole bar fits the largest icon and the tallest
         active indicator across tabs.{'\n'}
@@ -132,7 +135,7 @@ function MulticolorTab() {
         {'\n'}
         `selectedIcon`: drawableResource person_walking, `tinting`: original
         {'\n'}
-        `iconSize`: 30{'\n'}
+        `tabBarItemIconSize`: 30{'\n'}
         {'\n'}
         Selected: the walker keeps its own colors.{'\n'}
         Unselected: a single-color silhouette in the system theme color.{'\n'}
@@ -238,9 +241,9 @@ function IndicatorTab() {
       <Text style={styles.hint}>
         `icon`: drawableResource star_big_off{'\n'}
         `selectedIcon`: drawableResource star_big_on{'\n'}
-        `iconSize` NOT set (system default){'\n'}
-        `activeIndicatorWidth`: 56{'\n'}
-        `activeIndicatorHeight`: 36{'\n'}
+        `tabBarItemIconSize` NOT set (system default){'\n'}
+        `tabBarItemActiveIndicatorWidth`: 56{'\n'}
+        `tabBarItemActiveIndicatorHeight`: 36{'\n'}
         {'\n'}
         This tab&apos;s active indicator is 56x36dp. The other tabs&apos; active
         indicators wrap their own icons.{'\n'}
@@ -292,21 +295,21 @@ function ControlsTab() {
           />
           <SettingsPicker<IconSizeOption>
             testID="icon-tint-and-size-icon-size-picker"
-            label="iconSize"
+            label="tabBarItemIconSize"
             value={config.iconSize}
             onValueChange={iconSize => updateConfig({ iconSize })}
             items={ICON_SIZE_OPTIONS}
           />
           <SettingsPicker<IndicatorWidthOption>
             testID="icon-tint-and-size-controls-indicator-width-picker"
-            label="activeIndicatorWidth"
+            label="tabBarItemActiveIndicatorWidth"
             value={config.indicatorWidth}
             onValueChange={indicatorWidth => updateConfig({ indicatorWidth })}
             items={INDICATOR_WIDTH_OPTIONS}
           />
           <SettingsPicker<IndicatorHeightOption>
             testID="icon-tint-and-size-controls-indicator-height-picker"
-            label="activeIndicatorHeight"
+            label="tabBarItemActiveIndicatorHeight"
             value={config.indicatorHeight}
             onValueChange={indicatorHeight => updateConfig({ indicatorHeight })}
             items={INDICATOR_HEIGHT_OPTIONS}
@@ -404,7 +407,7 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
       title: 'Sized',
       android: {
         icon: { type: 'drawableResource', name: 'swm_logo' },
-        iconSize: 44,
+        standardAppearance: { tabBarItemIconSize: 44 },
       },
     },
   },
@@ -421,7 +424,7 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
           name: 'person_walking',
           tinting: 'original',
         },
-        iconSize: 30,
+        standardAppearance: { tabBarItemIconSize: 30 },
       },
     },
   },
@@ -453,8 +456,10 @@ const ANDROID_ROUTES: TabRouteConfig[] = [
       android: {
         icon: { type: 'drawableResource', name: 'star_big_off' },
         selectedIcon: { type: 'drawableResource', name: 'star_big_on' },
-        activeIndicatorWidth: 56,
-        activeIndicatorHeight: 36,
+        standardAppearance: {
+          tabBarItemActiveIndicatorWidth: 56,
+          tabBarItemActiveIndicatorHeight: 36,
+        },
       },
     },
   },

@@ -52,7 +52,11 @@ class TabsScreen(
 
     internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            tabsScreenDelegate.get()?.onAppearanceChanged(this)
+            if (invalidateMenuItemSizesIfNeeded(oldValue, newValue)) {
+                tabsScreenDelegate.get()?.onItemSizeChange(this)
+            } else {
+                tabsScreenDelegate.get()?.onAppearanceChanged(this)
+            }
         }
     }
 
@@ -95,28 +99,22 @@ class TabsScreen(
         selectedIcon.resolveIfNeeded()
     }
 
-    // Per-tab icon size in dp; 0 means the system default.
-    // The icon box is bar-wide, so a change here invalidates the whole bar, not just this item.
-    var iconSize: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
+    private fun invalidateMenuItemSizesIfNeeded(
+        oldValue: TabsAppearance?,
+        newValue: TabsAppearance?,
+    ): Boolean {
+        val isIconSizeChanged = oldValue?.tabBarItemIconSize != newValue?.tabBarItemIconSize
+        val isActiveIndicatorSizeChanged =
+            oldValue?.tabBarItemActiveIndicatorWidth != newValue?.tabBarItemActiveIndicatorWidth ||
+                oldValue?.tabBarItemActiveIndicatorHeight != newValue?.tabBarItemActiveIndicatorHeight
+        if (isIconSizeChanged) {
             isMenuItemIconInvalidated = true
-            isMenuItemActiveIndicatorInvalidated = true
-            tabsScreenDelegate.get()?.onItemSizeChange(this)
         }
-    }
-
-    var activeIndicatorWidth: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
+        if (isIconSizeChanged || isActiveIndicatorSizeChanged) {
             isMenuItemActiveIndicatorInvalidated = true
-            tabsScreenDelegate.get()?.onItemSizeChange(this)
+            return true
         }
-    }
-
-    var activeIndicatorHeight: Float by Delegates.observable(0f) { _, oldValue, newValue ->
-        if (newValue != oldValue) {
-            isMenuItemActiveIndicatorInvalidated = true
-            tabsScreenDelegate.get()?.onItemSizeChange(this)
-        }
+        return false
     }
 
     // endregion
