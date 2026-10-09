@@ -219,6 +219,7 @@ export { default as Test4651 } from './Test4651';
 export { default as Test4702 } from './Test4702';
 export { default as Test4709 } from './Test4709';
 export { default as Test4729 } from './Test4729';
+export { default as Test4732 } from './Test4732';
 export { default as Test4785 } from './Test4785';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
