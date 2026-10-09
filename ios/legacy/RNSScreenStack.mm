@@ -100,20 +100,22 @@ namespace react = facebook::react;
 
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
-    BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
-        (screenController.presentedViewController != nil &&
-         ![screenController.presentedViewController isBeingDismissed]);
-    BOOL isPresentingSearchController =
-        [screenController.presentedViewController isKindOfClass:UISearchController.class];
-
-    // Calculate header height during simple transition from one screen to another.
-    // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
-    // header height, as it could have nested stack.
-    if (![screenController hasNestedStack] && (isPresentingSearchController || isNotDismissingModal)) {
-      [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
-    }
-
+    [self notifyHeaderHeightChangeToScreen:screenController];
     [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
+  }
+}
+
+- (void)notifyHeaderHeightChangeToScreen:(RNSScreen *)screenController
+{
+  BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
+      (screenController.presentedViewController != nil && ![screenController.presentedViewController isBeingDismissed]);
+  BOOL isPresentingSearchController = [screenController.presentedViewController isKindOfClass:UISearchController.class];
+
+  // Calculate header height during simple transition from one screen to another.
+  // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
+  // header height, as it could have nested stack.
+  if (![screenController hasNestedStack] && (isPresentingSearchController || isNotDismissingModal)) {
+    [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
 }
 
@@ -190,6 +192,14 @@ namespace react = facebook::react;
     if (![self.topViewController isKindOfClass:[RNSScreen class]]) {
       return;
     }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    // The bar minimization (iOS 27+) changes the visible height of the bar without changing its frame and without
+    // layout of our view, so this is the only place where we can follow it.
+    if (@available(iOS 27.0, *)) {
+      [self notifyHeaderHeightChangeToScreen:static_cast<RNSScreen *>(self.topViewController)];
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
     auto headerConfig = static_cast<RNSScreen *>(self.topViewController).screenView.findHeaderConfig;
     if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
