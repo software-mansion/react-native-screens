@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.legacy.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.legacy.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.legacy.ext.asScreenStackFragment
+import com.swmansion.rnscreens.utils.RNSLog
 import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 
@@ -539,6 +540,16 @@ class Screen(
                     pxToDp(headerHeight.toFloat()).toDouble(),
                 ),
             )
+    }
+
+    internal fun selectSheetDetent(index: Int) {
+        val sheetDelegate = fragment?.asScreenStackFragment()?.sheetDelegate
+        if (!usesFormSheetPresentation() || sheetDelegate == null) {
+            RNSLog.w(TAG, "[RNScreens] selectDetent called on a screen that isn't presented as a form sheet. Command ignored.")
+            return
+        }
+
+        sheetDelegate.selectDetent(index)
     }
 
     internal fun onSheetDetentChanged(

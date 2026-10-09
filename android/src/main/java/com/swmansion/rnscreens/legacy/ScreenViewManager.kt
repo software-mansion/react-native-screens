@@ -385,6 +385,13 @@ open class ScreenViewManager :
         view.sheetInitialDetentIndex = value
     }
 
+    override fun selectDetent(
+        view: Screen,
+        index: Int,
+    ) {
+        view.selectSheetDetent(index)
+    }
+
     override fun setScreenId(
         view: Screen,
         value: String?,
