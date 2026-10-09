@@ -5,18 +5,29 @@ on:
       - main
     paths:
       - '.github/workflows/ios-e2e-test-fabric.yml'
+      - '.github/actions/argent-server/**'
+      - '.argent/**'
+      - 'scripts/e2e/argent-failure-summary.sh'
       - 'RNScreens.podspec'
       - 'package.json'
       - 'ios/**'
       - 'common/**'
       - 'FabricExample/**'
+      - 'apps/**'
       - 'src/**'
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      argent-only:
+        description: Skip the Detox tests; only build the app and run the Argent flows.
+        type: boolean
+        default: false
 concurrency:
-  group: ios-e2e-fabric-${{ github.ref }}
+  # Manual runs get their own group, so dispatching twice does not cancel the
+  # first run.
+  group: ios-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
   cancel-in-progress: true
 jobs:
   build:
@@ -49,7 +60,7 @@ jobs:
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-ios
-        # Hands the release build to the test jobs (they run on separate
+        # Hands the release build to the test and argent jobs (they run on separate
         # machines). tar keeps the executable bit, which upload-artifact drops.
       - name: Package app
         run: |
@@ -66,6 +77,7 @@ jobs:
     # iPhone and iPad suites run in parallel on separate machines, both on the
     # app built once above. fail-fast off, so one failing does not cancel the other.
     needs: build
+    if: ${{ !inputs.argent-only }}
     runs-on: macos-26-xlarge
     timeout-minutes: 90
     strategy:
@@ -117,3 +129,79 @@ jobs:
         with:
           name: ios-fail-screen-shots-${{ matrix.device }}
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
+
+  argent:
+    # Argent flows on the same release build, in parallel with the Detox
+    # suites: own time budget and a freshly created simulator.
+    needs: build
+    runs-on: macos-26-xlarge
+    timeout-minutes: 30
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      # Only needed to run the Argent CLI — the app is downloaded, not built.
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      # Same Xcode as the build, so the simulator runtime matches the SDK.
+      - name: Use latest stable Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.2'
+      - name: Download app built by the build job
+        uses: actions/download-artifact@v4
+        with:
+          name: build-ios-app
+          path: ${{ runner.temp }}/app
+      - name: Unpack app
+        run: |
+          tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$RUNNER_TEMP/app"
+          echo "APP_PATH=$RUNNER_TEMP/app/Release-iphonesimulator/FabricExample.app" >> "$GITHUB_ENV"
+      # iPhone 17 on iOS 26.5 is what the committed iOS baselines were recorded
+      # on (1206x2622). The runtime is pinned: tab bar rendering differs between
+      # iOS minor versions, so a newer runtime on the runner image would show up
+      # as snapshot diffs. A freshly created simulator, never one another job has used.
+      - name: Boot iPhone 17 simulator
+        env:
+          RUNTIME: com.apple.CoreSimulator.SimRuntime.iOS-26-5
+        run: |
+          if ! xcrun simctl list runtimes -j | jq -e --arg r "$RUNTIME" \
+            '.runtimes[] | select(.identifier == $r and .isAvailable)' > /dev/null; then
+            echo "iOS runtime $RUNTIME (the baselines' runtime) is not available on this runner:" >&2
+            xcrun simctl list runtimes >&2
+            exit 1
+          fi
+          UDID=$(xcrun simctl create "Argent iPhone 17" com.apple.CoreSimulator.SimDeviceType.iPhone-17 "$RUNTIME")
+          echo "Booting $UDID ($RUNTIME)"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID"
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+      - name: Install app on simulator
+        run: xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
+      - name: Install Argent and start the tool-server
+        uses: ./.github/actions/argent-server
+      # --output keeps baseline/current/diff PNGs of every mismatching snapshot.
+      - name: Run Argent flows
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/argent-out"
+          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
+            --output "$RUNNER_TEMP/argent-out/snapshots" 2>&1 | tee "$RUNNER_TEMP/argent-out/argent-flows.log"
+      - name: Capture screen at failure
+        if: ${{ failure() }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/argent-out"
+          xcrun simctl io "$SIMULATOR_UDID" screenshot "$RUNNER_TEMP/argent-out/screen-at-failure.png" || true
+      - name: Summarize Argent failure
+        if: ${{ failure() }}
+        run: |
+          cp "${ARGENT_SERVER_LOG:-/nonexistent}" "$RUNNER_TEMP/argent-out/" 2>/dev/null || true
+          scripts/e2e/argent-failure-summary.sh ios "$RUNNER_TEMP/argent-out"
+      - name: Upload Argent failure artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: argent-ios-failure
+          path: ${{ runner.temp }}/argent-out
+          if-no-files-found: ignore
