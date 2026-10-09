@@ -584,10 +584,15 @@ RNS_IGNORE_SUPER_CALL_END
   navctr.navigationBar.backgroundColor = appearance.backgroundColor;
 #endif
 
-  // With the system background and no large title customization, leave the scroll edge appearance to UIKit: the bar
-  // is transparent at the scroll edge and uses the standard appearance once content scrolls under it.
+  // With the system background and no large title customization, the bar is transparent at the scroll edge and uses
+  // the standard appearance once content scrolls under it, as UIKit does by default. The scroll edge appearance is set
+  // on the item rather than left nil, so it keeps the item's title attributes and isn't replaced by a scroll edge
+  // appearance set on the navigation bar (for example through `UINavigationBar.appearance()`).
   if ([self usesSystemBackground:config] && config.largeTitleBackgroundColor == nil && !config.largeTitleHideShadow) {
-    navitem.scrollEdgeAppearance = nil;
+    UINavigationBarAppearance *scrollEdgeAppearance =
+        [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
+    [scrollEdgeAppearance configureWithTransparentBackground];
+    navitem.scrollEdgeAppearance = scrollEdgeAppearance;
   } else {
     navitem.scrollEdgeAppearance = [self buildScrollEdgeAppearance:appearance withConfig:config];
   }
