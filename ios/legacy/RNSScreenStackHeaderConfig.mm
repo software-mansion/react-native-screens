@@ -217,7 +217,10 @@ RNS_IGNORE_SUPER_CALL_END
   [self updateShadowStateWithSize:navigationBar.frame.size
                        edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
                       frameOrigin:navBarFrameInScreenView.origin];
-  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+  // Iterate over a copy. Updating a subview's shadow state can trigger a synchronous commit that mounts or
+  // unmounts header subviews, which mutates `reactSubviews` while we're still enumerating it.
+  // See: https://github.com/software-mansion/react-native-screens/issues/4811
+  for (RNSScreenStackHeaderSubview *subview in [self.reactSubviews copy]) {
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
