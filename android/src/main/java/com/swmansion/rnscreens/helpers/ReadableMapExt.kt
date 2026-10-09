@@ -70,8 +70,8 @@ internal fun ReadableMap.readImageUri(
 // region Validation
 
 internal fun ReadableMap.requireNotNullString(key: String): String =
-    requireNotNull(this.getString(key)) {
-        "[RNScreens] $key property must not be null."
+    requireNotNull(readOptionalString(key)) {
+        "[RNScreens] $key property must be a non-null string."
     }
 
 // endregion

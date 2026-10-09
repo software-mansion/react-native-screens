@@ -15,6 +15,7 @@ export type {
   StackScreenActivityMode,
   StackScreenEventHandler,
   StackScreenProps,
+  StackScreenAnimation,
 } from './screen';
 
 export type {
