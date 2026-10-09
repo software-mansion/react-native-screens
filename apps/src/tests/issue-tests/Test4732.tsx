@@ -9,8 +9,6 @@ import {
 import { SafeAreaView } from 'react-native-screens/experimental';
 import { SettingsPicker, ThemedText } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import { scenarioDescription } from './scenario-description';
-import { createScenario } from '@apps/tests/shared/helpers';
 
 const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
   'automatic',
@@ -18,7 +16,7 @@ const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
   'disabled',
 ];
 
-function TestStackV4HeaderBarSafeAreaAdjustmentIOS() {
+export default function Test4732() {
   const [safeAreaAdjustment, setSafeAreaAdjustment] =
     React.useState<HeaderSafeAreaAdjustment>('automatic');
 
@@ -59,11 +57,6 @@ function TestStackV4HeaderBarSafeAreaAdjustmentIOS() {
     </ScreenStack>
   );
 }
-
-export default createScenario(
-  TestStackV4HeaderBarSafeAreaAdjustmentIOS,
-  scenarioDescription,
-);
 
 const styles = StyleSheet.create({
   container: {
