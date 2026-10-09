@@ -63,6 +63,14 @@ namespace react = facebook::react;
 + (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigUserInterfaceStyle)userInterfaceStyle;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
++ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior API_AVAILABLE(ios(27.0));
+
++ (UIBarMinimizationRestorationBehavior)UIBarMinimizationRestorationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigRestorationBehavior)restorationBehavior API_AVAILABLE(ios(27.0));
+#endif // Check for iOS >= 27
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 
 + (RNSBlurEffectStyle)RNSBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
