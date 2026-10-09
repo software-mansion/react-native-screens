@@ -44,6 +44,49 @@ function ensureNkfGem(appPath, { runCommand, logPath }) {
   runCommand('bundle', ['add', 'nkf'], appPath, logPath);
 }
 
+// iOS debug builds connect to Metro on 8081: `run ios --port` sets the port
+// through the RCT_METRO_PORT macro, which the prebuilt React Native core has
+// already compiled in. Instead, the app sets `jsLocation` — the setting behind
+// Dev Menu > "Configure Bundler" — which the bundle URL and the packager
+// connection (reload, dev menu from the Metro terminal) both read.
+// It is set on every launch, also to 8081: the value persists in the app's
+// user defaults, which outlive reinstalling the app.
+// The code goes right before the React Native factory is created, so before
+// React Native starts: in AppDelegate (templates up to RN 0.87) or in
+// SceneDelegate (a separate file in the RN 0.88+ template).
+function setIosMetroLocation(config) {
+  const iosAppDir = path.join(config.paths.app, 'ios', config.appName);
+  const factoryCreation = /^([ \t]*).*\bRCTReactNativeFactory\(/m;
+  const sourcePath = ['SceneDelegate.swift', 'AppDelegate.swift']
+    .map(file => path.join(iosAppDir, file))
+    .find(
+      file =>
+        fs.existsSync(file) &&
+        factoryCreation.test(fs.readFileSync(file, 'utf8')),
+    );
+  if (!sourcePath) {
+    throw new Error(
+      `Cannot find where React Native starts ('RCTReactNativeFactory(') in ${iosAppDir}.`,
+    );
+  }
+
+  const source = fs.readFileSync(sourcePath, 'utf8');
+  const indent = source.match(factoryCreation)[1];
+  const setMetroLocation = `#if DEBUG
+${indent}let deviceIp = Bundle.main.path(forResource: "ip", ofType: "txt")
+${indent}  .flatMap { try? String(contentsOfFile: $0, encoding: .utf8) }?
+${indent}  .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+${indent}let metroHost = deviceIp.isEmpty ? "localhost" : deviceIp
+${indent}RCTBundleURLProvider.sharedSettings().jsLocation = "\\(metroHost):${config['metro-port']}"
+#endif
+
+`;
+  fs.writeFileSync(
+    sourcePath,
+    source.replace(factoryCreation, match => setMetroLocation + match),
+  );
+}
+
 function installIosPods(config, { runTask, runCommand }) {
   const { paths } = config;
 
@@ -66,7 +109,14 @@ function installIosPods(config, { runTask, runCommand }) {
 }
 
 function buildAndroidRunArgs(config) {
-  const args = ['run', 'android', '--mode', config.variant];
+  const args = [
+    'run',
+    'android',
+    '--mode',
+    config.variant,
+    '--port',
+    String(config['metro-port']),
+  ];
   if (config['android-device']) {
     args.push('--device', config['android-device']);
   }
@@ -74,7 +124,14 @@ function buildAndroidRunArgs(config) {
 }
 
 function buildIosRunArgs(config) {
-  const args = ['run', 'ios', '--mode', config.capitalizedVariant];
+  const args = [
+    'run',
+    'ios',
+    '--mode',
+    config.capitalizedVariant,
+    '--port',
+    String(config['metro-port']),
+  ];
   if (config['ios-udid']) {
     args.push('--udid', config['ios-udid']);
   } else if (config['ios-device']) {
@@ -90,9 +147,10 @@ function buildAndRun(config, utils) {
   const { paths, capitalizedVariant, platform } = config;
   const runIos = platform === 'ios' || platform === 'both';
   const runAndroid = platform === 'android' || platform === 'both';
+  const metroPort = config['metro-port'];
 
-  runTask('Freeing Metro port 8081', paths.log, () => {
-    freePort();
+  runTask(`Freeing Metro port ${metroPort}`, paths.log, () => {
+    freePort(metroPort, paths.app);
   });
 
   if (runAndroid) {
@@ -106,6 +164,10 @@ function buildAndRun(config, utils) {
   }
 
   if (runIos) {
+    runTask(`Pointing iOS app at Metro port ${metroPort}`, paths.log, () => {
+      setIosMetroLocation(config);
+    });
+
     installIosPods(config, utils);
 
     runTask(`Building & running iOS (${capitalizedVariant})`, paths.log, () => {
