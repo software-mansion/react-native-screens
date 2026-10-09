@@ -78,6 +78,8 @@ class FormSheetHost(
     // hit-testing so touches reach the views behind it.
     override val pointerEvents: PointerEvents = PointerEvents.NONE
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
