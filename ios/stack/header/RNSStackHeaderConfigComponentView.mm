@@ -73,6 +73,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (@available(iOS 27.0, *)) {
     _minimizationBehavior = UIBarMinimizationBehaviorAutomatic;
     _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+    _safeAreaAdjustment = UIBarMinimizationSafeAreaAdjustmentAutomatic;
   }
 #endif // Check for iOS >= 27
   _backButtonTitle = nil;
@@ -474,6 +475,19 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 #endif // Check for iOS >= 27
       if (newHeaderProps.restorationBehavior != react::RNSStackHeaderConfigIOSRestorationBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (oldHeaderProps.safeAreaAdjustment != newHeaderProps.safeAreaAdjustment) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    if (@available(iOS 27.0, *)) {
+      _safeAreaAdjustment =
+          rnscreens::conversion::UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjustment(
+              newHeaderProps.safeAreaAdjustment);
+    } else
+#endif // Check for iOS >= 27
+      if (newHeaderProps.safeAreaAdjustment != react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Automatic) {
+        RCTLogWarn(@"[RNScreens] safeAreaAdjustment is supported for iOS >= 27");
       }
   }
 
