@@ -16,12 +16,20 @@ import {
 import { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
 import { Button, ScrollView, Text, StyleSheet, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
-import { SettingsSwitch, ToastProvider, useToast } from '@apps/shared';
+import {
+  SettingsPicker,
+  SettingsSwitch,
+  ToastProvider,
+  useToast,
+} from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import {
+  COLOR_OPTIONS,
   HeaderAppearanceSection,
   buildHeaderAppearance,
   makeDefaultHeaderAppearanceConfig,
+  resolveColor,
+  type ColorOption,
   type HeaderAppearanceConfig,
 } from '@apps/tests/shared/components/stack-v5/HeaderAppearanceControls';
 
@@ -45,6 +53,8 @@ interface Config {
   // so that button appearance text attributes have visible effect.
   textItems: boolean;
   overflow: boolean;
+  // Applied as `tintColor` to all four items.
+  itemTint: ColorOption;
   standard: HeaderAppearanceConfig<ButtonSlotKey>;
   scrollEdge: HeaderAppearanceConfig<ButtonSlotKey>;
 }
@@ -52,6 +62,7 @@ interface Config {
 const DEFAULT_CONFIG: Config = {
   textItems: false,
   overflow: false,
+  itemTint: 'default',
   standard: makeDefaultHeaderAppearanceConfig(BUTTON_SLOTS),
   scrollEdge: makeDefaultHeaderAppearanceConfig(BUTTON_SLOTS),
 };
@@ -86,6 +97,8 @@ const buildHeaderConfig = (
           icon: { type: 'sfSymbol', name: sfSymbol } as const,
         };
 
+  const tintColor = resolveColor(config.itemTint);
+
   return {
     title,
     ios: {
@@ -97,6 +110,7 @@ const buildHeaderConfig = (
           id: 'prominent-disabled-item',
           ...itemContent('dd', 'Prominent Disabled', '4.circle'),
           variant: 'prominent',
+          tintColor,
           disabled: true,
           onPress: () => showToast('Prominent disabled item pressed'),
         },
@@ -110,6 +124,7 @@ const buildHeaderConfig = (
           id: 'prominent-item',
           ...itemContent('cc', 'Prominent', '3.circle'),
           variant: 'prominent',
+          tintColor,
           onPress: () => showToast('Prominent item pressed'),
         },
         {
@@ -121,6 +136,7 @@ const buildHeaderConfig = (
           type: 'item',
           id: 'disabled-item',
           ...itemContent('bb', 'Disabled', '2.circle'),
+          tintColor,
           disabled: true,
           onPress: () => showToast('Disabled item pressed'),
         },
@@ -133,6 +149,7 @@ const buildHeaderConfig = (
           type: 'item',
           id: 'regular-item',
           ...itemContent('aa', 'Regular', '1.circle'),
+          tintColor,
           onPress: () => showToast('Regular item pressed'),
         },
         ...(config.overflow
@@ -208,6 +225,13 @@ function ConfigControls() {
         testID="push-to-overflow-switch"
         value={config.overflow}
         onValueChange={v => setConfig(prev => ({ ...prev, overflow: v }))}
+      />
+
+      <SettingsPicker<ColorOption>
+        label="item tintColor"
+        value={config.itemTint}
+        onValueChange={v => setConfig(prev => ({ ...prev, itemTint: v }))}
+        items={COLOR_OPTIONS}
       />
       <HeaderAppearanceSection
         label="standardAppearance"
