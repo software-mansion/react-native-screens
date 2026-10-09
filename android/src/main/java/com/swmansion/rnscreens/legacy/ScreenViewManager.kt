@@ -268,6 +268,11 @@ open class ScreenViewManager :
         value: Int,
     ) = Unit
 
+    override fun setTransitionStartDeferred(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
+
     override fun setHideKeyboardOnSwipe(
         view: Screen?,
         value: Boolean,

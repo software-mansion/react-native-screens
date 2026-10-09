@@ -11,6 +11,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RCTSurfaceTouchHandler+RNSUtility.h"
+#import "RNSDeferredTransitionStart.h"
 #import "RNSDefines.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
@@ -851,7 +852,13 @@ RNS_IGNORE_SUPER_CALL_END
       // otherwise the screen will be just popped immediately due to no animation
       ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwipingWithPanGesture ||
        [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
-    return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+    RNSScreenStackAnimator *animator = [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+    if (operation == UINavigationControllerOperationPush && screen.transitionStartDeferred &&
+        screen.stackAnimation == RNSScreenStackAnimationFade && screen.transitionDuration.doubleValue > 0 &&
+        !_customAnimation && _interactionController == nil) {
+      animator.deferredTransitionStart = [[RNSDeferredTransitionStart alloc] initWithScreen:screen animator:animator];
+    }
+    return animator;
   }
   return nil;
 }
@@ -1034,6 +1041,12 @@ RNS_IGNORE_SUPER_CALL_END
                          interactionControllerForAnimationController:
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
+  if ([animationController isKindOfClass:RNSScreenStackAnimator.class]) {
+    RNSDeferredTransitionStart *deferred = ((RNSScreenStackAnimator *)animationController).deferredTransitionStart;
+    if (deferred != nil) {
+      return deferred;
+    }
+  }
   RNSScreenView *fromView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
   RNSScreenView *toView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
   // we can intercept clicking back button here, we check reactSuperview since this method also fires when
@@ -1455,6 +1468,12 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
+  for (RNSScreenView *screen in _reactSubviews) {
+    if (!screen.transitionStartDeferred) {
+      [screen.deferredTransitionStart releaseTransition];
+    }
+  }
+
   for (const auto &mutation : transaction.getMutations()) {
     // Note that self.tag might be invalid in cases this stack is removed.
     // This mostlikely does not cause any problems now, but it is something
