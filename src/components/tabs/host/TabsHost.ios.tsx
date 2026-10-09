@@ -57,7 +57,8 @@ function TabsHost(props: TabsHostProps) {
       onMoreTabSelected={ios?.onMoreTabSelected}>
       {children}
       {ios?.bottomAccessory && isIOS26OrHigher && (
-        <TabsBottomAccessory>
+        <TabsBottomAccessory
+          onEnvironmentChange={ios.onBottomAccessoryEnvironmentChange}>
           <TabsBottomAccessoryContent environment="regular">
             {ios.bottomAccessory('regular')}
           </TabsBottomAccessoryContent>
