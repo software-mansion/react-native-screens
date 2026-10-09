@@ -13,8 +13,6 @@ import {
 import { SettingsPicker, ThemedText } from '@apps/shared';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Colors } from '@apps/shared/styling';
-import { scenarioDescription } from './scenario-description';
-import { createScenario } from '@apps/tests/shared/helpers';
 
 const MINIMIZATION_BEHAVIORS: HeaderMinimizationBehavior[] = [
   'automatic',
@@ -44,7 +42,7 @@ function ResizingItem() {
   );
 }
 
-function TestStackV4HeaderBarMinimizationIOS() {
+export default function Test4729() {
   const [minimizationBehavior, setMinimizationBehavior] =
     React.useState<HeaderMinimizationBehavior>('automatic');
   const [restorationBehavior, setRestorationBehavior] =
@@ -99,11 +97,6 @@ function TestStackV4HeaderBarMinimizationIOS() {
     </ScreenStack>
   );
 }
-
-export default createScenario(
-  TestStackV4HeaderBarMinimizationIOS,
-  scenarioDescription,
-);
 
 const styles = StyleSheet.create({
   container: {
