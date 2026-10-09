@@ -1,8 +1,14 @@
 import { element, by, waitFor } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
-import { tapWithinFrame } from './gestures';
+import { longPressWithinFrame, tapWithinFrame } from './gestures';
 import { getFrame } from './matchers';
-import { headerTitle } from './header-items-ios';
+import {
+  headerItem,
+  headerItemMatcher,
+  headerTitle,
+  isIOS27,
+  type HeaderItemOptions,
+} from './header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
@@ -107,6 +113,37 @@ export async function openContextMenu(
     await anchor.longPress();
   } else {
     await anchor.tap();
+  }
+  await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
+}
+
+/**
+ * Opens the menu of the header item titled `title`. On iOS 27 the item cannot
+ * be gestured on as an element (see `header-items-ios.ts`), so it is tapped or
+ * long-pressed by coordinates.
+ */
+export async function openHeaderItemMenu(
+  title: string,
+  {
+    control,
+    gesture = 'tap',
+    timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+  }: HeaderItemOptions & OpenContextMenuOptions = {},
+) {
+  if (!isIOS27) {
+    await openContextMenu(headerItem(title, { control }), { gesture, timeout });
+    return;
+  }
+
+  await waitFor(headerItem(title, { control })).toExist().withTimeout(timeout);
+  const frame = await getFrame(
+    headerItemMatcher(title, { control }),
+    `header item "${title}"`,
+  );
+  if (gesture === 'longPress') {
+    await longPressWithinFrame(frame);
+  } else {
+    await tapWithinFrame(frame);
   }
   await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
 }
