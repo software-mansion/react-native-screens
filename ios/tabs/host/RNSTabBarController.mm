@@ -331,7 +331,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)performContainerUpdate
 {
-  _isHandlingUserTabSelection = NO;
   _isHandlingExplicitSelectionUpdate = YES;
   [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
@@ -626,6 +625,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)applySelectedScreenController:(nonnull UIViewController *)screenController
 {
+  // Cleared only when a programmatic selection is applied, not on every container update:
+  // for `UISearchTab`, UIKit runs the search activation transition between `shouldSelectTab:`
+  // and `didSelectTab:`, and a mount transaction landing in that gap must not drop the user selection.
+  _isHandlingUserTabSelection = NO;
 #if RNS_UITAB_API_SDK_AVAILABLE
   if (RNS_UITAB_API_ENABLED) {
     if (![self isMoreNavigationControllerTabBarItemSelected]) {
