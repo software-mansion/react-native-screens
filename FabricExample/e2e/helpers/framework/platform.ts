@@ -43,6 +43,22 @@ function compareVersions(
   }
 }
 
+/**
+ * `true` when `version` is the release `targetVersion` names: any minor of it
+ * for a MAJOR target, that exact minor for a MAJOR.MINOR one.
+ */
+function isVersionMatching(version: string, targetVersion: string) {
+  assertSupportedVersionString(version);
+  assertSupportedVersionString(targetVersion);
+
+  const [major, minor = '0'] = version.split('.');
+  const [targetMajor, targetMinor] = targetVersion.split('.');
+  return (
+    Number(major) === Number(targetMajor) &&
+    (targetMinor === undefined || Number(minor) === Number(targetMinor))
+  );
+}
+
 /** `true` when `version` is at least `minimumVersion`. */
 function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
   assertSupportedVersionString(version);
@@ -51,8 +67,10 @@ function isVersionEqualOrHigherThan(version: string, minimumVersion: string) {
   return compareVersions(version, minimumVersion) >= 0;
 }
 
-export const describeIfIOS =
-  device.getPlatform() === 'ios' ? describe : describe.skip;
+/** Every iOS guard below derives from this, so none can leak onto Android. */
+const isIOS = device.getPlatform() === 'ios';
+
+export const describeIfIOS = isIOS ? describe : describe.skip;
 
 export const describeIfAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
@@ -62,38 +80,43 @@ export const describeIfAndroid =
  * RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)". See scripts/e2e/ios-devices.js.
  */
 const isIPadTarget =
-  device.getPlatform() === 'ios' &&
-  /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
+  isIOS && /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
 
 export const describeIfIPad = isIPadTarget ? describe : describe.skip;
 
 /** `true` on iOS at `version` or newer; `false` on Android. */
 export function isIOSVersionAtLeast(version: string): boolean {
-  return (
-    device.getPlatform() === 'ios' &&
-    isVersionEqualOrHigherThan(getIOSVersionNumber(), version)
-  );
+  return isIOS && isVersionEqualOrHigherThan(getIOSVersionNumber(), version);
 }
 
-/** Suites for iOS 26+ only features; skipped on Android and older iOS. */
-export const describeIfIOS26 = isIOSVersionAtLeast('26.0')
-  ? describe
-  : describe.skip;
+/**
+ * Suite guards for version-specific behavior. Each takes a MAJOR or
+ * MAJOR.MINOR version and resolves to `describe` or `describe.skip`, so a new
+ * iOS release needs no new export here.
+ */
 
-/** Suites for iOS 27+ only features; skipped on Android and older iOS. */
-export const describeIfIOS27 = isIOSVersionAtLeast('27.0')
-  ? describe
-  : describe.skip;
+/** Suites for features added in iOS `version`; skipped on Android and older iOS. */
+export const describeIfIOSAtLeast = (version: string) =>
+  isIOSVersionAtLeast(version) ? describe : describe.skip;
 
 /**
- * Suites for behavior that iOS 27 changed, kept on the versions before it.
- * Unlike the `describeIfIOS*` guards this also runs on Android - the version
- * check is `false` there - so nest it inside `describeIfIOS` when the suite is
- * iOS-only.
+ * Suites for behavior that iOS `version` changed, kept on the releases before
+ * it; skipped on Android and from `version` on. `isIOS` is required on its own
+ * because `isIOSVersionAtLeast` is also `false` on Android, so negating that
+ * alone would run the suite there.
  */
-export const describeIfBelowIOS27 = isIOSVersionAtLeast('27.0')
-  ? describe.skip
-  : describe;
+export const describeIfIOSBelow = (version: string) =>
+  isIOS && !isIOSVersionAtLeast(version) ? describe : describe.skip;
 
-export const describeIfIPadOS26 =
-  isIPadTarget && isIOSVersionAtLeast('26.0') ? describe : describe.skip;
+/**
+ * Suites for behavior that exists on iOS `version` only; skipped on Android and
+ * every other release. `'26'` runs on any 26.x, `'26.2'` on 26.2 only.
+ */
+export const describeIfIOSVersion = (version: string) =>
+  isIOS && isVersionMatching(getIOSVersionNumber(), version)
+    ? describe
+    : describe.skip;
+
+/** Suites for iPad-only features added in iPadOS `version`. */
+export const describeIfIPadOSAtLeast = (version: string) =>
+  isIPadTarget && isIOSVersionAtLeast(version) ? describe : describe.skip;
