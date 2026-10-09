@@ -152,9 +152,10 @@
     RNSMenuItemType effectiveItemType = [self resolveItemType:itemData.itemType
                                         insideSingleSelection:insideSingleSelection];
 
-    RCTAssert(!(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
-              @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
-              itemData.menuElementId);
+    RCTAssert(
+        !(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
+        @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
+        itemData.menuElementId);
 
     if (effectiveItemType == RNSMenuItemTypeToggle) {
       if (insideSingleSelection && itemData.initialToggleState) {
@@ -285,6 +286,7 @@
                                          [weakDelegate didPressMenuItem:data.menuElementId];
                                        }];
 
+  action.state = data.state;
   [self decorateActionKeepsMenuPresented:action withData:data];
 
   return action;

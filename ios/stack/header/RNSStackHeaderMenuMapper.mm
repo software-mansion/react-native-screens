@@ -13,8 +13,15 @@ static NSSet<NSString *> *const kRNSAllowedMenuKeys = [NSSet setWithObjects:@"id
                                                                             @"displayAsPalette",
                                                                             @"icon",
                                                                             nil];
-static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
-    setWithObjects:@"id", @"type", @"title", @"itemType", @"initialToggleState", @"keepsMenuPresented", @"icon", nil];
+static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet setWithObjects:@"id",
+                                                                                @"type",
+                                                                                @"title",
+                                                                                @"itemType",
+                                                                                @"state",
+                                                                                @"initialToggleState",
+                                                                                @"keepsMenuPresented",
+                                                                                @"icon",
+                                                                                nil];
 
 @implementation RNSStackHeaderMenuMapper
 
@@ -72,19 +79,31 @@ static NSSet<NSString *> *const kRNSAllowedMenuItemKeys = [NSSet
 
     RNSStackHeaderIconData *icon = [RNSStackHeaderIconMapper iconFromDictionary:dict[@"icon"]];
 
-    return [[RNSStackHeaderMenuItemData alloc] initWithId:[self stringForKey:@"id" in:dict]
-                                                    title:[self stringForKey:@"title" in:dict]
-                                                 itemType:[self itemTypeFromString:[self stringForKey:@"itemType"
-                                                                                                   in:dict]]
-                                       initialToggleState:[self boolForKey:@"initialToggleState" in:dict]
-                                       keepsMenuPresented:[self boolForKey:@"keepsMenuPresented" in:dict]
-                                                     icon:icon];
+    return [[RNSStackHeaderMenuItemData alloc]
+                initWithId:[self stringForKey:@"id" in:dict]
+                     title:[self stringForKey:@"title" in:dict]
+                  itemType:[self itemTypeFromString:[self stringForKey:@"itemType" in:dict]]
+                     state:[self menuItemStateFromString:[self stringForKey:@"state" in:dict]]
+        initialToggleState:[self boolForKey:@"initialToggleState" in:dict]
+        keepsMenuPresented:[self boolForKey:@"keepsMenuPresented" in:dict]
+                      icon:icon];
   }
 
   return nil;
 }
 
 #pragma mark - Helpers
+
++ (UIMenuElementState)menuItemStateFromString:(nullable NSString *)string
+{
+  if ([string isEqualToString:@"on"]) {
+    return UIMenuElementStateOn;
+  }
+  if ([string isEqualToString:@"mixed"]) {
+    return UIMenuElementStateMixed;
+  }
+  return UIMenuElementStateOff;
+}
 
 + (void)validateMenuKeys:(NSDictionary *)dict
 {
