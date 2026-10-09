@@ -3,6 +3,7 @@
 #if defined(__cplusplus)
 #import <React/RCTConvert.h>
 #endif // __cplusplus
+#import "RNSDefines.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
@@ -117,6 +118,16 @@ NS_ASSUME_NONNULL_END
  * re-applies the config only once, with all subviews already updated.
  */
 - (void)setNeedsViewControllerUpdate;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+/**
+ * Requests layout of all header subviews attached to the view hierarchy. Header subview updates its state in shadow
+ * tree when it is laid out, therefore this method should be called when `navBar` lays out its subviews - the header
+ * subviews are laid out later in the same layout pass, after UIKit has positioned the content of the navigation bar.
+ * When the content of `navBar` is moved out of the bar (bar minimization on iOS 27+) this method does nothing.
+ */
+- (void)setNeedsLayoutForHeaderSubviewsInNavigationBar:(nonnull UINavigationBar *)navBar;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @end
 
