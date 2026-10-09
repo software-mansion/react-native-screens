@@ -1,6 +1,8 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
+import type { NativeMatcher } from 'detox/detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
+import { tapWithinFrame } from '@e2e/framework/gestures';
 import { getMatches } from '@e2e/framework/matchers';
 import {
   CLASS_NAME_UI_TAB_BAR,
@@ -17,6 +19,20 @@ async function tapOptionButton(optionText: string) {
 async function getTabBarItemFrameX(tabLabel: string): Promise<number> {
   const [item] = await getMatches(by.label(tabLabel));
   return item.frame.x;
+}
+
+/**
+ * Taps the first tab bar item matched by `matcher`. On iOS 26+ the tap goes by
+ * coordinates: Detox's visibility check intermittently rejects the Liquid
+ * Glass `_UITabButton` ("View is not hittable at its visible point").
+ */
+async function tapTabBarItem(matcher: NativeMatcher) {
+  if (isIOSVersionAtLeast('26.0')) {
+    const [item] = await getMatches(matcher);
+    await tapWithinFrame(item.frame);
+  } else {
+    await element(matcher).atIndex(0).tap();
+  }
 }
 
 async function tapSystemTitleOption() {
@@ -61,7 +77,7 @@ describeIfIOS('Tab Bar System Item', () => {
     });
 
     it('tab bar item icon and title should remain the same when switching between tabs', async () => {
-      await element(by.id('custom-tab-item')).tap();
+      await tapTabBarItem(by.id('custom-tab-item'));
       await expect(element(by.text('Runtime Config'))).toBeVisible();
       await expect(
         element(by.id('book.fill').and(by.label('bookmark'))).atIndex(0),
@@ -70,7 +86,7 @@ describeIfIOS('Tab Bar System Item', () => {
         'Bookmarks',
       );
 
-      await element(by.id('bookmark-tab-item')).tap();
+      await tapTabBarItem(by.id('bookmark-tab-item'));
       await expect(element(by.text('Static System Item'))).toBeVisible();
       await expect(
         element(by.id('book.fill').and(by.label('bookmark'))).atIndex(0),
@@ -83,7 +99,7 @@ describeIfIOS('Tab Bar System Item', () => {
 
   describe('Runtime Config tab — initial state', () => {
     beforeAll(async () => {
-      await element(by.id('custom-tab-item')).tap();
+      await tapTabBarItem(by.id('custom-tab-item'));
     });
 
     it('should display the Runtime Config screen content', async () => {
@@ -296,7 +312,7 @@ describeIfIOS('Tab Bar System Item', () => {
     });
 
     it('should navigate to Bookmarks and back while house icon override is active', async () => {
-      await element(by.label('Bookmarks')).atIndex(0).tap();
+      await tapTabBarItem(by.label('Bookmarks'));
       await expect(element(by.text('Static System Item'))).toBeVisible();
       await expect(
         element(by.id('house').and(by.label('home'))).atIndex(0),
@@ -308,7 +324,7 @@ describeIfIOS('Tab Bar System Item', () => {
         'Bookmarks',
       );
 
-      await element(by.label('Favorites')).atIndex(0).tap();
+      await tapTabBarItem(by.label('Favorites'));
       await expect(
         element(by.id('config-icon').and(by.label("icon: custom 'house'"))),
       ).toBeVisible();
@@ -392,11 +408,11 @@ describeIfIOS('Tab Bar System Item', () => {
     it('should navigate to the Bookmarks tab and back with combined overrides active', async () => {
       const frameXBeforeSwitch = await getTabBarItemFrameX('Custom');
 
-      await element(by.label('Bookmarks')).atIndex(0).tap();
+      await tapTabBarItem(by.label('Bookmarks'));
       await expect(element(by.text('Static System Item'))).toBeVisible();
       const frameXAfterSwitch = await getTabBarItemFrameX('Custom');
       jestExpect(frameXAfterSwitch).toEqual(frameXBeforeSwitch);
-      await element(by.label('Custom')).atIndex(0).tap();
+      await tapTabBarItem(by.label('Custom'));
 
       await expect(
         element(
