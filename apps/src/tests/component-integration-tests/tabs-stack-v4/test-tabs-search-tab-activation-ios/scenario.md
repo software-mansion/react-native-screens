@@ -71,9 +71,22 @@ TBD.
 
     - [ ] The large title no longer hides
 
+### Returning through the collapsed tab bar
+
+8. With **automaticallyActivatesSearch** enabled, tap the search tab, then
+   tap the collapsed `Config` button on the left (do not cancel).
+
+    - [ ] `Config` becomes selected.
+
+9. Tap the search tab again. Repeat steps 8-9 a few times.
+
+    - [ ] The search field activates every time.
+
+    - [ ] The List screen shows "Selected in JS: yes" every time.
+
 ### Hosted search across push/pop in the nested stack
 
-8. Tap the search tab again, dismiss the keyboard by dragging the list
+10. Tap the search tab again, dismiss the keyboard by dragging the list
    (do not cancel - cancel restores the previous tab), then tap a list
    item to push **Details**.
 
@@ -83,7 +96,7 @@ TBD.
     - [ ] The Details screen has its own search bar with the
       "Search in details" placeholder in the header.
 
-9. With Details on top, switch to `Config`, then reselect the search tab.
+11. With Details on top, switch to `Config`, then reselect the search tab.
 
     - [ ] No search activates automatically (the stack is not at its
       root, so there is no hosted search field). The Details screen
@@ -92,15 +105,15 @@ TBD.
     - [ ] Tapping the "Search in details" field focuses it and typing
       updates the "Typed in the Details search bar" text.
 
-10. Go back to **List** with the back gesture.
+12. Go back to **List** with the back gesture.
 
     - [ ] The "Search places" field returns to the tab bar area.
 
-11. Switch to `Config`, then reselect the search tab.
+13. Switch to `Config`, then reselect the search tab.
 
     - [ ] Activation focuses the "Search places" field of the List screen
       again (the hosted field re-binds after the pop).
 
-12. Disable **automaticallyActivatesSearch** and tap the search tab.
+14. Disable **automaticallyActivatesSearch** and tap the search tab.
 
     - [ ] The search field is not focused automatically anymore.
