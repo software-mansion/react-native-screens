@@ -101,6 +101,10 @@ function getConfig() {
         type: 'boolean',
         default: false,
       },
+      'no-scene-delegate': {
+        type: 'boolean',
+        default: false,
+      },
       'ios-simulator': {
         type: 'string',
       },
@@ -120,6 +124,7 @@ function getConfig() {
   config.help = parseBooleanFlag(config.help);
   config['from-origin'] = parseBooleanFlag(config['from-origin']);
   config.run = parseBooleanFlag(config.run);
+  config['no-scene-delegate'] = parseBooleanFlag(config['no-scene-delegate']);
 
   if (config.help) {
     console.log(`
@@ -146,6 +151,11 @@ function getConfig() {
                                          'tabsAndStack4.x' (legacy ScreenStack + Tabs; RNS 4.x).
         -a, --app-name <name>            Name of the generated app folder under playground/ (default: 'PlaygroundApp').
                                          Must start with a letter and contain only letters and digits.
+            --no-scene-delegate          Keep the template's iOS AppDelegate without the UIScene life cycle.
+                                         By default the iOS app is switched to UIScene (SceneDelegate),
+                                         which apps built with the iOS 27 SDK need to launch on iOS 27+.
+                                         Templates that already use UIScene (RN 0.88+) are left as they
+                                         are, also with this flag.
         -h, --help                       Display this help message
 
       Without --run: JS setup only (init, copy, screens) — no pod install, no native compile,
@@ -302,6 +312,7 @@ function getConfig() {
     'ios-device': iosDevice,
     'ios-udid': iosUdid,
     'android-device': androidDevice,
+    'scene-delegate': !config['no-scene-delegate'],
     'screens-ref-type': screensRefType,
     'screens-ref-target': screensRefTarget,
     platform,
