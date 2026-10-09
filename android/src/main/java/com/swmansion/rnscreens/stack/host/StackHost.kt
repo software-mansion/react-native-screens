@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.stack.host
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import com.facebook.react.bridge.UIManager
@@ -82,7 +81,7 @@ class StackHost(
             // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
             containerUpdateCoordinator.addPopOperation(stackScreen)
         } else {
-            Log.d(TAG, "Ignoring pop operation of ${stackScreen.screenKey}, already not attached or natively dismissed")
+            RNSLog.d(TAG, "Ignoring pop operation of ${stackScreen.screenKey}, already not attached or natively dismissed")
         }
     }
 

@@ -259,9 +259,9 @@ internal class StackContainer(
     }
 
     private fun dumpStackModel() {
-        Log.d(TAG, "StackContainer [$id] MODEL BEGIN")
+        RNSLog.d(TAG, "StackContainer [$id] MODEL BEGIN")
         stackModel.forEach {
-            Log.d(TAG, "${it.stackScreen.screenKey}")
+            RNSLog.d(TAG, "${it.stackScreen.screenKey}")
         }
     }
 
@@ -277,7 +277,7 @@ internal class StackContainer(
             updateBatchStateProvider = WeakReference(this),
             colorSchemeProvider = WeakReference(this),
         ).also {
-            Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
+            RNSLog.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
     private fun updateTopFragment() {
