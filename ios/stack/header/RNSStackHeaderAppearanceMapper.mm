@@ -62,6 +62,13 @@
     appearance.buttonAppearance = buttonAppearance;
   }
 
+  UIBarButtonItemAppearance *backButtonAppearance = [self barButtonItemAppearance:appearance.backButtonAppearance
+                                                            updatedWithDictionary:appearanceDict
+                                                                        keyPrefix:@"backButton"];
+  if (backButtonAppearance != nil) {
+    appearance.backButtonAppearance = backButtonAppearance;
+  }
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     UIBarButtonItemAppearance *prominentButtonAppearance =
