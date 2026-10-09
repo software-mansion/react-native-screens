@@ -12,12 +12,22 @@
 #import "RNSDefines.h"
 #import "RNSLegacyEnums.h"
 
+@class RNSSearchBar;
+
+@protocol RNSSearchBarNavigationItemDelegate <NSObject>
+
+- (void)searchBarDidUpdateNavigationItem:(RNSSearchBar *)searchBar;
+
+@end
+
 @interface RNSSearchBar :
 #if defined(__cplusplus)
     RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
 #else
     UIView <UISearchBarDelegate>
 #endif
+
+@property (nonatomic, weak, nullable) id<RNSSearchBarNavigationItemDelegate> navigationItemDelegate;
 
 @property (nonatomic) BOOL hideWhenScrolling;
 @property (nonatomic) RNSSearchBarPlacement placement;
