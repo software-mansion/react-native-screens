@@ -20,15 +20,7 @@ internal class FormSheetBehaviorController(
             override fun onStateChanged(
                 bottomSheet: View,
                 newState: Int,
-            ) {
-                rememberStateIfStable(newState)
-
-                val index = mapStateToDetentIndex(newState)
-                if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
-                    lastEmittedDetentIndex = index
-                    onDetentChanged?.invoke(index)
-                }
-            }
+            ) = handleStateChanged(newState)
 
             override fun onSlide(
                 bottomSheet: View,
@@ -55,6 +47,37 @@ internal class FormSheetBehaviorController(
         }
 
         behavior.state = lastStableState
+    }
+
+    /**
+     * Snaps the sheet to the detent at [index]. Expected to be called once the sheet metrics have been resolved by
+     * [updateSheetBehavior], so the index is mapped against the current detents configuration.
+     */
+    internal fun selectDetent(index: Int) {
+        val targetState = resolveStateFromIndex(index, currentDetentsCount)
+        if (behavior.state == targetState) {
+            return
+        }
+
+        behavior.state = targetState
+        // A laid out sheet settles to the target state and reports it through the state callback, so an interrupted
+        // animation doesn't report a detent it hasn't reached. Material applies the state of a sheet that hasn't been
+        // laid out yet right away, without notifying the callbacks, so that change has to be handled here.
+        if (behavior.state == targetState) {
+            handleStateChanged(targetState)
+        }
+    }
+
+    private fun handleStateChanged(state: Int) {
+        rememberStateIfStable(state)
+        emitDetentChangedIfNeeded(mapStateToDetentIndex(state))
+    }
+
+    private fun emitDetentChangedIfNeeded(index: Int) {
+        if (index != FORM_SHEET_UNKNOWN_DETENT_INDEX && index != lastEmittedDetentIndex) {
+            lastEmittedDetentIndex = index
+            onDetentChanged?.invoke(index)
+        }
     }
 
     private fun rememberStateIfStable(state: Int) {

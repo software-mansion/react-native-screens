@@ -13,11 +13,13 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSFormSheetHostComponentDescriptor.h>
 
 namespace react = facebook::react;
 
 @interface RNSFormSheetHostComponentView () <RCTMountingTransactionObserving,
+                                             RCTRNSFormSheetHostViewProtocol,
                                              RNSFormSheetContentControllerDelegate,
                                              RNSFormSheetContentWrapperDelegate,
                                              RNSFormSheetPresentationProvider,
@@ -309,6 +311,20 @@ namespace react = facebook::react;
     }
     _controller = nil;
   }
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSFormSheetHostHandleCommand(self, commandName, args);
+}
+
+- (void)selectDetent:(NSInteger)index
+{
+#if !TARGET_OS_TV
+  [_controller selectDetentAtIndex:index];
+#endif // !TARGET_OS_TV
 }
 
 #pragma mark - RCTMountingTransactionObserving

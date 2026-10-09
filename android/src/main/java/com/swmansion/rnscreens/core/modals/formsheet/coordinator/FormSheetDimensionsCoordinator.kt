@@ -22,6 +22,7 @@ internal class FormSheetDimensionsCoordinator(
     private var currentDetents: FormSheetDetents? = null
     private var currentInitialDetentIndex: Int = 0
     private var shouldApplyInitialDetent: Boolean = false
+    private var pendingSelectedDetentIndex: Int? = null
 
     private var currentContentHeight: Int = 0
 
@@ -68,6 +69,18 @@ internal class FormSheetDimensionsCoordinator(
         invalidateGeometry()
     }
 
+    internal fun selectDetent(index: Int) {
+        if (isGeometryDirty) {
+            // The metrics are about to be resolved again, e.g. the sheet has just been opened or its detents have
+            // changed. The detent is selected right after they're applied (after the initial detent, if pending),
+            // so it doesn't get overridden and is mapped against the up-to-date detents.
+            pendingSelectedDetentIndex = index
+            return
+        }
+
+        behaviorController?.selectDetent(index)
+    }
+
     // Schedules a measure pass; the metrics are resolved from there. The provider is a sibling of the sheet
     // subtree, not an ancestor, so it has to be asked for a re-measure explicitly. No-op while the dialog
     // is not shown - the first traversal after `show()` measures everything anyway.
@@ -108,6 +121,9 @@ internal class FormSheetDimensionsCoordinator(
                 applyInitialDetent = shouldApplyInitialDetent,
             )
             shouldApplyInitialDetent = false
+
+            pendingSelectedDetentIndex?.let { behaviorController?.selectDetent(it) }
+            pendingSelectedDetentIndex = null
         }
 
         val sheetContainerHeight =

@@ -55,6 +55,15 @@ internal class FormSheetPresentationManager(
         updatePresentationState(shouldBeOpen = false, origin = FormSheetDismissalOrigin.USER)
     }
 
+    internal fun selectDetent(index: Int) {
+        if (state != FormSheetPresentationState.PRESENTING && state != FormSheetPresentationState.PRESENTED) {
+            Log.w("[RNScreens]", "selectDetent called while the form sheet is not presented. Command ignored.")
+            return
+        }
+
+        currentPresentation?.selectDetent(index)
+    }
+
     private fun updatePresentationState(
         shouldBeOpen: Boolean,
         origin: FormSheetDismissalOrigin,

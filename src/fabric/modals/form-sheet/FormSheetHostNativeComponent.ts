@@ -6,7 +6,7 @@ import type {
   HostComponent,
   ViewProps,
 } from 'react-native';
-import { codegenNativeComponent } from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -46,6 +46,19 @@ interface NativeProps extends ViewProps {
   // https://github.com/facebook/react-native/pull/56311
   onSyncFlush?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+interface NativeCommands {
+  selectDetent: (
+    viewRef: React.ComponentRef<ComponentType>,
+    index: CT.Int32,
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['selectDetent'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSFormSheetHost', {
   interfaceOnly: true,
