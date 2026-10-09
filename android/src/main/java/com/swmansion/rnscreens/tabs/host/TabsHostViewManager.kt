@@ -54,6 +54,16 @@ class TabsHostViewManager :
         parent.unmountReactSubviewAt(index)
     }
 
+    // TabsScreens are not real Android children of TabsHost (they live in its
+    // container). Fabric's removeViewAt verifies the child via getChildAt before
+    // removing; without these overrides it never finds the tab and skips removal.
+    override fun getChildCount(parent: TabsHost): Int = parent.reactSubviewCount
+
+    override fun getChildAt(
+        parent: TabsHost,
+        index: Int,
+    ): View? = parent.getReactSubviewAt(index)
+
     override fun removeAllViews(parent: TabsHost) {
         parent.unmountAllReactSubviews()
     }
