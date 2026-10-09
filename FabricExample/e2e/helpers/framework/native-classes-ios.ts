@@ -10,10 +10,13 @@
  * are exported side by side (see the iOS 26 pairs below).
  */
 
-// --- react-native-screens views ---
+// --- react-native-screens views (iOS)---
 
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
+
+// The library's `FormSheet` content view.
+export const CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW = 'RNSFormSheetContentView';
 
 // --- React Native host views ---
 
@@ -65,6 +68,12 @@ export const CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW =
   '_UIContextMenuHeaderView';
 export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
   '_UIContextMenuSubmenuTitleView';
+
+// --- UIKit: sheet presentation ---
+
+// The backdrop UIKit inserts behind a presented sheet.
+export const CLASS_NAME_UI_DIMMING_VIEW = 'UIDimmingView';
+export const CLASS_NAME_UI_DROP_SHADOW_VIEW = 'UIDropShadowView';
 
 // --- UIKit: other controls ---
 export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';

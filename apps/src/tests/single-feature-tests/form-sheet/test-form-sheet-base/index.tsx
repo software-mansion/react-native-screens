@@ -10,23 +10,29 @@ function TestFormSheetBase() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>FormSheet Test</Text>
+      <Text style={styles.title} testID="formsheet-base-title">
+        FormSheet Test
+      </Text>
       <Button
         title="Open FormSheet"
         color={Colors.primary}
         onPress={() => setIsOpen(true)}
+        testID="open-formsheet-button"
       />
       <FormSheet
         isOpen={isOpen}
         onNativeDismiss={() => setIsOpen(false)}
         detents={[0.6, 1.0]}>
         <View style={styles.sheetContent}>
-          <Text style={styles.sheetTitle}>FormSheet content</Text>
+          <Text style={styles.sheetTitle} testID="formsheet-base-content">
+            FormSheet content
+          </Text>
           <View style={styles.spacing} />
           <Button
             title="Dismiss from JS"
             color={Colors.primary}
             onPress={() => setIsOpen(false)}
+            testID="dismiss-formsheet-button"
           />
         </View>
       </FormSheet>

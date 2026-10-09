@@ -67,7 +67,7 @@ export async function getFrame(matcher: NativeMatcher, description?: string) {
 }
 
 /** Attributes of `matcher`'s last match — the topmost stacked screen's copy. */
-async function getTopmostMatch(
+export async function getTopmostMatch(
   matcher: NativeMatcher,
 ): Promise<ElementAttributes> {
   const matches = await getMatches(matcher);
