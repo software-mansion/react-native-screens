@@ -374,11 +374,25 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+// No background color or blur effect is set: use the system bar background, as a plain UINavigationController does.
+// tvOS keeps the opaque background, since it copies the appearance's background color onto the bar.
++ (BOOL)usesSystemBackground:(RNSScreenStackHeaderConfig *)config
+{
+#if TARGET_OS_TV
+  return NO;
+#else
+  return config.backgroundColor == nil && config.blurEffect == RNSBlurEffectStyleNone;
+#endif
+}
+
 + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
+  BOOL usesSystemBackground = [self usesSystemBackground:config];
 
-  if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
+  if (usesSystemBackground) {
+    [appearance configureWithDefaultBackground];
+  } else if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
     // Preserve the shadow properties in case the user wants to show the shadow on scroll.
     UIColor *shadowColor = appearance.shadowColor;
     UIImage *shadowImage = appearance.shadowImage;
@@ -400,7 +414,9 @@ RNS_IGNORE_SUPER_CALL_END
 
   switch (config.blurEffect) {
     case RNSBlurEffectStyleNone:
-      appearance.backgroundEffect = nil;
+      if (!usesSystemBackground) {
+        appearance.backgroundEffect = nil;
+      }
       break;
 
     case RNSBlurEffectStyleSystemDefault:
@@ -481,6 +497,30 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
++ (UINavigationBarAppearance *)buildScrollEdgeAppearance:(UINavigationBarAppearance *)appearance
+                                               withConfig:(RNSScreenStackHeaderConfig *)config
+{
+  UINavigationBarAppearance *scrollEdgeAppearance =
+      [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
+  if (config.largeTitleBackgroundColor != nil) {
+    // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
+    if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
+      // This will also remove the background blur effect in the large title which is otherwise inherited from the
+      // standard appearance.
+      [scrollEdgeAppearance configureWithTransparentBackground];
+      // This must be set to nil otherwise a default view will be added to the navigation bar background with an
+      // opaque background.
+      scrollEdgeAppearance.backgroundColor = nil;
+    } else {
+      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+    }
+  }
+  if (config.largeTitleHideShadow) {
+    scrollEdgeAppearance.shadowColor = nil;
+  }
+  return scrollEdgeAppearance;
+}
+
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -544,25 +584,18 @@ RNS_IGNORE_SUPER_CALL_END
   navctr.navigationBar.backgroundColor = appearance.backgroundColor;
 #endif
 
-  UINavigationBarAppearance *scrollEdgeAppearance =
-      [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
-  if (config.largeTitleBackgroundColor != nil) {
-    // Add support for using a fully transparent bar when the backgroundColor is set to transparent.
-    if (CGColorGetAlpha(config.largeTitleBackgroundColor.CGColor) == 0.) {
-      // This will also remove the background blur effect in the large title which is otherwise inherited from the
-      // standard appearance.
-      [scrollEdgeAppearance configureWithTransparentBackground];
-      // This must be set to nil otherwise a default view will be added to the navigation bar background with an
-      // opaque background.
-      scrollEdgeAppearance.backgroundColor = nil;
-    } else {
-      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
-    }
+  // With the system background and no large title customization, the bar is transparent at the scroll edge and uses
+  // the standard appearance once content scrolls under it, as UIKit does by default. The scroll edge appearance is set
+  // on the item rather than left nil, so it keeps the item's title attributes and isn't replaced by a scroll edge
+  // appearance set on the navigation bar (for example through `UINavigationBar.appearance()`).
+  if ([self usesSystemBackground:config] && config.largeTitleBackgroundColor == nil && !config.largeTitleHideShadow) {
+    UINavigationBarAppearance *scrollEdgeAppearance =
+        [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
+    [scrollEdgeAppearance configureWithTransparentBackground];
+    navitem.scrollEdgeAppearance = scrollEdgeAppearance;
+  } else {
+    navitem.scrollEdgeAppearance = [self buildScrollEdgeAppearance:appearance withConfig:config];
   }
-  if (config.largeTitleHideShadow) {
-    scrollEdgeAppearance.shadowColor = nil;
-  }
-  navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
