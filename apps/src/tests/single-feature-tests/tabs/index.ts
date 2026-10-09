@@ -5,6 +5,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestTabsSimpleNav from './test-tabs-simple-nav';
 import TestTabsPreventNativeSelection from './test-tabs-prevent-native-selection';
 import TestTabsStaleUpdateRejection from './test-tabs-stale-update-rejection';
+import TestTabsRecursiveEmission from './test-tabs-recursive-emission-android';
 import TestTabsAppearanceDefinedBySelectedTab from './test-tabs-appearance-defined-by-selected-tab';
 import TestTabsTabBarColorScheme from './test-tabs-tab-bar-color-scheme';
 import TestTabsOverrideScrollViewContentInset from './test-tabs-override-scroll-view-content-inset-ios';
@@ -37,6 +38,7 @@ import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-ex
 export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
 export { default as TestTabsPreventNativeSelection } from './test-tabs-prevent-native-selection';
 export { default as TestTabsStaleUpdateRejection } from './test-tabs-stale-update-rejection';
+export { default as TestTabsRecursiveEmission } from './test-tabs-recursive-emission-android';
 export { default as TestTabsAppearanceDefinedBySelectedTab } from './test-tabs-appearance-defined-by-selected-tab';
 export { default as TestTabsTabBarColorScheme } from './test-tabs-tab-bar-color-scheme';
 export { default as TestTabsOverrideScrollViewContentInset } from './test-tabs-override-scroll-view-content-inset-ios';
@@ -69,6 +71,7 @@ const scenarios = {
   TestTabsSimpleNav,
   TestTabsPreventNativeSelection,
   TestTabsStaleUpdateRejection,
+  TestTabsRecursiveEmission,
   TestTabsAppearanceDefinedBySelectedTab,
   TestTabsTabBarColorScheme,
   TestTabsOverrideScrollViewContentInset,
