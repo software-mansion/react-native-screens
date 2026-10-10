@@ -17,4 +17,13 @@ interface Container {
      * in the subtree does.
      */
     fun wantsToPreventStackNativeDismiss(): ContainerItem?
+
+    /**
+     * Asks the container to pop its own stack to the root, if it can. If it has nothing
+     * to pop (or can't pop), the request is forwarded to the nested container of its
+     * active item.
+     *
+     * @return `true` if a pop was performed or requested (here or in a nested container), `false` otherwise.
+     */
+    fun requestPopToRoot(): Boolean
 }

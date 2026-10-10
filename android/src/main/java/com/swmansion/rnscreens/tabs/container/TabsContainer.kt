@@ -26,7 +26,6 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
-import com.swmansion.rnscreens.helpers.ViewFinder
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.safearea.EdgeInsets
@@ -69,9 +68,7 @@ class TabsContainer internal constructor(
             val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
 
             if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack =
-                    ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
-                if (screenStack != null && screenStack.popToRoot()) {
+                if (selectedTabScreen.resolveNestedContainer()?.requestPopToRoot() == true) {
                     return true
                 }
             }
@@ -814,6 +811,10 @@ class TabsContainer internal constructor(
         } else {
             null
         }
+
+    // Tabs have no stack of their own - the request goes to the selected tab's nested container.
+    override fun requestPopToRoot(): Boolean =
+        navState.isNotEmpty() && selectedTab.tabsScreen.resolveNestedContainer()?.requestPopToRoot() == true
 
     // endregion
 
