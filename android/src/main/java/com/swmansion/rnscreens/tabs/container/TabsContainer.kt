@@ -29,8 +29,8 @@ import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
 import com.swmansion.rnscreens.ext.createTransactionWithReordering
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.safearea.EdgeInsets
+import com.swmansion.rnscreens.safearea.OnInterfaceInsetsChangeListener
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
-import com.swmansion.rnscreens.safearea.SafeAreaView
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHost
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
@@ -160,7 +160,7 @@ class TabsContainer internal constructor(
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsModel)
 
-    private var interfaceInsetsChangeListener: SafeAreaView? = null
+    private var interfaceInsetsChangeListener: OnInterfaceInsetsChangeListener? = null
 
     internal var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -372,14 +372,14 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+    override fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
         if (interfaceInsetsChangeListener == null) {
             bottomNavigationView.addOnLayoutChangeListener(this)
         }
         interfaceInsetsChangeListener = listener
     }
 
-    override fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+    override fun removeOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
         if (interfaceInsetsChangeListener == listener) {
             interfaceInsetsChangeListener = null
             bottomNavigationView.removeOnLayoutChangeListener(this)
