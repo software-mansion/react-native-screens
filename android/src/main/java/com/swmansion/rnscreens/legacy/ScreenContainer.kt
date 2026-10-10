@@ -472,5 +472,8 @@ open class ScreenContainer(
 
     override fun wantsToPreventStackNativeDismiss(): ContainerItem? = topScreen?.wantsToPreventStackNativeDismiss()
 
+    // Nothing to pop here - the request goes to the shown screen's nested container.
+    override fun requestPopToRoot(): Boolean = topScreen?.resolveNestedContainer()?.requestPopToRoot() == true
+
     // endregion
 }

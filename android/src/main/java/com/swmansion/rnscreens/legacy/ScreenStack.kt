@@ -449,6 +449,8 @@ class ScreenStack(
             .filter { !dismissedWrappers.contains(it) }
             .firstNotNullOfOrNull { it.screen.wantsToPreventStackNativeDismiss() }
 
+    override fun requestPopToRoot(): Boolean = popToRoot() || super.requestPopToRoot()
+
     // endregion
 
     companion object {
