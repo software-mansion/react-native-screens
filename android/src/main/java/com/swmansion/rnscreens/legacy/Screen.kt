@@ -462,6 +462,18 @@ class Screen(
         }
     }
 
+    /**
+     * Starts the removal transition before Fabric detaches this screen's children, if the screen has
+     * already been marked for removal. `NativeProxy.notifyScreenRemoved` starts the transition with
+     * `post`, and the mount transaction can detach the children before that runs: the content is then
+     * gone for the whole exit animation.
+     */
+    internal fun startRemovalTransitionIfBeingRemoved() {
+        if (isBeingRemoved) {
+            startRemovalTransition()
+        }
+    }
+
     fun endRemovalTransition() {
         if (isRemovalTransitionStarted) {
             isRemovalTransitionStarted = false
