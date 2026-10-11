@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react';
-import type { TabsBottomAccessoryEnvironment } from '../bottom-accessory/TabsBottomAccessory.types';
+import type {
+  TabsBottomAccessoryEnvironment,
+  TabsBottomAccessoryEnvironmentChangeEvent,
+} from '../bottom-accessory/TabsBottomAccessory.types';
 import type { ColorValue, NativeSyntheticEvent } from 'react-native';
 
 /**
@@ -125,6 +128,25 @@ export interface TabsHostPropsIOS {
    * @supported iOS 26 or higher
    */
   bottomAccessoryHidden?: boolean | undefined;
+  /**
+   * @summary
+   * A callback that gets invoked when the environment of the bottom accessory changes.
+   *
+   * @description
+   * The environment changes when the tab bar minimizes or expands, which moves the
+   * accessory between the `regular` and `inline` layouts. Both accessory components
+   * are rendered at the same time, so this event tells which one is currently visible.
+   *
+   * @see {@link TabsBottomAccessoryEnvironmentChangeEvent}
+   *
+   * @platform ios
+   * @supported iOS 26 or higher
+   */
+  onBottomAccessoryEnvironmentChange?:
+    | ((
+        event: NativeSyntheticEvent<TabsBottomAccessoryEnvironmentChangeEvent>,
+      ) => void)
+    | undefined;
   /**
    * @summary Specifies the display mode for the tab bar.
    *

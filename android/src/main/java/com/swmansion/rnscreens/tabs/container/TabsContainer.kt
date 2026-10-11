@@ -211,6 +211,11 @@ class TabsContainer internal constructor(
      * No-op when nothing is dirty or the view is detached.
      */
     fun flushPendingUpdates() {
+        if (observerRegistry.isEmitting) {
+            // Flushing now could emit re-entrantly (e.g. stale request rejection), which the registry forbids.
+            post { flushPendingUpdates() }
+            return
+        }
         if (invalidationFlags.any() && isAttachedToWindow) {
             performContainerUpdate()
         }
