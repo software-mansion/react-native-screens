@@ -92,9 +92,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
   BOOL _isHandlingExplicitSelectionUpdate;
 
-  /// UITab path only. Set when `shouldSelectTab:` admits a user selection, consumed by
-  /// `didSelectTab:` - which fires also for programmatic selection and this flag allows for filtering the latter.
-  BOOL _isHandlingUserTabSelection;
+  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab`. UIKit sends
+  /// `didSelectTab:` synchronously from inside those writes - this flag filters them out, so that
+  /// only UIKit-driven (user) selections reach the delegate logic. Marking user selections instead
+  /// is not viable: for `UISearchTab`, a mount transaction can land between `shouldSelectTab:`
+  /// and `didSelectTab:`.
+  BOOL _isApplyingProgrammaticTabSelection;
 
   /// UITab path only. Set in `tabBar:didSelectItem:` when the user selects the More tab while
   /// another tab is active. Tapping More does not necessarily show the More list - the stack may
@@ -119,7 +122,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _navigationState = nil;
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
-    _isHandlingUserTabSelection = NO;
+    _isApplyingProgrammaticTabSelection = NO;
     _pendingMoreTabSelectedEmit = NO;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
     _parentContainerRegistry = [RNSParentContainerItemRegistry new];
@@ -331,7 +334,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)performContainerUpdate
 {
-  _isHandlingUserTabSelection = NO;
   _isHandlingExplicitSelectionUpdate = YES;
   [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
@@ -537,19 +539,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectTab:(UITab *)tab API_AVAILABLE(ios(18.0))
 {
-  BOOL shouldSelect = [self tabBarController:tabBarController shouldSelectViewController:tab.viewController];
-  _isHandlingUserTabSelection = shouldSelect;
-  return shouldSelect;
+  return [self tabBarController:tabBarController shouldSelectViewController:tab.viewController];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
             didSelectTab:(UITab *)selectedTab
              previousTab:(nullable UITab *)previousTab API_AVAILABLE(ios(18.0))
 {
-  if (!_isHandlingUserTabSelection) {
+  if (_isApplyingProgrammaticTabSelection) {
     return;
   }
-  _isHandlingUserTabSelection = NO;
 
   RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
   [self tabBarController:tabBarController didSelectViewController:selectedTab.viewController];
@@ -581,12 +580,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
     for (RNSTabsScreenViewController *screenController in screenControllers) {
       [tabs addObject:[self tabForTabScreenController:screenController]];
     }
+    _isApplyingProgrammaticTabSelection = YES;
     [self setTabs:tabs animated:animated];
     [self assertAtMostOneSearchTabInstalled];
 
     if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
       self.selectedTab = previouslySelectedTab;
     }
+    _isApplyingProgrammaticTabSelection = NO;
     return;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
@@ -632,7 +633,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
       RCTAssert(screenController.tab != nil,
                 @"[RNScreens] No installed UITab for screenKey: %@",
                 [self screenKeyForViewController:screenController]);
+      _isApplyingProgrammaticTabSelection = YES;
       self.selectedTab = screenController.tab;
+      _isApplyingProgrammaticTabSelection = NO;
       return;
     }
   }
@@ -691,7 +694,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return screenController.tab;
   }
 
-  return [self makeTabForTabScreenController:screenController];
+  UITab *tab = [self makeTabForTabScreenController:screenController];
+  [self disableUserCustomizationOfTab:tab];
+  return tab;
+}
+
+/// Customizable tab would force the Edit button into the iPad sidebar,
+/// and we don't support tab editing as of now.
+- (void)disableUserCustomizationOfTab:(UITab *)tab API_AVAILABLE(ios(18.0))
+{
+  tab.preferredPlacement = UITabPlacementFixed;
 }
 
 /// Always builds a FRESH instance, seeded with current content - the bar reads a `UITab` only
