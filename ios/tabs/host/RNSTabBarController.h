@@ -161,6 +161,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate;
 
 /**
+ * Set the React `screenKey` of the tab screen that should receive the prominent treatment
+ * (`UITabBarController.prominentTabIdentifier`, iOS 27+). Pass nil or an empty string to
+ * unset it, letting UIKit decide which tab (if any) is prominent.
+ *
+ * The key is resolved to the backing `UITab` identifier lazily & re-applied after every child
+ * installation, so the call is valid before the children are installed. A key not matching any
+ * tab screen is warned about on the next update flush and behaves like an unset key.
+ *
+ * No-op below iOS 27.
+ */
+- (void)setProminentScreenKey:(nullable NSString *)screenKey;
+
+/**
  * Idempotent teardown. Releases observer references and any retained host references.
  * Called by the host on view lifecycle end.
  */
