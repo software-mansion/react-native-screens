@@ -145,7 +145,7 @@ function ConfigTab() {
     setRouteOptions('Search', {
       ios: {
         systemItem: 'search',
-        searchRole: true,
+        role: 'search',
         automaticallyActivatesSearch: value,
       },
     });
@@ -217,7 +217,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
       tabBarItemTestID: 'search-tab-item',
       ios: {
         systemItem: 'search',
-        searchRole: true,
+        role: 'search',
         automaticallyActivatesSearch: true,
       },
     },

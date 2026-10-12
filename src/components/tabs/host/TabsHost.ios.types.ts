@@ -193,7 +193,7 @@ export interface TabsHostPropsIOS {
    * onto its own surface and stays visible when the tab bar minimizes on scroll
    * (see `tabBarMinimizeBehavior`).
    *
-   * When omitted, the system default applies: a `searchRole` tab with
+   * When omitted, the system default applies: a tab with `role: 'search'` and
    * `automaticallyActivatesSearch` enabled becomes prominent automatically, otherwise
    * no tab is prominent.
    *
