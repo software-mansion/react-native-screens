@@ -235,7 +235,7 @@ function TestScreen({ navigation }: NativeStackScreenProps<ParamList, 'Test'>) {
 
 const Stack = createNativeStackNavigator<ParamList>();
 
-export default function Test0001() {
+export default function Test4872() {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
   return (
