@@ -12,6 +12,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RCTSurfaceTouchHandler+RNSUtility.h"
 #import "RNSDefines.h"
+#import "RNSNavigationBar.h"
 #import "RNSPercentDrivenInteractiveTransition.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackAnimator.h"
@@ -47,10 +48,28 @@ namespace react = facebook::react;
 
 @end
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+@interface RNSNavigationController () <RNSNavigationBarLayoutDelegate>
+@end
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+
 @implementation RNSNavigationController {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
   CGRect _lastNavigationBarFrame;
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+}
+
+- (instancetype)init
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  self = [super initWithNavigationBarClass:RNSNavigationBar.class toolbarClass:nil];
+  if (self != nil && [self.navigationBar isKindOfClass:RNSNavigationBar.class]) {
+    static_cast<RNSNavigationBar *>(self.navigationBar).layoutDelegate = self;
+  }
+#else // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  self = [super init];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  return self;
 }
 
 #if !TARGET_OS_TV
@@ -156,6 +175,31 @@ namespace react = facebook::react;
     [self.view setNeedsLayout];
   }
 }
+
+#pragma mark - RNSNavigationBarLayoutDelegate
+
+- (void)navigationBarDidLayoutSubviews:(UINavigationBar *)navigationBar
+{
+  // On iOS 26+ UIKit can position the content of the navigation bar after `viewDidLayoutSubviews`, in a layout pass
+  // that follows layout of the bar itself (e.g. title view on rotation of iPhone Duo), or without any layout pass of
+  // our view at all (bar minimization on iOS 27). None of our views receives a callback when it is moved this way,
+  // therefore we request layout of the header subviews. They are laid out later in the same layout pass, after their
+  // ancestors, and update their position in the shadow tree then.
+  // See https://github.com/software-mansion/react-native-screens-labs/issues/1841
+  if (@available(iOS 26.0, *)) {
+    if (![self.topViewController isKindOfClass:[RNSScreen class]]) {
+      return;
+    }
+
+    auto headerConfig = static_cast<RNSScreen *>(self.topViewController).screenView.findHeaderConfig;
+    if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
+      return;
+    }
+
+    [headerConfig setNeedsLayoutForHeaderSubviewsInNavigationBar:navigationBar];
+  }
+}
+
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 #endif // !TARGET_OS_TV
 
