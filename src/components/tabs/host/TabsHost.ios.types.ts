@@ -185,22 +185,17 @@ export interface TabsHostPropsIOS {
   /**
    * @summary `screenKey` of the tab screen that should receive the prominent treatment.
    *
-   * Available starting from iOS 27.
-   * Not supported on tvOS.
-   *
    * Must match the `screenKey` of one of the child `TabsScreen`s. Where supported, that tab
    * receives enhanced visual emphasis in the tab bar - it is detached from the other items
    * onto its own surface and stays visible when the tab bar minimizes on scroll
    * (see `tabBarMinimizeBehavior`).
    *
-   * When omitted, the system default applies: a tab with `role: 'search'` and
-   * `automaticallyActivatesSearch` enabled becomes prominent automatically, otherwise
-   * no tab is prominent.
-   *
-   * A value that does not match any tab screen logs a warning and falls back to the
-   * system default.
+   * When omitted, a tab with `role: 'search'` and `automaticallyActivatesSearch` enabled
+   * becomes prominent automatically, otherwise no tab is prominent.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/prominenttabidentifier|UITabBarController.prominentTabIdentifier}
+   *
+   * Not supported on tvOS.
    *
    * @platform ios
    * @supported iOS 27 or higher

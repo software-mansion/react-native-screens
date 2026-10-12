@@ -110,7 +110,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
 
-  /// Screen key of the prominent tab (iOS 27+), nil for the system default. Kept as the screen key,
+  /// Screen key of the prominent tab (iOS 27+); nil when not set, letting UIKit decide. Kept as the screen key,
   /// because `UISearchTab` gets a system-assigned identifier & the tabs are rebuilt on children updates.
   NSString *_Nullable _prominentScreenKey;
 
@@ -1019,9 +1019,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
       if (tab != nil) {
         tabIdentifier = tab.identifier;
       } else {
-        RCTLogWarn(
-            @"[RNScreens] prominentScreenKey '%@' does not match the screenKey of any tab screen, falling back to the system default",
-            _prominentScreenKey);
+        RCTLogWarn(@"[RNScreens] prominentScreenKey '%@' does not match the screenKey of any tab screen",
+                   _prominentScreenKey);
       }
     }
 

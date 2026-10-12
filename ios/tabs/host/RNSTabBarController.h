@@ -163,11 +163,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Set the React `screenKey` of the tab screen that should receive the prominent treatment
  * (`UITabBarController.prominentTabIdentifier`, iOS 27+). Pass nil or an empty string to
- * restore the system default.
+ * unset it, letting UIKit decide which tab (if any) is prominent.
  *
  * The key is resolved to the backing `UITab` identifier lazily & re-applied after every child
  * installation, so the call is valid before the children are installed. A key not matching any
- * tab screen is warned about on the next update flush and falls back to the system default.
+ * tab screen is warned about on the next update flush and behaves like an unset key.
  *
  * No-op below iOS 27.
  */

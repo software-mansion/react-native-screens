@@ -22,7 +22,6 @@ TBD.
 ## Note
 
 - On iOS 26 and lower the prop has no effect and a warning is logged.
-- Values in the picker are the screen keys of the tabs; `undefined` clears the prop.
 - The host presets `tabBarMinimizeBehavior: 'onScrollDown'`, the **Cart** tab
   holds the scrollable list used to trigger the minimize.
 - The search tab hosts a legacy (v4) native stack with a header search bar that
