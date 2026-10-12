@@ -1,6 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { describeIfIOS } from '@e2e/framework/platform';
+import { describeIfiOS, selectSingleFeatureTestsScreen } from '../../e2e-utils';
 
 type Route = 'Home' | 'Search';
 type ActionOrigin = 'user' | 'programmatic-js';
@@ -22,7 +21,7 @@ async function expectSelection(
   );
 }
 
-describeIfIOS('Tabs: navigation state on search tab interactions', () => {
+describeIfiOS('Tabs: navigation state on search tab interactions', () => {
   // Every selection advances the provenance by exactly one - a dropped
   // selection leaves it behind, a duplicated one skips a value.
   let provenance = 0;
