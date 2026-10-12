@@ -1018,7 +1018,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 /// Pass `warnIfUnresolved` only when the installed tabs are final for the current update.
 - (void)applyProminentIdentifierAnimated:(BOOL)animated warnIfUnresolved:(BOOL)warnIfUnresolved
 {
-#if RNS_TABS_PROMINENT_TAB_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 27.0, *)) {
     NSString *_Nullable tabIdentifier = nil;
 
@@ -1040,7 +1040,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     }
     [self setProminentTabIdentifier:tabIdentifier animated:animated];
   }
-#endif // RNS_TABS_PROMINENT_TAB_AVAILABLE
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Utility

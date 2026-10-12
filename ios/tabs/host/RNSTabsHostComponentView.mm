@@ -324,11 +324,11 @@ namespace react = facebook::react;
 
   if (newComponentProps.prominentScreenKey != oldComponentProps.prominentScreenKey) {
     _prominentScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.prominentScreenKey);
-#if RNS_TABS_PROMINENT_TAB_AVAILABLE
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
     if (@available(iOS 27.0, *)) {
       [_controller setProminentScreenKey:_prominentScreenKey];
     } else
-#endif // RNS_TABS_PROMINENT_TAB_AVAILABLE
+#endif // Check for iOS >= 27 && !TARGET_OS_TV && !TARGET_OS_VISION
       if (_prominentScreenKey != nil) {
         RCTLogWarn(@"[RNScreens] prominentScreenKey is supported for iOS >= 27");
       }
