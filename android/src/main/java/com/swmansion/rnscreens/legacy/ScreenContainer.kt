@@ -43,6 +43,8 @@ open class ScreenContainer(
         }
     private var parentScreenWrapper: ScreenFragmentWrapper? = null
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     override fun onLayout(
         changed: Boolean,
         l: Int,

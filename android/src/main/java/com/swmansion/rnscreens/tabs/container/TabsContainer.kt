@@ -26,7 +26,6 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
 import com.swmansion.rnscreens.helpers.ViewFinder
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
 import com.swmansion.rnscreens.helpers.createTransactionWithReordering
@@ -40,6 +39,7 @@ import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
+import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 /**
@@ -53,6 +53,7 @@ import kotlin.properties.Delegates
 @SuppressLint("ViewConstructor") // Created only by us. Should never be restored.
 class TabsContainer internal constructor(
     private val context: Context,
+    private val delegate: WeakReference<TabsContainerDelegate>,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -257,9 +258,9 @@ class TabsContainer internal constructor(
 
     internal fun setupFragmentManager() {
         fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }
+            checkNotNull(delegate.get()) {
+                "[RNScreens] TabsContainer has no delegate to resolve the fragment manager from"
+            }.resolveFragmentManager()
     }
 
     internal fun teardownFragmentManager() {
