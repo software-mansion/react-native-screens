@@ -123,6 +123,9 @@ function ScreenStackItem(
     contentStyle = contentWrapperStyles;
   }
 
+  // On iOS 26+ the screen is laid out under the navigation bar also when the header is opaque
+  // (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), so the content
+  // is inset by our `SafeAreaView`. See `getSafeAreaEdges` for the applied edges.
   const shouldUseSafeAreaView = isIOS26OrHigher;
 
   const content = (
@@ -284,20 +287,15 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 function getSafeAreaEdges(
   headerConfig?: ScreenStackHeaderConfigProps,
 ): SafeAreaViewProps['edges'] {
-  if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
+  // On iOS 26+ the screen extends under the navigation bar regardless of the header configuration
+  // (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), so the content
+  // must be inset from the top whenever the header is visible and opaque. Translucent and hidden
+  // headers keep the content under the bar / status bar, as on other iOS versions.
+  if (!isIOS26OrHigher || headerConfig?.translucent || headerConfig?.hidden) {
     return {};
   }
 
-  let defaultEdges: SafeAreaViewProps['edges'];
-  if (headerConfig?.translucent || headerConfig?.hidden) {
-    defaultEdges = {};
-  } else {
-    defaultEdges = {
-      top: true,
-    };
-  }
-
-  return defaultEdges;
+  return { top: true };
 }
 
 const styles = StyleSheet.create({
