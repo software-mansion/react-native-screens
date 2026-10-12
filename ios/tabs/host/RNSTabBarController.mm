@@ -114,7 +114,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// because `UISearchTab` gets a system-assigned identifier & the tabs are rebuilt on children updates.
   NSString *_Nullable _prominentScreenKey;
 
-  BOOL _needsUpdateOfProminent;
+  BOOL _needsUpdateOfProminentIdentifier;
 }
 
 - (instancetype)init
@@ -131,7 +131,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _isApplyingProgrammaticTabSelection = NO;
     _pendingMoreTabSelectedEmit = NO;
     _prominentScreenKey = nil;
-    _needsUpdateOfProminent = NO;
+    _needsUpdateOfProminentIdentifier = NO;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
     _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 
@@ -352,7 +352,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   [self updateTabBarItemsIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
-  [self updateProminentIfNeeded];
+  [self updateProminentIdentifierIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
@@ -600,7 +600,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
     // The backing tabs might have been rebuilt - re-resolve the prominent tab against them.
     [self applyProminentIdentifierAnimated:NO warnIfUnresolved:NO];
-    _needsUpdateOfProminent = YES;
+    _needsUpdateOfProminentIdentifier = YES;
     return;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
@@ -1000,17 +1000,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _prominentScreenKey = newScreenKey;
 
   // Applied eagerly, so that a runtime change is animated. The children might not be installed
-  // yet at this point, hence the validation is left to `updateProminentIfNeeded`.
+  // yet at this point, hence the validation is left to `updateProminentIdentifierIfNeeded`.
   [self applyProminentIdentifierAnimated:YES warnIfUnresolved:NO];
-  _needsUpdateOfProminent = YES;
+  _needsUpdateOfProminentIdentifier = YES;
 }
 
-- (void)updateProminentIfNeeded
+- (void)updateProminentIdentifierIfNeeded
 {
-  if (!_needsUpdateOfProminent) {
+  if (!_needsUpdateOfProminentIdentifier) {
     return;
   }
-  _needsUpdateOfProminent = NO;
+  _needsUpdateOfProminentIdentifier = NO;
   [self applyProminentIdentifierAnimated:NO warnIfUnresolved:YES];
 }
 
