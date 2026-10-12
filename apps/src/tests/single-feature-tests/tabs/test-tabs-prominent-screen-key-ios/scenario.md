@@ -31,20 +31,6 @@ TBD.
   and `prominentScreenKey` is `undefined` or `Search`).
 - The Config tab can toggle `automaticallyActivatesSearch` at runtime. With the
   switch off, the search tab behaves like a regular tab.
-- On iOS 27.2 a prominent search tab looks different depending on whether its
-  search is active when the tab is selected:
-  - With `automaticallyActivatesSearch` on (`prominentScreenKey` is `undefined`
-    or `Search`), selecting the search tab activates the search field right away and
-    the tab bar shows a close (X) button next to it.
-  - With `automaticallyActivatesSearch` off and `prominentScreenKey` =
-    `Search`, the search tab is only prominent. Selecting it shows an inactive
-    search field in the tab bar, the **List** large title stays visible and there
-    is no X button. The X button appears only after tapping the search field.
-- The order of the steps matters, because UIKit does not reset the search state
-  when switching tabs. Leaving an active search through another tab, instead of
-  the X button, keeps the search active. The next visit then shows the X button
-  even with `automaticallyActivatesSearch` off. Close the search with the X
-  button, or reload the app, before checking the "only prominent" case.
 - The same behavior reproduces in a plain UIKit app without React Native, so it
   is native UIKit behavior and not a react-native-screens issue.
 
@@ -72,7 +58,7 @@ TBD.
 4. Scroll **down** through the list.
 
    - [ ] The tab bar minimizes.
-   - [ ] **Cart** remains visible next to the minimized tab bar.
+   - [ ] **Cart** remains visible.
 
 5. Scroll back **up**, switch to **Config** and set
    `prominentScreenKey` = `Search`.
@@ -83,9 +69,13 @@ TBD.
 6. Tap the search tab.
 
    - [ ] The List screen appears.
-   - [ ] The search field activates immediately.
+   - [ ] The search field activates immediately and the keyboard appears.
+   - [ ] The tab bar shows the search field and an X button.
+   - [ ] The other items disapper.
 
-7. Tap the **Config** tab, then tap the **Cart** tab and scroll **down**.
+7. Tap the X button, then tap the **Cart** tab and scroll **down**.
+
+   - [ ] Tapping X closes the search and goes back to **Config**.
 
    - [ ] The tab bar minimizes.
    - [ ] The search tab bar item remains visible.
@@ -115,8 +105,9 @@ TBD.
 
 13. Tap the search tab.
 
-    - [ ] The List screen appears
-    - [ ] The search field are open.
+    - [ ] The List screen appears and its large title stays visible.
+    - [ ] The search field in the tab bar is inactive - no keyboard and no X
+          button.
 
 14. Tap the **Config** tab, then tap the **Cart** tab and scroll **down**.
 
