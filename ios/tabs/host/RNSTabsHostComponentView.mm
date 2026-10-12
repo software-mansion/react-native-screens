@@ -101,6 +101,7 @@ namespace react = facebook::react;
   _rejectStaleNavStateUpdates = NO;
   _tabBarHiddenAnimationEnabled = YES;
   _bottomAccessoryHidden = NO;
+  _prominentScreenKey = nil;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -318,6 +319,18 @@ namespace react = facebook::react;
       if (newComponentProps.tabBarSidebarPreferredPlacement !=
           react::RNSTabsHostIOSTabBarSidebarPreferredPlacement::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarSidebarPreferredPlacement is supported for iOS >= 27");
+      }
+  }
+
+  if (newComponentProps.prominentScreenKey != oldComponentProps.prominentScreenKey) {
+    _prominentScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.prominentScreenKey);
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 27.0, *)) {
+      [_controller setProminentScreenKey:_prominentScreenKey];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_TV && !TARGET_OS_VISION
+      if (_prominentScreenKey != nil) {
+        RCTLogWarn(@"[RNScreens] prominentScreenKey is supported for iOS >= 27");
       }
   }
 
