@@ -203,16 +203,9 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  // Screen's content offset in shadow tree matches its actual native origin (see `-[RNSScreenView updateBounds]`),
+  // therefore navigation bar's frame in screen's coordinate space can be used directly.
   CGRect navBarFrameInScreenView = [navigationBar convertRect:navigationBar.bounds toView:_screenView];
-
-  // On iOS 26+ in landscape mode there is a bug with `edgesForExtendedLayout` for non-transparent
-  // header. We're applying SAV to fix it but we need to take it into account for HeaderConfig's
-  // origin as well.
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (!_translucent && self.shouldHeaderBeVisible) {
-    navBarFrameInScreenView.origin.y -= _screenView.safeAreaInsets.top;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   [self updateShadowStateWithSize:navigationBar.frame.size
                        edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
