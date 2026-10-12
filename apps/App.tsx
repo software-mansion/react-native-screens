@@ -1,4 +1,5 @@
 import React from 'react';
+import { LogBox } from 'react-native';
 import { enableFreeze } from 'react-native-screens';
 
 import Example from './Example';
@@ -8,6 +9,11 @@ import Example from './Example';
 // import { Test42 as Example } from './src/tests/issue-tests';
 
 enableFreeze(true);
+
+// With the new debugger, LogBox shows no per-warning toasts, only this banner,
+// which covers the bottom of the screen (e.g. the native tab bar, breaking e2e
+// taps in Debug). Warnings still reach the debugger console; errors still show.
+LogBox.ignoreLogs(['Open debugger to view warnings.']);
 
 export default function App() {
   return <Example />;
