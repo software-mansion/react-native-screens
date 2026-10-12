@@ -46,11 +46,11 @@ const PLACES = [
   '🎡 Ferris Wheel',
 ];
 
-// `none` clears the prop; the remaining values are the route names of the tabs below.
-type ProminentTabOption = 'none' | 'Config' | 'Cart' | 'Search';
+// `undefined` clears the prop; the remaining values are the route names of the tabs below.
+type ProminentTabOption = 'undefined' | 'Config' | 'Cart' | 'Search';
 
 const PROMINENT_TAB_OPTIONS: ProminentTabOption[] = [
-  'none',
+  'undefined',
   'Config',
   'Cart',
   'Search',
@@ -136,7 +136,7 @@ function ConfigTab() {
 
   const onProminentRouteNameChange = (value: ProminentTabOption) => {
     updateHostConfig({
-      prominentRouteName: value === 'none' ? undefined : value,
+      prominentRouteName: value === 'undefined' ? undefined : value,
     });
   };
 
@@ -160,7 +160,7 @@ function ConfigTab() {
       <SettingsPicker<ProminentTabOption>
         testID="prominent-screen-key-picker"
         label="prominentScreenKey"
-        value={(prominentRouteName as ProminentTabOption) ?? 'none'}
+        value={(prominentRouteName as ProminentTabOption) ?? 'undefined'}
         onValueChange={onProminentRouteNameChange}
         items={PROMINENT_TAB_OPTIONS}
       />
@@ -174,7 +174,7 @@ function ConfigTab() {
         and stays visible once the tab bar minimizes.
         {'\n'}
         {'\n'}
-        With `none`, the search tab is prominent by default only{'\n'}while
+        With `undefined`, the search tab is prominent by default only{'\n'}while
         automaticallyActivatesSearch is on.
         {'\n'}
         {'\n'}

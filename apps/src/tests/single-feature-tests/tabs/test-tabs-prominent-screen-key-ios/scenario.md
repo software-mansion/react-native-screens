@@ -22,19 +22,19 @@ TBD.
 ## Note
 
 - On iOS 26 and lower the prop has no effect and a warning is logged.
-- Values in the picker are the screen keys of the tabs; `none` clears the prop.
+- Values in the picker are the screen keys of the tabs; `undefined` clears the prop.
 - The host presets `tabBarMinimizeBehavior: 'onScrollDown'`, the **Cart** tab
   holds the scrollable list used to trigger the minimize.
 - The search tab hosts a legacy (v4) native stack with a header search bar that
   filters its list of places. UIKit activates that search bar automatically only
   while the search tab is the prominent one (`automaticallyActivatesSearch` on
-  and `prominentScreenKey` is `none` or `Search`).
+  and `prominentScreenKey` is `undefined` or `Search`).
 - The Config tab can toggle `automaticallyActivatesSearch` at runtime. With the
   switch off, the search tab behaves like a regular tab.
 - On iOS 27.2 a prominent search tab looks different depending on whether its
   search is active when the tab is selected:
-  - With `automaticallyActivatesSearch` on (`prominentScreenKey` is `none` or
-    `Search`), selecting the search tab activates the search field right away and
+  - With `automaticallyActivatesSearch` on (`prominentScreenKey` is `undefined`
+    or `Search`), selecting the search tab activates the search field right away and
     the tab bar shows a close (X) button next to it.
   - With `automaticallyActivatesSearch` off and `prominentScreenKey` =
     `Search`, the search tab is only prominent. Selecting it shows an inactive
@@ -54,7 +54,7 @@ TBD.
 
    - [ ] Three tabs are visible: **Config**, **Cart** and the search tab
          (magnifier icon).
-   - [ ] **Config** is selected, the `prominentScreenKey` picker reads `none`,
+   - [ ] **Config** is selected, the `prominentScreenKey` picker reads `undefined`,
          and **automaticallyActivatesSearch** is on.
    - [ ] The search tab bar item is detached from the other items on its own
          surface.
@@ -91,7 +91,7 @@ TBD.
    - [ ] The search tab bar item remains visible.
 
 8. Scroll back **up**, switch to **Config**, set `prominentScreenKey` =
-   `none` and turn **automaticallyActivatesSearch** off.
+   `undefined` and turn **automaticallyActivatesSearch** off.
 
    - [ ] No tab is prominent - all three items sit together.
 
