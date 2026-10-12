@@ -1,18 +1,12 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { View } from 'react-native';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigRef,
-} from './StackHeaderConfig.types';
+import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-const StackHeaderConfig = forwardRef<
-  StackHeaderConfigRef,
-  StackHeaderConfigProps
->(function StackHeaderConfig() {
+function StackHeaderConfig(_props: StackHeaderConfigProps) {
   return <View />;
-});
+}
 
 export default StackHeaderConfig;
