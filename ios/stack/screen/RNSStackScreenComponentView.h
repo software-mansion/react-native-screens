@@ -1,6 +1,7 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
+#import "RNSSafeAreaProviding.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,7 +15,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
   RNSStackScreenActivityModeAttached = 1,
 };
 
-@interface RNSStackScreenComponentView : RNSReactBaseView
+@interface RNSStackScreenComponentView : RNSReactBaseView <RNSSafeAreaProviding>
 
 @property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, weak, readonly, nullable) RNSStackHeaderConfigComponentView *headerConfig;
