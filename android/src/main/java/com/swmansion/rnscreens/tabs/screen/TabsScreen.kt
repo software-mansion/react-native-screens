@@ -138,6 +138,8 @@ class TabsScreen(
         super.onAttachedToWindow()
     }
 
+    override fun shouldDelayChildPressedState(): Boolean = false
+
     override fun onLayout(
         changed: Boolean,
         l: Int,
