@@ -7,7 +7,7 @@ import {
   TabsContainer,
   type TabRouteConfig,
   useTabsNavigationContext,
-} from '@apps/shared/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
 // The last `onTabSelected` payload, shared with the tab screens - every
@@ -59,7 +59,7 @@ function ContentView() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Home',
-    element: <ContentView />,
+    Component: ContentView,
     options: {
       title: 'Home',
       tabBarItemTestID: 'home-tab-item',
@@ -70,7 +70,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Search',
-    element: <ContentView />,
+    Component: ContentView,
     options: {
       tabBarItemTestID: 'search-tab-item',
       ios: {
