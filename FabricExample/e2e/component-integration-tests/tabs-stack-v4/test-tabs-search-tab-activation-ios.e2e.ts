@@ -5,7 +5,13 @@ import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
 import { tapWithinFrame } from '@e2e/framework/gestures';
 import { getMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26 } from '@e2e/framework/native-classes-ios';
-import { describeIfIOS } from '@e2e/framework/platform';
+import { isIOSVersionAtLeast } from '@e2e/framework/platform';
+
+// `UISearchTab` (and with it search activation and the collapsed tab bar) is
+// used only on the `UITab` API path, enabled from iOS 26.1.
+const describeIfUISearchTab = isIOSVersionAtLeast('26.1')
+  ? describe
+  : describe.skip;
 
 // Once the search tab has been activated, UIKit lets a mount transaction run
 // between `shouldSelectTab:` and `didSelectTab:` on every later selection of
@@ -28,7 +34,7 @@ async function tapCollapsedTabButton(label: string) {
   await tapWithinFrame(collapsedButton.frame);
 }
 
-describeIfIOS('Stack v4 & Tabs: search tab activation', () => {
+describeIfUISearchTab('Stack v4 & Tabs: search tab activation', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectComponentIntegrationTestsScreen(
