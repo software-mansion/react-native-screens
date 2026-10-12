@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Validates automaticallyActivatesSearch on a search-role tab with a search bar in the nested (legacy) stack header, including the UIKit hosted-search contract across push/pop (hosted field exists only at the stack root).',
   platforms: ['ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'incomplete',
   smokeTest: false,
 };
