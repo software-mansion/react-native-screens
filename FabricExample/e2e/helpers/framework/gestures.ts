@@ -41,12 +41,19 @@ export async function rewindAndScrollUntilVisible(
   await scrollUntilVisible(id, scrollViewId, options);
 }
 
-/** Coordinate tap at (`xFraction`, 1/2) of `frame`, bypassing visibility checks. */
+/**
+ * Coordinate tap at (`xFraction`, 1/2) of `frame`, bypassing visibility
+ * checks. Rounded: Detox's iOS runner parses each coordinate as an integer and
+ * silently falls back to 100 for a fractional one.
+ */
 export async function tapWithinFrame(
   { x, y, width, height }: Frame,
   xFraction = 0.5,
 ) {
-  await device.tap({ x: x + width * xFraction, y: y + height / 2 });
+  await device.tap({
+    x: Math.round(x + width * xFraction),
+    y: Math.round(y + height / 2),
+  });
 }
 
 /** Coordinate tap (iOS) — bypasses Detox's visibility check. */
