@@ -32,6 +32,15 @@ Not automated:
 - The "hidden title" option is validated, but indirectly; it should be verified manually.
 - Steps 20-23 (orientation changes).
 
+Temporarily disabled:
+
+- Steps 10-19 (icon override cycling and combined overrides) are skipped (see
+[#4778](https://github.com/software-mansion/react-native-screens/pull/4778)),
+because the tab bar item icon is rendered in the wrong variant (`.fill` vs
+outline), so the icon assertions do not match
+([labs#1885](https://github.com/software-mansion/react-native-screens-labs/issues/1885)).
+Until the tests are re-enabled, verify steps 10-19 manually.
+
 ## Prerequisites
 
 - iOS device or simulator running iOS 18 or later.

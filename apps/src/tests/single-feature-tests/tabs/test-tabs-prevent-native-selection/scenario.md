@@ -30,6 +30,16 @@ More tab is not currently automated (Step 19 from the scenario). When the More t
 and displayed, Detox is unable to re-select the "More" tab bar item because it
 becomes invisible for Detox.
 
+Temporarily disabled:
+
+- iPad, iOS 26+: the tests covering steps 2-11 are skipped (see
+[#4778](https://github.com/software-mansion/react-native-screens/pull/4778)),
+because `tabBarItemTestID` is not applied to tab bar items on iPad, so the tab
+items cannot be matched by id
+([labs#1886](https://github.com/software-mansion/react-native-screens-labs/issues/1886)).
+Until the issue is fixed, the iPad E2E test covers only step 1 and the sidebar
+check - verify steps 2-11 on iPad manually.
+
 ## Prerequisites
 
 - iOS device or simulator: iPhone and iPad
