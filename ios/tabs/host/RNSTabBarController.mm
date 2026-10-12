@@ -598,8 +598,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     }
     _isApplyingProgrammaticTabSelection = NO;
 
-    // The backing tabs might have been rebuilt - re-resolve the prominent tab against them.
-    [self applyProminentIdentifierAnimated:NO warnIfUnresolved:NO];
+    // The prominent screen key might point to a tab created in this update - re-resolve it.
     _needsUpdateOfProminentIdentifier = YES;
     return;
   }
@@ -998,26 +997,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
   _prominentScreenKey = newScreenKey;
-
-  // Applied eagerly, so that a runtime change is animated. The children might not be installed
-  // yet at this point, hence the validation is left to `updateProminentIdentifierIfNeeded`.
-  [self applyProminentIdentifierAnimated:YES warnIfUnresolved:NO];
   _needsUpdateOfProminentIdentifier = YES;
 }
 
+/// Resolves `_prominentScreenKey` against the installed tabs & pushes the result to UIKit.
 - (void)updateProminentIdentifierIfNeeded
 {
   if (!_needsUpdateOfProminentIdentifier) {
     return;
   }
   _needsUpdateOfProminentIdentifier = NO;
-  [self applyProminentIdentifierAnimated:NO warnIfUnresolved:YES];
-}
 
-/// Resolves `_prominentScreenKey` against the installed tabs & pushes the result to UIKit.
-/// Pass `warnIfUnresolved` only when the installed tabs are final for the current update.
-- (void)applyProminentIdentifierAnimated:(BOOL)animated warnIfUnresolved:(BOOL)warnIfUnresolved
-{
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 27.0, *)) {
     NSString *_Nullable tabIdentifier = nil;
@@ -1028,7 +1018,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
       UITab *_Nullable tab = [self findChildViewControllerForKey:_prominentScreenKey].tab;
       if (tab != nil) {
         tabIdentifier = tab.identifier;
-      } else if (warnIfUnresolved) {
+      } else {
         RCTLogWarn(
             @"[RNScreens] prominentScreenKey '%@' does not match the screenKey of any tab screen, falling back to the system default",
             _prominentScreenKey);
@@ -1038,7 +1028,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
     if (tabIdentifier == self.prominentTabIdentifier || [tabIdentifier isEqualToString:self.prominentTabIdentifier]) {
       return;
     }
-    [self setProminentTabIdentifier:tabIdentifier animated:animated];
+    // Animate only runtime changes, not the initial setup before the tab bar is on screen.
+    [self setProminentTabIdentifier:tabIdentifier animated:self.viewIfLoaded.window != nil];
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 }
