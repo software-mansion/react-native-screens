@@ -7,25 +7,25 @@ package com.swmansion.rnscreens.safearea
  * System insets (e.g. `systemBars`, `displayCutout`) are handled through Android inset
  * dispatch mechanism (via `onApplyWindowInsets`).
  *
- * Classes implementing this protocol are responsible for notifying `SafeAreaView`, which
- * registers as a listener, about changes to **interface** safe area insets.
+ * Classes implementing this protocol are responsible for notifying the registered
+ * [OnInterfaceInsetsChangeListener] about changes to **interface** safe area insets.
  */
 interface SafeAreaProvider {
     /**
      * Responsible for registering **interface** safe area insets listener.
      *
-     * @param listener `SafeAreaView` instance that wants to receive notifications
-     * about changes to **interface** safe area insets via `onInterfaceInsetsChange`.
+     * @param listener listener that wants to receive notifications about changes
+     * to **interface** safe area insets via `onInterfaceInsetsChange`.
      */
-    fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView)
+    fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
 
     /**
      * Responsible for unregistering **interface** safe area insets listener.
      *
-     * @param listener `SafeAreaView` instance that wants to stop receiving notifications
-     * about changes to **interface** safe area insets.
+     * @param listener listener that wants to stop receiving notifications about changes
+     * to **interface** safe area insets.
      */
-    fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView)
+    fun removeOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
 
     /**
      * Responsible for providing current **interface** safe area insets.
