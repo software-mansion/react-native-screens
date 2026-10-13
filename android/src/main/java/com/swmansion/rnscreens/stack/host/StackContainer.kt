@@ -368,6 +368,17 @@ internal class StackContainer(
             .asReversed()
             .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
 
+    // Pop-to-root is not implemented for the v5 stack yet - the request is forwarded to the top screen's
+    // nested container.
+    override fun requestPopToRoot(): Boolean {
+        RNSLog.w(TAG, "[RNScreens] Pop-to-root special effect is not implemented for v5 stack yet")
+        return stackModel
+            .lastOrNull()
+            ?.stackScreen
+            ?.resolveNestedContainer()
+            ?.requestPopToRoot() == true
+    }
+
     // endregion
 
     // region Header back button
