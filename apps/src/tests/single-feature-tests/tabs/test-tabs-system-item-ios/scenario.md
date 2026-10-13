@@ -27,11 +27,7 @@ and the search item is asserted differently because it renders differently
 
 Not automated:
 
-- Validating the differences between icon and selectedIcon. Detox
-  exposes the custom `selectedIcon` (`house.fill`,
-  `heart.fill`) under the same identifier as `icon` (`house`, `heart`), so the
-  test only asserts the icon is present in the hierarchy, not whether it
-  renders filled or outlined (steps 11, 12, 15, 16).
+- Validating the differences between icon and selectedIcon.
 - Checking visual icon and label changes.
 - The "hidden title" option is validated, but indirectly; it should be verified manually.
 - Steps 20-23 (orientation changes).
