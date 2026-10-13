@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.scrollviewmarker
+package com.swmansion.rnscreens.react.views.scrollviewmarker
 
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
