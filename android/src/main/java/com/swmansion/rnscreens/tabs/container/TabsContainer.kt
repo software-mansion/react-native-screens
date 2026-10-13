@@ -26,8 +26,8 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
+import com.swmansion.rnscreens.ext.createTransactionWithReordering
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
-import com.swmansion.rnscreens.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.safearea.EdgeInsets
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
 import com.swmansion.rnscreens.safearea.SafeAreaView
