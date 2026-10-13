@@ -8,11 +8,11 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
-import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
+import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.stack.screen.StackScreen
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)

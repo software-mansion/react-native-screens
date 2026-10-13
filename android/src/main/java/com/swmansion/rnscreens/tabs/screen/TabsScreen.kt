@@ -6,14 +6,14 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
-import com.swmansion.rnscreens.common.FragmentProviding
-import com.swmansion.rnscreens.common.container.Container
-import com.swmansion.rnscreens.common.container.ContainerItem
-import com.swmansion.rnscreens.common.container.ContainerItemSupport
+import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
+import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearance
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 

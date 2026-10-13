@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.swmansion.rnscreens.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.core.utils.ViewIdGenerator
 
 class TabsScreenFragment(
     internal val tabsScreen: TabsScreen,

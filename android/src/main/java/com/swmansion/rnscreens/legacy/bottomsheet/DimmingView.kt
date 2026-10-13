@@ -7,7 +7,7 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.facebook.react.uimanager.ReactPointerEventsView
-import com.swmansion.rnscreens.ext.equalWithRespectToEps
+import com.swmansion.rnscreens.core.utils.equalWithRespectToEps
 
 /**
  * Serves as dimming view that can be used as background for some view that does not fully fill

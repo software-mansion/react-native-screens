@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.MenuItem
 import com.google.android.material.appbar.MaterialToolbar
-import com.swmansion.rnscreens.helpers.IconResolution
-import com.swmansion.rnscreens.helpers.PropIconResolver
+import com.swmansion.rnscreens.core.utils.IconResolution
+import com.swmansion.rnscreens.core.utils.PropIconResolver
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuElementConfig
 import com.swmansion.rnscreens.stack.header.toolbar.model.StackHeaderToolbarMenuItemIconSource

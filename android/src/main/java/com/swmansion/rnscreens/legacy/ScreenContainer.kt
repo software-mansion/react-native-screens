@@ -16,10 +16,10 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.common.FragmentProviding
-import com.swmansion.rnscreens.common.container.Container
-import com.swmansion.rnscreens.common.container.ContainerItem
-import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 
 open class ScreenContainer(

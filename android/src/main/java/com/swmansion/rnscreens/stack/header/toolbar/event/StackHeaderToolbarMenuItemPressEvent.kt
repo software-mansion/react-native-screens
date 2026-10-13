@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.stack.header.toolbar.event
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
-import com.swmansion.rnscreens.common.event.NamingAwareEventType
+import com.swmansion.rnscreens.react.common.event.NamingAwareEventType
 
 internal class StackHeaderToolbarMenuItemPressEvent(
     surfaceId: Int,

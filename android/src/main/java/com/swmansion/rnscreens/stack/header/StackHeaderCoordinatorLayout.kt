@@ -11,9 +11,9 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
