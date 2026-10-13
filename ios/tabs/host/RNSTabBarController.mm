@@ -92,11 +92,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
   BOOL _isHandlingExplicitSelectionUpdate;
 
-  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab`. UIKit sends
-  /// `didSelectTab:` synchronously from inside those writes - this flag filters them out, so that
-  /// only UIKit-driven (user) selections reach the delegate logic. Marking user selections instead
-  /// is not viable: for `UISearchTab`, a mount transaction can land between `shouldSelectTab:`
-  /// and `didSelectTab:`.
+  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab` /
+  /// `selectedViewController`. UIKit sends `didSelectTab:` synchronously from inside those writes -
+  /// this flag filters them out, so that only UIKit-driven (user) selections reach the delegate
+  /// logic. Marking user selections instead is not viable: for `UISearchTab`, a mount transaction
+  /// can land between `shouldSelectTab:` and `didSelectTab:`.
   BOOL _isApplyingProgrammaticTabSelection;
 
   /// UITab path only. Set in `tabBar:didSelectItem:` when the user selects the More tab while
@@ -641,15 +641,23 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
 #if RNS_UITAB_API_SDK_AVAILABLE
   if (RNS_UITAB_API_ENABLED) {
+    // Both writes below are our own. UIKit sends `didSelectTab:` synchronously from inside them, and
+    // `didSelectTab:` must not treat that as a user selection - otherwise the state is progressed
+    // twice and a second, `user`-origin event is emitted.
+    _isApplyingProgrammaticTabSelection = YES;
     if (![self isMoreNavigationControllerTabBarItemSelected]) {
       RCTAssert(screenController.tab != nil,
                 @"[RNScreens] No installed UITab for screenKey: %@",
                 [self screenKeyForViewController:screenController]);
-      _isApplyingProgrammaticTabSelection = YES;
       self.selectedTab = screenController.tab;
-      _isApplyingProgrammaticTabSelection = NO;
-      return;
+    } else {
+      // While More is active `selectedTab` lags behind UIKit's selection, so the write goes through
+      // the legacy setter (our own override, so that reconciliation of implicit UIKit-driven updates
+      // keeps working).
+      [self setSelectedViewController:screenController];
     }
+    _isApplyingProgrammaticTabSelection = NO;
+    return;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
 
