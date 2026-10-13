@@ -579,16 +579,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
   navitem.largeTitleDisplayMode =
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
-  if (@available(iOS 27.0, *)) {
-    // Due to native limitations related to opaque header and minimization behavior, we disable it for opaque headers.
-    UIBarMinimization *minimization = [UIBarMinimization new];
-    minimization.minimizationBehavior =
-        config.translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
-    navitem.navigationBarMinimization = minimization;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 #endif
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
