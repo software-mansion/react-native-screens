@@ -218,8 +218,11 @@ export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu ke
 export { default as Test4651 } from './Test4651';
 export { default as Test4702 } from './Test4702';
 export { default as Test4709 } from './Test4709';
+export { default as Test4725 } from './Test4725';
 export { default as Test4729 } from './Test4729';
+export { default as Test4757 } from './Test4757';
 export { default as Test4785 } from './Test4785';
+export { default as Test4872 } from './Test4872';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

@@ -54,6 +54,7 @@ function TabsHost(props: TabsHostProps) {
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
       tabBarTintColor={ios?.tabBarTintColor}
       bottomAccessoryHidden={ios?.bottomAccessoryHidden}
+      prominentScreenKey={ios?.prominentScreenKey}
       onMoreTabSelected={ios?.onMoreTabSelected}>
       {children}
       {ios?.bottomAccessory && isIOS26OrHigher && (

@@ -27,6 +27,9 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.common.FragmentProviding
+import com.swmansion.rnscreens.common.container.Container
+import com.swmansion.rnscreens.common.container.ContainerItem
+import com.swmansion.rnscreens.common.container.ContainerItemSupport
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.legacy.bottomsheet.fitToContentsSheetHeight
@@ -46,7 +49,10 @@ class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
     ScreenContentWrapper.OnLayoutCallback,
-    FragmentProviding {
+    FragmentProviding,
+    ContainerItem {
+    private val containerItemSupport = ContainerItemSupport()
+
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -625,6 +631,20 @@ class Screen(
                     }.build()
         }
     }
+
+    // region ContainerItem
+
+    override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
+
+    override fun unregisterNestedContainer(container: Container) = containerItemSupport.unregisterNestedContainer(container)
+
+    override fun resolveNestedContainer(): Container? = containerItemSupport.resolveNestedContainer()
+
+    override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
+
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = resolveNestedContainer()?.wantsToPreventStackNativeDismiss()
+
+    // endregion
 
     enum class StackPresentation {
         PUSH,
