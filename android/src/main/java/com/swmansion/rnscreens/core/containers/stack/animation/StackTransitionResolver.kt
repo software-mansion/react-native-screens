@@ -1,9 +1,10 @@
 package com.swmansion.rnscreens.core.containers.stack.animation
 
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.SpecTransition
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.ScreenTransition
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
-import com.swmansion.rnscreens.core.containers.stack.animation.model.SlotRole
-import com.swmansion.rnscreens.core.containers.stack.animation.spec.RowSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.presets.Presets
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
 
 /**
@@ -20,30 +21,40 @@ internal object StackTransitionResolver {
         slot: TransitionSlot,
         context: StackTransitionContext?,
         screenAbove: (StackScreenFragment) -> StackScreenFragment?,
-    ): SpecTransition? {
-        val isAppearing = slot.role == SlotRole.IN
-        val row: RowSpec =
+    ): ScreenTransition? {
+        val timeline: TransitionTimeline =
             when {
                 // A batch of ours is executing and the reader plays its role in it.
-                context != null && !isAppearing && reader === context.outgoing -> rowOf(context)
-                context != null && isAppearing && reader === context.incoming -> rowOf(context)
+                context != null && !slot.isAppearing && reader === context.outgoing -> timelineOf(context)
+                context != null && slot.isAppearing && reader === context.incoming -> timelineOf(context)
                 // Otherwise FragmentManager started a pop by itself (predictive back at gesture
-                // start): the popped screen plays its own pop row ...
-                !isAppearing -> StackAnimationResolver.popRow(reader.item)
-                // ... and the revealed screen plays the row of the screen above it. Nothing
+                // start): the popped screen plays its own pop ...
+                !slot.isAppearing -> popTimelineOf(reader)
+                // ... and the revealed screen plays the pop of the screen above it. Nothing
                 // above means the first screen, which never animates.
-                else -> screenAbove(reader)?.let { StackAnimationResolver.popRow(it.item) } ?: return null
+                else -> screenAbove(reader)?.let { popTimelineOf(it) } ?: return null
             }
-        val side = if (isAppearing) row.inSlot else row.outSlot
-        return SpecTransition(side, slot, row.outZPolicy)
+        val side = if (slot.isAppearing) timeline.enter else timeline.exit
+        return ScreenTransition(side, slot.isAppearing, timeline.exitZOrder)
     }
 
-    private fun rowOf(context: StackTransitionContext): RowSpec =
+    private fun timelineOf(context: StackTransitionContext): TransitionTimeline =
         when (context.kind) {
-            StackTransitionKind.PUSH -> StackAnimationResolver.pushRow(context.incoming.item)
-            StackTransitionKind.POP -> StackAnimationResolver.popRow(context.outgoing.item)
-            // Fixed to the outgoing screen's pop row until the `replaceAnimation` PR.
-            StackTransitionKind.REPLACE ->
-                StackAnimationResolver.replaceRow(context.incoming.item, context.outgoing.item)
+            // The incoming screen's config governs a push: the covered screen goes under it.
+            StackTransitionKind.PUSH -> pushTimelineOf(context.incoming)
+            // The outgoing screen's config governs a pop: the popped screen stays on top.
+            StackTransitionKind.POP -> popTimelineOf(context.outgoing)
+            // A replace looks like a pop of the outgoing screen until the `replaceAnimation` PR
+            // lets the incoming screen choose a push look instead.
+            StackTransitionKind.REPLACE -> popTimelineOf(context.outgoing)
+        }
+
+    private fun pushTimelineOf(fragment: StackScreenFragment): TransitionTimeline = definitionOf(fragment).push
+
+    private fun popTimelineOf(fragment: StackScreenFragment): TransitionTimeline = definitionOf(fragment).pop
+
+    private fun definitionOf(fragment: StackScreenFragment) =
+        when (val config = fragment.animationConfig) {
+            is StackAnimationConfig.Preset -> Presets.definition(config.name)
         }
 }

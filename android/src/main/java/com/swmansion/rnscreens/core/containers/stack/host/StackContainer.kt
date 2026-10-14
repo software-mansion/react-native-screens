@@ -23,6 +23,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionCo
 import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionKind
 import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionResolver
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.UnderlayProviding
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -44,7 +45,8 @@ internal class StackContainer(
     StackHeaderBackPressHandler,
     StackScreenFragmentDelegate,
     StackUpdateBatchStateProviding,
-    ScreenTransitionProviding {
+    ScreenTransitionProviding,
+    UnderlayProviding {
     private var fragmentManager: FragmentManager? = null
 
     private fun requireFragmentManager(): FragmentManager =
@@ -76,7 +78,7 @@ internal class StackContainer(
      * Permanent child 0. Screens exiting under an entering screen are hosted in its overlay,
      * so they draw before every fragment view FragmentManager appends after it.
      */
-    internal val underlay: FrameLayout = FrameLayout(context)
+    override val underlay: FrameLayout = FrameLayout(context)
 
     override fun onViewAdded(child: View) {
         super.onViewAdded(child)
@@ -197,7 +199,10 @@ internal class StackContainer(
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
-        Log.d(TRANSITION_TAG, "performOperations: ${pendingPopOperations.size} pops, ${pendingPushOperations.size} pushes, note=${transitionContext.describe()}")
+        Log.d(
+            TRANSITION_TAG,
+            "performOperations: ${pendingPopOperations.size} pops, ${pendingPushOperations.size} pushes, note=${transitionContext.describe()}",
+        )
         applyOperationsAndComputeFragmentManagerOperations()
         fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
 
@@ -329,7 +334,12 @@ internal class StackContainer(
             Log.d(
                 TRANSITION_TAG,
                 "read ${fragment.item.itemKey}.$slot note=${transitionContext.describe()} -> " +
-                    (it?.let { t -> "${t.mode.modeName()} ${t.spec.durationMs}ms ${t.spec.tracks.size} tracks z=${t.zPolicy}" } ?: "null"),
+                    (
+                        it?.let { t ->
+                            "${t.mode.modeName()} ${t.timeline.durationMs}ms ${t.timeline.tracks.size} tracks z=${t.exitZOrder}"
+                        }
+                            ?: "null"
+                    ),
             )
         }
 

@@ -4,23 +4,27 @@ import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
 import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetName
-import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
 import com.swmansion.rnscreens.react.utils.requireNotNullString
 
 /**
- * Parses the React `animation` prop (Dynamic) into the native descriptor.
+ * Converts the React `animation` prop into the package's config. The only file of the package
+ * that sees a React Native type; everything below it is framework-neutral.
+ *
+ * Scalar props are converted inline in the view managers; a discriminated object graph like
+ * this one gets a mapper next to its model, as the header toolbar menu does.
  */
 internal object StackAnimationMapper {
-    fun parse(value: Dynamic): StackAnimationDescriptor =
+    internal fun parse(value: Dynamic): StackAnimationConfig =
         when (value.type) {
-            ReadableType.String -> StackAnimationDescriptor.Preset(PresetName.fromString(checkNotNull(value.asString())))
-            ReadableType.Map -> parsePackage(checkNotNull(value.asMap()))
+            ReadableType.String -> StackAnimationConfig.Preset(PresetName.fromString(checkNotNull(value.asString())))
+            ReadableType.Map -> parseMap(checkNotNull(value.asMap()))
             else -> throw IllegalArgumentException("[RNScreens] animation must be a preset name or an object.")
         }
 
-    private fun parsePackage(map: ReadableMap): StackAnimationDescriptor =
+    private fun parseMap(map: ReadableMap): StackAnimationConfig =
         when (val type = map.requireNotNullString("type")) {
-            "preset" -> StackAnimationDescriptor.Preset(PresetName.fromString(map.requireNotNullString("name")))
+            "preset" -> StackAnimationConfig.Preset(PresetName.fromString(map.requireNotNullString("name")))
             else -> throw IllegalArgumentException("[RNScreens] Unknown animation type: $type.")
         }
 }

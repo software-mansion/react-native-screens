@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.ScreenTransitionProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
-import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderCoordinatorLayout
 import com.swmansion.rnscreens.core.containers.stack.host.StackUpdateBatchStateProviding
@@ -115,7 +115,7 @@ internal class StackScreenFragment(
      * What this screen asked for; the governing screen of an operation is not always this one,
      * which is why the container, not the fragment, resolves the transition.
      */
-    internal val animationConfig: StackAnimationDescriptor
+    internal val animationConfig: StackAnimationConfig
         get() = item.animation
 
     // FragmentManager reads a fragment's transitions through these getters, once per operation
