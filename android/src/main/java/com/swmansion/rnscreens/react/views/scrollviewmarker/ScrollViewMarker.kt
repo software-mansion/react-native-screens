@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.scrollviewmarker
+package com.swmansion.rnscreens.react.views.scrollviewmarker
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup

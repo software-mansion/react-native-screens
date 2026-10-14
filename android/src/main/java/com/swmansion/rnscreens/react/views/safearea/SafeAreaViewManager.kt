@@ -1,6 +1,6 @@
 // Implementation adapted from `react-native-safe-area-context`:
 // https://github.com/AppAndFlow/react-native-safe-area-context/tree/v5.6.1
-package com.swmansion.rnscreens.safearea
+package com.swmansion.rnscreens.react.views.safearea
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableMap

@@ -11,8 +11,8 @@ import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
 import com.swmansion.rnscreens.core.utils.findFragmentOrNull
 import com.swmansion.rnscreens.react.common.ShadowStateProxy
-import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
-import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
+import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewMarker
+import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.host.StackHost
