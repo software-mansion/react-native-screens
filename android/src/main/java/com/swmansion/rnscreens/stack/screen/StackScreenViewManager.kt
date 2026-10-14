@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens.stack.screen
 
+import android.util.Log
 import android.view.View
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
@@ -12,6 +14,8 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.stack.animation.StackAnimationMapper
+import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidDisappearEvent
@@ -145,7 +149,25 @@ class StackScreenViewManager :
         view.isPreventNativeDismissEnabled = value
     }
 
+    override fun setAnimation(
+        view: StackScreen,
+        value: Dynamic,
+    ) {
+        view.animation =
+            if (value.isNull) {
+                StackAnimationDescriptor.DEFAULT
+            } else {
+                try {
+                    StackAnimationMapper.parse(value)
+                } catch (e: IllegalArgumentException) {
+                    Log.w(TAG, "${e.message} Falling back to the default animation.")
+                    StackAnimationDescriptor.DEFAULT
+                }
+            }
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackScreen"
+        private const val TAG = "StackScreenViewManager"
     }
 }
