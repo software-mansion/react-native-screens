@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.stack.host
 
-import com.swmansion.rnscreens.stack.screen.StackScreen
+import com.swmansion.rnscreens.stack.screen.StackScreenItem
 
 internal class StackContainerUpdateCoordinator {
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
@@ -8,11 +8,11 @@ internal class StackContainerUpdateCoordinator {
     private val hasPendingOperations: Boolean
         get() = pendingPushOperations.isNotEmpty() || pendingPopOperations.isNotEmpty()
 
-    internal fun addPushOperation(stackScreen: StackScreen) {
+    internal fun addPushOperation(stackScreen: StackScreenItem) {
         pendingPushOperations.add(PushOperation(stackScreen))
     }
 
-    internal fun addPopOperation(stackScreen: StackScreen) {
+    internal fun addPopOperation(stackScreen: StackScreenItem) {
         pendingPopOperations.add(PopOperation(stackScreen))
     }
 
@@ -22,7 +22,7 @@ internal class StackContainerUpdateCoordinator {
      */
     internal fun enqueuePendingOperations(
         container: StackContainer,
-        renderedScreens: List<StackScreen>,
+        renderedScreens: List<StackScreenItem>,
     ) {
         if (!hasPendingOperations) {
             return

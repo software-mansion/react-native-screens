@@ -16,7 +16,7 @@ import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
 import java.lang.ref.WeakReference
 
 internal class StackScreenFragment(
-    internal val stackScreen: StackScreen,
+    internal val stackScreen: StackScreenItem,
     private val canNavigateBack: Boolean,
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
@@ -86,7 +86,7 @@ internal class StackScreenFragment(
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        screenLifecycleEventEmitter = stackScreen.createAppearanceEventsEmitter(viewLifecycleOwner)
+        screenLifecycleEventEmitter = StackScreenAppearanceEventsEmitter(viewLifecycleOwner.lifecycle, stackScreen.appearanceEventEmitter)
     }
 
     override fun onDestroyView() {

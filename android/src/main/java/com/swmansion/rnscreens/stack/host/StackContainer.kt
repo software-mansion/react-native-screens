@@ -19,9 +19,9 @@ import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.isMeasured
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
-import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.stack.screen.StackScreenFragmentDelegate
+import com.swmansion.rnscreens.stack.screen.StackScreenItem
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -167,11 +167,11 @@ internal class StackContainer(
         stackModel.forEach { it.flushPendingHeaderUpdates() }
     }
 
-    internal fun enqueuePushOperation(stackScreen: StackScreen) {
+    internal fun enqueuePushOperation(stackScreen: StackScreenItem) {
         pendingPushOperations.add(PushOperation(stackScreen))
     }
 
-    internal fun enqueuePopOperation(stackScreen: StackScreen) {
+    internal fun enqueuePopOperation(stackScreen: StackScreenItem) {
         pendingPopOperations.add(PopOperation(stackScreen))
     }
 
@@ -267,7 +267,7 @@ internal class StackContainer(
     }
 
     private fun createFragmentForScreen(
-        screen: StackScreen,
+        screen: StackScreenItem,
         canNavigateBack: Boolean,
     ): StackScreenFragment =
         StackScreenFragment(
@@ -384,7 +384,7 @@ internal class StackContainer(
 
     // region Header back button
 
-    override fun handleHeaderBackButtonPress(pressedScreen: StackScreen) {
+    override fun handleHeaderBackButtonPress(pressedScreen: StackScreenItem) {
         val fragmentManager = fragmentManager
         if (fragmentManager == null) {
             Log.w(TAG, "[RNScreens] Ignoring header back button press - container is detached")
@@ -405,7 +405,7 @@ internal class StackContainer(
         val vetoingItem = topScreen.wantsToPreventStackNativeDismiss()
         if (vetoingItem != null) {
             // Only a StackScreen can veto - TabsScreen has no own flag and only forwards.
-            val vetoingScreen = vetoingItem as? StackScreen
+            val vetoingScreen = vetoingItem as? StackScreenItem
             if (vetoingScreen != null) {
                 vetoingScreen.onNativeDismissPrevented()
             } else {

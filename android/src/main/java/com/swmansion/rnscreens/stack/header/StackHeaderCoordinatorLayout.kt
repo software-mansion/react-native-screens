@@ -22,7 +22,7 @@ import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProvi
 import com.swmansion.rnscreens.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
-import com.swmansion.rnscreens.stack.screen.StackScreen
+import com.swmansion.rnscreens.stack.screen.StackScreenItem
 import java.lang.ref.WeakReference
 
 /**
@@ -33,7 +33,7 @@ import java.lang.ref.WeakReference
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
     context: Context,
-    internal val stackScreen: StackScreen,
+    internal val stackScreen: StackScreenItem,
     private val canNavigateBack: Boolean,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
     parentColorSchemeProvider: WeakReference<ColorSchemeProviding>,
@@ -419,7 +419,7 @@ internal class StackHeaderCoordinatorLayout(
         // because SurfaceMountingManager will override Y offset (that depends on the header
         // height) with Y=0. If we wrap StackScreen in another view, as Y is relative to
         // parent view, value set by Yoga will be correct.
-        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
+        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen.view) }
         addView(
             stackScreenWrapper,
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
@@ -438,7 +438,7 @@ internal class StackHeaderCoordinatorLayout(
         pendingFlags = StackHeaderInvalidationFlags.NONE
         removeHeader()
 
-        stackScreenWrapper.removeView(stackScreen)
+        stackScreenWrapper.removeView(stackScreen.view)
 
         currentProvider?.setConfigurationObserver(null)
         currentProvider = null

@@ -21,7 +21,7 @@ import com.swmansion.rnscreens.stack.screen.event.StackScreenWillAppearEvent
 import com.swmansion.rnscreens.stack.screen.event.StackScreenWillDisappearEvent
 
 @ReactModule(name = StackScreenViewManager.REACT_CLASS)
-class StackScreenViewManager :
+internal class StackScreenViewManager :
     ViewGroupManager<StackScreen>(),
     RNSStackScreenManagerInterface<StackScreen> {
     private val delegate: ViewManagerDelegate<StackScreen> = RNSStackScreenManagerDelegate<StackScreen, StackScreenViewManager>(this)

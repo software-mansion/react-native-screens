@@ -1,10 +1,10 @@
 package com.swmansion.rnscreens.stack.host
 
 import androidx.fragment.app.FragmentManager
-import com.swmansion.rnscreens.stack.screen.StackScreen
+import com.swmansion.rnscreens.stack.screen.StackScreenItem
 
 internal interface StackContainerDelegate {
-    fun onScreenDismissCommitted(stackScreen: StackScreen)
+    fun onScreenDismissCommitted(stackScreen: StackScreenItem)
 
     /**
      * Resolves the fragment manager the container should run its operations on. Called every time the container

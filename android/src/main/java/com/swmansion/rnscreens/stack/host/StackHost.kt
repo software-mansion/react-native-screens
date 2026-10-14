@@ -15,11 +15,12 @@ import com.swmansion.rnscreens.react.utils.ViewIdGenerator
 import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.react.utils.verifyReactTagSchemeInDebug
 import com.swmansion.rnscreens.stack.screen.StackScreen
+import com.swmansion.rnscreens.stack.screen.StackScreenItem
 import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
-class StackHost(
+internal class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
@@ -95,7 +96,10 @@ class StackHost(
         }
     }
 
-    override fun onScreenDismissCommitted(stackScreen: StackScreen) {
+    override fun onScreenDismissCommitted(stackScreen: StackScreenItem) {
+        check(stackScreen is StackScreen) {
+            "[RNScreens] Unexpected screen item type: ${stackScreen.javaClass.simpleName}"
+        }
         if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
             stackScreen.isNativelyDismissed = true
         }

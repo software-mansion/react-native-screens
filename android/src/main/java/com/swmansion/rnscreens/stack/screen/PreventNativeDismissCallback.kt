@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.core.utils.RNSLog
 
 internal class PreventNativeDismissCallback(
     lifecycleOwner: LifecycleOwner,
-    private val screen: StackScreen,
+    private val screen: StackScreenItem,
     canBeEnabled: Boolean,
 ) : OnBackPressedCallback(false),
     LifecycleEventObserver,

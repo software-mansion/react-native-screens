@@ -5,7 +5,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.google.android.material.appbar.MaterialToolbar
-import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
+import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
 
 /**
  * Toolbar of a collapsing header. It exists to change the gravity of the
@@ -52,7 +52,7 @@ internal class StackHeaderToolbar(
         child: View,
         params: LayoutParams,
     ): Boolean =
-        child !is StackHeaderSubview &&
+        child !is StackHeaderSubviewProviding &&
             params.width == MATCH_PARENT &&
             params.height == MATCH_PARENT
 
