@@ -59,11 +59,11 @@ internal class StackScreen(
         }
     }
 
-    override var animation: StackAnimationDescriptor by Delegates.observable(StackAnimationDescriptor.DEFAULT) { _, oldValue, newValue ->
-        if (oldValue != newValue) {
-            stackHost.get()?.stackScreenChangedAnimation(this)
-        }
-    }
+    /**
+     * Read by the fragment whenever FragmentManager asks for one of its transitions, so a
+     * change here takes effect at the next read without any notification.
+     */
+    override var animation: StackAnimationDescriptor = StackAnimationDescriptor.DEFAULT
 
     var screenKey: String? = null
         set(value) {

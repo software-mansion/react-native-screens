@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.ScreenTransitionProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderCoordinatorLayout
 import com.swmansion.rnscreens.core.containers.stack.host.StackUpdateBatchStateProviding
@@ -20,6 +23,7 @@ internal class StackScreenFragment(
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
     private val colorSchemeProvider: WeakReference<ColorSchemeProviding>,
+    private val transitionProvider: WeakReference<ScreenTransitionProviding>,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -104,6 +108,31 @@ internal class StackScreenFragment(
         super.onConfigurationChanged(newConfig)
         delegate.get()?.onFragmentConfigurationChanged(newConfig)
     }
+
+    // region Transitions
+
+    /**
+     * What this screen asked for; the governing screen of an operation is not always this one,
+     * which is why the container, not the fragment, resolves the transition.
+     */
+    internal val animationConfig: StackAnimationDescriptor
+        get() = item.animation
+
+    // FragmentManager reads a fragment's transitions through these getters, once per operation
+    // it executes. Answering at read time means nothing is ever written ahead or kept in sync:
+    // the container knows which operation is executing, the screens know their configs.
+
+    override fun getEnterTransition(): Any? = ask(TransitionSlot.ENTER)
+
+    override fun getExitTransition(): Any? = ask(TransitionSlot.EXIT)
+
+    override fun getReturnTransition(): Any? = ask(TransitionSlot.RETURN)
+
+    override fun getReenterTransition(): Any? = ask(TransitionSlot.REENTER)
+
+    private fun ask(slot: TransitionSlot): Any? = transitionProvider.get()?.transitionFor(this, slot)
+
+    // endregion
 
     /**
      * Notifies this fragment that it has become "top fragment" in its fragment manager.

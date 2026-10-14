@@ -1,7 +1,10 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
@@ -40,6 +43,25 @@ internal object SlotAnimator {
                 scrim?.apply(timeMs, eased)
             }
             addListener(RestoreRestValuesListener(view))
+            // Spike instrumentation: wall-clock duration of every played slot.
+            addListener(
+                object : AnimatorListenerAdapter() {
+                    private var startedAt = 0L
+
+                    override fun onAnimationStart(animation: Animator) {
+                        startedAt = SystemClock.uptimeMillis()
+                        Log.d("RNSTransition", "animator start view=${view.hashCode()} spec=${spec.durationMs}ms tracks=${spec.tracks.size}")
+                    }
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        Log.d("RNSTransition", "animator end view=${view.hashCode()} spec=${spec.durationMs}ms took=${SystemClock.uptimeMillis() - startedAt}ms")
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {
+                        Log.d("RNSTransition", "animator cancel view=${view.hashCode()} spec=${spec.durationMs}ms")
+                    }
+                },
+            )
             scrim?.attachTo(this, rootTransition)
         }
     }

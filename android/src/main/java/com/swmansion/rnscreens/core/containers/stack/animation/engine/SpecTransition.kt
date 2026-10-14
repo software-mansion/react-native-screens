@@ -15,9 +15,9 @@ import com.swmansion.rnscreens.core.containers.stack.host.StackContainer
  * transitions and the seek controller attaches per-instance state.
  */
 internal class SpecTransition(
-    private val spec: SlotSpec,
+    internal val spec: SlotSpec,
     slot: TransitionSlot,
-    private val zPolicy: ZPolicy,
+    internal val zPolicy: ZPolicy,
 ) : Visibility() {
     init {
         mode = if (slot.role == SlotRole.IN) MODE_IN else MODE_OUT
