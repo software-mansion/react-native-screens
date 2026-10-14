@@ -10,9 +10,10 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
-import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
+import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.tabs.container.TabsContainer
 import com.swmansion.rnscreens.tabs.container.TabsContainerDelegate
@@ -21,7 +22,6 @@ import com.swmansion.rnscreens.tabs.container.TabsNavigationStateObserver
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateRejectionReason
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 

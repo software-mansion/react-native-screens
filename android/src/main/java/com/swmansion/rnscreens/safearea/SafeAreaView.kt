@@ -14,7 +14,11 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.utils.pxToDp
+import com.swmansion.rnscreens.core.common.safearea.EdgeInsets
+import com.swmansion.rnscreens.core.common.safearea.InsetType
+import com.swmansion.rnscreens.core.common.safearea.OnInterfaceInsetsChangeListener
+import com.swmansion.rnscreens.core.common.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.core.utils.pxToDp
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Should never be recreated

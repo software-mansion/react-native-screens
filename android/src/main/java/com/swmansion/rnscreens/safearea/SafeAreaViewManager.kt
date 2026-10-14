@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSSafeAreaViewManagerInterface
+import com.swmansion.rnscreens.core.common.safearea.InsetType
 
 @ReactModule(name = SafeAreaViewManager.REACT_CLASS)
 class SafeAreaViewManager :
