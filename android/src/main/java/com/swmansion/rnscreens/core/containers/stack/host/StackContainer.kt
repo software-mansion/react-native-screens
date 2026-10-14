@@ -10,7 +10,6 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.transition.Transition
-import androidx.transition.Visibility
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
@@ -199,10 +198,6 @@ internal class StackContainer(
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
-        Log.d(
-            TRANSITION_TAG,
-            "performOperations: ${pendingPopOperations.size} pops, ${pendingPushOperations.size} pushes, note=${transitionContext.describe()}",
-        )
         applyOperationsAndComputeFragmentManagerOperations()
         fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
 
@@ -233,7 +228,7 @@ internal class StackContainer(
                 OnCommitCallbackOp(
                     {
                         updateTopFragment()
-                        clearTransitionContext("commit runnable")
+                        transitionContext = null
                     },
                     allowStateLoss = true,
                     flushSync = false,
@@ -316,14 +311,6 @@ internal class StackContainer(
                 else -> StackTransitionKind.REPLACE
             }
         transitionContext = kind?.let { StackTransitionContext(it, checkNotNull(outgoing), incoming) }
-        Log.d(TRANSITION_TAG, "note written (batch): ${transitionContext.describe()}")
-    }
-
-    private fun clearTransitionContext(reason: String) {
-        if (transitionContext != null) {
-            Log.d(TRANSITION_TAG, "note cleared ($reason): ${transitionContext.describe()}")
-        }
-        transitionContext = null
     }
 
     override fun transitionFor(
@@ -331,15 +318,10 @@ internal class StackContainer(
         slot: TransitionSlot,
     ): Transition? =
         StackTransitionResolver.resolve(fragment, slot, transitionContext, ::fragmentAbove).also {
-            Log.d(
-                TRANSITION_TAG,
-                "read ${fragment.item.itemKey}.$slot note=${transitionContext.describe()} -> " +
-                    (
-                        it?.let { t ->
-                            "${t.mode.modeName()} ${t.timeline.durationMs}ms ${t.timeline.tracks.size} tracks z=${t.exitZOrder}"
-                        }
-                            ?: "null"
-                    ),
+            RNSLog.d(
+                TAG,
+                "Transition read: ${fragment.item.itemKey}.$slot with ${transitionContext.describe()} -> " +
+                    (it?.let { t -> "${t.timeline} ${t.exitZOrder}" } ?: "none"),
             )
         }
 
@@ -349,9 +331,7 @@ internal class StackContainer(
     }
 
     private fun StackTransitionContext?.describe(): String =
-        this?.let { "${it.kind}(${it.outgoing.item.itemKey} -> ${it.incoming.item.itemKey})" } ?: "none"
-
-    private fun Int.modeName(): String = if (this == Visibility.MODE_IN) "IN" else "OUT"
+        this?.let { "${it.kind}(${it.outgoing.item.itemKey} -> ${it.incoming.item.itemKey})" } ?: "no note"
 
     // endregion
 
@@ -372,10 +352,9 @@ internal class StackContainer(
         // the second, where the note would otherwise outlive the popped fragment.
         val note = StackTransitionContext(StackTransitionKind.POP, outgoing = fragment, incoming = stackModel.last())
         transitionContext = note
-        Log.d(TRANSITION_TAG, "note written (native pop): ${note.describe()}")
         post {
             if (transitionContext === note) {
-                clearTransitionContext("post after native pop")
+                transitionContext = null
             }
         }
     }
@@ -441,7 +420,7 @@ internal class StackContainer(
 
     // This is called after special effects (animations) are dispatched
     override fun onBackStackChanged() {
-        clearTransitionContext("onBackStackChanged")
+        transitionContext = null
     }
 
     // This is called before the special effects (animations) are dispatched, however mid transaction!
@@ -557,6 +536,5 @@ internal class StackContainer(
 
     companion object {
         const val TAG = "StackContainer"
-        private const val TRANSITION_TAG = "RNSTransition"
     }
 }

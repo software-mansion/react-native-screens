@@ -17,18 +17,68 @@ type OnDismissEventPayload = Readonly<{
 
 type ActivityMode = 'detached' | 'attached';
 
-type StackScreenAnimation =
+// Mirror of `components/stack/screen/animation/types.ts`; codegen does not follow imports,
+// so the two must be kept in sync by hand.
+type StackScreenAnimationBezier = [number, number, number, number];
+
+type StackScreenAnimationEasingName =
+  | 'linear'
+  | 'easeIn'
+  | 'easeOut'
+  | 'easeInOut'
+  | 'standard'
+  | 'standardAccelerate'
+  | 'standardDecelerate'
+  | 'emphasized'
+  | 'emphasizedAccelerate'
+  | 'emphasizedDecelerate';
+
+type StackScreenAnimationEasing =
+  | StackScreenAnimationEasingName
+  | StackScreenAnimationBezier;
+
+type StackScreenAnimationLength = number | `${number}%`;
+
+type StackScreenAnimationPresetName =
   | 'default'
+  | 'none'
+  | 'fade'
   | 'slideFromRight'
   | 'slideFromLeft'
   | 'slideFromBottom'
   | 'slideFromTop'
-  | 'fade'
   | 'fadeFromBottom'
   | 'fadeFromTop'
   | 'iosFromRight'
-  | 'iosFromLeft'
-  | 'none';
+  | 'iosFromLeft';
+
+interface StackScreenAnimationTimingOptions {
+  duration?: number;
+  easing?: StackScreenAnimationEasing;
+}
+
+type StackScreenAnimationPresetRef =
+  | ({
+      type: 'preset';
+      name: 'fadeFromBottom' | 'fadeFromTop';
+      distance?: StackScreenAnimationLength;
+    } & StackScreenAnimationTimingOptions)
+  | ({
+      type: 'preset';
+      name:
+        | 'slideFromRight'
+        | 'slideFromLeft'
+        | 'slideFromBottom'
+        | 'slideFromTop'
+        | 'fade'
+        | 'iosFromRight'
+        | 'iosFromLeft';
+    } & StackScreenAnimationTimingOptions)
+  | { type: 'preset'; name: 'default' | 'none' };
+
+type StackScreenAnimation =
+  | StackScreenAnimationPresetName
+  | StackScreenAnimationPresetRef;
 
 export interface NativeProps extends ViewProps {
   // Control
