@@ -17,4 +17,13 @@ internal sealed interface Value {
     ) : Value {
         override fun negated() = Percent(-fraction)
     }
+
+    /**
+     * Unitless value: an alpha or a scale factor.
+     */
+    data class Scalar(
+        val value: Float,
+    ) : Value {
+        override fun negated() = Scalar(-value)
+    }
 }

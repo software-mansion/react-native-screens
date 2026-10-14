@@ -6,6 +6,6 @@ internal sealed interface StackAnimationDescriptor {
     ) : StackAnimationDescriptor
 
     companion object {
-        val DEFAULT: StackAnimationDescriptor = Preset(PresetName.SLIDE_FROM_RIGHT)
+        val DEFAULT: StackAnimationDescriptor = Preset(PresetName.DEFAULT)
     }
 }
