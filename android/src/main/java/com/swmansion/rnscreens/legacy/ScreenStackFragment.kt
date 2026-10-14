@@ -506,8 +506,12 @@ class ScreenStackFragment :
     }
 
     override fun canNavigateBack(): Boolean {
-        val container: ScreenContainer? = screen.container
+        // A nested header can still update after an ancestor leaves its stack.
+        val container: ScreenContainer = screen.container ?: return false
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
+        if (!container.hasScreen(this)) {
+            return false
+        }
         return if (container.rootScreen == screen) {
             // this screen is the root of the container, if it is nested we can check parent container
             // if it is also a root or not
