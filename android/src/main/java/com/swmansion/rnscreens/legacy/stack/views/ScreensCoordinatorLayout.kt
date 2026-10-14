@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.WindowInsets
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.swmansion.rnscreens.common.nestedscroll.ScreenNestedScrollCoordinatorLayout
 import com.swmansion.rnscreens.legacy.PointerEventsBoxNoneImpl
 import com.swmansion.rnscreens.legacy.ScreenStackFragment
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
@@ -15,7 +15,7 @@ internal class ScreensCoordinatorLayout(
     context: Context,
     internal val fragment: ScreenStackFragment,
     private val pointerEventsImpl: ReactPointerEventsView,
-) : CoordinatorLayout(context),
+) : ScreenNestedScrollCoordinatorLayout(context, fragment.screen),
     ReactPointerEventsView by pointerEventsImpl {
     constructor(context: Context, fragment: ScreenStackFragment) : this(
         context,
