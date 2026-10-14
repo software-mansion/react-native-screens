@@ -6,6 +6,7 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "RNSTabsBottomAccessoryState.h"
+#include "utils/YogaSizeUtil.h"
 
 namespace facebook::react {
 
@@ -20,6 +21,14 @@ class JSI_EXPORT RNSTabsBottomAccessoryShadowNode final
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
+
+  // Like `setSize`, but leaves the Yoga node clean when the size is unchanged.
+  // See `rnscreens::yogaStyleHasSize`.
+  void setSizeIfChanged(Size size) const {
+    if (!rnscreens::yogaStyleHasSize(yogaNode_.style(), size)) {
+      setSize(size);
+    }
+  }
 
 #pragma mark - ShadowNode overrides
 
