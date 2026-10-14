@@ -17,6 +17,7 @@
 #import "RNSTabBarController.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
+#import "RNSTabsBottomAccessoryWrapperView.h"
 #import "RNSTabsScreenComponentView.h"
 
 namespace react = facebook::react;
@@ -100,6 +101,7 @@ namespace react = facebook::react;
   _rejectStaleNavStateUpdates = NO;
   _tabBarHiddenAnimationEnabled = YES;
   _bottomAccessoryHidden = NO;
+  _prominentScreenKey = nil;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -174,7 +176,7 @@ namespace react = facebook::react;
         // corner radius. RCTViewComponentView overrides it to 0 by default and we're unable
         // to restore default value in an easy way. By wrapping it in UIView, it is clipped
         // to default corner radius.
-        UIView *wrapperView = [UIView new];
+        UIView *wrapperView = [RNSTabsBottomAccessoryWrapperView new];
         [wrapperView addSubview:bottomAccessory];
         _bottomAccessoryWrapperView = wrapperView;
       } else {
@@ -317,6 +319,18 @@ namespace react = facebook::react;
       if (newComponentProps.tabBarSidebarPreferredPlacement !=
           react::RNSTabsHostIOSTabBarSidebarPreferredPlacement::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarSidebarPreferredPlacement is supported for iOS >= 27");
+      }
+  }
+
+  if (newComponentProps.prominentScreenKey != oldComponentProps.prominentScreenKey) {
+    _prominentScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.prominentScreenKey);
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 27.0, *)) {
+      [_controller setProminentScreenKey:_prominentScreenKey];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_TV && !TARGET_OS_VISION
+      if (_prominentScreenKey != nil) {
+        RCTLogWarn(@"[RNScreens] prominentScreenKey is supported for iOS >= 27");
       }
   }
 

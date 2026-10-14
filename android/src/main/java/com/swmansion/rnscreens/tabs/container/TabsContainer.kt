@@ -26,13 +26,11 @@ import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.common.container.Container
 import com.swmansion.rnscreens.common.container.ContainerItem
 import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
-import com.swmansion.rnscreens.helpers.ViewFinder
+import com.swmansion.rnscreens.ext.createTransactionWithReordering
 import com.swmansion.rnscreens.helpers.ViewIdGenerator
-import com.swmansion.rnscreens.helpers.createTransactionWithReordering
 import com.swmansion.rnscreens.safearea.EdgeInsets
+import com.swmansion.rnscreens.safearea.OnInterfaceInsetsChangeListener
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
-import com.swmansion.rnscreens.safearea.SafeAreaView
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHost
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
@@ -40,6 +38,7 @@ import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 import com.swmansion.rnscreens.utils.RNSLog
+import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 /**
@@ -53,6 +52,7 @@ import kotlin.properties.Delegates
 @SuppressLint("ViewConstructor") // Created only by us. Should never be restored.
 class TabsContainer internal constructor(
     private val context: Context,
+    private val delegate: WeakReference<TabsContainerDelegate>,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -68,9 +68,7 @@ class TabsContainer internal constructor(
             val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
 
             if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                val screenStack =
-                    ViewFinder.findScreenStackInFirstDescendantChain(selectedTabScreen)
-                if (screenStack != null && screenStack.popToRoot()) {
+                if (selectedTabScreen.resolveNestedContainer()?.requestPopToRoot() == true) {
                     return true
                 }
             }
@@ -162,7 +160,7 @@ class TabsContainer internal constructor(
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsModel)
 
-    private var interfaceInsetsChangeListener: SafeAreaView? = null
+    private var interfaceInsetsChangeListener: OnInterfaceInsetsChangeListener? = null
 
     internal var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -257,9 +255,9 @@ class TabsContainer internal constructor(
 
     internal fun setupFragmentManager() {
         fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }
+            checkNotNull(delegate.get()) {
+                "[RNScreens] TabsContainer has no delegate to resolve the fragment manager from"
+            }.resolveFragmentManager()
     }
 
     internal fun teardownFragmentManager() {
@@ -374,14 +372,14 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun setOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+    override fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
         if (interfaceInsetsChangeListener == null) {
             bottomNavigationView.addOnLayoutChangeListener(this)
         }
         interfaceInsetsChangeListener = listener
     }
 
-    override fun removeOnInterfaceInsetsChangeListener(listener: SafeAreaView) {
+    override fun removeOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
         if (interfaceInsetsChangeListener == listener) {
             interfaceInsetsChangeListener = null
             bottomNavigationView.removeOnLayoutChangeListener(this)
@@ -417,8 +415,20 @@ class TabsContainer internal constructor(
                 menuItem,
                 tabsScreen,
                 appearance,
+                appearanceCoordinator.resolveIconBoxDp(),
             )
             a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
+        }
+    }
+
+    override fun onItemSizeChange(tabsScreen: TabsScreen) {
+        // Icon box is bar-wide, so this must run even when the changed tab is not selected.
+        // Skip when detached; reattachment reapplies the full appearance anyway.
+        if (isAttachedToWindow) {
+            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+            post {
+                this.flushPendingUpdates()
+            }
         }
     }
 
@@ -552,6 +562,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
+        appearanceCoordinator.invalidateRebuiltMenuItems()
     }
 
     private fun updateBottomNavigationViewAppearance() {
@@ -800,6 +811,10 @@ class TabsContainer internal constructor(
         } else {
             null
         }
+
+    // Tabs have no stack of their own - the request goes to the selected tab's nested container.
+    override fun requestPopToRoot(): Boolean =
+        navState.isNotEmpty() && selectedTab.tabsScreen.resolveNestedContainer()?.requestPopToRoot() == true
 
     // endregion
 

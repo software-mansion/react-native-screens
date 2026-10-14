@@ -3,7 +3,9 @@ import TestStackV4Orientation from './stack-v4-orientation';
 
 export { default as TestStackV4Orientation } from './stack-v4-orientation';
 
-const scenarios = { TestStackV4Orientation };
+const scenarios = {
+  TestStackV4Orientation,
+};
 
 const StackV4ScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
   name: 'Stack v4',

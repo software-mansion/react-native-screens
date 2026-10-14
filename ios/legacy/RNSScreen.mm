@@ -53,6 +53,9 @@ struct ContentWrapperBox {
 
 @implementation RNSScreenView {
   __weak RCTScrollViewComponentView *_sheetsScrollView;
+  /// Tag of `_sheetsScrollView` at the time we started observing it. Fabric changes the tag when it recycles
+  /// the view, so a mismatch means the instance now belongs to some other component.
+  NSInteger _sheetsScrollViewTag;
 
   /// Up-to-date only when sheet is in `fitToContents` mode.
   CGFloat _sheetContentHeight;
@@ -99,6 +102,7 @@ struct ContentWrapperBox {
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
+  _sheetsScrollViewTag = 0;
   _sheetContentHeight = 0.0;
   _markedForUnmountInCurrentTransaction = NO;
   _synchronousShadowStateUpdatesEnabled = YES;
@@ -134,16 +138,24 @@ RNS_IGNORE_SUPER_CALL_END
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
 
-    // * in large title, ScrollView handles the offset of content so we cannot set it here also
-    // * TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
+    // The content offset sent to the shadow tree must match the screen's native origin in the navigation controller's
+    // view. It is used by measurements & hit testing only, the size is delivered separately (`frameSize`).
+    // * On iOS 26+ (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`) the screen is always
+    // laid out under the navigation bar, so the origin is 0 and the `SafeAreaView` rendered by `ScreenStackItem`
+    // insets the content below an opaque bar. All branches below evaluate to 0 in that case.
+    // * Below iOS 26, when config.translucent == true, we use `edgesForExtendedLayout` and the screen is laid out
+    // under the navigation bar, therefore there is no need to set content offset in shadow tree.
+    // * Below iOS 26, in large title, ScrollView handles the offset of content so we cannot set it here also.
+    // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
     // used?
-    // * When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
-    // navigation bar, therefore there is no need to set content offset in shadow tree.
     // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
     // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
-    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent || self.isPresentedAsNativeModal
-        ? 0
-        : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+    // * Otherwise the offset must match the actual native origin of the screen. We can not derive it from the
+    // navigation bar geometry, because UIKit does not always lay out the screen right below the navigation bar
+    // (e.g. on iOS 26 `edgesForExtendedLayout` ignores the navigation bar's origin offset).
+    // See https://github.com/software-mansion/react-native-screens-labs/issues/1841
+    const CGFloat effectiveContentOffsetY =
+        config.largeTitle || config.translucent || self.isPresentedAsNativeModal ? 0 : [self originInNavigationView].y;
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
@@ -176,6 +188,17 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+// Returns origin of the screen in the coordinate space of its navigation controller's view, which matches
+// the coordinate space of the screen stack in the shadow tree.
+- (CGPoint)originInNavigationView
+{
+  UIView *navigationView = _controller.navigationController.view;
+  if (navigationView == nil || ![self isDescendantOfView:navigationView]) {
+    return CGPointZero;
+  }
+  return [self convertPoint:CGPointZero toView:navigationView];
+}
+
 - (void)applyFrameCorrectionForDescendantScrollView
 {
   // A dismissed sheet can still receive a layout pass after React has deleted it. By then Fabric
@@ -194,6 +217,8 @@ RNS_IGNORE_SUPER_CALL_END
     // we are going to overwrite it anyway.
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
   }
+  // Refreshed even for the same instance: Fabric might have recycled it back into this sheet.
+  _sheetsScrollViewTag = scrollView != nil ? scrollView.tag : 0;
   if (scrollView != nil) {
     [self correctScrollViewFrame:scrollView withHeader:nil];
   }
@@ -219,6 +244,16 @@ RNS_IGNORE_SUPER_CALL_END
   UIView *scrollView = (UIView *)object;
 
   if (![scrollView isKindOfClass:RCTScrollViewComponentView.class]) {
+    return;
+  }
+
+  // The sheet's content can remove its scroll view while the sheet stays presented. Fabric then recycles
+  // the instance (possibly into another screen), which changes its tag. Stop observing it instead of
+  // forcing it to this screen's frame. See #4785.
+  if (scrollView.tag != _sheetsScrollViewTag) {
+    [scrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = nil;
+    _sheetsScrollViewTag = 0;
     return;
   }
 
@@ -784,6 +819,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (_sheetsScrollView != nil) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = nil;
+    _sheetsScrollViewTag = 0;
   }
 
   // We want to run after container updates are performed (transitions etc.)
@@ -1555,10 +1591,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [super viewDidLayoutSubviews];
 
   // The below code makes the screen view adapt dimensions provided by the system. We take these
-  // into account only when the view is mounted under RNSNavigationController in which case system
-  // provides additional padding to account for possible header, and in the case when screen is
-  // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
-  // screen size
+  // into account only when the view is mounted under RNSNavigationController, in which case the
+  // navigation controller sizes the screen (below iOS 26 an opaque navigation bar is excluded from
+  // the screen's frame, on iOS 26+ the screen always spans under the bar, see
+  // `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), and in the case when
+  // screen is shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter
+  // than the screen size.
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
   BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 
@@ -1622,6 +1660,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     return 0;
   }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    return [self calculateMinimizationAwareHeaderHeightInNavigationController:navctr];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
 #if !TARGET_OS_TV
   CGFloat navbarInset = navctr.navigationBar.frame.origin.y;
@@ -1632,6 +1676,35 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   return navbarHeight + navbarInset;
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+// On iOS 27 the navigation bar can minimize in response to scrolling (`UIBarMinimization`). The frame of
+// `UINavigationBar` does not follow the minimization, only its subviews (background, content view, large title,
+// search bar) do - they are shifted up within the bar. Therefore we measure the bottom edge of the subviews
+// instead, in the coordinate space of the navigation controller's view. The value is clamped to the bar's frame,
+// which is the maximum extent of the bar in the expanded state.
+- (CGFloat)calculateMinimizationAwareHeaderHeightInNavigationController:(UINavigationController *)navctr
+    API_AVAILABLE(ios(27.0))
+{
+  UINavigationBar *navbar = navctr.navigationBar;
+  CGFloat navbarMaxY = CGRectGetMaxY([navbar convertRect:navbar.bounds toView:navctr.view]);
+  CGFloat maxY = -CGFLOAT_MAX;
+
+  for (UIView *subview in navbar.subviews) {
+    if (subview.isHidden || CGRectIsEmpty(subview.frame)) {
+      continue;
+    }
+    maxY = MAX(maxY, CGRectGetMaxY([navbar convertRect:subview.frame toView:navctr.view]));
+  }
+
+  if (maxY == -CGFLOAT_MAX) {
+    // No measurable subviews, same as the pre-iOS 27 formula.
+    return navbarMaxY;
+  }
+
+  return MIN(maxY, navbarMaxY);
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
 
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
 {

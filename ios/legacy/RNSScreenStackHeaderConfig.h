@@ -3,6 +3,7 @@
 #if defined(__cplusplus)
 #import <React/RCTConvert.h>
 #endif // __cplusplus
+#import "RNSDefines.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
@@ -59,6 +60,17 @@ NS_ASSUME_NONNULL_END
                     withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
 
 /**
+ * Returns `YES` when screens in the legacy stack are always laid out under the navigation bar
+ * (`edgesForExtendedLayout = UIRectEdgeAll`), also when the header is opaque. In that case the content is inset below
+ * an opaque bar by the `SafeAreaView` rendered by `ScreenStackItem` (JS) and the screen's origin in the navigation
+ * controller's view is always 0. Otherwise (iOS < 26, tvOS, visionOS) a screen with a visible, opaque header is laid
+ * out below the bar (`UIRectEdgeAll - UIRectEdgeTop`).
+ *
+ * Keep in sync with `getSafeAreaEdges` in `src/legacy/components/ScreenStackItem.tsx`.
+ */
++ (BOOL)screensExtendUnderOpaqueNavigationBar;
+
+/**
  * Returns true iff subview of given `type` is present.
  *
  *  **Please note that the subviews are not mounted under the header config in HostTree**
@@ -98,6 +110,24 @@ NS_ASSUME_NONNULL_END
  * When `navBar == nil` this method does nothing.
  */
 - (void)updateHeaderStateInShadowTreeInContextOfNavigationBar:(nullable UINavigationBar *)navBar;
+
+/**
+ * Requests `updateViewControllerIfNeeded` to be called once, after the current
+ * mounting transaction finishes. Use this instead of calling `updateViewControllerIfNeeded`
+ * directly from subviews, so that a single transaction updating several subviews
+ * re-applies the config only once, with all subviews already updated.
+ */
+- (void)setNeedsViewControllerUpdate;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+/**
+ * Requests layout of all header subviews attached to the view hierarchy. Header subview updates its state in shadow
+ * tree when it is laid out, therefore this method should be called when `navBar` lays out its subviews - the header
+ * subviews are laid out later in the same layout pass, after UIKit has positioned the content of the navigation bar.
+ * When the content of `navBar` is moved out of the bar (bar minimization on iOS 27+) this method does nothing.
+ */
+- (void)setNeedsLayoutForHeaderSubviewsInNavigationBar:(nonnull UINavigationBar *)navBar;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @end
 

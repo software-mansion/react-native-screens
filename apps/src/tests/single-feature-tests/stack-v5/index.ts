@@ -13,6 +13,7 @@ import TestStackSubviewsIOS from './test-stack-subviews-ios';
 import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
 import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
 import TestStackBackButtonIOS from './test-stack-back-button-ios';
+import TestStackHeaderBarMinimizationIOS from './test-stack-header-bar-minimization-ios';
 import TestStackBackButtonAndroid from './test-stack-back-button-android';
 import TestStackOverflowIcon from './test-stack-overflow-icon-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
@@ -28,6 +29,8 @@ import TestStackHeaderSubviewOnPress from './test-stack-header-subview-onpress-i
 import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updates-ios';
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
 import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
+import TestStackHeaderItemVisibilityPriorityIOS from './test-stack-header-item-visibility-priority-ios';
+import TestStackHeaderItemAppearanceIOS from './test-stack-header-item-appearance-ios';
 import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
 import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
 import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
@@ -37,7 +40,6 @@ import TestStackColorScheme from './test-stack-color-scheme';
 import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
 import TestStackLayoutDirection from './test-stack-layout-direction-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
-
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestStackPreventNativeDismissSingleStack } from './test-stack-prevent-native-dismiss-single-stack';
@@ -50,11 +52,14 @@ export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-sc
 export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
 export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
+export { default as TestStackHeaderItemVisibilityPriorityIOS } from './test-stack-header-item-visibility-priority-ios';
+export { default as TestStackHeaderItemAppearanceIOS } from './test-stack-header-item-appearance-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
 export { default as TestStackHeaderSubviewOnPressIOS } from './test-stack-header-subview-onpress-ios';
 export { default as TestStackBackButtonIOS } from './test-stack-back-button-ios';
+export { default as TestStackHeaderBarMinimizationIOS } from './test-stack-header-bar-minimization-ios';
 export { default as TestStackBackButtonAndroid } from './test-stack-back-button-android';
 export { default as TestStackOverflowIcon } from './test-stack-overflow-icon-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
@@ -75,7 +80,6 @@ export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
 export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
-
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
@@ -88,10 +92,13 @@ const scenarios = {
   TestStackHeaderMenuIOS,
   TestStackHeaderIconIOS,
   TestStackHeaderItemIdentifierIOS,
+  TestStackHeaderItemVisibilityPriorityIOS,
+  TestStackHeaderItemAppearanceIOS,
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,
   TestStackBackButtonIOS,
+  TestStackHeaderBarMinimizationIOS,
   TestStackBackButtonAndroid,
   TestStackOverflowIcon,
   TestStackToolbarMenuCommands,

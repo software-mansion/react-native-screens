@@ -16,7 +16,8 @@
     "format-android-cpp": "find android/src/main/cpp -iname \"*.h\" -o -iname \"*.cpp\" | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-common && yarn format-cpp && yarn format-android-cpp",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
-    "lint-android": "./android/gradlew -p android spotlessCheck -q",
+    "lint-android": "yarn check-android-layers && ./android/gradlew -p android spotlessCheck -q",
+    "check-android-layers": "node ./scripts/check-android-layers.js",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install"

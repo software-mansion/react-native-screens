@@ -1,13 +1,20 @@
 package com.swmansion.rnscreens.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.TypedValue
 import android.view.View
-import com.facebook.react.uimanager.PixelUtil
+
+/**
+ * Density of the device's main display - the value React Native's `PixelUtil` converts with
+ * (`DisplayMetricsHolder` screen metrics), read without depending on React Native.
+ */
+private val mainDisplayDensity: Float
+    get() = Resources.getSystem().displayMetrics.density
 
 /**
  * Converts a pixel value to dp using the given display [density] — not the process-global
- * density that [PixelUtil] reads from the device's main display. Fabric mounts views with
+ * density of the device's main display. Fabric mounts views with
  * the per-display density, so state pushed back to the Shadow Tree must be converted with
  * that same density; the global one mis-scales the frame on any display whose density
  * differs from the main one (Samsung DeX, freeform multi-window, external monitors). On
@@ -18,12 +25,12 @@ import com.facebook.react.uimanager.PixelUtil
  * [android.util.DisplayMetrics] that was never populated — which should not happen for a
  * live view. The `density > 0f` guard exists solely so a degenerate `0` cannot turn the
  * division into Infinity/NaN and corrupt the pushed state; in that case we fall back to the
- * global conversion, which is at least well-defined.
+ * main display's density ([mainDisplayDensity]), which is at least well-defined.
  */
 internal fun pxToDp(
     px: Float,
     density: Float,
-): Float = if (density > 0f) px / density else PixelUtil.toDIPFromPixel(px)
+): Float = if (density > 0f) px / density else px / mainDisplayDensity
 
 /**
  * Converts a pixel value to dp using the density of the display this [View] is attached to.
@@ -34,13 +41,13 @@ internal fun View.pxToDp(px: Float): Float = pxToDp(px, resources.displayMetrics
 
 /**
  * Converts a dp value to pixels using the given display [density] — not the process-global
- * density that [PixelUtil] reads from the device's main display.
+ * density of the device's main display.
  * See [pxToDp] for more context.
  */
 internal fun dpToPx(
     dp: Float,
     density: Float,
-): Float = if (density > 0f) dp * density else PixelUtil.toPixelFromDIP(dp)
+): Float = if (density > 0f) dp * density else dp * mainDisplayDensity
 
 /**
  * Converts a dp value to pixels using the density of the display this [View] is attached to.
@@ -52,7 +59,7 @@ internal fun View.dpToPx(dp: Float): Float = dpToPx(dp, resources.displayMetrics
 /**
  * Converts an SP value to pixels using the density of the display this [View] is
  * attached to (including the current font scale). Uses the view's own resources
- * rather than the process-global density read by [PixelUtil]. See [pxToDp].
+ * rather than the process-global density of the main display. See [pxToDp].
  */
 internal fun View.spToPx(sp: Float): Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)
 
