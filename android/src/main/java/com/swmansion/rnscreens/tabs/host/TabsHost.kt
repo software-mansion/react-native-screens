@@ -13,6 +13,8 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
+import com.swmansion.rnscreens.react.utils.ViewIdGenerator
+import com.swmansion.rnscreens.react.utils.assertReactTagSchemeInDebug
 import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.tabs.container.TabsContainer
@@ -42,7 +44,7 @@ class TabsHost(
     private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
-        TabsContainer(reactContext, WeakReference(this)).apply {
+        TabsContainer(reactContext, WeakReference(this), ViewIdGenerator).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -79,6 +81,7 @@ class TabsHost(
         RNSLog.i(TAG, "TabsHost [$id] attached to window")
         viewTreeObserver.addOnPreDrawListener(this)
         super.onAttachedToWindow()
+        assertReactTagSchemeInDebug(this)
     }
 
     override fun onDetachedFromWindow() {
