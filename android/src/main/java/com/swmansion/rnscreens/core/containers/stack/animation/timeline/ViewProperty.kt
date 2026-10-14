@@ -4,7 +4,7 @@ internal enum class ViewProperty {
     OPACITY,
 
     /**
-     * Uniform scale about the view's centre.
+     * Uniform scale about the view's center.
      */
     SCALE,
 }

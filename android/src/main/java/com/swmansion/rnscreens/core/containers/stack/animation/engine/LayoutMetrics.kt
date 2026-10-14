@@ -34,7 +34,7 @@ internal fun Length.toPx(
     axis: Axis,
     metrics: LayoutMetrics,
 ): Float {
-    val magnitude =
+    val px =
         when (this) {
             is Length.Dp -> value * metrics.density
             is Length.Percent ->
@@ -44,5 +44,5 @@ internal fun Length.toPx(
                         Axis.Y -> metrics.containerHeight
                     }
         }
-    return if (axis == Axis.LOGICAL_X && metrics.isRTL) -magnitude else magnitude
+    return if (axis == Axis.LOGICAL_X && metrics.isRTL) -px else px
 }

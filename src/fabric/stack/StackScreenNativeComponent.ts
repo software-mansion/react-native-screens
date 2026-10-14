@@ -17,8 +17,6 @@ type OnDismissEventPayload = Readonly<{
 
 type ActivityMode = 'detached' | 'attached';
 
-// Mirror of `components/stack/screen/animation/types.ts`; codegen does not follow imports,
-// so the two must be kept in sync by hand.
 type StackScreenAnimationBezier = [number, number, number, number];
 
 type StackScreenAnimationEasingName =

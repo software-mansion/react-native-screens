@@ -9,7 +9,7 @@ internal enum class StackTransitionKind {
 }
 
 /**
- * The operation this container most recently committed, as a note for the transition reads
+ * The operation this container most recently committed, kept for the transition reads
  * FragmentManager makes while executing it. It is consulted only for the two fragments it
  * names, each only in its own role: [outgoing] when its view disappears, [incoming] when its
  * view appears. Every other read is answered from the screens' own configs.

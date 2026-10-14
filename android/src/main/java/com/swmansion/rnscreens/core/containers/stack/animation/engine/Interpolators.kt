@@ -11,9 +11,11 @@ import com.google.android.material.R as MaterialR
 
 /**
  * Curves are loaded from the platform's and Material Components' interpolator resources or
- * built from the CSS specification's bezier constants, never transcribed by hand, and cached:
- * one instance per curve serves every animator. Resource interpolators do not depend on the
- * theme, so the cache is keyed by the curve alone.
+ * built from the CSS specification's bezier constants, never transcribed by hand.
+ *
+ * Loading an interpolator inflates it from XML every time (the platform does not cache it), so
+ * loaded instances are cached here. Interpolators are immutable and theme-independent, so one
+ * instance per curve serves every animator. Main thread only.
  */
 internal object Interpolators {
     // CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords.

@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Timing
 /**
  * A scrim over one screen, hosted in that screen's own overlay so it draws above the screen's
  * content and below its siblings. It is added and removed exactly when the animator starts,
- * pauses, resumes, ends or is cancelled, which mirrors androidx `Visibility.OverlayListener`.
+ * pauses, resumes, ends or is canceled, which mirrors androidx `Visibility.OverlayListener`.
  */
 internal class ScrimBinding(
     private val host: ViewGroup,

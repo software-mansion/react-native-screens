@@ -9,4 +9,10 @@ internal interface StackScreenFragmentDelegate {
      * the only place where such updates are delivered reliably.
      */
     fun onFragmentConfigurationChanged(config: Configuration)
+
+    /**
+     * Notifies the delegate that the fragment is destroyed, whether it was popped or torn down
+     * together with its FragmentManager.
+     */
+    fun onFragmentDestroyed(fragment: StackScreenFragment)
 }

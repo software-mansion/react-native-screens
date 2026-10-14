@@ -16,7 +16,7 @@ internal interface TrackBinding {
 
     /**
      * Puts the binding's own target back to its rest value. Idempotent, and mandatory: fragment
-     * views are retained across detach, so a cancelled or reversed transition must not leave
+     * views are retained across detach, so a canceled or reversed transition must not leave
      * them displaced.
      */
     fun restore()

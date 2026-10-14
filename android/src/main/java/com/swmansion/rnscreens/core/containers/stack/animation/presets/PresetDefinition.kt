@@ -6,7 +6,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Transiti
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ZOrder
 
 /**
- * Both transitions of a preset, authored in absolute milliseconds. The reference duration a
+ * Both transitions of a preset, defined in absolute milliseconds. The reference duration a
  * `duration` option rescales against is derived: the longer of the two.
  */
 internal data class PresetDefinition(
@@ -17,7 +17,7 @@ internal data class PresetDefinition(
         get() = maxOf(push.durationMs, pop.durationMs)
 
     /**
-     * Both transitions scaled by the same factor, so authored asymmetry survives.
+     * Both transitions scaled by the same factor, so the preset's own asymmetry survives.
      */
     internal fun retimed(durationMs: Long): PresetDefinition {
         val factor = durationMs.toFloat() / referenceDurationMs

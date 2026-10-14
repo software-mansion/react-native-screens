@@ -20,9 +20,9 @@ import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistr
 import com.swmansion.rnscreens.core.containers.stack.animation.ScreenTransitionProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionContext
 import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionKind
-import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionResolver
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.UnderlayProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.resolveStackTransition
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -223,7 +223,7 @@ internal class StackContainer(
             // attached is not a "pop" commit, therefore JS-pop commits have not been properly
             // recognized.
             // The commit runnables run after FragmentManager has read the transitions of this
-            // batch, which is the right moment to retire the note.
+            // batch, which is the right moment to retire the transition context.
             fragmentOps.add(
                 OnCommitCallbackOp(
                     {
@@ -236,7 +236,6 @@ internal class StackContainer(
             )
         }
 
-        val previousTop = stackModel.lastOrNull()
         val modelBeforeBatch = stackModel.toList()
 
         pendingPopOperations.forEach { operation ->
@@ -274,7 +273,7 @@ internal class StackContainer(
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
         if (hasPendingOperations) {
-            writeTransitionContext(previousTop, modelBeforeBatch)
+            writeTransitionContext(modelBeforeBatch)
         }
 
         pendingPopOperations.clear()
@@ -284,22 +283,27 @@ internal class StackContainer(
     // region Transition provision
 
     /**
-     * The note about the batch most recently committed, consulted by [transitionFor] while
-     * FragmentManager executes it. Written when a batch is computed and on a native pop; cleared
-     * once the reads are over (the batch's commit runnable, `onBackStackChanged`).
+     * The operation this container most recently committed, consulted by [transitionFor] while
+     * FragmentManager executes it and reads the fragments' transitions.
+     *
+     * Written at two points: when a batch of pending operations is computed, and on a native pop
+     * (inside `onBackStackChangeCommitted`, which FragmentManager dispatches right before the reads).
+     * Cleared at three: the batch's own commit runnable and `onBackStackChanged`, which both run after
+     * the reads, and [onFragmentDestroyed] for the outgoing fragment. The last one covers a predictive
+     * back commit, which reads nothing (the reads happened at gesture start) and never reports a
+     * back stack change: the context stays until the popped fragment is destroyed. Nothing here
+     * is dispatched asynchronously.
      */
     private var transitionContext: StackTransitionContext? = null
 
     /**
-     * A JS batch computed while an earlier one is still pending in FragmentManager executes
-     * together with it, so the outgoing screen stays the one FragmentManager still shows.
+     * The outgoing screen is the one FragmentManager still shows, taken from FragmentManager itself:
+     * a batch computed while an earlier one is still pending executes together with it, and the
+     * transition is read between the top shown before both and the top after both.
      */
-    private fun writeTransitionContext(
-        previousTop: StackScreenFragment?,
-        modelBeforeBatch: List<StackScreenFragment>,
-    ) {
+    private fun writeTransitionContext(modelBeforeBatch: List<StackScreenFragment>) {
         val incoming = stackModel.last()
-        val outgoing = transitionContext?.outgoing ?: previousTop
+        val outgoing = determineTopFragment()
         val kind =
             when {
                 // The first screen is not a back stack record; nothing animates.
@@ -316,22 +320,18 @@ internal class StackContainer(
     override fun transitionFor(
         fragment: StackScreenFragment,
         slot: TransitionSlot,
-    ): Transition? =
-        StackTransitionResolver.resolve(fragment, slot, transitionContext, ::fragmentAbove).also {
-            RNSLog.d(
-                TAG,
-                "Transition read: ${fragment.item.itemKey}.$slot with ${transitionContext.describe()} -> " +
-                    (it?.let { t -> "${t.timeline} ${t.exitZOrder}" } ?: "none"),
-            )
-        }
+    ): Transition? = resolveStackTransition(fragment, slot, transitionContext, ::fragmentAbove)
 
     private fun fragmentAbove(fragment: StackScreenFragment): StackScreenFragment? {
         val index = stackModel.indexOf(fragment)
         return if (index >= 0) stackModel.getOrNull(index + 1) else null
     }
 
-    private fun StackTransitionContext?.describe(): String =
-        this?.let { "${it.kind}(${it.outgoing.item.itemKey} -> ${it.incoming.item.itemKey})" } ?: "no note"
+    override fun onFragmentDestroyed(fragment: StackScreenFragment) {
+        if (transitionContext?.outgoing === fragment) {
+            transitionContext = null
+        }
+    }
 
     // endregion
 
@@ -347,16 +347,9 @@ internal class StackContainer(
         updateTopFragment()
 
         // FragmentManager reads the transitions of this pop right after this callback (header
-        // back, system back) or not at all (predictive back commit), always within the current
-        // call stack. `onBackStackChanged` clears the note on the first path; the post covers
-        // the second, where the note would otherwise outlive the popped fragment.
-        val note = StackTransitionContext(StackTransitionKind.POP, outgoing = fragment, incoming = stackModel.last())
-        transitionContext = note
-        post {
-            if (transitionContext === note) {
-                transitionContext = null
-            }
-        }
+        // back, system back) or not at all (predictive back commit). `onBackStackChanged` clears
+        // the context on the first path, `onFragmentDestroyed` on the second.
+        transitionContext = StackTransitionContext(StackTransitionKind.POP, outgoing = fragment, incoming = stackModel.last())
     }
 
     private fun dumpStackModel() {

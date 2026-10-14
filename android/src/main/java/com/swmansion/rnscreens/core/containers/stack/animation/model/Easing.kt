@@ -6,7 +6,8 @@ package com.swmansion.rnscreens.core.containers.stack.animation.model
  */
 internal enum class EasingName(
     /**
-     * The name on the JS side, `null` for the legacy platform curves the preset tables use.
+     * The value accepted by the `easing` option of the `animation` prop; `null` for the legacy
+     * platform curves only the preset tables use.
      */
     internal val stringName: String?,
 ) {

@@ -29,7 +29,7 @@ internal class ScreenTransition(
     // The only change versus stock Visibility is which ViewGroupOverlay hosts the disappearing
     // view: the scene root's overlay draws above every child, the underlay's draws as part of
     // child 0, i.e. under the entering screen. Everything androidx does with that overlay
-    // afterwards (removal at end or cancel, pause / resume / reverse while seeking) is unchanged.
+    // afterward (removal at end or cancel, pause / resume / reverse while seeking) is unchanged.
     override fun onDisappear(
         sceneRoot: ViewGroup,
         startValues: TransitionValues?,
@@ -46,8 +46,12 @@ internal class ScreenTransition(
         return super.onDisappear(host, startValues, startVisibility, endValues, endVisibility)
     }
 
-    // `startValues` / `endValues` are ignored on purpose: Visibility captures them to decide
-    // whether a view appears or disappears, and the timeline says how.
+    // `startValues` / `endValues` are ignored on purpose. An androidx transition normally animates
+    // between the property snapshots it captured in the start and end scenes (`ChangeBounds` its
+    // bounds, `Fade` its alpha); `Visibility` captures only visibility and parent, uses them to pick
+    // `onAppear` or `onDisappear`, and passes the same snapshots on. Here the `from` / `to` values
+    // come from the timeline and the view is at rest in both scenes, so the snapshots hold nothing
+    // to animate between.
     override fun onAppear(
         sceneRoot: ViewGroup,
         view: View,
@@ -65,7 +69,7 @@ internal class ScreenTransition(
     private fun animate(
         view: View,
         sceneRoot: ViewGroup,
-    ): Animator = TimelineAnimator.create(view, timeline, LayoutMetrics.of(view, sceneRoot.containerOrSelf()), rootTransition)
+    ): Animator = createTimelineAnimator(view, timeline, LayoutMetrics.of(view, sceneRoot.containerOrSelf()), rootTransition)
 
     /**
      * The metrics come from the real container also when the scene root is its underlay.

@@ -102,6 +102,7 @@ internal class StackScreenFragment(
             item.onDismiss()
         }
         teardownPreventNativeDismissCallback()
+        delegate.get()?.onFragmentDestroyed(this)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -122,15 +123,15 @@ internal class StackScreenFragment(
     // it executes. Answering at read time means nothing is ever written ahead or kept in sync:
     // the container knows which operation is executing, the screens know their configs.
 
-    override fun getEnterTransition(): Any? = ask(TransitionSlot.ENTER)
+    override fun getEnterTransition(): Any? = resolveTransition(TransitionSlot.ENTER)
 
-    override fun getExitTransition(): Any? = ask(TransitionSlot.EXIT)
+    override fun getExitTransition(): Any? = resolveTransition(TransitionSlot.EXIT)
 
-    override fun getReturnTransition(): Any? = ask(TransitionSlot.RETURN)
+    override fun getReturnTransition(): Any? = resolveTransition(TransitionSlot.RETURN)
 
-    override fun getReenterTransition(): Any? = ask(TransitionSlot.REENTER)
+    override fun getReenterTransition(): Any? = resolveTransition(TransitionSlot.REENTER)
 
-    private fun ask(slot: TransitionSlot): Any? = transitionProvider.get()?.transitionFor(this, slot)
+    private fun resolveTransition(slot: TransitionSlot): Any? = transitionProvider.get()?.transitionFor(this, slot)
 
     // endregion
 
