@@ -1,13 +1,13 @@
 package com.swmansion.rnscreens.stack.host
 
-import com.swmansion.rnscreens.stack.screen.StackScreenItem
+import com.swmansion.rnscreens.stack.screen.StackContainerItem
 
 internal sealed class StackOperation
 
 internal class PushOperation(
-    val screen: StackScreenItem,
+    val item: StackContainerItem,
 ) : StackOperation()
 
 internal class PopOperation(
-    val screen: StackScreenItem,
+    val item: StackContainerItem,
 ) : StackOperation()

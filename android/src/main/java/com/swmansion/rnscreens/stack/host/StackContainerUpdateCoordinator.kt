@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.stack.host
 
-import com.swmansion.rnscreens.stack.screen.StackScreenItem
+import com.swmansion.rnscreens.stack.screen.StackContainerItem
 
 internal class StackContainerUpdateCoordinator {
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
@@ -8,12 +8,12 @@ internal class StackContainerUpdateCoordinator {
     private val hasPendingOperations: Boolean
         get() = pendingPushOperations.isNotEmpty() || pendingPopOperations.isNotEmpty()
 
-    internal fun addPushOperation(stackScreen: StackScreenItem) {
-        pendingPushOperations.add(PushOperation(stackScreen))
+    internal fun addPushOperation(item: StackContainerItem) {
+        pendingPushOperations.add(PushOperation(item))
     }
 
-    internal fun addPopOperation(stackScreen: StackScreenItem) {
-        pendingPopOperations.add(PopOperation(stackScreen))
+    internal fun addPopOperation(item: StackContainerItem) {
+        pendingPopOperations.add(PopOperation(item))
     }
 
     /**
@@ -22,22 +22,22 @@ internal class StackContainerUpdateCoordinator {
      */
     internal fun enqueuePendingOperations(
         container: StackContainer,
-        renderedScreens: List<StackScreenItem>,
+        renderedItems: List<StackContainerItem>,
     ) {
         if (!hasPendingOperations) {
             return
         }
 
         pendingPopOperations
-            .map { Pair(renderedScreens.indexOf(it.screen), it) }
+            .map { Pair(renderedItems.indexOf(it.item), it) }
             .sortedBy { it.first }
             .asReversed()
-            .forEach { (_, operation) -> container.enqueuePopOperation(operation.screen) }
+            .forEach { (_, operation) -> container.enqueuePopOperation(operation.item) }
 
         pendingPushOperations
-            .map { Pair(renderedScreens.indexOf(it.screen), it) }
+            .map { Pair(renderedItems.indexOf(it.item), it) }
             .sortedBy { it.first }
-            .forEach { (_, operation) -> container.enqueuePushOperation(operation.screen) }
+            .forEach { (_, operation) -> container.enqueuePushOperation(operation.item) }
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()

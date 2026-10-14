@@ -16,7 +16,7 @@ import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
 import java.lang.ref.WeakReference
 
 internal class StackScreenFragment(
-    internal val stackScreen: StackScreenItem,
+    internal val item: StackContainerItem,
     private val canNavigateBack: Boolean,
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
@@ -67,12 +67,12 @@ internal class StackScreenFragment(
 
         return StackHeaderCoordinatorLayout(
             requireContext(),
-            stackScreen,
+            item,
             canNavigateBack,
             updateBatchStateProvider,
             colorSchemeProvider,
-        ) { pressedScreen ->
-            backPressHandler.get()?.handleHeaderBackButtonPress(pressedScreen)
+        ) { pressedItem ->
+            backPressHandler.get()?.handleHeaderBackButtonPress(pressedItem)
                 ?: Log.w(TAG, "[RNScreens] Header back button press dropped - handler is gone")
         }.also { headerCoordinatorLayout = it }
     }
@@ -86,7 +86,7 @@ internal class StackScreenFragment(
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        screenLifecycleEventEmitter = StackScreenAppearanceEventsEmitter(viewLifecycleOwner.lifecycle, stackScreen.appearanceEventEmitter)
+        screenLifecycleEventEmitter = StackScreenAppearanceEventsEmitter(viewLifecycleOwner.lifecycle, item.appearanceEventEmitter)
     }
 
     override fun onDestroyView() {
@@ -98,7 +98,7 @@ internal class StackScreenFragment(
         super.onDestroy()
         headerCoordinatorLayout?.tearDown()
         headerCoordinatorLayout = null
-        stackScreen.onDismiss()
+        item.onDismiss()
         teardownPreventNativeDismissCallback()
     }
 
@@ -135,7 +135,7 @@ internal class StackScreenFragment(
 
     private fun setupPreventNativeDismissCallback() {
         preventNativeDismissBackPressedCallback =
-            PreventNativeDismissCallback(this, stackScreen, canBeEnabled = false)
+            PreventNativeDismissCallback(this, item, canBeEnabled = false)
         requireActivity().onBackPressedDispatcher.addCallback(
             requireNativeDismissBackPressedCallback,
         )

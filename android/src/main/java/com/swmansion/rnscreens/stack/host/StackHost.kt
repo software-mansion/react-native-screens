@@ -14,8 +14,8 @@ import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
 import com.swmansion.rnscreens.react.utils.ViewIdGenerator
 import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 import com.swmansion.rnscreens.react.utils.verifyReactTagSchemeInDebug
+import com.swmansion.rnscreens.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.stack.screen.StackScreen
-import com.swmansion.rnscreens.stack.screen.StackScreenItem
 import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
@@ -96,12 +96,12 @@ internal class StackHost(
         }
     }
 
-    override fun onScreenDismissCommitted(stackScreen: StackScreenItem) {
-        check(stackScreen is StackScreen) {
-            "[RNScreens] Unexpected screen item type: ${stackScreen.javaClass.simpleName}"
+    override fun onItemDismissCommitted(item: StackContainerItem) {
+        check(item is StackScreen) {
+            "[RNScreens] Unexpected stack item type: ${item.javaClass.simpleName}"
         }
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            stackScreen.isNativelyDismissed = true
+        if (item.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            item.isNativelyDismissed = true
         }
     }
 

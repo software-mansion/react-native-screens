@@ -6,15 +6,15 @@ import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
 
 /**
- * What the stack container, its fragments and the header need from a stack screen.
+ * What the stack container, its fragments and the header need from an item of the stack.
  */
-internal interface StackScreenItem : ContainerItem {
+internal interface StackContainerItem : ContainerItem {
     /**
      * The view displaying the screen's content.
      */
     val view: View
 
-    val screenKey: String?
+    val itemKey: String?
 
     val isPreventNativeDismissEnabled: Boolean
 

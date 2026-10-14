@@ -26,7 +26,7 @@ internal class StackScreen(
 ) : ViewGroup(reactContext),
     FragmentProviding,
     ScrollViewSeeking,
-    StackScreenItem {
+    StackContainerItem {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
@@ -55,7 +55,7 @@ internal class StackScreen(
         }
     }
 
-    override var screenKey: String? = null
+    var screenKey: String? = null
         set(value) {
             require(
                 field == null,
@@ -163,6 +163,9 @@ internal class StackScreen(
 
     override val view: View
         get() = this
+
+    override val itemKey: String?
+        get() = screenKey
 
     override fun getAssociatedFragment(): Fragment? =
         this.findFragmentOrNull()?.also {
