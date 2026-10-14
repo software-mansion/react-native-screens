@@ -12,8 +12,8 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
 import com.swmansion.rnscreens.react.utils.ViewIdGenerator
-import com.swmansion.rnscreens.react.utils.assertReactTagSchemeInDebug
 import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.react.utils.verifyReactTagSchemeInDebug
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import java.lang.ref.WeakReference
 
@@ -44,7 +44,7 @@ class StackHost(
     override fun onAttachedToWindow() {
         RNSLog.d(TAG, "StackHost [$id] attached to window")
         super.onAttachedToWindow()
-        assertReactTagSchemeInDebug(this)
+        verifyReactTagSchemeInDebug(this)
     }
 
     internal fun mountReactSubviewAt(

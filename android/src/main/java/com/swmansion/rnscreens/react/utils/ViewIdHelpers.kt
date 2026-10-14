@@ -4,6 +4,7 @@ import android.view.View
 import androidx.annotation.UiThread
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 
 /**
@@ -12,7 +13,7 @@ import com.swmansion.rnscreens.core.utils.ViewIdProviding
  *
  * This class relies on internal renderer behaviours, that happened to change over the time, therefore
  * it must be revisited & kept up to date with current RN behaviour until better solution is found.
- * [assertReactTagSchemeInDebug] fails in debug builds when these assumptions stop holding.
+ * [verifyReactTagSchemeInDebug] logs an error in debug builds when these assumptions stop holding.
  *
  * Until RN 0.81 ReactSurfaceView had tag `11`. In later versions it was changed to `1` (new arch only change).
  *
@@ -63,20 +64,23 @@ object ViewIdGenerator : ViewIdProviding {
     }
 }
 
+private const val TAG = "ViewIdGenerator"
+
 /**
- * Checks, in debug builds, the React Native tag scheme that [ViewIdGenerator]'s default relies on:
+ * Verifies, in debug builds, the React Native tag scheme that [ViewIdGenerator]'s default relies on:
  * the tag of a view rendered by React is even, and the tag of its surface is a valid root view tag.
+ * A mismatch is logged as an error rather than thrown, so that apps using the library don't crash.
  * Skipped when [ViewIdGenerator.externalGenerator] is set, since the default is not used then.
  */
-internal fun assertReactTagSchemeInDebug(reactView: View) {
+internal fun verifyReactTagSchemeInDebug(reactView: View) {
     if (!BuildConfig.DEBUG || ViewIdGenerator.externalGenerator != null) {
         return
     }
-    check(reactView.id % 2 == 0) {
-        "[RNScreens] React tag ${reactView.id} is odd; ViewIdGenerator may collide with React tags"
+    if (reactView.id % 2 != 0) {
+        RNSLog.e(TAG, "[RNScreens] React tag ${reactView.id} is odd; ViewIdGenerator may collide with React tags")
     }
     val surfaceId = UIManagerHelper.getSurfaceId(reactView)
-    check(isValidReactRootTag(surfaceId)) {
-        "[RNScreens] Surface tag $surfaceId is not 1 (mod 10); ViewIdGenerator may collide with root view tags"
+    if (!isValidReactRootTag(surfaceId)) {
+        RNSLog.e(TAG, "[RNScreens] Surface tag $surfaceId is not 1 (mod 10); ViewIdGenerator may collide with root view tags")
     }
 }

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
-class TabsScreenFragment(
+class TabsScreenFragment internal constructor(
     internal val tabsScreen: TabsScreen,
     internal val menuItemId: Int,
 ) : Fragment() {
