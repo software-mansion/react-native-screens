@@ -632,9 +632,11 @@ class TabsContainer internal constructor(
                 // [applyInitialStateToFragmentManagerSync]. Tabs removed from the model afterwards
                 // stay there, so remove the ones that are still attached. Tabs added afterwards
                 // have never been added, so `attach` alone would leave the content empty.
+                // The FragmentManager can be shared with other TabsHosts, so only touch fragments
+                // added to this container's content view.
                 fragmentManager.fragments
                     .filterIsInstance<TabsScreenFragment>()
-                    .filter { fragment -> fragment !in tabsModel }
+                    .filter { fragment -> fragment.id == contentView.id && fragment !in tabsModel }
                     .forEach { fragment -> it.remove(fragment) }
                 currSelectedFragment?.let { fragment -> it.detach(fragment) }
                 // A detached fragment reports `isAdded == false` too, so check `isDetached` as well.
