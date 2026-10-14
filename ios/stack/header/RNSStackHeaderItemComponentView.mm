@@ -284,7 +284,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (oldItemProps.paddingRemoved != newItemProps.paddingRemoved) {
     _paddingRemoved = newItemProps.paddingRemoved;
-    needsUpdate = YES;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    // The item is rebuilt only on iOS 27+, where the padding removal is actually applied.
+    if (@available(iOS 27.0, *)) {
+      needsUpdate = YES;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
   }
 
   [super updateProps:props oldProps:oldProps];
