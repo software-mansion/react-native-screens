@@ -430,6 +430,81 @@ export type StackHeaderMinimizationBehaviorIOS =
  */
 export type StackHeaderRestorationBehaviorIOS = 'automatic' | 'atScrollEdge';
 
+/**
+ * @summary Text attributes of header items in a single control state.
+ *
+ * @platform iOS
+ */
+export interface StackHeaderButtonStateAppearanceIOS {
+  /**
+   * @summary Specifies the font family used for the item's text.
+   *
+   * @platform ios
+   */
+  fontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the item's text.
+   *
+   * @platform ios
+   */
+  fontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the item's text.
+   *
+   * @platform ios
+   */
+  fontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the item's text.
+   *
+   * @platform ios
+   */
+  fontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the item's text.
+   *
+   * @platform ios
+   */
+  fontColor?: TextStyle['color'] | undefined;
+}
+
+/**
+ * @summary Per-state appearance of header items of a single variant.
+ *
+ * @description For each state left unset, UIKit derives the appearance from
+ * the `normal` state. Explicitly set per-state attributes merge into the
+ * state's defaults, so e.g. a font-only state keeps the system text color
+ * for that state.
+ *
+ * @platform iOS
+ */
+export interface StackHeaderButtonAppearanceIOS {
+  /**
+   * @summary Text attributes of the item in the normal state.
+   *
+   * @platform ios
+   */
+  normal?: StackHeaderButtonStateAppearanceIOS | undefined;
+  /**
+   * @summary Text attributes of the item in the highlighted (pressed) state.
+   *
+   * @platform ios
+   */
+  highlighted?: StackHeaderButtonStateAppearanceIOS | undefined;
+  /**
+   * @summary Text attributes of the item in the disabled state.
+   *
+   * @platform ios
+   */
+  disabled?: StackHeaderButtonStateAppearanceIOS | undefined;
+  /**
+   * @summary Text attributes of the item in the focused state.
+   *
+   * @platform ios
+   */
+  focused?: StackHeaderButtonStateAppearanceIOS | undefined;
+}
+
 export interface StackHeaderAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of the header.
@@ -542,425 +617,26 @@ export interface StackHeaderAppearanceIOS {
    */
   subtitleFontColor?: TextStyle['color'] | undefined;
   /**
-   * @summary Specifies the font family used for plain header items.
+   * @summary Appearance of plain header items.
    *
    * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * including the back button title. Attributes can be customized per control
+   * state: `normal`, `highlighted`, `disabled` and `focused`.
    *
    * @platform ios
    */
-  buttonFontFamily?: TextStyle['fontFamily'] | undefined;
+  button?: StackHeaderButtonAppearanceIOS | undefined;
   /**
-   * @summary Specifies the font size used for plain header items.
+   * @summary Appearance of prominent header items.
    *
-   * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
-   *
-   * @platform ios
-   */
-  buttonFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for plain header items.
-   *
-   * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
+   * @description Applies to the text of header items with the `prominent`
+   * variant (on iOS below 26 these fall back to the `done` style, which this
+   * prop styles as well). Attributes can be customized per control state:
+   * `normal`, `highlighted`, `disabled` and `focused`.
    *
    * @platform ios
    */
-  buttonFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for plain header items.
-   *
-   * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
-   *
-   * @platform ios
-   */
-  buttonFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for plain header items.
-   *
-   * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title.
-   *
-   * @platform ios
-   */
-  buttonFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for prominent header items.
-   *
-   * @description Applies to the text of header items with the `prominent` variant
-   * (on iOS below 26 these fall back to the `done` style, which this prop styles as well).
-   *
-   * @platform ios
-   */
-  prominentButtonFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for prominent header items.
-   *
-   * @description Applies to the text of header items with the `prominent` variant
-   * (on iOS below 26 these fall back to the `done` style, which this prop styles as well).
-   *
-   * @platform ios
-   */
-  prominentButtonFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for prominent header items.
-   *
-   * @description Applies to the text of header items with the `prominent` variant
-   * (on iOS below 26 these fall back to the `done` style, which this prop styles as well).
-   *
-   * @platform ios
-   */
-  prominentButtonFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for prominent header items.
-   *
-   * @description Applies to the text of header items with the `prominent` variant
-   * (on iOS below 26 these fall back to the `done` style, which this prop styles as well).
-   *
-   * @platform ios
-   */
-  prominentButtonFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for prominent header items.
-   *
-   * @description Applies to the text of header items with the `prominent` variant
-   * (on iOS below 26 these fall back to the `done` style, which this prop styles as well).
-   *
-   * @platform ios
-   */
-  prominentButtonFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for plain header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  buttonHighlightedFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for plain header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  buttonHighlightedFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for plain header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  buttonHighlightedFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for plain header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  buttonHighlightedFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for plain header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  buttonHighlightedFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for plain header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  buttonDisabledFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for plain header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  buttonDisabledFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for plain header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  buttonDisabledFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for plain header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  buttonDisabledFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for plain header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  buttonDisabledFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for plain header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  buttonFocusedFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for plain header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  buttonFocusedFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for plain header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  buttonFocusedFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for plain header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  buttonFocusedFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for plain header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  buttonFocusedFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for prominent header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  prominentButtonHighlightedFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for prominent header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  prominentButtonHighlightedFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for prominent header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  prominentButtonHighlightedFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for prominent header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  prominentButtonHighlightedFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for prominent header items in the
-   * highlighted (pressed) state.
-   *
-   * @description When unset, UIKit derives the highlighted (pressed) appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system highlighted (pressed) text color.
-   *
-   * @platform ios
-   */
-  prominentButtonHighlightedFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for prominent header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  prominentButtonDisabledFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for prominent header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  prominentButtonDisabledFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for prominent header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  prominentButtonDisabledFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for prominent header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  prominentButtonDisabledFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for prominent header items in the
-   * disabled state.
-   *
-   * @description When unset, UIKit derives the disabled appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system disabled text color.
-   *
-   * @platform ios
-   */
-  prominentButtonDisabledFontColor?: TextStyle['color'] | undefined;
-  /**
-   * @summary Specifies the font family used for prominent header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  prominentButtonFocusedFontFamily?: TextStyle['fontFamily'] | undefined;
-  /**
-   * @summary Specifies the font size used for prominent header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  prominentButtonFocusedFontSize?: TextStyle['fontSize'] | undefined;
-  /**
-   * @summary Specifies the font weight used for prominent header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  prominentButtonFocusedFontWeight?: TextStyle['fontWeight'] | undefined;
-  /**
-   * @summary Specifies the font style used for prominent header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  prominentButtonFocusedFontStyle?: TextStyle['fontStyle'] | undefined;
-  /**
-   * @summary Specifies the font color used for prominent header items in the
-   * focused state.
-   *
-   * @description When unset, UIKit derives the focused appearance from
-   * the normal state. Explicitly set per-state attributes merge into the state's defaults,
-   * so e.g. a font-only group keeps the system focused text color.
-   *
-   * @platform ios
-   */
-  prominentButtonFocusedFontColor?: TextStyle['color'] | undefined;
+  prominentButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
 
 export interface StackHeaderConfigPropsIOS {
@@ -1141,10 +817,10 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @description
    * Limitations:
-   * - On iOS 26, header items resolve the `buttonFont*` / `prominentButtonFont*` attributes once,
+   * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
    *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
    *   and do not update on property changes or scroll edge transitions.
-   * - On iOS 27, changing text color at runtime doesn't work reliably, other props appear to be working
+   * - On iOS 27, changing text color at runtime doesn't work reliably.
    *
    * @platform ios
    */
@@ -1158,10 +834,10 @@ export interface StackHeaderConfigPropsIOS {
    * background by default (iOS <18).
    *
    * Limitations:
-   * - On iOS 26, header items resolve the `buttonFont*` / `prominentButtonFont*` attributes once,
+   * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
    *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
    *   and do not update on property changes or scroll edge transitions.
-   * - On iOS 27, changing text color at runtime doesn't work reliably, other props appear to be working
+   * - On iOS 27, changing text color at runtime doesn't work reliably.
    *
    * @platform ios
    */
