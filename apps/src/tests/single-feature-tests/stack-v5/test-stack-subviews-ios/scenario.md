@@ -112,25 +112,17 @@ stay manual.
 
 1. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
 
-2. Enable `paddingRemoved`.
+2. Click "Toggle leading/trailing items count" to get 3 on both sides.
+
+  - [ ] Two items on each side appear in shared bubble.
+
+3. Enable `paddingRemoved`.
+
+  - [ ] Items loose padding and are closer to each other (more visible for the buttons that share the bubble).
 
   - [ ] Position of items on device matches element tree.
 
-3. Click on header items to resize and force other items to move. Verify layout.
-
-  - [ ] Enlarged items poke out of liquid bubble.
-
-  - [ ] Position of items on device matches element tree.
-
-4. Click "Toggle leading/trailing items count" to add and remove items. Verify layout.
-
-  - [ ] Position of items on device matches element tree.
-
-5. Enable `hidesSharedBackground` while `paddingRemoved` stays enabled.
-
-  - [ ] Both take effect and position of items on device matches element tree.
-
-6. Disable `paddingRemoved` at runtime.
+4. Disable `paddingRemoved` at runtime.
 
   - [ ] Padding is restored and position of items on device matches element tree.
 
