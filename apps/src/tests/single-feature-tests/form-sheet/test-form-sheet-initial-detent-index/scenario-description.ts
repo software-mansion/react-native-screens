@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     "initialDetentIndex: opening detent for 0, 1 and 'last'; re-renders must not snap the sheet back.",
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

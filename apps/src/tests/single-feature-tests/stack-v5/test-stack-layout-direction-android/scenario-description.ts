@@ -7,6 +7,7 @@ export const scenarioDescription: ScenarioDescription = {
     'Test the direction prop on StackHost: the header title, subviews, menu ' +
     'and back button lay out against it, and push and pop transitions mirror',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

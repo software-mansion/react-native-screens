@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verifies that a presented FormSheet keeps correct size, position and content layout across device orientation changes.',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'onWillAppear, onDidAppear, onWillDisappear, onDidDisappear: order on present and dismiss.',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: true,
 };

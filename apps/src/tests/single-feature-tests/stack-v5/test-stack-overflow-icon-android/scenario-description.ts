@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests overflow menu icon customization: custom icon and tint colors.',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

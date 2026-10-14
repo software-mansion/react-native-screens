@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests header item appearance: regular, disabled, prominent and prominent disabled items, plus moving items to the overflow menu.',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

@@ -10,6 +10,7 @@ export const scenarioDescription: ScenarioDescription = {
     ' `tabBarItemIconSize` and active indicator size; iOS custom SF' +
     ' Symbols from the asset catalog.',
   platforms: ['ios', 'android'],
+  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

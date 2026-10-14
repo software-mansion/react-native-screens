@@ -5,6 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-tab-bar-controller-mode-ios',
   details: 'Test different tab bar modes.',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

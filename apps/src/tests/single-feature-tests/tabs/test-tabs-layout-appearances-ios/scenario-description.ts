@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verifies tab item font styles and colors across all layout appearances. Visual changes are used to confirm responsive layout shifts during device rotation.',
   platforms: ['ios'],
+  devices: ['iphone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

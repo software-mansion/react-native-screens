@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Observe behavior of prevent native dismiss depending on configuration of nested stack hosting screen',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

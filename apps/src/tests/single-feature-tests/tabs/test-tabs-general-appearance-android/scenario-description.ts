@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests Android tab bar appearance: default system rendering, tab bar background color, label visibility, ripple effect, and active indicator.',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

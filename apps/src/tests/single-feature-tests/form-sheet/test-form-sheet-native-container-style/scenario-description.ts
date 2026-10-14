@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'nativeContainerStyle.backgroundColor: native background fills the whole sheet, including safe areas.',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

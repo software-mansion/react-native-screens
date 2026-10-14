@@ -5,6 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-split-pressables-ios',
   details: 'Allows to test pressability of components inside Split columns.',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

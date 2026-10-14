@@ -5,6 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-stale-update-rejection',
   details: 'Test stale update rejection mechanism',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

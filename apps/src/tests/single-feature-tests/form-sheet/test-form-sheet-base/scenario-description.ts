@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Single sheet with two detents: open, drag between detents, check content layout, dismiss.',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

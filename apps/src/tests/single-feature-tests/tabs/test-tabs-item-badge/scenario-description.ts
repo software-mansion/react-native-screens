@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Exercises tab bar item badge props: badgeValue, tabBarItemBadgeBackgroundColor, and tabBarItemBadgeTextColor (Android only).',
   platforms: ['ios', 'android'],
+  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

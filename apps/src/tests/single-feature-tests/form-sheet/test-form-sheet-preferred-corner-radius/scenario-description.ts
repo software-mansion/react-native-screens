@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'preferredCornerRadius: system default, sharp and custom radii, updated while presented.',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

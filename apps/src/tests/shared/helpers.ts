@@ -1,3 +1,10 @@
+export type ScenarioDevice =
+  | 'iphone'
+  | 'ipad'
+  | 'duo'
+  | 'android-phone'
+  | 'android-tablet';
+
 /**
  * Models single test scenario.
  */
@@ -21,6 +28,18 @@ export interface ScenarioDescription {
    * What platforms does this test cover.
    */
   platforms?: ('android' | 'ios')[];
+  /**
+   * Devices this scenario must be executed on. Only list a device when the
+   * scenario.md describes how to run the test on it (shared steps or a
+   * dedicated `## Steps - <device>` section). Used to group release test runs
+   * per device.
+   * - 'iphone': iPhone (compact width).
+   * - 'ipad': iPad (regular width, sidebar, resizable windows).
+   * - 'duo': iPhone Duo (foldable; postures and fold transitions).
+   * - 'android-phone': Android phone.
+   * - 'android-tablet': Android tablet or foldable.
+   */
+  devices: ScenarioDevice[];
   /**
    * Indicates the current status of end-to-end (E2E) test coverage for this scenario.
    * - 'full': The scenario is completely covered by E2E tests.

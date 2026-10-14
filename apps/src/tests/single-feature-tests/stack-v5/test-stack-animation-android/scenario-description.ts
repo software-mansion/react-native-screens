@@ -5,6 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-animation-android',
   details: 'High contrast screens to test animations on Android',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

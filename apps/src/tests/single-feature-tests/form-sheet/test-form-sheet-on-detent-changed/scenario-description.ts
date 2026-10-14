@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'onDetentChanged: reported index after settling between three detents.',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

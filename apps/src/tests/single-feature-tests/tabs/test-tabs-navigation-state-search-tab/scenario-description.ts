@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verifies that the navigation state progresses exactly once per user and programmatic selection of a search-role tab.',
   platforms: ['ios'],
+  devices: ['iphone'],
   e2eCoverage: 'full',
   smokeTest: false,
 };

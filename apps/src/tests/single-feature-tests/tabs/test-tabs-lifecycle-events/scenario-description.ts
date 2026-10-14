@@ -5,6 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-lifecycle-events',
   details: 'Verify lifecycle events (onWillAppear, etc.) fire on tab switch',
   platforms: ['ios', 'android'],
+  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

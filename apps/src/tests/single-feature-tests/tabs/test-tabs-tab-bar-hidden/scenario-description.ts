@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Test tabBarHidden prop on TabsHost - toggle to show/hide the tab bar at runtime.',
   platforms: ['ios', 'android'],
+  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

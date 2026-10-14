@@ -9,6 +9,7 @@ export const scenarioDescription: ScenarioDescription = {
     'change resets them, and that commands sent while the header is hidden ' +
     'are recorded and emit their events.',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

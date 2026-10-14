@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Test sidebar vs tab bar preferred placement with Stack v5 header in tabs (iOS 27+).',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

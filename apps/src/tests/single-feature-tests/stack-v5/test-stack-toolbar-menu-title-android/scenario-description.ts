@@ -7,6 +7,7 @@ export const scenarioDescription: ScenarioDescription = {
     'Tests the title-related toolbar menu item props: title, titleCondensed ' +
     '(toolbar button label) and tooltipText (long-press tooltip).',
   platforms: ['android'],
+  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

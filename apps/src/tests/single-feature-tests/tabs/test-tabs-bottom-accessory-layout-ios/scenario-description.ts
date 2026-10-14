@@ -5,6 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-bottom-accessory-layout-ios',
   details: 'Test tabs bottom accessory layout with various contents',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

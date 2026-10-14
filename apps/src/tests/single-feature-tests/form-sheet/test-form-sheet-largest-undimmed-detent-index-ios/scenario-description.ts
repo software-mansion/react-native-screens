@@ -6,6 +6,7 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'largestUndimmedDetentIndex: dimming per detent and interactivity of the screen underneath.',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

@@ -8,6 +8,7 @@ export const scenarioDescription: ScenarioDescription = {
     Modification of this prop requires app restart.
   `,
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
