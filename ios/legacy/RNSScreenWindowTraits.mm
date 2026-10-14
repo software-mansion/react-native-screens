@@ -42,9 +42,7 @@
 {
   switch (statusBarStyle) {
     case RNSStatusBarStyleAuto:
-      return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
-          ? UIStatusBarStyleLightContent
-          : UIStatusBarStyleDarkContent;
+      return UIStatusBarStyleDefault;
     case RNSStatusBarStyleInverted:
       return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
           ? UIStatusBarStyleDarkContent
