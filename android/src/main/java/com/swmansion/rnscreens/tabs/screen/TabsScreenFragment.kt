@@ -6,15 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.swmansion.rnscreens.core.utils.ViewIdGenerator
 
-class TabsScreenFragment(
+class TabsScreenFragment internal constructor(
     internal val tabsScreen: TabsScreen,
+    internal val menuItemId: Int,
 ) : Fragment() {
     internal val requireScreenKey: String by tabsScreen::requireScreenKey
     internal val isPreventNativeSelectionEnabled: Boolean by tabsScreen::preventNativeSelection
-
-    internal val menuItemId: Int = ViewIdGenerator.generateViewId()
 
     override fun onCreateView(
         inflater: LayoutInflater,

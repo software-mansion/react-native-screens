@@ -30,7 +30,7 @@ import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
 import com.swmansion.rnscreens.core.utils.RNSLog
-import com.swmansion.rnscreens.core.utils.ViewIdGenerator
+import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHost
@@ -53,6 +53,7 @@ import kotlin.properties.Delegates
 class TabsContainer internal constructor(
     private val context: Context,
     private val delegate: WeakReference<TabsContainerDelegate>,
+    private val viewIdProvider: ViewIdProviding,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -60,7 +61,7 @@ class TabsContainer internal constructor(
     SafeAreaProvider,
     View.OnLayoutChangeListener {
     init {
-        id = ViewIdGenerator.generateViewId()
+        id = viewIdProvider.generateViewId()
     }
 
     private inner class SpecialEffectsHandler {
@@ -152,7 +153,7 @@ class TabsContainer internal constructor(
                     LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT,
                 )
-            id = ViewIdGenerator.generateViewId()
+            id = viewIdProvider.generateViewId()
         }
 
     private val appearanceCoordinator =
@@ -234,7 +235,7 @@ class TabsContainer internal constructor(
         index: Int,
         tabsScreen: TabsScreen,
     ) {
-        tabsModel.add(index, TabsScreenFragment(tabsScreen))
+        tabsModel.add(index, TabsScreenFragment(tabsScreen, viewIdProvider.generateViewId()))
         invalidationFlags.invalidateAll()
     }
 
