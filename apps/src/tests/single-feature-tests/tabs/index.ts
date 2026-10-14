@@ -35,6 +35,7 @@ import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
 import TestTabsScreenOrientation from './test-tabs-screen-orientation';
 import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 import TestTabsConditionalTabs from './test-tabs-conditional-tabs';
+import TestTabsSwapTabs from './test-tabs-swap-tabs';
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
@@ -70,6 +71,7 @@ export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-acces
 export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
 export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
 export { default as TestTabsConditionalTabs } from './test-tabs-conditional-tabs';
+export { default as TestTabsSwapTabs } from './test-tabs-swap-tabs';
 
 const scenarios = {
   TestTabsSimpleNav,
@@ -105,6 +107,7 @@ const scenarios = {
   TestTabsScreenOrientation,
   TestTabsTabBarExperimentalUserInterfaceStyle,
   TestTabsConditionalTabs,
+  TestTabsSwapTabs,
 };
 
 const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
