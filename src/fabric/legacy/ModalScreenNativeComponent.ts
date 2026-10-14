@@ -1,6 +1,6 @@
 'use client';
 
-import { codegenNativeComponent } from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
   HostComponent,
@@ -129,6 +129,19 @@ export interface NativeProps extends ViewProps {
   synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
   iosOrientationInheritanceFixEnabled?: CT.WithDefault<boolean, true>;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+interface NativeCommands {
+  selectDetent: (
+    viewRef: React.ComponentRef<ComponentType>,
+    index: CT.Int32,
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['selectDetent'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSModalScreen', {
   interfaceOnly: true,
