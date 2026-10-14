@@ -57,6 +57,8 @@ export type {
   StackHeaderItemVisibilityPriorityIOS,
   StackHeaderConfigPropsIOS,
   StackHeaderAppearanceIOS,
+  StackHeaderButtonAppearanceIOS,
+  StackHeaderButtonStateAppearanceIOS,
   StackHeaderItemVariantIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,
