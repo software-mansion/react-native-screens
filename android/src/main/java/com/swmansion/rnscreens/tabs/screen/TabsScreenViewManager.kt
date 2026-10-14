@@ -22,7 +22,7 @@ import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillAppearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillDisappearEvent
 
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
-class TabsScreenViewManager :
+internal class TabsScreenViewManager :
     ViewGroupManager<TabsScreen>(),
     RNSTabsScreenAndroidManagerInterface<TabsScreen> {
     private val delegate: ViewManagerDelegate<TabsScreen> = RNSTabsScreenAndroidManagerDelegate<TabsScreen, TabsScreenViewManager>(this)
