@@ -8,35 +8,36 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 class TabsScreenFragment internal constructor(
-    internal val tabsScreen: TabsScreen,
+    internal val item: TabsContainerItem,
     internal val menuItemId: Int,
 ) : Fragment() {
-    internal val requireScreenKey: String by tabsScreen::requireScreenKey
-    internal val isPreventNativeSelectionEnabled: Boolean by tabsScreen::preventNativeSelection
+    internal val requireItemKey: String
+        get() = checkNotNull(item.itemKey) { "[RNScreens] itemKey MUST NOT be null" }
+    internal val isPreventNativeSelectionEnabled: Boolean by item::preventNativeSelection
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = tabsScreen
+    ): View = item.view
 
     override fun onStart() {
-        tabsScreen.eventEmitter.emitOnWillAppear()
+        item.appearanceEventEmitter.emitOnWillAppear()
         super.onStart()
     }
 
     override fun onResume() {
-        tabsScreen.eventEmitter.emitOnDidAppear()
+        item.appearanceEventEmitter.emitOnDidAppear()
         super.onResume()
     }
 
     override fun onPause() {
-        tabsScreen.eventEmitter.emitOnWillDisappear()
+        item.appearanceEventEmitter.emitOnWillDisappear()
         super.onPause()
     }
 
     override fun onStop() {
-        tabsScreen.eventEmitter.emitOnDidDisappear()
+        item.appearanceEventEmitter.emitOnDidDisappear()
         super.onStop()
     }
 
@@ -44,6 +45,6 @@ class TabsScreenFragment internal constructor(
         super.onConfigurationChanged(newConfig)
 
         // Handle theme change through RN's Appearance.setColorScheme
-        tabsScreen.onFragmentConfigurationChange(this, newConfig)
+        item.onFragmentConfigurationChange(newConfig)
     }
 }

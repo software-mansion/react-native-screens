@@ -9,5 +9,5 @@ internal fun Menu.getOrCreateMenuItemForFragment(fragment: TabsScreenFragment): 
         Menu.NONE,
         fragment.menuItemId,
         Menu.NONE,
-        fragment.tabsScreen.tabTitle,
+        fragment.item.tabTitle,
     )

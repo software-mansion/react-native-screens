@@ -40,7 +40,7 @@ interface TabsNavigationStateObserver {
 
     /**
      * Called when a native user action (tap) attempts to select a tab that has
-     * [com.swmansion.rnscreens.tabs.screen.TabsScreen.preventNativeSelection] enabled.
+     * [com.swmansion.rnscreens.tabs.screen.TabsContainerItem.preventNativeSelection] enabled.
      * The navigation state remains unchanged.
      *
      * @param currentNavState The currently active navigation state that was kept.
