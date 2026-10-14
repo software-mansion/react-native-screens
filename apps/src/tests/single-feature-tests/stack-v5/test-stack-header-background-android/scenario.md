@@ -84,6 +84,8 @@ colors and animated transitions, neither of which Detox can read.
           (`holo_green_light`); scrolling darkens it to the OS-resolved dark green
           (`holo_green_dark`) and back.
 
+---
+
 ### Medium / large header
 
 1. Set `type` = `medium` (later repeat with `large`), colors = `default`.
@@ -117,6 +119,8 @@ colors and animated transitions, neither of which Detox can read.
 6. Set both colors back to `default` with the subview still enabled.
 
     - [ ] Collapsed state shows the default scrim color again.
+
+---
 
 ### Type changes keep colors
 

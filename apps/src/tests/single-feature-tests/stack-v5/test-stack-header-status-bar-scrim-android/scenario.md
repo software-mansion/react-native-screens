@@ -84,6 +84,8 @@ colors and animated transitions, neither of which Detox can read.
 
     - [ ] The explicit blue strip is applied over the translucent background.
 
+---
+
 ### Medium / large header
 
 1. Set `type` = `medium` (later repeat with `large`), all colors `default`,
@@ -119,6 +121,8 @@ colors and animated transitions, neither of which Detox can read.
 
     - [ ] No default status-bar scrim: the translucent content scrim shows
           without an extra darker band in the status-bar area.
+
+---
 
 ### Type changes keep settings
 

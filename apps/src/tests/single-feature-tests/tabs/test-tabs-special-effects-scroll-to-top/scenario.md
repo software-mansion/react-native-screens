@@ -42,6 +42,8 @@ list of 50 items.
     - [ ] The list animates back to the top of the scroll position
           (item 1 is visible).
 
+---
+
 ### scrollToTop: false
 
 1. Tap Tab2.
@@ -57,6 +59,8 @@ list of 50 items.
     - [ ] The list does **not** scroll back to the top; scroll position is
           preserved.
 
+---
+
 ### no specialEffects (default)
 
 1. Tap Tab3.
@@ -71,6 +75,8 @@ list of 50 items.
 
     - [ ] Observe and note the default behavior - back to the top of the
           scroll position (item 1 is visible).
+
+---
 
 ### scrollToTop: true — switching away and back (not a repeated tap)
 

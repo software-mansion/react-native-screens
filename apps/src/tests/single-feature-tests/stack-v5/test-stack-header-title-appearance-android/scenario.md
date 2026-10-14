@@ -60,6 +60,8 @@ Incomplete - hard to verify text appearance with Detox.
     - [ ] Each collapsing header renders with its own default title/subtitle
           appearance; large title is visibly larger than medium. No custom color.
 
+---
+
 ### Small — combine customizations, then restore
 
 1. `type=small`. Add one axis at a time to the title: `color=red`, then
@@ -79,6 +81,8 @@ Incomplete - hard to verify text appearance with Detox.
     - [ ] Each axis reverts to its default while the others remain applied; after
           the last one the title is fully default again (in particular the size is a
           normal default, not tiny or oversized).
+
+---
 
 ### Small — title vs subtitle differentiation
 
@@ -100,6 +104,8 @@ Incomplete - hard to verify text appearance with Detox.
     - [ ] Title turns blue and subtitle red — the styling follows the slot, not the
           shared text.
 
+---
+
 ### Small — appearance survives the text being toggled
 
 1. Set `subtitle color=blue` (confirm it is blue), then `subtitle=undefined`,
@@ -108,6 +114,8 @@ Incomplete - hard to verify text appearance with Detox.
     - [ ] The subtitle returns blue — its appearance persisted across the text being
           cleared and re-shown. (The title showed the same behavior in step 2 of
           **Small — title vs subtitle differentiation**.)
+
+---
 
 ### Small — PlatformColor
 
@@ -119,6 +127,8 @@ Incomplete - hard to verify text appearance with Detox.
 
     - [ ] Title reverts to the default color; subtitle stays green (its
           `PlatformColor` is unaffected).
+
+---
 
 ### Medium / large — expanded vs collapsed
 
@@ -147,6 +157,8 @@ color=red` and `collapsedTitle color=blue`.
     - [ ] Each removal reverts only that axis while the others remain; the
           `collapsedTitle`, `expandedSubtitle` and `collapsedSubtitle` slots stay
           default the whole time (no cross-slot bleed).
+
+---
 
 ### Medium — appearance change while collapsed
 

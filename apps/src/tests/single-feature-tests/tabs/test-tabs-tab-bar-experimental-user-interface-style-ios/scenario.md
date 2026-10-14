@@ -30,6 +30,8 @@ Occasional flashes of the back button in the header are expected behavior and ar
 
     - [ ] `Home` screen is shown with two buttons `Dark` and `Light`.
 
+---
+
 ### Light system mode & dark screen style
 
 1. On `Home` screen click `Dark` button.
@@ -47,6 +49,8 @@ Occasional flashes of the back button in the header are expected behavior and ar
 4. Pop back to previous `Dark` screen and then pop back to the `Home` screen.
 
     - [ ] `Home` screen is shown with two buttons `Dark` and `Light`.
+
+---
 
 ### Dark system mode & light screen style
 

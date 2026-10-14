@@ -68,6 +68,8 @@ Android emulator or physical device.
           half the `L·40` probe's width. The trailing probe sits flush against the
           trailing edge, because Material's end default is 0.
 
+---
+
 ### Start inset — small
 
 The title is the measure here; the probe follows it.
@@ -100,6 +102,8 @@ The title is the measure here; the probe follows it.
     - [ ] The title behaves exactly as it did with the probe present; the probe
           was never affecting the measurement.
 
+---
+
 ### End inset
 
 1. Tap `Reset`, then step `contentInsetEnd` through `32`, `64`, `96`.
@@ -112,6 +116,8 @@ The title is the measure here; the probe follows it.
 
     - [ ] The trailing probe returns flush against the trailing edge for both
           values, and does not shift between them — Material's end default is 0.
+
+---
 
 ### Back button — start-side inertness
 
@@ -136,6 +142,8 @@ The title is the measure here; the probe follows it.
     - [ ] The back button disappears and the title jumps to the toolbar's leading
           edge.
 
+---
+
 ### Toolbar menu — end-side inertness
 
 1. Turn `backButtonHidden` off, go back to `Root`, tap `Reset`, set
@@ -158,6 +166,8 @@ The title is the measure here; the probe follows it.
     - [ ] The trailing probe is pushed further in, past the menu item — the inset
           now exceeds the menu's width and takes effect again.
 
+---
+
 ### Collapsing headers — the motivating case
 
 1. Tap the `Off-center collapsed title` preset, then scroll the content up
@@ -171,6 +181,8 @@ The title is the measure here; the probe follows it.
 2. Tap the `Fixed with insets` preset and collapse the header again.
 
     - [ ] The collapsed title is centered in the header.
+
+---
 
 ### Collapsing headers — start inset without a title view
 
@@ -186,6 +198,8 @@ The title is the measure here; the probe follows it.
           measure, because the toolbar has no title view of its own.
     - [ ] The collapsed title is pushed a further 40dp in, to the probe's
           trailing side. This is the opposite order from the `small` header.
+
+---
 
 ### RTL
 

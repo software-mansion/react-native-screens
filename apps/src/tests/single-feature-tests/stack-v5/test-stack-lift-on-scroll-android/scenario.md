@@ -64,6 +64,8 @@ Not automated:
 
     - [ ] Lift is restored and re-applies without a visible header rebuild/flash.
 
+---
+
 ### Transparent
 
 1. Set `transparent` = `true`, then scroll.
@@ -74,12 +76,16 @@ Not automated:
 
     - [ ] Lift behavior is restored.
 
+---
+
 ### Hidden (detach / re-show the header)
 
 1. Set `hidden` = `true`, scroll, then set `hidden` = `false`.
 
     - [ ] While hidden there is no header. After re-showing, lift-on-scroll works
           again (the target scroll view is re-resolved).
+
+---
 
 ### Attach / detach headerConfig
 

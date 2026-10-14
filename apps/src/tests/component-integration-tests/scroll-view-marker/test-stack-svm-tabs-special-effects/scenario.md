@@ -44,6 +44,8 @@ This test needs to be updated after such interaction is supported.
     - [ ] *scroll-to-top* should be triggered and you should observe the scroll-view scrolling
           to its top.
 
+---
+
 ### Nested stack
 
 1. Change tab to `Stack`.

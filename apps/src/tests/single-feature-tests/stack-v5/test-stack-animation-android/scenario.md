@@ -76,6 +76,8 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
     - [ ] **Home** is shown with **Push Blue** /
           **Push Red** / **Push NestedHost** buttons. No **Pop** button is shown.
 
+---
+
 ### Push animation
 
 1. Tap **Push Blue**.
@@ -90,6 +92,8 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
     - [ ] The **Red** screen slides in over **Blue**, same as step 1 — smooth,
           button shadows present, no content jump.
 
+---
+
 ### Pop animation (on-screen button)
 
 1. On **Red**, tap **Pop**.
@@ -97,6 +101,8 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
     - [ ] **Red** slides back out and **Blue** is revealed with a smooth
           animation (the reverse of the push). The button shadows stay visible;
           no content jump occurs.
+
+---
 
 ### Predictive back gesture (interactive)
 
@@ -124,6 +130,8 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
     - [ ] The gesture is **cancelled smoothly**: **Red** animates back into place
           and no navigation change occurs.
 
+---
+
 ### Nested stack animations
 
 1. Pop/navigate back to **Home**, then tap **Push NestedHost**.
@@ -145,6 +153,8 @@ qualities that Detox cannot assert reliably. This scenario is manual only.
           gesture all behave as they do on the outer stack).
           When the nested stack has only **NestedHome** left, a further back
           pops the whole **NestedHost** route and returns to **Home**, animated.
+
+---
 
 ### Re-pushing the same route (edge case)
 

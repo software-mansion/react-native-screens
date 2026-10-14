@@ -20,10 +20,10 @@ TBD.
 
 1. Navigate to **CIT → SAV → SafeAreaView in Stack - SafeAreaView below stack header (iOS)**.
 
-   - [ ] The header "Safe Area View" is visible.
-   - [ ] The top edge of the red border starts right below the header and is
-         not covered by it.
-   - [ ] The bottom edge of the border ends right above the home indicator.
-   - [ ] The left and right edges of the border touch the screen edges.
-   - [ ] The bottom corners of the border may be clipped by the rounded
-         display corners. This is expected.
+    - [ ] The header "Safe Area View" is visible.
+    - [ ] The top edge of the red border starts right below the header and is
+          not covered by it.
+    - [ ] The bottom edge of the border ends right above the home indicator.
+    - [ ] The left and right edges of the border touch the screen edges.
+    - [ ] The bottom corners of the border may be clipped by the rounded
+          display corners. This is expected.

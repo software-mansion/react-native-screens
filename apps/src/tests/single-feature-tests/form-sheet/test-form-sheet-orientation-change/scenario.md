@@ -47,6 +47,8 @@ TBD: Planned, but will be implemented separately.
 
 6. Drag the sheet down to dismiss it.
 
+---
+
 ### Opening in landscape
 
 1. Rotate the device to landscape and open the sheet.
@@ -60,6 +62,8 @@ TBD: Planned, but will be implemented separately.
     - [ ] The sheet rests at the 0.3 detent of the portrait height, with the content laid out to the sheet's surface.
 
 3. Dismiss the sheet.
+
+---
 
 ### Rotating while dismissed
 

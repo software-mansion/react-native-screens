@@ -95,6 +95,8 @@ Incomplete.
           the header. No **Pop** button is shown, only **Push A** and **Push B**.
           Note the displayed `Key` value to compare against later steps.
 
+---
+
 ### Push navigation
 
 1. Tap **Push A**.
@@ -110,6 +112,8 @@ Incomplete.
           B`, and a new `Key`.
           A native back button is visible in the header. Note this `Key` value.
 
+---
+
 ### Re-pushing an already-present route
 
 1. While on **B**, tap **Push A** again.
@@ -118,6 +122,8 @@ Incomplete.
           is now Home, A, B, A). Displays `Name: A` and a new
           `Key` that is **different** from the `Key` shown in step 1 of **Push
           navigation**.
+
+---
 
 ### Pop via the on-screen button
 
@@ -137,6 +143,8 @@ Incomplete.
     - [ ] Returns to **Home**. No **Pop** button is shown and no header back
           button appears (root screen reached).
 
+---
+
 ### Native header back button
 
 1. Tap **Push A**, then tap **Push B**. Then tap the native back button in the header.
@@ -144,6 +152,8 @@ Incomplete.
     - [ ] Tapping the native back button behaves the same as tapping **Pop**:
           returns to screen **A** with its `Key` unchanged. No crash and no
           inconsistent state.
+
+---
 
 ### Edge-swipe / system gesture-back
 
@@ -157,6 +167,8 @@ Incomplete.
           cancels it: the current screen returns to place and no navigation change
           occurs.
 
+---
+
 ### Route key uniqueness (edge case)
 
 1. From **Home**, tap **Push A**. While on the newly pushed **A**, tap
@@ -165,6 +177,8 @@ Incomplete.
 
     - [ ] Three separate **A** instances are stacked. Each shows `Name: A`,
           but the `Key` value is different every time you land on a new push.
+
+---
 
 ### Rapid tapping (edge case)
 

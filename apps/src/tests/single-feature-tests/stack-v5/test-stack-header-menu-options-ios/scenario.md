@@ -49,6 +49,8 @@ Not covered:
 15. Tap the overflow menu button (three dots)
     - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated, menu separator, Delete, all inline
 
+---
+
 ### displayAsPalette
 
 1. Ensure both toggles are set to `false`

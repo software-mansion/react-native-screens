@@ -44,12 +44,16 @@ tool you chose.
           toolbar.
     - [ ] The overflow menu button (three dots) is visible.
 
+---
+
 ### Action item accessibility
 
 1. Verify contentDescription of the action item in the toolbar.
 
     - [ ] The content description is "Accessibility for Alpha"
           (not the title "Alpha").
+
+---
 
 ### Overflow item accessibility
 
@@ -61,6 +65,8 @@ tool you chose.
 
     - [ ] The content description is "Accessibility for Beta" and
           "Accessibility for Gamma" respectively.
+
+---
 
 ### Submenu item accessibility
 
@@ -75,6 +81,8 @@ tool you chose.
 
 3. Dismiss all menus.
 
+---
+
 ### View command — update action item
 
 1. Set "target id" to "action-item", set "accessibilityLabel"
@@ -82,6 +90,8 @@ tool you chose.
 
     - [ ] The action item contentDescription is now
           "Updated label".
+
+---
 
 ### View command — reset action item
 
@@ -91,6 +101,8 @@ tool you chose.
     - [ ] The action item falls back to using the title "Alpha"
           as content description (default behavior for icon-only
           toolbar buttons).
+
+---
 
 ### View command — update overflow item
 
@@ -104,6 +116,8 @@ tool you chose.
           "Updated label".
 
 3. Dismiss the overflow menu.
+
+---
 
 ### View command — reset overflow item
 

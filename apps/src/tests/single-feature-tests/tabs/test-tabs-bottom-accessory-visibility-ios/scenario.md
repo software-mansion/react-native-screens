@@ -36,6 +36,8 @@ and no blank frame (all steps of **Hidden prop**, step 1 of
     - [ ] The bottom accessory is visible above the tab bar with
           "Bottom Accessory" text centered.
 
+---
+
 ### Hidden prop
 
 1. Toggle `hidden` on.
@@ -48,6 +50,8 @@ and no blank frame (all steps of **Hidden prop**, step 1 of
     - [ ] The bottom accessory animates back in. The content is
           immediately visible — no blank frame.
 
+---
+
 ### Rendered prop
 
 1. Toggle `rendered` off.
@@ -57,6 +61,8 @@ and no blank frame (all steps of **Hidden prop**, step 1 of
 2. Toggle `rendered` on.
 
     - [ ] The bottom accessory reappears with content.
+
+---
 
 ### Combined
 

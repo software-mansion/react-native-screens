@@ -80,6 +80,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
           `Key`. No header/back button is visible. Only **Push A** /
           **Push B** buttons are shown (no **Pop** button).
 
+---
+
 ### Push navigation and initial state
 
 1. Tap **Push A**.
@@ -96,6 +98,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
           A's, and **Prevent native dismiss: Enabled**. **Push A** / **Push
           B** / **Pop** and a **Toggle Prevent Native Dismiss** button are all
           present.
+
+---
 
 ### Native dismiss blocked while Enabled (screen B)
 
@@ -117,6 +121,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
     - [ ] Each tap is intercepted individually; a new toast appears each time;
           the app never pops off of **B**.
 
+---
+
 ### Native dismiss allowed while Disabled (screen A)
 
 1. Tap the on-screen **Pop** button to return to **A**.
@@ -132,6 +138,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
    right.
 
     - [ ] The gesture pops the stack normally. No toast is shown.
+
+---
 
 ### Toggling the flag at runtime (screen B)
 
@@ -151,6 +159,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
     - [ ] The chevron is intercepted: the green toast appears and the app remains
           on **B**.
 
+---
+
 ### JS-driven Pop always works regardless of the flag
 
 1. On **B** (prevent native dismiss Enabled), tap the on-screen **Pop**
@@ -158,6 +168,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
 
     - [ ] App pops back to **Home** normally. **No toast** is shown - the on-screen
           **Pop** bypasses `preventNativeDismiss` entirely.
+
+---
 
 ### Edge case: toggling immediately before a native dismiss
 
@@ -168,6 +180,8 @@ is Disabled - including the pop expected after toggling **B** to Disabled.
     - [ ] The most recent toggle takes effect before the back press: since
           prevent is Enabled at press time, back is intercepted (toast shown, app
           stays on **B**).
+
+---
 
 ### Android: prevent native dismiss mechanism keeps working after activity backgrounding
 

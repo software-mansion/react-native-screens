@@ -160,6 +160,8 @@ still `false`.
 
     - [ ] Navigation to **Fifth** proceeds normally. No toast appears.
 
+---
+
 ### iPad only - Sidebar behavior
 
 1. Resize app to full screen width.
