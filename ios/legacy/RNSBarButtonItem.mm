@@ -166,6 +166,30 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   if (imageSourceObj != nil || templateSourceObj != nil) {
     BOOL isTemplate = imageSourceObj == nil;
     NSDictionary *source = imageSourceObj != nil ? imageSourceObj : templateSourceObj;
+
+    // Menu actions are built once with `image:nil` and UIKit doesn't pick up an image assigned after an
+    // asynchronous load completes, so a local file (a bare path or a file:// URL) is read synchronously.
+    NSString *uri = source[@"uri"];
+    NSString *path = nil;
+    if ([uri isKindOfClass:[NSString class]]) {
+      if ([uri hasPrefix:@"/"]) {
+        path = uri;
+      } else if ([uri hasPrefix:@"file://"]) {
+        path = [NSURL URLWithString:uri].path;
+      }
+    }
+    if (path != nil) {
+      NSData *data = [NSData dataWithContentsOfFile:path];
+      NSNumber *scale = source[@"scale"];
+      UIImage *image = data != nil ? [UIImage imageWithData:data scale:scale != nil ? [scale doubleValue] : 1.0] : nil;
+      if (image != nil) {
+        completionBlock(
+            [image imageWithRenderingMode:isTemplate ? UIImageRenderingModeAlwaysTemplate
+                                                     : UIImageRenderingModeAlwaysOriginal]);
+        return;
+      }
+    }
+
     [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
                                                  withImageLoader:imageLoader
                                                       asTemplate:isTemplate
