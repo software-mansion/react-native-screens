@@ -55,6 +55,6 @@ internal object StackTransitionResolver {
 
     private fun definitionOf(fragment: StackScreenFragment) =
         when (val config = fragment.animationConfig) {
-            is StackAnimationConfig.Preset -> Presets.definition(config.name)
+            is StackAnimationConfig.Preset -> Presets.definition(config.name, config.options)
         }
 }

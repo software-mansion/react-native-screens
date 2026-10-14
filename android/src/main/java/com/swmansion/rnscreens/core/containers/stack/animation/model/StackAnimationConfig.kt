@@ -7,6 +7,7 @@ package com.swmansion.rnscreens.core.containers.stack.animation.model
 internal sealed interface StackAnimationConfig {
     data class Preset(
         val name: PresetName,
+        val options: PresetOptions = PresetOptions.NONE,
     ) : StackAnimationConfig
 
     companion object {
