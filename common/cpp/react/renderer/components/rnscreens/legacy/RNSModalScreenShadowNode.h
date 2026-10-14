@@ -4,6 +4,7 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
+#include "../utils/YogaSizeUtil.h"
 #include "RNSScreenState.h"
 
 namespace facebook {
@@ -19,6 +20,14 @@ class JSI_EXPORT RNSModalScreenShadowNode final
           RNSScreenState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
+
+  // Like `setSize`, but leaves the Yoga node clean when the size is unchanged.
+  // See `rnscreens::yogaStyleHasSize`.
+  void setSizeIfChanged(Size size) const {
+    if (!rnscreens::yogaStyleHasSize(yogaNode_.style(), size)) {
+      setSize(size);
+    }
+  }
 
   Point getContentOriginOffset(bool includeTransform) const override;
   static ShadowNodeTraits BaseTraits() {

@@ -38,8 +38,6 @@ class RNSScreenComponentDescriptor final
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-    auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
@@ -99,19 +97,21 @@ class RNSScreenComponentDescriptor final
           FrameCorrectionModes::Mode::FrameHeightCorrection);
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameOriginCorrection);
-      layoutableShadowNode.setSize(
+      screenShadowNode.setSizeIfChanged(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     } else if (
         stateData.frameSize.width == 0 && stateData.frameSize.height == 0) {
       // Reset YogaNode so it recalculates its layout. Useful for the case
       // when native orientation changes and react has not been notified yet.
       // The if condition holds true on first render and when it is reset inside
-      // RNSScreenShadowNodeCommitHook.
-      layoutableShadowNode.setSize({YGUndefined, YGUndefined});
+      // RNSScreenShadowNodeCommitHook. It also holds for as long as native
+      // never reports a frame, which is the case for screens outside a native
+      // stack (e.g. tabs), so the reset must not dirty the node on every clone.
+      screenShadowNode.setSizeIfChanged({YGUndefined, YGUndefined});
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
+      screenShadowNode.setSizeIfChanged(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
 #endif // ANDROID

@@ -19,8 +19,6 @@ class RNSModalScreenComponentDescriptor final
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-    auto &layoutableShadowNode =
-        dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSModalScreenShadowNode::ConcreteState>(
@@ -28,7 +26,7 @@ class RNSModalScreenComponentDescriptor final
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
+      screenShadowNode.setSizeIfChanged(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
 

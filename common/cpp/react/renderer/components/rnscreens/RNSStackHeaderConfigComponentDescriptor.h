@@ -23,8 +23,6 @@ class RNSStackHeaderConfigComponentDescriptor final
         static_cast<RNSStackHeaderConfigShadowNode &>(shadowNode);
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
-    auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(configShadowNode);
 
     auto state = std::static_pointer_cast<
         const RNSStackHeaderConfigShadowNode::ConcreteState>(
@@ -32,7 +30,7 @@ class RNSStackHeaderConfigComponentDescriptor final
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
+      configShadowNode.setSizeIfChanged(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
 

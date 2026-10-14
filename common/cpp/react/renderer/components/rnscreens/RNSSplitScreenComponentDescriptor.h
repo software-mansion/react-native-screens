@@ -20,8 +20,6 @@ class RNSSplitScreenComponentDescriptor final
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&splitScreenShadowNode));
-    auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(splitScreenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSSplitScreenShadowNode::ConcreteState>(
@@ -29,7 +27,7 @@ class RNSSplitScreenComponentDescriptor final
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(stateData.frameSize);
+      splitScreenShadowNode.setSizeIfChanged(stateData.frameSize);
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
