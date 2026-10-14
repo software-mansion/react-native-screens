@@ -66,9 +66,10 @@ object ViewIdGenerator : ViewIdProviding {
 /**
  * Checks, in debug builds, the React Native tag scheme that [ViewIdGenerator]'s default relies on:
  * the tag of a view rendered by React is even, and the tag of its surface is a valid root view tag.
+ * Skipped when [ViewIdGenerator.externalGenerator] is set, since the default is not used then.
  */
 internal fun assertReactTagSchemeInDebug(reactView: View) {
-    if (!BuildConfig.DEBUG) {
+    if (!BuildConfig.DEBUG || ViewIdGenerator.externalGenerator != null) {
         return
     }
     check(reactView.id % 2 == 0) {
