@@ -9,6 +9,8 @@ import React, {
 import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
   Commands as StackHeaderConfigIOSNativeCommands,
+  ButtonAppearance,
+  ButtonStateAppearance,
   HeaderAppearance,
   MenuItemPressEvent,
   MenuSelectionChangeEvent,
@@ -26,6 +28,8 @@ import {
 } from 'react-native';
 import type {
   StackHeaderAppearanceIOS,
+  StackHeaderButtonAppearanceIOS,
+  StackHeaderButtonStateAppearanceIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
   StackHeaderMenuItemOptionsIOS,
@@ -189,6 +193,91 @@ function toNativeFontWeight(
   return weight !== undefined ? String(weight) : undefined;
 }
 
+const BUTTON_APPEARANCE_STATES = [
+  'normal',
+  'highlighted',
+  'disabled',
+  'focused',
+] as const;
+
+const BUTTON_STATE_APPEARANCE_KEYS = [
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'fontStyle',
+  'fontColor',
+] as const;
+
+function warnUnknownKeys(
+  path: string,
+  object: object,
+  allowedKeys: readonly string[],
+) {
+  for (const key of Object.keys(object)) {
+    if (!allowedKeys.includes(key)) {
+      console.warn(`[Stack] Unsupported key "${key}" in ${path}`);
+    }
+  }
+}
+
+function assertsPlainObject(path: string, value: unknown): boolean {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    console.warn(
+      `[Stack] Expected ${path} to be an object, got ${typeof value}`,
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function mapButtonStateAppearanceToNativeProp(
+  path: string,
+  stateAppearance?: StackHeaderButtonStateAppearanceIOS,
+): ButtonStateAppearance | undefined {
+  if (stateAppearance === undefined) return undefined;
+  if (!assertsPlainObject(path, stateAppearance)) return undefined;
+
+  warnUnknownKeys(path, stateAppearance, BUTTON_STATE_APPEARANCE_KEYS);
+
+  // Font family, size and style pass through unchanged via the spread; color
+  // and weight need conversion to the wire format.
+  return {
+    ...stateAppearance,
+    fontColor: processColor(stateAppearance.fontColor),
+    fontWeight: toNativeFontWeight(stateAppearance.fontWeight),
+  };
+}
+
+function mapButtonAppearanceToNativeProp(
+  path: string,
+  buttonAppearance?: StackHeaderButtonAppearanceIOS,
+): ButtonAppearance | undefined {
+  if (buttonAppearance === undefined) return undefined;
+  if (!assertsPlainObject(path, buttonAppearance)) return undefined;
+
+  warnUnknownKeys(path, buttonAppearance, BUTTON_APPEARANCE_STATES);
+
+  return {
+    normal: mapButtonStateAppearanceToNativeProp(
+      `${path}.normal`,
+      buttonAppearance.normal,
+    ),
+    highlighted: mapButtonStateAppearanceToNativeProp(
+      `${path}.highlighted`,
+      buttonAppearance.highlighted,
+    ),
+    disabled: mapButtonStateAppearanceToNativeProp(
+      `${path}.disabled`,
+      buttonAppearance.disabled,
+    ),
+    focused: mapButtonStateAppearanceToNativeProp(
+      `${path}.focused`,
+      buttonAppearance.focused,
+    ),
+  };
+}
+
 function mapAppearanceToNativeProp(
   appearance?: StackHeaderAppearanceIOS,
 ): HeaderAppearance | undefined {
@@ -208,50 +297,13 @@ function mapAppearanceToNativeProp(
     subtitleFontColor: processColor(appearance.subtitleFontColor),
     subtitleFontWeight: toNativeFontWeight(appearance.subtitleFontWeight),
 
-    buttonFontColor: processColor(appearance.buttonFontColor),
-    buttonFontWeight: toNativeFontWeight(appearance.buttonFontWeight),
-
-    buttonHighlightedFontColor: processColor(
-      appearance.buttonHighlightedFontColor,
+    button: mapButtonAppearanceToNativeProp(
+      'appearance.button',
+      appearance.button,
     ),
-    buttonHighlightedFontWeight: toNativeFontWeight(
-      appearance.buttonHighlightedFontWeight,
-    ),
-
-    buttonDisabledFontColor: processColor(appearance.buttonDisabledFontColor),
-    buttonDisabledFontWeight: toNativeFontWeight(
-      appearance.buttonDisabledFontWeight,
-    ),
-
-    buttonFocusedFontColor: processColor(appearance.buttonFocusedFontColor),
-    buttonFocusedFontWeight: toNativeFontWeight(
-      appearance.buttonFocusedFontWeight,
-    ),
-
-    prominentButtonFontColor: processColor(appearance.prominentButtonFontColor),
-    prominentButtonFontWeight: toNativeFontWeight(
-      appearance.prominentButtonFontWeight,
-    ),
-
-    prominentButtonHighlightedFontColor: processColor(
-      appearance.prominentButtonHighlightedFontColor,
-    ),
-    prominentButtonHighlightedFontWeight: toNativeFontWeight(
-      appearance.prominentButtonHighlightedFontWeight,
-    ),
-
-    prominentButtonDisabledFontColor: processColor(
-      appearance.prominentButtonDisabledFontColor,
-    ),
-    prominentButtonDisabledFontWeight: toNativeFontWeight(
-      appearance.prominentButtonDisabledFontWeight,
-    ),
-
-    prominentButtonFocusedFontColor: processColor(
-      appearance.prominentButtonFocusedFontColor,
-    ),
-    prominentButtonFocusedFontWeight: toNativeFontWeight(
-      appearance.prominentButtonFocusedFontWeight,
+    prominentButton: mapButtonAppearanceToNativeProp(
+      'appearance.prominentButton',
+      appearance.prominentButton,
     ),
   };
 }

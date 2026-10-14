@@ -3,6 +3,7 @@
 
 #import <React/RCTConvert.h>
 #import <React/RCTFont.h>
+#import <React/RCTLog.h>
 
 @implementation RNSStackHeaderAppearanceMapper
 
@@ -56,18 +57,17 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   UIBarButtonItemAppearance *buttonAppearance = [self barButtonItemAppearance:appearance.buttonAppearance
-                                                        updatedWithDictionary:appearanceDict
-                                                                    keyPrefix:@"button"];
+                                                        updatedWithDictionary:[self dictionaryForKey:@"button"
+                                                                                                  in:appearanceDict]];
   if (buttonAppearance != nil) {
     appearance.buttonAppearance = buttonAppearance;
   }
 
+  NSDictionary *prominentButtonDict = [self dictionaryForKey:@"prominentButton" in:appearanceDict];
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
     UIBarButtonItemAppearance *prominentButtonAppearance =
-        [self barButtonItemAppearance:appearance.prominentButtonAppearance
-                updatedWithDictionary:appearanceDict
-                            keyPrefix:@"prominentButton"];
+        [self barButtonItemAppearance:appearance.prominentButtonAppearance updatedWithDictionary:prominentButtonDict];
     if (prominentButtonAppearance != nil) {
       appearance.prominentButtonAppearance = prominentButtonAppearance;
     }
@@ -75,8 +75,7 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   {
     UIBarButtonItemAppearance *doneButtonAppearance = [self barButtonItemAppearance:appearance.doneButtonAppearance
-                                                              updatedWithDictionary:appearanceDict
-                                                                          keyPrefix:@"prominentButton"];
+                                                              updatedWithDictionary:prominentButtonDict];
     if (doneButtonAppearance != nil) {
       appearance.doneButtonAppearance = doneButtonAppearance;
     }
@@ -85,36 +84,37 @@
 
 /**
  Creates button item appearance object based on `baseAppearance`,
- updating it with well-known attributes prefixed with `keyPrefix` ("button" or "prominentButton")
+ updating each control state with the attributes from the state's sub-dictionary
+ (`normal`, `highlighted`, `disabled`, `focused`) of `buttonDict`.
  */
 + (nullable UIBarButtonItemAppearance *)barButtonItemAppearance:(nonnull UIBarButtonItemAppearance *)baseAppearance
-                                          updatedWithDictionary:(nullable NSDictionary *)appearanceDict
-                                                      keyPrefix:(nonnull NSString *)keyPrefix
+                                          updatedWithDictionary:(nullable NSDictionary *)buttonDict
 {
+  if (buttonDict == nil) {
+    return nil;
+  }
+
   UIBarButtonItemAppearance *updatedAppearance = [baseAppearance copy];
 
   BOOL didUpdate = NO;
-  didUpdate |= [self updateStateAppearance:updatedAppearance.normal fromDictionary:appearanceDict keyPrefix:keyPrefix];
+  didUpdate |= [self updateStateAppearance:updatedAppearance.normal
+                            fromDictionary:[self dictionaryForKey:@"normal" in:buttonDict]];
   didUpdate |= [self updateStateAppearance:updatedAppearance.highlighted
-                            fromDictionary:appearanceDict
-                                 keyPrefix:[keyPrefix stringByAppendingString:@"Highlighted"]];
+                            fromDictionary:[self dictionaryForKey:@"highlighted" in:buttonDict]];
   didUpdate |= [self updateStateAppearance:updatedAppearance.disabled
-                            fromDictionary:appearanceDict
-                                 keyPrefix:[keyPrefix stringByAppendingString:@"Disabled"]];
+                            fromDictionary:[self dictionaryForKey:@"disabled" in:buttonDict]];
   didUpdate |= [self updateStateAppearance:updatedAppearance.focused
-                            fromDictionary:appearanceDict
-                                 keyPrefix:[keyPrefix stringByAppendingString:@"Focused"]];
+                            fromDictionary:[self dictionaryForKey:@"focused" in:buttonDict]];
 
   return didUpdate ? updatedAppearance : nil;
 }
 
 + (BOOL)updateStateAppearance:(nonnull UIBarButtonItemStateAppearance *)stateAppearance
-               fromDictionary:(nullable NSDictionary *)appearanceDict
-                    keyPrefix:(nonnull NSString *)keyPrefix
+               fromDictionary:(nullable NSDictionary *)stateDict
 {
   NSDictionary *textAttributes = [self textAttributes:stateAppearance.titleTextAttributes
-                                updatedWithDictionary:appearanceDict
-                                            keyPrefix:keyPrefix];
+                                updatedWithDictionary:stateDict
+                                            keyPrefix:nil];
   if (textAttributes == nil) {
     return NO;
   }
@@ -122,15 +122,29 @@
   return YES;
 }
 
+/**
+ Resolves the dictionary key for an attribute: bare camelCase name when `keyPrefix` is empty
+ (`fontFamily`), prefixed otherwise (`titleFontFamily`).
+ */
++ (nonnull NSString *)attributeKey:(nonnull NSString *)name withPrefix:(nullable NSString *)keyPrefix
+{
+  if (keyPrefix.length == 0) {
+    return name;
+  }
+  NSString *capitalized =
+      [[[name substringToIndex:1] uppercaseString] stringByAppendingString:[name substringFromIndex:1]];
+  return [keyPrefix stringByAppendingString:capitalized];
+}
+
 + (nullable NSDictionary *)textAttributes:(nullable NSDictionary *)baseAttributes
                     updatedWithDictionary:(nullable NSDictionary *)appearanceDict
-                                keyPrefix:(nonnull NSString *)keyPrefix
+                                keyPrefix:(nullable NSString *)keyPrefix
 {
-  NSString *fontFamily = [self stringForKey:[keyPrefix stringByAppendingString:@"FontFamily"] in:appearanceDict];
-  NSNumber *fontSize = [self numberForKey:[keyPrefix stringByAppendingString:@"FontSize"] in:appearanceDict];
-  NSString *fontWeight = [self stringForKey:[keyPrefix stringByAppendingString:@"FontWeight"] in:appearanceDict];
-  NSString *fontStyle = [self stringForKey:[keyPrefix stringByAppendingString:@"FontStyle"] in:appearanceDict];
-  id fontColor = [self colorValueForKey:[keyPrefix stringByAppendingString:@"FontColor"] in:appearanceDict];
+  NSString *fontFamily = [self stringForKey:[self attributeKey:@"fontFamily" withPrefix:keyPrefix] in:appearanceDict];
+  NSNumber *fontSize = [self numberForKey:[self attributeKey:@"fontSize" withPrefix:keyPrefix] in:appearanceDict];
+  NSString *fontWeight = [self stringForKey:[self attributeKey:@"fontWeight" withPrefix:keyPrefix] in:appearanceDict];
+  NSString *fontStyle = [self stringForKey:[self attributeKey:@"fontStyle" withPrefix:keyPrefix] in:appearanceDict];
+  id fontColor = [self colorValueForKey:[self attributeKey:@"fontColor" withPrefix:keyPrefix] in:appearanceDict];
 
   if (fontFamily == nil && fontSize == nil && fontWeight == nil && fontStyle == nil && fontColor == nil) {
     return nil;
@@ -155,22 +169,53 @@
   return textAttributes;
 }
 
+// The accessors below treat NSNull as an absent value (JS `undefined`/`null` arrive
+// as NSNull via folly::dynamic) and warn when a present value has an unexpected type.
+
 + (nullable NSString *)stringForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
 {
-  id value = dict[key];
-  return [value isKindOfClass:[NSString class]] ? value : nil;
+  id value = [self presentValueForKey:key in:dict];
+  if (value != nil && ![value isKindOfClass:[NSString class]]) {
+    RCTLogWarn(@"[RNScreens] Invalid value for header appearance key '%@': expected a string", key);
+    return nil;
+  }
+  return value;
 }
 
 + (nullable NSNumber *)numberForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
 {
-  id value = dict[key];
-  return [value isKindOfClass:[NSNumber class]] ? value : nil;
+  id value = [self presentValueForKey:key in:dict];
+  if (value != nil && ![value isKindOfClass:[NSNumber class]]) {
+    RCTLogWarn(@"[RNScreens] Invalid value for header appearance key '%@': expected a number", key);
+    return nil;
+  }
+  return value;
 }
 
 + (nullable id)colorValueForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
 {
+  id value = [self presentValueForKey:key in:dict];
+  if (value != nil && !([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDictionary class]])) {
+    RCTLogWarn(@"[RNScreens] Invalid value for header appearance key '%@': expected a processed color", key);
+    return nil;
+  }
+  return value;
+}
+
++ (nullable NSDictionary *)dictionaryForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
+{
+  id value = [self presentValueForKey:key in:dict];
+  if (value != nil && ![value isKindOfClass:[NSDictionary class]]) {
+    RCTLogWarn(@"[RNScreens] Invalid value for header appearance key '%@': expected an object", key);
+    return nil;
+  }
+  return value;
+}
+
++ (nullable id)presentValueForKey:(nonnull NSString *)key in:(nullable NSDictionary *)dict
+{
   id value = dict[key];
-  return ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDictionary class]]) ? value : nil;
+  return value == (id)[NSNull null] ? nil : value;
 }
 
 @end

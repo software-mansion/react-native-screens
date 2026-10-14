@@ -115,6 +115,27 @@ function resolveStyle(value: StyleOption): TextStyle['fontStyle'] {
   return value === 'default' ? undefined : value;
 }
 
+// Button slots land in the nested `button` / `prominentButton` appearance
+// objects, keyed by control state; the remaining slots use flat prefixed keys.
+const BUTTON_SLOT_PATHS: Partial<
+  Record<
+    HeaderAppearanceSlotKey,
+    [
+      'button' | 'prominentButton',
+      'normal' | 'highlighted' | 'disabled' | 'focused',
+    ]
+  >
+> = {
+  button: ['button', 'normal'],
+  buttonHighlighted: ['button', 'highlighted'],
+  buttonDisabled: ['button', 'disabled'],
+  buttonFocused: ['button', 'focused'],
+  prominentButton: ['prominentButton', 'normal'],
+  prominentButtonHighlighted: ['prominentButton', 'highlighted'],
+  prominentButtonDisabled: ['prominentButton', 'disabled'],
+  prominentButtonFocused: ['prominentButton', 'focused'],
+};
+
 export function buildHeaderAppearance<K extends HeaderAppearanceSlotKey>(
   config: HeaderAppearanceConfig<K>,
 ): StackHeaderAppearanceIOS | undefined {
@@ -125,11 +146,27 @@ export function buildHeaderAppearance<K extends HeaderAppearanceSlotKey>(
   const appearance: Record<string, unknown> = {};
   for (const slot of Object.keys(config.slots) as K[]) {
     const value = config.slots[slot];
-    appearance[`${slot}FontColor`] = resolveColor(value.color);
-    appearance[`${slot}FontSize`] = resolveSize(value.fontSize);
-    appearance[`${slot}FontFamily`] = resolveFamily(value.fontFamily);
-    appearance[`${slot}FontWeight`] = resolveWeight(value.fontWeight);
-    appearance[`${slot}FontStyle`] = resolveStyle(value.fontStyle);
+    const buttonPath = BUTTON_SLOT_PATHS[slot];
+    if (buttonPath !== undefined) {
+      const [variant, state] = buttonPath;
+      const variantAppearance = (appearance[variant] ??= {}) as Record<
+        string,
+        unknown
+      >;
+      variantAppearance[state] = {
+        fontColor: resolveColor(value.color),
+        fontSize: resolveSize(value.fontSize),
+        fontFamily: resolveFamily(value.fontFamily),
+        fontWeight: resolveWeight(value.fontWeight),
+        fontStyle: resolveStyle(value.fontStyle),
+      };
+    } else {
+      appearance[`${slot}FontColor`] = resolveColor(value.color);
+      appearance[`${slot}FontSize`] = resolveSize(value.fontSize);
+      appearance[`${slot}FontFamily`] = resolveFamily(value.fontFamily);
+      appearance[`${slot}FontWeight`] = resolveWeight(value.fontWeight);
+      appearance[`${slot}FontStyle`] = resolveStyle(value.fontStyle);
+    }
   }
   return appearance as StackHeaderAppearanceIOS;
 }
