@@ -79,7 +79,7 @@ TBD: Planned, but will be implemented separately.
 
     - [ ] The sheet visits the detents in order: `0.3` → `0.6` → `1.0` → `0.6` → `0.3`. Android: the header's top edge aligns with the corresponding guide at every stop (`1.0`: header just under the status bar), the guides of the lower detents show through the sheet body, and the footer strip appears only at `1.0`.
 
-2. Dismiss the sheet. Tap "[0.2, 0.9, 1.0]" and repeat step 1.
+2. Dismiss the sheet. Tap "[0.2, 0.9, 1.0]", then "Open FormSheet". Drag the sheet up twice, then down twice.
 
     - [ ] The lowest detent shows only a small strip of the sheet, the middle detent is close to the top, and the largest reaches the top. All three are distinct stops of the drag.
 
@@ -87,7 +87,7 @@ TBD: Planned, but will be implemented separately.
 
 ### Three detents, evenly spaced
 
-1. Dismiss the sheet. Tap "[0.25, 0.5, 0.75]" and repeat step 1 of **Three detents, reaching the top**.
+1. Dismiss the sheet. Tap "[0.25, 0.5, 0.75]", then "Open FormSheet". Drag the sheet up twice, then down twice.
 
     - [ ] The three stops are evenly spaced (a quarter of the screen apart). Android: the header's top edge aligns with the `0.25`, `0.5` and `0.75` guides; at `0.75` the sheet ends exactly at the bottom edge of the screen, with no dimmed strip below it, and the footer strip is visible right above the navigation bar.
 

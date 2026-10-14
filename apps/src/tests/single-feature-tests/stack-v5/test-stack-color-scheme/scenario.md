@@ -145,7 +145,8 @@ exercises.
     - [ ] The header stays fully collapsed and the content scroll position is
           unchanged.
 
-3. Set header type to `large` and repeat step 1.
+3. Set header type to `large` and change the color scheme with the header
+   **expanded**.
 
     - [ ] Same result — only the title and subtitle sizes differ from `medium`.
 
