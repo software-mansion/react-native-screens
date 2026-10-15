@@ -62,7 +62,9 @@ async function swipeHeaderRightSlightly() {
     .swipe(
       'right',
       'slow',
-      (offsetFraction * target.width) / host.width,
+      // Detox treats the swipe offset as a fraction of the screen, not the
+      // element, so it carries over from the pre-iOS 27 path unchanged.
+      offsetFraction,
       (startX - host.x) / host.width,
       (startY - host.y) / host.height,
     );
