@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.stack.screen.event
 
-import com.swmansion.rnscreens.common.event.NamingAwareEventType
+import com.swmansion.rnscreens.react.common.event.NamingAwareEventType
 
 internal class StackScreenDidDisappearEvent(
     surfaceId: Int,

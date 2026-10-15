@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.tabs.host
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.tabs.container.TabsNavigationState
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateRejectionReason

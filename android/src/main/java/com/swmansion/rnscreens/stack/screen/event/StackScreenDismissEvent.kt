@@ -2,7 +2,7 @@ package com.swmansion.rnscreens.stack.screen.event
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
-import com.swmansion.rnscreens.common.event.NamingAwareEventType
+import com.swmansion.rnscreens.react.common.event.NamingAwareEventType
 
 internal class StackScreenDismissEvent(
     surfaceId: Int,
