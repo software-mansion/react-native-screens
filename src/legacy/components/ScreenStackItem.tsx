@@ -85,12 +85,26 @@ function ScreenStackItem(
   ref: React.ForwardedRef<ScreenInstance>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  const { nextContextValue: nextEdgeContextValue } = useEdgeInsetApplication(
+  // On Android, a form sheet is not drawn under the status bar: neither its
+  // header nor the headers of the stacks nested in it have the status bar's
+  // top inset to apply.
+  const isAndroidFormSheet =
+    Platform.OS === 'android' && stackPresentation === 'formSheet';
+  const disableTopInsetApplication =
+    isAndroidFormSheet || (headerConfig?.disableTopInsetApplication ?? false);
+  const { nextContextValue: headerEdgeContextValue } = useEdgeInsetApplication(
     headerVisible,
-    headerConfig?.disableTopInsetApplication ?? false,
+    disableTopInsetApplication,
     headerConfig?.disableLeftInsetApplication ?? false,
     headerConfig?.disableRightInsetApplication ?? false,
     headerConfig?.disableBottomInsetApplication ?? false,
+  );
+  const nextEdgeContextValue = React.useMemo(
+    () =>
+      isAndroidFormSheet
+        ? { ...headerEdgeContextValue, topAlreadyApplied: true }
+        : headerEdgeContextValue,
+    [isAndroidFormSheet, headerEdgeContextValue],
   );
 
   const currentScreenRef = React.useRef<ScreenInstance | null>(null);
@@ -187,7 +201,10 @@ function ScreenStackItem(
        * See https://github.com/software-mansion/react-native-screens/pull/1825
        * for detailed explanation.
        */}
-      <ScreenStackHeaderConfig {...headerConfig} />
+      <ScreenStackHeaderConfig
+        {...headerConfig}
+        disableTopInsetApplication={disableTopInsetApplication}
+      />
       {/* eslint-disable-next-line camelcase */}
       {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
         <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
