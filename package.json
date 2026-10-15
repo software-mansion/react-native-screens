@@ -242,5 +242,8 @@
       }
     }
   },
+  "swiftpmConfig": {
+    "name": "RNScreens"
+  },
   "packageManager": "yarn@4.1.1"
 }
