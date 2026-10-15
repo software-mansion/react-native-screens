@@ -28,17 +28,17 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.swmansion.rnscreens.common.text.TextAppearance
-import com.swmansion.rnscreens.common.text.TextAppearanceDefaults
-import com.swmansion.rnscreens.ext.detachFromCurrentParent
+import com.swmansion.rnscreens.core.common.text.TextAppearance
+import com.swmansion.rnscreens.core.common.text.TextAppearanceDefaults
+import com.swmansion.rnscreens.core.utils.detachFromCurrentParent
+import com.swmansion.rnscreens.core.utils.dpToPx
+import com.swmansion.rnscreens.core.utils.resolveColorAttr
+import com.swmansion.rnscreens.core.utils.resolveDrawableAttr
+import com.swmansion.rnscreens.core.utils.spToPx
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderContentScrimDrawable
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProviding
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
-import com.swmansion.rnscreens.utils.dpToPx
-import com.swmansion.rnscreens.utils.resolveColorAttr
-import com.swmansion.rnscreens.utils.resolveDrawableAttr
-import com.swmansion.rnscreens.utils.spToPx
 import kotlin.math.roundToInt
 
 /**
@@ -434,7 +434,7 @@ internal class StackHeaderApplicator(
      * not from lift-on-scroll, so we leave their app bar untouched.
      *
      * [targetScrollView] is the resolved content scroll view (see
-     * [com.swmansion.rnscreens.common.container.ContainerItem.findContentScrollView]).
+     * [com.swmansion.rnscreens.core.containers.common.ContainerItem.findContentScrollView]).
      * Without it, Material's `findFirstScrollingChild` only inspects the
      * CoordinatorLayout's direct children — which is our wrapper `FrameLayout`,
      * not the (deeply nested) scroll view — so the lifted state is miscomputed

@@ -4,6 +4,7 @@ import {
   type TabSelectedEvent,
   Tabs,
   type TabsHostNavStateRequest,
+  type TabsHostProps,
 } from 'react-native-screens';
 import type {
   SelectTabMethod,
@@ -22,13 +23,21 @@ import {
 import { RNSLog } from 'react-native-screens/private';
 import { TabsContainerItem } from './TabsContainerItem';
 import { useElementsByName } from '../shared/use-elements-by-name';
+import { screenKeyFromRouteName } from './screenKeyFromRouteName';
 
 export function TabsContainer<
   const TRouteConfigs extends readonly TabRouteConfig[],
 >(props: TabsContainerProps<TRouteConfigs>) {
   RNSLog.info('TabsContainer render');
 
-  const { routeConfigs, defaultRouteName, onTabSelected, ...restProps } = props;
+  const {
+    routeConfigs,
+    defaultRouteName,
+    prominentRouteName,
+    onTabSelected,
+    ios,
+    ...restProps
+  } = props;
 
   useSanitizeRouteConfigs(routeConfigs);
 
@@ -72,11 +81,14 @@ export function TabsContainer<
 
   const navMethods = useTabsNavigationMethods(dispatch);
 
+  const hostIOSProps = getTabsHostIOSProps(ios, prominentRouteName);
+
   return (
     <Tabs.Host
       navStateRequest={hostNavStateRequest}
       onTabSelected={onTabSelectedCallback}
       direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      ios={hostIOSProps}
       {...restProps}>
       {tabsNavState.routes.map((route: TabRoute) => {
         const isSelected =
@@ -117,6 +129,20 @@ function useTabsHostNavStateRequest(
   }, [tabsNavState.suggestedState]);
 
   return hostNavStateRequest;
+}
+
+function getTabsHostIOSProps(
+  ios: TabsHostProps['ios'],
+  prominentRouteName: string | undefined,
+): TabsHostProps['ios'] {
+  if (prominentRouteName == null) {
+    return ios;
+  }
+
+  return {
+    ...ios,
+    prominentScreenKey: screenKeyFromRouteName(prominentRouteName),
+  };
 }
 
 function useSanitizeRouteConfigs(routeConfigs: readonly TabRouteConfig[]) {

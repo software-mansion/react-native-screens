@@ -9,8 +9,8 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsHostAndroidManagerInterface
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
 import com.swmansion.rnscreens.tabs.container.TabsActionOrigin
 import com.swmansion.rnscreens.tabs.container.TabsNavigationStateUpdateRequest
 import com.swmansion.rnscreens.tabs.host.event.TabsHostTabSelectedEvent
