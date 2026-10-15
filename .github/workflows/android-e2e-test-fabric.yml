@@ -7,6 +7,7 @@ on:
       - '.github/workflows/android-e2e-test-fabric.yml'
       - '.github/actions/argent-server/**'
       - '.argent/**'
+      - 'react-native-screens-testing'
       - 'scripts/e2e/run-argent-flows-android.sh'
       - 'scripts/e2e/argent-failure-summary.sh'
       - 'package.json'
@@ -176,6 +177,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Baselines live in the react-native-screens-testing submodule
+      # (.argent/flows/__baselines__ is a symlink into it).
+      - name: Fetch Argent baselines
+        run: git submodule update --init --depth 1 react-native-screens-testing
 
       # Only needed to run the Argent CLI — the APK is downloaded, not built.
       - name: Setup Node.js (version from .nvmrc)

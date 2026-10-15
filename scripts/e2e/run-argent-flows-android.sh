@@ -4,8 +4,9 @@
 # from the repository root, after `yarn build-e2e-android` and after the Argent
 # tool-server was started (.github/actions/argent-server).
 #
-# Snapshots are always diffed against the baselines committed under
-# .argent/flows/__baselines__; a missing baseline fails the flow. Record new
+# Snapshots are always diffed against the baselines in .argent/flows/__baselines__,
+# a symlink into the react-native-screens-testing submodule (the workflow
+# initializes it); a missing baseline fails the flow. Record new
 # baselines with `--update-baselines` on an emulator matching this job — pixel_7
 # AVD, API 34, 3-button navigation, `-gpu swiftshader`. A local emulator with
 # gesture navigation produces differently sized crops that fail here.

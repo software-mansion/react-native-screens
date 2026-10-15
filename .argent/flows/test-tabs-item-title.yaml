@@ -41,7 +41,9 @@
 #   - Android: pixel_7 AVD, API 34, 3-button navigation, booted with `-gpu swiftshader` (what the
 #     CI argent job runs). The Android crop includes the system navigation bar, so a local
 #     emulator with gesture navigation renders a different crop and CI fails on the mismatch.
-# Reseed on such a device with `--update-baselines`, open every PNG, and commit them.
+# Reseed on such a device with `--update-baselines`, open every PNG, commit them in the
+# react-native-screens-testing submodule (__baselines__ is a symlink into it), then bump the
+# submodule pin here.
 steps:
   - echo: Restart FabricExample (in-memory tabs config resets); expect the root examples list
   - launch: { ios: org.reactjs.native.example.FabricExample, android: com.fabricexample }
