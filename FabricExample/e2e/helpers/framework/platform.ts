@@ -79,7 +79,7 @@ export const describeIfAndroid =
  * Inferred from `RNS_APPLE_SIM_NAME` (Detox has no idiom query), e.g.
  * RNS_APPLE_SIM_NAME="iPad Pro 13-inch (M4)". See scripts/e2e/ios-devices.js.
  */
-const isIPadTarget =
+export const isIPadTarget =
   isIOS && /^iPad\s/i.test(process.env.RNS_APPLE_SIM_NAME ?? '');
 
 export const describeIfIPad = isIPadTarget ? describe : describe.skip;
