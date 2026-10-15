@@ -4,7 +4,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.swmansion.rnscreens.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.RNSLog
 
 internal class PreventNativeDismissCallback(
     lifecycleOwner: LifecycleOwner,

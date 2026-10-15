@@ -9,7 +9,7 @@ using namespace facebook;
 jobject globalThis;
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(
+Java_com_swmansion_rnscreens_react_module_ScreensModule_nativeInstall(
     JNIEnv *env,
     jobject thiz,
     jlong jsiPtr) {
@@ -95,7 +95,7 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_swmansion_rnscreens_ScreensModule_nativeUninstall(
+Java_com_swmansion_rnscreens_react_module_ScreensModule_nativeUninstall(
     JNIEnv *env,
     jobject thiz) {
   if (globalThis != nullptr) {
