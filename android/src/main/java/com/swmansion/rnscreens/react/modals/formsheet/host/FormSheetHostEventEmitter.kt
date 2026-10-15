@@ -1,8 +1,8 @@
 package com.swmansion.rnscreens.react.modals.formsheet.host
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.core.modals.formsheet.interfaces.FormSheetDialogEventEmitter
+import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetDetentChangedEvent
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetDidAppearEvent
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetDidDisappearEvent
