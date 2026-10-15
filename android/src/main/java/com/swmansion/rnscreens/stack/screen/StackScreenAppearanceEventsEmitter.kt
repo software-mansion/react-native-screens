@@ -3,7 +3,7 @@ package com.swmansion.rnscreens.stack.screen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 
 internal class StackScreenAppearanceEventsEmitter(
     screenLifecycle: Lifecycle,

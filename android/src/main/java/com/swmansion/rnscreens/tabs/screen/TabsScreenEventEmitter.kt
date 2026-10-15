@@ -1,13 +1,13 @@
 package com.swmansion.rnscreens.tabs.screen
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.tabs.screen.TabsScreenEventEmitter.Companion.TAG
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenDidDisappearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillAppearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillDisappearEvent
-import com.swmansion.rnscreens.utils.RNSLog
 
 internal class TabsScreenEventEmitter(
     reactContext: ReactContext,

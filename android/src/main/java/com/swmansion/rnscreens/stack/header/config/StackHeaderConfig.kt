@@ -5,11 +5,11 @@ import android.graphics.drawable.Drawable
 import android.view.Gravity
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.views.view.ReactViewGroup
-import com.swmansion.rnscreens.common.ShadowStateProxy
-import com.swmansion.rnscreens.common.text.ReactTextAppearance
-import com.swmansion.rnscreens.helpers.IconResolution
-import com.swmansion.rnscreens.helpers.PropIconResolver
-import com.swmansion.rnscreens.helpers.resolveImage
+import com.swmansion.rnscreens.core.utils.IconResolution
+import com.swmansion.rnscreens.core.utils.PropIconResolver
+import com.swmansion.rnscreens.react.common.ShadowStateProxy
+import com.swmansion.rnscreens.react.common.text.ReactTextAppearance
+import com.swmansion.rnscreens.react.utils.resolveImage
 import com.swmansion.rnscreens.stack.header.subview.OnStackHeaderSubviewChangeListener
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubview
 import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewType

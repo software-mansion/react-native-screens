@@ -1,8 +1,8 @@
 package com.swmansion.rnscreens.stack.screen
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.common.event.BaseEventEmitter
-import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
+import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidDisappearEvent
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDismissEvent
