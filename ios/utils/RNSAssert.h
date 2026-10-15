@@ -27,7 +27,7 @@ FOUNDATION_EXTERN void _RNSAssertFormat(const char *condition,
 
 NS_ASSUME_NONNULL_END
 
-// Compiled out together with `NSAssert` / `RCTAssert`: the condition is not evaluated
+// Compiled out together with `NSAssert`: the condition is not evaluated
 // when `NS_BLOCK_ASSERTIONS` is defined.
 #ifndef NS_BLOCK_ASSERTIONS
 #define RNSAssert(condition, ...)                                              \
