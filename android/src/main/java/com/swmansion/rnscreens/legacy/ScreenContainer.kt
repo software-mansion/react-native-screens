@@ -16,12 +16,16 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ReactChoreographer
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 
 open class ScreenContainer(
     context: Context?,
-) : ViewGroup(context) {
+) : ViewGroup(context),
+    Container {
     @JvmField
     protected val screenWrappers = ArrayList<ScreenFragmentWrapper>()
 
@@ -42,6 +46,10 @@ open class ScreenContainer(
             }
         }
     private var parentScreenWrapper: ScreenFragmentWrapper? = null
+
+    private val parentContainerRegistry = ParentContainerItemRegistry()
+
+    override fun shouldDelayChildPressedState(): Boolean = false
 
     override fun onLayout(
         changed: Boolean,
@@ -275,6 +283,7 @@ open class ScreenContainer(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        parentContainerRegistry.attach(this)
         isAttached = true
         setupFragmentManager()
     }
@@ -320,6 +329,7 @@ open class ScreenContainer(
 
         parentScreenWrapper?.removeChildScreenContainer(this)
         parentScreenWrapper = null
+        parentContainerRegistry.detach(this)
 
         super.onDetachedFromWindow()
         isAttached = false
@@ -454,4 +464,16 @@ open class ScreenContainer(
     protected open fun notifyContainerUpdate() {
         topScreen?.fragmentWrapper?.onContainerUpdate()
     }
+
+    // region Container
+
+    // Only the currently shown (top) screen is consulted.
+    override fun resolveCurrentContentScrollView(): ViewGroup? = topScreen?.findContentScrollView()
+
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = topScreen?.wantsToPreventStackNativeDismiss()
+
+    // Nothing to pop here - the request goes to the shown screen's nested container.
+    override fun requestPopToRoot(): Boolean = topScreen?.resolveNestedContainer()?.requestPopToRoot() == true
+
+    // endregion
 }

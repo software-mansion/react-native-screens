@@ -168,9 +168,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)layoutNavigationControllerView
 {
-  // We need to layout navigation controller view after translucent prop changes, because otherwise
-  // frame of RNSScreen will not be changed and screen content will remain the same size.
-  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
+  // We need to layout navigation controller view after `translucent` / `hidden` prop changes. Below iOS 26 the frame
+  // of RNSScreen depends on them (`edgesForExtendedLayout`), so without the layout pass the screen content would
+  // remain the same size (https://github.com/software-mansion/react-native-screens/issues/1158). On iOS 26+ the frame
+  // does not change, but the layout pass still refreshes the header layout info in the shadow tree and the safe area
+  // insets consumed by the `SafeAreaView` rendered by `ScreenStackItem`.
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
@@ -203,16 +205,9 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  // Screen's content offset in shadow tree matches its actual native origin (see `-[RNSScreenView updateBounds]`),
+  // therefore navigation bar's frame in screen's coordinate space can be used directly.
   CGRect navBarFrameInScreenView = [navigationBar convertRect:navigationBar.bounds toView:_screenView];
-
-  // On iOS 26+ in landscape mode there is a bug with `edgesForExtendedLayout` for non-transparent
-  // header. We're applying SAV to fix it but we need to take it into account for HeaderConfig's
-  // origin as well.
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (!_translucent && self.shouldHeaderBeVisible) {
-    navBarFrameInScreenView.origin.y -= _screenView.safeAreaInsets.top;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   [self updateShadowStateWithSize:navigationBar.frame.size
                        edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
@@ -221,6 +216,24 @@ RNS_IGNORE_SUPER_CALL_END
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)setNeedsLayoutForHeaderSubviewsInNavigationBar:(nonnull UINavigationBar *)navigationBar
+{
+  // During the bar minimization (iOS 27+) UIKit moves the content view of the navigation bar above the bar, on each
+  // frame of the scroll. The header subviews are not visible then, therefore we do not follow their position, to
+  // avoid state update on each frame. When the bar is restored, its content view is back at the origin of the bar.
+  if (CGRectGetMinY(navigationBar.rnscreens_findContentView.frame) < 0) {
+    return;
+  }
+
+  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+    if (subview.window != nil) {
+      [subview setNeedsLayout];
+    }
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
@@ -360,6 +373,18 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
   return nil;
+}
+
++ (BOOL)screensExtendUnderOpaqueNavigationBar
+{
+#if TARGET_OS_TV || TARGET_OS_VISION
+  return NO;
+#else // TARGET_OS_TV || TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    return YES;
+  }
+  return NO;
+#endif // TARGET_OS_TV || TARGET_OS_VISION
 }
 
 + (void)willShowViewController:(UIViewController *)vc
@@ -503,12 +528,16 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
-  if (!shouldHide && !config.translucent) {
-    // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
-    // the screen underneath navigation controllers
+  if (!shouldHide && !config.translucent && ![self screensExtendUnderOpaqueNavigationBar]) {
+    // When nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
+    // the screen underneath navigation controllers.
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
   } else {
-    // system default is UIRectEdgeAll
+    // System default is UIRectEdgeAll - the screen is laid out under the navigation bar.
+    // On iOS 26+ this is also the case for an opaque header: UIKit does not reliably lay out the screen right below
+    // the bar when the top edge is excluded (it ignores the bar's origin offset, e.g. in landscape or on iPhone Duo),
+    // so we let the screen extend under the bar and inset the content with the `SafeAreaView` rendered by
+    // `ScreenStackItem`. See https://github.com/software-mansion/react-native-screens-labs/issues/1841
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
@@ -532,6 +561,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
   navitem.largeTitleDisplayMode =
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    // Due to native limitations related to opaque header and minimization behavior, we disable it for opaque headers.
+    UIBarMinimization *minimization = [UIBarMinimization new];
+    minimization.minimizationBehavior =
+        config.translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
+    navitem.navigationBarMinimization = minimization;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 #endif
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];

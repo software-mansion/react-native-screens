@@ -58,74 +58,74 @@ Android specific notes:
 
 1. Launch the app and navigate to the **Tab Bar Item Icon Tint and Size** screen.
 
-- [ ] Five tabs are visible in the tab bar: **Symbol**, **Image**, **Original**,
-  **Mixed** and **Controls**.
-- [ ] The **Symbol** tab is selected by default. Its icon is the custom
-  `nano.swm` symbol (Software Mansion logo), tinted **green** by the host
-  `tabBarTintColor`.
+    - [ ] Five tabs are visible in the tab bar: **Symbol**, **Image**, **Original**,
+          **Mixed** and **Controls**.
+    - [ ] The **Symbol** tab is selected by default. Its icon is the custom
+          `nano.swm` symbol (Software Mansion logo), tinted **green** by the host
+          `tabBarTintColor`.
 
 ---
 
 ### `imageSource` icons are tinted by default
 
-2. Tap the **Image** tab.
+1. Tap the **Image** tab.
 
-- [ ] The icon is tinted **green**.
-- [ ] The **Symbol** tab icon renders in the system theme color.
+    - [ ] The icon is tinted **green**.
+    - [ ] The **Symbol** tab icon renders in the system theme color.
 
 ---
 
 ### `imageSource` icon with `renderingMode: 'original'`
 
-3. Tap the **Original** tab.
+1. Tap the **Original** tab.
 
-- [ ] The icon renders in its original **black** color, NOT green.
-- [ ] The unselected **Image** icon renders in the system theme color.
+    - [ ] The icon renders in its original **black** color, NOT green.
+    - [ ] The unselected **Image** icon renders in the system theme color.
 
 ---
 
 ### Different `renderingMode` per slot
 
-4. Tap the **Mixed** tab.
+1. Tap the **Mixed** tab.
 
-- [ ] The selected icon is the system `heart.fill` symbol in its own
-  multicolor rendering: **red**, NOT green.
+    - [ ] The selected icon is the system `heart.fill` symbol in its own
+          multicolor rendering: **red**, NOT green.
 
-5. Tap the **Original** tab.
+2. Tap the **Original** tab.
 
-- [ ] The unselected **Mixed** icon (`renderingMode: 'monochrome'`) is a
-  single-color heart in the system theme color.
+    - [ ] The unselected **Mixed** icon (`renderingMode: 'monochrome'`) is a
+          single-color heart in the system theme color.
 
 ---
 
 ### Runtime `renderingMode` change
 
-6. Tap the **Controls** tab.
+1. Tap the **Controls** tab.
 
-- [ ] The icon is tinted **green**.
+    - [ ] The icon is tinted **green**.
 
-7. Select `original` in the **renderingMode** picker.
+2. Select `original` in the **renderingMode** picker.
 
-- [ ] The **Controls** tab icon changes to its original **black** color.
+    - [ ] The **Controls** tab icon changes to its original **black** color.
 
-8. Select `default` in the **renderingMode** picker.
+3. Select `default` in the **renderingMode** picker.
 
-- [ ] The **Controls** tab icon is tinted **green**, as with `template`.
+    - [ ] The **Controls** tab icon is tinted **green**, as with `template`.
 
-9. Select `template` in the **renderingMode** picker.
+4. Select `template` in the **renderingMode** picker.
 
-- [ ] The **Controls** tab icon stays tinted **green**.
+    - [ ] The **Controls** tab icon stays tinted **green**.
 
 ---
 
 ### Stability check
 
-10. Cycle through all five tabs in order, then in reverse.
+1. Cycle through all five tabs in order, then in reverse.
 
-- [ ] Each tab keeps its icon and color behavior: green when selected for
-  **Symbol**, **Image** and **Controls**; red when selected for **Mixed**;
-  always black for **Original**.
-- [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.
+    - [ ] Each tab keeps its icon and color behavior: green when selected for
+          **Symbol**, **Image** and **Controls**; red when selected for **Mixed**;
+          always black for **Original**.
+    - [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.
 
 ## Steps - Android
 
@@ -133,138 +133,138 @@ Android specific notes:
 
 1. Launch the app and navigate to the **Tab Bar Item Icon Tint and Size** screen.
 
-- [ ] Five tabs are visible in the tab bar: **Sized**, **Multicolor**,
-  **Image**, **Indicator** and **Controls**.
-- [ ] The **Sized** tab is selected by default. Its icon is the wide SWM logo,
-  rendered at 44dp - visibly larger than the other icons.
-- [ ] The active indicator pill wraps the enlarged icon: 52dp tall, NOT the
-  default 32dp tall pill. Its width is capped (see Note).
-- [ ] The **Indicator** tab star renders at the default 24dp, centered in its slot.
+    - [ ] Five tabs are visible in the tab bar: **Sized**, **Multicolor**,
+          **Image**, **Indicator** and **Controls**.
+    - [ ] The **Sized** tab is selected by default. Its icon is the wide SWM logo,
+          rendered at 44dp - visibly larger than the other icons.
+    - [ ] The active indicator pill wraps the enlarged icon: 52dp tall, NOT the
+          default 32dp tall pill. Its width is capped (see Note).
+    - [ ] The **Indicator** tab star renders at the default 24dp, centered in its slot.
 
 ---
 
 ### Drawable in original colors when selected
 
-2. Tap the **Multicolor** tab.
+1. Tap the **Multicolor** tab.
 
-- [ ] The selected icon is the walker in its own colors (skin, dark clothes,
-  gray box).
-- [ ] The icon renders at 30dp: smaller than the SWM logo, larger than the star.
-- [ ] Its active indicator pill wraps the 30dp icon: shorter than the **Sized**
-  pill.
+    - [ ] The selected icon is the walker in its own colors (skin, dark clothes,
+          gray box).
+    - [ ] The icon renders at 30dp: smaller than the SWM logo, larger than the star.
+    - [ ] Its active indicator pill wraps the 30dp icon: shorter than the **Sized**
+          pill.
 
-3. Tap the **Sized** tab.
+2. Tap the **Sized** tab.
 
-- [ ] The unselected **Multicolor** icon is a single-color silhouette in the
-  system theme color.
+    - [ ] The unselected **Multicolor** icon is a single-color silhouette in the
+          system theme color.
 
 ---
 
 ### Image in original colors when selected
 
-4. Tap the **Image** tab.
+1. Tap the **Image** tab.
 
-- [ ] The selected icon renders in its original **black** color.
+    - [ ] The selected icon renders in its original **black** color.
 
-5. Tap the **Sized** tab.
+2. Tap the **Sized** tab.
 
-- [ ] The unselected **Image** icon renders in the system theme color.
+    - [ ] The unselected **Image** icon renders in the system theme color.
 
 ---
 
 ### Explicit active indicator size
 
-6. Tap the **Indicator** tab.
+1. Tap the **Indicator** tab.
 
-- [ ] The selected icon is the filled star.
-- [ ] Its active indicator pill has the explicit 56x36dp size: narrower than the
-  **Sized** pill, taller than the default 32dp pill.
-- [ ] The tab bar height is the same as on the other tabs.
+    - [ ] The selected icon is the filled star.
+    - [ ] Its active indicator pill has the explicit 56x36dp size: narrower than the
+          **Sized** pill, taller than the default 32dp pill.
+    - [ ] The tab bar height is the same as on the other tabs.
 
-7. Tap the **Sized** tab.
+2. Tap the **Sized** tab.
 
-- [ ] The **Sized** pill is unchanged (52dp tall). The tab bar height does not
-  change.
+    - [ ] The **Sized** pill is unchanged (52dp tall). The tab bar height does not
+          change.
 
 ---
 
 ### Runtime `tinting` change
 
-8. Tap the **Controls** tab.
+1. Tap the **Controls** tab.
 
-- [ ] The icon is a single-color walker silhouette at the default 24dp.
+    - [ ] The icon is a single-color walker silhouette at the default 24dp.
 
-9. Select `original` in the **tinting** picker.
+2. Select `original` in the **tinting** picker.
 
-- [ ] The **Controls** icon changes to the walker in its own colors.
+    - [ ] The **Controls** icon changes to the walker in its own colors.
 
-10. Select `default` in the **tinting** picker.
+3. Select `default` in the **tinting** picker.
 
-- [ ] The **Controls** icon is a single-color silhouette again.
+    - [ ] The **Controls** icon is a single-color silhouette again.
 
-11. Select `original`, then `tinted` in the **tinting** picker.
+4. Select `original`, then `tinted` in the **tinting** picker.
 
-- [ ] The **Controls** icon is a single-color silhouette.
+    - [ ] The **Controls** icon is a single-color silhouette.
 
 ---
 
 ### Runtime `tabBarItemIconSize` change
 
-12. Select `32` in the **tabBarItemIconSize** picker.
+1. Select `32` in the **tabBarItemIconSize** picker.
 
-- [ ] The **Controls** icon grows to 32dp.
-- [ ] The other tab icons do NOT change size. The tab bar height is unchanged.
+    - [ ] The **Controls** icon grows to 32dp.
+    - [ ] The other tab icons do NOT change size. The tab bar height is unchanged.
 
-13. Select `56` in the **tabBarItemIconSize** picker.
+2. Select `56` in the **tabBarItemIconSize** picker.
 
-- [ ] The **Controls** icon grows to 56dp.
-- [ ] All other icons keep their own sizes (SWM logo 44dp, walker 30dp, star
-  24dp) and stay centered.
-- [ ] The **Controls** pill grows to 64dp tall to wrap its 56dp icon. The other
-  tabs keep their own pills.
-- [ ] The tab bar gets taller once, and keeps that height when switching tabs.
+    - [ ] The **Controls** icon grows to 56dp.
+    - [ ] All other icons keep their own sizes (SWM logo 44dp, walker 30dp, star
+          24dp) and stay centered.
+    - [ ] The **Controls** pill grows to 64dp tall to wrap its 56dp icon. The other
+          tabs keep their own pills.
+    - [ ] The tab bar gets taller once, and keeps that height when switching tabs.
 
-14. Select `default` in the **tabBarItemIconSize** picker.
+3. Select `default` in the **tabBarItemIconSize** picker.
 
-- [ ] The **Controls** icon returns to 24dp.
-- [ ] The **Controls** pill returns to 64x32dp and the tab bar returns to its
-  previous height.
+    - [ ] The **Controls** icon returns to 24dp.
+    - [ ] The **Controls** pill returns to 64x32dp and the tab bar returns to its
+          previous height.
 
 ---
 
 ### Runtime per-tab active indicator size
 
-15. Select `96` in the **tabBarItemActiveIndicatorWidth** picker and `64` in the
-    **tabBarItemActiveIndicatorHeight** picker.
+1. Select `96` in the **tabBarItemActiveIndicatorWidth** picker and `64` in the
+   **tabBarItemActiveIndicatorHeight** picker.
 
-- [ ] The **Controls** pill grows to 64dp tall. Its width is capped by the tab
-  item width (see Note).
-- [ ] The other tabs keep their own pills. The tab bar gets taller once, and
-  keeps that height when switching tabs.
+    - [ ] The **Controls** pill grows to 64dp tall. Its width is capped by the tab
+          item width (see Note).
+    - [ ] The other tabs keep their own pills. The tab bar gets taller once, and
+          keeps that height when switching tabs.
 
-16. Select `auto` in both indicator pickers.
+2. Select `auto` in both indicator pickers.
 
-- [ ] The **Controls** pill wraps its icon again and the tab bar returns to its
-  previous height.
+    - [ ] The **Controls** pill wraps its icon again and the tab bar returns to its
+          previous height.
 
 ---
 
 ### Unrelated item update keeps icons
 
-17. Tap the **badgeValue** switch so it reads `badgeValue: true`.
+1. Tap the **badgeValue** switch so it reads `badgeValue: true`.
 
-- [ ] A badge with "1" appears on the **Controls** tab.
-- [ ] All tab icons stay unchanged: same images, colors and sizes.
+    - [ ] A badge with "1" appears on the **Controls** tab.
+    - [ ] All tab icons stay unchanged: same images, colors and sizes.
 
-18. Tap the **badgeValue** switch again so it reads `badgeValue: false`.
+2. Tap the **badgeValue** switch again so it reads `badgeValue: false`.
 
-- [ ] The badge disappears. All tab icons stay unchanged.
+    - [ ] The badge disappears. All tab icons stay unchanged.
 
 ---
 
 ### Stability check
 
-19. Cycle through all five tabs in order, then in reverse.
+1. Cycle through all five tabs in order, then in reverse.
 
-- [ ] Each tab keeps its icon, size and color behavior on every selection.
-- [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.
+    - [ ] Each tab keeps its icon, size and color behavior on every selection.
+    - [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.

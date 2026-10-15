@@ -8,27 +8,27 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
-import com.swmansion.rnscreens.common.container.Container
-import com.swmansion.rnscreens.common.container.ContainerItem
-import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
-import com.swmansion.rnscreens.ext.isMeasured
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
-import com.swmansion.rnscreens.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.ViewIdProviding
+import com.swmansion.rnscreens.core.utils.isMeasured
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.stack.screen.StackScreenFragmentDelegate
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
+    viewIdProvider: ViewIdProviding,
 ) : FrameLayout(context),
     Container,
     FragmentManager.OnBackStackChangedListener,
@@ -78,7 +78,7 @@ internal class StackContainer(
     // endregion
 
     init {
-        id = ViewIdGenerator.generateViewId()
+        id = viewIdProvider.generateViewId()
     }
 
     override fun onAttachedToWindow() {
@@ -86,7 +86,7 @@ internal class StackContainer(
         super.onAttachedToWindow()
 
         parentContainerRegistry.attach(this)
-        setupFragmentManger()
+        setupFragmentManager()
 
         // StackContainer only provides container-level color scheme configuration for its screens
         // but doesn't use any color scheme-dependent views, so we don't need the callback.
@@ -121,11 +121,11 @@ internal class StackContainer(
 
     override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
-    internal fun setupFragmentManger() {
+    internal fun setupFragmentManager() {
         fragmentManager =
-            checkNotNull(FragmentManagerHelper.findFragmentManagerForView(this)) {
-                "[RNScreens] Nullish fragment manager - can't run container operations"
-            }.also {
+            checkNotNull(delegate.get()) {
+                "[RNScreens] StackContainer has no delegate to resolve the fragment manager from"
+            }.resolveFragmentManager().also {
                 it.addOnBackStackChangedListener(this)
             }
     }
@@ -260,9 +260,9 @@ internal class StackContainer(
     }
 
     private fun dumpStackModel() {
-        Log.d(TAG, "StackContainer [$id] MODEL BEGIN")
+        RNSLog.d(TAG, "StackContainer [$id] MODEL BEGIN")
         stackModel.forEach {
-            Log.d(TAG, "${it.stackScreen.screenKey}")
+            RNSLog.d(TAG, "${it.stackScreen.screenKey}")
         }
     }
 
@@ -278,7 +278,7 @@ internal class StackContainer(
             updateBatchStateProvider = WeakReference(this),
             colorSchemeProvider = WeakReference(this),
         ).also {
-            Log.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
+            RNSLog.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
         }
 
     private fun updateTopFragment() {
@@ -368,6 +368,17 @@ internal class StackContainer(
         stackModel
             .asReversed()
             .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
+
+    // Pop-to-root is not implemented for the v5 stack yet - the request is forwarded to the top screen's
+    // nested container.
+    override fun requestPopToRoot(): Boolean {
+        RNSLog.w(TAG, "[RNScreens] Pop-to-root special effect is not implemented for v5 stack yet")
+        return stackModel
+            .lastOrNull()
+            ?.stackScreen
+            ?.resolveNestedContainer()
+            ?.requestPopToRoot() == true
+    }
 
     // endregion
 

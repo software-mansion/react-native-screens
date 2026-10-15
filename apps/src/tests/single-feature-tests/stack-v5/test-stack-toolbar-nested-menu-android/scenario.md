@@ -18,11 +18,12 @@ prior command-applied state at every level.
 
 Full: covers all steps.
 
-Steps 19 and 27 leave the submenu entry with no text for Detox to
-match, so both are reached by their position among the overflow
-menu's rows instead. The absence of a submenu header is asserted
-indirectly, as a header would show up as an extra match for the text
-it renders.
+Step 3 of **Imperative command — change menuTitle** and step 7 of
+**Props change — structural changes** leave the submenu entry with no
+text for Detox to match, so both are reached by their position among
+the overflow menu's rows instead. The absence of a submenu header is
+asserted indirectly, as a header would show up as an extra match for
+the text it renders.
 
 ## Prerequisites
 
@@ -55,246 +56,248 @@ it renders.
 
 1. Launch the app and navigate to **Stack Toolbar Nested Menu**.
 
-- [ ] Header title reads "Toolbar Nested Menu Test". The toolbar
-      overflow menu shows three entries: "Top Item", "Submenu A"
-      (with a submenu indicator), "Submenu B" (with a submenu
-      indicator).
+    - [ ] Header title reads "Toolbar Nested Menu Test". The toolbar
+          overflow menu shows three entries: "Top Item", "Submenu A"
+          (with a submenu indicator), "Submenu B" (with a submenu
+          indicator).
 
 2. Tap "Submenu A" in the overflow menu.
 
-- [ ] A nested menu opens with a submenu header reading
-      "Header A". It shows two items: "Sub A.1" and "Sub A.2".
+    - [ ] A nested menu opens with a submenu header reading
+          "Header A". It shows two items: "Sub A.1" and "Sub A.2".
 
 3. Go back to the top-level menu. Tap "Submenu B".
 
-- [ ] A nested menu opens with a submenu header reading
-      "Submenu B" (fallback from title — no menuTitle set). It
-      shows two entries: "Sub B.1" and "Deep" (with a submenu
-      indicator).
+    - [ ] A nested menu opens with a submenu header reading
+          "Submenu B" (fallback from title — no menuTitle set). It
+          shows two entries: "Sub B.1" and "Deep" (with a submenu
+          indicator).
 
 4. Tap "Deep" in the Submenu B menu.
 
-- [ ] A nested menu opens with a submenu header reading "Deep"
-      (fallback from title — no menuTitle set). It shows one
-      item: "Deep.1".
+    - [ ] A nested menu opens with a submenu header reading "Deep"
+          (fallback from title — no menuTitle set). It shows one
+          item: "Deep.1".
 
 ---
 
 ### Click handling — items at all nesting levels
 
-5. Open the overflow menu and tap "Top Item".
+1. Open the overflow menu and tap "Top Item".
 
-- [ ] "Last clicked" updates to `item-top`.
+    - [ ] "Last clicked" updates to `item-top`.
 
-6. Open the overflow menu, tap "Submenu A", then tap "Sub A.1".
+2. Open the overflow menu, tap "Submenu A", then tap "Sub A.1".
 
-- [ ] "Last clicked" updates to `sub-1-1`.
+    - [ ] "Last clicked" updates to `sub-1-1`.
 
-7. Open the overflow menu, tap "Submenu A", then tap "Sub A.2".
+3. Open the overflow menu, tap "Submenu A", then tap "Sub A.2".
 
-- [ ] "Last clicked" updates to `sub-1-2`.
+    - [ ] "Last clicked" updates to `sub-1-2`.
 
-8. Open the overflow menu, tap "Submenu B", then tap "Sub B.1".
+4. Open the overflow menu, tap "Submenu B", then tap "Sub B.1".
 
-- [ ] "Last clicked" updates to `sub-2-1`.
+    - [ ] "Last clicked" updates to `sub-2-1`.
 
-9. Open the overflow menu, tap "Submenu B", tap "Deep", then tap
+5. Open the overflow menu, tap "Submenu B", tap "Deep", then tap
    "Deep.1".
 
-- [ ] "Last clicked" updates to `deep-1`.
+    - [ ] "Last clicked" updates to `deep-1`.
 
 ---
 
 ### Imperative command — change a leaf item inside a submenu
 
-10. In **Send Command**, set target id = `sub-1-1`,
+1. In **Send Command**, set target id = `sub-1-1`,
     title = `Title X`, hidden = `no change`. Tap **Send Command**.
 
-- [ ] Open "Submenu A": item 1 now reads "Title X". Item 2 still
-      reads "Sub A.2".
+    - [ ] Open "Submenu A": item 1 now reads "Title X". Item 2 still
+          reads "Sub A.2".
 
-11. Tap "Title X" in the submenu.
+2. Tap "Title X" in the submenu.
 
-- [ ] "Last clicked" updates to `sub-1-1` (id is stable across
-      title changes).
+    - [ ] "Last clicked" updates to `sub-1-1` (id is stable across
+          title changes).
 
 ---
 
 ### Imperative command — hide and show a leaf item inside a submenu
 
-12. Set target id = `sub-1-2`, title = `no change`,
+1. Set target id = `sub-1-2`, title = `no change`,
     hidden = `true`. Tap **Send Command**.
 
-- [ ] Open "Submenu A": only "Title X" is visible. "Sub A.2" is
-      hidden.
+    - [ ] Open "Submenu A": only "Title X" is visible. "Sub A.2" is
+          hidden.
 
-13. Set target id = `sub-1-2`, title = `no change`,
+2. Set target id = `sub-1-2`, title = `no change`,
     hidden = `false`. Tap **Send Command**.
 
-- [ ] Open "Submenu A": "Sub A.2" reappears alongside "Title X".
+    - [ ] Open "Submenu A": "Sub A.2" reappears alongside "Title X".
 
 ---
 
 ### Imperative command — change a submenu container
 
-14. Set target id = `submenu-1`, title = `Title X`,
+1. Set target id = `submenu-1`, title = `Title X`,
     hidden = `no change`. Tap **Send Command**.
 
-- [ ] In the overflow menu, the submenu previously labeled
-      "Submenu A" now reads "Title X". Its children are unchanged
-      ("Title X" from step 10 and "Sub A.2"), and its submenu
-      header still reads "Header A" — the `menuTitle` prop is
-      untouched by a `title` change.
+    - [ ] In the overflow menu, the submenu previously labeled
+          "Submenu A" now reads "Title X". Its children are unchanged
+          ("Title X" from step 1 of **Imperative command — change a
+          leaf item inside a submenu** and "Sub A.2"), and its submenu
+          header still reads "Header A" — the `menuTitle` prop is
+          untouched by a `title` change.
 
-15. Set target id = `submenu-1`, title = `no change`,
+2. Set target id = `submenu-1`, title = `no change`,
     hidden = `true`. Tap **Send Command**.
 
-- [ ] The submenu disappears from the overflow menu. Only
-      "Top Item" and "Submenu B" remain.
+    - [ ] The submenu disappears from the overflow menu. Only
+          "Top Item" and "Submenu B" remain.
 
-16. Set target id = `submenu-1`, title = `no change`,
+3. Set target id = `submenu-1`, title = `no change`,
     hidden = `false`. Tap **Send Command**.
 
-- [ ] The submenu reappears with the title "Title X" (preserved
-      from step 14) and the submenu header "Header A".
+    - [ ] The submenu reappears with the title "Title X" (preserved
+          from step 1) and the submenu header "Header A".
 
 ---
 
 ### Imperative command — change menuTitle
 
-17. Set target id = `submenu-1`, menuTitle = `Header X`,
+1. Set target id = `submenu-1`, menuTitle = `Header X`,
     title = `no change`, hidden = `no change`.
     Tap **Send Command**.
 
-- [ ] Open the submenu (still labeled "Title X" from step 14):
-      the submenu header now reads "Header X" instead of
-      "Header A".
+    - [ ] Open the submenu (still labeled "Title X" from step 1 of
+          **Imperative command — change a submenu container**):
+          the submenu header now reads "Header X" instead of
+          "Header A".
 
-18. Set target id = `submenu-1`, menuTitle = `undefined`,
+2. Set target id = `submenu-1`, menuTitle = `undefined`,
     title = `no change`, hidden = `no change`.
     Tap **Send Command**.
 
-- [ ] Open the submenu: the submenu header falls back to the
-      title value and reads "Title X".
+    - [ ] Open the submenu: the submenu header falls back to the
+          title value and reads "Title X".
 
-19. Set target id = `submenu-1`, title = `undefined`,
+3. Set target id = `submenu-1`, title = `undefined`,
     menuTitle = `undefined`, hidden = `no change`.
     Tap **Send Command**.
 
-- [ ] Open the submenu: no submenu header is shown at all (both
-      menuTitle and title are undefined). The submenu entry in
-      the overflow menu also has no title.
+    - [ ] Open the submenu: no submenu header is shown at all (both
+          menuTitle and title are undefined). The submenu entry in
+          the overflow menu also has no title.
 
 ---
 
 ### Props change drops all command state
 
-20. In **Menu Structure — Props**, toggle the "add extra item to
+1. In **Menu Structure — Props**, toggle the "add extra item to
     submenu-1" switch ON.
 
-- [ ] Open "Submenu A" (which reverts to its prop-configured
-      title "Submenu A" because the props change rebuilt the
-      menu). The submenu header reads "Header A" (restored from
-      props). It now shows three items: "Sub A.1" (reverted from
-      "Title X"), "Sub A.2", and "Sub A.3". All command state is
-      gone.
+    - [ ] Open "Submenu A" (which reverts to its prop-configured
+          title "Submenu A" because the props change rebuilt the
+          menu). The submenu header reads "Header A" (restored from
+          props). It now shows three items: "Sub A.1" (reverted from
+          "Title X"), "Sub A.2", and "Sub A.3". All command state is
+          gone.
 
 ---
 
 ### Props change — structural changes
 
-21. Toggle the "add extra item to submenu-1" switch OFF.
+1. Toggle the "add extra item to submenu-1" switch OFF.
 
-- [ ] Open "Submenu A": "Sub A.3" disappears. Two items remain:
-      "Sub A.1" and "Sub A.2".
+    - [ ] Open "Submenu A": "Sub A.3" disappears. Two items remain:
+          "Sub A.1" and "Sub A.2".
 
-22. Change the "submenu-1 title" picker to `Changed`.
+2. Change the "submenu-1 title" picker to `Changed`.
 
-- [ ] The submenu now reads "Changed" in the overflow menu. Its
-      children are unchanged.
+    - [ ] The submenu now reads "Changed" in the overflow menu. Its
+          children are unchanged.
 
-23. Change the "submenu-1 title" picker back to `Submenu A`.
+3. Change the "submenu-1 title" picker back to `Submenu A`.
 
-- [ ] The submenu reads "Submenu A" again.
+    - [ ] The submenu reads "Submenu A" again.
 
-24. Change the "submenu-1 menuTitle" picker to `Changed Header`.
+4. Change the "submenu-1 menuTitle" picker to `Changed Header`.
 
-- [ ] Open "Submenu A": the submenu header reads
-      "Changed Header". Children unchanged.
+    - [ ] Open "Submenu A": the submenu header reads
+          "Changed Header". Children unchanged.
 
-25. Change the "submenu-1 menuTitle" picker back to `Header A`.
+5. Change the "submenu-1 menuTitle" picker back to `Header A`.
 
-- [ ] Open "Submenu A": the submenu header reads "Header A"
-      again.
+    - [ ] Open "Submenu A": the submenu header reads "Header A"
+          again.
 
-26. Change the "submenu-1 menuTitle" picker to `undefined`.
+6. Change the "submenu-1 menuTitle" picker to `undefined`.
 
-- [ ] Open "Submenu A": the submenu header falls back to the
-      title and reads "Submenu A".
+    - [ ] Open "Submenu A": the submenu header falls back to the
+          title and reads "Submenu A".
 
-27. Change the "submenu-1 title" picker to `undefined`
+7. Change the "submenu-1 title" picker to `undefined`
     (menuTitle is still undefined from the previous step).
 
-- [ ] Open the submenu: no submenu header is shown. The submenu
-      entry in the overflow menu also has no title.
+    - [ ] Open the submenu: no submenu header is shown. The submenu
+          entry in the overflow menu also has no title.
 
-28. Change the "submenu-1 title" picker back to `Submenu A`,
+8. Change the "submenu-1 title" picker back to `Submenu A`,
     then change "submenu-1 menuTitle" back to `Header A`.
 
-- [ ] The submenu reads "Submenu A" in the overflow menu and the
-      submenu header reads "Header A" when opened.
+    - [ ] The submenu reads "Submenu A" in the overflow menu and the
+          submenu header reads "Header A" when opened.
 
-29. Toggle the "include submenu-1" switch OFF.
+9. Toggle the "include submenu-1" switch OFF.
 
-- [ ] "Submenu A" disappears from the overflow menu. Only
-      "Top Item" and "Submenu B" remain.
+    - [ ] "Submenu A" disappears from the overflow menu. Only
+          "Top Item" and "Submenu B" remain.
 
-30. Toggle the "include submenu-1" switch ON.
+10. Toggle the "include submenu-1" switch ON.
 
-- [ ] "Submenu A" reappears with its default children ("Sub A.1"
-      and "Sub A.2").
+    - [ ] "Submenu A" reappears with its default children ("Sub A.1"
+          and "Sub A.2").
 
-31. Toggle the "include submenu-2" switch OFF.
+11. Toggle the "include submenu-2" switch OFF.
 
-- [ ] "Submenu B" disappears. Only "Top Item" and "Submenu A"
-      remain.
+    - [ ] "Submenu B" disappears. Only "Top Item" and "Submenu A"
+          remain.
 
-32. Toggle the "include submenu-2" switch ON.
+12. Toggle the "include submenu-2" switch ON.
 
-- [ ] "Submenu B" reappears with "Sub B.1" and "Deep"
-      (containing "Deep.1").
+    - [ ] "Submenu B" reappears with "Sub B.1" and "Deep"
+          (containing "Deep.1").
 
 ---
 
 ### Deeply nested submenu — commands at depth
 
-33. Set target id = `deep-1`, title = `Title X`,
+1. Set target id = `deep-1`, title = `Title X`,
     hidden/menuTitle = `no change`. Tap **Send Command**.
 
-- [ ] Open Submenu B > Deep: the item now reads "Title X".
+    - [ ] Open Submenu B > Deep: the item now reads "Title X".
 
-34. Tap "Title X".
+2. Tap "Title X".
 
-- [ ] "Last clicked" updates to `deep-1`.
+    - [ ] "Last clicked" updates to `deep-1`.
 
-35. Set target id = `deep-menu`, title = `Title X`,
+3. Set target id = `deep-menu`, title = `Title X`,
     hidden/menuTitle = `no change`. Tap **Send Command**.
 
-- [ ] Open Submenu B: the nested submenu now reads "Title X"
-      instead of "Deep".
+    - [ ] Open Submenu B: the nested submenu now reads "Title X"
+          instead of "Deep".
 
-36. Set target id = `deep-menu`, menuTitle = `Header X`,
+4. Set target id = `deep-menu`, menuTitle = `Header X`,
     title = `no change`, hidden = `no change`.
     Tap **Send Command**.
 
-- [ ] Open Submenu B > "Title X" (from step 35): the submenu
-      header reads "Header X" instead of "Title X" (the title
-      fallback).
+    - [ ] Open Submenu B > "Title X" (from step 3): the submenu
+          header reads "Header X" instead of "Title X" (the title
+          fallback).
 
-37. In **Menu Structure — Props**, toggle "include submenu-2" OFF
+5. In **Menu Structure — Props**, toggle "include submenu-2" OFF
     and back ON.
 
-- [ ] Open Submenu B: its submenu header reads "Submenu B"
-      (title fallback — props rebuild). Open Deep: its submenu
-      header reads "Deep" (title fallback — props rebuild).
-      "Deep.1" is restored.
+    - [ ] Open Submenu B: its submenu header reads "Submenu B"
+          (title fallback — props rebuild). Open Deep: its submenu
+          header reads "Deep" (title fallback — props rebuild).
+          "Deep.1" is restored.

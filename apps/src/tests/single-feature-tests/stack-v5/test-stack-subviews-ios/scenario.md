@@ -45,55 +45,55 @@ stay manual.
 
 3. Verify first layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 4. Click "Toggle leading/trailing items count" to add items. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 5. Set title to `view`. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 6. Set subtitle to `view`. Verify layout.
 
-  - [ ] on iOS 26, position of items on device matches element tree.
+    - [ ] on iOS 26, position of items on device matches element tree.
 
 7. Click on header items to resize and force other items to move. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 8. Rotate the screen to landscape. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 9. Rotate the screen back to portrait. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 10. Click "Toggle leading items count" to remove all leading items. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 11. Click "large header enabled" to show large header. You may need to scroll down.
 
-  - [ ] Regular title is removed whenever large title shows and item positions match element tree. You may need to remove some items to give space for the regular title.
+    - [ ] Regular title is removed whenever large title shows and item positions match element tree. You may need to remove some items to give space for the regular title.
 
 12. Set title to `long` and `largeTitle` to `short`. Scroll to reveal large title.
 
-  - [ ] on iOS 18, largeTitle should be long
+    - [ ] on iOS 18, largeTitle should be long
   
-  - [ ] on iOS 26, largeTitle should be short
+    - [ ] on iOS 26, largeTitle should be short
 
 13. Set `largeTitle` to `none`.
 
-  - [ ] on iOS 26, largeTitle should be long
+    - [ ] on iOS 26, largeTitle should be long
 
 14. Enable `prompt`. Verify layout.
 
-  - [ ] Prompt text shows above the title and the navigation bar grows in height.
+    - [ ] Prompt text shows above the title and the navigation bar grows in height.
   
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
   
 ## hidesSharedBackground (iOS 26)
   
@@ -115,12 +115,12 @@ stay manual.
 
 3. Verify first layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 4. Set title to `view`. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.
 
 5. Resize the application. Verify layout.
 
-  - [ ] Position of items on device matches element tree.
+    - [ ] Position of items on device matches element tree.

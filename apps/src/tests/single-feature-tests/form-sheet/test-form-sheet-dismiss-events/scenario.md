@@ -27,44 +27,44 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Dismiss Events** screen.
 
-- [ ] The host screen shows the "Open FormSheet" and "Clear Logs" buttons and an empty "Event Logs" panel ("No events recorded yet.").
+    - [ ] The host screen shows the "Open FormSheet" and "Clear Logs" buttons and an empty "Event Logs" panel ("No events recorded yet.").
 
 ---
 
 ### Native dismissal – swipe
 
-2. Tap "Open FormSheet", wait for the sheet to present, then swipe it down past the lower detent.
+1. Tap "Open FormSheet", wait for the sheet to present, then swipe it down past the lower detent.
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one new entry: `onNativeDismiss`.
 
 ---
 
 ### Native dismissal – backdrop
 
-3. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area outside the sheet).
+1. Tap "Open FormSheet", wait for the sheet to present, then tap the backdrop (the dimmed area outside the sheet).
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one new entry: `onNativeDismiss`.
 
 ---
 
 ### Programmatic dismissal
 
-4. Tap "Clear Logs".
+1. Tap "Clear Logs".
 
-- [ ] The log is empty again.
+    - [ ] The log is empty again.
 
-5. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet.
+2. Tap "Open FormSheet", wait for the sheet to present, then tap "Dismiss from JS" inside the sheet.
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one entry: `onDismiss` (and no `onNativeDismiss`).
 
 ---
 
 ### Android only - system back native dismissal
 
-6. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button).
+1. Tap "Open FormSheet", wait for the sheet to present, then use the system back gesture (or the back button).
 
-- [ ] The sheet dismisses.
-- [ ] The log shows exactly one new entry: `onNativeDismiss`.
+    - [ ] The sheet dismisses.
+    - [ ] The log shows exactly one new entry: `onNativeDismiss`.

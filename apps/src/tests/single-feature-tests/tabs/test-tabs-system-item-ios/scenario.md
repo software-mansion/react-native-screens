@@ -18,8 +18,9 @@ smoke test.
 
 ## E2E test
 
-Incomplete: Automation covers steps 1–19, but not in full scope - see the
-list below. A single suite runs on both iOS versions, with version-specific
+Incomplete: Automation covers all steps except **Orientation smoke test**,
+but not in full scope - see the list below. A single suite runs on both iOS
+versions, with version-specific
 conditions where behavior diverges: the tab bar button class name resolves
 dynamically (UITabBarButton on iOS 18 and lower vs. _UITabButton on iOS 26),
 and the search item is asserted differently because it renders differently
@@ -30,7 +31,7 @@ Not automated:
 - Validating the differences between icon and selectedIcon.
 - Checking visual icon and label changes.
 - The "hidden title" option is validated, but indirectly; it should be verified manually.
-- Steps 20-23 (orientation changes).
+- All steps of **Orientation smoke test** (orientation changes).
 
 ## Prerequisites
 
@@ -65,180 +66,180 @@ iPhone Pro models (for iOS 18 excluding Max).
 
 1. Launch the app and navigate to the **Tab Bar System Item** screen.
 
-- [ ] Two tabs are visible in the tab bar.
-- [ ] The first tab is selected by default.
-- [ ] Its tab bar item shows the UIKit open-book icon and the
-  iOS-localized title `Bookmarks`.
-- [ ] No custom title or icon override is present.
+    - [ ] Two tabs are visible in the tab bar.
+    - [ ] The first tab is selected by default.
+    - [ ] Its tab bar item shows the UIKit open-book icon and the
+          iOS-localized title `Bookmarks`.
+    - [ ] No custom title or icon override is present.
 
 2. Tap the second tab, then tap the first tab (**Bookmarks**)
    again.
 
-- [ ] The Bookmarks tab is re-selected.
-- [ ] The localized open-book icon and `Bookmarks` title are
-  unchanged after re-selection.
+    - [ ] The Bookmarks tab is re-selected.
+    - [ ] The localized open-book icon and `Bookmarks` title are
+          unchanged after re-selection.
 
 ---
 
 ### Runtime Config tab - initial state
 
-3. Tap the second tab in the tab bar (**Favorites**).
+1. Tap the second tab in the tab bar (**Favorites**).
 
-- [ ] The Favorites tab becomes selected.
-- [ ] The Runtime Config title is displayed on the screen.
-- [ ] The on-screen status reads: `systemItem: 'favorites'`,
-  `title: undefined (system)`, `icon: system (from systemItem)`.
-- [ ] The tab bar item shows the UIKit favorites (star) icon with
-  the iOS-localized title `Favorites`.
+    - [ ] The Favorites tab becomes selected.
+    - [ ] The Runtime Config title is displayed on the screen.
+    - [ ] The on-screen status reads: `systemItem: 'favorites'`,
+          `title: undefined (system)`, `icon: system (from systemItem)`.
+    - [ ] The tab bar item shows the UIKit favorites (star) icon with
+          the iOS-localized title `Favorites`.
 
 ---
 
 ### Runtime Config tab - systemItem cycling
 
-4. Tap **history** in the systemItem group.
+1. Tap **history** in the systemItem group.
 
-- [ ] The tab bar item changes to the UIKit history (clock) icon and
-  the `History` title.
-- [ ] The on-screen status updates to `systemItem: 'history'`.
+    - [ ] The tab bar item changes to the UIKit history (clock) icon and
+          the `History` title.
+    - [ ] The on-screen status updates to `systemItem: 'history'`.
 
-5. Tap **search** in the systemItem group.
+2. Tap **search** in the systemItem group.
 
-- [ ] The tab bar item changes to the UIKit magnifying glass icon.
-- [ ] iOS 18: The title label `Search` is visible beneath the icon.
-- [ ] iOS 26: No visible title label; the Search tab bar item is
-  detached from the other items.
+    - [ ] The tab bar item changes to the UIKit magnifying glass icon.
+    - [ ] iOS 18: The title label `Search` is visible beneath the icon.
+    - [ ] iOS 26: No visible title label; the Search tab bar item is
+          detached from the other items.
 
-6. Tap **favorites** to restore the initial systemItem.
+3. Tap **favorites** to restore the initial systemItem.
 
-- [ ] The tab bar item reverts to the UIKit favorites icon and
-  `Favorites` title.
-- [ ] iOS 26: The tab bar item correctly realigns and is no longer detached.
+    - [ ] The tab bar item reverts to the UIKit favorites icon and
+          `Favorites` title.
+    - [ ] iOS 26: The tab bar item correctly realigns and is no longer detached.
 
 ---
 
 ### Runtime Config tab - title override cycling
 
-7. Tap **Custom** in the title group.
+1. Tap **Custom** in the title group.
 
-- [ ] The tab bar item label changes to `Custom` immediately.
-- [ ] The favorites icon remains visible and is unchanged.
+    - [ ] The tab bar item label changes to `Custom` immediately.
+    - [ ] The favorites icon remains visible and is unchanged.
 
-8. Tap **hidden** in the title group.
+2. Tap **hidden** in the title group.
 
-- [ ] The tab bar item label disappears entirely (empty string).
-- [ ] The favorites icon is still visible in the tab bar item.
+    - [ ] The tab bar item label disappears entirely (empty string).
+    - [ ] The favorites icon is still visible in the tab bar item.
 
-9. Tap **system** in the title group.
+3. Tap **system** in the title group.
 
-- [ ] The tab bar item label returns to the UIKit-localized title
-  `Favorites` immediately.
+    - [ ] The tab bar item label returns to the UIKit-localized title
+          `Favorites` immediately.
 
 ---
 
 ### Runtime Config tab - icon override cycling
 
-10. Tap **house** in the icon group.
+1. Tap **house** in the icon group.
 
-- [ ] The tab bar item icon changes to the `house.fill` SF Symbol.
-- [ ] The system favorites icon is no longer visible.
+    - [ ] The tab bar item icon changes to the `house.fill` SF Symbol.
+    - [ ] The system favorites icon is no longer visible.
 
-11. Tap the first tab (**Bookmarks**) and observe icons, then
+2. Tap the first tab (**Bookmarks**) and observe icons, then
     tap **Favorites** again.
 
-- [ ] While Bookmarks is selected, the Favorites tab bar item
-  shows the unselected `house` SF Symbol.
-- [ ] On re-selection, the Favorites tab bar item shows
-  `house.fill`.
+    - [ ] While Bookmarks is selected, the Favorites tab bar item
+          shows the unselected `house` SF Symbol.
+    - [ ] On re-selection, the Favorites tab bar item shows
+          `house.fill`.
 
-12. Tap **heart** in the icon group.
+3. Tap **heart** in the icon group.
 
-- [ ] The tab bar item icon changes to `heart.fill` immediately.
-- [ ] No `house` or `house.fill` image lingers.
+    - [ ] The tab bar item icon changes to `heart.fill` immediately.
+    - [ ] No `house` or `house.fill` image lingers.
 
-13. Tap **system** in the icon group.
+4. Tap **system** in the icon group.
 
-- [ ] The custom icon is removed. The tab bar item falls back to
-  the UIKit system icon for the current systemItem (`favorites`
-  star) immediately.
-- [ ] No stale `heart` or `heart.fill` image remains in the tab bar
-  item.
+    - [ ] The custom icon is removed. The tab bar item falls back to
+          the UIKit system icon for the current systemItem (`favorites`
+          star) immediately.
+    - [ ] No stale `heart` or `heart.fill` image remains in the tab bar
+          item.
 
 ---
 
 ### Runtime Config tab - combined overrides
 
-14. Set systemItem to **search**, title to **custom**, icon to
+1. Set systemItem to **search**, title to **custom**, icon to
     **heart** (all three groups in a non-default state).
 
-- [ ] The tab bar item shows the `heart` SF Symbol icon (custom
-  icon overrides the system search icon)
-- [ ] iOS 18: The label reads `Custom`.
-- [ ] iOS 26: No visible title label; the tab bar item is
-  detached from the Bookmarks item.
+    - [ ] The tab bar item shows the `heart` SF Symbol icon (custom
+          icon overrides the system search icon)
+    - [ ] iOS 18: The label reads `Custom`.
+    - [ ] iOS 26: No visible title label; the tab bar item is
+          detached from the Bookmarks item.
 
-15. Tap the first tab (**Bookmarks**).
+2. Tap the first tab (**Bookmarks**).
 
-- [ ] While Bookmarks is selected, the second tab bar item shows the unselected `heart` SF Symbol.
-- [ ] iOS 26: The second tab bar item remains detached.
+    - [ ] While Bookmarks is selected, the second tab bar item shows the unselected `heart` SF Symbol.
+    - [ ] iOS 26: The second tab bar item remains detached.
 
-16. Tap second tab again. Change systemItem to **history** while keeping title as
+3. Tap second tab again. Change systemItem to **history** while keeping title as
     **custom** and icon as **heart**.
 
-- [ ] The icon remains `heart.fill`.
-- [ ] The label reads `Custom`.
+    - [ ] The icon remains `heart.fill`.
+    - [ ] The label reads `Custom`.
 
-17. Change icon to **system** while keeping systemItem as
+4. Change icon to **system** while keeping systemItem as
     **history** and title as **custom**.
 
-- [ ] The icon falls back to the UIKit system history (clock) icon
-  immediately.
-- [ ] No stale `heart` image remains.
-- [ ] The label remains `Custom`.
+    - [ ] The icon falls back to the UIKit system history (clock) icon
+          immediately.
+    - [ ] No stale `heart` image remains.
+    - [ ] The label remains `Custom`.
 
-18. Change title to **hidden ('')** while keeping systemItem as
+5. Change title to **hidden ('')** while keeping systemItem as
     **history** and icon as **system**.
 
-- [ ] The tab bar label disappears.
-- [ ] The UIKit history icon remains visible.
+    - [ ] The tab bar label disappears.
+    - [ ] The UIKit history icon remains visible.
 
-19. Change title to **system** while keeping systemItem as
+6. Change title to **system** while keeping systemItem as
     **history** and icon as **system**.
 
-- [ ] The tab bar label reads `History`.
-- [ ] The UIKit history icon remains visible.
+    - [ ] The tab bar label reads `History`.
+    - [ ] The UIKit history icon remains visible.
 
 ---
 
 ### Orientation smoke test
 
-20. Select **Bookmarks** tab and rotate device to landscape orientation.
+1. Select **Bookmarks** tab and rotate device to landscape orientation.
 
-- [ ] The layout adapts to landscape.
-- [ ] The tab bar switches to a compact inline layout
-  (icons and titles side by side).
-- [ ] All two tab items remain visible with system icons and titles.
+    - [ ] The layout adapts to landscape.
+    - [ ] The tab bar switches to a compact inline layout
+          (icons and titles side by side).
+    - [ ] All two tab items remain visible with system icons and titles.
 
-21. While in landscape orientation, tap the second tab,
+2. While in landscape orientation, tap the second tab,
     then tap **house** in the icon group, and **custom** in title group.
 
-- [ ] The tab bar label reads `Custom`.
-- [ ] iOS 18 KI: Custom SF Symbol overrides may revert to the system icon in compactInline appearance.
-- [ ] iOS 26: The icon changes to `house.fill`.
+    - [ ] The tab bar label reads `Custom`.
+    - [ ] iOS 18 KI: Custom SF Symbol overrides may revert to the system icon in compactInline appearance.
+    - [ ] iOS 26: The icon changes to `house.fill`.
 
-22. Change systemItem to **search** and icon to **heart**. Keep title set to **custom**.
+3. Change systemItem to **search** and icon to **heart**. Keep title set to **custom**.
 
-- [ ] The tab bar label remains `Custom`.
-- [ ] iOS 18 KI: Custom SF Symbol overrides may revert to the system icon in compactInline appearance.
-- [ ] iOS 26: The icon changes to `heart.fill`. No visible title label; the Search tab bar item is
-  detached from the other items.
+    - [ ] The tab bar label remains `Custom`.
+    - [ ] iOS 18 KI: Custom SF Symbol overrides may revert to the system icon in compactInline appearance.
+    - [ ] iOS 26: The icon changes to `heart.fill`. No visible title label; the Search tab bar item is
+          detached from the other items.
 
-23. Rotate the device back to portrait orientation.
+4. Rotate the device back to portrait orientation.
 
-- [ ] The tab bar reverts to its portrait layout.
-- [ ] The second tab bar item shows the `heart.fill` icon
-  (selected).
-- [ ] The Bookmarks item is unchanged.
-- [ ] The previously selected tab remains selected.
-- [ ] iOS 18: The title label `Custom` is visible beneath the icon.
-- [ ] iOS 26: No visible title label; the Search tab bar item is
-  detached from the other items.
+    - [ ] The tab bar reverts to its portrait layout.
+    - [ ] The second tab bar item shows the `heart.fill` icon
+          (selected).
+    - [ ] The Bookmarks item is unchanged.
+    - [ ] The previously selected tab remains selected.
+    - [ ] iOS 18: The title label `Custom` is visible beneath the icon.
+    - [ ] iOS 26: No visible title label; the Search tab bar item is
+          detached from the other items.

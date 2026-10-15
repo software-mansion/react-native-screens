@@ -2,10 +2,10 @@ package com.swmansion.rnscreens.tabs.screen
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import com.swmansion.rnscreens.helpers.IconResolution
-import com.swmansion.rnscreens.helpers.NoTintDrawable
-import com.swmansion.rnscreens.helpers.PropIconResolver
-import com.swmansion.rnscreens.helpers.resolveImage
+import com.swmansion.rnscreens.core.utils.IconResolution
+import com.swmansion.rnscreens.core.utils.NoTintDrawable
+import com.swmansion.rnscreens.core.utils.PropIconResolver
+import com.swmansion.rnscreens.react.utils.resolveImage
 import kotlin.properties.Delegates
 
 /**
