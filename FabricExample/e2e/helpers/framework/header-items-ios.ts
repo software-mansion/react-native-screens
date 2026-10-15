@@ -1,7 +1,7 @@
 import { expect, element, by } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
 import { tapWithinFrame } from './gestures';
-import { getFrame } from './matchers';
+import { getFrame, getMatches } from './matchers';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
   CLASS_NAME_UI_LABEL,
@@ -45,14 +45,31 @@ export function headerItem(title: string, options?: HeaderItemOptions) {
 
 /**
  * Asserts the view matched by `matcher`, hosted in the header (e.g. a custom
- * item view), is shown: `toBeVisible`, or on iOS 27 (see above) only
- * `toExist`.
+ * item view), is shown: `toBeVisible(visibilityPct)`, or on iOS 27 (see above)
+ * only `toExist`.
  */
-export async function expectHeaderViewShown(matcher: NativeMatcher) {
+export async function expectHeaderViewShown(
+  matcher: NativeMatcher,
+  visibilityPct?: number,
+) {
   if (isIOSVersionAtLeast('27.0')) {
     await expect(element(matcher)).toExist();
   } else {
-    await expect(element(matcher)).toBeVisible();
+    await expect(element(matcher)).toBeVisible(visibilityPct);
+  }
+}
+
+/**
+ * Taps the `index`-th view matched by `matcher`, hosted in the header (e.g. a
+ * custom item view or `_UIButtonBarButton`), by coordinates on iOS 27 (see
+ * above).
+ */
+export async function tapHeaderView(matcher: NativeMatcher, index = 0) {
+  if (isIOSVersionAtLeast('27.0')) {
+    const matches = await getMatches(matcher);
+    await tapWithinFrame(matches[index].frame);
+  } else {
+    await element(matcher).atIndex(index).tap();
   }
 }
 
