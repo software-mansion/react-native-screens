@@ -6,7 +6,9 @@ import PackageDescription
 let headerSearchPaths: [String] = [
     "ios",
     "ios/conversion",
+    "ios/core/common",
     "ios/core/utils",
+    "ios/core/views/scroll-to-top-guard",
     "ios/helpers/container",
     "ios/helpers/image",
     "ios/helpers/scroll-view",
