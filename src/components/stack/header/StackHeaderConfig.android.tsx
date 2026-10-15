@@ -1,20 +1,11 @@
-import React, {
-  ComponentRef,
-  forwardRef,
-  Ref,
-  useImperativeHandle,
-  useRef,
-} from 'react';
+import React, { ComponentRef, useImperativeHandle, useRef } from 'react';
 import {
   type NativeSyntheticEvent,
   processColor,
   StyleSheet,
   type TextStyle,
 } from 'react-native';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigRef,
-} from './StackHeaderConfig.types';
+import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigAndroidNativeComponent, {
   Commands as StackHeaderConfigAndroidNativeCommands,
 } from '../../../fabric/stack/StackHeaderConfigAndroidNativeComponent';
@@ -43,13 +34,10 @@ import { parseAndroidIconToNativeProps } from '../../shared';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHeaderConfig(
-  props: StackHeaderConfigProps,
-  forwardedRef: Ref<StackHeaderConfigRef>,
-) {
+function StackHeaderConfig(props: StackHeaderConfigProps) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { android, ios, ...baseProps } = props;
+  const { ref: forwardedRef, android, ios, ...baseProps } = props;
 
   const ref = useHeaderConfigRef(forwardedRef);
 
@@ -252,7 +240,7 @@ function resolveScrollFlags(
   };
 }
 
-function useHeaderConfigRef(forwardedRef: Ref<StackHeaderConfigRef>) {
+function useHeaderConfigRef(forwardedRef: StackHeaderConfigProps['ref']) {
   const ref =
     useRef<ComponentRef<typeof StackHeaderConfigAndroidNativeComponent>>(null);
 
@@ -614,6 +602,4 @@ function parseToolbarMenuElementOptionsToNativeProps(
   return nativeOptions;
 }
 
-export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(
-  StackHeaderConfig,
-);
+export default StackHeaderConfig;

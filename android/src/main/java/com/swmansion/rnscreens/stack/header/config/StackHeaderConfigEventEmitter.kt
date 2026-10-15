@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.stack.header.config
 
 import com.facebook.react.bridge.ReactContext
-import com.swmansion.rnscreens.common.event.BaseEventEmitter
+import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.stack.header.toolbar.event.StackHeaderToolbarMenuGroupSelectionChangeEvent
 import com.swmansion.rnscreens.stack.header.toolbar.event.StackHeaderToolbarMenuItemPressEvent
 
