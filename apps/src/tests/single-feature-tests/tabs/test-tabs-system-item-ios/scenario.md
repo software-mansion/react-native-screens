@@ -23,7 +23,9 @@ list below. A single suite runs on both iOS versions, with version-specific
 conditions where behavior diverges: the tab bar button class name resolves
 dynamically (UITabBarButton on iOS 18 and lower vs. _UITabButton on iOS 26),
 and the search item is asserted differently because it renders differently
-(visible label on iOS 18 vs. detached/no-label on iOS 26).
+(visible label on iOS 18 vs. detached/no-label on iOS 26). The search item's
+position is asserted as detached on iOS 26 only; on iOS 18 and iOS 27 it keeps
+its position.
 
 Not automated:
 
@@ -56,6 +58,8 @@ iPhone Pro models (for iOS 18 excluding Max).
   dark blue.
 - iOS 26: The `systemItem 'search'` tab bar item is detached from the other items
   and has no label.
+- iOS 27: The `systemItem 'search'` tab bar item is not detached; it keeps its
+  position like any other item.
 - iOS 18 KI: SystemItem icon is not overridden for the compactInline
   (landscape orientation on iPhone Pro) tab bar appearance.
 
