@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.tabs.container.TabsContainer
+import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 
@@ -14,6 +15,18 @@ internal class TabsAppearanceCoordinator(
     private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
 
     private var appliedIconBoxDp: Float? = null
+
+    private val menuItemStates = HashMap<Int, TabsMenuItemState>()
+
+    private fun menuItemState(menuItemId: Int) = menuItemStates.getOrPut(menuItemId) { TabsMenuItemState() }
+
+    internal fun invalidateMenuItem(
+        menuItemId: Int,
+        flags: TabsItemInvalidationFlags,
+    ) {
+        val state = menuItemState(menuItemId)
+        state.pendingFlags = state.pendingFlags or flags
+    }
 
     // Icon box is bar-wide: the largest effective size across tabs.
     internal fun resolveIconBoxDp(): Float {
@@ -34,16 +47,12 @@ internal class TabsAppearanceCoordinator(
     }
 
     internal fun invalidateMenuItemIcons() {
-        tabsScreenFragments.forEach { it.tabsScreen.isMenuItemIconInvalidated = true }
+        menuItemStates.values.forEach { it.pendingFlags = it.pendingFlags or TabsItemInvalidationFlags.ICON }
     }
 
+    // Rebuilt menu items have nothing applied; fresh states are fully dirty.
     internal fun invalidateRebuiltMenuItems() {
-        invalidateMenuItemIcons()
-        tabsScreenFragments.forEach {
-            it.tabsScreen.isMenuItemActiveIndicatorInvalidated = true
-            it.tabsScreen.appliedActiveIndicatorWidthPx = null
-            it.tabsScreen.appliedActiveIndicatorHeightPx = null
-        }
+        menuItemStates.clear()
     }
 
     fun updateTabAppearance(
@@ -84,7 +93,7 @@ internal class TabsAppearanceCoordinator(
         appearance: TabsAppearance?,
         iconBoxDp: Float,
     ) {
-        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, iconBoxDp)
+        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, menuItemState(menuItem.itemId), iconBoxDp)
         appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
     }
 }
