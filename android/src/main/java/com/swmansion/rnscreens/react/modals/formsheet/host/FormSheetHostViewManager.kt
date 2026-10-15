@@ -10,7 +10,6 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSFormSheetHostManagerDelegate
 import com.facebook.react.viewmanagers.RNSFormSheetHostManagerInterface
-import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetDetentChangedEvent
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetDidAppearEvent
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetDidDisappearEvent
@@ -20,6 +19,7 @@ import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetNativeDismi
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetSyncFlushEvent
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetWillAppearEvent
 import com.swmansion.rnscreens.react.modals.formsheet.event.FormSheetWillDisappearEvent
+import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
 
 @ReactModule(name = FormSheetHostViewManager.REACT_CLASS)
 class FormSheetHostViewManager :
