@@ -276,12 +276,7 @@ describeIfIOS('Tab Bar System Item', () => {
     });
   });
 
-  // TODO: Re-enable once
-  // https://github.com/software-mansion/react-native-screens-labs/issues/1885 is fixed.
-  // The tab bar item icon is rendered in the wrong variant (.fill vs outline), likely
-  // a regression from https://github.com/software-mansion/react-native-screens/pull/4675,
-  // so the icon assertions do not match.
-  describe.skip('Runtime Config tab — icon override cycling', () => {
+  describe('Runtime Config tab — icon override cycling', () => {
     it('should update tab bar item icon when switching to house icon', async () => {
       await tapOptionButton('house');
       await expect(
@@ -346,10 +341,7 @@ describeIfIOS('Tab Bar System Item', () => {
     });
   });
 
-  // TODO: Re-enable together with "icon override cycling" above - blocked by the same
-  // icon rendering issue:
-  // https://github.com/software-mansion/react-native-screens-labs/issues/1885.
-  describe.skip('Runtime Config tab — combined overrides', () => {
+  describe('Runtime Config tab — combined overrides', () => {
     it('should update tab bar item with combined selection of search systemItem + custom title + heart icon', async () => {
       const frameXBeforeSearch = await getTabBarItemFrameX('Favorites');
 

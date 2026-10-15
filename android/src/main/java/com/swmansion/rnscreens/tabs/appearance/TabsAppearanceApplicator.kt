@@ -18,10 +18,10 @@ import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.core.utils.dpToPx
+import com.swmansion.rnscreens.core.utils.pxToDp
+import com.swmansion.rnscreens.core.utils.resolveColorAttr
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
-import com.swmansion.rnscreens.utils.dpToPx
-import com.swmansion.rnscreens.utils.pxToDp
-import com.swmansion.rnscreens.utils.resolveColorAttr
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 internal class TabsAppearanceApplicator(

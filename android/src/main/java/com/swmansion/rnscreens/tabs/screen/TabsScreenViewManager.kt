@@ -8,18 +8,18 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerDelegate
 import com.facebook.react.viewmanagers.RNSTabsScreenAndroidManagerInterface
-import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
-import com.swmansion.rnscreens.helpers.readOptionalBoolean
-import com.swmansion.rnscreens.helpers.readOptionalColor
-import com.swmansion.rnscreens.helpers.readOptionalFloat
-import com.swmansion.rnscreens.helpers.readOptionalString
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
+import com.swmansion.rnscreens.react.utils.readOptionalBoolean
+import com.swmansion.rnscreens.react.utils.readOptionalColor
+import com.swmansion.rnscreens.react.utils.readOptionalFloat
+import com.swmansion.rnscreens.react.utils.readOptionalString
 import com.swmansion.rnscreens.tabs.appearance.ItemStateAppearance
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenDidAppearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenDidDisappearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillAppearEvent
 import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillDisappearEvent
-import com.swmansion.rnscreens.utils.RNSLog
 
 @ReactModule(name = TabsScreenViewManager.REACT_CLASS)
 class TabsScreenViewManager :
