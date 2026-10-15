@@ -1,3 +1,4 @@
+import type { Ref } from 'react';
 import type { StackHeaderConfigCommandsAndroid } from './StackHeaderConfig.android.types';
 import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
@@ -58,6 +59,7 @@ export interface StackHeaderConfigPropsBase {
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
   android?: StackHeaderConfigPropsAndroid | undefined;
   ios?: StackHeaderConfigPropsIOS | undefined;
+  ref?: Ref<StackHeaderConfigRef> | undefined;
 }
 
 export interface StackHeaderConfigRef {
