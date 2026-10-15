@@ -11,8 +11,8 @@ import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
 import com.swmansion.rnscreens.core.utils.RNSLog
-import com.swmansion.rnscreens.scrollviewmarker.ScrollViewMarker
-import com.swmansion.rnscreens.scrollviewmarker.ScrollViewSeeking
+import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewMarker
+import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewSeeking
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearance
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates

@@ -1,10 +1,11 @@
-package com.swmansion.rnscreens.core.utils
+package com.swmansion.rnscreens.react.utils
 
+import android.view.View
 import androidx.annotation.UiThread
-
-interface ViewIdProviding {
-    fun generateViewId(): Int
-}
+import com.facebook.react.uimanager.UIManagerHelper
+import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.ViewIdProviding
 
 /**
  * This class generates view id that should not collide with ids (tags) assigned by renderer to React
@@ -12,6 +13,7 @@ interface ViewIdProviding {
  *
  * This class relies on internal renderer behaviours, that happened to change over the time, therefore
  * it must be revisited & kept up to date with current RN behaviour until better solution is found.
+ * [verifyReactTagSchemeInDebug] logs an error in debug builds when these assumptions stop holding.
  *
  * Until RN 0.81 ReactSurfaceView had tag `11`. In later versions it was changed to `1` (new arch only change).
  *
@@ -39,14 +41,19 @@ private class NewArchAwareViewIdGenerator : ViewIdProviding {
             nextId += 2
         }
     }
-
-    private fun isValidReactRootTag(tag: Int): Boolean = tag % 10 == 1
 }
+
+private fun isValidReactRootTag(tag: Int): Boolean = tag % 10 == 1
 
 @UiThread
 object ViewIdGenerator : ViewIdProviding {
     /**
      * Set this field to customize view ids utilized by the library.
+     *
+     * Ids must be unique process-wide and must not collide with tags assigned by React Native.
+     * It may be set at any time, but it affects only ids issued after it is set: ids already
+     * issued are kept by their views. Set it in `Application.onCreate`, before any React surface
+     * renders, unless the new generator never returns ids issued before.
      */
     var externalGenerator: ViewIdProviding? = null
     private val defaultGenerator: ViewIdProviding = NewArchAwareViewIdGenerator()
@@ -54,5 +61,26 @@ object ViewIdGenerator : ViewIdProviding {
     override fun generateViewId(): Int {
         externalGenerator?.let { return it.generateViewId() }
         return defaultGenerator.generateViewId()
+    }
+}
+
+private const val TAG = "ViewIdGenerator"
+
+/**
+ * Verifies, in debug builds, the React Native tag scheme that [ViewIdGenerator]'s default relies on:
+ * the tag of a view rendered by React is even, and the tag of its surface is a valid root view tag.
+ * A mismatch is logged as an error rather than thrown, so that apps using the library don't crash.
+ * Skipped when [ViewIdGenerator.externalGenerator] is set, since the default is not used then.
+ */
+internal fun verifyReactTagSchemeInDebug(reactView: View) {
+    if (!BuildConfig.DEBUG || ViewIdGenerator.externalGenerator != null) {
+        return
+    }
+    if (reactView.id % 2 != 0) {
+        RNSLog.e(TAG, "[RNScreens] React tag ${reactView.id} is odd; ViewIdGenerator may collide with React tags")
+    }
+    val surfaceId = UIManagerHelper.getSurfaceId(reactView)
+    if (!isValidReactRootTag(surfaceId)) {
+        RNSLog.e(TAG, "[RNScreens] Surface tag $surfaceId is not 1 (mod 10); ViewIdGenerator may collide with root view tags")
     }
 }

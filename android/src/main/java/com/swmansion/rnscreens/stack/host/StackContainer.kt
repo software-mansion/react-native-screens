@@ -16,7 +16,7 @@ import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
 import com.swmansion.rnscreens.core.utils.RNSLog
-import com.swmansion.rnscreens.core.utils.ViewIdGenerator
+import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.isMeasured
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.screen.StackScreen
@@ -28,6 +28,7 @@ import java.lang.ref.WeakReference
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
+    viewIdProvider: ViewIdProviding,
 ) : FrameLayout(context),
     Container,
     FragmentManager.OnBackStackChangedListener,
@@ -77,7 +78,7 @@ internal class StackContainer(
     // endregion
 
     init {
-        id = ViewIdGenerator.generateViewId()
+        id = viewIdProvider.generateViewId()
     }
 
     override fun onAttachedToWindow() {
