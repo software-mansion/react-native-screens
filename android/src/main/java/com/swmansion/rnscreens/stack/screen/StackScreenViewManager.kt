@@ -11,7 +11,7 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
-import com.swmansion.rnscreens.helpers.makeEventRegistrationInfo
+import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
 import com.swmansion.rnscreens.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.stack.screen.event.StackScreenDidDisappearEvent

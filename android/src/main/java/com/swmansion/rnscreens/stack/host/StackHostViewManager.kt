@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHostManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHostManagerInterface
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.stack.screen.StackScreen
 
 @ReactModule(name = StackHostViewManager.REACT_CLASS)
