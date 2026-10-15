@@ -3,9 +3,9 @@ package com.swmansion.rnscreens.stack.header.appbar
 import android.content.Context
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.google.android.material.appbar.MaterialToolbar
-import com.swmansion.rnscreens.stack.header.subview.StackHeaderSubviewProviding
 
 /**
  * Toolbar of a collapsing header. It exists to change the gravity of the
@@ -43,16 +43,20 @@ internal class StackHeaderToolbar(
     }
 
     /**
-     * The placeholder is not identifiable by type - it is a plain [View] - so it is recognized by
-     * its size instead. Every view the toolbar builds for itself (navigation & collapse buttons,
-     * menu, logo, expanded action view) is WRAP_CONTENT, and so are the subviews we add, which
-     * leaves a MATCH_PARENT child of a foreign type as the placeholder and nothing else.
+     * The placeholder is a plain [View] added with MATCH_PARENT in both dimensions. Every view the
+     * toolbar builds for itself (navigation & collapse buttons, menu, logo, expanded action view) is
+     * WRAP_CONTENT, and so are the header subviews we add (which are view groups anyway), which
+     * leaves a MATCH_PARENT non-group child as the placeholder and nothing else.
+     *
+     * This relies on implementation details of Material's CollapsingToolbarLayout (verified against
+     * Material 1.14.0, `CollapsingToolbarLayout.updateDummyView`). It MUST be re-verified every time the
+     * Material dependency is bumped.
      */
     private fun isCollapsedTitlePlaceholder(
         child: View,
         params: LayoutParams,
     ): Boolean =
-        child !is StackHeaderSubviewProviding &&
+        child !is ViewGroup &&
             params.width == MATCH_PARENT &&
             params.height == MATCH_PARENT
 
