@@ -34,7 +34,7 @@ function Home({ navigation }: NativeStackScreenProps<StackParamList, 'Home'>) {
     <View style={styles.screen} testID="test4360-home">
       <Text style={styles.description}>
         1. Push Details{'\n'}
-        2. Go back (back button or swipe){'\n'}
+        2. Go back ("Go back" button or swipe){'\n'}
         3. Watch the header items on Details during the pop animation — they
         must keep their size (iOS 26+)
       </Text>
