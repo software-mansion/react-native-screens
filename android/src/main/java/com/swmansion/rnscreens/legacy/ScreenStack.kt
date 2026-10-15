@@ -6,6 +6,7 @@ import android.os.Build
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.legacy.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.legacy.bottomsheet.sheetShouldUseDimmingView
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
@@ -439,6 +440,18 @@ class ScreenStack(
             drawingTime = 0
         }
     }
+
+    // region Container
+
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
+        screenWrappers
+            .asReversed()
+            .filter { !dismissedWrappers.contains(it) }
+            .firstNotNullOfOrNull { it.screen.wantsToPreventStackNativeDismiss() }
+
+    override fun requestPopToRoot(): Boolean = popToRoot() || super.requestPopToRoot()
+
+    // endregion
 
     companion object {
         const val TAG = "ScreenStack"

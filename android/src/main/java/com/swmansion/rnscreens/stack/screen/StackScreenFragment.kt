@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.Slide
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.stack.header.StackHeaderCoordinatorLayout
 import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding

@@ -28,7 +28,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.recycle
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetTransitionCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetWindowInsetListenerChain
 import com.swmansion.rnscreens.legacy.bottomsheet.DimmingViewManager
@@ -38,7 +39,6 @@ import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.legacy.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.legacy.utils.DeviceUtils
 import com.swmansion.rnscreens.legacy.utils.resolveBackgroundColor
-import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.math.max
 
 sealed class KeyboardState

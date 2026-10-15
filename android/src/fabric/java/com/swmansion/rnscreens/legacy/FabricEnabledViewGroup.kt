@@ -6,7 +6,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
 import com.facebook.react.uimanager.StateWrapper
-import com.swmansion.rnscreens.utils.pxToDp
+import com.swmansion.rnscreens.core.utils.pxToDp
 import kotlin.math.abs
 
 abstract class FabricEnabledViewGroup(
