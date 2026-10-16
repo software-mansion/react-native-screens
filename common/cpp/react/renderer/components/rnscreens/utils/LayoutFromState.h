@@ -1,5 +1,7 @@
 #pragma once
 
+#include <react/renderer/core/LayoutPrimitives.h>
+#include <react/renderer/graphics/Point.h>
 #include <react/renderer/graphics/Size.h>
 #include <yoga/style/Style.h>
 
@@ -44,5 +46,36 @@ class SizeFromStateShadowNode : public BaseShadowNodeT {
     }
   }
 };
+
+/**
+ * Marks the node's layout dirty when the frame origin its `layout()` override
+ * would set differs from the one in its current layout metrics.
+ *
+ * Some nodes overwrite the frame origin computed by Yoga with one that native
+ * reports through state, in `layout()`. Fabric only calls `layout()` on a node
+ * that has new layout from Yoga, and a state update doesn't dirty the Yoga
+ * node, so a state update that only moves the node would otherwise leave its
+ * shadow tree origin stale. That's what `measure()` and Pressability's
+ * press-rect checks read.
+ *
+ * A clone inherits the layout metrics of its source, with the correction
+ * already applied, so a clone whose state origin didn't change stays clean.
+ *
+ * Call it from the component descriptor's `adopt()`. `ShadowNodeT` must have a
+ * `Point correctFrameOrigin(Point origin) const` method, which `layout()` uses
+ * to correct the origin too.
+ */
+template <typename ShadowNodeT>
+void dirtyLayoutIfFrameOriginStale(ShadowNodeT &shadowNode) {
+  const auto layoutMetrics = shadowNode.getLayoutMetrics();
+  if (layoutMetrics.displayType == react::DisplayType::None) {
+    // `layout()` isn't called on hidden nodes, so this couldn't correct it.
+    return;
+  }
+  const auto origin = layoutMetrics.frame.origin;
+  if (shadowNode.correctFrameOrigin(origin) != origin) {
+    shadowNode.dirtyLayout();
+  }
+}
 
 } // namespace rnscreens

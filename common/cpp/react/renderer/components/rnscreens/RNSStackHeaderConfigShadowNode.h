@@ -32,6 +32,12 @@ class JSI_EXPORT RNSStackHeaderConfigShadowNode final
 #else // ANDROID
   void layout(LayoutContext layoutContext) override;
 
+  /**
+   * The frame origin `layout()` sets, given the one computed by Yoga. The
+   * component descriptor compares it with the current layout metrics.
+   */
+  Point correctFrameOrigin(Point origin) const;
+
   void setImageLoader(std::weak_ptr<void> imageLoader);
 
  private:
