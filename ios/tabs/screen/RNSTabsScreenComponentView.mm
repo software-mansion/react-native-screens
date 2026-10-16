@@ -398,7 +398,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
-  RNSLog(
+  RNSLogD(
       @"TabScreen [%ld] updateLayoutMetrics: %@", self.tag, NSStringFromCGRect(RCTCGRectFromRect(layoutMetrics.frame)));
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
 }
@@ -412,7 +412,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RNSLog(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
+  RNSLogD(@"TabScreen [%ld] mount [%ld] at %ld", self.tag, childComponentView.tag, index);
   [super mountChildComponentView:childComponentView index:index];
 
   // overrideScrollViewBehavior uses first descendant chain from screen to find ScrollView,
@@ -430,7 +430,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RNSLog(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
+  RNSLogD(@"TabScreen [%ld] unmount [%ld] from %ld", self.tag, childComponentView.tag, index);
   [super unmountChildComponentView:childComponentView index:index];
 }
 

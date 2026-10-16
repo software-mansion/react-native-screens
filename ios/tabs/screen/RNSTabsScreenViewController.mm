@@ -64,7 +64,7 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  RNSLog(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
+  RNSLogD(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
 
   if (parent == nil) {
     return;
