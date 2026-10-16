@@ -207,8 +207,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
         (shouldFreeze !== undefined ? shouldFreeze : activityState === 0);
 
       return (
-        <DelayedFreeze freeze={freeze}>
-          <AnimatedScreen
+        <AnimatedScreen
             {...props}
             /**
              * This messy override is to conform NativeProps used by codegen and
@@ -287,7 +286,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
               featureFlags.experiment.iosOrientationInheritanceFixEnabled
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
-              children
+              <DelayedFreeze freeze={freeze}>{children}</DelayedFreeze>
             ) : (
               <TransitionProgressContext.Provider
                 value={{
@@ -295,11 +294,12 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
                   closing,
                   goingForward,
                 }}>
-                {children}
+                <DelayedFreeze freeze={freeze}>
+                  {children}
+                </DelayedFreeze>
               </TransitionProgressContext.Provider>
             )}
           </AnimatedScreen>
-        </DelayedFreeze>
       );
     } else {
       // same reason as above
