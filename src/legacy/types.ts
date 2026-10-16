@@ -794,6 +794,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   largeTitleFontWeight?: string | undefined;
   /**
+   * Customize letter spacing in points for the large title, mapping to the attributed-string kern.
+   * A value of 0 or undefined leaves UIKit's default spacing unchanged.
+   * @platform ios
+   */
+  largeTitleLetterSpacing?: number | undefined;
+  /**
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean | undefined;

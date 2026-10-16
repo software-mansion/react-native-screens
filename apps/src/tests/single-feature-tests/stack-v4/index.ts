@@ -1,9 +1,12 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestStackV4Orientation from './stack-v4-orientation';
+import TestStackV4LargeTitleLetterSpacingIOS from './test-stack-large-title-letter-spacing-ios';
 
 export { default as TestStackV4Orientation } from './stack-v4-orientation';
+export { default as TestStackV4LargeTitleLetterSpacingIOS } from './test-stack-large-title-letter-spacing-ios';
 
 const scenarios = {
+  TestStackV4LargeTitleLetterSpacingIOS,
   TestStackV4Orientation,
 };
 

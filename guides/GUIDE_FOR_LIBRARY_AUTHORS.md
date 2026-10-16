@@ -791,6 +791,10 @@ Customize the size of the font to be used for the large title.
 
 Customize the weight of the font to be used for the large title.
 
+### `largeTitleLetterSpacing` (iOS only)
+
+Customize letter spacing in points for the large title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. A value of `0` or an omitted prop leaves UIKit's default spacing unchanged.
+
 ### `largeTitleHideShadow` (iOS only)
 
 Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
