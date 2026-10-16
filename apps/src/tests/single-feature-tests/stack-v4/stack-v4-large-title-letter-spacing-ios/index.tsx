@@ -27,6 +27,8 @@ function TestStackV4LargeTitleLetterSpacingIOS() {
           title: 'Large Title',
           largeTitle: true,
           translucent: true,
+          // On iOS 26+, an opaque bar covers the large title hosted in the scroll view.
+          backgroundColor: 'transparent',
           largeTitleLetterSpacing: spacing,
           largeTitleFontSize: customTypography ? 30 : undefined,
           largeTitleFontWeight: customTypography ? '700' : undefined,
