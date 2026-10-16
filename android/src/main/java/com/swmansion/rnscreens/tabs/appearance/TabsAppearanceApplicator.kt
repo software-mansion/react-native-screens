@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
+import com.swmansion.rnscreens.tabs.container.TabsMenuItemState
 import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 

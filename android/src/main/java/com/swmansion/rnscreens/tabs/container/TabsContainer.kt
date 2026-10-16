@@ -415,7 +415,7 @@ class TabsContainer internal constructor(
         flags: TabsItemInvalidationFlags,
     ) {
         val fragment = getFragmentForTabsScreen(tabsScreen) ?: return
-        appearanceCoordinator.invalidateMenuItem(fragment.menuItemId, flags)
+        bottomNavigationView.invalidateMenuItem(fragment.menuItemId, flags)
 
         if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)) {
             // Icon box is bar-wide, so this must run even when the changed tab is not selected.
@@ -588,7 +588,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
-        appearanceCoordinator.invalidateRebuiltMenuItems()
+        bottomNavigationView.resetMenuItemStates()
     }
 
     private fun updateBottomNavigationViewAppearance() {
