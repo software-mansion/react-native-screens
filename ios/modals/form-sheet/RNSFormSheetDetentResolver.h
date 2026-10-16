@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Predefined value for `fitToContents` detent.
 static const double kRNSFormSheetFitToContents = -1.0;
-// Predefined values for `initialDetentIndex`.
+// Predefined values for `initialDetentIndex` and `selectDetent`.
 static NSInteger const kRNSFormSheetLastDetent = -1;
 // Predefined values for `largestUndimmedDetentIndex`.
 static NSInteger const kRNSFormSheetAlwaysDimmed = -1;
@@ -36,6 +36,15 @@ static NSInteger const kRNSFormSheetNeverDimmed = -2;
 + (nullable UISheetPresentationControllerDetentIdentifier)
     largestUndimmedDetentIdentifierForDetents:(NSArray<UISheetPresentationControllerDetent *> *)detents
                              atRequestedIndex:(NSInteger)requestedIndex;
+
+/**
+ * Resolves the index requested with the `selectDetent` command against the detents currently applied to the sheet.
+ *
+ * @return nil if the index is out of bounds of `detents`.
+ */
++ (nullable UISheetPresentationControllerDetentIdentifier)selectedDetentIdentifierForDetents:
+                                                              (NSArray<UISheetPresentationControllerDetent *> *)detents
+                                                                            atRequestedIndex:(NSInteger)requestedIndex;
 
 #endif // !TARGET_OS_TV
 

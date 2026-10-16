@@ -92,6 +92,10 @@ internal class FormSheetPresentation(
         dimensionsCoordinator.onContentHeightChanged(height)
     }
 
+    internal fun selectDetent(index: Int) {
+        dimensionsCoordinator.selectDetent(index)
+    }
+
     internal fun applyInitialConfig(
         config: FormSheetConfig,
         contentHeight: Int,

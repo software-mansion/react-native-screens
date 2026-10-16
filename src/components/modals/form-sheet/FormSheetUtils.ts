@@ -2,7 +2,7 @@ import type { FormSheetProps } from './FormSheet.types';
 
 // Predefined value for `fitToContents`. Keep in sync with native counterpart.
 const FORM_SHEET_NATIVE_FIT_TO_CONTENTS = -1.0;
-// Predefined values for `initialDetentIndex`. Keep in sync with native counterpart.
+// Predefined values for `initialDetentIndex` and `selectDetent`. Keep in sync with native counterpart.
 const FORM_SHEET_LAST_DETENT = -1;
 // Predefined values for `largestUndimmedDetentIndex`. Keep in sync with native counterpart.
 const FORM_SHEET_ALWAYS_DIMMED = -1;
@@ -51,6 +51,37 @@ export function resolveInitialDetentIndex(
     "[RNScreens] Invalid value provided for 'initialDetentIndex'. Expected a number or 'last'. Falling back to 0.",
   );
   return 0;
+}
+
+/**
+ * Resolves the index passed to the `selectDetent` command to a native numeric value.
+ *
+ * @param index The index passed to the command.
+ * @param detentsCount Length of the `detents` array as seen from JS.
+ * @returns A value to pass to the native command (`-1` for `last` or a non-negative index),
+ * or `undefined` if the index is invalid and the command should be skipped.
+ */
+export function resolveSelectedDetentIndex(
+  index: number | 'last',
+  detentsCount: number = 0,
+): number | undefined {
+  if (index === 'last') {
+    return FORM_SHEET_LAST_DETENT;
+  }
+
+  const lastDetentIndex = Math.max(detentsCount - 1, 0);
+
+  if (
+    typeof index !== 'number' ||
+    !isIndexInClosedRange(index, 0, lastDetentIndex)
+  ) {
+    console.error(
+      `[RNScreens] Invalid index provided to 'selectDetent' (${index}). Expected an integer between 0 and ${lastDetentIndex} or 'last'. Ignoring the call.`,
+    );
+    return undefined;
+  }
+
+  return index;
 }
 
 export function resolveNativeCornerRadius(

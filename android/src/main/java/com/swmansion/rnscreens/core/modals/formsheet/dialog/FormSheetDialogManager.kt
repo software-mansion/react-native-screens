@@ -90,6 +90,10 @@ class FormSheetDialogManager(
         }
     }
 
+    internal fun selectDetent(index: Int) {
+        presentationManager.selectDetent(index)
+    }
+
     internal fun destroy() {
         presentationManager.destroy()
     }

@@ -33,6 +33,27 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
   return YES;
 }
 
+static UISheetPresentationControllerDetentIdentifier RNSDetentIdentifierAtIndex(
+    NSArray<UISheetPresentationControllerDetent *> *detents,
+    NSUInteger index)
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return detents[index].identifier;
+  } else
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  {
+    // iOS 15 Fallback - mirroring buildSheetDetentsForFractions:
+    UISheetPresentationControllerDetent *targetDetent = detents[index];
+
+    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
+      return UISheetPresentationControllerDetentIdentifierMedium;
+    }
+
+    return UISheetPresentationControllerDetentIdentifierLarge;
+  }
+}
+
 @implementation RNSFormSheetDetentResolver
 
 + (NSArray<UISheetPresentationControllerDetent *> *)buildSheetDetentsWithBehaviorProvider:
@@ -132,21 +153,7 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
     initialIndex = 0;
   }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (@available(iOS 16.0, *)) {
-    return detents[(NSUInteger)initialIndex].identifier;
-  } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  {
-    // iOS 15 Fallback - mirroring buildSheetDetentsForFractions:
-    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)initialIndex];
-
-    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
-      return UISheetPresentationControllerDetentIdentifierMedium;
-    }
-
-    return UISheetPresentationControllerDetentIdentifierLarge;
-  }
+  return RNSDetentIdentifierAtIndex(detents, (NSUInteger)initialIndex);
 }
 
 + (nullable UISheetPresentationControllerDetentIdentifier)
@@ -167,21 +174,23 @@ static BOOL RNSAreDetentsStrictlyAscending(const std::vector<double> &detents)
     return nil;
   }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (@available(iOS 16.0, *)) {
-    return detents[(NSUInteger)ludIndex].identifier;
-  } else
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  {
-    // iOS 15 Fallback - mirroring buildSheetDetentsForFractions:
-    UISheetPresentationControllerDetent *targetDetent = detents[(NSUInteger)ludIndex];
+  return RNSDetentIdentifierAtIndex(detents, (NSUInteger)ludIndex);
+}
 
-    if ([targetDetent isEqual:[UISheetPresentationControllerDetent mediumDetent]]) {
-      return UISheetPresentationControllerDetentIdentifierMedium;
-    }
++ (nullable UISheetPresentationControllerDetentIdentifier)selectedDetentIdentifierForDetents:
+                                                              (NSArray<UISheetPresentationControllerDetent *> *)detents
+                                                                            atRequestedIndex:(NSInteger)requestedIndex
+{
+  NSInteger selectedIndex = requestedIndex == kRNSFormSheetLastDetent ? (NSInteger)detents.count - 1 : requestedIndex;
 
-    return UISheetPresentationControllerDetentIdentifierLarge;
+  if (selectedIndex < 0 || selectedIndex >= (NSInteger)detents.count) {
+    RCTLogError(@"[RNScreens] selectDetent index (%ld) exceeds effective detents count (%lu). Command ignored.",
+                (long)requestedIndex,
+                (unsigned long)detents.count);
+    return nil;
   }
+
+  return RNSDetentIdentifierAtIndex(detents, (NSUInteger)selectedIndex);
 }
 
 + (NSInteger)detentIndexFromDetentIdentifier:(nullable UISheetPresentationControllerDetentIdentifier)identifier
