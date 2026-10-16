@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_END
 #ifndef NS_BLOCK_ASSERTIONS
 #define RNSAssert(condition, ...)                                              \
   do {                                                                         \
-    if ((condition) == 0) {                                                    \
+    if (!(condition)) {                                                        \
       _RNSAssertFormat(#condition, __FILE__, __LINE__, __func__, __VA_ARGS__); \
     }                                                                          \
   } while (0)
