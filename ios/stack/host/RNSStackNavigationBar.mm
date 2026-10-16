@@ -32,6 +32,13 @@ static void *const RNSBackButtonMenuEnabledKVOContext = (void *)&RNSBackButtonMe
 
 - (void)enforceBackButtonMenuState
 {
+  if (@available(iOS 27.0, *)) {
+    // On iOS 27+ the menu is disabled through the back bar button item instead
+    // (see RNSStackScreenHeaderCoordinator), which also covers back buttons that
+    // UIKit draws outside the navigation bar.
+    return;
+  }
+
   UIView *wrapperView = [self rnscreens_findBackButtonWrapperView];
   if (wrapperView != _observedBackButtonWrapper) {
     [_observedBackButtonWrapper removeObserver:self
