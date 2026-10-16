@@ -1,8 +1,9 @@
 import { device, expect, element, by, waitFor } from 'detox';
+import { expectFormSheetDetentIndex } from '@e2e/framework/form-sheet';
 import { countMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_ANDROID_BOTTOM_SHEET_DRAG_HANDLE_VIEW } from '@e2e/framework/native-classes-android';
 import { CLASS_NAME_UI_GRABBER } from '@e2e/framework/native-classes-ios';
-import { describeIfAndroid } from '@e2e/framework/platform';
+import { describeIfAndroid, isIPadTarget } from '@e2e/framework/platform';
 import { DEFAULT_TIMEOUT_MS, waitUntil } from '@e2e/framework/wait';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 
@@ -11,6 +12,7 @@ const SHEET_CONTENT = 'formsheet-grabber-content';
 const HOST_SWITCH = 'host-grabber-switch';
 const SHEET_SWITCH = 'sheet-grabber-switch';
 const DISMISS_BUTTON = 'dismiss-formsheet-button';
+const DETENTS = [0.6, 1.0];
 
 /**
  * iOS creates `_UIGrabber` only once the grabber is first shown, and afterwards
@@ -38,6 +40,14 @@ async function expectGrabber(visible: boolean): Promise<void> {
     },
     { message: `iOS grabber to be ${visible ? 'present' : 'absent'}` },
   );
+}
+
+/** No-op on iPad: the floating panel has no detent geometry to measure. */
+async function expectLowerDetentUnlessIPad(): Promise<void> {
+  if (isIPadTarget) {
+    return;
+  }
+  await expectFormSheetDetentIndex(DETENTS, 0);
 }
 
 async function openSheet(): Promise<void> {
@@ -72,6 +82,7 @@ describe('Formsheet: grabber visibility', () => {
   it('should present without a grabber by default and dismiss by swipe', async () => {
     await openSheet();
     await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(false);
+    await expectLowerDetentUnlessIPad();
     await expectGrabber(false);
 
     await dismissBySwipe();
@@ -82,6 +93,7 @@ describe('Formsheet: grabber visibility', () => {
     await element(by.id(HOST_SWITCH)).tap();
     await openSheet();
     await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(true);
+    await expectLowerDetentUnlessIPad();
     await expectGrabber(true);
   });
 
