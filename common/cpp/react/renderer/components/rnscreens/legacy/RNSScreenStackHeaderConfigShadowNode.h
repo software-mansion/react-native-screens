@@ -30,6 +30,12 @@ class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
 
 #pragma mark - Custom interface
 
+  /**
+   * The frame origin `layout()` sets, given the one computed by Yoga. The
+   * component descriptor compares it with the current layout metrics.
+   */
+  Point correctFrameOrigin(Point origin) const;
+
 #if !defined(ANDROID)
   void setImageLoader(std::weak_ptr<void> imageLoader);
 #endif // !ANDROID && !NDEBUG

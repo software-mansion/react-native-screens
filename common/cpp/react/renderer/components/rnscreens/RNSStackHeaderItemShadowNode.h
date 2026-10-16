@@ -23,6 +23,13 @@ class JSI_EXPORT RNSStackHeaderItemShadowNode final
 
   void layout(LayoutContext layoutContext) override;
 
+  /**
+   * The frame origin `layout()` sets, given the one computed by Yoga: native
+   * positions the item in the navigation bar and reports where. The component
+   * descriptor compares it with the current layout metrics.
+   */
+  Point correctFrameOrigin(Point origin) const;
+
  private:
   void applyFrameCorrections();
 };

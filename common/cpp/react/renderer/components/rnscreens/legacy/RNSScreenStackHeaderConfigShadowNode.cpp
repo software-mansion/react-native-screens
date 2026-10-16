@@ -7,7 +7,11 @@ extern const char RNSScreenStackHeaderConfigComponentName[] =
 
 void RNSScreenStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
   YogaLayoutableShadowNode::layout(layoutContext);
+  applyFrameCorrections();
+}
 
+Point RNSScreenStackHeaderConfigShadowNode::correctFrameOrigin(
+    Point origin) const {
 #if defined(ANDROID)
   const auto &headerProps =
       *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
@@ -16,22 +20,23 @@ void RNSScreenStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
     // On Android, when header is translucent, the Screen is laid out underneath
     // the native header view, therefore HeaderConfig origin already matches
     // the toolbar & the correction is not needed.
-    return;
+    return origin;
   }
 #endif // defined(ANDROID)
-  applyFrameCorrections();
+
+  const auto &stateData = getStateData();
+#if defined(ANDROID)
+  origin.y = -stateData.frameSize.height;
+#else // defined(ANDROID)
+  origin.x = stateData.frameOrigin.x;
+  origin.y = stateData.frameOrigin.y;
+#endif // defined(ANDROID)
+  return origin;
 }
 
 void RNSScreenStackHeaderConfigShadowNode::applyFrameCorrections() {
   ensureUnsealed();
-
-  const auto &stateData = getStateData();
-#if defined(ANDROID)
-  layoutMetrics_.frame.origin.y = -stateData.frameSize.height;
-#else // defined(ANDROID)
-  layoutMetrics_.frame.origin.x = stateData.frameOrigin.x;
-  layoutMetrics_.frame.origin.y = stateData.frameOrigin.y;
-#endif // defined(ANDROID)
+  layoutMetrics_.frame.origin = correctFrameOrigin(layoutMetrics_.frame.origin);
 }
 
 #if !defined(ANDROID)

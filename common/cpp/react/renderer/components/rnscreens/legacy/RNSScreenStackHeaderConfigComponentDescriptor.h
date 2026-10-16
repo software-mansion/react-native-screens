@@ -52,6 +52,10 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
     }
 #endif // ANDROID
 
+    // `layout()` takes the frame origin from state (on Android, the Y origin
+    // from the toolbar height), so re-run it when that origin changes.
+    rnscreens::dirtyLayoutIfFrameOriginStale(configShadowNode);
+
     ConcreteComponentDescriptor::adopt(shadowNode);
 #if !defined(ANDROID)
     std::weak_ptr<void> imageLoader =
