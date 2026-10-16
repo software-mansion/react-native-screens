@@ -23,8 +23,6 @@ rnscreens_cpp_flags << "-DRNS_USE_CXXBRIDGE=1" if use_cxxbridge
 rnscreens_config  =  {
   'OTHER_CPLUSPLUSFLAGS' => rnscreens_cpp_flags.join(" ")
 }
-# `RNSLog.h` is plain Objective-C, so the flag must reach `.m` files too.
-rnscreens_config['OTHER_CFLAGS'] = '$(inherited) -DRNS_DEBUG_LOGGING=1' if debug_logging_enabled
 
 rnscreens_config['DEFINES_MODULE'] = 'YES'
 
