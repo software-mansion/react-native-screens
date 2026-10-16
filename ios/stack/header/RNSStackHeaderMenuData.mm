@@ -6,6 +6,9 @@
 
 - (instancetype)initWithId:(NSString *)menuElementId
                      title:(nullable NSString *)title
+                  subtitle:(nullable NSString *)subtitle
+                  disabled:(BOOL)disabled
+               destructive:(BOOL)destructive
                   itemType:(RNSMenuItemType)itemType
         initialToggleState:(BOOL)initialToggleState
         keepsMenuPresented:(BOOL)keepsMenuPresented
@@ -14,6 +17,9 @@
   if (self = [super init]) {
     _menuElementId = [menuElementId copy];
     _title = [title copy];
+    _subtitle = [subtitle copy];
+    _disabled = disabled;
+    _destructive = destructive;
     _itemType = itemType;
     _initialToggleState = initialToggleState;
     _keepsMenuPresented = keepsMenuPresented;

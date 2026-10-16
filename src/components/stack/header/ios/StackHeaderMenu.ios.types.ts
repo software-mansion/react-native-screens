@@ -34,6 +34,34 @@ export interface StackHeaderMenuItemIOS {
    */
   title?: string | undefined;
   /**
+   * @summary Secondary text displayed below the menu item's title.
+   *
+   * @remarks Requires iOS 15.0 or later. Ignored on older versions.
+   *
+   * @platform ios
+   */
+  subtitle?: string | undefined;
+  /**
+   * @summary Disables user interaction with the menu item.
+   *
+   * @description
+   * Applies to both actions and toggles. Tapping a disabled item emits neither
+   * press nor selection callbacks. Programmatic toggle state updates remain available.
+   *
+   * @default false
+   * @platform ios
+   */
+  disabled?: boolean | undefined;
+  /**
+   * @summary Marks the menu item as a destructive operation.
+   *
+   * @description Applies the system's destructive appearance to actions and toggles.
+   *
+   * @default false
+   * @platform ios
+   */
+  destructive?: boolean | undefined;
+  /**
    * @summary Determines the behavior of the menu item.
    *
    * @description
