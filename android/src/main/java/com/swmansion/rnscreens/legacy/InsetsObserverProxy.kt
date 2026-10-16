@@ -18,6 +18,10 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     // context lifetime handling.
     private var isObservingContextLifetime: Boolean = false
 
+    /**
+     * Notifies listeners with root window insets, falling back to [insets] when unavailable.
+     * Returns [insets] unchanged so observation does not consume them.
+     */
     override fun onApplyWindowInsets(
         v: View,
         insets: WindowInsetsCompat,
@@ -30,8 +34,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         return insets
     }
 
-    // Call this method to ensure that the observer proxy is
-    // unregistered when apps is destroyed or we change activity.
+    /** Subscribes to host lifecycle events so host destruction removes the observer. */
     fun registerWithContext(context: ReactApplicationContext) {
         if (isObservingContextLifetime) {
             Log.w(
@@ -44,27 +47,36 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         context.addLifecycleEventListener(this)
     }
 
+    /** Leaves registration to the sheet lifecycle when the host resumes. */
     override fun onHostResume() = Unit
 
+    /** Keeps the observer attached while the host is paused. */
     override fun onHostPause() = Unit
 
+    /** Removes the observer and resets context tracking when the host is destroyed. */
     override fun onHostDestroy() {
         unregister()
         isObservingContextLifetime = false
     }
 
+    /** Adds [listener] once and requests insets from the observer for a new subscription. */
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
         if (listeners.add(listener)) {
             getObservedView()?.let { ViewCompat.requestApplyInsets(it) }
         }
     }
 
+    /** Stops notifying [listener] without detaching the shared observer. */
     fun removeOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
         listeners.remove(listener)
     }
 
     /**
-     * @return whether an observer was attached to this view group
+     * Observes insets through an owned first child, leaving [view]'s listener unchanged.
+     * Reuses an observer already attached to [view] and requests current insets.
+     *
+     * @return true if a new observer was attached, or false if the existing one was reused
+     * @throws IllegalStateException if [view] is not a [ViewGroup]
      */
     fun registerOnView(view: View): Boolean {
         check(view is ViewGroup) { "[RNScreens] Insets observation requires a view group" }
@@ -79,6 +91,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         // Keep our listener on a view we own; other libraries also observe the decor view.
         val observer =
             object : View(view.context) {
+                /** Requests insets on attachment, including when the keyboard is already visible. */
                 override fun onAttachedToWindow() {
                     super.onAttachedToWindow()
                     ViewCompat.requestApplyInsets(this)
@@ -93,6 +106,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         return true
     }
 
+    /** Removes the owned observer and its listener, retaining subscriptions for later registration. */
     fun unregister() {
         getObservedView()?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it, null)
@@ -101,5 +115,6 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         eventSourceView.clear()
     }
 
+    /** Returns the owned observer, or null if its weak reference has been cleared. */
     private fun getObservedView(): View? = eventSourceView.get()
 }
