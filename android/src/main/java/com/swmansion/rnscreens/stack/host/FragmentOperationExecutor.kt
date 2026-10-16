@@ -23,7 +23,7 @@ internal class FragmentOperationExecutor {
     ) {
         fragmentManager.createTransactionWithReordering().let { tx ->
             if (op.addToBackStack) {
-                tx.addToBackStack(op.fragment.stackScreen.screenKey)
+                tx.addToBackStack(op.fragment.item.itemKey)
             }
             tx.add(op.containerViewId, op.fragment)
             op.coveredFragment?.let { tx.detach(it) }
@@ -37,7 +37,7 @@ internal class FragmentOperationExecutor {
         op: PopBackStackOp,
     ) {
         fragmentManager.popBackStack(
-            op.fragment.stackScreen.screenKey,
+            op.fragment.item.itemKey,
             FragmentManager.POP_BACK_STACK_INCLUSIVE,
         )
     }

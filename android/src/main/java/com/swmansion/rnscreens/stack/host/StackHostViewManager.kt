@@ -12,7 +12,7 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.stack.screen.StackScreen
 
 @ReactModule(name = StackHostViewManager.REACT_CLASS)
-class StackHostViewManager :
+internal class StackHostViewManager :
     ViewGroupManager<StackHost>(),
     RNSStackHostManagerInterface<StackHost> {
     private val delegate: ViewManagerDelegate<StackHost> = RNSStackHostManagerDelegate<StackHost, StackHostViewManager>(this)

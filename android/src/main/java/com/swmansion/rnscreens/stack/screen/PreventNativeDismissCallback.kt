@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.core.utils.RNSLog
 
 internal class PreventNativeDismissCallback(
     lifecycleOwner: LifecycleOwner,
-    private val screen: StackScreen,
+    private val item: StackContainerItem,
     canBeEnabled: Boolean,
 ) : OnBackPressedCallback(false),
     LifecycleEventObserver,
@@ -24,15 +24,15 @@ internal class PreventNativeDismissCallback(
         }
 
     private val shouldBeEnabled
-        get() = canBeEnabled && screen.isPreventNativeDismissEnabled
+        get() = canBeEnabled && item.isPreventNativeDismissEnabled
 
     init {
         lifecycleOwner.lifecycle.addObserver(this)
     }
 
     override fun handleOnBackPressed() {
-        RNSLog.i("RNScreens", "PreventNativeDismissCallback called for screen ${screen.screenKey}")
-        screen.onNativeDismissPrevented()
+        RNSLog.i("RNScreens", "PreventNativeDismissCallback called for screen ${item.itemKey}")
+        item.onNativeDismissPrevented()
     }
 
     override fun onStateChanged(
@@ -41,7 +41,7 @@ internal class PreventNativeDismissCallback(
     ) {
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
-                screen.preventNativeDismissChangeObserver = this
+                item.preventNativeDismissChangeObserver = this
             }
 
             Lifecycle.Event.ON_START -> {
@@ -54,7 +54,7 @@ internal class PreventNativeDismissCallback(
 
             Lifecycle.Event.ON_DESTROY -> {
                 source.lifecycle.removeObserver(this)
-                screen.preventNativeDismissChangeObserver = null
+                item.preventNativeDismissChangeObserver = null
             }
 
             else -> {

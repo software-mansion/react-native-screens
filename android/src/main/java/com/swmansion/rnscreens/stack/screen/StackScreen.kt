@@ -1,11 +1,12 @@
 package com.swmansion.rnscreens.stack.screen
 
 import android.annotation.SuppressLint
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
@@ -20,12 +21,12 @@ import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor") // should never be restored
-class StackScreen(
+internal class StackScreen(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     FragmentProviding,
     ScrollViewSeeking,
-    ContainerItem {
+    StackContainerItem {
     enum class ActivityMode {
         DETACHED,
         ATTACHED,
@@ -33,7 +34,7 @@ class StackScreen(
 
     private val containerItemSupport = ContainerItemSupport()
 
-    internal var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+    override var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             preventNativeDismissChangeObserver?.preventNativeDismissChanged(newValue)
         }
@@ -68,7 +69,7 @@ class StackScreen(
 
     internal var stateWrapper by shadowStateProxy::stateWrapper
 
-    internal fun onContentYOriginChanged(y: Int) {
+    override fun onContentYOriginChanged(y: Int) {
         shadowStateProxy.updateStateIfNeeded(
             density = resources.displayMetrics.density,
             contentOffsetY = y,
@@ -98,7 +99,7 @@ class StackScreen(
 
     private var onHeaderConfigurationAttachListener: WeakReference<OnHeaderConfigurationAttachListener>? = null
 
-    internal fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener) {
+    override fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener) {
         check(onHeaderConfigurationAttachListener?.get() == null) {
             "[RNScreens] Attempted to register header config attach listener before previous listener was cleared."
         }
@@ -106,7 +107,7 @@ class StackScreen(
         headerConfig?.let { listener.onHeaderConfigAttached(it, it) }
     }
 
-    internal fun clearHeaderConfigAttachListener() {
+    override fun clearHeaderConfigAttachListener() {
         onHeaderConfigurationAttachListener = null
     }
 
@@ -138,10 +139,7 @@ class StackScreen(
 
     internal lateinit var eventEmitter: StackScreenEventEmitter
 
-    /**
-     * Use this to set/unset the observer.
-     */
-    internal var preventNativeDismissChangeObserver: PreventNativeDismissChangeObserver? = null
+    override var preventNativeDismissChangeObserver: PreventNativeDismissChangeObserver? = null
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
@@ -149,19 +147,25 @@ class StackScreen(
         eventEmitter = StackScreenEventEmitter(reactContext, id)
     }
 
-    internal fun createAppearanceEventsEmitter(viewLifecycleOwner: LifecycleOwner) =
-        StackScreenAppearanceEventsEmitter(viewLifecycleOwner.lifecycle, eventEmitter)
+    override val appearanceEventEmitter: ViewAppearanceEventEmitter
+        get() = eventEmitter
 
-    internal fun onDismiss() {
+    override fun onDismiss() {
         if (activityMode == ActivityMode.ATTACHED) {
             isNativelyDismissed = true
         }
         eventEmitter.emitOnDismiss(isNativelyDismissed)
     }
 
-    internal fun onNativeDismissPrevented() {
+    override fun onNativeDismissPrevented() {
         eventEmitter.emitOnNativeDismissPrevented()
     }
+
+    override val view: View
+        get() = this
+
+    override val itemKey: String?
+        get() = screenKey
 
     override fun getAssociatedFragment(): Fragment? =
         this.findFragmentOrNull()?.also {
