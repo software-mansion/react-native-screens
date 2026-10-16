@@ -100,6 +100,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)showColumnNamed:(NSString *)columnName;
 
+/**
+ * @brief Programmatically hides a sidebar column using UISplitViewController's native transition.
+ *
+ * @param columnName A string representing the column to hide: "primary" or "supplementary".
+ */
+- (void)hideColumnNamed:(NSString *)columnName;
+
 @end
 
 NS_ASSUME_NONNULL_END
