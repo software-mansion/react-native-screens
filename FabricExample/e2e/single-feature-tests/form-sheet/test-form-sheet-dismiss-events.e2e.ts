@@ -13,16 +13,20 @@ import { CLASS_NAME_ANDROID_COORDINATOR_LAYOUT } from '@e2e/framework/native-cla
 const itIfAndroid = device.getPlatform() === 'android' ? it : it.skip;
 
 /**
- * Taps the dimmed area outside the sheet. Android reports frames in px but
- * takes tap points in dp, so it taps the sheet dialog's full-window layout at a
- * fixed dp offset well above the lower detent instead of converting units.
+ * Backdrop tap point on Android, in dp from the dialog window's top-left
+ * (Detox takes tap points in dp, but reports frames in px).
+ * - y: 80 clears the status bar (~24–50 dp) and stays far above the sheet at
+ *   the 0.6 detent, whose top sits at 40% of the window (300+ dp on any phone).
+ * - x: any value works; the backdrop spans the full width.
  */
+const ANDROID_BACKDROP_TAP_DP = { x: 24, y: 80 };
+
+/** Taps the dimmed area outside the sheet. */
 async function tapFormSheetBackdrop() {
   if (device.getPlatform() === 'android') {
-    await element(by.type(CLASS_NAME_ANDROID_COORDINATOR_LAYOUT)).tap({
-      x: 24,
-      y: 80,
-    });
+    await element(by.type(CLASS_NAME_ANDROID_COORDINATOR_LAYOUT)).tap(
+      ANDROID_BACKDROP_TAP_DP,
+    );
     return;
   }
   // The host title sits above the sheet (iPhone) or beside the floating panel
