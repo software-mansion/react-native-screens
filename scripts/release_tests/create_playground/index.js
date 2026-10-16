@@ -4,6 +4,7 @@ const logger = require('./logger');
 const utils = require('./utils');
 const initApp = require('./tasks/initApp');
 const copyExample = require('./tasks/copyExample');
+const setupSceneDelegate = require('./tasks/setupSceneDelegate');
 const setupScreens = require('./tasks/setupScreens');
 const buildAndRun = require('./tasks/buildApp');
 
@@ -25,6 +26,7 @@ console.table({
   'ios-device': config['ios-device'] ?? '',
   'ios-udid': config['ios-udid'] ?? '',
   'android-device': config['android-device'] ?? '',
+  'scene-delegate': config['scene-delegate'],
 });
 console.log('--------------------------------------------------');
 
@@ -35,6 +37,7 @@ console.time('⏳ Total execution time');
 
 initApp(config, utils);
 copyExample(config, utils);
+setupSceneDelegate(config, utils);
 setupScreens(config, utils);
 if (config.run) {
   buildAndRun(config, utils);
