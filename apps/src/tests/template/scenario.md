@@ -70,16 +70,30 @@ Include any critical information for scenario execution not covered elsewhere. U
 are recorded here with a link (issue, Feedback Assistant / Apple report), not as
 failing steps. Name the device/posture/OS where it reproduces, e.g.:
 
-- **Known issue (iPhone Duo, open, landscape):** after rotating with a minimized tab bar the
-  accessory stops short of the tab bar. Native UIKit bug, reported to Apple (link).
+- **Known issue (iPhone Duo, open, landscape):** after rotating with a minimized
+  tab bar the accessory stops short of the tab bar. Native UIKit bug, reported to
+  Apple (link).
 
 ## Steps
 
 Step-by-step instructions for a tester to manually verify the scenario.
 
-**Format Convention:** Action steps are numbered (e.g., 1. Action). The expected results for that action immediately
-follow as Markdown checkboxes (- [ ] Expected result). You can use multiple checkboxes to separate distinct outcomes.
-Use subheadings to group steps logically (e.g., ### Baseline).
+### Conventions
+
+**Format Convention:** Action steps are numbered (e.g., 1. Action). The expected
+results for that action immediately follow as Markdown checkboxes
+(- [ ] Expected result). You can use multiple checkboxes to separate distinct
+outcomes. Use subheadings to group steps logically (e.g., ### Baseline).
+
+**Numbering Convention:** Numbering restarts from 1 in every `###` subsection and
+in every `## Steps - <device>` section. Separate subsections with a horizontal
+rule (`---`). When referring to another step, always name its section and
+subsection, e.g. "Baseline step 2" or "iPhone Duo, Unfolding step 1" - a bare
+"step 2" is ambiguous.
+
+**Indentation Convention:** Expected-result checkboxes are indented with
+4 spaces (`    - [ ] Expected result`). When a checkbox wraps onto more lines,
+align the continuation lines with the checkbox text (10 spaces).
 
 ### How to write OS and device differences
 
@@ -87,29 +101,31 @@ Keep one `scenario.md` per test. Do not create per-device files
 (`scenario-ipad.md`, `scenario-duo.md`, ...).
 
 - **OS / platform differences** (iOS 18 vs 26, iOS vs Android) go as prefixed
-  checkboxes inside the step, not as separate sections:
+  checkboxes inside the step, not as separate sections. Write the prefix with a
+  space: `iOS 18:`, `iOS 26:`, `Android:`.
 
   ```text
-  - [ ] iOS 18: the tab bar is opaque.
-  - [ ] iOS 26: the tab bar uses Liquid Glass.
-  - [ ] Android: the tab bar is at the bottom.
+      - [ ] iOS 18: the tab bar is opaque.
+      - [ ] iOS 26: the tab bar uses Liquid Glass.
+      - [ ] Android: the tab bar is at the bottom.
   ```
 
 - **Device differences** go into a `## Steps - <device>` section, using exactly
   one of: `## Steps - iPhone`, `## Steps - iPad`, `## Steps - iPhone Duo`,
-  `## Steps - Android`. Add a device section **only for steps whose expected result
-  differs** on that device. Steps that behave the same everywhere stay in the
-  base `## Steps`.
+  `## Steps - Android`. Add a device section **only for steps whose expected
+  result differs** on that device. Steps that behave the same everywhere stay in
+  the base `## Steps`.
+- **Device-only scenarios.** If no step is shared by all listed devices (e.g. a
+  test run only on iPad and iPhone Duo), skip the base `## Steps` and write one
+  `## Steps - <device>` section per device.
 - **Avoid jumping around the file.** If a device shares only the first few steps
   and then diverges, or the tester would have to alternate between the base steps
   and the device section more than once, keep only the shared initial steps in
   `## Steps` and write the rest out in full inside the device section. Each
   section must be executable top to bottom without going back.
 - A device section starts by naming what it builds on and its setup, e.g.
-  `Run steps 1-3 from ## Steps first.` and, for Duo, the posture set:
+  `Run Baseline steps 1-3 from ## Steps first.` and, for Duo, the posture set:
   `Postures: closed portrait, open portrait; close and open with the screen shown.`
-- Number steps inside a device section from 1, so a tester can refer to
-  "iPhone Duo step 2".
 
 ### Where device-specific bugs and tests go
 
@@ -123,13 +139,8 @@ Keep one `scenario.md` per test. Do not create per-device files
 
 ### Example
 
-**Numbering Convention:** When steps are grouped into subsections (`###`),
-numbering restarts from 1 in each subsection. Separate subsections with a
-horizontal rule (`---`).
-
-**Indentation Convention:** Expected-result checkboxes are indented with
-4 spaces (`    - [ ] Expected result`). When a checkbox wraps onto more lines,
-align the continuation lines with the checkbox text (10 spaces).
+```markdown
+## Steps
 
 ### Baseline
 
@@ -143,12 +154,31 @@ align the continuation lines with the checkbox text (10 spaces).
 
 1. Tap ...
 
-    - [ ] iOS18: expected behavior on this OS version.
-    - [ ] iOS26: expected behavior on this OS version.
+    - [ ] iOS 18: expected behavior on this OS version.
+    - [ ] iOS 26: expected behavior on this OS version.
 
 2. Tap ...
 
     - [ ] Description of expected behavior after the action, wrapped onto
           a second line.
 
+## Steps - iPhone Duo
+
+Run Baseline step 1 from `## Steps` first.
+Postures: closed portrait, open portrait; close and open with the screen shown.
+
+### Closed
+
+1. With the device closed in portrait, tap ...
+
+    - [ ] The tab bar is shown as a vertical rail on the side.
+
 ---
+
+### Unfolding
+
+1. Open the device fully with the screen shown.
+
+    - [ ] The tab bar moves to the bottom; the selected tab is the same as in
+          Closed step 1.
+```
