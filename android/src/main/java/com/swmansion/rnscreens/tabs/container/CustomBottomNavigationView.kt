@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 
 @SuppressLint("ViewConstructor") // Should not be restored & should only be constructed by us.
 class CustomBottomNavigationView(
@@ -14,6 +15,34 @@ class CustomBottomNavigationView(
 ) : BottomNavigationView(context),
     ReactPointerEventsView {
     private var actionOrigin: TabsActionOrigin? = null
+
+    // region Menu item state
+
+    private val menuItemStates = HashMap<Int, TabsMenuItemState>()
+
+    internal fun menuItemState(menuItemId: Int): TabsMenuItemState = menuItemStates.getOrPut(menuItemId) { TabsMenuItemState() }
+
+    internal fun invalidateMenuItem(
+        menuItemId: Int,
+        flags: TabsItemInvalidationFlags,
+    ) {
+        val state = menuItemState(menuItemId)
+        state.pendingFlags = state.pendingFlags or flags
+    }
+
+    internal fun invalidateMenuItemIcons() {
+        menuItemStates.values.forEach { it.pendingFlags = it.pendingFlags or TabsItemInvalidationFlags.ICON }
+    }
+
+    /**
+     * Rebuilt menu items have nothing applied, so their fresh states are fully dirty. This also drops
+     * the states of removed tabs.
+     */
+    internal fun resetMenuItemStates() {
+        menuItemStates.clear()
+    }
+
+    // endregion
 
     /**
      * The tab bar is hidden by setting its visibility to `GONE`. A `GONE` view is skipped by its
