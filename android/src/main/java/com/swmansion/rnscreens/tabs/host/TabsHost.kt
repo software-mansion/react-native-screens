@@ -44,7 +44,13 @@ class TabsHost(
     private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
-        TabsContainer(reactContext, WeakReference(this), ViewIdGenerator, ReactTabsTitleFontResolver(reactContext)).apply {
+        TabsContainer(
+            reactContext,
+            WeakReference(this),
+            ViewIdGenerator,
+            ReactTabsTitleFontResolver(reactContext),
+            ::ReactTabsBottomNavigationView,
+        ).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
