@@ -22,13 +22,13 @@ import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderC
 import com.swmansion.rnscreens.react.containers.stack.header.subview.StackHeaderSubviewViewManager
 import com.swmansion.rnscreens.react.containers.stack.host.StackHostViewManager
 import com.swmansion.rnscreens.react.containers.stack.screen.StackScreenViewManager
+import com.swmansion.rnscreens.react.containers.tabs.host.TabsHostViewManager
+import com.swmansion.rnscreens.react.containers.tabs.screen.TabsScreenViewManager
 import com.swmansion.rnscreens.react.modals.formsheet.contentwrapper.FormSheetContentWrapperViewManager
 import com.swmansion.rnscreens.react.modals.formsheet.host.FormSheetHostViewManager
 import com.swmansion.rnscreens.react.module.ScreensModule
 import com.swmansion.rnscreens.react.views.safearea.SafeAreaViewManager
 import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewMarkerViewManager
-import com.swmansion.rnscreens.tabs.host.TabsHostViewManager
-import com.swmansion.rnscreens.tabs.screen.TabsScreenViewManager
 
 // Fool autolinking for older versions that do not support BaseReactPackage.
 // public class RNScreensPackage implements TurboReactPackage {
