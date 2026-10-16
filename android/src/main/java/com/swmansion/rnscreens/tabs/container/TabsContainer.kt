@@ -57,6 +57,7 @@ class TabsContainer internal constructor(
     private val delegate: WeakReference<TabsContainerDelegate>,
     private val viewIdProvider: ViewIdProviding,
     titleFontResolver: FontResolver,
+    bottomNavigationViewFactory: (Context, TabsContainer) -> TabsBottomNavigationView,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -133,7 +134,7 @@ class TabsContainer internal constructor(
         )
 
     internal val bottomNavigationView: TabsBottomNavigationView =
-        TabsBottomNavigationView(themedContext, this).apply {
+        bottomNavigationViewFactory(themedContext, this).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
