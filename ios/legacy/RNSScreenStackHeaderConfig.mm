@@ -607,8 +607,11 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
   navitem.titleView = nil;
-  navitem.leftBarButtonItems = nil;
-  navitem.rightBarButtonItems = nil;
+  // The bar button items are gathered here and set once at the end, animated when they change
+  // in place: with the previous items still on the bar, UIKit animates the change (on iOS 26 the
+  // glass group morphs) instead of rebuilding the bar.
+  NSMutableArray<UIBarButtonItem *> *leftItems = [NSMutableArray array];
+  NSMutableArray<UIBarButtonItem *> *rightItems = [NSMutableArray array];
 
 #if !TARGET_OS_TV
   // We want to set navitem.searchController to nil only if we are sure
@@ -621,17 +624,11 @@ RNS_IGNORE_SUPER_CALL_END
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-        NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:[subview getUIBarButtonItem]];
-        navitem.leftBarButtonItems = mutableItems;
+        [leftItems addObject:[subview getUIBarButtonItem]];
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:[subview getUIBarButtonItem]];
-        navitem.rightBarButtonItems = mutableItems;
+        [rightItems addObject:[subview getUIBarButtonItem]];
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
@@ -696,10 +693,15 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
-  navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
-                                                withCurrentItems:navitem.leftBarButtonItems];
-  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
-                                                 withCurrentItems:navitem.rightBarButtonItems];
+  // Animated only for a change in place, never inside a push or pop: there the transition
+  // coordinator animates the whole bar.
+  BOOL animateItems = animated && vc.transitionCoordinator == nil;
+  [navitem setLeftBarButtonItems:[config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+                                                   withCurrentItems:leftItems]
+                        animated:animateItems];
+  [navitem setRightBarButtonItems:[config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                    withCurrentItems:rightItems]
+                         animated:animateItems];
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
