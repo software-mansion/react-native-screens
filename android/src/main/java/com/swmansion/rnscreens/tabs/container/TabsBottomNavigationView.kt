@@ -9,7 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 
 @SuppressLint("ViewConstructor") // Should not be restored & should only be constructed by us.
-class CustomBottomNavigationView(
+class TabsBottomNavigationView(
     context: Context,
     val container: TabsContainer,
 ) : BottomNavigationView(context),
