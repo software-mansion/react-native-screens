@@ -14,7 +14,10 @@ Pass: nothing about the header resets on a tab switch.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Incomplete: every step is automated except two purely visual checks. The
+subtitle of a collapsing header is drawn by Material rather than rendered as a
+view, so Detox cannot read it, and the absence of a header flash on a tab
+switch cannot be observed either.
 
 ## Prerequisites
 
