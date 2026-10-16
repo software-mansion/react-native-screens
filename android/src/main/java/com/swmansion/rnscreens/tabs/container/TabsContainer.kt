@@ -132,8 +132,8 @@ class TabsContainer internal constructor(
             R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    internal val bottomNavigationView: CustomBottomNavigationView =
-        CustomBottomNavigationView(themedContext, this).apply {
+    internal val bottomNavigationView: TabsBottomNavigationView =
+        TabsBottomNavigationView(themedContext, this).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
