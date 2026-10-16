@@ -114,6 +114,7 @@ export interface NativeProps extends ViewProps {
   stackPresentation?: CT.WithDefault<StackPresentation, 'push'>;
   stackAnimation?: CT.WithDefault<StackAnimation, 'default'>;
   transitionDuration?: CT.WithDefault<CT.Int32, 500>;
+  transitionStartDeferred?: CT.WithDefault<boolean, false>;
   replaceAnimation?: CT.WithDefault<ReplaceAnimation, 'pop'>;
   swipeDirection?: CT.WithDefault<SwipeDirection, 'horizontal'>;
   hideKeyboardOnSwipe?: boolean | undefined;
