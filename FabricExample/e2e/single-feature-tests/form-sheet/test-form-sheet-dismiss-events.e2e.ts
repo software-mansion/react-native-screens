@@ -45,7 +45,6 @@ describe('FormSheet: dismiss events', () => {
     );
   });
 
-  // Step 1
   it('should show the host screen with an empty event log', async () => {
     await expect(element(by.id('formsheet-dismiss-events-title'))).toHaveLabel(
       'FormSheet Dismiss Test',
@@ -55,7 +54,6 @@ describe('FormSheet: dismiss events', () => {
     await expectEmptyEventLog();
   });
 
-  // Step 2
   it('should log only onNativeDismiss when swiped down past the lower detent', async () => {
     await openFormSheet();
     await element(by.id('formsheet-base-content')).swipe('down', 'fast');
@@ -63,7 +61,6 @@ describe('FormSheet: dismiss events', () => {
     await expectEventLog(['onNativeDismiss']);
   });
 
-  // Step 3
   it('should log only onNativeDismiss when the backdrop is tapped', async () => {
     await openFormSheet();
     await tapFormSheetBackdrop();
@@ -71,12 +68,10 @@ describe('FormSheet: dismiss events', () => {
     await expectEventLog(['onNativeDismiss', 'onNativeDismiss']);
   });
 
-  // Step 4
   it('should empty the event log when Clear Logs is pressed', async () => {
     await clearEventLog();
   });
 
-  // Step 5
   it('should log only onDismiss when dismissed from JS', async () => {
     await openFormSheet();
     await element(by.id('dismiss-formsheet-button')).tap();
@@ -84,7 +79,6 @@ describe('FormSheet: dismiss events', () => {
     await expectEventLog(['onDismiss']);
   });
 
-  // Step 6
   itIfAndroid(
     'should log only onNativeDismiss when dismissed with system back',
     async () => {
