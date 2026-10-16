@@ -271,6 +271,11 @@ class ScreenStackHeaderConfigViewManager :
         value: String?,
     ) = Unit
 
+    override fun setLargeTitleLetterSpacing(
+        view: ScreenStackHeaderConfig?,
+        value: Float,
+    ) = Unit
+
     override fun setLargeTitleBackgroundColor(
         view: ScreenStackHeaderConfig?,
         value: Int?,

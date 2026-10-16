@@ -497,6 +497,12 @@ RNS_IGNORE_SUPER_CALL_END
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
+  if (config.largeTitleLetterSpacing != 0) {
+    NSMutableDictionary *largeAttrs = [appearance.largeTitleTextAttributes mutableCopy];
+    largeAttrs[NSKernAttributeName] = @(config.largeTitleLetterSpacing);
+    appearance.largeTitleTextAttributes = largeAttrs;
+  }
+
   UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
@@ -1091,6 +1097,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
   _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
+  _largeTitleLetterSpacing = newScreenProps.largeTitleLetterSpacing;
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
   _largeTitleBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleBackgroundColor);
 
