@@ -329,12 +329,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)reactMountingTransactionWillMount
 {
-  RNSLogD(@"[RNScreens] TabBarCtrl mountintTransactionWillMount");
+  RNSLogD(@"TabBarCtrl mountintTransactionWillMount");
 }
 
 - (void)reactMountingTransactionDidMount
 {
-  RNSLogD(@"[RNScreens] TabBarCtrl mountintTransactionDidMount running updates");
+  RNSLogD(@"TabBarCtrl mountintTransactionDidMount running updates");
   [self performContainerUpdate];
 }
 
@@ -834,7 +834,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateReactChildrenControllers
 {
-  RNSLogD(@"[RNScreens] TabBarCtrl updateReactChildrenControllers");
+  RNSLogD(@"TabBarCtrl updateReactChildrenControllers");
   _needsUpdateOfChildViewControllers = false;
 
   if (_tabScreenControllers == nil) {
@@ -858,7 +858,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  RNSLogD(@"[RNScreens] TabBarCtrl updateSelectedViewController");
+  RNSLogD(@"TabBarCtrl updateSelectedViewController");
   [self updateSelectedViewControllerInner];
   _pendingStateUpdate = nil;
 }
@@ -914,7 +914,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     self.tabBar.overrideUserInterfaceStyle = nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
   }
 
-  RNSLogD(@"[RNScreens] Change selected view controller to: %@", nextSelectedViewControllerKey);
+  RNSLogD(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
                                                          withKey:nextSelectedViewControllerKey
                                                     actionOrigin:_pendingStateUpdate.actionOrigin];
@@ -947,7 +947,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateTabBarAppearance
 {
-  RNSLogD(@"[RNScreens] TabBarCtrl updateTabBarAppearance");
+  RNSLogD(@"TabBarCtrl updateTabBarAppearance");
   _needsUpdateOfTabBarAppearance = false;
 
   [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
@@ -1141,7 +1141,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  RNSLogD(@"[RNScreens] TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
+  RNSLogD(@"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
           _navigationState.selectedScreenKey,
           selectedScreenKey);
   [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
