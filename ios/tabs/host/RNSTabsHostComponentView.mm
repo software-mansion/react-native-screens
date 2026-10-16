@@ -3,6 +3,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTMountingTransactionObserving.h>
+#import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -137,7 +138,7 @@ namespace react = facebook::react;
   }
 }
 
-#pragma mark - RNSScreenContainerDelegate
+#pragma mark - Container updates
 
 - (void)updateContainer
 {
@@ -187,11 +188,6 @@ namespace react = facebook::react;
     }
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   }
-}
-
-- (void)markChildUpdated
-{
-  [self updateContainer];
 }
 
 #pragma mark - React events
