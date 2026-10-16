@@ -163,12 +163,12 @@ namespace react = facebook::react;
   }
 
   if (_hasModifiedTabsScreensInCurrentTransaction) {
-    RNSLogD(@"updateContainer: tabControllers: %@", tabControllers);
+    RNSLogD(@"[RNScreens] updateContainer: tabControllers: %@", tabControllers);
     [_controller childViewControllersHaveChangedTo:tabControllers];
   }
 
   if (_hasModifiedBottomAccessoryInCurrentTransation) {
-    RNSLogD(@"updateContainer: bottomAccessory: %@", bottomAccessory);
+    RNSLogD(@"[RNScreens] updateContainer: bottomAccessory: %@", bottomAccessory);
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
     if (@available(iOS 26.0, *)) {
       if (bottomAccessory != nil) {
