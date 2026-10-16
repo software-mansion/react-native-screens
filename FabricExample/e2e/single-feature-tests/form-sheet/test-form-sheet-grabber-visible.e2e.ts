@@ -63,13 +63,13 @@ describe('Formsheet: grabber visibility', () => {
     );
   });
 
-  it('should show host switch off and the open button [step 1]', async () => {
+  it('should show host switch off and the open button', async () => {
     await expect(element(by.id(HOST_SWITCH))).toBeVisible();
     await expect(element(by.id(HOST_SWITCH))).toHaveToggleValue(false);
     await expect(element(by.id(OPEN_BUTTON))).toBeVisible();
   });
 
-  it('should present without a grabber by default and dismiss by swipe [steps 2-3]', async () => {
+  it('should present without a grabber by default and dismiss by swipe', async () => {
     await openSheet();
     await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(false);
     await expectGrabber(false);
@@ -78,7 +78,7 @@ describe('Formsheet: grabber visibility', () => {
     await expect(element(by.id(OPEN_BUTTON))).toBeVisible();
   });
 
-  it('should present with a grabber when enabled from the host screen [step 4]', async () => {
+  it('should present with a grabber when enabled from the host screen', async () => {
     await element(by.id(HOST_SWITCH)).tap();
     await openSheet();
     await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(true);
