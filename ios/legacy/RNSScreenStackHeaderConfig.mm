@@ -306,6 +306,16 @@ RNS_IGNORE_SUPER_CALL_END
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
       RCTImageComponentView *imageView = subview.subviews[0];
+      // A URI with no scheme may name an asset-catalog image or custom symbol, which no
+      // React Native image loader reads. Try UIKit's catalog lookup first; on a miss,
+      // fall through to the stock path.
+      NSURL *url = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView].request.URL;
+      if (url != nil && url.scheme == nil) {
+        UIImage *namedImage = [UIImage imageNamed:url.absoluteString];
+        if (namedImage != nil) {
+          return namedImage;
+        }
+      }
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
         // certain circumstances image attribute can be null despite the app running in production
