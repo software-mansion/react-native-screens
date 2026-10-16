@@ -16,8 +16,9 @@ static RCTLogLevel RCTLogLevelFromRNSLogLevel(RNSLogLevel level)
     case RNSLogLevelWarning:
       return RCTLogLevelWarning;
     case RNSLogLevelError:
-    case RNSLogLevelWTF:
       return RCTLogLevelError;
+    case RNSLogLevelWTF:
+      return RCTLogLevelFatal;
   }
   return RCTLogLevelError;
 }
