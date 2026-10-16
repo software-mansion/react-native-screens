@@ -17,9 +17,6 @@ class RNSFormSheetHostComponentDescriptor final
     auto &concreteShadowNode =
         static_cast<RNSFormSheetHostShadowNode &>(shadowNode);
 
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&concreteShadowNode));
-
     auto state = std::static_pointer_cast<
         const RNSFormSheetHostShadowNode::ConcreteState>(shadowNode.getState());
 

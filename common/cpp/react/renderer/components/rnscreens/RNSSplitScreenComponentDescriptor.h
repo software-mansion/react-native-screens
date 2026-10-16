@@ -18,9 +18,6 @@ class RNSSplitScreenComponentDescriptor final
     auto &splitScreenShadowNode =
         static_cast<RNSSplitScreenShadowNode &>(shadowNode);
 
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&splitScreenShadowNode));
-
     auto state =
         std::static_pointer_cast<const RNSSplitScreenShadowNode::ConcreteState>(
             shadowNode.getState());

@@ -36,9 +36,6 @@ class RNSScreenComponentDescriptor final
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
 
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-
     auto state =
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
             shadowNode.getState());

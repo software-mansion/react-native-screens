@@ -6,7 +6,7 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "RNSSplitScreenState.h"
-#include "utils/YogaSizeUtil.h"
+#include "utils/LayoutFromState.h"
 
 namespace facebook::react {
 
@@ -19,18 +19,11 @@ using ConcreteViewShadowNodeSuperType = ConcreteViewShadowNode<
     RNSSplitScreenState>;
 
 class JSI_EXPORT RNSSplitScreenShadowNode final
-    : public ConcreteViewShadowNodeSuperType {
+    : public rnscreens::SizeFromStateShadowNode<
+          ConcreteViewShadowNodeSuperType> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
-
-  // Like `setSize`, but leaves the Yoga node clean when the size is unchanged.
-  // See `rnscreens::yogaStyleHasSize`.
-  void setSizeIfChanged(Size size) const {
-    if (!rnscreens::yogaStyleHasSize(yogaNode_.style(), size)) {
-      setSize(size);
-    }
-  }
 
 #pragma mark - ShadowNode overrides
 

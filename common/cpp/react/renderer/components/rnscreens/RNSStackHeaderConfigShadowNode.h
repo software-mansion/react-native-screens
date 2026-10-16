@@ -6,14 +6,14 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "RNSStackHeaderConfigState.h"
-#include "utils/YogaSizeUtil.h"
+#include "utils/LayoutFromState.h"
 
 namespace facebook::react {
 
 JSI_EXPORT extern const char RNSStackHeaderConfigComponentName[];
 
 class JSI_EXPORT RNSStackHeaderConfigShadowNode final
-    : public ConcreteViewShadowNode<
+    : public rnscreens::SizeFromStateShadowNode<ConcreteViewShadowNode<
           RNSStackHeaderConfigComponentName,
 #if !defined(ANDROID)
           RNSStackHeaderConfigIOSProps,
@@ -22,18 +22,10 @@ class JSI_EXPORT RNSStackHeaderConfigShadowNode final
           RNSStackHeaderConfigAndroidProps,
           RNSStackHeaderConfigAndroidEventEmitter,
 #endif // !defined(ANDROID)
-          RNSStackHeaderConfigState> {
+          RNSStackHeaderConfigState>> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
-
-  // Like `setSize`, but leaves the Yoga node clean when the size is unchanged.
-  // See `rnscreens::yogaStyleHasSize`.
-  void setSizeIfChanged(Size size) const {
-    if (!rnscreens::yogaStyleHasSize(yogaNode_.style(), size)) {
-      setSize(size);
-    }
-  }
 
 #ifdef ANDROID
   Point getContentOriginOffset(bool includeTransform) const override;
