@@ -584,6 +584,8 @@ export interface ScreenProps extends ViewProps {
   /**
    * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    * `auto` and `inverted` are supported only on iOS. On Android, they will fallback to `light`.
+   * On iOS, `auto` uses UIKit's default style, which dynamically maintains contrast with the content below it on iOS 17 and later.
+   * `inverted` follows the opposite of the user interface style; `light` and `dark` remain fixed.
    * Defaults to `auto` on iOS and `light` on Android.
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark' | undefined;
