@@ -16,8 +16,8 @@ internal data class TabsAppearance(
     val tabBarItemTitleFontFamily: String? = null,
     val tabBarItemTitleSmallLabelFontSize: Float? = null,
     val tabBarItemTitleLargeLabelFontSize: Float? = null,
-    val tabBarItemTitleFontWeight: String? = null,
-    val tabBarItemTitleFontStyle: String? = null,
+    val tabBarItemTitleFontWeight: Int? = null,
+    val tabBarItemTitleFontItalic: Boolean? = null,
     val tabBarItemBadgeBackgroundColor: Int? = null,
     val tabBarItemBadgeTextColor: Int? = null,
 )
