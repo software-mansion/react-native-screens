@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menuRepresentation;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) UIBarButtonItemStyle style;
+@property (nonatomic, readonly, nullable) UIColor *itemTintColor;
 @property (nonatomic, readonly) BOOL disabled;
 @property (nonatomic, readonly) BOOL respondsToOnPress;
 @property (nonatomic, readonly) BOOL hidesSharedBackground;
