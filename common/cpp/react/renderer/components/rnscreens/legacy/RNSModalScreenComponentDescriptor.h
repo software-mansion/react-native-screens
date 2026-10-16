@@ -17,9 +17,6 @@ class RNSModalScreenComponentDescriptor final
     auto &screenShadowNode =
         static_cast<RNSModalScreenShadowNode &>(shadowNode);
 
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-
     auto state =
         std::static_pointer_cast<const RNSModalScreenShadowNode::ConcreteState>(
             shadowNode.getState());

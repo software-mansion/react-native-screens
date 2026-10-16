@@ -19,9 +19,6 @@ class RNSContainedModalHostComponentDescriptor final
     auto &concreteShadowNode =
         static_cast<RNSContainedModalHostShadowNode &>(shadowNode);
 
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&concreteShadowNode));
-
     auto state = std::static_pointer_cast<
         const RNSContainedModalHostShadowNode::ConcreteState>(
         shadowNode.getState());

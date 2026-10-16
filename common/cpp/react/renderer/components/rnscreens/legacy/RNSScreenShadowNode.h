@@ -6,7 +6,7 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "../FrameCorrectionModes.h"
-#include "../utils/YogaSizeUtil.h"
+#include "../utils/LayoutFromState.h"
 #include "RNSScreenState.h"
 
 namespace facebook {
@@ -16,13 +16,14 @@ using namespace rnscreens;
 
 JSI_EXPORT extern const char RNSScreenComponentName[];
 
-class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
-                                                 RNSScreenComponentName,
-                                                 RNSScreenProps,
-                                                 RNSScreenEventEmitter,
-                                                 RNSScreenState> {
+class JSI_EXPORT RNSScreenShadowNode final
+    : public rnscreens::SizeFromStateShadowNode<ConcreteViewShadowNode<
+          RNSScreenComponentName,
+          RNSScreenProps,
+          RNSScreenEventEmitter,
+          RNSScreenState>> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #pragma mark - ShadowNode overrides
@@ -38,14 +39,6 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
   void setHeaderHeight(float headerHeight);
 
   FrameCorrectionModes &getFrameCorrectionModes();
-
-  // Like `setSize`, but leaves the Yoga node clean when the size is unchanged.
-  // See `rnscreens::yogaStyleHasSize`.
-  void setSizeIfChanged(Size size) const {
-    if (!rnscreens::yogaStyleHasSize(yogaNode_.style(), size)) {
-      setSize(size);
-    }
-  }
 
 #ifdef ANDROID
   void resetFrameSizeState();

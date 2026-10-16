@@ -21,8 +21,6 @@ class RNSStackHeaderConfigComponentDescriptor final
         dynamic_cast<RNSStackHeaderConfigShadowNode *>(&shadowNode));
     auto &configShadowNode =
         static_cast<RNSStackHeaderConfigShadowNode &>(shadowNode);
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
 
     auto state = std::static_pointer_cast<
         const RNSStackHeaderConfigShadowNode::ConcreteState>(
