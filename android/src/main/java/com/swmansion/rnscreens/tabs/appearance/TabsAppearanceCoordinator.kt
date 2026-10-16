@@ -10,8 +10,9 @@ import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 internal class TabsAppearanceCoordinator(
     private val bottomNavigationView: CustomBottomNavigationView,
     private val tabsScreenFragments: MutableList<TabsScreenFragment>,
+    titleFontResolver: TabsTitleFontResolver,
 ) {
-    private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
+    private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView, titleFontResolver)
 
     private var appliedIconBoxDp: Float? = null
 
