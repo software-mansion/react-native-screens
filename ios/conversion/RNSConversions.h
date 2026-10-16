@@ -11,9 +11,6 @@ namespace rnscreens::conversion {
 id RNSConvertFollyDynamicToId(const folly::dynamic &dyn);
 
 #if !TARGET_OS_TV
-UIInterfaceOrientationMask UIInterfaceOrientationMaskFromRNSOrientation(
-    RNSOrientation orientation);
-
 // Currently unused in stack v5. Maybe remove after stopping support for v4.
 RNSOrientation RNSOrientationFromUIInterfaceOrientationMask(
     UIInterfaceOrientationMask orientationMask);
