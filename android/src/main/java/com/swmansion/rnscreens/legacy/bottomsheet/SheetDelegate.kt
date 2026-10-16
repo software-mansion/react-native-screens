@@ -99,6 +99,8 @@ class SheetDelegate(
     }
 
     private fun handleHostFragmentOnDestroy() {
+        // The attach-time listener may exist even if the fragment never resumed.
+        InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
         restoreBackgroundFocus()
     }
 
@@ -372,9 +374,7 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        // This listener runs at the decor-view level (via InsetsObserverProxy), so anything we
-        // return here propagates to the entire view hierarchy. We therefore return the insets
-        // unmodified and we should never consume insets globally.
+        // InsetsObserverProxy observes window insets without consuming them.
         return insets
     }
 

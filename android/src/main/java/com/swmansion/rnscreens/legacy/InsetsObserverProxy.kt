@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.legacy
 
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,36 +14,20 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     private val listeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
     private var eventSourceView: WeakReference<View> = WeakReference(null)
 
-    // Please note semantics of this property. This is not `isRegistered`, because somebody, could unregister
-    // us, without our knowledge, e.g. reanimated or different 3rd party library. This holds only information
-    // whether this observer has been initially registered.
-    private var hasBeenRegistered: Boolean = false
-
     // Mainly debug variable to log warnings in case we missed some code path regarding
     // context lifetime handling.
     private var isObservingContextLifetime: Boolean = false
-
-    private var shouldForwardInsetsToView = true
-
-    // Allow only when we have not been registered yet or the view we're observing has been
-    // invalidated due to some lifecycle we have not observed.
-    private val allowRegistration get() = !hasBeenRegistered || eventSourceView.get() == null
 
     override fun onApplyWindowInsets(
         v: View,
         insets: WindowInsetsCompat,
     ): WindowInsetsCompat {
-        var rollingInsets =
-            if (shouldForwardInsetsToView) {
-                ViewCompat.onApplyWindowInsets(v, insets)
-            } else {
-                insets
-            }
-
+        // Ancestors can consume system-bar insets before they reach the observer.
+        val rootInsets = ViewCompat.getRootWindowInsets(v) ?: insets
         listeners.forEach {
-            rollingInsets = it.onApplyWindowInsets(v, insets)
+            it.onApplyWindowInsets(v, rootInsets)
         }
-        return rollingInsets
+        return insets
     }
 
     // Call this method to ensure that the observer proxy is
@@ -64,17 +49,14 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     override fun onHostPause() = Unit
 
     override fun onHostDestroy() {
-        val observedView = getObservedView()
-        if (hasBeenRegistered && observedView != null) {
-            ViewCompat.setOnApplyWindowInsetsListener(observedView, null)
-            hasBeenRegistered = false
-            eventSourceView.clear()
-        }
+        unregister()
         isObservingContextLifetime = false
     }
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
-        listeners.add(listener)
+        if (listeners.add(listener)) {
+            getObservedView()?.let { ViewCompat.requestApplyInsets(it) }
+        }
     }
 
     fun removeOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {
@@ -82,22 +64,41 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     }
 
     /**
-     * @return boolean whether the proxy registered as a listener on a view
+     * @return whether an observer was attached to this view group
      */
     fun registerOnView(view: View): Boolean {
-        if (allowRegistration) {
-            ViewCompat.setOnApplyWindowInsetsListener(view, this)
-            eventSourceView = WeakReference(view)
-            hasBeenRegistered = true
-            return true
+        check(view is ViewGroup) { "[RNScreens] Insets observation requires a view group" }
+        getObservedView()?.let {
+            if (it.parent === view) {
+                ViewCompat.requestApplyInsets(it)
+                return false
+            }
         }
-        return false
+        unregister()
+
+        // Keep our listener on a view we own; other libraries also observe the decor view.
+        val observer =
+            object : View(view.context) {
+                override fun onAttachedToWindow() {
+                    super.onAttachedToWindow()
+                    ViewCompat.requestApplyInsets(this)
+                }
+            }.apply {
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }
+        ViewCompat.setOnApplyWindowInsetsListener(observer, this)
+        eventSourceView = WeakReference(observer)
+        // On API 29 and lower, a sibling can consume insets for the remaining children.
+        view.addView(observer, 0, ViewGroup.LayoutParams(0, 0))
+        return true
     }
 
     fun unregister() {
-        getObservedView()?.takeIf { hasBeenRegistered }?.let {
+        getObservedView()?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it, null)
+            (it.parent as? ViewGroup)?.removeView(it)
         }
+        eventSourceView.clear()
     }
 
     private fun getObservedView(): View? = eventSourceView.get()
