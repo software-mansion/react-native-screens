@@ -469,7 +469,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight ||
-      config.largeTitleLetterSpacing != 0 || config.largeTitleColor || config.titleColor) {
+      config.largeTitleColor || config.titleColor) {
     NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
 
     // Ignore changing header title color on visionOS
@@ -494,10 +494,12 @@ RNS_IGNORE_SUPER_CALL_END
       largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
     }
 
-    if (config.largeTitleLetterSpacing != 0) {
-      largeAttrs[NSKernAttributeName] = @(config.largeTitleLetterSpacing);
-    }
+    appearance.largeTitleTextAttributes = largeAttrs;
+  }
 
+  if (config.largeTitleLetterSpacing != 0) {
+    NSMutableDictionary *largeAttrs = [appearance.largeTitleTextAttributes mutableCopy];
+    largeAttrs[NSKernAttributeName] = @(config.largeTitleLetterSpacing);
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 

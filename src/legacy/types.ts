@@ -795,6 +795,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   largeTitleFontWeight?: string | undefined;
   /**
    * Customize letter spacing in points for the large title, mapping to the attributed-string kern.
+   * A non-zero value replaces the system's default tracking for the large title rather than adding to it.
    * A value of 0 or undefined leaves UIKit's default spacing unchanged.
    * @platform ios
    */

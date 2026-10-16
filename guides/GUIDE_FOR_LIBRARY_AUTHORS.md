@@ -793,7 +793,7 @@ Customize the weight of the font to be used for the large title.
 
 ### `largeTitleLetterSpacing` (iOS only)
 
-Customize letter spacing in points for the large title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. A value of `0` or an omitted prop leaves UIKit's default spacing unchanged.
+Customize letter spacing in points for the large title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. A non-zero value replaces the system's default tracking for the large title rather than adding to it. A value of `0` or an omitted prop leaves UIKit's default spacing unchanged.
 
 ### `largeTitleHideShadow` (iOS only)
 

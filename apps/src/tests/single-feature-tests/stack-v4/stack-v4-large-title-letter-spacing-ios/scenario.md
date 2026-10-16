@@ -37,6 +37,10 @@ scenario; no automated or native verification is claimed by adding it.
    steps. Focus search, type a query, cancel search, then disable the search bar.
    - [ ] Search remains usable and the large title retains the selected spacing
      when it reappears.
-8. Repeat at a larger system text size.
-   - [ ] Native large-title behavior remains consistent with the omitted-spacing
-     baseline; this prop introduces no font-scaling changes.
+8. Disable custom typography and search. At the default system text size,
+   compare omitted spacing with `-0.9`. Increase the system text size to a large
+   setting, reopen the scenario if necessary, and compare omitted with `-0.9`
+   again.
+   - [ ] The title scales identically with omitted spacing and `-0.9`; only its
+     tracking differs. Setting spacing alone must not replace the system font
+     or prevent Dynamic Type scaling.
