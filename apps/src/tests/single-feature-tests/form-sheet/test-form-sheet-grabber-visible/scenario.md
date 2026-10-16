@@ -8,8 +8,8 @@
 
 ## E2E test
 
-Incomplete: Covers grabber visibility in all steps on iPhone, iPad and Android
-phone, and the lower detent on presentation on iPhone and Android.
+Incomplete: Covers grabber visibility in all steps and the lower detent on
+presentation, on iPhone and Android phone.
 
 Not automated: Android content position relative to the drag handle; on iOS,
 the grabber hiding in "Toggling from inside the sheet" step 2 (UIKit keeps

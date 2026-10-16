@@ -3,7 +3,6 @@ import { expectFormSheetDetentIndex } from '@e2e/framework/form-sheet';
 import { countMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_ANDROID_BOTTOM_SHEET_DRAG_HANDLE_VIEW } from '@e2e/framework/native-classes-android';
 import { CLASS_NAME_UI_GRABBER } from '@e2e/framework/native-classes-ios';
-import { describeIfAndroid, isIPadTarget } from '@e2e/framework/platform';
 import { DEFAULT_TIMEOUT_MS, waitUntil } from '@e2e/framework/wait';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 
@@ -42,14 +41,6 @@ async function expectGrabber(visible: boolean): Promise<void> {
   );
 }
 
-/** No-op on iPad: the floating panel has no detent geometry to measure. */
-async function expectLowerDetentUnlessIPad(): Promise<void> {
-  if (isIPadTarget) {
-    return;
-  }
-  await expectFormSheetDetentIndex(DETENTS, 0);
-}
-
 async function openSheet(): Promise<void> {
   await element(by.id(OPEN_BUTTON)).tap();
   await waitFor(element(by.id(SHEET_CONTENT)))
@@ -65,7 +56,7 @@ async function dismissBySwipe(): Promise<void> {
 }
 
 describe('Formsheet: grabber visibility', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'FormSheet',
@@ -79,12 +70,14 @@ describe('Formsheet: grabber visibility', () => {
     await expect(element(by.id(OPEN_BUTTON))).toBeVisible();
   });
 
-  it('should present without a grabber by default and dismiss by swipe', async () => {
+  it('should present at the lower detent without a grabber by default', async () => {
     await openSheet();
     await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(false);
-    await expectLowerDetentUnlessIPad();
+    await expectFormSheetDetentIndex(DETENTS, 0);
     await expectGrabber(false);
+  });
 
+  it('should dismiss by swipe', async () => {
     await dismissBySwipe();
     await expect(element(by.id(OPEN_BUTTON))).toBeVisible();
   });
@@ -93,23 +86,23 @@ describe('Formsheet: grabber visibility', () => {
     await element(by.id(HOST_SWITCH)).tap();
     await openSheet();
     await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(true);
-    await expectLowerDetentUnlessIPad();
+    await expectFormSheetDetentIndex(DETENTS, 0);
     await expectGrabber(true);
   });
 
-  it('should present without a grabber after disabling it on the host screen [steps 5-6]', async () => {
-    await element(by.id(HOST_SWITCH)).tap();
-    await openSheet();
-    await expectGrabber(true);
+  it('should present without a grabber after disabling it on the host screen', async () => {
     await dismissBySwipe();
-
     await element(by.id(HOST_SWITCH)).tap();
     await openSheet();
     await expectGrabber(false);
-    await dismissBySwipe();
   });
 
-  it('should show the grabber when enabled inside the presented sheet [step 7]', async () => {
+  it('should dismiss by swipe again', async () => {
+    await dismissBySwipe();
+    await expect(element(by.id(OPEN_BUTTON))).toBeVisible();
+  });
+
+  it('should show the grabber when enabled inside the presented sheet', async () => {
     await openSheet();
     await expectGrabber(false);
 
@@ -118,22 +111,17 @@ describe('Formsheet: grabber visibility', () => {
     await expectGrabber(true);
   });
 
-  // iOS cannot observe the grabber hiding in place, see `expectGrabber`.
-  describeIfAndroid('in-sheet disable', () => {
-    it('should hide the grabber when disabled inside the presented sheet [step 8]', async () => {
-      await openSheet();
-      await element(by.id(SHEET_SWITCH)).tap();
-      await expectGrabber(true);
-
-      await element(by.id(SHEET_SWITCH)).tap();
-      await expect(element(by.id(SHEET_CONTENT))).toBeVisible();
+  it('should hide the grabber when disabled inside the presented sheet', async () => {
+    await element(by.id(SHEET_SWITCH)).tap();
+    await expect(element(by.id(SHEET_CONTENT))).toBeVisible();
+    if (device.getPlatform() === 'android') {
       await expectGrabber(false);
-    });
+    }
   });
 
-  it('should reflect the last in-sheet value on the host switch after JS dismiss [step 9]', async () => {
-    await openSheet();
+  it('should reflect the last in-sheet value on the host switch after JS dismiss', async () => {
     await element(by.id(SHEET_SWITCH)).tap();
+    await expect(element(by.id(SHEET_SWITCH))).toHaveToggleValue(true);
     await element(by.id(DISMISS_BUTTON)).tap();
 
     await waitFor(element(by.id(SHEET_CONTENT)))
