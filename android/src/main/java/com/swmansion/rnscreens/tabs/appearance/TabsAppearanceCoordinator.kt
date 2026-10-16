@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.MenuItem
 import com.swmansion.rnscreens.tabs.container.CustomBottomNavigationView
 import com.swmansion.rnscreens.tabs.container.TabsContainer
-import com.swmansion.rnscreens.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 
 internal class TabsAppearanceCoordinator(
@@ -24,8 +24,8 @@ internal class TabsAppearanceCoordinator(
         var tallestIndicatorDp = 0f
         var shortestIndicatorDp = Float.MAX_VALUE
         tabsScreenFragments.forEach {
-            largestIconDp = maxOf(largestIconDp, appearanceApplicator.effectiveIconSizeDp(it.tabsScreen))
-            val indicatorHeightDp = appearanceApplicator.effectiveIndicatorHeightDp(it.tabsScreen)
+            largestIconDp = maxOf(largestIconDp, appearanceApplicator.effectiveIconSizeDp(it.item))
+            val indicatorHeightDp = appearanceApplicator.effectiveIndicatorHeightDp(it.item)
             tallestIndicatorDp = maxOf(tallestIndicatorDp, indicatorHeightDp)
             shortestIndicatorDp = minOf(shortestIndicatorDp, indicatorHeightDp)
         }
@@ -37,7 +37,7 @@ internal class TabsAppearanceCoordinator(
         context: Context,
         tabsContainer: TabsContainer,
     ) {
-        val selectedTabAppearance = tabsContainer.selectedTab.tabsScreen.appearance
+        val selectedTabAppearance = tabsContainer.selectedTab.item.appearance
         val iconBoxDp = resolveIconBoxDp()
         if (iconBoxDp != appliedIconBoxDp) {
             appliedIconBoxDp = iconBoxDp
@@ -60,18 +60,18 @@ internal class TabsAppearanceCoordinator(
                 checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
                     "[RNScreens] Missing MenuItem for id: $menuItemId"
                 }
-            updateMenuItemAppearance(context, menuItem, fragment.tabsScreen, tabsAppearance, iconBoxDp)
+            updateMenuItemAppearance(context, menuItem, fragment.item, tabsAppearance, iconBoxDp)
         }
     }
 
     internal fun updateMenuItemAppearance(
         context: Context,
         menuItem: MenuItem,
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
         appearance: TabsAppearance?,
         iconBoxDp: Float,
     ) {
-        appearanceApplicator.updateMenuItemAppearance(menuItem, tabsScreen, bottomNavigationView.menuItemState(menuItem.itemId), iconBoxDp)
-        appearanceApplicator.updateBadgeAppearance(context, menuItem, tabsScreen, appearance)
+        appearanceApplicator.updateMenuItemAppearance(menuItem, item, bottomNavigationView.menuItemState(menuItem.itemId), iconBoxDp)
+        appearanceApplicator.updateBadgeAppearance(context, menuItem, item, appearance)
     }
 }

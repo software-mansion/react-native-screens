@@ -9,12 +9,12 @@ internal interface TabsScreenDelegate {
      * got configuration update.
      */
     fun onFragmentConfigurationChange(
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
         config: Configuration,
     )
 
     /**
      * This returns fragment **if one is associated with given tab screen**.
      */
-    fun getFragmentForTabsScreen(tabsScreen: TabsScreen): Fragment?
+    fun getFragmentForItem(item: TabsContainerItem): Fragment?
 }

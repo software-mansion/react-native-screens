@@ -105,21 +105,21 @@ class TabsHost(
         }
 
         renderedScreens.add(index, tabsScreen)
-        tabsScreen.setTabsScreenDelegate(container)
+        tabsScreen.setTabsScreenDelegate(container.tabsScreenDelegate)
 
-        container.addTabsScreenAt(index, tabsScreen)
+        container.addItemAt(index, tabsScreen)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         renderedScreens.removeAt(index).also { tabsScreen ->
-            container.removeTabsScreenAt(index)
+            container.removeItemAt(index)
             tabsScreen.setTabsScreenDelegate(null)
         }
     }
 
     internal fun unmountReactSubview(reactSubview: TabsScreen) {
         if (renderedScreens.removeIf { it === reactSubview }) {
-            assert(container.removeTabsScreen(reactSubview))
+            assert(container.removeItem(reactSubview))
             reactSubview.setTabsScreenDelegate(null)
         }
     }
@@ -128,7 +128,7 @@ class TabsHost(
         renderedScreens.forEach { it.setTabsScreenDelegate(null) }
         renderedScreens.clear()
 
-        container.removeAllTabsScreens()
+        container.removeAllItems()
     }
 
     internal fun updateJSNavigationStateUpdateRequest(navStateRequest: TabsNavigationStateUpdateRequest) {

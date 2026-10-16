@@ -9,26 +9,26 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.children
 import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.swmansion.rnscreens.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 
-class TabsHostA11yCoordinator(
+internal class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
     private val tabsScreenFragments: List<TabsScreenFragment>,
 ) {
     fun setA11yPropertiesToTabItem(
         menuItem: MenuItem,
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // The setting will overwrite default item title when building a11y description
             // see https://github.com/material-components/material-components-android/blob/9cc5d57d7b5a41d0ceafa29b98d2cd6d4094d19c/lib/java/com/google/android/material/navigation/NavigationBarItemView.java#L692
-            menuItem.contentDescription = tabsScreen.tabBarItemAccessibilityLabel
+            menuItem.contentDescription = item.tabBarItemAccessibilityLabel
         }
 
         findTabItemView(menuItem.itemId)?.let { tabItemView ->
             // when matching view by id, espresso driver seems to look for tag property
-            tabItemView.tag = tabsScreen.tabBarItemTestID
+            tabItemView.tag = item.tabBarItemTestID
 
             // UiAutomator-based drivers (Maestro, Appium) read the node's viewIdResourceName instead,
             // so expose the testID there as well — this is what React Native's ReactAccessibilityDelegate
@@ -41,7 +41,7 @@ class TabsHostA11yCoordinator(
                         info: AccessibilityNodeInfoCompat,
                     ) {
                         super.onInitializeAccessibilityNodeInfo(host, info)
-                        info.viewIdResourceName = tabsScreen.tabBarItemTestID
+                        info.viewIdResourceName = item.tabBarItemTestID
                     }
                 },
             )
@@ -55,7 +55,7 @@ class TabsHostA11yCoordinator(
     fun setA11yPropertiesToAllTabItems() {
         tabsScreenFragments.forEachIndexed { index, fragment ->
             val menuItem = bottomNavigationView.menu[index]
-            setA11yPropertiesToTabItem(menuItem, fragment.tabsScreen)
+            setA11yPropertiesToTabItem(menuItem, fragment.item)
         }
     }
 }
