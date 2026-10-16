@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Platform, StyleProp, ViewStyle, type ViewProps } from 'react-native';
+import {
+  Platform,
+  RootTagContext,
+  StyleProp,
+  ViewStyle,
+  type ViewProps,
+} from 'react-native';
 // @ts-expect-error importing private component
 
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -28,6 +34,7 @@ let DebugContainer: React.FC<ContainerProps> = ({
 if (process.env.NODE_ENV !== 'production') {
   DebugContainer = (props: ContainerProps) => {
     const { contentStyle, stackPresentation, style, ...rest } = props;
+    const rootTag = React.useContext(RootTagContext);
 
     const content = (
       <ScreenContentWrapper style={[style, contentStyle]} {...rest} />
@@ -39,7 +46,7 @@ if (process.env.NODE_ENV !== 'production') {
       stackPresentation !== 'formSheet'
     ) {
       // This is necessary for LogBox
-      return <AppContainer>{content}</AppContainer>;
+      return <AppContainer rootTag={rootTag}>{content}</AppContainer>;
     }
 
     return content;
