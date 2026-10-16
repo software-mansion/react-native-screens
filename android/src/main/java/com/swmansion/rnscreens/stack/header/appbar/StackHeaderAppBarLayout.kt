@@ -15,9 +15,9 @@ import androidx.core.view.children
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.swmansion.rnscreens.core.utils.resolveDimensionAttr
 import com.swmansion.rnscreens.stack.header.config.StackHeaderCollapsedTitleGravityMode
 import com.swmansion.rnscreens.stack.header.config.StackHeaderType
-import com.swmansion.rnscreens.utils.resolveDimensionAttr
 
 internal sealed class StackHeaderAppBarLayout(
     context: Context,

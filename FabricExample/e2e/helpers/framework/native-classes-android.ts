@@ -13,7 +13,7 @@
 
 // The library's `FormSheet` content container.
 export const CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER =
-  'com.swmansion.rnscreens.modals.formsheet.native.core.FormSheetContainer';
+  'com.swmansion.rnscreens.core.modals.formsheet.dialog.FormSheetContainer';
 // `BottomSheetDialog`'s root layout, spanning the dialog window.
 export const CLASS_NAME_ANDROID_COORDINATOR_LAYOUT =
   'androidx.coordinatorlayout.widget.CoordinatorLayout';

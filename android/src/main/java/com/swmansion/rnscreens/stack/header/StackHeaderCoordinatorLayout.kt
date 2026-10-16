@@ -11,9 +11,9 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.R
 import com.google.android.material.appbar.AppBarLayout
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderAppBarLayout
 import com.swmansion.rnscreens.stack.header.appbar.StackHeaderScrollingViewBehavior
 import com.swmansion.rnscreens.stack.header.config.OnHeaderConfigurationAttachListener
@@ -22,7 +22,7 @@ import com.swmansion.rnscreens.stack.header.config.StackHeaderConfigurationProvi
 import com.swmansion.rnscreens.stack.header.config.StackHeaderDelegate
 import com.swmansion.rnscreens.stack.header.config.StackHeaderInvalidationFlags
 import com.swmansion.rnscreens.stack.host.StackUpdateBatchStateProviding
-import com.swmansion.rnscreens.stack.screen.StackScreen
+import com.swmansion.rnscreens.stack.screen.StackContainerItem
 import java.lang.ref.WeakReference
 
 /**
@@ -33,7 +33,7 @@ import java.lang.ref.WeakReference
 @SuppressLint("ViewConstructor")
 internal class StackHeaderCoordinatorLayout(
     context: Context,
-    internal val stackScreen: StackScreen,
+    internal val item: StackContainerItem,
     private val canNavigateBack: Boolean,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
     parentColorSchemeProvider: WeakReference<ColorSchemeProviding>,
@@ -170,7 +170,7 @@ internal class StackHeaderCoordinatorLayout(
     private var appBarLayout: StackHeaderAppBarLayout? = null
 
     private val onNavigationIconClick: () -> Unit = {
-        backPressHandler.handleHeaderBackButtonPress(stackScreen)
+        backPressHandler.handleHeaderBackButtonPress(item)
     }
 
     private var pendingFlags = StackHeaderInvalidationFlags.NONE
@@ -247,7 +247,7 @@ internal class StackHeaderCoordinatorLayout(
                 applicator.applyLiftOnScroll(
                     appBar,
                     enabled = provider.liftOnScroll && !provider.transparent,
-                    targetScrollView = stackScreen.findContentScrollView(),
+                    targetScrollView = item.findContentScrollView(),
                 )
             }
 
@@ -275,7 +275,7 @@ internal class StackHeaderCoordinatorLayout(
     }
 
     // If the scroll view hasn't reached the top, we consider it scrolled.
-    private fun isContentScrolled() = stackScreen.findContentScrollView()?.canScrollVertically(-1) == true
+    private fun isContentScrolled() = item.findContentScrollView()?.canScrollVertically(-1) == true
 
     // endregion
 
@@ -370,7 +370,7 @@ internal class StackHeaderCoordinatorLayout(
         if (params.behavior == null) {
             params.behavior =
                 StackHeaderScrollingViewBehavior { contentTop, _ ->
-                    stackScreen.onContentYOriginChanged(contentTop)
+                    item.onContentYOriginChanged(contentTop)
                 }
             stackScreenWrapper.layoutParams = params
             stackScreenWrapper.requestLayout()
@@ -382,7 +382,7 @@ internal class StackHeaderCoordinatorLayout(
         if (params.behavior != null) {
             params.behavior = null
             stackScreenWrapper.layoutParams = params
-            stackScreen.onContentYOriginChanged(0)
+            item.onContentYOriginChanged(0)
             stackScreenWrapper.requestLayout()
         }
     }
@@ -419,13 +419,13 @@ internal class StackHeaderCoordinatorLayout(
         // because SurfaceMountingManager will override Y offset (that depends on the header
         // height) with Y=0. If we wrap StackScreen in another view, as Y is relative to
         // parent view, value set by Yoga will be correct.
-        stackScreenWrapper = FrameLayout(context).apply { addView(stackScreen) }
+        stackScreenWrapper = FrameLayout(context).apply { addView(item.view) }
         addView(
             stackScreenWrapper,
             LayoutParams(MATCH_PARENT, MATCH_PARENT),
         )
 
-        stackScreen.registerHeaderConfigAttachListener(onHeaderConfigAttached)
+        item.registerHeaderConfigAttachListener(onHeaderConfigAttached)
     }
 
     // endregion
@@ -438,13 +438,13 @@ internal class StackHeaderCoordinatorLayout(
         pendingFlags = StackHeaderInvalidationFlags.NONE
         removeHeader()
 
-        stackScreenWrapper.removeView(stackScreen)
+        stackScreenWrapper.removeView(item.view)
 
         currentProvider?.setConfigurationObserver(null)
         currentProvider = null
         currentDelegate = null
 
-        stackScreen.clearHeaderConfigAttachListener()
+        item.clearHeaderConfigAttachListener()
     }
 
     // endregion

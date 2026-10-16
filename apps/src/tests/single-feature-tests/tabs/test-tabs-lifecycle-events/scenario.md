@@ -11,17 +11,20 @@ rapid switching.
 
 ## E2E test
 
-Incomplete: The E2E test covers steps 1–4 on both iPhone and
-Android, verifying baseline appearance events, all three tab-switch transitions
-(with platform-specific event ordering). The re-tap (step 5) is covered only
-for Android as for iOS 26+ Detox is not able to re-tap a tab bar item.
+Incomplete: The E2E test covers all steps of **Baseline**,
+**Tab A → Tab B transition**, **Tab B → Tab C transition** and
+**Tab C → Tab A transition** on both iPhone and Android, verifying baseline
+appearance events, all three tab-switch transitions (with platform-specific
+event ordering). The re-tap (step 1 of
+**Re-tapping the active tab (edge case)**) is covered only for Android as for
+iOS 26+ Detox is not able to re-tap a tab bar item.
 
 Not automated:
 
-- Rapid switching (step 6) — cannot be reliably triggered through Detox's
-  synchronous interaction model.
-- Full 12-toast sequence (step 7) — too fragile due to shifting toast indices
-  on each dismiss.
+- Rapid switching (step 1 of **Rapid tab switching (edge case)**) — cannot be
+  reliably triggered through Detox's synchronous interaction model.
+- Full 12-toast sequence (step 1 of **Full round-trip verification**) — too
+  fragile due to shifting toast indices on each dismiss.
 
 ## Prerequisites
 
@@ -54,20 +57,20 @@ Not automated:
 
 1. Launch the app and navigate to **Tabs lifecycle events**.
 
-- [ ] Three tabs are visible in the tab bar: **Tab A**, **Tab B**,
-  and **Tab C**. **Tab A** is selected. Two toasts
-  appear for the initial Tab A appearance:
-  - `TabA: onWillAppear`
-  - `TabA: onDidAppear`
+    - [ ] Three tabs are visible in the tab bar: **Tab A**, **Tab B**,
+          and **Tab C**. **Tab A** is selected. Two toasts
+          appear for the initial Tab A appearance:
+      - `TabA: onWillAppear`
+      - `TabA: onDidAppear`
 
 ---
 
 ### Tab A → Tab B transition
 
-2. Tap **Tab B** in the tab bar.
+1. Tap **Tab B** in the tab bar.
 
-- [ ] The content area switches to show "TabB". Four toasts
-  appear in the following platform-specific order:
+    - [ ] The content area switches to show "TabB". Four toasts
+          appear in the following platform-specific order:
 
   **iOS:**
   1. `TabB: onWillAppear`
@@ -85,10 +88,10 @@ Not automated:
 
 ### Tab B → Tab C transition
 
-3. Tap **Tab C** in the tab bar.
+1. Tap **Tab C** in the tab bar.
 
-- [ ] The content area switches to show "TabC". Four toasts
-  appear in the following platform-specific order:
+    - [ ] The content area switches to show "TabC". Four toasts
+          appear in the following platform-specific order:
 
   **iOS:**
   1. `TabC: onWillAppear`
@@ -106,10 +109,10 @@ Not automated:
 
 ### Tab C → Tab A transition
 
-4. Tap **Tab A** in the tab bar.
+1. Tap **Tab A** in the tab bar.
 
-- [ ] The content area switches to show "TabA". Four toasts
-  appear in the following platform-specific order:
+    - [ ] The content area switches to show "TabA". Four toasts
+          appear in the following platform-specific order:
 
   **iOS:**
   1. `TabA: onWillAppear`
@@ -127,31 +130,31 @@ Not automated:
 
 ### Re-tapping the active tab (edge case)
 
-5. With **Tab A** selected, tap **Tab A** again in the tab bar.
+1. With **Tab A** selected, tap **Tab A** again in the tab bar.
 
-- [ ] The content area does not change. No toast notifications
-  appear. No lifecycle events fire for a tap on the already-active tab.
+    - [ ] The content area does not change. No toast notifications
+          appear. No lifecycle events fire for a tap on the already-active tab.
 
 ---
 
 ### Rapid tab switching (edge case)
 
-6. Tap **Tab B**, then immediately tap **Tab C** before the toasts from
+1. Tap **Tab B**, then immediately tap **Tab C** before the toasts from
    the previous step have finished dismissing.
 
-- [ ] Both transitions complete. Toasts from the B→C transition
-  appear after the A→B toasts. The final selected
-  tab is **Tab C** and its content area shows "TabC". No events are
-  missing or duplicated — all eight toasts from both transitions are
-  eventually shown.
+    - [ ] Both transitions complete. Toasts from the B→C transition
+          appear after the A→B toasts. The final selected
+          tab is **Tab C** and its content area shows "TabC". No events are
+          missing or duplicated — all eight toasts from both transitions are
+          eventually shown.
 
 ---
 
 ### Full round-trip verification
 
-7. From **Tab C**, tap **Tab A**, then **Tab B**, then **Tab C**.
+1. From **Tab C**, tap **Tab A**, then **Tab B**, then **Tab C**.
 
-- [ ] Each tab switch produces exactly four toasts (will/did
-  disappear for the leaving tab, will/did appear for the arriving tab).
-  After three switches, twelve toasts in total have been fired. The final
-  selected tab is **Tab C**.
+    - [ ] Each tab switch produces exactly four toasts (will/did
+          disappear for the leaving tab, will/did appear for the arriving tab).
+          After three switches, twelve toasts in total have been fired. The final
+          selected tab is **Tab C**.

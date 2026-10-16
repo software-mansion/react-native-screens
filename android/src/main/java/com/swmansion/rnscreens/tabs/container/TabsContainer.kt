@@ -19,25 +19,25 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
-import com.swmansion.rnscreens.common.container.Container
-import com.swmansion.rnscreens.common.container.ContainerItem
-import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
-import com.swmansion.rnscreens.ext.createTransactionWithReordering
-import com.swmansion.rnscreens.helpers.ViewIdGenerator
-import com.swmansion.rnscreens.safearea.EdgeInsets
-import com.swmansion.rnscreens.safearea.OnInterfaceInsetsChangeListener
-import com.swmansion.rnscreens.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.common.safearea.EdgeInsets
+import com.swmansion.rnscreens.core.common.safearea.OnInterfaceInsetsChangeListener
+import com.swmansion.rnscreens.core.common.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.ViewIdProviding
+import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHost
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -53,6 +53,7 @@ import kotlin.properties.Delegates
 class TabsContainer internal constructor(
     private val context: Context,
     private val delegate: WeakReference<TabsContainerDelegate>,
+    private val viewIdProvider: ViewIdProviding,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -60,7 +61,7 @@ class TabsContainer internal constructor(
     SafeAreaProvider,
     View.OnLayoutChangeListener {
     init {
-        id = ViewIdGenerator.generateViewId()
+        id = viewIdProvider.generateViewId()
     }
 
     private inner class SpecialEffectsHandler {
@@ -152,7 +153,7 @@ class TabsContainer internal constructor(
                     LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT,
                 )
-            id = ViewIdGenerator.generateViewId()
+            id = viewIdProvider.generateViewId()
         }
 
     private val appearanceCoordinator =
@@ -234,7 +235,7 @@ class TabsContainer internal constructor(
         index: Int,
         tabsScreen: TabsScreen,
     ) {
-        tabsModel.add(index, TabsScreenFragment(tabsScreen))
+        tabsModel.add(index, TabsScreenFragment(tabsScreen, viewIdProvider.generateViewId()))
         invalidationFlags.invalidateAll()
     }
 

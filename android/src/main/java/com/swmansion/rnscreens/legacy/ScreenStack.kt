@@ -6,7 +6,7 @@ import android.os.Build
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.common.container.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.legacy.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.legacy.bottomsheet.sheetShouldUseDimmingView
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation

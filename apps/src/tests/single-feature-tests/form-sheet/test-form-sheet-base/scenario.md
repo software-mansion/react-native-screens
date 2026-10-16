@@ -33,50 +33,50 @@ Not automated: content centering and anchoring, for Android: dimming and system 
 
 1. Launch the app and navigate to the **Basic Functionality** screen.
 
-- [ ] The host screen shows the "FormSheet Test" title and the "Open FormSheet" button.
+    - [ ] The host screen shows the "FormSheet Test" title and the "Open FormSheet" button.
 
 ---
 
 ### Presentation & layout
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.6) and the host screen is dimmed.
-- [ ] iOS: "FormSheet content" and "Dismiss from JS" are centered both vertically and horizontally within the sheet.
-- [ ] Android: "FormSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet.
+    - [ ] The sheet presents at the lower detent (0.6) and the host screen is dimmed.
+    - [ ] iOS: "FormSheet content" and "Dismiss from JS" are centered both vertically and horizontally within the sheet.
+    - [ ] Android: "FormSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet.
 
 ---
 
 ### Detent adaptation
 
-3. Drag the sheet up to the largest detent (1.0).
+1. Drag the sheet up to the largest detent (1.0).
 
-- [ ] The sheet expands to the maximum available height (respecting the top inset).
-- [ ] iOS: the content re-centers within the taller sheet.
-- [ ] Android: the content stays anchored to the top of the sheet and moves together with it.
+    - [ ] The sheet expands to the maximum available height (respecting the top inset).
+    - [ ] iOS: the content re-centers within the taller sheet.
+    - [ ] Android: the content stays anchored to the top of the sheet and moves together with it.
 
-4. Drag the sheet back down to the lower detent (0.6).
+2. Drag the sheet back down to the lower detent (0.6).
 
-- [ ] The sheet settles at 0.6. Nothing is clipped.
-- [ ] iOS: the content re-centers again.
-- [ ] Android: the content moves down with the sheet, still anchored to its top.
+    - [ ] The sheet settles at 0.6. Nothing is clipped.
+    - [ ] iOS: the content re-centers again.
+    - [ ] Android: the content moves down with the sheet, still anchored to its top.
 
 ---
 
 ### Dismissal
 
-5. Tap "Dismiss from JS".
+1. Tap "Dismiss from JS".
 
-- [ ] The sheet dismisses with an animation. The host screen is undimmed and "Open FormSheet" is pressable again.
+    - [ ] The sheet dismisses with an animation. The host screen is undimmed and "Open FormSheet" is pressable again.
 
-6. Tap "Open FormSheet", then swipe the sheet down past the lower detent.
+2. Tap "Open FormSheet", then swipe the sheet down past the lower detent.
 
-- [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
+    - [ ] The sheet dismisses natively. "Open FormSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
 
 ---
 
 ### Android only - System back
 
-7. Tap "Open FormSheet", then use the system back gesture (or the back button).
+1. Tap "Open FormSheet", then use the system back gesture (or the back button).
 
-- [ ] The sheet dismisses natively, exactly like after the swipe.
+    - [ ] The sheet dismisses natively, exactly like after the swipe.

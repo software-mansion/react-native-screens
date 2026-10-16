@@ -8,23 +8,26 @@ import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.helpers.FragmentManagerHelper
-import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
+import com.swmansion.rnscreens.react.utils.ViewIdGenerator
+import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.react.utils.verifyReactTagSchemeInDebug
+import com.swmansion.rnscreens.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.stack.screen.StackScreen
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
-class StackHost(
+internal class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
     StackContainerDelegate,
     StackContainerParent {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
-    private val container = StackContainer(reactContext, WeakReference(this))
+    private val container = StackContainer(reactContext, WeakReference(this), ViewIdGenerator)
     private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
     private var isLayoutEnqueued = false
 
@@ -42,6 +45,7 @@ class StackHost(
     override fun onAttachedToWindow() {
         RNSLog.d(TAG, "StackHost [$id] attached to window")
         super.onAttachedToWindow()
+        verifyReactTagSchemeInDebug(this)
     }
 
     internal fun mountReactSubviewAt(
@@ -92,9 +96,12 @@ class StackHost(
         }
     }
 
-    override fun onScreenDismissCommitted(stackScreen: StackScreen) {
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            stackScreen.isNativelyDismissed = true
+    override fun onItemDismissCommitted(item: StackContainerItem) {
+        check(item is StackScreen) {
+            "[RNScreens] Unexpected stack item type: ${item.javaClass.simpleName}"
+        }
+        if (item.activityMode == StackScreen.ActivityMode.ATTACHED) {
+            item.isNativelyDismissed = true
         }
     }
 

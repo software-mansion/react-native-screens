@@ -27,14 +27,14 @@ Full: All manual steps are covered by an E2E test.
 
 1. Launch the app and navigate to the screen Tab Bar Hidden Pressable Interaction.
 
-- [ ] Screen with one Tab in tab bar should be displayed.
-- [ ] A green "Bottom Pressable" should be anchored to the bottom of the screen, behind the tab bar.
-- [ ] `Bottom presses: 0` should be displayed.
+    - [ ] Screen with one Tab in tab bar should be displayed.
+    - [ ] A green "Bottom Pressable" should be anchored to the bottom of the screen, behind the tab bar.
+    - [ ] `Bottom presses: 0` should be displayed.
 
 2. Toggle `tabBarHidden` to `true`.
 
-- [ ] Tab bar should disappear immediately.
+    - [ ] Tab bar should disappear immediately.
 
 3. Tap the green "Bottom Pressable" in the strip the tab bar occupied, just above the system navigation bar.
 
-- [ ] `Bottom presses` should increment. Hidden tab bar should not block Pressable interaction.
+    - [ ] `Bottom presses` should increment. Hidden tab bar should not block Pressable interaction.
