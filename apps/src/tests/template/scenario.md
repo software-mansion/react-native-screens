@@ -37,35 +37,30 @@ Example:
 
 - iPhone: simulator or device, iOS 18.6 and 26.5.
 - iPad: simulator or device, app in full screen (regular width and height).
-- iPhone Duo: simulator with iOS 27.1+, postures CP, OP; transition CP → OP → CP with
-  the screen open.
+- iPhone Duo: simulator with iOS 27.1+, closed in portrait at launch. Postures:
+  closed portrait, open portrait; close and open the device with the screen shown.
 - Android: emulator or device, API 36.
 
 ### iPhone Duo posture set
 
 iPhone Duo has three postures (closed, half-open, open), each in portrait or
 landscape, plus transitions between them. Do NOT run every step in every posture.
-Use these abbreviations:
-
-| Code | Posture                |
-| ---- | ---------------------- |
-| CP   | Closed, portrait       |
-| CL   | Closed, landscape      |
-| HO   | Half-open              |
-| OP   | Open, portrait         |
-| OL   | Open, landscape        |
+Write postures out in full (e.g. "closed, portrait", "half-open",
+"open, landscape"); do not use abbreviations.
 
 Rules:
 
 1. **Pick postures by what changes on screen.** List only the postures where the
-   UI looks or behaves differently (e.g. tabs: CP vertical rail, OP bottom bar;
-   Stack header: CP side back button, OL).
+   UI looks or behaves differently (e.g. tabs: vertical tab bar when closed,
+   bottom tab bar when open in portrait; Stack header: side back button when
+   closed, open in landscape).
 2. **Always add one transition with the test screen open** (fold or unfold while
-   the screen is shown), e.g. `CP → OP → CP`. Most Duo bugs are transition bugs.
+   the screen is shown), e.g. closed → open → closed. Most Duo bugs are
+   transition bugs.
 3. **Write the set in Prerequisites.** The tester runs exactly that set, nothing
    more, so "passed on Duo" means the same thing for every tester.
 4. **Grow the set only from issues.** Add a posture when a bug shows it matters,
-   and link the issue next to it, e.g. `OL (#1234)`.
+   and link the issue next to it, e.g. "open, landscape (#1234)".
 
 ## Note
 
@@ -75,7 +70,7 @@ Include any critical information for scenario execution not covered elsewhere. U
 are recorded here with a link (issue, Feedback Assistant / Apple report), not as
 failing steps. Name the device/posture/OS where it reproduces, e.g.:
 
-- **Known issue (iPhone Duo, OL):** after rotating with a minimized tab bar the
+- **Known issue (iPhone Duo, open, landscape):** after rotating with a minimized tab bar the
   accessory stops short of the tab bar. Native UIKit bug, reported to Apple (link).
 
 ## Steps
@@ -112,7 +107,7 @@ Keep one `scenario.md` per test. Do not create per-device files
   section must be executable top to bottom without going back.
 - A device section starts by naming what it builds on and its setup, e.g.
   `Run steps 1-3 from ## Steps first.` and, for Duo, the posture set:
-  `Postures: CP, OP; transition CP → OP → CP with the screen open.`
+  `Postures: closed portrait, open portrait; close and open with the screen shown.`
 - Number steps inside a device section from 1, so a tester can refer to
   "iPhone Duo step 2".
 
@@ -140,12 +135,12 @@ Keep one `scenario.md` per test. Do not create per-device files
 ## Steps - iPhone Duo
 
 Run steps 1-2 from `## Steps` first.
-Postures: CP, OP; transition CP → OP → CP with the screen open.
+Postures: closed portrait, open portrait; close and open with the screen shown.
 
-1. In CP, tap ...
+1. With the device closed in portrait, tap ...
 
 - [ ] The tab bar is shown as a vertical rail on the side.
 
-2. Unfold to OP with the screen open.
+2. Open the device fully with the screen shown.
 
 - [ ] The tab bar moves to the bottom; the selected tab is unchanged.
