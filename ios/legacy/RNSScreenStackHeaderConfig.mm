@@ -85,6 +85,12 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
   _blurEffect = RNSBlurEffectStyleNone;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    _minimizationBehavior = UIBarMinimizationBehaviorAutomatic;
+    _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
   _synchronousShadowStateUpdatesEnabled = YES;
 }
 
@@ -553,6 +559,15 @@ RNS_IGNORE_SUPER_CALL_END
 
   navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    UIBarMinimization *minimization = [UIBarMinimization new];
+    minimization.minimizationBehavior = config.minimizationBehavior;
+    minimization.restorationBehavior = config.restorationBehavior;
+    navitem.navigationBarMinimization = minimization;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+
 #if !TARGET_OS_TV
   [config configureBackItem:prevItem withPrevVC:prevVC];
 
@@ -561,16 +576,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
   navitem.largeTitleDisplayMode =
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
-  if (@available(iOS 27.0, *)) {
-    // Due to native limitations related to opaque header and minimization behavior, we disable it for opaque headers.
-    UIBarMinimization *minimization = [UIBarMinimization new];
-    minimization.minimizationBehavior =
-        config.translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
-    navitem.navigationBarMinimization = minimization;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 #endif
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
@@ -1123,6 +1128,30 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
+  }
+
+  if (newScreenProps.minimizationBehavior != oldScreenProps.minimizationBehavior) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _minimizationBehavior =
+          [RNSConvert UIBarMinimizationBehaviorFromCppEquivalent:newScreenProps.minimizationBehavior];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.minimizationBehavior != react::RNSScreenStackHeaderConfigMinimizationBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] minimizationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (newScreenProps.restorationBehavior != oldScreenProps.restorationBehavior) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _restorationBehavior =
+          [RNSConvert UIBarMinimizationRestorationBehaviorFromCppEquivalent:newScreenProps.restorationBehavior];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.restorationBehavior != react::RNSScreenStackHeaderConfigRestorationBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
   }
 
   if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {
