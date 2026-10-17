@@ -80,6 +80,7 @@ export interface NativeProps extends ViewProps {
     StackHeaderItemVisibilityPriorityIOS,
     'standard'
   >;
+  paddingRemoved?: CT.WithDefault<boolean, false>;
   title?: string | undefined;
   icon?: UnsafeMixed<PlatformIconIOS> | undefined;
   menu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
