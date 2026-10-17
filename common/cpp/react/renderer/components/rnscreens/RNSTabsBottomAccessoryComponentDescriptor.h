@@ -24,7 +24,7 @@ class RNSTabsBottomAccessoryComponentDescriptor final
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      tabsBottomAccessoryShadowNode.setSize(stateData.frameSize);
+      tabsBottomAccessoryShadowNode.setSizeIfChanged(stateData.frameSize);
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);

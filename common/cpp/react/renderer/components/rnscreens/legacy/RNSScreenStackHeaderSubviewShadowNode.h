@@ -27,6 +27,13 @@ class JSI_EXPORT RNSScreenStackHeaderSubviewShadowNode final
   void layout(LayoutContext layoutContext) override;
 
 #pragma mark - Custom interface
+  /**
+   * The frame origin `layout()` sets, given the one computed by Yoga: native
+   * positions the subview in the navigation bar / toolbar and reports where.
+   * The component descriptor compares it with the current layout metrics.
+   */
+  Point correctFrameOrigin(Point origin) const;
+
   void applyFrameCorrections();
 };
 
