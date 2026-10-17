@@ -645,9 +645,12 @@ RNS_IGNORE_SUPER_CALL_END
 
       // if you want to present another modal quick enough after dismissing the previous one,
       // it will result in wrong changeRootController, see repro in
-      // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
-      // `presentationControllerDidDismiss` to cover this case and present new controller
+      // https://github.com/software-mansion/react-native-screens/issues/1299
+      // `previous` may also be a modal of another (e.g. outer) stack that is being dismissed in the same
+      // transaction, see https://github.com/software-mansion/react-native-screens/pull/4949. Nothing else
+      // would update this stack once the dismissal ends, so we wait for it and run the update again.
       if (previous.beingDismissed) {
+        [weakSelf updateModalsAfterDismissalOf:previous];
         return;
       }
 
@@ -742,6 +745,30 @@ RNS_IGNORE_SUPER_CALL_END
 
   // We didn't detect any controllers for dismissal, thus we start presenting new VCs
   finish();
+}
+
+- (void)updateModalsAfterDismissalOf:(UIViewController *)controller
+{
+  __weak RNSScreenStackView *weakSelf = self;
+  void (^retry)(void) = ^{
+    // Dispatch so that UIKit is done with the dismissal and `controller` is no longer
+    // reported as presented when we look for the top-most controller again.
+    dispatch_async(dispatch_get_main_queue(), ^{
+      weakSelf.updatingModals = NO;
+      weakSelf.scheduleModalsUpdate = NO;
+      [weakSelf updateContainer];
+    });
+  };
+
+  id<UIViewControllerTransitionCoordinator> coordinator = controller.transitionCoordinator;
+  if (coordinator != nil) {
+    [coordinator animateAlongsideTransition:nil
+                                 completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+                                   retry();
+                                 }];
+  } else {
+    retry();
+  }
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
