@@ -1,11 +1,13 @@
 package com.swmansion.rnscreens.legacy.stack.views
 
 import android.content.Context
+import android.view.View
 import android.view.WindowInsets
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.legacy.PointerEventsBoxNoneImpl
 import com.swmansion.rnscreens.legacy.ScreenStackFragment
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
@@ -27,6 +29,39 @@ internal class ScreensCoordinatorLayout(
     internal var needsTransitionFinalization = false
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
+
+    // The header (AppBarLayout) is added after the screen so that it draws on top of it. With a
+    // translucent header both start at the top edge, and the framework sorts accessibility children
+    // by position (top, then taller first), so screen readers reached the header after the whole
+    // screen content. Report the header's nodes first, keeping the order within each group.
+    override fun addChildrenForAccessibility(outChildren: ArrayList<View>) {
+        val start = outChildren.size
+        super.addChildrenForAccessibility(outChildren)
+
+        val appBarLayout =
+            (0 until childCount)
+                .map { getChildAt(it) }
+                .firstOrNull { it is AppBarLayout } ?: return
+        val added = outChildren.subList(start, outChildren.size)
+        val (header, rest) = added.partition { it.isSelfOrDescendantOf(appBarLayout) }
+        if (header.isEmpty() || rest.isEmpty()) {
+            return
+        }
+        added.clear()
+        added.addAll(header)
+        added.addAll(rest)
+    }
+
+    private fun View.isSelfOrDescendantOf(ancestor: View): Boolean {
+        var current: View? = this
+        while (current != null) {
+            if (current === ancestor) {
+                return true
+            }
+            current = current.parent as? View
+        }
+        return false
+    }
 
     private val animationListener: Animation.AnimationListener =
         object : Animation.AnimationListener {
