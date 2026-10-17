@@ -1,3 +1,6 @@
 [submodule "react-navigation"]
 	path = react-navigation
 	url = https://github.com/react-navigation/react-navigation.git
+[submodule "react-native-screens-testing"]
+	path = react-native-screens-testing
+	url = https://github.com/software-mansion-labs/react-native-screens-testing.git
