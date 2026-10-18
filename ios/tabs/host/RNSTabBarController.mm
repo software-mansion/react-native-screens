@@ -72,6 +72,19 @@ static const NSTimeInterval RNSTabBarTestIDRetryDelay = 0.15;
 static const NSUInteger RNSTabBarTestIDMaxRetryAttempts = 5;
 static const void *RNSTabBarViewOriginalAccessibilityIdentifierKey = &RNSTabBarViewOriginalAccessibilityIdentifierKey;
 
+static UIView *_Nullable RNSGetTabBarItemView(UITabBarItem *item)
+{
+  @try {
+    id candidate = [item valueForKey:@"view"];
+    return [candidate isKindOfClass:UIView.class] ? candidate : nil;
+  } @catch (NSException *exception) {
+    if (![exception.name isEqualToString:NSUndefinedKeyException]) {
+      @throw;
+    }
+    return nil;
+  }
+}
+
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
@@ -1021,7 +1034,7 @@ static const void *RNSTabBarViewOriginalAccessibilityIdentifierKey = &RNSTabBarV
   BOOL appliedAllTestIDs = YES;
   for (UITabBarItem *item in self.tabBar.items ?: @[]) {
     NSString *testID = item.accessibilityIdentifier;
-    UIView *tabView = [item valueForKey:@"view"];
+    UIView *tabView = RNSGetTabBarItemView(item);
     if (testID.length > 0 && tabView != nil) {
       [self applyTestID:testID toTabView:tabView];
     } else if (tabView != nil) {

@@ -103,18 +103,6 @@ export default function Test4748() {
                   setTestIDs(current => ({ ...current, cards: '' }))
                 }
               />
-              <Button
-                title="Reset"
-                testID="reset-mount"
-                onPress={() => {
-                  setTestIDs(INITIAL_TEST_IDS);
-                  setNavStateRequest({
-                    selectedScreenKey: 'home',
-                    baseProvenance: 0,
-                  });
-                  setPhase('gate');
-                }}
-              />
             </View>
           </Tabs.Screen>
         ))}
