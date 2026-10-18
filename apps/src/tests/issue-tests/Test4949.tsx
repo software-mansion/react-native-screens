@@ -42,7 +42,9 @@ function ListScreen({
     <View style={styles.screen} testID="test4949-list">
       <Text style={styles.description}>
         1. Open the outer sheet (root stack){'\n'}
-        2. Tap "Close, then open inner sheet at once"{'\n'}
+        2. Tap "Close, then open inner sheet at once", or "Close and open inner
+        sheet in one update" (the stacks update in no fixed order, so try it a
+        few times){'\n'}
         Expected: the inner sheet (nested stack) appears.{'\n'}
         Bug: no sheet, although the inner stack state has InnerSheet.
       </Text>
@@ -90,6 +92,14 @@ function OuterSheetScreen({
         onPress={() => {
           navigation.goBack();
           openInnerSheetAfter(0);
+        }}
+      />
+      <Button
+        title="Close and open inner sheet in one update"
+        testID="test4949-close-open-inner-sheet-same-update"
+        onPress={() => {
+          navigation.goBack();
+          navigationRef.navigate('Home', { screen: 'InnerSheet' });
         }}
       />
       <Button

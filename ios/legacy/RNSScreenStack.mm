@@ -40,6 +40,15 @@ namespace react = facebook::react;
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
 @property (nonatomic) BOOL scheduleModalsUpdate;
+// Incremented whenever a modals update takes the `updatingModals` lock (and on recycle), so that a deferred
+// update can tell whether it still owns the lock.
+@property (nonatomic) NSUInteger modalsUpdateGeneration;
+// YES while the update holding the lock waits for another controller to go away before presenting,
+// see `deferModalsUpdateUntilDismissalOf:generation:`. Nothing is in flight for that update then.
+@property (nonatomic) BOOL waitingToPresentModals;
+// Time after which a deferred update stops waiting and presents anyway, 0 when no update is deferred.
+@property (nonatomic) CFTimeInterval modalsUpdateDeferralDeadline;
+@property (nonatomic) BOOL retryingDeferredModalsUpdate;
 
 #if TARGET_OS_TV
 @property (nonatomic, assign) BOOL disableDefaultMenuAction;
@@ -563,6 +572,11 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   _updatingModals = YES;
+  const NSUInteger generation = ++_modalsUpdateGeneration;
+  _waitingToPresentModals = NO;
+  if (!_retryingDeferredModalsUpdate) {
+    _modalsUpdateDeferralDeadline = 0;
+  }
 
   // We need to find bottom-most view controller that should stay on the stack
   // for the duration of transition.
@@ -632,6 +646,26 @@ RNS_IGNORE_SUPER_CALL_END
 
     UIViewController *previous = changeRootController;
 
+    // if you want to present another modal quick enough after dismissing the previous one,
+    // it will result in wrong changeRootController, see repro in
+    // https://github.com/software-mansion/react-native-screens/issues/1299
+    // `previous`, or a controller it is presented from, may also be a modal of another (e.g. outer) stack that is
+    // going away in the same transaction: it is either being dismissed already, or that stack has not started
+    // dismissing it yet (stacks run their updates in no particular order). Presenting on top of it would fail or be
+    // torn down with it, and nothing else would update this stack afterwards, so we wait and run the update again.
+    // See https://github.com/software-mansion/react-native-screens/pull/4949.
+    UIViewController *goingAway = [RNSScreenStackView findControllerGoingAwayInPresentationChainOf:previous];
+    if (goingAway != nil) {
+      if ([weakSelf deferModalsUpdateUntilDismissalOf:goingAway generation:generation]) {
+        return;
+      }
+      if (previous.beingDismissed) {
+        // We waited long enough and still can't present from `previous`.
+        afterTransitions();
+        return;
+      }
+    }
+
     for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
       UIViewController *next = controllers[i];
       BOOL lastModal = (i == controllers.count - 1);
@@ -642,17 +676,6 @@ RNS_IGNORE_SUPER_CALL_END
 
       BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
           ((RNSScreen *)next).screenView.stackAnimation != RNSScreenStackAnimationNone;
-
-      // if you want to present another modal quick enough after dismissing the previous one,
-      // it will result in wrong changeRootController, see repro in
-      // https://github.com/software-mansion/react-native-screens/issues/1299
-      // `previous` may also be a modal of another (e.g. outer) stack that is being dismissed in the same
-      // transaction, see https://github.com/software-mansion/react-native-screens/pull/4949. Nothing else
-      // would update this stack once the dismissal ends, so we wait for it and run the update again.
-      if (previous.beingDismissed) {
-        [weakSelf updateModalsAfterDismissalOf:previous];
-        return;
-      }
 
       [previous presentViewController:next
                              animated:shouldAnimate
@@ -747,28 +770,74 @@ RNS_IGNORE_SUPER_CALL_END
   finish();
 }
 
-- (void)updateModalsAfterDismissalOf:(UIViewController *)controller
++ (nullable UIViewController *)findControllerGoingAwayInPresentationChainOf:(UIViewController *)controller
 {
+  for (UIViewController *vc = controller; vc != nil; vc = vc.presentingViewController) {
+    if (vc.beingDismissed) {
+      return vc;
+    }
+    if ([vc isKindOfClass:RNSScreen.class] &&
+        static_cast<RNSScreen *>(vc).screenView.isMarkedForUnmountInCurrentTransaction) {
+      return vc;
+    }
+  }
+  return nil;
+}
+
+/**
+ * Schedules the modals update to run again once `controller` has gone away: after its current transition if it has
+ * one, otherwise on the next frame. Returns NO once the update has been deferred for longer than
+ * `kMaxModalsUpdateDeferral`, in which case the caller should go on without waiting.
+ */
+- (BOOL)deferModalsUpdateUntilDismissalOf:(UIViewController *)controller generation:(NSUInteger)generation
+{
+  static const CFTimeInterval kMaxModalsUpdateDeferral = 1.0;
+
+  const CFTimeInterval now = CACurrentMediaTime();
+  if (_modalsUpdateDeferralDeadline == 0) {
+    _modalsUpdateDeferralDeadline = now + kMaxModalsUpdateDeferral;
+  } else if (now >= _modalsUpdateDeferralDeadline) {
+    _modalsUpdateDeferralDeadline = 0;
+    return NO;
+  }
+  _waitingToPresentModals = YES;
+
   __weak RNSScreenStackView *weakSelf = self;
-  void (^retry)(void) = ^{
-    // Dispatch so that UIKit is done with the dismissal and `controller` is no longer
-    // reported as presented when we look for the top-most controller again.
-    dispatch_async(dispatch_get_main_queue(), ^{
-      weakSelf.updatingModals = NO;
-      weakSelf.scheduleModalsUpdate = NO;
-      [weakSelf updateContainer];
+  __block BOOL didScheduleRetry = NO;
+  void (^retry)(int64_t) = ^(int64_t delay) {
+    if (didScheduleRetry) {
+      return;
+    }
+    didScheduleRetry = YES;
+    // Dispatch so that UIKit is done with the transition before we look for the top-most controller again.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay), dispatch_get_main_queue(), ^{
+      RNSScreenStackView *strongSelf = weakSelf;
+      // A newer update took the lock in the meantime (or the view was recycled). It owns the lock and
+      // computes the modals from the current state, so this retry has nothing left to do.
+      if (strongSelf == nil || strongSelf.modalsUpdateGeneration != generation) {
+        return;
+      }
+      strongSelf.waitingToPresentModals = NO;
+      strongSelf.updatingModals = NO;
+      strongSelf.scheduleModalsUpdate = NO;
+      strongSelf.retryingDeferredModalsUpdate = YES;
+      [strongSelf updateContainer];
+      strongSelf.retryingDeferredModalsUpdate = NO;
     });
   };
 
+  // The completion may run even if this returns NO, hence the guard in `retry`.
   id<UIViewControllerTransitionCoordinator> coordinator = controller.transitionCoordinator;
-  if (coordinator != nil) {
-    [coordinator animateAlongsideTransition:nil
-                                 completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
-                                   retry();
-                                 }];
-  } else {
-    retry();
+  if (coordinator != nil &&
+      [coordinator animateAlongsideTransition:nil
+                                   completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+                                     retry(0);
+                                   }]) {
+    return YES;
   }
+  // No transition to wait for (yet), e.g. the stack owning `controller` has not started dismissing it.
+  retry(16 * NSEC_PER_MSEC);
+  return YES;
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
@@ -1596,6 +1665,14 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   [_presentedModals removeAllObjects];
+  // Drop a pending deferred modals update. It holds the lock with nothing in flight, so release the lock too.
+  _modalsUpdateGeneration++;
+  if (_waitingToPresentModals) {
+    _waitingToPresentModals = NO;
+    _updatingModals = NO;
+    _scheduleModalsUpdate = NO;
+  }
+  _modalsUpdateDeferralDeadline = 0;
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
   [_controller setViewControllers:@[ [UIViewController new] ]];
