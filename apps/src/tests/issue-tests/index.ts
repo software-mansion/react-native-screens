@@ -220,6 +220,7 @@ export { default as Test4571 } from './Test4571';
 export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
 export { default as Test4709 } from './Test4709';
 export { default as Test4725 } from './Test4725';
+export { default as Test4748 } from './Test4748'; // [E2E created](iOS): tabBarItemTestID after a delayed Tabs.Host mount
 export { default as Test4757 } from './Test4757';
 export { default as Test4872 } from './Test4872';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
