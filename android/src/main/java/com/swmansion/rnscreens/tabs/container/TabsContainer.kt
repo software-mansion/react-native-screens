@@ -35,6 +35,7 @@ import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHost
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
+import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
@@ -236,20 +237,26 @@ class TabsContainer internal constructor(
         tabsScreen: TabsScreen,
     ) {
         tabsModel.add(index, TabsScreenFragment(tabsScreen, viewIdProvider.generateViewId()))
+        tabsScreen.setConfigurationObserver { flags -> onTabsScreenInvalidated(tabsScreen, flags) }
         invalidationFlags.invalidateAll()
     }
 
     internal fun removeTabsScreenAt(index: Int): TabsScreen? =
         tabsModel.removeAt(index).tabsScreen.also {
+            it.setConfigurationObserver(null)
             invalidationFlags.invalidateAll()
         }
 
     internal fun removeTabsScreen(tabsScreen: TabsScreen): Boolean =
         tabsModel.removeIf { it.tabsScreen === tabsScreen }.also { isRemoved ->
-            if (isRemoved) invalidationFlags.invalidateAll()
+            if (isRemoved) {
+                tabsScreen.setConfigurationObserver(null)
+                invalidationFlags.invalidateAll()
+            }
         }
 
     internal fun removeAllTabsScreens() {
+        tabsModel.forEach { it.tabsScreen.setConfigurationObserver(null) }
         tabsModel.clear()
         invalidationFlags.invalidateAll()
     }
@@ -397,18 +404,43 @@ class TabsContainer internal constructor(
 
     // endregion
 
-    // region TabsScreenDelegate impl
+    // region Tab configuration changes
 
-    override fun onAppearanceChanged(tabsScreen: TabsScreen) {
-        if (isAttachedToWindow && selectedTab.tabsScreen === tabsScreen) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                this.flushPendingUpdates()
+    /**
+     * Maps a tab's fine-grained [flags] to tab bar updates: the menu item records them, so the
+     * applicator re-applies only the invalidated parts, and the container decides what to run.
+     */
+    private fun onTabsScreenInvalidated(
+        tabsScreen: TabsScreen,
+        flags: TabsItemInvalidationFlags,
+    ) {
+        val fragment = getFragmentForTabsScreen(tabsScreen) ?: return
+        bottomNavigationView.invalidateMenuItem(fragment.menuItemId, flags)
+
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)) {
+            // Icon box is bar-wide, so this must run even when the changed tab is not selected.
+            // Skip when detached; reattachment reapplies the full appearance anyway.
+            if (isAttachedToWindow) {
+                invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+                post {
+                    this.flushPendingUpdates()
+                }
             }
+        } else if (flags.containsAny(TabsItemInvalidationFlags.APPEARANCE)) {
+            if (isAttachedToWindow && selectedTab.tabsScreen === tabsScreen) {
+                invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+                post {
+                    this.flushPendingUpdates()
+                }
+            }
+        }
+
+        if (flags.containsAny(TabsItemInvalidationFlags.MENU_ITEM_ATTRIBUTES)) {
+            updateMenuItem(tabsScreen)
         }
     }
 
-    override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
+    private fun updateMenuItem(tabsScreen: TabsScreen) {
         getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
             val appearance = selectedTab.tabsScreen.appearance
             appearanceCoordinator.updateMenuItemAppearance(
@@ -422,16 +454,9 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun onItemSizeChange(tabsScreen: TabsScreen) {
-        // Icon box is bar-wide, so this must run even when the changed tab is not selected.
-        // Skip when detached; reattachment reapplies the full appearance anyway.
-        if (isAttachedToWindow) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                this.flushPendingUpdates()
-            }
-        }
-    }
+    // endregion
+
+    // region TabsScreenDelegate impl
 
     override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
         tabsModel.find {
@@ -563,7 +588,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
-        appearanceCoordinator.invalidateRebuiltMenuItems()
+        bottomNavigationView.resetMenuItemStates()
     }
 
     private fun updateBottomNavigationViewAppearance() {
