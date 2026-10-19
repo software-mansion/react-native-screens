@@ -7,8 +7,11 @@
  *    Symbols are matched anywhere in a file, comments included, because
  *    `RCT*` macros also arrive through transitive imports.
  * 3. Every quoted import in `ios/core` resolves to a file under `ios/core`
- *    (so `core` imports neither `react` nor `legacy`).
- * 4. `ios/core` headers are plain Objective-C: no C++, not even guarded.
+ *    (so `core` imports neither `react` nor `legacy`). Angle-bracket imports
+ *    of our own headers (`<RNSFoo.h>`, `<RNScreens/RNSFoo.h>`) are held to the
+ *    same rule.
+ * 4. `ios/core` headers are plain Objective-C: no C++, not even guarded. C++
+ *    standard headers are recognised by their missing extension (`<string>`).
  * 5. The `headerSearchPaths` list in `Package.swift` is up to date.
  *
  * The check fails when no core sources are found, so it cannot pass
@@ -27,7 +30,9 @@ const REACT_NATIVE_INCLUDE =
   /#\s*(?:import|include)\s*<(?:React|react|ReactCommon|jsi)\/|@import\s+React\b/;
 const RCT_SYMBOL = /\bRCT[A-Z]\w*/;
 const QUOTED_INCLUDE = /#\s*(?:import|include)\s*"([^"]+)"/;
-const CPP_IN_HEADER = /__cplusplus|#\s*include\s*<vector>|std::|folly|react::/;
+const ANGLE_INCLUDE = /#\s*(?:import|include)\s*<([^>]+)>/;
+const CPP_IN_HEADER =
+  /__cplusplus|#\s*(?:import|include)\s*<[\w/]+>|\bnamespace\b|\btemplate\s*<|std::|folly|react::/;
 
 function listFiles(dir, pattern) {
   if (!fs.existsSync(dir)) {
@@ -89,6 +94,20 @@ function checkLine(file, line) {
     if (targets.length === 0) {
       reasons.push(`"${quoted[1]}" resolves to no header under ios/`);
     } else if (!targets.some(target => isUnder(target, CORE_DIR))) {
+      reasons.push(
+        `core must not import ${relative(targets[0])} (outside ios/core)`,
+      );
+    }
+  }
+  // `<RNSFoo.h>` and `<RNScreens/RNSFoo.h>` name our own headers; anything
+  // else in angle brackets is a system or third-party header.
+  const angled = line.match(ANGLE_INCLUDE);
+  if (angled && /^(?:RNScreens\/)?[^/]+$/.test(angled[1])) {
+    const targets = headersByBasename.get(path.basename(angled[1])) ?? [];
+    if (
+      targets.length > 0 &&
+      !targets.some(target => isUnder(target, CORE_DIR))
+    ) {
       reasons.push(
         `core must not import ${relative(targets[0])} (outside ios/core)`,
       );
