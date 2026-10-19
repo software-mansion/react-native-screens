@@ -77,7 +77,9 @@ export interface StackHeaderBaseItemIOS {
    * @summary Icon displayed for the header item.
    *
    * @description
-   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * Supports SF Symbols, xcassets, and image sources. Local files (including
+   * images bundled with a release build) are loaded synchronously. For other
+   * image sources (e.g. remote URLs or images served by Metro),
    * the item renders without an icon first and updates when loaded.
    * Ignored when custom view ({@link StackHeaderInlineCustomItemIOS.render | render}) is set.
    *

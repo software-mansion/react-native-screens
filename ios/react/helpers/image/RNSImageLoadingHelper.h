@@ -19,7 +19,9 @@
                               completionBlock:(void (^_Nonnull)(UIImage *_Nullable image))imageLoadingCompletionBlock;
 
 /**
- * Loads image from `RCTImageSource`, relies on `RCTImageLoader` implementation.
+ * Loads image from `RCTImageSource`. When called from UI thread, local files outside of the app bundle are read
+ * synchronously (`completionBlock` is executed before the method returns). Everything else is loaded with
+ * `RCTImageLoader`, which is synchronous only for images from the app bundle.
  * `completionBlock` is executed on main queue.
  */
 + (void)loadImageFromSource:(nonnull RCTImageSource *)imageSource
