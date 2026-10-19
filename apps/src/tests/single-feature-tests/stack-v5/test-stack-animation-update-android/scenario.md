@@ -12,7 +12,7 @@ pop.
 
 ## E2E test
 
-Incomplete: no step is automated. For manual testing perform steps 1-9.
+Incomplete: no step is automated. For manual testing perform all steps.
 
 The direction a screen moves in and the interactive predictive back gesture
 are not assertable with Detox.
@@ -45,16 +45,16 @@ are not assertable with Detox.
 
 ### Change on the top screen
 
-2. Tap "Push Blue", set "this screen" to `slideFromBottom`, then swipe in from
+1. Tap "Push Blue", set "this screen" to `slideFromBottom`, then swipe in from
    the left screen edge and release past the middle.
 
    - [ ] "Blue" sinks to the bottom edge and "Home" is static.
 
-3. Tap "Push Blue", set "this screen" to `slideFromLeft`, then tap "Pop".
+2. Tap "Push Blue", set "this screen" to `slideFromLeft`, then tap "Pop".
 
    - [ ] "Blue" slides out to the left and "Home" slides in from the right.
 
-4. Tap "Push Blue", set "this screen" to `slideFromTop`, then back to
+3. Tap "Push Blue", set "this screen" to `slideFromTop`, then back to
    `slideFromRight`, and tap "Pop".
 
    - [ ] "Blue" slides out to the right and "Home" slides in from the left.
@@ -63,15 +63,15 @@ are not assertable with Detox.
 
 ### Change on a covered screen
 
-5. Tap "Push Blue", set "this screen" to `slideFromTop`, then tap "Push Red".
+1. Tap "Push Blue", set "this screen" to `slideFromTop`, then tap "Push Red".
 
    - [ ] "Red" slides in from the right and "Blue" slides out to the left.
 
-6. On "Red", tap "Pop".
+2. On "Red", tap "Pop".
 
    - [ ] "Red" slides out to the right and "Blue" slides in from the left.
 
-7. On "Blue", tap "Pop".
+3. On "Blue", tap "Pop".
 
    - [ ] "Blue" rises out through the top edge and "Home" is static.
 
@@ -79,12 +79,12 @@ are not assertable with Detox.
 
 ### Change after a native pop
 
-8. Tap "Push Blue", tap "Push Red", then swipe in from the left screen edge and
+1. Tap "Push Blue", tap "Push Red", then swipe in from the left screen edge and
    release past the middle.
 
    - [ ] "Red" slides out to the right and "Blue" slides in from the left.
 
-9. On "Blue", set "this screen" to `slideFromBottom`, then swipe in from the
+2. On "Blue", set "this screen" to `slideFromBottom`, then swipe in from the
    left screen edge and release past the middle.
 
    - [ ] "Blue" sinks to the bottom edge and "Home" is static.

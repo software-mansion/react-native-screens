@@ -14,7 +14,7 @@ batch is ever visible.
 
 ## E2E test
 
-Incomplete: no step is automated. For manual testing perform steps 1-21.
+Incomplete: no step is automated. For manual testing perform all steps.
 
 Which screen moves, in which direction, and whether an intermediate screen
 flashes are not assertable with Detox; only the resulting stack would be.
@@ -24,9 +24,10 @@ flashes are not assertable with Detox; only the resulting stack would be.
 - Android emulator or device.
 - System animations are on: "Settings → Accessibility → Color and motion →
   Remove animations" is off.
-- Developer options, for steps 17-21 only: set "Animator duration scale" and
-  "Transition animation scale" to 5x before step 17 and back to 1x after
-  step 21.
+- Developer options, for **Interrupted operations (with extended animation
+  duration scale)** only: set "Animator duration scale" and "Transition
+  animation scale" to 5x before step 1 of that group and back to 1x after its
+  step 5.
 
 ## Note
 
@@ -54,12 +55,12 @@ flashes are not assertable with Detox; only the resulting stack would be.
 
 ### Single push and pop
 
-2. Tap "Push Right".
+1. Tap "Push Right".
 
    - [ ] "Right" (blue) slides in from the right and "Home" slides out to the
          left.
 
-3. On "Right", tap "Pop".
+2. On "Right", tap "Pop".
 
    - [ ] "Right" slides out to the right and "Home" slides in from the left.
 
@@ -67,21 +68,21 @@ flashes are not assertable with Detox; only the resulting stack would be.
 
 ### Multi-push
 
-4. Tap "Push Left + Top".
+1. Tap "Push Left + Top".
 
    - [ ] "Top" (purple) drops in from the top edge above a static "Home"; no
          red screen and no leftward slide appears at any point.
    - [ ] "Pop 2" is enabled.
 
-5. On "Top", tap "Pop".
+2. On "Top", tap "Pop".
 
    - [ ] "Top" rises out through the top edge above a static "Left" (red).
 
-6. On "Left", tap "Pop".
+3. On "Left", tap "Pop".
 
    - [ ] "Left" slides out to the left and "Home" slides in from the right.
 
-7. Tap "Push Right + Bottom + Left".
+4. Tap "Push Right + Bottom + Left".
 
    - [ ] "Left" slides in from the left and "Home" slides out to the right; no
          blue and no green screen appears at any point.
@@ -91,92 +92,92 @@ flashes are not assertable with Detox; only the resulting stack would be.
 
 ### Multi-pop
 
-8. On "Left", tap "Pop 2".
+1. On "Left", tap "Pop 2".
 
    - [ ] "Left" slides out to the left and "Right" (blue) slides in from the
          right; "Bottom" (green) never appears.
 
-9. On "Right", tap "Push Top".
+2. On "Right", tap "Push Top".
 
    - [ ] "Top" drops in from the top edge above a static "Right".
 
-10. On "Top", tap "Pop 2".
+3. On "Top", tap "Pop 2".
 
-    - [ ] "Top" rises out through the top edge above a static "Home"; "Right"
-          never appears.
-    - [ ] "Pop" is disabled on "Home".
+   - [ ] "Top" rises out through the top edge above a static "Home"; "Right"
+         never appears.
+   - [ ] "Pop" is disabled on "Home".
 
 ---
 
 ### Replace
 
-11. Tap "Push Right", then tap "Replace with Bottom" on it.
+1. Tap "Push Right", then tap "Replace with Bottom" on it.
 
-    - [ ] "Right" slides out to the right and "Bottom" (green) slides in from
-          the left; "Bottom" does not rise from the bottom edge and "Home"
-          does not appear.
-    - [ ] "Pop" is enabled and "Pop 2" is disabled.
+   - [ ] "Right" slides out to the right and "Bottom" (green) slides in from
+         the left; "Bottom" does not rise from the bottom edge and "Home"
+         does not appear.
+   - [ ] "Pop" is enabled and "Pop 2" is disabled.
 
-12. On "Bottom", tap "Pop".
+2. On "Bottom", tap "Pop".
 
-    - [ ] "Bottom" sinks to the bottom edge above a static "Home".
+   - [ ] "Bottom" sinks to the bottom edge above a static "Home".
 
-13. Tap "Push Left", then tap "Replace with Right" on it.
+3. Tap "Push Left", then tap "Replace with Right" on it.
 
-    - [ ] "Left" slides out to the left and "Right" slides in from the right.
+   - [ ] "Left" slides out to the left and "Right" slides in from the right.
 
 ---
 
 ### Multi-replace
 
-14. On "Right", tap "Push Bottom", then tap "Replace 2 with Left + Top" on
-    "Bottom".
+1. On "Right", tap "Push Bottom", then tap "Replace 2 with Left + Top" on
+   "Bottom".
 
-    - [ ] "Bottom" sinks to the bottom edge above "Top" (purple), which is
-          already in place; no blue screen and no leftward slide appears, and
-          "Top" does not drop in from the top edge.
-    - [ ] "Pop 2" is enabled.
+   - [ ] "Bottom" sinks to the bottom edge above "Top" (purple), which is
+         already in place; no blue screen and no leftward slide appears, and
+         "Top" does not drop in from the top edge.
+   - [ ] "Pop 2" is enabled.
 
-15. On "Top", tap "Pop".
+2. On "Top", tap "Pop".
 
-    - [ ] "Top" rises out through the top edge above a static "Left".
+   - [ ] "Top" rises out through the top edge above a static "Left".
 
-16. On "Left", tap "Pop".
+3. On "Left", tap "Pop".
 
-    - [ ] "Left" slides out to the left and "Home" slides in from the right.
+   - [ ] "Left" slides out to the left and "Home" slides in from the right.
 
 ---
 
 ### Interrupted operations (with extended animation duration scale)
 
-17. Tap "Push Right", then tap "Push Bottom" on "Right" while it is still
-    sliding in.
+1. Tap "Push Right", then tap "Push Bottom" on "Right" while it is still
+   sliding in.
 
-    - [ ] The running transition jumps to its end, then "Bottom" rises from the
-          bottom edge above a static "Right"; no stale copy of another screen
-          is left behind.
+   - [ ] The running transition jumps to its end, then "Bottom" rises from the
+         bottom edge above a static "Right"; no stale copy of another screen
+         is left behind.
 
-18. On "Bottom", tap "Pop", then tap "Pop" on "Right" while "Bottom" is still
-    sinking.
+2. On "Bottom", tap "Pop", then tap "Pop" on "Right" while "Bottom" is still
+   sinking.
 
-    - [ ] "Right" is removed without its pop animation and "Home" slides in
-          from the left over the window background (see Note); "Home" is the
-          only screen left, without a crash.
+   - [ ] "Right" is removed without its pop animation and "Home" slides in
+         from the left over the window background (see Note); "Home" is the
+         only screen left, without a crash.
 
-19. Tap "Push Right + Bottom + Left", then tap "Pop 3" on "Left" while it is
-    still sliding in.
+3. Tap "Push Right + Bottom + Left", then tap "Pop 3" on "Left" while it is
+   still sliding in.
 
-    - [ ] "Left" is removed without its pop animation and "Home" is shown at
-          once, with nothing sliding in (see Note).
-    - [ ] "Pop" is disabled on "Home".
+   - [ ] "Left" is removed without its pop animation and "Home" is shown at
+         once, with nothing sliding in (see Note).
+   - [ ] "Pop" is disabled on "Home".
 
-20. Tap "Push Right", then tap "Replace with Bottom" on "Right" while it is
-    still sliding in.
+4. Tap "Push Right", then tap "Replace with Bottom" on "Right" while it is
+   still sliding in.
 
-    - [ ] "Right" is removed at once and "Bottom" slides in from the left over
-          the window background (see Note); "Home" does not appear.
+   - [ ] "Right" is removed at once and "Bottom" slides in from the left over
+         the window background (see Note); "Home" does not appear.
 
-21. On "Bottom", tap "Pop".
+5. On "Bottom", tap "Pop".
 
-    - [ ] "Bottom" sinks to the bottom edge above a static "Home", and "Pop"
-          is disabled on "Home".
+   - [ ] "Bottom" sinks to the bottom edge above a static "Home", and "Pop"
+         is disabled on "Home".

@@ -13,7 +13,7 @@ runtime is covered by `test-stack-animation-update-android`.
 
 ## E2E test
 
-Incomplete: no step is automated. For manual testing perform steps 1-11.
+Incomplete: no step is automated. For manual testing perform all steps.
 
 The direction a screen moves in, the draw order over a static screen and the
 interactive predictive back gesture are not assertable with Detox.
@@ -48,12 +48,12 @@ interactive predictive back gesture are not assertable with Detox.
 
 ### Push and pop
 
-2. Tap "Push Blue".
+1. Tap "Push Blue".
 
    - [ ] "Blue" (blue) slides in from the right and "Home" slides out to the
          left, both as rigid blocks.
 
-3. On "Blue", tap "Pop".
+2. On "Blue", tap "Pop".
 
    - [ ] "Blue" slides out to the right and "Home" slides in from the left.
 
@@ -61,24 +61,24 @@ interactive predictive back gesture are not assertable with Detox.
 
 ### Predictive back gesture
 
-4. Tap "Push Blue", then swipe in from the left screen edge and release past
+1. Tap "Push Blue", then swipe in from the left screen edge and release past
    the middle.
 
    - [ ] "Blue" tracks the finger and "Home" is progressively revealed; on
          release the motion continues from that position until only "Home" is
          shown.
 
-5. Tap "Push Blue", swipe in from the left screen edge to the middle, then
+2. Tap "Push Blue", swipe in from the left screen edge to the middle, then
    swipe back to the edge and release.
 
    - [ ] "Blue" returns to rest with no residual offset and nothing is popped.
 
-6. On "Blue", tap "Push Red", then swipe in from the left screen edge and
+3. On "Blue", tap "Push Red", then swipe in from the left screen edge and
    release past the middle.
 
    - [ ] "Red" (red) tracks the finger and is popped, leaving "Blue".
 
-7. Swipe in from the left screen edge and release past the middle again.
+4. Swipe in from the left screen edge and release past the middle again.
 
    - [ ] "Blue" tracks the finger the same way and is popped, leaving "Home".
 
@@ -86,21 +86,21 @@ interactive predictive back gesture are not assertable with Detox.
 
 ### Nested stack
 
-8. Tap "Push NestedHost".
+1. Tap "Push NestedHost".
 
    - [ ] A green screen reading "Name: NestedHome" rises from the bottom edge
          above a static "Home".
 
-9. On "NestedHome", tap "Push NestedBlue".
+2. On "NestedHome", tap "Push NestedBlue".
 
    - [ ] "NestedBlue" slides in from the right and "NestedHome" slides out to
          the left; nothing rises from the bottom edge.
 
-10. On "NestedBlue", tap "Pop".
+3. On "NestedBlue", tap "Pop".
 
-    - [ ] "NestedBlue" slides out to the right and "NestedHome" slides in from
-          the left.
+   - [ ] "NestedBlue" slides out to the right and "NestedHome" slides in from
+         the left.
 
-11. On "NestedHome", tap "Pop".
+4. On "NestedHome", tap "Pop".
 
-    - [ ] The green screen sinks to the bottom edge above a static "Home".
+   - [ ] The green screen sinks to the bottom edge above a static "Home".
