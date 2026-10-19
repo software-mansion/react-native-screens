@@ -184,6 +184,8 @@ function mapAppearanceToNativeProp(
   if (!appearance) return undefined;
 
   const {
+    backgroundColor,
+    shadowColor,
     titleFontColor,
     titleFontWeight,
     largeTitleFontColor,
@@ -194,6 +196,8 @@ function mapAppearanceToNativeProp(
 
   return {
     ...appearance,
+    backgroundColor: processColor(backgroundColor),
+    shadowColor: processColor(shadowColor),
     titleFontColor: processColor(titleFontColor),
     titleFontWeight:
       titleFontWeight !== undefined ? String(titleFontWeight) : undefined,
