@@ -37,6 +37,7 @@ let headerSearchPaths: [String] = [
     "ios/react/utils",
     "ios/react/utils/extensions",
     "ios/react/views/safe-area",
+    "ios/react/views/scroll-edge-element",
     "ios/react/views/scroll-to-top-guard",
     "ios/react/views/scroll-view-marker",
     "ios/react/views/scroll-view-marker/conversion",
