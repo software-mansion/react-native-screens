@@ -105,7 +105,7 @@ class TabsHost(
         }
 
         renderedScreens.add(index, tabsScreen)
-        tabsScreen.setTabsContainerItemDelegate(container.containerItemDelegate)
+        tabsScreen.setContainerItemDelegate(container)
 
         container.addItemAt(index, tabsScreen)
     }
@@ -113,19 +113,19 @@ class TabsHost(
     internal fun unmountReactSubviewAt(index: Int) {
         renderedScreens.removeAt(index).also { tabsScreen ->
             container.removeItemAt(index)
-            tabsScreen.setTabsContainerItemDelegate(null)
+            tabsScreen.setContainerItemDelegate(null)
         }
     }
 
     internal fun unmountReactSubview(reactSubview: TabsScreen) {
         if (renderedScreens.removeIf { it === reactSubview }) {
             assert(container.removeItem(reactSubview))
-            reactSubview.setTabsContainerItemDelegate(null)
+            reactSubview.setContainerItemDelegate(null)
         }
     }
 
     internal fun unmountAllReactSubviews() {
-        renderedScreens.forEach { it.setTabsContainerItemDelegate(null) }
+        renderedScreens.forEach { it.setContainerItemDelegate(null) }
         renderedScreens.clear()
 
         container.removeAllItems()

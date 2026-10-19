@@ -12,7 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 
-internal class TabsHostA11yCoordinator(
+class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
     private val tabsScreenFragments: List<TabsScreenFragment>,
 ) {

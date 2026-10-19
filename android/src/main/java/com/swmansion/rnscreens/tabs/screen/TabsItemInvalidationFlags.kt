@@ -5,7 +5,7 @@ package com.swmansion.rnscreens.tabs.screen
  * [TabsItemConfigurationObserver]; the consumer decides what to re-apply.
  */
 @JvmInline
-internal value class TabsItemInvalidationFlags(
+value class TabsItemInvalidationFlags(
     val raw: Int,
 ) {
     companion object {

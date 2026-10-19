@@ -23,7 +23,7 @@ import kotlin.properties.Delegates
 /**
  * React Component view.
  */
-internal class TabsScreen(
+class TabsScreen(
     val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     FragmentProviding,
@@ -156,7 +156,7 @@ internal class TabsScreen(
         // Ignore restoring instance state too, as we are not saving anything anyways.
     }
 
-    internal fun setTabsContainerItemDelegate(delegate: TabsContainerItemDelegate?) {
+    internal fun setContainerItemDelegate(delegate: TabsContainerItemDelegate?) {
         containerItemDelegate = WeakReference(delegate)
     }
 

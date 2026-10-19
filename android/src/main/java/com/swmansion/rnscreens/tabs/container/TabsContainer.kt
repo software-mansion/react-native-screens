@@ -57,6 +57,7 @@ class TabsContainer internal constructor(
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
+    TabsContainerItemDelegate,
     SafeAreaProvider,
     View.OnLayoutChangeListener {
     init {
@@ -456,22 +457,14 @@ class TabsContainer internal constructor(
 
     // region TabsContainerItemDelegate impl
 
-    // A separate object instead of `TabsContainer : TabsContainerItemDelegate`: the delegate's methods
-    // take the internal `TabsContainerItem`, and overrides in this public class would be public members
-    // exposing that internal type, which Kotlin rejects.
-    internal val containerItemDelegate: TabsContainerItemDelegate =
-        object : TabsContainerItemDelegate {
-            override fun getFragmentForItem(item: TabsContainerItem): TabsScreenFragment? = this@TabsContainer.getFragmentForItem(item)
+    override fun getFragmentForItem(item: TabsContainerItem): TabsScreenFragment? = tabsModel.find { it.item === item }
 
-            override fun onFragmentConfigurationChange(
-                item: TabsContainerItem,
-                config: Configuration,
-            ) {
-                this@TabsContainer.onConfigurationChanged(config)
-            }
-        }
-
-    private fun getFragmentForItem(item: TabsContainerItem): TabsScreenFragment? = tabsModel.find { it.item === item }
+    override fun onFragmentConfigurationChange(
+        item: TabsContainerItem,
+        config: Configuration,
+    ) {
+        this.onConfigurationChanged(config)
+    }
 
     // endregion
 

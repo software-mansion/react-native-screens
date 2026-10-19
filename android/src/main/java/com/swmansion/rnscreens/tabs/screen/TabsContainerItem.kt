@@ -10,7 +10,7 @@ import com.swmansion.rnscreens.tabs.appearance.TabsAppearance
 /**
  * What the tabs container, its fragments and the tab bar need from an item of the tabs.
  */
-internal interface TabsContainerItem : ContainerItem {
+interface TabsContainerItem : ContainerItem {
     /**
      * The view displaying the tab's content.
      */
