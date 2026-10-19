@@ -12,7 +12,7 @@ cancelled predictive back gesture or a committed one has finished.
 
 ## E2E test
 
-Incomplete: no step is automated. For manual testing perform steps 1-11.
+Incomplete: no step is automated. For manual testing perform all steps.
 
 The tint, the travel distances, the draw order and the interactive predictive
 back gesture are not assertable with Detox.
@@ -21,8 +21,10 @@ back gesture are not assertable with Detox.
 
 - Android emulator or device with gesture navigation enabled.
 - The interactive predictive back gesture needs API 34 or newer.
-- Developer options, for steps 2-7 only: set "Animator duration scale" and
-  "Transition animation scale" to 10x before step 2 and back to 1x after step 7.
+- Developer options, for the groups whose heading says "with extended
+  animation duration scale" only: set "Animator duration scale" and
+  "Transition animation scale" to 10x before the first of them and back to
+  1x after the last.
   At 1x these transitions are 200 ms long and the tint, which exists only while
   one is running, cannot be compared against a swatch by eye.
 - Run the screen directly. In `apps/App.tsx` import and render
@@ -54,14 +56,14 @@ back gesture are not assertable with Detox.
 
 ### `iosFromRight` (with extended animation duration scale)
 
-2. Tap "Push Blue".
+1. Tap "Push Blue".
 
    - [ ] "Blue" travels in from the right edge across the full width, drawn
          above "Home". "Home" moves left by about a third of the width and takes
          on a tint (see Note) as it recedes: its yellow is visibly darker than
          the yellow swatch at "Blue"'s left edge, right beside it.
 
-3. On "Blue", tap "Pop".
+2. On "Blue", tap "Pop".
 
    - [ ] "Blue" travels out to the right, drawn above "Home". "Home" returns
          from a third of the width to the left and its tint lifts as it goes: by
@@ -72,14 +74,14 @@ back gesture are not assertable with Detox.
 
 ### `iosFromLeft` (with extended animation duration scale)
 
-4. On "Home", set "next push" to `iosFromLeft`, then tap "Push Blue".
+1. On "Home", set "next push" to `iosFromLeft`, then tap "Push Blue".
 
    - [ ] Mirrored: "Blue" enters from the left edge across the full width on
          top, and "Home" recedes about a third of the width to the right and
          takes on a tint: its yellow is darker than the yellow swatch at
          "Blue"'s right edge.
 
-5. On "Blue", tap "Pop".
+2. On "Blue", tap "Pop".
 
    - [ ] "Blue" leaves to the left on top and "Home" returns from the right: by
          the time "Blue" reaches the left edge "Home"'s yellow matches the
@@ -89,13 +91,13 @@ back gesture are not assertable with Detox.
 
 ### A preset changed before the pop (with extended animation duration scale)
 
-6. On "Home", set "next push" to `slideFromRight`, then tap "Push Blue".
+1. On "Home", set "next push" to `slideFromRight`, then tap "Push Blue".
 
    - [ ] Both screens travel the full width as one band and "Home" takes on no
          tint: its yellow stays identical to the yellow swatch at "Blue"'s left
          edge for the whole push.
 
-7. On "Blue", set "this screen" to `iosFromRight`, then tap "Pop".
+2. On "Blue", set "this screen" to `iosFromRight`, then tap "Pop".
 
    - [ ] "Blue" leaves to the right on top while "Home" returns from a third of
          the width to the left: "Home"'s yellow starts darker than the yellow
@@ -105,26 +107,26 @@ back gesture are not assertable with Detox.
 
 ### Predictive back gesture and the tint
 
-8. On "Home", set "next push" to `iosFromRight`, tap "Push Blue", then swipe in
+1. On "Home", set "next push" to `iosFromRight`, tap "Push Blue", then swipe in
    from the left screen edge and hold at the middle.
 
    - [ ] "Home" is revealed on the left and moves with the finger, and its tint
          lightens as "Blue" is dragged further right: its yellow closes on the
          yellow swatch at "Blue"'s left edge.
 
-9. Swipe back to the edge and release.
+2. Swipe back to the edge and release.
 
    - [ ] "Blue" returns to rest with no residual offset, "Home" is hidden again
          and nothing is popped.
 
-10. On "Blue", tap "Pop".
+3. On "Blue", tap "Pop".
 
-    - [ ] "Home"'s yellow matches the yellow swatch at "Blue"'s left edge by
-          the time "Blue" leaves, and once the pop has finished "Home"'s card is
-          white, not grey: no veil is left behind.
+   - [ ] "Home"'s yellow matches the yellow swatch at "Blue"'s left edge by
+         the time "Blue" leaves, and once the pop has finished "Home"'s card is
+         white, not grey: no veil is left behind.
 
-11. Tap "Push Blue", swipe in from the left screen edge and release past the
-    middle.
+4. Tap "Push Blue", swipe in from the left screen edge and release past the
+   middle.
 
-    - [ ] The pop completes from the position the finger was released at, and
-          "Home" ends untinted: its card is white, not grey.
+   - [ ] The pop completes from the position the finger was released at, and
+         "Home" ends untinted: its card is white, not grey.
