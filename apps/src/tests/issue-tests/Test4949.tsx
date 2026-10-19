@@ -1,5 +1,12 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import {
+  Button,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   NavigationContainer,
   createNavigationContainerRef,
@@ -8,6 +15,7 @@ import {
 } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
+  type NativeStackNavigationProp,
   type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 
@@ -19,33 +27,41 @@ type InnerStackParamList = {
 type RootStackParamList = {
   Home: NavigatorScreenParams<InnerStackParamList> | undefined;
   OuterSheet: undefined;
+  OuterSheetNoAnimation: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const InnerStack = createNativeStackNavigator<InnerStackParamList>();
 const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
+let innerNavigation: NativeStackNavigationProp<InnerStackParamList> | null =
+  null;
+let setInnerStackMounted: ((mounted: boolean) => void) | null = null;
+
+function openInnerSheet() {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('Home', { screen: 'InnerSheet' });
+  }
+}
+
 function openInnerSheetAfter(delay: number) {
-  setTimeout(() => {
-    if (navigationRef.isReady()) {
-      navigationRef.navigate('Home', { screen: 'InnerSheet' });
-    }
-  }, delay);
+  setTimeout(openInnerSheet, delay);
 }
 
 function ListScreen({
   navigation,
 }: NativeStackScreenProps<InnerStackParamList, 'List'>) {
+  innerNavigation = navigation;
   const routes = useNavigationState(state => state.routes.map(r => r.name));
+  const [rnModalVisible, setRNModalVisible] = React.useState(false);
 
   return (
-    <View style={styles.screen} testID="test4949-list">
+    <ScrollView contentContainerStyle={styles.screen} testID="test4949-list">
       <Text style={styles.description}>
-        1. Open the outer sheet (root stack){'\n'}
-        2. Tap "Close, then open inner sheet at once", or "Close and open inner
-        sheet in one update" (the stacks update in no fixed order, so try it a
-        few times){'\n'}
-        Expected: the inner sheet (nested stack) appears.{'\n'}
+        Open the outer sheet (root stack), then close it and open the inner
+        sheet (nested stack) with one of its buttons. The stacks update in no
+        fixed order, so try the one-update cases a few times.{'\n'}
+        Expected: the inner sheet appears and stays.{'\n'}
         Bug: no sheet, although the inner stack state has InnerSheet.
       </Text>
       <Text style={styles.state} testID="test4949-inner-routes">
@@ -57,11 +73,45 @@ function ListScreen({
         onPress={() => navigationRef.navigate('OuterSheet')}
       />
       <Button
+        title="Open outer sheet (no animation)"
+        testID="test4949-open-outer-sheet-no-animation"
+        onPress={() => navigationRef.navigate('OuterSheetNoAnimation')}
+      />
+      <Button
         title="Open inner sheet"
         testID="test4949-open-inner-sheet"
         onPress={() => navigation.navigate('InnerSheet')}
       />
-    </View>
+      <Button
+        title="Open outer sheet, close it while opening and open inner sheet"
+        testID="test4949-outer-sheet-still-opening"
+        onPress={() => {
+          navigationRef.navigate('OuterSheet');
+          setTimeout(() => {
+            navigationRef.goBack();
+            openInnerSheet();
+          }, 100);
+        }}
+      />
+      <Button
+        title="Show React Native modal"
+        testID="test4949-show-rn-modal"
+        onPress={() => setRNModalVisible(true)}
+      />
+      <Modal visible={rnModalVisible} animationType="slide">
+        <View style={styles.rnModal} testID="test4949-rn-modal">
+          <Text style={styles.title}>React Native modal</Text>
+          <Button
+            title="Close modal and open inner sheet"
+            testID="test4949-close-rn-modal-open-inner-sheet"
+            onPress={() => {
+              setRNModalVisible(false);
+              navigation.navigate('InnerSheet');
+            }}
+          />
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
@@ -82,7 +132,10 @@ function InnerSheetScreen({
 
 function OuterSheetScreen({
   navigation,
-}: NativeStackScreenProps<RootStackParamList, 'OuterSheet'>) {
+}: NativeStackScreenProps<
+  RootStackParamList,
+  'OuterSheet' | 'OuterSheetNoAnimation'
+>) {
   return (
     <View style={styles.sheet} testID="test4949-outer-sheet">
       <Text style={styles.title}>Outer sheet (root stack)</Text>
@@ -99,7 +152,33 @@ function OuterSheetScreen({
         testID="test4949-close-open-inner-sheet-same-update"
         onPress={() => {
           navigation.goBack();
-          navigationRef.navigate('Home', { screen: 'InnerSheet' });
+          openInnerSheet();
+        }}
+      />
+      <Button
+        title="Close and open preloaded inner sheet in one update"
+        testID="test4949-close-open-preloaded-inner-sheet"
+        onPress={() => {
+          // Activating a preloaded screen updates the nested stack synchronously, during the mount transaction,
+          // so it runs before the root stack's update.
+          if (innerNavigation == null) {
+            throw new Error('Test4949: the nested stack is not mounted');
+          }
+          innerNavigation.preload('InnerSheet');
+          setTimeout(() => {
+            navigation.goBack();
+            openInnerSheet();
+          }, 300);
+        }}
+      />
+      <Button
+        title="Close, open inner sheet and remount the nested stack"
+        testID="test4949-close-open-inner-sheet-remount"
+        onPress={() => {
+          navigation.goBack();
+          openInnerSheet();
+          setTimeout(() => setInnerStackMounted?.(false), 50);
+          setTimeout(() => setInnerStackMounted?.(true), 600);
         }}
       />
       <Button
@@ -115,6 +194,13 @@ function OuterSheetScreen({
 }
 
 function Home() {
+  const [mounted, setMounted] = React.useState(true);
+  setInnerStackMounted = setMounted;
+  if (!mounted) {
+    return (
+      <View style={styles.screen} testID="test4949-inner-stack-unmounted" />
+    );
+  }
   return (
     <InnerStack.Navigator>
       <InnerStack.Screen name="List" component={ListScreen} />
@@ -139,7 +225,16 @@ export default function App() {
         <RootStack.Screen
           name="OuterSheet"
           component={OuterSheetScreen}
-          options={{ presentation: 'formSheet', sheetAllowedDetents: [0.4] }}
+          options={{ presentation: 'formSheet', sheetAllowedDetents: [0.5] }}
+        />
+        <RootStack.Screen
+          name="OuterSheetNoAnimation"
+          component={OuterSheetScreen}
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: [0.5],
+            animation: 'none',
+          }}
         />
       </RootStack.Navigator>
     </NavigationContainer>
@@ -148,12 +243,17 @@ export default function App() {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
     padding: 16,
-    gap: 12,
+    gap: 8,
   },
   sheet: {
     padding: 16,
+    gap: 8,
+  },
+  rnModal: {
+    flex: 1,
+    padding: 32,
+    paddingTop: 120,
     gap: 12,
   },
   title: {
