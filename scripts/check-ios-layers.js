@@ -3,7 +3,8 @@
  *
  * 1. Header basenames are unique under `ios/` (CocoaPods flattens headers and
  *    SPM resolves bare names through a flat list of search paths).
- * 2. `ios/core` does not include React Native headers or use `RCT*` symbols.
+ * 2. `ios/core` does not include React Native headers (including the folly and
+ *    yoga libraries it ships) or use `RCT*` symbols.
  *    Symbols are matched anywhere in a file, comments included, because
  *    `RCT*` macros also arrive through transitive imports.
  * 3. Every quoted import in `ios/core` resolves to a file under `ios/core`
@@ -29,7 +30,7 @@ const IOS_DIR = path.join(ROOT, 'ios');
 const CORE_DIR = path.join(IOS_DIR, 'core');
 
 const REACT_NATIVE_INCLUDE =
-  /#\s*(?:import|include)\s*<(?:React|react|ReactCommon|jsi)\/|@import\s+React\b/;
+  /#\s*(?:import|include)\s*<(?:React|react|ReactCommon|jsi|folly|yoga)\/|@import\s+React\b/;
 const RCT_SYMBOL = /\bRCT[A-Z]\w*/;
 const QUOTED_INCLUDE = /#\s*(?:import|include)\s*"([^"]+)"/;
 const ANGLE_INCLUDE = /#\s*(?:import|include)\s*<([^>]+)>/;
