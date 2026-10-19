@@ -111,37 +111,7 @@ Keep one `scenario.md` per test. Do not create per-device files
 | Same feature, but the device needs a **different `index.tsx`** (different layout) | a generic `test-tabs-foo-ios` exists, Duo needs its own screen | Create a separate test dir named after the generic one with the device suffix instead of the platform suffix: `test-tabs-foo-duo` (`-ipad` for iPad). `devices` lists only that device. The generic test does not list the device. |
 | Native platform bug, not fixable in the library | UIKit layout bug on fold | Record it in `## Note` as a Known issue with a link, not as a failing step. |
 
-### Example with a device section
+### Example
 
-The `## Steps - iPhone Duo` section below is only an illustration - add a device
-section only when the test covers that device.
-
-```markdown
-## Steps
-
-### Baseline
-
-1. Navigate to ...
-
-    - [ ] Description of expected behavior after the navigation action.
-
-## Steps - iPhone Duo
-
-Run Baseline step 1 from `## Steps` first.
-Postures: closed portrait, open portrait; close and open with the screen shown.
-
-### Closed
-
-1. With the device closed in portrait, tap ...
-
-    - [ ] The tab bar is shown as a vertical rail on the side.
-
----
-
-### Unfolding
-
-1. Open the device fully with the screen shown.
-
-    - [ ] The tab bar moves to the bottom; the selected tab is the same as in
-          Closed step 1.
-```
+See [scenario.md](scenario.md) for an example of the base `## Steps` and an
+optional `## Steps - iPhone Duo` section.
