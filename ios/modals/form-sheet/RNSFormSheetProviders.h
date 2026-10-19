@@ -2,10 +2,6 @@
 
 #import <UIKit/UIKit.h>
 
-#ifdef __cplusplus
-#include <vector>
-#endif
-
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSFormSheetPresentationProvider <NSObject>
@@ -26,13 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSFormSheetBehaviorProvider <NSObject>
 
-#ifdef __cplusplus
-- (const std::vector<double> &)detents;
-#endif
+/**
+ * Detent fractions in ascending order, or a single `kRNSFormSheetFitToContents`.
+ */
+- (NSArray<NSNumber *> *)detents;
 - (NSInteger)initialDetentIndex;
 - (BOOL)prefersScrollingExpandsWhenScrolledToEdge;
 - (BOOL)preventNativeDismiss;
-- (CGFloat)reactContentsHeight;
+- (CGFloat)contentsHeight;
 
 @end
 
