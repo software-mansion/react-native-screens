@@ -408,6 +408,38 @@ class TabsContainer internal constructor(
 
     // endregion
 
+    // region Update batch
+
+    private var isUpdateBatchPending = false
+
+    /**
+     * Announces that the host is applying a batch of updates (e.g. a React transaction). Tab
+     * configuration changes raised until [endUpdateBatch] are only recorded and applied together
+     * when the batch ends.
+     */
+    internal fun beginUpdateBatch() {
+        isUpdateBatchPending = true
+    }
+
+    internal fun endUpdateBatch() {
+        isUpdateBatchPending = false
+        flushPendingUpdates()
+    }
+
+    /**
+     * Changes raised outside a batch (e.g. an icon loaded asynchronously) have no batch end to flush
+     * them, so they schedule a flush of their own.
+     */
+    private fun scheduleFlushOutsideUpdateBatch() {
+        if (!isUpdateBatchPending) {
+            post {
+                flushPendingUpdates()
+            }
+        }
+    }
+
+    // endregion
+
     // region Tab configuration changes
 
     /**
@@ -427,21 +459,19 @@ class TabsContainer internal constructor(
             // Skip when detached; reattachment reapplies the full appearance anyway.
             if (isAttachedToWindow) {
                 invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-                post {
-                    this.flushPendingUpdates()
-                }
             }
         } else if (flags.containsAny(TabsItemInvalidationFlags.APPEARANCE)) {
             if (isAttachedToWindow && selectedTab.item === item) {
                 invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-                post {
-                    this.flushPendingUpdates()
-                }
             }
         }
 
         if (flags.containsAny(TabsItemInvalidationFlags.MENU_ITEM_ATTRIBUTES)) {
-            updateMenuItem(item)
+            invalidationFlags.isMenuItemsInvalidated = true
+        }
+
+        if (invalidationFlags.any()) {
+            scheduleFlushOutsideUpdateBatch()
         }
     }
 
@@ -516,6 +546,20 @@ class TabsContainer internal constructor(
 
     private fun performPostSelectedTabUpdateActions() {
         updateBottomNavigationViewAppearanceIfNeeded()
+        updateMenuItemsIfNeeded()
+    }
+
+    /**
+     * Applies the menu items' pending per-item changes. Runs after the whole-bar appearance update,
+     * which already consumed the pending flags of every menu item it updated.
+     */
+    private fun updateMenuItemsIfNeeded() {
+        // Nothing is selected yet; the appearance update that follows the first selection applies them.
+        if (!invalidationFlags.isMenuItemsInvalidated || navState.isEmpty()) {
+            return
+        }
+        invalidationFlags.isMenuItemsInvalidated = false
+        tabsModel.forEach { updateMenuItem(it.item) }
     }
 
     private fun updateNavigationMenuStructureIfNeeded() {
@@ -883,13 +927,19 @@ internal class TabsContainerInvalidationFlags(
     var isSelectedTabInvalidated: Boolean = false,
     var isNavigationMenuAppearanceInvalidated: Boolean = false,
     var isNavigationMenuStructureInvalidated: Boolean = false,
+    var isMenuItemsInvalidated: Boolean = false,
 ) {
-    internal fun any(): Boolean = isSelectedTabInvalidated || isNavigationMenuAppearanceInvalidated || isNavigationMenuStructureInvalidated
+    internal fun any(): Boolean =
+        isSelectedTabInvalidated ||
+            isNavigationMenuAppearanceInvalidated ||
+            isNavigationMenuStructureInvalidated ||
+            isMenuItemsInvalidated
 
     internal fun invalidateAll() {
         isSelectedTabInvalidated = true
         isNavigationMenuAppearanceInvalidated = true
         isNavigationMenuStructureInvalidated = true
+        isMenuItemsInvalidated = true
     }
 
     internal fun invalidateOnSelectedTabChanged() {
