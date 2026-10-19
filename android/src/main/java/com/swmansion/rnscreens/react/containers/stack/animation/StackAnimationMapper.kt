@@ -44,12 +44,11 @@ private fun parseMap(map: ReadableMap): StackAnimationConfig {
     val keys = map.keySetIterator()
     while (keys.hasNextKey()) {
         val key = keys.nextKey()
-        if (key == KEY_TYPE || key == KEY_NAME) continue
+        if (key == KEY_TYPE || key == KEY_NAME || map.isNull(key)) continue
         val option = PresetOption.entries.firstOrNull { it.key == key }
         require(option != null && option in name.options) {
             "[RNScreens] Option '$key' is not supported by animation preset '${name.stringName}'."
         }
-        if (map.isNull(key)) continue
         when (option) {
             PresetOption.DURATION -> durationMs = parseDuration(map.getDynamic(key))
             PresetOption.EASING -> easing = parseEasing(map.getDynamic(key))

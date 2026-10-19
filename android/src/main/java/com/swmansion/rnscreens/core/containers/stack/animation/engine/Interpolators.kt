@@ -7,6 +7,7 @@ import android.view.animation.Interpolator
 import androidx.core.view.animation.PathInterpolatorCompat
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
+import java.util.EnumMap
 import com.google.android.material.R as MaterialR
 
 /**
@@ -14,8 +15,9 @@ import com.google.android.material.R as MaterialR
  * built from the CSS specification's bezier constants, never transcribed by hand.
  *
  * Loading an interpolator inflates it from XML every time (the platform does not cache it), so
- * loaded instances are cached here. Interpolators are immutable and theme-independent, so one
- * instance per curve serves every animator. Main thread only.
+ * named curves are cached here. Interpolators are immutable and theme-independent, so one
+ * instance per curve serves every animator. A bezier is cheap to build (no resource parsing) and
+ * is built on every request, so arbitrary curves never accumulate. Main thread only.
  */
 internal object Interpolators {
     // CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords.
@@ -23,44 +25,40 @@ internal object Interpolators {
     private val CSS_EASE_OUT = Easing.Bezier(0f, 0f, 0.58f, 1f)
     private val CSS_EASE_IN_OUT = Easing.Bezier(0.42f, 0f, 0.58f, 1f)
 
-    private val cache = HashMap<Easing, Interpolator>()
+    private val cache = EnumMap<EasingName, Interpolator>(EasingName::class.java)
 
     internal fun of(
         easing: Easing,
         context: Context,
-    ): Interpolator = cache.getOrPut(easing) { load(easing, context) }
-
-    private fun load(
-        easing: Easing,
-        context: Context,
     ): Interpolator =
         when (easing) {
-            is Easing.Bezier -> PathInterpolatorCompat.create(easing.x1, easing.y1, easing.x2, easing.y2)
-            is Easing.Named ->
-                when (easing.name) {
-                    EasingName.EASE_IN -> of(CSS_EASE_IN, context)
-                    EasingName.EASE_OUT -> of(CSS_EASE_OUT, context)
-                    EasingName.EASE_IN_OUT -> of(CSS_EASE_IN_OUT, context)
-                    else -> AnimationUtils.loadInterpolator(context, easing.name.resourceId)
-                }
+            is Easing.Bezier -> easing.toInterpolator()
+            is Easing.Named -> cache.getOrPut(easing.name) { load(easing.name, context) }
         }
 
-    private val EasingName.resourceId: Int
-        @SuppressLint("PrivateResource")
-        get() =
-            when (this) {
-                EasingName.LINEAR -> android.R.interpolator.linear
-                EasingName.STANDARD -> MaterialR.interpolator.m3_sys_motion_easing_standard
-                EasingName.STANDARD_ACCELERATE -> MaterialR.interpolator.m3_sys_motion_easing_standard_accelerate
-                EasingName.STANDARD_DECELERATE -> MaterialR.interpolator.m3_sys_motion_easing_standard_decelerate
-                // Identical to AOSP `fast_out_extra_slow_in`, which is public only from API 28.
-                EasingName.EMPHASIZED -> MaterialR.interpolator.m3_sys_motion_easing_emphasized
-                EasingName.EMPHASIZED_ACCELERATE -> MaterialR.interpolator.m3_sys_motion_easing_emphasized_accelerate
-                EasingName.EMPHASIZED_DECELERATE -> MaterialR.interpolator.m3_sys_motion_easing_emphasized_decelerate
-                EasingName.ACCELERATE_DECELERATE -> android.R.interpolator.accelerate_decelerate
-                EasingName.ACCELERATE_QUINT -> android.R.interpolator.accelerate_quint
-                EasingName.DECELERATE_QUINT -> android.R.interpolator.decelerate_quint
-                EasingName.EASE_IN, EasingName.EASE_OUT, EasingName.EASE_IN_OUT ->
-                    error("[RNScreens] CSS curves are built from constants, not loaded.")
-            }
+    @SuppressLint("PrivateResource")
+    private fun load(
+        name: EasingName,
+        context: Context,
+    ): Interpolator =
+        when (name) {
+            EasingName.LINEAR -> context.inflate(android.R.interpolator.linear)
+            EasingName.EASE_IN -> CSS_EASE_IN.toInterpolator()
+            EasingName.EASE_OUT -> CSS_EASE_OUT.toInterpolator()
+            EasingName.EASE_IN_OUT -> CSS_EASE_IN_OUT.toInterpolator()
+            EasingName.STANDARD -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_standard)
+            EasingName.STANDARD_ACCELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_standard_accelerate)
+            EasingName.STANDARD_DECELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_standard_decelerate)
+            // Identical to AOSP `fast_out_extra_slow_in`, which is public only from API 28.
+            EasingName.EMPHASIZED -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_emphasized)
+            EasingName.EMPHASIZED_ACCELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_emphasized_accelerate)
+            EasingName.EMPHASIZED_DECELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_emphasized_decelerate)
+            EasingName.ACCELERATE_DECELERATE -> context.inflate(android.R.interpolator.accelerate_decelerate)
+            EasingName.ACCELERATE_QUINT -> context.inflate(android.R.interpolator.accelerate_quint)
+            EasingName.DECELERATE_QUINT -> context.inflate(android.R.interpolator.decelerate_quint)
+        }
+
+    private fun Context.inflate(id: Int): Interpolator = AnimationUtils.loadInterpolator(this, id)
+
+    private fun Easing.Bezier.toInterpolator(): Interpolator = PathInterpolatorCompat.create(x1, y1, x2, y2)
 }

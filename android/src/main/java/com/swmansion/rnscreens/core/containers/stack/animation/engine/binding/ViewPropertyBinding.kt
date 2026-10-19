@@ -27,7 +27,7 @@ internal class ViewPropertyBinding(
         set(from + (to - from) * if (eased) interpolator.getInterpolation(progress) else progress)
     }
 
-    override fun restore() = set(REST_VALUES.getValue(target))
+    override fun restore() = set(target.restValue)
 
     private fun set(value: Float) {
         when (target) {
@@ -41,14 +41,11 @@ internal class ViewPropertyBinding(
         }
     }
 
-    private companion object {
-        // The `View` defaults.
-        val REST_VALUES =
-            mapOf(
-                ViewTarget.TRANSLATION_X to 0f,
-                ViewTarget.TRANSLATION_Y to 0f,
-                ViewTarget.ALPHA to 1f,
-                ViewTarget.SCALE to 1f,
-            )
-    }
+    // The `View` defaults.
+    private val ViewTarget.restValue: Float
+        get() =
+            when (this) {
+                ViewTarget.TRANSLATION_X, ViewTarget.TRANSLATION_Y -> 0f
+                ViewTarget.ALPHA, ViewTarget.SCALE -> 1f
+            }
 }

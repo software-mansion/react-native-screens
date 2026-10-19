@@ -400,9 +400,11 @@ internal class StackContainer(
             return
         }
 
-        // Only a pop FragmentManager starts by itself (header back, system back, predictive back gesture
-        // start) arrives without a context. The model is mutated later, in `onBackStackChangeCommitted`,
-        // so its top is still the popped fragment.
+        // A pop FragmentManager starts by itself (header back, system back, predictive back gesture
+        // start) arrives without a context. So does a JS push and pop executed together (the batch
+        // with no net change wrote none, and the last record is a pop); FragmentManager starts no
+        // transition for it, so the context written here is never read. The model is mutated later,
+        // in `onBackStackChangeCommitted`, so its top is still the popped fragment.
         if (pop && transitionContext == null && stackModel.size > 1) {
             transitionContext =
                 StackTransitionContext(
