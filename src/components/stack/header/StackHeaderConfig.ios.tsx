@@ -18,7 +18,12 @@ import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
-import { NativeSyntheticEvent, StyleSheet, processColor } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  Platform,
+  StyleSheet,
+  processColor,
+} from 'react-native';
 import type {
   StackHeaderAppearanceIOS,
   StackHeaderInlineCustomItemIOS,
@@ -40,6 +45,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
   const { ref: forwardedRef, ios, android, ...restProps } = props;
 
   const {
+    searchBar,
     leadingItems,
     trailingItems,
     titleItem,
@@ -168,6 +174,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       style={styles.config}
       onMenuItemPress={handleMenuItemPress}
       onMenuSelectionChange={handleSelectionChange}>
+      {!Platform.isTV && searchBar}
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
       {titleItem && makeItemViewFromItem(titleItem, 'title')}
       {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}
