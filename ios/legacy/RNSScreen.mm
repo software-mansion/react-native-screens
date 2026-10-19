@@ -27,6 +27,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSScrollViewSeeking.h"
 #import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
@@ -48,6 +49,7 @@ struct ContentWrapperBox {
                              UISheetPresentationControllerDelegate,
 #endif
                              RCTRNSScreenViewProtocol,
+                             RNSScrollViewSeeking,
                              CAAnimationDelegate>
 @end
 
@@ -1155,6 +1157,39 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
                                       withProvider:self];
+}
+
+#pragma mark - RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  // UIKit looks for the content scroll view only in the first descendant chain, unless it is set explicitly.
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+  [[self findSeekingAncestorOutsideLegacyScreens] registerDescendantScrollView:scrollView fromMarker:marker];
+}
+
+- (void)unregisterDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+{
+  // Another marker that is still mounted in this screen is not registered again. The content scroll view stays
+  // unset (UIKit falls back to its own lookup) until that marker registers on the next window attach.
+  if ([_controller contentScrollViewForEdge:NSDirectionalRectEdgeTop] == scrollView) {
+    [_controller setContentScrollView:nil forEdge:NSDirectionalRectEdgeAll];
+  }
+}
+
+/**
+ * Passes the registration on to the ancestor (e.g. a tabs screen) that the marker would have registered with
+ * before screens of the legacy stack and screen container became seeking ancestors.
+ */
+- (nullable id<RNSScrollViewSeeking>)findSeekingAncestorOutsideLegacyScreens
+{
+  for (UIView *ancestor = self.reactSuperview; ancestor != nil; ancestor = ancestor.reactSuperview) {
+    if (![ancestor isKindOfClass:RNSScreenView.class] &&
+        [ancestor respondsToSelector:@selector(registerDescendantScrollView:fromMarker:)]) {
+      return static_cast<id<RNSScrollViewSeeking>>(ancestor);
+    }
+  }
+  return nil;
 }
 
 #pragma mark - RNSSafeAreaProviding
