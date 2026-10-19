@@ -56,6 +56,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: '${testDirName}',
   details: '',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
@@ -137,6 +138,9 @@ function main(): void {
     `  - scenario-description.ts (name='${screenName}', key='${testDirName}')`,
   );
   console.log('  - scenario.md (from template)');
+  console.log(
+    'Before writing the scenario, read apps/src/tests/template/scenario-rules.md',
+  );
 }
 
 main();
