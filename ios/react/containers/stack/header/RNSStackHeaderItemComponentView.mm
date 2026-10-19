@@ -120,7 +120,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSViewFrameChangeDelegate
 
-- (void)viewFrameDidChange:(nonnull UINavigationBar *)navigationBar
+- (void)viewFrameDidChange:(nonnull UIView *)navigationBar
 {
   if (_state == nullptr || self.superview == nil) {
     return;

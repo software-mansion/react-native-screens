@@ -243,7 +243,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - RNSViewFrameChangeDelegate
 
-- (void)viewFrameDidChange:(nonnull UINavigationBar *)navigationBar
+- (void)viewFrameDidChange:(nonnull UIView *)navigationBar
 {
   if (_state == nullptr || self.superview == nil) {
     return;
