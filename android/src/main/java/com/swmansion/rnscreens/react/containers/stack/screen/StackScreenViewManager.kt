@@ -21,7 +21,7 @@ import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWi
 import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
 
 @ReactModule(name = StackScreenViewManager.REACT_CLASS)
-internal class StackScreenViewManager :
+class StackScreenViewManager :
     ViewGroupManager<StackScreen>(),
     RNSStackScreenManagerInterface<StackScreen> {
     private val delegate: ViewManagerDelegate<StackScreen> = RNSStackScreenManagerDelegate<StackScreen, StackScreenViewManager>(this)
