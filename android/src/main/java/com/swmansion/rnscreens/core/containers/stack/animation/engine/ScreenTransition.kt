@@ -10,8 +10,8 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ZOrder
 
 /**
  * The androidx transition that plays one screen's timeline in one operation. One instance per
- * read, never shared, holding only immutable data: FragmentManager clones what it reads and the
- * seek controller attaches per-instance state.
+ * request, never shared, holding only immutable data: FragmentManager clones it and the seek
+ * controller attaches per-instance state.
  */
 internal class ScreenTransition(
     internal val timeline: ScreenTimeline,
@@ -26,10 +26,8 @@ internal class ScreenTransition(
     // this is what keeps predictive back enabled for the batch.
     override fun isSeekingSupported(): Boolean = true
 
-    // The only change versus stock Visibility is which ViewGroupOverlay hosts the disappearing
-    // view: the scene root's overlay draws above every child, the underlay's draws as part of
-    // child 0, i.e. under the entering screen. Everything androidx does with that overlay
-    // afterward (removal at end or cancel, pause / resume / reverse while seeking) is unchanged.
+    // For [ZOrder.UNDER] the disappearing view is hosted in the underlay's overlay, which draws under
+    // the entering screen; nothing else differs from stock Visibility.
     override fun onDisappear(
         sceneRoot: ViewGroup,
         startValues: TransitionValues?,
@@ -46,12 +44,8 @@ internal class ScreenTransition(
         return super.onDisappear(host, startValues, startVisibility, endValues, endVisibility)
     }
 
-    // `startValues` / `endValues` are ignored on purpose. An androidx transition normally animates
-    // between the property snapshots it captured in the start and end scenes (`ChangeBounds` its
-    // bounds, `Fade` its alpha); `Visibility` captures only visibility and parent, uses them to pick
-    // `onAppear` or `onDisappear`, and passes the same snapshots on. Here the `from` / `to` values
-    // come from the timeline and the view is at rest in both scenes, so the snapshots hold nothing
-    // to animate between.
+    // `startValues` / `endValues` are ignored: `Visibility` captures only visibility and parent, and
+    // the values to animate come from the timeline.
     override fun onAppear(
         sceneRoot: ViewGroup,
         view: View,

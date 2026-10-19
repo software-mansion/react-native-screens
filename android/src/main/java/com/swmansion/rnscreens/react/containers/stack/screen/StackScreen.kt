@@ -60,8 +60,8 @@ internal class StackScreen(
     }
 
     /**
-     * Read by the fragment whenever FragmentManager asks for one of its transitions, so a
-     * change here takes effect at the next read without any notification.
+     * Read whenever FragmentManager asks for a transition, so a change applies to the next
+     * operation without notification.
      */
     override var animation: StackAnimationConfig = StackAnimationConfig.DEFAULT
 

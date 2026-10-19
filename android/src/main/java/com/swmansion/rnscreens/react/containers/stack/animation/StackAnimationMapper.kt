@@ -19,13 +19,9 @@ private const val KEY_NAME = "name"
 private const val PERCENT_SUFFIX = "%"
 
 /**
- * Converts the React `animation` prop into the package's config. The only file of the package
- * that sees a React Native type; everything below it is framework-neutral.
- *
- * Scalar props are converted inline in the view managers; a discriminated object graph like
- * this one gets a mapper next to its model, as the header toolbar menu does. Native is the
- * single validator: every rejected value is an [IllegalArgumentException] the view manager
- * turns into a warning and the default animation.
+ * Converts the React `animation` prop into the package's config; the only file of the package
+ * that sees a React Native type. Native is the single validator: every rejected value is an
+ * [IllegalArgumentException] the view manager turns into a warning and the default animation.
  */
 internal fun parseStackAnimationConfig(value: Dynamic): StackAnimationConfig =
     when (value.type) {

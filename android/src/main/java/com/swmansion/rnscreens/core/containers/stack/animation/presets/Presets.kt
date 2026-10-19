@@ -12,12 +12,9 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ZOrder
 private const val NONE_DURATION_MS = 20L
 
 /**
- * The only entry point to the preset tables. Options are applied here, while the tables are
- * built; the resolver only picks a transition for an operation. Building a definition is a
- * handful of small allocations, so it is done on every read.
- *
- * This package deliberately depends on the platform: [defaultPreset] picks its table by API
- * level and [dimTrack] defaults to a platform color.
+ * The only entry point to the preset tables; options are applied while they are built, which is
+ * cheap enough to do on every request. Depends on the platform: [defaultPreset] picks its table
+ * by API level and [dimTrack] defaults to a platform color.
  */
 internal fun presetDefinition(
     name: PresetName,

@@ -7,35 +7,29 @@ import com.swmansion.rnscreens.core.containers.stack.animation.presets.PresetDef
 import com.swmansion.rnscreens.core.containers.stack.animation.presets.presetDefinition
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
+import com.swmansion.rnscreens.core.utils.RNSLog
+
+private const val TAG = "StackTransitionResolver"
 
 /**
- * Pure: picks the transition a fragment plays in a slot from the container's context about the
- * executing operation and the screens' configs.
- *
- * Only one bit of the slot is used, whether the reader's view is appearing or disappearing,
- * which FragmentManager guarantees by construction (an appearing slot is read only for a
- * fragment whose final state is visible). Its push / pop classification is never consulted.
+ * Picks the transition [fragment] plays in [slot] from the executing operation in [context] and
+ * the screens' configs. Without a context nothing animates (the first screen, a stack torn down
+ * with its FragmentManager); a fragment outside its role in the context is unexpected and logged.
  */
 internal fun resolveStackTransition(
-    reader: StackScreenFragment,
+    fragment: StackScreenFragment,
     slot: TransitionSlot,
     context: StackTransitionContext?,
-    screenAbove: (StackScreenFragment) -> StackScreenFragment?,
 ): ScreenTransition? {
-    val timeline: TransitionTimeline =
-        if (context != null && reader === (if (slot.isAppearing) context.incoming else context.outgoing)) {
-            // A batch of ours is executing and the reader plays its role in it.
-            timelineOf(context)
-        } else if (!slot.isAppearing) {
-            // Otherwise FragmentManager started a pop by itself (predictive back at gesture
-            // start): the popped screen plays its own pop ...
-            definitionOf(reader).pop
-        } else {
-            // ... and the revealed screen plays the pop of the screen above it. Nothing above
-            // means the first screen, which never animates.
-            val above = screenAbove(reader) ?: return null
-            definitionOf(above).pop
-        }
+    if (context == null) {
+        return null
+    }
+    val expectedFragment = if (slot.isAppearing) context.incoming else context.outgoing
+    if (fragment !== expectedFragment) {
+        RNSLog.d(TAG, "Transition requested for $fragment in $slot outside its role in the executing operation")
+        return null
+    }
+    val timeline = timelineOf(context)
     val screenTimeline = if (slot.isAppearing) timeline.enter else timeline.exit
     return ScreenTransition(screenTimeline, slot.isAppearing, timeline.exitZOrder)
 }

@@ -131,6 +131,7 @@ internal class StackContainer(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
+        transitionContext = null
         fragmentManager = null
         parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
@@ -222,14 +223,9 @@ internal class StackContainer(
             // when last operation of the batch is "pop". Empty commit with only onCommit callback
             // attached is not a "pop" commit, therefore JS-pop commits have not been properly
             // recognized.
-            // The commit runnables run after FragmentManager has read the transitions of this
-            // batch, which is the right moment to retire the transition context.
             fragmentOps.add(
                 OnCommitCallbackOp(
-                    {
-                        updateTopFragment()
-                        transitionContext = null
-                    },
+                    { updateTopFragment() },
                     allowStateLoss = true,
                     flushSync = false,
                 ),
@@ -283,23 +279,17 @@ internal class StackContainer(
     // region Transition provision
 
     /**
-     * The operation this container most recently committed, consulted by [transitionFor] while
-     * FragmentManager executes it and reads the fragments' transitions.
-     *
-     * Written at two points: when a batch of pending operations is computed, and on a native pop
-     * (inside `onBackStackChangeCommitted`, which FragmentManager dispatches right before the reads).
-     * Cleared at three: the batch's own commit runnable and `onBackStackChanged`, which both run after
-     * the reads, and [onFragmentDestroyed] for the outgoing fragment. The last one covers a predictive
-     * back commit, which reads nothing (the reads happened at gesture start) and never reports a
-     * back stack change: the context stays until the popped fragment is destroyed. Nothing here
-     * is dispatched asynchronously.
+     * The operation FragmentManager is about to execute, consulted by [transitionFor]. Written right
+     * before FragmentManager asks for the transitions ([writeTransitionContext],
+     * [onBackStackChangeStarted]) and cleared after it, in [onBackStackChanged] (both in
+     * `FragmentManager.executeOpsTogether`). A predictive back commit asks for nothing; the gesture
+     * start already did.
      */
     private var transitionContext: StackTransitionContext? = null
 
     /**
-     * The outgoing screen is the one FragmentManager still shows, taken from FragmentManager itself:
-     * a batch computed while an earlier one is still pending executes together with it, and the
-     * transition is read between the top shown before both and the top after both.
+     * The outgoing screen is FragmentManager's current top, not the model's: a batch computed while
+     * an earlier one is pending executes together with it.
      */
     private fun writeTransitionContext(modelBeforeBatch: List<StackScreenFragment>) {
         val incoming = stackModel.last()
@@ -320,18 +310,7 @@ internal class StackContainer(
     override fun transitionFor(
         fragment: StackScreenFragment,
         slot: TransitionSlot,
-    ): Transition? = resolveStackTransition(fragment, slot, transitionContext, ::fragmentAbove)
-
-    private fun fragmentAbove(fragment: StackScreenFragment): StackScreenFragment? {
-        val index = stackModel.indexOf(fragment)
-        return if (index >= 0) stackModel.getOrNull(index + 1) else null
-    }
-
-    override fun onFragmentDestroyed(fragment: StackScreenFragment) {
-        if (transitionContext?.outgoing === fragment) {
-            transitionContext = null
-        }
-    }
+    ): Transition? = resolveStackTransition(fragment, slot, transitionContext)
 
     // endregion
 
@@ -345,11 +324,6 @@ internal class StackContainer(
             "[RNScreens] Primary navigation fragment not updated by native pop"
         }
         updateTopFragment()
-
-        // FragmentManager reads the transitions of this pop right after this callback (header
-        // back, system back) or not at all (predictive back commit). `onBackStackChanged` clears
-        // the context on the first path, `onFragmentDestroyed` on the second.
-        transitionContext = StackTransitionContext(StackTransitionKind.POP, outgoing = fragment, incoming = stackModel.last())
     }
 
     private fun dumpStackModel() {
@@ -414,6 +388,29 @@ internal class StackContainer(
     // This is called after special effects (animations) are dispatched
     override fun onBackStackChanged() {
         transitionContext = null
+    }
+
+    // Called before FragmentManager asks for transitions, for every fragment of the back stack record
+    // (hence the model check).
+    override fun onBackStackChangeStarted(
+        fragment: Fragment,
+        pop: Boolean,
+    ) {
+        if (fragment !is StackScreenFragment || !stackModel.contains(fragment)) {
+            return
+        }
+
+        // Only a pop FragmentManager starts by itself (header back, system back, predictive back gesture
+        // start) arrives without a context. The model is mutated later, in `onBackStackChangeCommitted`,
+        // so its top is still the popped fragment.
+        if (pop && transitionContext == null && stackModel.size > 1) {
+            transitionContext =
+                StackTransitionContext(
+                    StackTransitionKind.POP,
+                    outgoing = stackModel.last(),
+                    incoming = stackModel[stackModel.lastIndex - 1],
+                )
+        }
     }
 
     // This is called before the special effects (animations) are dispatched, however mid transaction!
