@@ -14,6 +14,7 @@ let headerSearchPaths: [String] = [
     "ios/legacy/events",
     "ios/legacy/integrations",
     "ios/legacy/utils",
+    "ios/modals/contained-modal",
     "ios/modals/form-sheet",
     "ios/modals/utils",
     "ios/react",
