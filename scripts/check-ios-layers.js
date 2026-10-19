@@ -13,6 +13,8 @@
  * 4. `ios/core` headers are plain Objective-C: no C++, not even guarded. C++
  *    standard headers are recognised by their missing extension (`<string>`).
  * 5. The `headerSearchPaths` list in `Package.swift` is up to date.
+ * 6. `ios/core` headers name no component-view class (RFC rule 6): a `core`
+ *    signature takes a protocol describing what the view provides.
  *
  * The check fails when no core sources are found, so it cannot pass
  * vacuously.
@@ -31,6 +33,7 @@ const REACT_NATIVE_INCLUDE =
 const RCT_SYMBOL = /\bRCT[A-Z]\w*/;
 const QUOTED_INCLUDE = /#\s*(?:import|include)\s*"([^"]+)"/;
 const ANGLE_INCLUDE = /#\s*(?:import|include)\s*<([^>]+)>/;
+const COMPONENT_VIEW = /\b\w+ComponentView\b/;
 const CPP_IN_HEADER =
   /__cplusplus|#\s*(?:import|include)\s*<[\w/]+>|\bnamespace\b|\btemplate\s*<|std::|folly|react::/;
 
@@ -115,6 +118,9 @@ function checkLine(file, line) {
   }
   if (file.endsWith('.h') && CPP_IN_HEADER.test(line)) {
     reasons.push('core headers must be plain Objective-C (no C++)');
+  }
+  if (file.endsWith('.h') && COMPONENT_VIEW.test(line)) {
+    reasons.push('core headers must not name a component-view class');
   }
   return reasons;
 }
