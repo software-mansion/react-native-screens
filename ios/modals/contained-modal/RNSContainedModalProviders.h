@@ -15,10 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable UIWindow *)hostWindow;
 
 /**
- * The view controller this modal should be presented from - the matched
- * provider's context view controller. Resolving the provider from the React
- * tree is a react-layer concern; pure-UIKit code only ever receives the
- * already-resolved controller through this accessor.
+ * The matched provider's context view controller to present from. Provider
+ * resolution is a react-layer concern; pure-UIKit code only receives the
+ * resolved controller through this accessor.
  */
 - (nullable UIViewController *)presentationSourceViewController;
 
