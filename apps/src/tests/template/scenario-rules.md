@@ -19,12 +19,12 @@ List the devices required to run the test, with the setup each one needs
 (orientation, window size, size class, posture).
 
 The list MUST match the `devices` field in `scenario-description.ts`
-(`'iphone' | 'ipad' | 'duo' | 'android-phone' | 'android-tablet'`). `devices` is
+(`'iphone' | 'ipad' | 'iphone-duo' | 'android-phone' | 'android-tablet'`). `devices` is
 required: list every device this scenario must be run on, and only those. It is
 used to group release test runs per device, so a tester can do all iPhone runs,
 then all iPad runs, then all Duo runs, without switching back and forth.
 
-Not every test needs iPad or iPhone Duo coverage. Add `ipad` or `duo` only when
+Not every test needs iPad or iPhone Duo coverage. Add `ipad` or `iphone-duo` only when
 the tested feature looks or behaves differently on that device, or exists only
 there (e.g. sidebar on iPad, vertical tab bar on iPhone Duo). Most scenarios run
 on iPhone and/or Android phone only.
@@ -39,7 +39,7 @@ Example (list only the devices the test actually covers):
 
 ### iPhone Duo posture set
 
-Only for tests that list `duo` in `devices`.
+Only for tests that list `iphone-duo` in `devices`.
 
 iPhone Duo has three postures (closed, half-open, open), each in portrait or
 landscape, plus transitions between them. Do NOT run every step in every posture.
@@ -77,7 +77,7 @@ align the continuation lines with the checkbox text (10 spaces).
 ### How to write OS and device differences
 
 Keep one `scenario.md` per test. Do not create per-device files
-(`scenario-ipad.md`, `scenario-duo.md`, ...).
+(`scenario-ipad.md`, `scenario-iphone-duo.md`, ...).
 
 - **OS / platform differences** (iOS 18 vs 26, iOS vs Android) go as prefixed
   checkboxes inside the step, not as separate sections. Write the prefix with a
@@ -107,7 +107,7 @@ Keep one `scenario.md` per test. Do not create per-device files
 | ---- | ------- | ---------------- |
 | Generic feature, bug found only on one device | blinking back button on Duo | Add the step that caught the bug to the `## Steps - <device>` section of the **generic** test's `scenario.md`, with the posture/setup where it reproduces. Add the device to that test's `devices`. The issue test (`issue-tests/TestXXXX`) stays only for reproducing and fixing the bug - it has no `scenario-description.ts`, so it does not carry `devices` and is not on the release list. |
 | Shared feature that looks or behaves differently on a device | vertical tab bar on Duo, sidebar on iPad | Same `scenario.md`, plus a `## Steps - <device>` section only for the differing steps; posture set / setup in Prerequisites. |
-| Device-only feature, same screen works for it | a Duo-only prop | Normal test dir with the platform suffix (`-ios`) and `devices: ['duo']`; the whole `scenario.md` is the device scenario with its own posture set. |
+| Device-only feature, same screen works for it | a Duo-only prop | Normal test dir with the platform suffix (`-ios`) and `devices: ['iphone-duo']`; the whole `scenario.md` is the device scenario with its own posture set. |
 | Same feature, but the device needs a **different `index.tsx`** (different layout) | a generic `test-tabs-foo-ios` exists, Duo needs its own screen | Create a separate test dir named after the generic one with the device suffix instead of the platform suffix: `test-tabs-foo-duo` (`-ipad` for iPad). `devices` lists only that device. The generic test does not list the device. |
 | Native platform bug, not fixable in the library | UIKit layout bug on fold | Record it in `## Note` as a Known issue with a link, not as a failing step. |
 

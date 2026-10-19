@@ -9,7 +9,7 @@ export const scenarioDescription: ScenarioDescription = {
     'after fold, rotation and tab bar minimize changes, also when the ' +
     'accessory is hidden or removed during the change.',
   platforms: ['ios'],
-  devices: ['ipad', 'duo'],
+  devices: ['ipad', 'iphone-duo'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

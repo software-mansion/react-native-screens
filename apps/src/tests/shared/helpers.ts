@@ -1,7 +1,7 @@
 export type ScenarioDevice =
   | 'iphone'
   | 'ipad'
-  | 'duo'
+  | 'iphone-duo'
   | 'android-phone'
   | 'android-tablet';
 
@@ -35,7 +35,7 @@ export interface ScenarioDescription {
    * per device.
    * - 'iphone': iPhone (compact width).
    * - 'ipad': iPad (regular width, sidebar, resizable windows).
-   * - 'duo': iPhone Duo (foldable; postures and fold transitions).
+   * - 'iphone-duo': iPhone Duo (foldable; postures and fold transitions).
    * - 'android-phone': Android phone.
    * - 'android-tablet': Android tablet or foldable.
    */

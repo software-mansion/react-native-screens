@@ -65,7 +65,7 @@ Step-by-step instructions for a tester to manually verify the scenario.
 
 ## Steps - iPhone Duo
 
-Optional: add this section only if the test covers iPhone Duo (`duo` in
+Optional: add this section only if the test covers iPhone Duo (`iphone-duo` in
 `devices`) and only for steps whose expected result differs on Duo. Remove it
 otherwise.
 
