@@ -66,6 +66,11 @@ struct ContentWrapperBox {
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   NSMutableArray<UIView *> *_reactSubviews;
+#if !TARGET_OS_TV && !TARGET_OS_VISION && !TARGET_OS_MACCATALYST && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  __weak UISheetPresentationController *_backgroundEffectSheet;
+  __weak UIVisualEffect *_ownedSheetBackgroundEffect;
+  UIColor *_sheetBackgroundEffectColor;
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && !TARGET_OS_MACCATALYST && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -938,12 +943,58 @@ RNS_IGNORE_SUPER_CALL_END
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
 
+#if !TARGET_OS_TV && !TARGET_OS_VISION && !TARGET_OS_MACCATALYST && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+- (void)updateFormSheetBackgroundEffect
+{
+  if (@available(iOS 26.1, *)) {
+    UISheetPresentationController *sheet =
+        _stackPresentation == RNSScreenStackPresentationFormSheet ? _controller.sheetPresentationController : nil;
+    UIColor *color = [self.backgroundColor resolvedColorWithTraitCollection:self.traitCollection];
+    if (sheet == nil || color == nil || CGColorGetAlpha(color.CGColor) < 1.0) {
+      color = nil;
+    }
+    if (color != nil && _backgroundEffectSheet == sheet && [_sheetBackgroundEffectColor isEqual:color] &&
+        sheet.backgroundEffect == _ownedSheetBackgroundEffect) {
+      return;
+    }
+
+    // Restore only an effect this screen installed; nil selects UIKit's default material.
+    if ((_backgroundEffectSheet != sheet || color == nil) && _ownedSheetBackgroundEffect != nil &&
+        _backgroundEffectSheet.backgroundEffect == _ownedSheetBackgroundEffect) {
+      _backgroundEffectSheet.backgroundEffect = nil;
+    }
+    _backgroundEffectSheet = nil;
+    _ownedSheetBackgroundEffect = nil;
+    _sheetBackgroundEffectColor = nil;
+
+    if (color != nil) {
+      UIVisualEffect *effect = [UIColorEffect effectWithColor:color];
+      sheet.backgroundEffect = effect;
+      _backgroundEffectSheet = sheet;
+      _ownedSheetBackgroundEffect = effect;
+      _sheetBackgroundEffectColor = color;
+    }
+  }
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+  [super traitCollectionDidChange:previousTraitCollection];
+  if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+    [self updateFormSheetBackgroundEffect];
+  }
+}
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && !TARGET_OS_MACCATALYST && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+
 /**
  * Updates settings for sheet presentation controller.
  * On Fabric we run it from `finalizeUpdates` if props have changed.
  */
 - (void)updateFormSheetPresentationStyle
 {
+#if !TARGET_OS_TV && !TARGET_OS_VISION && !TARGET_OS_MACCATALYST && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  [self updateFormSheetBackgroundEffect];
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && !TARGET_OS_MACCATALYST && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
     return;
   }
