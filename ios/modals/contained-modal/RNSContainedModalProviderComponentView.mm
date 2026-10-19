@@ -40,11 +40,9 @@ namespace react = facebook::react;
   if (self.window != nil) {
     [self reactAddControllerToClosestParent:_wrappedContextViewController];
   } else {
-    // When the provider leaves the window (e.g. navigating back), detach the
-    // controller from its parent. Otherwise it keeps a stale
-    // parentViewController pointing at the already-removed screen controller,
-    // and on the next mount a modal would be presented from a detached view
-    // controller - producing a corrupt, mis-sized presentation.
+    // Detach on window exit: a stale parentViewController pointing at a
+    // removed screen controller would make the next presentation run from a
+    // detached controller - corrupt and mis-sized.
     [self reactRemoveControllerFromParent:_wrappedContextViewController];
   }
 }
@@ -59,14 +57,11 @@ namespace react = facebook::react;
   while (parentView != nil) {
     if (parentView.reactViewController != nil) {
       [parentView.reactViewController addChildViewController:controller];
-      // This view is the wrapper the presentation container anchors to (see
-      // RNSContainedModalProviderController.h): the controller's view must be
-      // its DIRECT subview and fill it exactly. Insert at the BOTTOM: when a
-      // presentation is suspended (this view left the window with a modal
-      // open), UIKit's container view stays behind as a wrapper subview, and
-      // appending the context view on re-attach would stack this full-bounds
-      // transparent view on top of it - swallowing every touch meant for the
-      // restored modal.
+      // Wrapper invariant (RNSContainedModalProviderController.h): the context
+      // view must be a direct, exactly-filling subview. Insert at the BOTTOM -
+      // during a suspension UIKit's container stays behind as a wrapper
+      // subview, and re-attaching this transparent full-bounds view above it
+      // would swallow every touch meant for the restored modal.
       controller.view.frame = self.bounds;
       [self insertSubview:controller.view atIndex:0];
       [controller didMoveToParentViewController:parentView.reactViewController];

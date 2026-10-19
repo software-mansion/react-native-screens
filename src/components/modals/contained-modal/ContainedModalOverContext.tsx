@@ -8,29 +8,23 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * A modal presented over the content of its `ContainedModalProvider`.
  *
  * @remarks
- * The modal fills the bounds of the targeted provider and is presented over
- * the provider's children, which stay in place underneath - with a transparent
- * modal background they remain visible and keep updating. Touches within the
- * provider's bounds are captured by the modal while it is open; content
- * outside the provider stays interactive. The modal's children stay mounted
- * regardless of `isOpen`, so their React state is preserved across
+ * The modal fills the targeted provider's bounds. The provider's children
+ * stay in place underneath and keep updating; touches inside the provider are
+ * captured by the open modal, content outside stays interactive. The modal's
+ * children stay mounted regardless of `isOpen`, so their React state survives
  * presentations.
  *
- * When to reach for this component: it drives a real UIKit presentation
- * confined to the provider's region, which matters when that region must
- * behave like a native modal context - pane-scoped dialogs in split-view /
- * multi-column and other large-screen layouts (e.g. a dialog over the detail
- * column while the sidebar stays interactive), correct stacking and
- * suspend/restore alongside other native presentations and navigation
- * (push/pop, column hide/show), accessibility modality, and a presentation
- * context future native presenters can target.
+ * Modality is scoped to the provider's position in the view hierarchy, not
+ * the window: a sibling that overlaps the provider and renders later in the
+ * React tree draws above the open modal and receives touches in the overlap,
+ * exactly as it would above the provider's regular content.
  *
- * When NOT to use it: for a simple overlay inside a view - a loading cover,
- * an inline confirmation box, a dimmed panel on a phone-sized layout - a
- * conditionally rendered absolutely-positioned `View` with a touch-blocking
- * backdrop is simpler, behaves the same, and needs none of this machinery.
- * If nothing in your use case involves native presentation semantics, prefer
- * the plain view.
+ * Reach for this when the region must behave like a native modal context:
+ * pane-scoped dialogs in split-view / multi-column layouts, correct stacking
+ * and suspend/restore alongside native presentations and navigation,
+ * accessibility modality, a presentation context other native presenters can
+ * target. For a simple overlay inside a view, a conditionally rendered
+ * absolutely-positioned `View` is simpler and behaves the same.
  *
  * @platform ios
  * @since 5.0
@@ -59,12 +53,9 @@ export function ContainedModalOverContext(props: ContainedModalProps) {
 }
 
 const styles = StyleSheet.create({
-  // We use absolute positioning so the Host view doesn't affect the layout of its siblings.
-  // Setting `top: 0` and `left: 0` explicitly anchors the view to a predictable origin,
-  // preventing it from floating at an arbitrary offset based on its position in the Element tree.
-  //
-  // IMPORTANT: "Absolute" positioning is still relative to the nearest positioned containing
-  // box. This anchors it to that specific container's (0,0), not the global window (0,0).
+  // Absolute with explicit top/left: the host must not affect sibling layout
+  // and needs a predictable origin (relative to its containing box, not the
+  // window).
   host: {
     position: 'absolute',
     top: 0,

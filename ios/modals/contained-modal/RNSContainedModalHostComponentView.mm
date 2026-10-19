@@ -74,11 +74,9 @@ namespace react = facebook::react;
 
 #pragma mark - Provider resolution
 
-// A contained modal is presented from the provider whose `containerId` matches the
-// modal's `targetContainerId`, so it stays contained within that provider's bounds.
-// This resolves the provider only once - on the first presentation. The provider is
-// an ancestor of the modal in the React tree, so it cannot be unmounted without also
-// unmounting the modal.
+// Presents from the provider whose `containerId` matches the modal's
+// `targetContainerId`. Resolved once: the provider is an ancestor in the
+// React tree, so it cannot unmount without also unmounting the modal.
 - (nullable UIView<RNSContainedModalContainmentProviding> *)resolveProviderView
 {
   if (_cachedProviderView != nil) {
@@ -118,11 +116,10 @@ namespace react = facebook::react;
 }
 
 #if DEBUG
-// The whole containment model rides on UIKit attaching the presentation
-// container to the context view's superview (the provider wrapper) sized to
-// its bounds - observed, not documented behavior. Detection only: if an iOS
-// release changes the attach point or re-asserts its own layout, this warns
-// instead of leaving a silently misplaced (and touch-misrouted) modal.
+// The attach point is observed, not documented, UIKit behavior, and the
+// container's bounds are the modal's touch-blocking area - an escaped
+// container means dead touch zones, not just a misplaced view. Detection
+// only: warn if an iOS release changes the contract.
 - (void)validateContainmentIntegrity
 {
   if (_controller == nil || _controller.presentingViewController == nil || _controller.viewIfLoaded.window == nil) {
@@ -148,10 +145,8 @@ namespace react = facebook::react;
 - (void)modalControllerViewDidAppear:(RNSContainedModalContentController *)controller
 {
   // The layout callback also re-syncs, but a restore after a suspension
-  // (covering screen popped, split column re-shown, app re-foregrounded)
-  // re-attaches the content WITHOUT any layout pass, so appearance is the
-  // only trigger that fires then. The proxy dedupes by frame, so an
-  // overlapping trigger costs a point comparison.
+  // re-attaches without a layout pass, so appearance is the only trigger
+  // that fires then. The proxy dedupes by frame, so overlap is cheap.
   [self syncShadowNodeState];
 }
 
@@ -248,14 +243,11 @@ namespace react = facebook::react;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   // The modal's React children are teleported into the presented controller's
-  // content view (RNSContainedModalContentView). Unlike FormSheet, that view
-  // stays INSIDE the main surface's view hierarchy (containment), so the main
-  // surface's RCTSurfaceTouchHandler delivers its touches - a dedicated
-  // handler would produce a second, differently-offset event stream for the
-  // same touch and break Pressability. This host view itself is an empty
-  // anchor in the React tree, so it must never be a hit-test target -
-  // returning nil lets touches pass through to whatever is actually behind it
-  // instead of being swallowed by this empty view.
+  // content view, which stays inside the main surface's hierarchy - the main
+  // surface's RCTSurfaceTouchHandler delivers its touches, and a dedicated
+  // handler would emit a second, differently-offset event stream for the same
+  // touch and break Pressability. This host view is an empty anchor; return
+  // nil so it never swallows touches meant for views behind it.
   return nil;
 }
 
@@ -267,13 +259,11 @@ namespace react = facebook::react;
     return;
   }
 
-  // contentOriginOffset must be the content view's ABSOLUTE origin in window
-  // space: measurement of the teleported children stops at this host (its
-  // shadow node carries the RootNodeKind trait) and then adds this offset, so
-  // the offset is what lifts content-local child metrics into the same
-  // window-rooted coordinate space the main surface's touch handler reports
-  // events in. Anything else makes Pressability's measured region diverge
-  // from event pageX/pageY and cancels any press on the first finger move.
+  // The offset must be the content view's ABSOLUTE window origin: child
+  // measurement stops at this host's RootNodeKind shadow node and adds this
+  // offset, which must land in the same window space the main surface's touch
+  // handler reports events in - otherwise Pressability's measured region
+  // diverges from pageX/pageY and presses cancel on the first finger move.
   CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
 
   [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentViewOriginInWindow];

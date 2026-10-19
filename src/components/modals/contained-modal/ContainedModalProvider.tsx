@@ -4,19 +4,16 @@ import { ContainedModalContext } from './ContainedModalContext';
 import type { ContainedModalProviderProps } from './ContainedModal.types';
 
 /**
- * A container that defines the presentation area for contained modals.
+ * Defines the presentation area for contained modals.
  *
  * @remarks
- * Contained modals rendered below this provider in the React tree are
- * presented within the provider's bounds, fully covering it. The nearest
- * provider is targeted by default; an outer one can be targeted explicitly
- * via the modal's `targetContainerId` prop and the provider's auto-generated
- * `containerId` exposed through context.
+ * Contained modals below this provider in the React tree present within its
+ * bounds, fully covering it. The nearest provider is targeted by default; an
+ * outer one via the modal's `targetContainerId` and the provider's
+ * auto-generated `containerId`.
  *
- * Intended for region-scoped NATIVE modality - see the "When to reach for
- * this component" guidance on `ContainedModalOverContext`. For a simple
- * overlay inside a view, a conditionally rendered absolutely-positioned
- * `View` is usually the better tool.
+ * Intended for region-scoped native modality - see `ContainedModalOverContext`
+ * for when to prefer a plain absolutely-positioned `View` instead.
  *
  * @platform ios
  * @since 5.0
