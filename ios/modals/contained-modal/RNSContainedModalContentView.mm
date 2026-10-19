@@ -5,11 +5,9 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    // Explicitly set to clearColor since this UIView is manually added
-    // into the view hierarchy. This ensures it doesn't interfere with
-    // any background colors defined by child React subviews.
+    // Transparent, so child React views own the background.
     self.backgroundColor = [UIColor clearColor];
-    // Ensure the view stretches to fill the presentation container.
+    // Keep filling the presentation container.
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   }
   return self;

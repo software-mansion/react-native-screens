@@ -33,10 +33,9 @@
     return;
   }
 
-  // A presentation request from a view that is not in a window is silently
-  // ignored by UIKit (its completion never fires), so stay dismissed - the
-  // pending update is flushed again from `didMoveToWindow` once the host
-  // attaches.
+  // UIKit silently ignores a presentation request from an off-window view
+  // (the completion never fires); stay dismissed - the host re-flushes on
+  // window attach.
   if (provider.hostWindow == nil) {
     return;
   }
@@ -54,10 +53,9 @@
     return;
   }
 
-  // One open modal per provider: UIKit silently ignores a presentation request
-  // on a view controller that is already presenting (no exception, completion
-  // never fires), so reject the request deterministically instead. The request
-  // is not queued.
+  // One open modal per provider. UIKit silently ignores a presentation
+  // request on an already-presenting controller (the completion never
+  // fires), so reject deterministically instead; the request is not queued.
   if (presentedViewController != nil) {
     [controller.delegate modalControllerDidRejectPresentation:controller];
     return;

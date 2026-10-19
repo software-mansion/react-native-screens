@@ -12,18 +12,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)modalControllerViewDidLayoutSubviews:(RNSContainedModalContentController *)controller;
 
 /**
- * Fires on every appearance: the initial presentation AND a UIKit-driven
- * restore after a suspension (e.g. the covering stack screen was popped). A
- * restore re-attaches without any layout pass, so appearance - not layout - is
- * the only reliable signal to rebuild what the disappearance tore down.
+ * Fires on the initial presentation AND on a UIKit-driven restore after a
+ * suspension (e.g. the covering stack screen was popped). A restore
+ * re-attaches without a layout pass, so appearance - not layout - is the
+ * signal to rebuild state after a disappearance.
  */
 - (void)modalControllerViewDidAppear:(RNSContainedModalContentController *)controller;
 - (void)modalControllerViewDidDisappear:(RNSContainedModalContentController *)controller;
 
 /**
- * The presentation request was rejected: the target provider is already
- * presenting another modal, or an ancestor of it is being dismissed. The
- * modal is NOT queued - the request is dropped.
+ * The request was dropped (not queued): the target provider is already
+ * presenting another modal, or an ancestor of it is being dismissed.
  */
 - (void)modalControllerDidRejectPresentation:(RNSContainedModalContentController *)controller;
 @end
