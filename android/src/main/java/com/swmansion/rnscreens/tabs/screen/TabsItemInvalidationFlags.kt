@@ -19,6 +19,11 @@ internal value class TabsItemInvalidationFlags(
         val ACTIVE_INDICATOR_SIZE = TabsItemInvalidationFlags(1 shl 6)
         val ALL =
             TITLE or ICON or BADGE or ACCESSIBILITY or APPEARANCE or ICON_SIZE or ACTIVE_INDICATOR_SIZE
+
+        /**
+         * Parts applied to the tab's own menu item, without a whole-bar appearance update.
+         */
+        val MENU_ITEM_ATTRIBUTES = TITLE or ICON or BADGE or ACCESSIBILITY
     }
 
     infix fun or(other: TabsItemInvalidationFlags) = TabsItemInvalidationFlags(raw or other.raw)

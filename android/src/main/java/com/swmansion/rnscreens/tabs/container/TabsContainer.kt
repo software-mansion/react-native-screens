@@ -435,7 +435,7 @@ class TabsContainer internal constructor(
             }
         }
 
-        if (flags.containsAny(MENU_ITEM_ATTRIBUTES)) {
+        if (flags.containsAny(TabsItemInvalidationFlags.MENU_ITEM_ATTRIBUTES)) {
             updateMenuItem(tabsScreen)
         }
     }
@@ -846,11 +846,6 @@ class TabsContainer internal constructor(
 
     companion object {
         const val TAG = "TabsContainer"
-
-        // Tab configuration applied per menu item, without a whole-bar appearance update.
-        private val MENU_ITEM_ATTRIBUTES =
-            TabsItemInvalidationFlags.TITLE or TabsItemInvalidationFlags.ICON or TabsItemInvalidationFlags.BADGE or
-                TabsItemInvalidationFlags.ACCESSIBILITY
     }
 }
 

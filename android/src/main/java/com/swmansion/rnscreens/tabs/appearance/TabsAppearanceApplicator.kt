@@ -270,8 +270,7 @@ internal class TabsAppearanceApplicator(
         val flags = state.pendingFlags
         state.pendingFlags = TabsItemInvalidationFlags.NONE
 
-        // Title, badge and accessibility are cheap and also depend on bar-wide state, so they are
-        // re-applied on every update; the icon and the active indicator only when invalidated.
+        // The title is diffed; the icon and the active indicator are re-applied only when invalidated.
         if (menuItem.title != tabsScreen.tabTitle) {
             menuItem.title = tabsScreen.tabTitle
         }
