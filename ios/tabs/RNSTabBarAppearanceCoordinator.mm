@@ -200,6 +200,22 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
   }
 }
 
+/// Whether the screen is still managed by a tab bar controller. On the UITab path the controller of
+/// a tab that overflows into More has no parent until the tab is first shown (UIKit parents it
+/// lazily), but its `UITab` is installed - the tab is the liveness check there, not the parent.
+- (BOOL)isScreenControllerAttachedToTabBarController:(nullable RNSTabsScreenViewController *)screenController
+{
+  if (screenController == nil) {
+    return NO;
+  }
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return screenController.tab.tabBarController != nil;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return screenController.parentViewController != nil;
+}
+
 - (void)updateTabBarItem:(nullable UITabBarItem *)tabBarItem
                withImage:(nullable UIImage *)image
               isSelected:(BOOL)isSelected
@@ -212,8 +228,7 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
     return;
   }
 
-  UIViewController *screenParentViewController = [screenView.controller parentViewController];
-  if (screenParentViewController == nil) {
+  if (![self isScreenControllerAttachedToTabBarController:screenView.controller]) {
     return;
   }
 
@@ -222,6 +237,17 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
   } else {
     [self setTabImage:image forTabBarItem:tabBarItem screenView:screenView];
   }
+
+  UIViewController *screenParentViewController = [screenView.controller parentViewController];
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    if (screenParentViewController == nil) {
+      // A tab that overflows into More and has not been shown yet - UIKit parents it lazily. Its
+      // icon lives in the More list, not in the bar, so there is nothing to lay out.
+      return;
+    }
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 
   // A layout pass is required because the image might be loaded asynchronously,
   // after the tab bar has already been attached to the window.

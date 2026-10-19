@@ -3,6 +3,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTMountingTransactionObserving.h>
+#import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -101,6 +102,7 @@ namespace react = facebook::react;
   _rejectStaleNavStateUpdates = NO;
   _tabBarHiddenAnimationEnabled = YES;
   _bottomAccessoryHidden = NO;
+  _prominentScreenKey = nil;
 #if !TARGET_OS_TV
   _nativeContainerBackgroundColor = [UIColor systemBackgroundColor];
 #else // !TARGET_OS_TV
@@ -136,7 +138,7 @@ namespace react = facebook::react;
   }
 }
 
-#pragma mark - RNSScreenContainerDelegate
+#pragma mark - Container updates
 
 - (void)updateContainer
 {
@@ -162,12 +164,12 @@ namespace react = facebook::react;
   }
 
   if (_hasModifiedTabsScreensInCurrentTransaction) {
-    RNSLog(@"updateContainer: tabControllers: %@", tabControllers);
+    RNSLogD(@"updateContainer: tabControllers: %@", tabControllers);
     [_controller childViewControllersHaveChangedTo:tabControllers];
   }
 
   if (_hasModifiedBottomAccessoryInCurrentTransation) {
-    RNSLog(@"updateContainer: bottomAccessory: %@", bottomAccessory);
+    RNSLogD(@"updateContainer: bottomAccessory: %@", bottomAccessory);
 #if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
     if (@available(iOS 26.0, *)) {
       if (bottomAccessory != nil) {
@@ -186,11 +188,6 @@ namespace react = facebook::react;
     }
 #endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
   }
-}
-
-- (void)markChildUpdated
-{
-  [self updateContainer];
 }
 
 #pragma mark - React events
@@ -318,6 +315,18 @@ namespace react = facebook::react;
       if (newComponentProps.tabBarSidebarPreferredPlacement !=
           react::RNSTabsHostIOSTabBarSidebarPreferredPlacement::Automatic) {
         RCTLogWarn(@"[RNScreens] tabBarSidebarPreferredPlacement is supported for iOS >= 27");
+      }
+  }
+
+  if (newComponentProps.prominentScreenKey != oldComponentProps.prominentScreenKey) {
+    _prominentScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.prominentScreenKey);
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 27.0, *)) {
+      [_controller setProminentScreenKey:_prominentScreenKey];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_TV && !TARGET_OS_VISION
+      if (_prominentScreenKey != nil) {
+        RCTLogWarn(@"[RNScreens] prominentScreenKey is supported for iOS >= 27");
       }
   }
 

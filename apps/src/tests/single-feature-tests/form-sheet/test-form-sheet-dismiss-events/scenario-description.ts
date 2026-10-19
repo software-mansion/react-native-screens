@@ -6,6 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'onDismiss vs onNativeDismiss: which event fires for JS and native dismissal.',
   platforms: ['android', 'ios'],
-  e2eCoverage: 'tbd',
+  e2eCoverage: 'full',
   smokeTest: false,
 };

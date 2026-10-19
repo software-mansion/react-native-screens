@@ -13,19 +13,21 @@ stay put, only changing their appearance.
 
 ## E2E test
 
-Incomplete: covers the end state after each push for steps 1–3 and 6–7 — which
-item shows at which trailing position (asserted via horizontal frame order) for
+Incomplete: covers the end state after each push for steps 1–3 of **Steps on
+iPhone** and steps 1–2 of **Steps with separators** — which item shows at which
+trailing position (asserted via horizontal frame order) for
 the sfSymbols and separators configurations, and that with separators each
 item sits in its own platter view.
 
 Not automated:
 
-- Transition quality (steps 2–4, 7): flashing / blur / crossfade — Detox
-  samples settled state, not animation frames.
-- Step 4 (custom views): automating it would only check that the custom views
-  render, not the real identifier-matching functionality.
-- Step 5 (identifiers off): end state is identical, only the transition
-  differs — Detox can't assert it.
+- Transition quality (steps 2–4 of **Steps on iPhone**, step 2 of **Steps with
+  separators**): flashing / blur / crossfade — Detox samples settled state, not
+  animation frames.
+- Step 4 of **Steps on iPhone** (custom views): automating it would only check
+  that the custom views render, not the real identifier-matching functionality.
+- Step 5 of **Steps on iPhone** (identifiers off): end state is identical, only
+  the transition differs — Detox can't assert it.
 
 ## Prerequisites
 
@@ -38,23 +40,23 @@ Not automated:
 ## Steps on iPhone
 
 1. Inspect the trailing header items
-  - [ ] Three items are visible: "1", "fish", "carrot"
+    - [ ] Three items are visible: "1", "fish", "carrot"
 2. Tap "Next"
-  - [ ] The numbered item swaps position with center item and now shows "2"
-  - [ ] The two food items change their symbols and don't flash
+    - [ ] The numbered item swaps position with center item and now shows "2"
+    - [ ] The two food items change their symbols and don't flash
 3. Tap "Next"
-  - [ ] The numbered item swaps position with right item and now shows "3"
-  - [ ] The two food items change their symbols and don't flash
+    - [ ] The numbered item swaps position with right item and now shows "3"
+    - [ ] The two food items change their symbols and don't flash
 4. Go back to screen One, toggle "Custom views" to `true`, repeat steps 2–3
-  - [ ] Observe the same behavior as for sfSymbols
+    - [ ] Observe the same behavior as for sfSymbols
 5. Go back to screen One, toggle "Custom views" to `false`, "Identifiers" to `false`, repeat steps 2–3
-  - [ ] Without `identifier`, matching falls back to the heuristic: items crossfade /
-        mis-match on transition instead of the numbered item cleanly moving
+    - [ ] Without `identifier`, matching falls back to the heuristic: items crossfade /
+          mis-match on transition instead of the numbered item cleanly moving
 
 ## Steps with separators
 
-6. Go back to screen One, toggle "Identifiers" and "Separators" to `true`
-  - [ ] Each header item now sits in its own liquid-glass bubble
-7. Tap "Next" through the screens (One → Two → Three)
-  - [ ] On each transition, the two items that swap positions blur / crossfade
-  - [ ] The item that keeps its position does not flash
+1. Go back to screen One, toggle "Identifiers" and "Separators" to `true`
+    - [ ] Each header item now sits in its own liquid-glass bubble
+2. Tap "Next" through the screens (One → Two → Three)
+    - [ ] On each transition, the two items that swap positions blur / crossfade
+    - [ ] The item that keeps its position does not flash

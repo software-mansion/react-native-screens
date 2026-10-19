@@ -3,7 +3,6 @@
 #import "RNSDefines.h"
 #import "RNSEnums.h"
 #import "RNSReactBaseView.h"
-#import "RNSScreenContainer.h"
 #import "RNSTabsHostEventEmitter.h"
 #import "RNSTabsNavigationState.h"
 
@@ -23,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 2. provider of React state & props for the tab bar controller
  * 3. two way communication channel with React (commands & events)
  */
-@interface RNSTabsHostComponentView : RNSReactBaseView <RNSScreenContainerDelegate, RNSTabsNavigationStateObserver>
+@interface RNSTabsHostComponentView : RNSReactBaseView <RNSTabsNavigationStateObserver>
 
 @property (nonatomic, nonnull, strong, readonly) RNSTabBarController *controller;
 
@@ -61,6 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
 @property (nonatomic, readonly) UITabBarControllerMode tabBarControllerMode API_AVAILABLE(ios(18.0));
 #endif // Check for iOS >= 18
+
+@property (nonatomic, copy, readonly, nullable) NSString *prominentScreenKey;
 @end
 
 #pragma mark - React Events

@@ -1,7 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import { selectPickerOption } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { dismissToast } from '@e2e/app/toast';
+import { dismissNextToast } from '@e2e/app/toast';
 import { checkmarkFor, openContextMenu } from '@e2e/framework/context-menu-ios';
 import { headerItem as textItem } from '@e2e/framework/header-items-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
@@ -64,8 +64,8 @@ describeIfIOS('Stack Header Selective Updates (iOS)', () => {
       await expect(checkmarkFor('Option-0-A')).toBeVisible();
 
       await element(by.text('Option-0-B')).tap();
-      await dismissToast('1. Pressed Item 1');
-      await dismissToast('1. Item 1 [single]: "Option-0-B"');
+      await dismissNextToast('Pressed Item 1');
+      await dismissNextToast('Item 1 [single]: "Option-0-B"');
     });
 
     it('should show only Option-0-B checked when the menu is reopened', async () => {
@@ -73,7 +73,7 @@ describeIfIOS('Stack Header Selective Updates (iOS)', () => {
 
       await expect(checkmarkFor('Option-0-B')).toBeVisible();
       await expect(checkmarkFor('Option-0-A')).not.toExist();
-      await dismissToast('1. Pressed Item 1');
+      await dismissNextToast('Pressed Item 1');
     });
   });
 
@@ -84,13 +84,13 @@ describeIfIOS('Stack Header Selective Updates (iOS)', () => {
     await expect(checkmarkFor('Option-0-A')).toBeVisible();
 
     await element(by.text('Option-0-B')).tap();
-    await dismissToast('1. Pressed Item 1');
-    await dismissToast('1. Item 1 [multi]: "Option-0-A", "Option-0-B"');
+    await dismissNextToast('Pressed Item 1');
+    await dismissNextToast('Item 1 [multi]: "Option-0-A", "Option-0-B"');
 
     await openContextMenu(textItem('Bar 1'), { gesture: 'longPress' });
     await expect(checkmarkFor('Option-0-A')).toBeVisible();
     await expect(checkmarkFor('Option-0-B')).toBeVisible();
-    await dismissToast('1. Pressed Item 1');
+    await dismissNextToast('Pressed Item 1');
   });
 
   it("should replace Item 1's text button with its custom render view when Custom view is enabled, leaving Item 2 untouched", async () => {

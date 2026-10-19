@@ -8,26 +8,27 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.swmansion.rnscreens.common.colorscheme.ColorScheme
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeCoordinator
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeListener
-import com.swmansion.rnscreens.common.colorscheme.ColorSchemeProviding
-import com.swmansion.rnscreens.common.container.Container
-import com.swmansion.rnscreens.common.container.ContainerItem
-import com.swmansion.rnscreens.common.container.ParentContainerItemRegistry
-import com.swmansion.rnscreens.ext.isMeasured
-import com.swmansion.rnscreens.helpers.ViewIdGenerator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
+import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.ViewIdProviding
+import com.swmansion.rnscreens.core.utils.isMeasured
 import com.swmansion.rnscreens.stack.header.StackHeaderBackPressHandler
-import com.swmansion.rnscreens.stack.screen.StackScreen
+import com.swmansion.rnscreens.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.stack.screen.StackScreenFragmentDelegate
-import com.swmansion.rnscreens.utils.RNSLog
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 internal class StackContainer(
     context: Context,
     private val delegate: WeakReference<StackContainerDelegate>,
+    viewIdProvider: ViewIdProviding,
 ) : FrameLayout(context),
     Container,
     FragmentManager.OnBackStackChangedListener,
@@ -77,7 +78,7 @@ internal class StackContainer(
     // endregion
 
     init {
-        id = ViewIdGenerator.generateViewId()
+        id = viewIdProvider.generateViewId()
     }
 
     override fun onAttachedToWindow() {
@@ -166,12 +167,12 @@ internal class StackContainer(
         stackModel.forEach { it.flushPendingHeaderUpdates() }
     }
 
-    internal fun enqueuePushOperation(stackScreen: StackScreen) {
-        pendingPushOperations.add(PushOperation(stackScreen))
+    internal fun enqueuePushOperation(item: StackContainerItem) {
+        pendingPushOperations.add(PushOperation(item))
     }
 
-    internal fun enqueuePopOperation(stackScreen: StackScreen) {
-        pendingPopOperations.add(PopOperation(stackScreen))
+    internal fun enqueuePopOperation(item: StackContainerItem) {
+        pendingPopOperations.add(PopOperation(item))
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
@@ -210,7 +211,7 @@ internal class StackContainer(
 
         pendingPopOperations.forEach { operation ->
             val fragment =
-                checkNotNull(stackModel.find { it.stackScreen === operation.screen }) {
+                checkNotNull(stackModel.find { it.item === operation.item }) {
                     "[RNScreens] Unable to find a fragment to pop"
                 }
 
@@ -227,7 +228,7 @@ internal class StackContainer(
 
         pendingPushOperations.forEach { operation ->
             val newFragment =
-                createFragmentForScreen(operation.screen, canNavigateBack = stackModel.isNotEmpty())
+                createFragmentForItem(operation.item, canNavigateBack = stackModel.isNotEmpty())
 
             fragmentOps.add(
                 AddAndSetAsPrimaryOp(
@@ -261,23 +262,23 @@ internal class StackContainer(
     private fun dumpStackModel() {
         RNSLog.d(TAG, "StackContainer [$id] MODEL BEGIN")
         stackModel.forEach {
-            RNSLog.d(TAG, "${it.stackScreen.screenKey}")
+            RNSLog.d(TAG, "${it.item.itemKey}")
         }
     }
 
-    private fun createFragmentForScreen(
-        screen: StackScreen,
+    private fun createFragmentForItem(
+        item: StackContainerItem,
         canNavigateBack: Boolean,
     ): StackScreenFragment =
         StackScreenFragment(
-            screen,
+            item,
             canNavigateBack,
             WeakReference(this),
             backPressHandler = WeakReference(this),
             updateBatchStateProvider = WeakReference(this),
             colorSchemeProvider = WeakReference(this),
         ).also {
-            RNSLog.d(TAG, "Created Fragment $it for screen ${screen.screenKey}")
+            RNSLog.d(TAG, "Created Fragment $it for item ${item.itemKey}")
         }
 
     private fun updateTopFragment() {
@@ -337,7 +338,7 @@ internal class StackContainer(
         // I avoid using `pop` parameter here, because transaction might not be classified as `pop`
         // and still include fragment removal operations.
         if (fragment.isRemoving) {
-            delegate.get()?.onScreenDismissCommitted(fragment.stackScreen)
+            delegate.get()?.onItemDismissCommitted(fragment.item)
             if (stackModel.contains(fragment)) {
                 onNativeFragmentPop(fragment)
             }
@@ -357,7 +358,7 @@ internal class StackContainer(
 
     override fun resolveCurrentContentScrollView(): ViewGroup? =
         determineTopFragment()
-            ?.stackScreen
+            ?.item
             ?.findContentScrollView()
 
     // Asked when this container's whole subtree is about to be dismissed (the screen
@@ -366,36 +367,47 @@ internal class StackContainer(
     override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
         stackModel
             .asReversed()
-            .firstNotNullOfOrNull { it.stackScreen.wantsToPreventStackNativeDismiss() }
+            .firstNotNullOfOrNull { it.item.wantsToPreventStackNativeDismiss() }
+
+    // Pop-to-root is not implemented for the v5 stack yet - the request is forwarded to the top screen's
+    // nested container.
+    override fun requestPopToRoot(): Boolean {
+        RNSLog.w(TAG, "[RNScreens] Pop-to-root special effect is not implemented for v5 stack yet")
+        return stackModel
+            .lastOrNull()
+            ?.item
+            ?.resolveNestedContainer()
+            ?.requestPopToRoot() == true
+    }
 
     // endregion
 
     // region Header back button
 
-    override fun handleHeaderBackButtonPress(pressedScreen: StackScreen) {
+    override fun handleHeaderBackButtonPress(pressedItem: StackContainerItem) {
         val fragmentManager = fragmentManager
         if (fragmentManager == null) {
             Log.w(TAG, "[RNScreens] Ignoring header back button press - container is detached")
             return
         }
 
-        val topScreen = stackModel.lastOrNull()?.stackScreen
-        if (topScreen !== pressedScreen || stackModel.size <= 1) {
+        val topItem = stackModel.lastOrNull()?.item
+        if (topItem !== pressedItem || stackModel.size <= 1) {
             Log.w(
                 TAG,
-                "[RNScreens] Ignoring header back button press for non-top screen ${pressedScreen.screenKey}",
+                "[RNScreens] Ignoring header back button press for non-top screen ${pressedItem.itemKey}",
             )
             return
         }
 
         // This pop dismisses only the top screen (together with its subtree), therefore
         // only the top item is asked - screens below the top get no vote at this level.
-        val vetoingItem = topScreen.wantsToPreventStackNativeDismiss()
+        val vetoingItem = topItem.wantsToPreventStackNativeDismiss()
         if (vetoingItem != null) {
             // Only a StackScreen can veto - TabsScreen has no own flag and only forwards.
-            val vetoingScreen = vetoingItem as? StackScreen
-            if (vetoingScreen != null) {
-                vetoingScreen.onNativeDismissPrevented()
+            val vetoingStackItem = vetoingItem as? StackContainerItem
+            if (vetoingStackItem != null) {
+                vetoingStackItem.onNativeDismissPrevented()
             } else {
                 Log.w(
                     TAG,
@@ -412,7 +424,7 @@ internal class StackContainer(
         fragmentManager.popBackStackImmediate(
             // key MUST BE present, otherwise the navigation action will be delegated to child primary navigation
             // fragment.
-            checkNotNull(pressedScreen.screenKey) { "[RNScreens] Screen key is required" },
+            checkNotNull(pressedItem.itemKey) { "[RNScreens] Screen key is required" },
             FragmentManager.POP_BACK_STACK_INCLUSIVE,
         )
     }

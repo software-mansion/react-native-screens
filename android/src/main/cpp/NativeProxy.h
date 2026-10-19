@@ -17,7 +17,7 @@ class NativeProxy : public jni::HybridClass<NativeProxy> {
   std::vector<std::weak_ptr<const facebook::react::MountingCoordinator>>
       coordinatorsWithMountingOverrides_;
   static auto constexpr kJavaDescriptor =
-      "Lcom/swmansion/rnscreens/NativeProxy;";
+      "Lcom/swmansion/rnscreens/legacy/NativeProxy;";
   static jni::local_ref<jhybriddata> initHybrid(
       jni::alias_ref<jhybridobject> jThis);
   static void registerNatives();
