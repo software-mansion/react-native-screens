@@ -22,6 +22,8 @@ import {
 type InnerStackParamList = {
   List: undefined;
   InnerSheet: undefined;
+  InnerDetail: undefined;
+  StackedSheet: undefined;
 };
 
 type RootStackParamList = {
@@ -126,6 +128,35 @@ function InnerSheetScreen({
         testID="test4949-close-inner-sheet"
         onPress={() => navigation.goBack()}
       />
+      <Button
+        title="Push screens beneath and open another sheet"
+        testID="test4949-push-beneath-open-sheet"
+        onPress={() => {
+          navigation.push('InnerDetail');
+          // Arrives while the first push is still running: the stack runs it again when the push ends, while the
+          // sheet defers presenting on top of it until then.
+          setTimeout(() => {
+            navigation.push('InnerDetail');
+            navigation.push('StackedSheet');
+          }, 50);
+        }}
+      />
+    </View>
+  );
+}
+
+function InnerDetailScreen() {
+  return (
+    <View style={styles.screen}>
+      <Text style={styles.title}>Detail (nested stack)</Text>
+    </View>
+  );
+}
+
+function StackedSheetScreen() {
+  return (
+    <View style={styles.sheet} testID="test4949-stacked-sheet">
+      <Text style={styles.title}>Sheet over the inner sheet</Text>
     </View>
   );
 }
@@ -208,6 +239,12 @@ function Home() {
         name="InnerSheet"
         component={InnerSheetScreen}
         options={{ presentation: 'formSheet', sheetAllowedDetents: [0.4] }}
+      />
+      <InnerStack.Screen name="InnerDetail" component={InnerDetailScreen} />
+      <InnerStack.Screen
+        name="StackedSheet"
+        component={StackedSheetScreen}
+        options={{ presentation: 'formSheet', sheetAllowedDetents: [0.3] }}
       />
     </InnerStack.Navigator>
   );

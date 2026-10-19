@@ -2055,22 +2055,24 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // we need to delay presenting it if we're in an ongoing transition. This might be necessary
   // when we use an animation to cancel back button dismiss and try to present a modal at the same time.
   // For more details see: https://github.com/software-mansion/react-native-screens/pull/2976.
-  if (self.parentViewController == nil) {
-    UIViewController *controller = self.screenView.reactSuperview.reactViewController;
-
-    if (controller.transitionCoordinator != nil) {
-      [controller.transitionCoordinator
-          animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-            // do nothing here, we only want to be notified when transition is complete
-          }
-          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-            [super presentViewController:viewControllerToPresent animated:flag completion:completion];
-          }];
-      return;
-    }
+  if ([self defersPresentationUntilTransitionEnds]) {
+    [self.screenView.reactSuperview.reactViewController.transitionCoordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          // do nothing here, we only want to be notified when transition is complete
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [super presentViewController:viewControllerToPresent animated:flag completion:completion];
+        }];
+    return;
   }
 
   [super presentViewController:viewControllerToPresent animated:flag completion:completion];
+}
+
+- (BOOL)defersPresentationUntilTransitionEnds
+{
+  return self.parentViewController == nil &&
+      self.screenView.reactSuperview.reactViewController.transitionCoordinator != nil;
 }
 
 #pragma mark - RNSOrientationProviding

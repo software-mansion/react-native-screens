@@ -724,6 +724,8 @@ RNS_IGNORE_SUPER_CALL_END
       BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
           ((RNSScreen *)next).screenView.stackAnimation != RNSScreenStackAnimationNone;
 
+      const BOOL presentationDeferred = [previous isKindOfClass:RNSScreen.class] &&
+          [static_cast<RNSScreen *>(previous) defersPresentationUntilTransitionEnds];
       [weakSelf.pendingModalPresentations addObject:next];
       [previous presentViewController:next
                              animated:shouldAnimate
@@ -743,6 +745,15 @@ RNS_IGNORE_SUPER_CALL_END
                                afterTransitions();
                              };
                            }];
+      if (presentationDeferred) {
+        // `previous` presents `next` once its stack's transition ends. That presentation finishes this batch, and the
+        // update runs again for the controllers left.
+        if (!lastModal) {
+          weakSelf.scheduleModalsUpdate = YES;
+        }
+        lastPresentedIndex = i;
+        return;
+      }
       if (next.presentingViewController == nil && !next.isBeingPresented) {
         // UIKit refused the presentation and won't run its completion. Run the update again once this one is done.
         [weakSelf.pendingModalPresentations removeObject:next];

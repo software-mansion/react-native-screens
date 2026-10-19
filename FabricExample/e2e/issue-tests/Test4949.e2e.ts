@@ -93,6 +93,17 @@ describeIfIOS('Test4949', () => {
     await waitFor(innerSheet()).toBeVisible().withTimeout(5000);
   });
 
+  it('presents a sheet over a sheet while the stack pushes beneath them', async () => {
+    await element(by.id('test4949-open-inner-sheet')).tap();
+    await waitFor(innerSheet()).toBeVisible().withTimeout(5000);
+    await element(by.id('test4949-push-beneath-open-sheet')).tap();
+    await waitFor(element(by.id('test4949-stacked-sheet')))
+      .toBeVisible()
+      .withTimeout(5000);
+    await sleep(2000);
+    await expect(element(by.id('test4949-stacked-sheet'))).toBeVisible();
+  });
+
   it('presents the inner sheet when opened after the outer one has closed', async () => {
     await openOuterSheet();
     await element(by.id('test4949-close-open-inner-sheet-delayed')).tap();

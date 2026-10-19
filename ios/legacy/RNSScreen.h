@@ -54,6 +54,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;
+/**
+ * Whether `presentViewController:animated:completion:` waits for the ongoing transition of this screen's stack, and
+ * presents only once it ends.
+ */
+- (BOOL)defersPresentationUntilTransitionEnds;
 
 @end
 
