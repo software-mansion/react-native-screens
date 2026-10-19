@@ -16,19 +16,15 @@ customisation is driven by `standardAppearance`.
 
 Incomplete. Automated on iOS only - Android is fully manual.
 
-Covered:
-
-- iOS **Baseline**: all four tabs exist and each shows its expected badge value.
+Covered: iOS **Baseline** - all four tabs exist and each shows its badge value
+(`1`, `1234567890`, `NEW!`, `⚠️`). This also covers the value checks repeated
+in the Tab1 - Tab4 subsections.
 
 Manual only:
 
-- iOS: **Tab1 - default badge appearance**, **Tab2 - long badge value and
-  scrollEdgeAppearance**, **Tab3 - string badge value and normal/selected state
-  colors**, **Tab4 - emoji badge and transparent selected state**, and
-  **Stability check**.
+- iOS: all badge color checks (including in **Baseline**), steps 2–3 of
+  **Tab2 - long badge value and scrollEdgeAppearance**, and **Stability check**.
 - Android: all steps.
-- Every badge color check, including the default-appearance check in
-  iOS **Baseline**.
 
 ## Prerequisites
 
