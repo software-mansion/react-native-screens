@@ -222,6 +222,7 @@ export { default as Test4709 } from './Test4709';
 export { default as Test4725 } from './Test4725';
 export { default as Test4757 } from './Test4757';
 export { default as Test4872 } from './Test4872';
+export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
