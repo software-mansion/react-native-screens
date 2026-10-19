@@ -1,15 +1,10 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
-import type { NativeMatcher } from 'detox/detox';
 import { pickerOptionId } from '@e2e/app/settings-controls';
-import {
-  selectComponentIntegrationTestsScreen,
-  STACK_TABS_SCENARIO_GROUP,
-} from '@e2e/app/test-screen-navigation';
+import { selectComponentIntegrationTestsScreen } from '@e2e/app/test-screen-navigation';
 import { tapBarBackButton } from '@e2e/framework/back-button';
 import { tapTopmostButton } from '@e2e/framework/gestures';
-import { getSingleMatch } from '@e2e/framework/matchers';
-import { CLASS_NAME_ANDROID_REACT_SCROLL_VIEW } from '@e2e/framework/native-classes-android';
+import { getFrame } from '@e2e/framework/matchers';
 import { describeIfAndroid } from '@e2e/framework/platform';
 import {
   stackV5AppBar,
@@ -22,7 +17,6 @@ import {
 import {
   expectTabBarItemByLabel,
   forceSelectTabByLabel,
-  TAB_SWITCH_TIMEOUT_MS,
 } from '@e2e/framework/tab-bar';
 import {
   createOverflowMenuHelpers,
@@ -31,18 +25,12 @@ import {
 } from '@e2e/framework/toolbar-menu-android';
 import { DEFAULT_TIMEOUT_MS, waitUntil } from '@e2e/framework/wait';
 
-/** Stack in Tabs: header persistence (Android). All of `scenario.md` except
- * the drawn subtitle and the no-flash check; tabs by label, the rest as shown. */
-
+const SCENARIO_GROUP = 'Stack V5 & Native Tabs Integration Tests';
 const SCENARIO_KEY = 'test-stack-tabs-stack-in-tabs-header-persistence';
 
-const STACK_TAB = 'Stack';
-const OTHER_TAB = 'Other';
-
-/** `tabBarItemAccessibilityLabel` of a tab, as set in the scenario. */
-const tabBarItemLabel = (tab: string) => `${tab.toLowerCase()}-tab-item-label`;
-
-const selectTab = (tab: string) => forceSelectTabByLabel(tabBarItemLabel(tab));
+// `tabBarItemAccessibilityLabel` of each tab, as set in the scenario.
+const STACK_TAB_ITEM_LABEL = 'stack-tab-item-label';
+const OTHER_TAB_ITEM_LABEL = 'other-tab-item-label';
 
 const DETAILS_TITLE = 'Details';
 
@@ -63,10 +51,6 @@ const FILTER_B = 'Filter B';
 const lastMenuSelectionText = (selection: string) =>
   `Last menu selection: ${selection}`;
 
-/** Polled: Espresso's idle sync does not cover a header rebuild re-asserting
- * the collapsed state. */
-const HEADER_SETTLE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
-
 /** Enough to fully collapse a large header (152dp) and then some. */
 const ONE_SCREEN_DP = 600;
 
@@ -75,14 +59,13 @@ const ONE_SCREEN_DP = 600;
 const DOWNWARD_SCROLL_START = 0.6;
 const UPWARD_SCROLL_START = 0.35;
 
-/** The Home screen's scroll view. A factory: `atIndex` mutates on Android. */
-const homeScrollView = (): NativeMatcher =>
-  by.type(CLASS_NAME_ANDROID_REACT_SCROLL_VIEW);
+const HOME_SCROLL_VIEW_ID = 'header-persistence-home-scrollview';
+const homeScrollView = () => by.id(HOME_SCROLL_VIEW_ID);
 
 const overflowButton = () => by.label(OVERFLOW_MENU_LABEL);
 
 const { withOverflowMenu, tapMenuItem } = createOverflowMenuHelpers({
-  screenMatcher: homeScrollView,
+  scrollViewId: HOME_SCROLL_VIEW_ID,
 });
 
 // --- Header geometry ---
@@ -97,14 +80,8 @@ type HeaderGeometry = {
 };
 
 async function readHeaderGeometry(): Promise<HeaderGeometry> {
-  const { frame: appBar } = await getSingleMatch(
-    stackV5AppBar(),
-    'the Stack v5 app bar',
-  );
-  const { frame: toolbar } = await getSingleMatch(
-    stackV5Toolbar(),
-    'the Stack v5 toolbar',
-  );
+  const appBar = await getFrame(stackV5AppBar(), 'the Stack v5 app bar');
+  const toolbar = await getFrame(stackV5Toolbar(), 'the Stack v5 toolbar');
   return {
     appBarTop: appBar.y,
     appBarBottom: appBar.y + appBar.height,
@@ -132,7 +109,6 @@ async function waitForHeaderGeometry(
       return predicate(observed);
     },
     {
-      timeout: HEADER_SETTLE_TIMEOUT_MS,
       message: () =>
         `${expectation}; last observed: ${
           observed ? JSON.stringify(observed) : String(lastError)
@@ -160,7 +136,7 @@ const expectHeaderFullyCollapsed = () =>
   );
 
 /** The expanded header's height, for comparing header types. */
-async function readExpandedHeaderHeight(): Promise<number> {
+async function expectExpandedAndReadHeaderHeight(): Promise<number> {
   const { appBarTop, appBarBottom } = await expectHeaderFullyExpanded();
   return appBarBottom - appBarTop;
 }
@@ -190,19 +166,19 @@ async function scrollBackToTop() {
 // --- Tabs ---
 
 async function switchToOtherTab() {
-  await selectTab(OTHER_TAB);
+  await forceSelectTabByLabel(OTHER_TAB_ITEM_LABEL);
   await waitFor(element(by.text(OTHER_TAB_HEADING)))
     .toBeVisible()
-    .withTimeout(TAB_SWITCH_TIMEOUT_MS);
+    .withTimeout(DEFAULT_TIMEOUT_MS);
 }
 
 /** Waits for the Stack tab's content, which is up whatever the header state.
  * Not for a round trip with Details pushed. */
 async function switchToStackTab() {
-  await selectTab(STACK_TAB);
+  await forceSelectTabByLabel(STACK_TAB_ITEM_LABEL);
   await waitFor(element(homeScrollView()))
     .toBeVisible()
-    .withTimeout(TAB_SWITCH_TIMEOUT_MS);
+    .withTimeout(DEFAULT_TIMEOUT_MS);
 }
 
 /** A round trip through the Other tab, optionally acting there. */
@@ -214,7 +190,7 @@ async function roundTripThroughOtherTab(whileAway?: () => Promise<void>) {
 
 // --- Other tab controls ---
 
-/** Opens the picker, taps `option`, closes it again (an open picker's rows
+/** Opens the picker, taps `to`, closes it again (an open picker's rows
  * would collide with later `by.text` matchers). */
 async function setHeaderType(from: string, to: string) {
   await element(by.text(`${TYPE_PICKER_LABEL}: ${from}`)).tap();
@@ -259,8 +235,7 @@ async function expectPushDetailsScrolledAway() {
 
 /** Screen position of the "Push Details" row, on or off screen. */
 async function readPushDetailsTop(): Promise<number> {
-  return (await getSingleMatch(by.text(PUSH_DETAILS), 'the Push Details row'))
-    .frame.y;
+  return (await getFrame(by.text(PUSH_DETAILS), 'the Push Details row')).y;
 }
 
 /** A hidden header is removed from the hierarchy. The content is asserted
@@ -277,15 +252,11 @@ describeIfAndroid(
   () => {
     beforeAll(async () => {
       await device.reloadReactNative();
-      await selectComponentIntegrationTestsScreen(
-        STACK_TABS_SCENARIO_GROUP,
-        SCENARIO_KEY,
-      );
+      await selectComponentIntegrationTestsScreen(SCENARIO_GROUP, SCENARIO_KEY);
     });
 
-    // Expanded heights per header type, captured as the suite progresses.
+    // Expanded height of the medium header, captured on the fresh screen.
     let mediumHeaderHeight = Number.NaN;
-    let largeHeaderHeight = Number.NaN;
 
     // The status bar inset: the expanded header offsets its toolbar by it.
     let statusBarInset = Number.NaN;
@@ -294,10 +265,9 @@ describeIfAndroid(
       it('should show the Stack tab with a collapsing "Home v1" header and an overflow button', async () => {
         await waitFor(element(homeScrollView()))
           .toBeVisible()
-          .withTimeout(TAB_SWITCH_TIMEOUT_MS);
-        for (const tab of [STACK_TAB, OTHER_TAB]) {
-          await expectTabBarItemByLabel(tabBarItemLabel(tab));
-        }
+          .withTimeout(DEFAULT_TIMEOUT_MS);
+        await expectTabBarItemByLabel(STACK_TAB_ITEM_LABEL);
+        await expectTabBarItemByLabel(OTHER_TAB_ITEM_LABEL);
         await expectHomeHeader('Home v1');
 
         // A fresh header is expanded by construction: this is the reference the
@@ -308,8 +278,8 @@ describeIfAndroid(
         expandedAppBarTop = appBarTop;
         mediumHeaderHeight = appBarBottom - appBarTop;
         statusBarInset = (
-          await getSingleMatch(stackV5Toolbar(), 'the Stack v5 toolbar')
-        ).frame.y;
+          await getFrame(stackV5Toolbar(), 'the Stack v5 toolbar')
+        ).y;
         jestExpect(statusBarInset).toBeGreaterThan(0);
       });
 
@@ -403,12 +373,12 @@ describeIfAndroid(
 
       it('should expand to a large header, taller than the medium one', async () => {
         await scrollBackToTop();
-        largeHeaderHeight = await readExpandedHeaderHeight();
+        const largeHeaderHeight = await expectExpandedAndReadHeaderHeight();
         jestExpect(largeHeaderHeight).toBeGreaterThan(mediumHeaderHeight);
       });
 
       it('should drop the header while hidden, with the content below the status bar', async () => {
-        const { frame: contentWithHeader } = await getSingleMatch(
+        const contentWithHeader = await getFrame(
           homeScrollView(),
           'the Home scroll view',
         );
@@ -416,7 +386,7 @@ describeIfAndroid(
         await roundTripThroughOtherTab(() => setHeaderHidden(true));
 
         await expectNoHomeHeader();
-        const { frame: content } = await getSingleMatch(
+        const content = await getFrame(
           homeScrollView(),
           'the Home scroll view',
         );
@@ -471,9 +441,9 @@ describeIfAndroid(
         await roundTripThroughOtherTab(() => setHeaderType('large', 'medium'));
 
         await expectHomeHeader('Home v2');
-        const height = await readExpandedHeaderHeight();
-        jestExpect(height).toBeLessThan(largeHeaderHeight);
-        jestExpect(height).toBe(mediumHeaderHeight);
+        jestExpect(await expectExpandedAndReadHeaderHeight()).toBe(
+          mediumHeaderHeight,
+        );
       });
     });
 
@@ -485,11 +455,11 @@ describeIfAndroid(
           .withTimeout(DEFAULT_TIMEOUT_MS);
 
         await switchToOtherTab();
-        await selectTab(STACK_TAB);
+        await forceSelectTabByLabel(STACK_TAB_ITEM_LABEL);
 
         await waitFor(element(stackV5HeaderTitle(DETAILS_TITLE)))
           .toBeVisible()
-          .withTimeout(TAB_SWITCH_TIMEOUT_MS);
+          .withTimeout(DEFAULT_TIMEOUT_MS);
         await expect(element(stackV5BackButton())).toBeVisible();
       });
 

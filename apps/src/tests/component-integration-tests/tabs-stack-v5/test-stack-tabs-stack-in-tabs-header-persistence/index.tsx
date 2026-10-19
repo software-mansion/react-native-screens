@@ -138,6 +138,7 @@ function HomeScreen() {
     // bar, so the top inset has to take over while `hidden` is set.
     <SafeAreaView edges={{ top: headerHidden }}>
       <ScrollView
+        testID="header-persistence-home-scrollview"
         style={styles.container}
         contentContainerStyle={styles.content}
         nestedScrollEnabled>

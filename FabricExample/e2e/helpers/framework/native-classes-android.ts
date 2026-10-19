@@ -43,9 +43,3 @@ export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_VIEW =
 // cover the `AppCompat*` variants the platform inflates.
 export const CLASS_NAME_ANDROID_CHECK_BOX = 'android.widget.CheckBox';
 export const CLASS_NAME_ANDROID_RADIO_BUTTON = 'android.widget.RadioButton';
-
-// --- React Native ---
-
-// A vertical RN `ScrollView` — the handle on one that carries no `testID`.
-export const CLASS_NAME_ANDROID_REACT_SCROLL_VIEW =
-  'com.facebook.react.views.scroll.ReactScrollView';

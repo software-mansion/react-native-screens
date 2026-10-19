@@ -3,15 +3,10 @@ import { device, expect, element, by } from 'detox';
 import type { IosElementAttributes, NativeMatcher } from 'detox/detox';
 import { forceTapByLabelIOS } from './gestures';
 import { getMatches } from './matchers';
-import { DEFAULT_TIMEOUT_MS } from './wait';
 import {
   CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY,
   CLASS_NAME_UI_TAB_BAR,
 } from './native-classes-ios';
-
-/** A tab switch can outlast the default wait: iOS taps by coordinate outside
- * Detox's sync, and the first switch into a tab loads its content. */
-export const TAB_SWITCH_TIMEOUT_MS = 2 * DEFAULT_TIMEOUT_MS;
 
 export async function forceSelectTabByLabel(label: string) {
   if (device.getPlatform() === 'ios') {
@@ -21,19 +16,10 @@ export async function forceSelectTabByLabel(label: string) {
   }
 }
 
-/**
- * Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
- * is in the tab bar. Existence only on iOS: the selected button fails Detox's
- * visibility threshold on iOS 26.
- */
-export async function expectTabBarItemByLabel(label: string) {
-  const item = element(by.label(label));
-  if (device.getPlatform() === 'ios') {
-    await expect(item).toExist();
-  } else {
-    await expect(item).toBeVisible();
-  }
-}
+/** Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
+ * is in the tab bar. */
+export const expectTabBarItemByLabel = (label: string) =>
+  expect(element(by.label(label))).toBeVisible();
 
 /**
  * The first match — UIKit can keep more than one host view / tab bar in the
