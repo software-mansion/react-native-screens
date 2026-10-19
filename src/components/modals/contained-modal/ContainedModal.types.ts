@@ -14,9 +14,7 @@ export interface ContainedModalProps {
    * Determines whether the contained modal is currently visible.
    *
    * @remarks
-   * Presentation is driven by state transitions: updating this property
-   * from `false` to `true` triggers the modal to present, while changing
-   * it from `true` to `false` triggers a programmatic dismissal.
+   * `false` -> `true` presents the modal; `true` -> `false` dismisses it.
    *
    * @platform ios
    * @since 5.0
@@ -51,10 +49,8 @@ export interface ContainedModalProviderProps {
    * Style applied to the provider's host view.
    *
    * @remarks
-   * The provider is a regular, space-filling container whose bounds define the
-   * area within which a matched contained modal is presented, so its size is
-   * configurable - unlike the modal components, whose hosts are zero-impact
-   * logical anchors.
+   * The provider is a regular container whose bounds define the area a
+   * matched contained modal is presented in.
    *
    * @platform ios
    * @since 5.0
