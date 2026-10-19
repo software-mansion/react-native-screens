@@ -246,17 +246,23 @@ internal class TabsAppearanceApplicator(
         }
     }
 
+    /**
+     * Applies the invalidated parts of the menu item's title, icon and active indicator, and clears
+     * the menu item's pending flags.
+     *
+     * @return The flags that were pending, so the caller can apply the parts it owns (badge,
+     * accessibility).
+     */
     fun updateMenuItemAppearance(
         menuItem: MenuItem,
         item: TabsContainerItem,
         state: TabsMenuItemState,
         iconBoxDp: Float,
-    ) {
+    ): TabsItemInvalidationFlags {
         val flags = state.pendingFlags
         state.pendingFlags = TabsItemInvalidationFlags.NONE
 
-        // The title is diffed; the icon and the active indicator are re-applied only when invalidated.
-        if (menuItem.title != item.tabTitle) {
+        if (flags.containsAny(TabsItemInvalidationFlags.TITLE)) {
             menuItem.title = item.tabTitle
         }
 
@@ -283,6 +289,8 @@ internal class TabsAppearanceApplicator(
             // The menu item's view doesn't exist yet; retry on the next update.
             state.pendingFlags = state.pendingFlags or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE
         }
+
+        return flags
     }
 
     internal fun updateBadgeAppearance(

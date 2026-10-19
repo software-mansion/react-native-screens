@@ -446,14 +446,18 @@ class TabsContainer internal constructor(
     private fun updateMenuItem(item: TabsContainerItem) {
         getMenuItemForItem(item)?.let { menuItem ->
             val appearance = selectedTab.item.appearance
-            appearanceCoordinator.updateMenuItemAppearance(
-                themedContext,
-                menuItem,
-                item,
-                appearance,
-                appearanceCoordinator.resolveIconBoxDp(),
-            )
-            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)
+            val flags =
+                appearanceCoordinator.updateMenuItemAppearance(
+                    themedContext,
+                    menuItem,
+                    item,
+                    appearance,
+                    appearanceCoordinator.resolveIconBoxDp(),
+                    isWholeBarUpdate = false,
+                )
+            if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY)) {
+                a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)
+            }
         }
     }
 
