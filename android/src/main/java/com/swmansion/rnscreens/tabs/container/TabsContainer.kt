@@ -35,8 +35,8 @@ import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
 import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
+import com.swmansion.rnscreens.tabs.screen.TabsContainerItemDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
-import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
@@ -454,12 +454,13 @@ class TabsContainer internal constructor(
 
     // endregion
 
-    // region TabsScreenDelegate impl
+    // region TabsContainerItemDelegate impl
 
-    // Not implemented by the container itself: the delegate names internal types, which a public class
-    // can't expose through public overrides.
-    internal val tabsScreenDelegate: TabsScreenDelegate =
-        object : TabsScreenDelegate {
+    // A separate object instead of `TabsContainer : TabsContainerItemDelegate`: the delegate's methods
+    // take the internal `TabsContainerItem`, and overrides in this public class would be public members
+    // exposing that internal type, which Kotlin rejects.
+    internal val containerItemDelegate: TabsContainerItemDelegate =
+        object : TabsContainerItemDelegate {
             override fun getFragmentForItem(item: TabsContainerItem): TabsScreenFragment? = this@TabsContainer.getFragmentForItem(item)
 
             override fun onFragmentConfigurationChange(

@@ -29,7 +29,7 @@ internal class TabsScreen(
     FragmentProviding,
     ScrollViewSeeking,
     TabsContainerItem {
-    private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
+    private var containerItemDelegate: WeakReference<TabsContainerItemDelegate> = WeakReference(null)
 
     // region Handling configuration changes
 
@@ -156,11 +156,11 @@ internal class TabsScreen(
         // Ignore restoring instance state too, as we are not saving anything anyways.
     }
 
-    internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
-        tabsScreenDelegate = WeakReference(delegate)
+    internal fun setTabsContainerItemDelegate(delegate: TabsContainerItemDelegate?) {
+        containerItemDelegate = WeakReference(delegate)
     }
 
-    override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForItem(this)
+    override fun getAssociatedFragment(): Fragment? = containerItemDelegate.get()?.getFragmentForItem(this)
 
     private fun onIconChange() = invalidate(TabsItemInvalidationFlags.ICON)
 
@@ -174,7 +174,7 @@ internal class TabsScreen(
         get() = eventEmitter
 
     override fun onFragmentConfigurationChange(config: Configuration) {
-        tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
+        containerItemDelegate.get()?.onFragmentConfigurationChange(this, config)
     }
 
     // region ScrollViewSeeking

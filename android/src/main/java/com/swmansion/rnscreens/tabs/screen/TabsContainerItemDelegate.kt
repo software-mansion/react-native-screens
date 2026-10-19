@@ -3,9 +3,9 @@ package com.swmansion.rnscreens.tabs.screen
 import android.content.res.Configuration
 import androidx.fragment.app.Fragment
 
-internal interface TabsScreenDelegate {
+internal interface TabsContainerItemDelegate {
     /**
-     * **If a fragment is associated with the tab screen**, notify the delegate that the fragment
+     * **If a fragment is associated with the item**, notify the delegate that the fragment
      * got configuration update.
      */
     fun onFragmentConfigurationChange(
@@ -14,7 +14,7 @@ internal interface TabsScreenDelegate {
     )
 
     /**
-     * This returns fragment **if one is associated with given tab screen**.
+     * This returns fragment **if one is associated with given item**.
      */
     fun getFragmentForItem(item: TabsContainerItem): Fragment?
 }
