@@ -2,7 +2,7 @@
 #import "RNSDefines.h"
 #import "RNSFormSheetProviders.h"
 
-#import <React/RCTLog.h>
+#import "RNSLog.h"
 
 #if !TARGET_OS_TV
 
@@ -48,13 +48,13 @@ static BOOL RNSAreDetentsStrictlyAscending(NSArray<NSNumber *> *detents)
   }
 
   if (!RNSAreDetentsValid(detents)) {
-    RCTLogError(
+    RNSLogE(
         @"[RNScreens] The values in the detents array must fall within the 0.0 to 1.0 range. Falling back to large detent.");
     return @[ [UISheetPresentationControllerDetent largeDetent] ];
   }
 
   if (!RNSAreDetentsStrictlyAscending(detents)) {
-    RCTLogError(
+    RNSLogE(
         @"[RNScreens] The values in the detents array must be in strictly ascending order. Falling back to large detent.");
     return @[ [UISheetPresentationControllerDetent largeDetent] ];
   }
@@ -102,8 +102,7 @@ static BOOL RNSAreDetentsStrictlyAscending(NSArray<NSNumber *> *detents)
     if (detentsCount == 1) {
       double firstDetentFraction = detents[0].doubleValue;
       if (firstDetentFraction == kRNSFormSheetFitToContents) {
-        RCTLogError(
-            @"[RNScreens] 'fitToContents' is unsupported on iOS versions below 16. Falling back to large detent.");
+        RNSLogE(@"[RNScreens] 'fitToContents' is unsupported on iOS versions below 16. Falling back to large detent.");
         [nativeDetents addObject:UISheetPresentationControllerDetent.largeDetent];
       } else if (firstDetentFraction < 1.0) {
         [nativeDetents addObject:UISheetPresentationControllerDetent.mediumDetent];
@@ -127,9 +126,9 @@ static BOOL RNSAreDetentsStrictlyAscending(NSArray<NSNumber *> *detents)
   NSInteger initialIndex = requestedIndex == kRNSFormSheetLastDetent ? (NSInteger)detents.count - 1 : requestedIndex;
 
   if (initialIndex < 0 || initialIndex >= (NSInteger)detents.count) {
-    RCTLogError(@"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
-                (long)requestedIndex,
-                (unsigned long)detents.count);
+    RNSLogE(@"[RNScreens] initialDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to 0.",
+            (long)requestedIndex,
+            (unsigned long)detents.count);
     initialIndex = 0;
   }
 
@@ -161,7 +160,7 @@ static BOOL RNSAreDetentsStrictlyAscending(NSArray<NSNumber *> *detents)
   NSInteger ludIndex = requestedIndex == kRNSFormSheetNeverDimmed ? (NSInteger)detents.count - 1 : requestedIndex;
 
   if (ludIndex < 0 || ludIndex >= (NSInteger)detents.count) {
-    RCTLogError(
+    RNSLogE(
         @"[RNScreens] largestUndimmedDetentIndex (%ld) exceeds effective detents count (%lu). Falling back to the default behavior (always dimmed).",
         (long)requestedIndex,
         (unsigned long)detents.count);
