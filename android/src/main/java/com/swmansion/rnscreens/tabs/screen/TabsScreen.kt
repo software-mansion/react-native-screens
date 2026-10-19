@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.tabs.screen
 
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.util.SparseArray
@@ -172,10 +171,6 @@ class TabsScreen(
 
     override val appearanceEventEmitter: ViewAppearanceEventEmitter
         get() = eventEmitter
-
-    override fun onFragmentConfigurationChange(config: Configuration) {
-        containerItemDelegate.get()?.onFragmentConfigurationChange(this, config)
-    }
 
     // region ScrollViewSeeking
     override fun registerScrollView(

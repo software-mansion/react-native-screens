@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import java.lang.ref.WeakReference
 
 class TabsScreenFragment internal constructor(
     internal val item: TabsContainerItem,
     internal val menuItemId: Int,
+    private val delegate: WeakReference<TabsScreenFragmentDelegate>,
 ) : Fragment() {
     internal val requireItemKey: String
         get() = checkNotNull(item.itemKey) { "[RNScreens] itemKey MUST NOT be null" }
@@ -45,6 +47,6 @@ class TabsScreenFragment internal constructor(
         super.onConfigurationChanged(newConfig)
 
         // Handle theme change through RN's Appearance.setColorScheme
-        item.onFragmentConfigurationChange(newConfig)
+        delegate.get()?.onFragmentConfigurationChanged(newConfig)
     }
 }

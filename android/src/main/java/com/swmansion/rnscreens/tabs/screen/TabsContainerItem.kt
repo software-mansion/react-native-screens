@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.tabs.screen
 
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.view.View
 import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
@@ -44,12 +43,4 @@ interface TabsContainerItem : ContainerItem {
      * Sets the observer the item reports its configuration changes to; `null` clears it.
      */
     fun setConfigurationObserver(observer: TabsItemConfigurationObserver?)
-
-    /**
-     * The item's fragment received a configuration update.
-     *
-     * There are cases where the fragment will receive configuration change, but its view will not,
-     * e.g. theme update from JS via Appearance.setColorScheme.
-     */
-    fun onFragmentConfigurationChange(config: Configuration)
 }

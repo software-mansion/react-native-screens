@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
 import com.swmansion.rnscreens.tabs.screen.TabsContainerItemDelegate
 import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
+import com.swmansion.rnscreens.tabs.screen.TabsScreenFragmentDelegate
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -58,6 +59,7 @@ class TabsContainer internal constructor(
     Container,
     ColorSchemeProviding,
     TabsContainerItemDelegate,
+    TabsScreenFragmentDelegate,
     SafeAreaProvider,
     View.OnLayoutChangeListener {
     init {
@@ -235,7 +237,7 @@ class TabsContainer internal constructor(
         index: Int,
         item: TabsContainerItem,
     ) {
-        tabsModel.add(index, TabsScreenFragment(item, viewIdProvider.generateViewId()))
+        tabsModel.add(index, TabsScreenFragment(item, viewIdProvider.generateViewId(), WeakReference(this)))
         item.setConfigurationObserver { flags -> onItemInvalidated(item, flags) }
         invalidationFlags.invalidateAll()
     }
@@ -459,12 +461,11 @@ class TabsContainer internal constructor(
 
     override fun getFragmentForItem(item: TabsContainerItem): TabsScreenFragment? = tabsModel.find { it.item === item }
 
-    override fun onFragmentConfigurationChange(
-        item: TabsContainerItem,
-        config: Configuration,
-    ) {
-        this.onConfigurationChanged(config)
-    }
+    // endregion
+
+    // region TabsScreenFragmentDelegate impl
+
+    override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
     // endregion
 
