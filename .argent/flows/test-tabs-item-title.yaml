@@ -37,7 +37,7 @@
 # Runner:  argent flow run test-tabs-item-title --platform ios        # or --platform android
 #
 # Baselines are keyed by platform and screen size and must come from a device matching CI:
-#   - iOS: iPhone 17 simulator, iOS 26.5 (1206x2622).
+#   - iOS: iPhone 17 simulator, iOS 27.0 (1206x2622).
 #   - Android: pixel_7 AVD, API 34, 3-button navigation, booted with `-gpu swiftshader` (what the
 #     CI argent job runs). The Android crop includes the system navigation bar, so a local
 #     emulator with gesture navigation renders a different crop and CI fails on the mismatch.

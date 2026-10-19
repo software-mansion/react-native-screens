@@ -131,8 +131,11 @@ jobs:
     # Argent flows on the same release build, in parallel with the Detox
     # suites: own time budget and a freshly created simulator.
     needs: build
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 30
+    env:
+      # Same Xcode as the build, so the simulator runtime matches the SDK.
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -145,11 +148,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-      # Same Xcode as the build, so the simulator runtime matches the SDK.
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
+      - name: Get Xcode version
+        run: xcodebuild -version
       - name: Download app built by the build job
         uses: actions/download-artifact@v4
         with:
@@ -159,13 +159,13 @@ jobs:
         run: |
           tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$RUNNER_TEMP/app"
           echo "APP_PATH=$RUNNER_TEMP/app/Release-iphonesimulator/FabricExample.app" >> "$GITHUB_ENV"
-      # iPhone 17 on iOS 26.5 is what the committed iOS baselines were recorded
+      # iPhone 17 on iOS 27.0 is what the committed iOS baselines were recorded
       # on (1206x2622). The runtime is pinned: tab bar rendering differs between
       # iOS minor versions, so a newer runtime on the runner image would show up
       # as snapshot diffs. A freshly created simulator, never one another job has used.
       - name: Boot iPhone 17 simulator
         env:
-          RUNTIME: com.apple.CoreSimulator.SimRuntime.iOS-26-5
+          RUNTIME: com.apple.CoreSimulator.SimRuntime.iOS-27-0
         run: |
           if ! xcrun simctl list runtimes -j | jq -e --arg r "$RUNTIME" \
             '.runtimes[] | select(.identifier == $r and .isAvailable)' > /dev/null; then
