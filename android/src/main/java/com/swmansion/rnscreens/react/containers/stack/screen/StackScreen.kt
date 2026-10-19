@@ -24,7 +24,7 @@ import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor") // should never be restored
-internal class StackScreen(
+class StackScreen(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     FragmentProviding,
