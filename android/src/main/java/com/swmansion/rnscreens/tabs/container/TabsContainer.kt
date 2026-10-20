@@ -57,7 +57,7 @@ class TabsContainer internal constructor(
     private val delegate: WeakReference<TabsContainerDelegate>,
     private val viewIdProvider: ViewIdProviding,
     titleFontResolver: FontResolver,
-    bottomNavigationViewFactory: (Context, TabsContainer) -> TabsBottomNavigationView,
+    bottomNavigationViewFactory: (Context, TabsContainer) -> TabsBottomNavigationView = ::TabsBottomNavigationView,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
