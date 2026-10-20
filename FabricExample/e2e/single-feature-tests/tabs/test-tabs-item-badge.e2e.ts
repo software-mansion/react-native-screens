@@ -8,9 +8,9 @@ import {
   CLASS_NAME_UI_TAB_BAR_BADGE_VIEW_LEGACY,
 } from '@e2e/framework/native-classes-ios';
 import {
-  describeIfBelowIOS27,
+  describeIfIOSBelow,
   describeIfIOS,
-  describeIfIOS27,
+  describeIfIOSAtLeast,
   isIOSVersionAtLeast,
 } from '@e2e/framework/platform';
 
@@ -57,7 +57,7 @@ describeIfIOS('Tab Bar Item Badge', () => {
     }
   });
 
-  describeIfBelowIOS27('badge nested in its tab bar item', () => {
+  describeIfIOSBelow('27.0')('badge nested in its tab bar item', () => {
     it('should render each badge value inside its own tab bar item', async () => {
       for (const { testID, badgeValue } of TAB_BADGES) {
         await expect(
@@ -67,7 +67,7 @@ describeIfIOS('Tab Bar Item Badge', () => {
     });
   });
 
-  describeIfIOS27('badge detached from its tab bar item', () => {
+  describeIfIOSAtLeast('27.0')('badge detached from its tab bar item', () => {
     it("should expose each badge on its own tab bar item's accessibility value", async () => {
       for (const { testID, badgeValue } of TAB_BADGES) {
         await expectItemBadgeValue(testID, badgeValue);
