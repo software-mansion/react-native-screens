@@ -16,7 +16,6 @@ import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
-import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
@@ -27,7 +26,7 @@ import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
-    private val titleFontResolver: FontResolver,
+    private val titleFontResolver: TabsTitleFontResolver,
 ) {
     // Resolved on each access: tracks the display density of the current configuration.
     internal val defaultIconSizeDp: Float
@@ -217,7 +216,7 @@ internal class TabsAppearanceApplicator(
                 titleFontResolver.resolveTypeface(
                     tabBarAppearance?.tabBarItemTitleFontFamily,
                     tabBarAppearance?.tabBarItemTitleFontWeight,
-                    tabBarAppearance?.tabBarItemTitleFontItalic ?: false,
+                    tabBarAppearance?.tabBarItemTitleFontItalic,
                 )
 
             /*
