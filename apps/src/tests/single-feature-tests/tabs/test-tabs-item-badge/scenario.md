@@ -10,22 +10,21 @@ badge, and an emoji badge. For iOS, it also exercises
 `scrollEdgeAppearance` badge color. On Android, all badge color
 customisation is driven by `standardAppearance`.
 
-**OS test creation version:** iOS: 18.6 and iOS 26.5, Android: API Level 36.
+**OS test creation version:** iOS: 18.6, iOS 26.5 and iOS 27.0, Android: API Level 36.
 
 ## E2E test
 
-Incomplete: Only step 1 of **Baseline** for iOS is automated. The E2E test asserts the badge text
-values for all four tabs at baseline. A single suite can be run on both iOS
-versions with version-specific conditions: the tab bar badge view class name
-resolves dynamically (_UIBadgeView on iOS 18 and lower vs.
-_UIBarBadgeView on iOS 26).
+Incomplete. Automated on iOS only - Android is fully manual.
 
-Not covered:
+Covered: iOS **Baseline** - all four tabs exist and each shows its badge value
+(`1`, `1234567890`, `NEW!`, `⚠️`). This also covers the value checks repeated
+in the Tab1 - Tab4 subsections.
 
-- All steps for Android, and most iOS steps except for the initial badge text validation.
-- Badge background and text colors (all tabs, all states). Detox does not expose color
-  attributes for native tab bar badge views, meaning color validation requires a
-  screenshot-diff approach that is not yet implemented.
+Manual only:
+
+- iOS: all badge color checks (including in **Baseline**), steps 2–3 of
+  **Tab2 - long badge value and scrollEdgeAppearance**, and **Stability check**.
+- Android: all steps.
 
 ## Prerequisites
 
