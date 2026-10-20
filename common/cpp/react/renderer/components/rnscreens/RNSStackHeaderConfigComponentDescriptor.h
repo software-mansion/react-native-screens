@@ -21,10 +21,6 @@ class RNSStackHeaderConfigComponentDescriptor final
         dynamic_cast<RNSStackHeaderConfigShadowNode *>(&shadowNode));
     auto &configShadowNode =
         static_cast<RNSStackHeaderConfigShadowNode &>(shadowNode);
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&configShadowNode));
-    auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(configShadowNode);
 
     auto state = std::static_pointer_cast<
         const RNSStackHeaderConfigShadowNode::ConcreteState>(
@@ -32,11 +28,15 @@ class RNSStackHeaderConfigComponentDescriptor final
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
+      configShadowNode.setSizeIfChanged(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
 
 #if !defined(ANDROID)
+    // `layout()` takes the frame origin from state, so re-run it when that
+    // origin changes.
+    rnscreens::dirtyLayoutIfFrameOriginStale(configShadowNode);
+
     std::weak_ptr<void> imageLoader =
         contextContainer_->at<std::shared_ptr<void>>("RCTImageLoader");
     configShadowNode.setImageLoader(imageLoader);

@@ -22,12 +22,14 @@ void RNSStackHeaderConfigShadowNode::layout(LayoutContext layoutContext) {
   applyFrameCorrections();
 }
 
+Point RNSStackHeaderConfigShadowNode::correctFrameOrigin(
+    Point /*origin*/) const {
+  return getStateData().contentOffset;
+}
+
 void RNSStackHeaderConfigShadowNode::applyFrameCorrections() {
   ensureUnsealed();
-
-  const auto &stateData = getStateData();
-  layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
-  layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
+  layoutMetrics_.frame.origin = correctFrameOrigin(layoutMetrics_.frame.origin);
 }
 
 void RNSStackHeaderConfigShadowNode::setImageLoader(
