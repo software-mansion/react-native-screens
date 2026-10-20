@@ -9,6 +9,9 @@ on:
       - '.argent/**'
       - 'react-native-screens-testing'
       - 'scripts/e2e/argent-failure-summary.sh'
+      - 'scripts/e2e/start-argent-server.sh'
+      - 'scripts/e2e/boot-argent-ios-simulator.sh'
+      - 'scripts/e2e/run-argent-flows-ios.sh'
       - 'RNScreens.podspec'
       - 'package.json'
       - 'ios/**'
@@ -48,7 +51,7 @@ jobs:
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install root node dependencies
-        run: yarn install && yarn submodules
+        run: yarn install && yarn submodules:react-navigation
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
@@ -104,7 +107,7 @@ jobs:
       - name: Install AppleSimulatorUtils
         run: brew tap wix/brew && brew trust wix/brew && brew install applesimutils
       - name: Install root node dependencies
-        run: yarn install && yarn submodules
+        run: yarn install && yarn submodules:react-navigation
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
@@ -160,43 +163,18 @@ jobs:
           tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$RUNNER_TEMP/app"
           echo "APP_PATH=$RUNNER_TEMP/app/Release-iphonesimulator/FabricExample.app" >> "$GITHUB_ENV"
       # iPhone 17 on iOS 27.0 is what the committed iOS baselines were recorded
-      # on (1206x2622). The runtime is pinned: tab bar rendering differs between
-      # iOS minor versions, so a newer runtime on the runner image would show up
-      # as snapshot diffs. A freshly created simulator, never one another job has used.
+      # on (1206x2622); see the script for why the runtime is pinned.
       - name: Boot iPhone 17 simulator
-        env:
-          RUNTIME: com.apple.CoreSimulator.SimRuntime.iOS-27-0
-        run: |
-          if ! xcrun simctl list runtimes -j | jq -e --arg r "$RUNTIME" \
-            '.runtimes[] | select(.identifier == $r and .isAvailable)' > /dev/null; then
-            echo "iOS runtime $RUNTIME (the baselines' runtime) is not available on this runner:" >&2
-            xcrun simctl list runtimes >&2
-            exit 1
-          fi
-          UDID=$(xcrun simctl create "Argent iPhone 17" com.apple.CoreSimulator.SimDeviceType.iPhone-17 "$RUNTIME")
-          echo "Booting $UDID ($RUNTIME)"
-          xcrun simctl boot "$UDID"
-          xcrun simctl bootstatus "$UDID"
-          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
-      - name: Install app on simulator
-        run: xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
+        run: scripts/e2e/boot-argent-ios-simulator.sh com.apple.CoreSimulator.SimRuntime.iOS-27-0
       - name: Install Argent and start the tool-server
         uses: ./.github/actions/argent-server
-      # --output keeps baseline/current/diff PNGs of every mismatching snapshot.
+      # Installs the app, runs the flows and takes screen-at-failure.png.
       - name: Run Argent flows
-        run: |
-          set -o pipefail
-          mkdir -p "$RUNNER_TEMP/argent-out"
-          argent flow run ./.argent/flows --device "$SIMULATOR_UDID" \
-            --output "$RUNNER_TEMP/argent-out/snapshots" 2>&1 | tee "$RUNNER_TEMP/argent-out/argent-flows.log"
-      - name: Capture screen at failure
-        if: ${{ failure() }}
-        run: |
-          mkdir -p "$RUNNER_TEMP/argent-out"
-          xcrun simctl io "$SIMULATOR_UDID" screenshot "$RUNNER_TEMP/argent-out/screen-at-failure.png" || true
+        run: scripts/e2e/run-argent-flows-ios.sh "$SIMULATOR_UDID" "$APP_PATH"
       - name: Summarize Argent failure
         if: ${{ failure() }}
         run: |
+          mkdir -p "$RUNNER_TEMP/argent-out"
           cp "${ARGENT_SERVER_LOG:-/nonexistent}" "$RUNNER_TEMP/argent-out/" 2>/dev/null || true
           scripts/e2e/argent-failure-summary.sh ios "$RUNNER_TEMP/argent-out"
       - name: Upload Argent failure artifact

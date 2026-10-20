@@ -10,6 +10,7 @@ on:
       - 'react-native-screens-testing'
       - 'scripts/e2e/run-argent-flows-android.sh'
       - 'scripts/e2e/argent-failure-summary.sh'
+      - 'scripts/e2e/start-argent-server.sh'
       - 'package.json'
       - 'android/**'
       - 'common/**'
@@ -25,21 +26,17 @@ on:
         description: Skip the Detox tests; only build the app and run the Argent flows.
         type: boolean
         default: false
+concurrency:
+  # Manual runs get their own group, so dispatching twice does not cancel the
+  # first run.
+  group: android-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
+  cancel-in-progress: true
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      build-uploaded: ${{ steps.upload-build.outcome == 'success' }}
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample
-      API_LEVEL: 34
-      AVD_PROFILE: pixel_7
-    concurrency:
-      # Manual runs get their own group, so dispatching twice does not cancel
-      # the first run.
-      group: android-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
-      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,9 +59,9 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - name: Install root node dependencies
 
-        run: yarn install && yarn submodules
+      - name: Install root node dependencies
+        run: yarn install && yarn submodules:react-navigation
 
       - name: Install node dependencies
         id: install_deps
@@ -77,26 +74,66 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
 
-      - name: Install AVD dependencies
-        # libxkbfile1 is removed by "Free Disk Space (Ubuntu)" step first. Here we install it again
-        # as it seems to be needed by the emulator.
-        run: |
-          sudo apt update
-          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
-
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
 
-      # Hands the release build to the `argent` job (jobs run on separate
-      # machines). Internal only — nothing to download from the run page.
-      - name: Upload APK for Argent
-        id: upload-build
+      # Hands the release build to the test and argent jobs (they run on
+      # separate machines). The whole apk/ dir: Detox also needs the test APK
+      # (androidTest/release/app-release-androidTest.apk), Argent only the app.
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
           name: build-android-apk
-          path: ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk/release/app-release.apk
+          path: ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk
           retention-days: 1
+
+  test:
+    # Detox and Argent run in parallel on separate machines, both on the app
+    # built once above.
+    needs: build
+    if: ${{ !inputs.argent-only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      WORKING_DIRECTORY: FabricExample
+      API_LEVEL: 34
+      AVD_PROFILE: pixel_7
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install root node dependencies
+        run: yarn install && yarn submodules:react-navigation
+
+      - name: Install node dependencies
+        id: install_deps
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        continue-on-error: true
+        run: yarn install
+
+      - if: steps.install_deps.outcome == 'failure'
+        name: Reinstall node dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn
+
+      # Unpacked where Detox's android.release binaryPath expects it.
+      - name: Download APKs built by the build job
+        uses: actions/download-artifact@v4
+        with:
+          name: build-android-apk
+          path: ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk
+
+      - name: Install AVD dependencies
+        run: |
+          sudo apt update
+          sudo apt-get install -y libpulse0 libgl1 libxkbfile1
 
       - name: Enable KVM
         run: |
@@ -130,7 +167,6 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run emulator and tests
-        if: ${{ !inputs.argent-only }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -153,13 +189,9 @@ jobs:
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
 
   argent:
-    # Separate job so the Argent flows get their own time budget and a fresh
-    # emulator, whatever state the Detox run left behind. Runs even when Detox
-    # failed.
-    needs: test
-    # Runs when the build was uploaded, whether Detox then passed or failed;
-    # skipped when the test job was cancelled or failed before the upload.
-    if: ${{ !cancelled() && needs.test.outputs.build-uploaded == 'true' }}
+    # Argent flows on the same release build, in parallel with Detox: own time
+    # budget and a fresh emulator.
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -169,11 +201,6 @@ jobs:
       # $XDG_RUNTIME_DIR/avd/running/pid_*.ini, which is where Argent's Android
       # backend looks for it. The variable is unset on runners, so pin it.
       XDG_RUNTIME_DIR: /tmp/xdg-runtime
-    concurrency:
-      # Manual runs get their own group, so dispatching twice does not cancel
-      # the first run.
-      group: android-argent-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
-      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -190,11 +217,11 @@ jobs:
           node-version-file: '.nvmrc'
 
       # Where scripts/e2e/run-argent-flows-android.sh installs it from.
-      - name: Download APK built by the test job
+      - name: Download APKs built by the build job
         uses: actions/download-artifact@v4
         with:
           name: build-android-apk
-          path: FabricExample/android/app/build/outputs/apk/release
+          path: FabricExample/android/app/build/outputs/apk
 
       - name: Install AVD dependencies
         run: |
