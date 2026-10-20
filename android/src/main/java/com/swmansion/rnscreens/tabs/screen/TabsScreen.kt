@@ -1,12 +1,14 @@
 package com.swmansion.rnscreens.tabs.screen
 
-import android.content.res.Configuration
+import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.util.SparseArray
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
@@ -25,14 +27,14 @@ class TabsScreen(
 ) : ViewGroup(reactContext),
     FragmentProviding,
     ScrollViewSeeking,
-    ContainerItem {
-    private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
+    TabsContainerItem {
+    private var containerItemDelegate: WeakReference<TabsContainerItemDelegate> = WeakReference(null)
 
     // region Handling configuration changes
 
     private var configObserver: TabsItemConfigurationObserver? = null
 
-    internal fun setConfigurationObserver(observer: TabsItemConfigurationObserver?) {
+    override fun setConfigurationObserver(observer: TabsItemConfigurationObserver?) {
         configObserver = observer
     }
 
@@ -63,14 +65,11 @@ class TabsScreen(
                 }
         }
 
-    internal val requireScreenKey: String
-        get() = checkNotNull(screenKey) { "[RNScreens] screenKey MUST NOT be null" }
-
-    var tabTitle: String? by invalidatingProperty(null, TabsItemInvalidationFlags.TITLE)
+    override var tabTitle: String? by invalidatingProperty(null, TabsItemInvalidationFlags.TITLE)
 
     // region Appearance
 
-    internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+    override var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             invalidate(resolveAppearanceInvalidationFlags(oldValue, newValue))
         }
@@ -80,14 +79,14 @@ class TabsScreen(
 
     // region Badge
 
-    var badgeValue: String? by invalidatingProperty(null, TabsItemInvalidationFlags.BADGE)
+    override var badgeValue: String? by invalidatingProperty(null, TabsItemInvalidationFlags.BADGE)
 
     // endregion
 
     // region Accessibility
-    var tabBarItemTestID: String? by invalidatingProperty(null, TabsItemInvalidationFlags.ACCESSIBILITY)
+    override var tabBarItemTestID: String? by invalidatingProperty(null, TabsItemInvalidationFlags.ACCESSIBILITY)
 
-    var tabBarItemAccessibilityLabel: String? by invalidatingProperty(null, TabsItemInvalidationFlags.ACCESSIBILITY)
+    override var tabBarItemAccessibilityLabel: String? by invalidatingProperty(null, TabsItemInvalidationFlags.ACCESSIBILITY)
 
     // endregion
 
@@ -95,6 +94,12 @@ class TabsScreen(
 
     internal val icon = TabsScreenIcon(reactContext, ::onIconChange)
     internal val selectedIcon = TabsScreenIcon(reactContext, ::onIconChange)
+
+    override val iconDrawable: Drawable?
+        get() = icon.drawable
+
+    override val selectedIconDrawable: Drawable?
+        get() = selectedIcon.drawable
 
     internal fun resolveIconsIfNeeded() {
         icon.resolveIfNeeded()
@@ -119,10 +124,10 @@ class TabsScreen(
 
     // endregion
 
-    var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
-    var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
+    override var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
+    override var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
-    var preventNativeSelection: Boolean = false
+    override var preventNativeSelection: Boolean = false
 
     override fun onAttachedToWindow() {
         RNSLog.d(TAG, "TabsScreen [$id] attached to window")
@@ -150,11 +155,11 @@ class TabsScreen(
         // Ignore restoring instance state too, as we are not saving anything anyways.
     }
 
-    internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
-        tabsScreenDelegate = WeakReference(delegate)
+    internal fun setContainerItemDelegate(delegate: TabsContainerItemDelegate?) {
+        containerItemDelegate = WeakReference(delegate)
     }
 
-    override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForTabsScreen(this)
+    override fun getAssociatedFragment(): Fragment? = containerItemDelegate.get()?.getFragmentForItem(this)
 
     private fun onIconChange() = invalidate(TabsItemInvalidationFlags.ICON)
 
@@ -164,18 +169,8 @@ class TabsScreen(
         eventEmitter = TabsScreenEventEmitter(reactContext, id)
     }
 
-    /**
-     * Notify the view that it's associated fragment got its config updated.
-     *
-     * There are cases where the fragment will receive configuration change, but it's view will not,
-     * e.g. theme update from JS via Appearance.setColorScheme.
-     */
-    internal fun onFragmentConfigurationChange(
-        fragment: TabsScreenFragment,
-        config: Configuration,
-    ) {
-        tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
-    }
+    override val appearanceEventEmitter: ViewAppearanceEventEmitter
+        get() = eventEmitter
 
     // region ScrollViewSeeking
     override fun registerScrollView(
@@ -188,6 +183,12 @@ class TabsScreen(
     // endregion
 
     // region ContainerItem
+
+    override val view: View
+        get() = this
+
+    override val itemKey: String?
+        get() = screenKey
 
     override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
 
