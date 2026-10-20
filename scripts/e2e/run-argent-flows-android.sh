@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Runs the Argent flows from .argent/flows against the booted Android emulator.
 # Meant to be the `script:` of reactivecircus/android-emulator-runner in CI, run
-# from the repository root, after `yarn build-e2e-android` and after the Argent
-# tool-server was started (.github/actions/argent-server).
+# from the repository root, after the APK from the build job was downloaded to
+# FabricExample/android/app/build/outputs/apk and after the Argent tool-server
+# was started (.github/actions/argent-server).
 #
 # Snapshots are always diffed against the baselines in .argent/flows/__baselines__,
 # a symlink into the react-native-screens-testing submodule (the workflow

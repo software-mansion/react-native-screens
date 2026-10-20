@@ -29,10 +29,10 @@
 # substring matches in the tab content ("Title Color", "Font and Position", the hint quoting the
 # long title). The Android Font tab heading reads "Font Config" for that reason.
 #
-# Known warning (iOS 26 only): every `await: { idle: true }` after a tab tap reports "a small part of
-# the screen was still changing" — the liquid-glass selection pill keeps animating briefly. The
-# next action always gates on the destination tab's content text, and each snapshot sits behind a
-# 700 ms settle; seed + two fresh-service passes matched at 0.00%.
+# Settle before snapshots: on iOS with liquid glass the selection pill keeps animating briefly after
+# a tab tap, so `await: { idle: true }` can report "a small part of the screen was still changing".
+# The next action always gates on the destination tab's content text, and each snapshot sits behind
+# a 700 ms `wait`.
 #
 # Runner:  argent flow run test-tabs-item-title --platform ios        # or --platform android
 #          (run `yarn submodules:testing` first to fetch the baselines)
@@ -85,7 +85,7 @@ steps:
   - tap: { text: Color }
   - await: { visible: { text: RedLight100 }, timeout: 10000 }
   - await: { idle: true }
-  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - wait: 700 # liquid-glass pill settle, see header
   - when: { platform: ios }
     steps:
       - snapshot: { name: color-selected, cropOn: { text: { matches: '^Tab Bar$' } }, maxMismatch: 0.01 }
@@ -103,7 +103,7 @@ steps:
   - tap: { text: Color }
   - await: { visible: { text: RedLight100 }, timeout: 10000 }
   - await: { idle: true }
-  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - wait: 700 # liquid-glass pill settle, see header
   - when: { platform: ios }
     steps:
       - snapshot: { name: color-selected, cropOn: { text: { matches: '^Tab Bar$' } }, maxMismatch: 0.01 }
@@ -116,7 +116,7 @@ steps:
   - tap: { text: Font }
   - await: { visible: { text: tabBarItemTitleFontFamily }, timeout: 10000 }
   - await: { idle: true }
-  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - wait: 700 # liquid-glass pill settle, see header
   - when: { platform: ios }
     steps:
       - snapshot: { name: font-selected, cropOn: { text: { matches: '^Tab Bar$' } }, maxMismatch: 0.01 }
@@ -132,7 +132,7 @@ steps:
   - tap: { text: Font }
   - await: { visible: { text: tabBarItemTitleFontFamily }, timeout: 10000 }
   - await: { idle: true }
-  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - wait: 700 # liquid-glass pill settle, see header
   - when: { platform: ios }
     steps:
       - snapshot: { name: font-selected, cropOn: { text: { matches: '^Tab Bar$' } }, maxMismatch: 0.01 }
@@ -157,7 +157,7 @@ steps:
   - tap: { text: A Very Long Tab Title That Should Truncate }
   - await: { visible: { text: Long Title }, timeout: 10000 }
   - await: { idle: true }
-  - wait: 700 # let the tab-selection animation (iOS 26 liquid-glass pill) settle before capturing — idle alone still reports residual motion here
+  - wait: 700 # liquid-glass pill settle, see header
   - when: { platform: ios }
     steps:
       - snapshot: { name: long-title-selected, cropOn: { text: { matches: '^Tab Bar$' } }, maxMismatch: 0.01 }
