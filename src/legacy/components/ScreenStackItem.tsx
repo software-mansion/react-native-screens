@@ -105,7 +105,11 @@ function ScreenStackItem(
   const nextEdgeContextValue = React.useMemo(
     () =>
       isAndroidFormSheetBelowStatusBar
-        ? { ...headerEdgeContextValue, topAlreadyApplied: true }
+        ? {
+            ...headerEdgeContextValue,
+            topAlreadyApplied: true,
+            legacyTopInsetBehaviorDisabled: true,
+          }
         : headerEdgeContextValue,
     [isAndroidFormSheetBelowStatusBar, headerEdgeContextValue],
   );
