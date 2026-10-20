@@ -51,7 +51,7 @@ let cxxSettings: [CXXSetting] = [
 
 let package = Package(
     name: "RNScreens",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS("15.1")],
     products: [
         .library(name: "RNScreens", targets: ["RNScreens"]),
     ],
