@@ -31,10 +31,16 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalOverContext(props: ContainedModalProps) {
-  const { children, isOpen, targetContainerId } = props;
+  const { children, isOpen, targetContainerId, onPresentationRejected } = props;
 
   const context = useContext(ContainedModalContext);
-  const resolvedTargetContainerId = targetContainerId ?? context?.containerId;
+  // An empty string is never a valid containerId; native maps it to nil and
+  // the modal would assert (debug) or silently never present (release), so it
+  // falls back to the nearest provider exactly like an omitted prop.
+  const resolvedTargetContainerId =
+    targetContainerId !== undefined && targetContainerId !== ''
+      ? targetContainerId
+      : context?.containerId;
 
   if (resolvedTargetContainerId === undefined) {
     throw new Error(
@@ -46,7 +52,8 @@ export function ContainedModalOverContext(props: ContainedModalProps) {
     <ContainedModalHostNativeComponent
       style={styles.host}
       isOpen={isOpen}
-      targetContainerId={resolvedTargetContainerId}>
+      targetContainerId={resolvedTargetContainerId}
+      onPresentationRejected={onPresentationRejected}>
       {children}
     </ContainedModalHostNativeComponent>
   );

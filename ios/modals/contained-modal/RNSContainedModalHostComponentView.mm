@@ -1,6 +1,7 @@
 #import "RNSContainedModalHostComponentView.h"
 #import "RNSContainedModalContentController.h"
 #import "RNSContainedModalContentView.h"
+#import "RNSContainedModalHostEventEmitter.h"
 #import "RNSContainedModalHostShadowStateProxy.h"
 #import "RNSContainedModalProviders.h"
 
@@ -8,6 +9,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
+#import <React/RCTRootComponentView.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RNSContainedModalHostComponentDescriptor.h>
 
@@ -20,6 +22,7 @@ namespace react = facebook::react;
 
 @implementation RNSContainedModalHostComponentView {
   RNSContainedModalHostShadowStateProxy *_Nonnull _shadowStateProxy;
+  RNSContainedModalHostEventEmitter *_Nonnull _reactEventEmitter;
 
   RNSContainedModalContentController *_Nullable _controller;
 
@@ -44,6 +47,7 @@ namespace react = facebook::react;
   [self setupController];
 
   _shadowStateProxy = [RNSContainedModalHostShadowStateProxy new];
+  _reactEventEmitter = [RNSContainedModalHostEventEmitter new];
 }
 
 - (void)resetProps
@@ -159,8 +163,9 @@ namespace react = facebook::react;
 - (void)modalControllerDidRejectPresentation:(RNSContainedModalContentController *)controller
 {
   RCTLogWarn(
-      @"[RNScreens] ContainedModal (targetContainerId '%@') was not presented: its provider is already presenting another modal. Only one modal can be open per provider; the request was dropped.",
+      @"[RNScreens] ContainedModal (targetContainerId '%@') was not presented: its provider is already presenting another modal, or UIKit rejected the presentation. The request was dropped, not queued.",
       _targetContainerId);
+  [_reactEventEmitter emitOnPresentationRejected];
 }
 
 #pragma mark - RNSContainedModalPresentationProvider
@@ -181,6 +186,13 @@ namespace react = facebook::react;
 {
   [super updateState:state oldState:oldState];
   [_shadowStateProxy updateState:state oldState:oldState];
+}
+
+- (void)updateEventEmitter:(const react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+  [_reactEventEmitter
+      updateEventEmitter:std::static_pointer_cast<const react::RNSContainedModalHostEventEmitter>(eventEmitter)];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
@@ -210,6 +222,9 @@ namespace react = facebook::react;
 
   if (oldComponentProps.targetContainerId != newComponentProps.targetContainerId) {
     _targetContainerId = RCTNSStringFromStringNilIfEmpty(newComponentProps.targetContainerId);
+    // The cached provider was resolved for the previous target; keeping it
+    // would present a retargeted modal inside the old provider's bounds.
+    _cachedProviderView = nil;
   }
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
@@ -236,6 +251,14 @@ namespace react = facebook::react;
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   [_controller flushPendingUpdates];
+
+  // The provider can move in surface space without any layout pass on the
+  // presented controller's view (an ancestor ScrollView scrolls, a sibling
+  // collapses) - the controller's layout/appearance callbacks never fire for a
+  // pure position change, so re-sync after every transaction (scrolling and
+  // layout shifts each commit state). Cheap: the proxy dedupes by frame, so an
+  // unchanged origin schedules nothing.
+  [self syncShadowNodeState];
 }
 
 #pragma mark - Touch Handling overrides
@@ -259,14 +282,28 @@ namespace react = facebook::react;
     return;
   }
 
-  // The offset must be the content view's ABSOLUTE window origin: child
-  // measurement stops at this host's RootNodeKind shadow node and adds this
-  // offset, which must land in the same window space the main surface's touch
-  // handler reports events in - otherwise Pressability's measured region
-  // diverges from pageX/pageY and presses cancel on the first finger move.
-  CGPoint contentViewOriginInWindow = [_controller.contentView convertPoint:CGPointZero toView:nil];
+  // The offset must be the content view's origin in the SURFACE ROOT's
+  // coordinate space: child measurement stops at this host's RootNodeKind
+  // shadow node and adds this offset, and RCTSurfaceTouchHandler reports
+  // pageX/pageY relative to the root component view it is attached to - NOT
+  // the window. With an embedded surface (root view not at the window origin)
+  // a window-space offset would diverge from pageX/pageY by exactly the
+  // surface origin and presses would cancel on the first finger move.
+  CGPoint contentViewOriginInSurface = [_controller.contentView convertPoint:CGPointZero
+                                                                      toView:[self resolveSurfaceRootView]];
 
-  [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentViewOriginInWindow];
+  [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentViewOriginInSurface];
+}
+
+- (nullable UIView *)resolveSurfaceRootView
+{
+  UIView *currentView = _controller.contentView;
+  while (currentView != nil && ![currentView isKindOfClass:RCTRootComponentView.class]) {
+    currentView = currentView.superview;
+  }
+  // nil (not found) makes convertPoint:toView: fall back to window
+  // coordinates - the correct space for a full-window surface.
+  return currentView;
 }
 
 #pragma mark - Dynamic frameworks support

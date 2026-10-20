@@ -9,8 +9,8 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * @remarks
  * Contained modals below this provider in the React tree present within its
  * bounds, fully covering it. The nearest provider is targeted by default; an
- * outer one via the modal's `targetContainerId` and the provider's
- * auto-generated `containerId`.
+ * outer one by giving that provider an explicit `containerId` and setting the
+ * modal's `targetContainerId` to the same value.
  *
  * Intended for region-scoped native modality - see `ContainedModalOverContext`
  * for when to prefer a plain absolutely-positioned `View` instead.
@@ -20,9 +20,15 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalProvider(props: ContainedModalProviderProps) {
-  const { children, style } = props;
+  const { children, style, containerId: containerIdProp } = props;
 
-  const containerId = useId();
+  const generatedContainerId = useId();
+  // An empty string is never a valid containerId (native maps it to nil), so
+  // it falls back to the generated id exactly like an omitted prop.
+  const containerId =
+    containerIdProp !== undefined && containerIdProp !== ''
+      ? containerIdProp
+      : generatedContainerId;
   const contextValue = useMemo(() => ({ containerId }), [containerId]);
 
   return (
