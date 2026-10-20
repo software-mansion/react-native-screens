@@ -40,19 +40,9 @@ internal class ScrollAwareBottomSheetBehavior<V : View> : BottomSheetBehavior<V>
         event: MotionEvent,
     ): Boolean = if (isGestureForContent) false else super.onTouchEvent(parent, child, event)
 
-    override fun onStartNestedScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: V,
-        directTargetChild: View,
-        target: View,
-        axes: Int,
-        type: Int,
-    ): Boolean =
-        if (isGestureForContent) {
-            false
-        } else {
-            super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)
-        }
+    // Nested scrolls from any scroll view, not only the one found at the last layout: a scroll view mounted later hands
+    // the gesture over to the sheet once it reaches its top, within the same drag.
+    override fun isNestedScrollingCheckEnabled(): Boolean = false
 
     private fun hasScrolledContentAt(
         view: View,
