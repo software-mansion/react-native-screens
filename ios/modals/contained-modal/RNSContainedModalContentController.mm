@@ -11,10 +11,6 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    // Native over-context style. The provider component view is a tight
-    // wrapper around the context controller's view, so UIKit's presentation
-    // container coincides with the provider and tracks it with no
-    // intervention (see RNSContainedModalProviderController.h).
     self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 

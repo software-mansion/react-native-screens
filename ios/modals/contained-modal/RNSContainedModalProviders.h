@@ -6,8 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Data source for the presentation of a contained modal. Implemented by the
- * host component view; consumed by the pure-UIKit controller & manager, which
- * must stay unaware of React types.
+ * host component view; consumed by the pure-UIKit controller & manager.
  */
 @protocol RNSContainedModalPresentationProvider <NSObject>
 
