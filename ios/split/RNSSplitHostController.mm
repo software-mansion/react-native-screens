@@ -197,6 +197,19 @@
   [self showColumn:(UISplitViewControllerColumn)column.integerValue];
 }
 
+- (void)hideColumnNamed:(NSString *)columnName
+{
+  NSNumber *column = [self splitViewColumnFromString:columnName];
+  BOOL isSidebarColumn = column != nil && column.integerValue != UISplitViewControllerColumnSecondary;
+  RCTAssert(
+      isSidebarColumn, @"[RNScreens] Cannot hide column %@. Only primary and supplementary are supported.", columnName);
+  if (!isSidebarColumn) {
+    return;
+  }
+
+  [self hideColumn:(UISplitViewControllerColumn)column.integerValue];
+}
+
 /**
  * @brief Maps a string column name to its corresponding `UISplitViewController.Column` value.
  *
