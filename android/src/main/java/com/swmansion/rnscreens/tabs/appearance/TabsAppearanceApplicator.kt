@@ -16,6 +16,7 @@ import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
@@ -26,7 +27,7 @@ import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
-    private val titleFontResolver: TabsTitleFontResolver,
+    private val titleFontResolver: FontResolver,
 ) {
     // Resolved on each access: tracks the display density of the current configuration.
     internal val defaultIconSizeDp: Float
@@ -215,7 +216,7 @@ internal class TabsAppearanceApplicator(
             val fontFamily =
                 titleFontResolver.resolveTypeface(
                     tabBarAppearance?.tabBarItemTitleFontFamily,
-                    tabBarAppearance?.tabBarItemTitleFontWeight ?: DEFAULT_FONT_WEIGHT,
+                    tabBarAppearance?.tabBarItemTitleFontWeight,
                     tabBarAppearance?.tabBarItemTitleFontItalic ?: false,
                 )
 
@@ -327,8 +328,5 @@ internal class TabsAppearanceApplicator(
 
     companion object {
         const val TAG = "TabsAppearanceApplicator"
-
-        // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-        private const val DEFAULT_FONT_WEIGHT = 400
     }
 }
