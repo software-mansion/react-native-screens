@@ -120,13 +120,13 @@ namespace react = facebook::react;
 
 #pragma mark - RNSViewFrameChangeDelegate
 
-- (void)viewFrameDidChange:(nonnull UIView *)navigationBar
+- (void)viewFrameDidChange:(nonnull UIView *)view
 {
   if (_state == nullptr || self.superview == nil) {
     return;
   }
 
-  CGRect frameInNavBar = [self convertRect:self.bounds toView:navigationBar];
+  CGRect frameInNavBar = [self convertRect:self.bounds toView:view];
   [_shadowStateProxy updateShadowStateWithFrame:frameInNavBar];
 }
 
