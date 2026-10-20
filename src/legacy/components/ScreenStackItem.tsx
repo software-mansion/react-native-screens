@@ -204,6 +204,7 @@ function ScreenStackItem(
       <ScreenStackHeaderConfig
         {...headerConfig}
         disableTopInsetApplication={disableTopInsetApplication}
+        isInAndroidFormSheet={isAndroidFormSheet}
       />
       {/* eslint-disable-next-line camelcase */}
       {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
