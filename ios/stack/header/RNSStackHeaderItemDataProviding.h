@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL respondsToOnPress;
 @property (nonatomic, readonly) BOOL hidesSharedBackground;
 @property (nonatomic, readonly) RNSHeaderItemVisibilityPriority visibilityPriority;
+@property (nonatomic, readonly) BOOL paddingRemoved;
 
 @end
 
