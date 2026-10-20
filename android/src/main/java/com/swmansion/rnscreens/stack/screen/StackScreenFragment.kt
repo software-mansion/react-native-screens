@@ -98,7 +98,12 @@ internal class StackScreenFragment(
         super.onDestroy()
         headerCoordinatorLayout?.tearDown()
         headerCoordinatorLayout = null
-        item.onDismiss()
+        // `isRemoving` is true only when this fragment is removed from its own stack (JS or native pop).
+        // A fragment destroyed together with its FragmentManager (e.g. an ancestor screen was popped)
+        // was not dismissed - reporting it would count as a native dismiss of a still-attached screen.
+        if (isRemoving) {
+            item.onDismiss()
+        }
         teardownPreventNativeDismissCallback()
     }
 

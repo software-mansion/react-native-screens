@@ -21,6 +21,8 @@ import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
+import com.swmansion.rnscreens.tabs.container.TabsMenuItemState
+import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.tabs.screen.TabsScreen
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
@@ -71,12 +73,13 @@ internal class TabsAppearanceApplicator(
     private fun applyActiveIndicatorSize(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
+        state: TabsMenuItemState,
     ): Boolean {
         val widthPx = bottomNavigationView.dpToPx(effectiveIndicatorWidthDp(tabsScreen)).toInt()
         val heightPx = bottomNavigationView.dpToPx(effectiveIndicatorHeightDp(tabsScreen)).toInt()
         val isAlreadyApplied =
-            widthPx == (tabsScreen.appliedActiveIndicatorWidthPx ?: defaultIndicatorWidthPx) &&
-                heightPx == (tabsScreen.appliedActiveIndicatorHeightPx ?: defaultIndicatorHeightPx)
+            widthPx == (state.appliedActiveIndicatorWidthPx ?: defaultIndicatorWidthPx) &&
+                heightPx == (state.appliedActiveIndicatorHeightPx ?: defaultIndicatorHeightPx)
         if (isAlreadyApplied) {
             return true
         }
@@ -88,8 +91,8 @@ internal class TabsAppearanceApplicator(
         itemView.setActiveIndicatorWidth(widthPx)
         itemView.setActiveIndicatorHeight(heightPx)
 
-        tabsScreen.appliedActiveIndicatorWidthPx = widthPx
-        tabsScreen.appliedActiveIndicatorHeightPx = heightPx
+        state.appliedActiveIndicatorWidthPx = widthPx
+        state.appliedActiveIndicatorHeightPx = heightPx
 
         return true
     }
@@ -261,14 +264,18 @@ internal class TabsAppearanceApplicator(
     fun updateMenuItemAppearance(
         menuItem: MenuItem,
         tabsScreen: TabsScreen,
+        state: TabsMenuItemState,
         iconBoxDp: Float,
     ) {
+        val flags = state.pendingFlags
+        state.pendingFlags = TabsItemInvalidationFlags.NONE
+
+        // The title is diffed; the icon and the active indicator are re-applied only when invalidated.
         if (menuItem.title != tabsScreen.tabTitle) {
             menuItem.title = tabsScreen.tabTitle
         }
 
-        if (tabsScreen.isMenuItemIconInvalidated) {
-            tabsScreen.isMenuItemIconInvalidated = false
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON or TabsItemInvalidationFlags.ICON_SIZE)) {
             // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
             // single inset computed from one child would mis-size the other when their resolutions differ.
             val effectiveDp = effectiveIconSizeDp(tabsScreen)
@@ -285,8 +292,11 @@ internal class TabsAppearanceApplicator(
                 }
         }
 
-        if (tabsScreen.isMenuItemActiveIndicatorInvalidated && applyActiveIndicatorSize(menuItem, tabsScreen)) {
-            tabsScreen.isMenuItemActiveIndicatorInvalidated = false
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE) &&
+            !applyActiveIndicatorSize(menuItem, tabsScreen, state)
+        ) {
+            // The menu item's view doesn't exist yet; retry on the next update.
+            state.pendingFlags = state.pendingFlags or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE
         }
     }
 
