@@ -31,6 +31,15 @@
 
 namespace react = facebook::react;
 
+// What keeps a modal update from presenting right now, see `waitForModalsBlocker:kind:generation:`.
+typedef NS_ENUM(NSInteger, RNSModalsBlockerKind) {
+  RNSModalsBlockerKindNone,
+  // A controller in the presentation chain is being presented or dismissed.
+  RNSModalsBlockerKindTransitioning,
+  // A screen in the presentation chain is going to be unmounted, but nothing has started dismissing it yet.
+  RNSModalsBlockerKindMarked,
+};
+
 @interface RNSScreenStackView () <UINavigationControllerDelegate,
                                   UIAdaptivePresentationControllerDelegate,
                                   UIGestureRecognizerDelegate,
@@ -40,6 +49,17 @@ namespace react = facebook::react;
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
 @property (nonatomic) BOOL scheduleModalsUpdate;
+// Incremented whenever the modal update lock is taken, and on recycle / invalidate, so that callbacks of an older
+// modal update can tell they no longer own it.
+@property (nonatomic) NSUInteger modalsUpdateGeneration;
+// Generation of the modal update that waits for the presentation chain to settle, 0 when none does.
+@property (nonatomic) NSUInteger waitingModalsUpdateGeneration;
+// Controllers this stack asked UIKit to present whose completion hasn't run yet.
+@property (nonatomic, readonly) NSHashTable<UIViewController *> *pendingModalPresentations;
+// Incremented on recycle / invalidate, so that presentations that complete afterwards are torn down.
+@property (nonatomic) NSUInteger modalsRecycleCount;
+// YES only while a deferred modal update runs again, see `reconcileModalsForGeneration:`.
+@property (nonatomic) BOOL reconcilingModals;
 
 #if TARGET_OS_TV
 @property (nonatomic, assign) BOOL disableDefaultMenuAction;
@@ -270,6 +290,13 @@ namespace react = facebook::react;
   RNSPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
+  // State of the current wait for the presentation chain to settle, see `waitForModalsBlocker:kind:generation:`.
+  __weak UIViewController *_waitHoppedMarkedController;
+  __weak UIViewController *_waitDismissedMarkedController;
+  NSUInteger _waitMarkedDismissAttempts;
+  __weak id _waitLookedCoordinator;
+  __weak UIViewController *_waitBackoffBlocker;
+  NSUInteger _waitBackoffLooks;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -297,6 +324,7 @@ namespace react = facebook::react;
 {
   _reactSubviews = [NSMutableArray new];
   _presentedModals = [NSMutableArray new];
+  _pendingModalPresentations = [NSHashTable weakObjectsHashTable];
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
   _nativeContainerBackgroundColor = nil;
@@ -360,8 +388,20 @@ namespace react = facebook::react;
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
+    // If its presentation never completed, it won't anymore.
+    [_pendingModalPresentations removeObject:presentationController.presentedViewController];
 
-    _updatingModals = NO;
+    // An in-flight presentation, or a wait for the presentation chain to settle, owns the lock and releases it.
+    if (_waitingModalsUpdateGeneration == 0 && _pendingModalPresentations.allObjects.count == 0) {
+      _updatingModals = NO;
+      if (_scheduleModalsUpdate) {
+        _scheduleModalsUpdate = NO;
+        __weak RNSScreenStackView *weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [weakSelf updateContainer];
+        });
+      }
+    }
     [self emitOnFinishTransitioningEvent];
   }
 }
@@ -563,6 +603,20 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   _updatingModals = YES;
+  const NSUInteger generation = ++_modalsUpdateGeneration;
+
+  // UIKit refuses to present or dismiss while a presentation or dismissal is in progress in the same presentation
+  // chain, and then never calls the completion, so wait for the chain to settle before starting any transition.
+  NSMutableArray<UIViewController *> *lockAnchors = [NSMutableArray arrayWithObject:_controller];
+  [lockAnchors addObjectsFromArray:_presentedModals];
+  UIViewController *lockBlocker = nil;
+  const RNSModalsBlockerKind lockBlockerKind = [self findModalsBlockerWithAnchors:lockAnchors
+                                                                    includeMarked:NO
+                                                                          blocker:&lockBlocker];
+  if (lockBlockerKind != RNSModalsBlockerKindNone) {
+    [self waitForModalsBlocker:lockBlocker kind:RNSModalsBlockerKindTransitioning generation:generation];
+    return;
+  }
 
   // We need to find bottom-most view controller that should stay on the stack
   // for the duration of transition.
@@ -599,6 +653,10 @@ RNS_IGNORE_SUPER_CALL_END
   __weak RNSScreenStackView *weakSelf = self;
 
   void (^afterTransitions)(void) = ^{
+    if (weakSelf.modalsUpdateGeneration != generation) {
+      // the stack was recycled or invalidated in the meantime
+      return;
+    }
     [weakSelf emitOnFinishTransitioningEvent];
     weakSelf.updatingModals = NO;
     if (weakSelf.scheduleModalsUpdate) {
@@ -614,12 +672,32 @@ RNS_IGNORE_SUPER_CALL_END
   };
 
   void (^finish)(void) = ^{
+    if (weakSelf.modalsUpdateGeneration != generation) {
+      // the stack was recycled or invalidated in the meantime
+      return;
+    }
+    BOOL isAttached =
+        changeRootController.parentViewController != nil || changeRootController.presentingViewController != nil;
+
+    if (isAttached && changeRootIndex < controllers.count) {
+      // We are going to present. Don't present on top of a controller that is going away, or while the presentation
+      // chain is changing, see https://github.com/software-mansion/react-native-screens/pull/4949. This runs before
+      // any bookkeeping changes, so the update runs again from intact state.
+      UIViewController *blocker = nil;
+      const RNSModalsBlockerKind kind = [weakSelf findModalsBlockerWithAnchors:@[ changeRootController ]
+                                                                 includeMarked:YES
+                                                                       blocker:&blocker];
+      if (kind != RNSModalsBlockerKindNone) {
+        [weakSelf waitForModalsBlocker:blocker kind:kind generation:generation];
+        return;
+      }
+    }
+    [weakSelf resetModalsWait];
+
     NSUInteger oldCount = weakSelf.presentedModals.count;
     if (changeRootIndex < oldCount) {
       [weakSelf.presentedModals removeObjectsInRange:NSMakeRange(changeRootIndex, oldCount - changeRootIndex)];
     }
-    BOOL isAttached =
-        changeRootController.parentViewController != nil || changeRootController.presentingViewController != nil;
 
     if (!isAttached || changeRootIndex >= controllers.count) {
       // if change controller view is not attached, presenting modals will silently fail on iOS.
@@ -631,6 +709,9 @@ RNS_IGNORE_SUPER_CALL_END
     }
 
     UIViewController *previous = changeRootController;
+    // The completion of this batch's last presentation finishes the update.
+    __block NSUInteger lastPresentedIndex = controllers.count - 1;
+    const NSUInteger recycleCount = weakSelf.modalsRecycleCount;
 
     for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
       UIViewController *next = controllers[i];
@@ -643,22 +724,48 @@ RNS_IGNORE_SUPER_CALL_END
       BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
           ((RNSScreen *)next).screenView.stackAnimation != RNSScreenStackAnimationNone;
 
-      // if you want to present another modal quick enough after dismissing the previous one,
-      // it will result in wrong changeRootController, see repro in
-      // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
-      // `presentationControllerDidDismiss` to cover this case and present new controller
-      if (previous.beingDismissed) {
-        return;
-      }
-
+      const BOOL presentationDeferred = [previous isKindOfClass:RNSScreen.class] &&
+          [static_cast<RNSScreen *>(previous) defersPresentationUntilTransitionEnds];
+      [weakSelf.pendingModalPresentations addObject:next];
       [previous presentViewController:next
                              animated:shouldAnimate
                            completion:^{
-                             [weakSelf.presentedModals addObject:next];
-                             if (lastModal) {
+                             RNSScreenStackView *strongSelf = weakSelf;
+                             if (strongSelf == nil || strongSelf.modalsRecycleCount != recycleCount) {
+                               // The stack was recycled or invalidated while presenting: tear it down.
+                               UIViewController *presenter = next.presentingViewController;
+                               if (presenter.presentedViewController == next) {
+                                 [presenter dismissViewControllerAnimated:NO completion:nil];
+                               }
+                               return;
+                             }
+                             [strongSelf.pendingModalPresentations removeObject:next];
+                             [strongSelf.presentedModals addObject:next];
+                             if (i == lastPresentedIndex) {
                                afterTransitions();
                              };
                            }];
+      if (presentationDeferred) {
+        // `previous` presents `next` once its stack's transition ends. That presentation finishes this batch, and the
+        // update runs again for the controllers left.
+        if (!lastModal) {
+          weakSelf.scheduleModalsUpdate = YES;
+        }
+        lastPresentedIndex = i;
+        return;
+      }
+      if (next.presentingViewController == nil && !next.isBeingPresented) {
+        // UIKit refused the presentation and won't run its completion. Run the update again once this one is done.
+        [weakSelf.pendingModalPresentations removeObject:next];
+        weakSelf.scheduleModalsUpdate = YES;
+        if (i > changeRootIndex) {
+          // Earlier presentations of this batch are still in flight: the last of them finishes the update.
+          lastPresentedIndex = i - 1;
+          return;
+        }
+        [weakSelf handleRefusedModalPresentationFrom:previous generation:generation];
+        return;
+      }
       previous = next;
     }
   };
@@ -705,15 +812,10 @@ RNS_IGNORE_SUPER_CALL_END
           [changeRootController dismissViewControllerAnimated:firstModalToBeDismissedPrefersAnimation
                                                    completion:finish];
         } else {
-          // We need to wait for its dismissal and then run our presentation code.
-          // This happens, e.g. when we have foreign modal presented on top of owned one & we dismiss foreign one and
-          // immediately present another owned one. Dismissal of the foreign one will be triggered by foreign
-          // controller.
-          [[firstModalToBeDismissed transitionCoordinator]
-              animateAlongsideTransition:nil
-                              completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
-                                finish();
-                              }];
+          // It is being dismissed already, e.g. a foreign modal presented on top of an owned one is dismissed by its
+          // controller and we immediately present another owned one. The transition check when taking the lock
+          // already waits for this, so this is only a fallback; finish() still checks before presenting.
+          finish();
         }
         return;
       }
@@ -742,6 +844,224 @@ RNS_IGNORE_SUPER_CALL_END
 
   // We didn't detect any controllers for dismissal, thus we start presenting new VCs
   finish();
+}
+
+#pragma mark - Waiting for the presentation chain to settle
+
+- (void)resetModalsWait
+{
+  _waitHoppedMarkedController = nil;
+  _waitDismissedMarkedController = nil;
+  _waitMarkedDismissAttempts = 0;
+  _waitLookedCoordinator = nil;
+  _waitBackoffBlocker = nil;
+  _waitBackoffLooks = 0;
+}
+
+- (void)resetModalsUpdateState
+{
+  _modalsUpdateGeneration++;
+  _modalsRecycleCount++;
+  _updatingModals = NO;
+  _scheduleModalsUpdate = NO;
+  _waitingModalsUpdateGeneration = 0;
+  [_pendingModalPresentations removeAllObjects];
+  [self resetModalsWait];
+}
+
+- (void)dismissModalsForTeardown
+{
+  // Dismissing the bottom-most one from its presenter dismisses everything presented above it as well. In-flight
+  // presentations tear themselves down in their completion.
+  [_presentedModals.firstObject.presentingViewController dismissViewControllerAnimated:NO completion:nil];
+  [_presentedModals removeAllObjects];
+}
+
+/**
+ * UIKit refused to present from `previous`. If something in its presentation chain is transitioning, wait for it and
+ * run the update again. Otherwise there is nothing to wait for (e.g. a foreign modal that refuses to be dismissed
+ * occupies it): release the lock and leave the update scheduled, so that the next update or dismissal retries it.
+ */
+- (void)handleRefusedModalPresentationFrom:(UIViewController *)previous generation:(NSUInteger)generation
+{
+  UIViewController *blocker = nil;
+  const RNSModalsBlockerKind kind = [self findModalsBlockerWithAnchors:@[ previous ] includeMarked:NO blocker:&blocker];
+  if (kind == RNSModalsBlockerKindTransitioning) {
+    _scheduleModalsUpdate = NO;
+    [self waitForModalsBlocker:blocker kind:RNSModalsBlockerKindTransitioning generation:generation];
+    return;
+  }
+  [self resetModalsWait];
+  _updatingModals = NO;
+  [self emitOnFinishTransitioningEvent];
+  [RNSScreenWindowTraits updateWindowTraits];
+}
+
+/**
+ * Controllers whose state decides whether presenting is safe: everything presented on the window, plus, for each
+ * anchor, its presentation ancestry and descendants. The latter covers current context presentations
+ * (`containedModal`), which aren't on the window's chain.
+ */
+- (NSArray<UIViewController *> *)modalsPresentationChainWithAnchors:(NSArray<UIViewController *> *)anchors
+{
+  NSMutableOrderedSet<UIViewController *> *chain = [NSMutableOrderedSet new];
+  UIWindow *window = self.window ?: _presentedModals.lastObject.view.window;
+  for (UIViewController *vc = window.rootViewController.presentedViewController; vc != nil;
+       vc = vc.presentedViewController) {
+    [chain addObject:vc];
+  }
+  for (UIViewController *anchor in anchors) {
+    UIViewController *container = anchor;
+    while (container.parentViewController != nil) {
+      container = container.parentViewController;
+    }
+    for (UIViewController *vc = container; vc != nil; vc = vc.presentingViewController) {
+      [chain addObject:vc];
+    }
+    [chain addObject:anchor];
+    for (UIViewController *vc = anchor.presentedViewController; vc != nil; vc = vc.presentedViewController) {
+      [chain addObject:vc];
+    }
+  }
+  return chain.array;
+}
+
+- (RNSModalsBlockerKind)findModalsBlockerWithAnchors:(NSArray<UIViewController *> *)anchors
+                                       includeMarked:(BOOL)includeMarked
+                                             blocker:(UIViewController *__autoreleasing *)blocker
+{
+  NSArray<UIViewController *> *chain = [self modalsPresentationChainWithAnchors:anchors];
+  for (UIViewController *vc in chain) {
+    if (vc.isBeingPresented || vc.isBeingDismissed) {
+      *blocker = vc;
+      return RNSModalsBlockerKindTransitioning;
+    }
+  }
+  if (includeMarked) {
+    for (UIViewController *vc in chain) {
+      if ([vc isKindOfClass:RNSScreen.class] &&
+          static_cast<RNSScreen *>(vc).screenView.isMarkedForUnmountInCurrentTransaction) {
+        *blocker = vc;
+        return RNSModalsBlockerKindMarked;
+      }
+    }
+  }
+  return RNSModalsBlockerKindNone;
+}
+
+/**
+ * Holds the modal update lock and runs the update again (`reconcileModalsForGeneration:`) once `blocker` no longer
+ * blocks presenting. We wait for UIKit's transition completions, and only look again after a delay when UIKit gives
+ * us nothing to wait for.
+ */
+- (void)waitForModalsBlocker:(UIViewController *)blocker
+                        kind:(RNSModalsBlockerKind)kind
+                  generation:(NSUInteger)generation
+{
+  _waitingModalsUpdateGeneration = generation;
+  __weak RNSScreenStackView *weakSelf = self;
+
+  if (kind == RNSModalsBlockerKindTransitioning) {
+    id<UIViewControllerTransitionCoordinator> coordinator = blocker.transitionCoordinator;
+    // We don't register on non-animated transitions, it gives them an artificial duration, see
+    // https://github.com/software-mansion/react-native-screens/pull/3189.
+    if (coordinator != nil && coordinator.isAnimated) {
+      // The return value is ignored: it's NO for a transition whose animations already started, but the
+      // completion still runs.
+      [coordinator
+          animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+          }
+          completion:^(id<UIViewControllerTransitionCoordinatorContext> _) {
+            [weakSelf scheduleModalsReconcileForGeneration:generation delay:0];
+          }];
+      // The completion runs the update again as soon as the transition ends. We also look again later in case it
+      // never comes: after the expected duration (sheets report ~0, hence the minimum), then every 250 ms (e.g.
+      // during a long interactive dismissal).
+      NSTimeInterval safetyDelay = 0.25;
+      if (_waitLookedCoordinator != coordinator) {
+        _waitLookedCoordinator = coordinator;
+        safetyDelay = MAX(coordinator.transitionDuration, 0.25) + 0.1;
+      }
+      [self scheduleModalsReconcileForGeneration:generation delay:safetyDelay];
+      return;
+    }
+    [self lookAgainForModalsBlocker:blocker generation:generation];
+    return;
+  }
+
+  // RNSModalsBlockerKindMarked
+  if (_waitHoppedMarkedController != blocker) {
+    // Give its owner a chance to start dismissing it. Two hops, so that we run after every update queued from the
+    // current mount transaction (`mountingTransactionDidMount:`), also when we got here during its mutations.
+    _waitHoppedMarkedController = blocker;
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [weakSelf scheduleModalsReconcileForGeneration:generation delay:0];
+    });
+    return;
+  }
+  if (!_reconcilingModals) {
+    // Don't start a dismissal from inside a UIKit completion or a mount transaction.
+    [self scheduleModalsReconcileForGeneration:generation delay:0];
+    return;
+  }
+  if (_waitDismissedMarkedController == blocker || (_waitMarkedDismissAttempts > 0 && _waitBackoffLooks % 15 != 0)) {
+    [self lookAgainForModalsBlocker:blocker generation:generation];
+    return;
+  }
+  // Nothing in the chain is transitioning and its owner had its chance: dismiss it ourselves, as we do for foreign
+  // modals above. Whatever is presented on top of it is going away with it anyway.
+  const BOOL animated = static_cast<RNSScreen *>(blocker).screenView.stackAnimation != RNSScreenStackAnimationNone;
+  [blocker.presentingViewController dismissViewControllerAnimated:animated
+                                                       completion:^{
+                                                         [weakSelf scheduleModalsReconcileForGeneration:generation
+                                                                                                  delay:0];
+                                                       }];
+  if (blocker.isBeingDismissed) {
+    _waitDismissedMarkedController = blocker;
+    [self scheduleModalsReconcileForGeneration:generation delay:0];
+  } else {
+    // UIKit refused it; try again every 15 looks.
+    _waitMarkedDismissAttempts++;
+    [self lookAgainForModalsBlocker:blocker generation:generation];
+  }
+}
+
+- (void)lookAgainForModalsBlocker:(UIViewController *)blocker generation:(NSUInteger)generation
+{
+  if (_waitBackoffBlocker != blocker) {
+    _waitBackoffBlocker = blocker;
+    _waitBackoffLooks = 0;
+    _waitMarkedDismissAttempts = 0;
+  }
+  [self scheduleModalsReconcileForGeneration:generation delay:(_waitBackoffLooks++ < 60 ? 0.016 : 0.25)];
+}
+
+- (void)scheduleModalsReconcileForGeneration:(NSUInteger)generation delay:(NSTimeInterval)delay
+{
+  __weak RNSScreenStackView *weakSelf = self;
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [weakSelf reconcileModalsForGeneration:generation];
+  });
+}
+
+- (void)reconcileModalsForGeneration:(NSUInteger)generation
+{
+  if (_waitingModalsUpdateGeneration != generation || _modalsUpdateGeneration != generation) {
+    // already reconciled, superseded, recycled or invalidated
+    return;
+  }
+  _waitingModalsUpdateGeneration = 0;
+  _updatingModals = NO;
+  _scheduleModalsUpdate = NO;
+  _reconcilingModals = YES;
+  [self updateContainer];
+  _reconcilingModals = NO;
+  if (_modalsUpdateGeneration == generation) {
+    // The update didn't take the lock again (nothing left to change): do what afterTransitions would have done.
+    [self resetModalsWait];
+    [self emitOnFinishTransitioningEvent];
+    [RNSScreenWindowTraits updateWindowTraits];
+  }
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
@@ -1564,14 +1884,20 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // TARGET_OS_TV
   _reactSubviews = [NSMutableArray new];
 
-  for (UIViewController *controller in _presentedModals) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
-  }
-
-  [_presentedModals removeAllObjects];
+  [self resetModalsUpdateState];
+  [self dismissModalsForTeardown];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
   [_controller setViewControllers:@[ [UIViewController new] ]];
+}
+
+- (void)invalidate
+{
+  [super invalidate];
+  // Called instead of prepareForRecycle when the view isn't recycled.
+  _reactSubviews = [NSMutableArray new];
+  [self resetModalsUpdateState];
+  [self dismissModalsForTeardown];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
