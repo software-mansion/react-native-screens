@@ -47,6 +47,10 @@ such as stack, tabs, split.
 - `yarn submodules` — initializes and builds the `react-navigation` git
   submodule. Only needed when working against that downstream library; not
   required to build or type-check the screens library itself.
+- `yarn submodules:testing` — initializes the `react-native-screens-testing`
+  git submodule, which holds the Argent screenshot baselines
+  (`.argent/flows/__baselines__` is a symlink into it). Only needed to run
+  Argent flows; `yarn submodules` does not fetch it.
 
 ### Build the library
 

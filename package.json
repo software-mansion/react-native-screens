@@ -3,7 +3,8 @@
   "version": "1000.0.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
-    "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn && yarn build && cd ../)",
+    "submodules": "git submodule update --init --recursive react-navigation && (cd react-navigation && yarn && yarn build && cd ../)",
+    "submodules:testing": "git submodule update --init --depth 1 react-native-screens-testing",
     "check-types": "tsc --noEmit",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",

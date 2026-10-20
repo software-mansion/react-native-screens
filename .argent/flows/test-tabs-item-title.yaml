@@ -35,6 +35,7 @@
 # 700 ms settle; seed + two fresh-service passes matched at 0.00%.
 #
 # Runner:  argent flow run test-tabs-item-title --platform ios        # or --platform android
+#          (run `yarn submodules:testing` first to fetch the baselines)
 #
 # Baselines are keyed by platform and screen size and must come from a device matching CI:
 #   - iOS: iPhone 17 simulator, iOS 27.0 (1206x2622).
