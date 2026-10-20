@@ -36,10 +36,20 @@ export const ScreenStackHeaderSubview: React.ComponentType<ScreenStackHeaderSubv
 export interface ScreenStackHeaderConfigInstance
   extends React.ComponentRef<typeof View> {}
 
+type ScreenStackHeaderConfigInternalProps = ScreenStackHeaderConfigProps & {
+  /**
+   * Internal: the header of an Android form sheet, which is never drawn under
+   * the status bar. Its top inset stays off even with
+   * `androidLegacyTopInsetBehavior`, which would otherwise apply it whatever
+   * `disableTopInsetApplication` says.
+   */
+  isInAndroidFormSheet?: boolean;
+};
+
 export const ScreenStackHeaderConfig = React.forwardRef<
   ScreenStackHeaderConfigInstance,
-  ScreenStackHeaderConfigProps
->((props, ref) => {
+  ScreenStackHeaderConfigInternalProps
+>(({ isInAndroidFormSheet = false, ...props }, ref) => {
   const {
     appliesTopInset,
     useLegacyBehavior,
@@ -148,7 +158,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
       consumeLeftInset={consumeLeftInset}
       consumeRightInset={consumeRightInset}
       consumeBottomInset={consumeBottomInset}
-      legacyTopInsetBehavior={useLegacyBehavior}
+      legacyTopInsetBehavior={useLegacyBehavior && !isInAndroidFormSheet}
     />
   );
 });
