@@ -85,13 +85,16 @@ function ScreenStackItem(
   ref: React.ForwardedRef<ScreenInstance>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  // On Android, a form sheet is not drawn under the status bar: neither its
-  // header nor the headers of the stacks nested in it have the status bar's
-  // top inset to apply.
-  const isAndroidFormSheet =
-    Platform.OS === 'android' && stackPresentation === 'formSheet';
+  // On Android, a form sheet is not drawn under the status bar (unless it
+  // overflows the top inset): neither its header nor the headers of the stacks
+  // nested in it have the status bar's top inset to apply.
+  const isAndroidFormSheetBelowStatusBar =
+    Platform.OS === 'android' &&
+    stackPresentation === 'formSheet' &&
+    !rest.sheetShouldOverflowTopInset;
   const disableTopInsetApplication =
-    isAndroidFormSheet || (headerConfig?.disableTopInsetApplication ?? false);
+    isAndroidFormSheetBelowStatusBar ||
+    (headerConfig?.disableTopInsetApplication ?? false);
   const { nextContextValue: headerEdgeContextValue } = useEdgeInsetApplication(
     headerVisible,
     disableTopInsetApplication,
@@ -101,10 +104,10 @@ function ScreenStackItem(
   );
   const nextEdgeContextValue = React.useMemo(
     () =>
-      isAndroidFormSheet
+      isAndroidFormSheetBelowStatusBar
         ? { ...headerEdgeContextValue, topAlreadyApplied: true }
         : headerEdgeContextValue,
-    [isAndroidFormSheet, headerEdgeContextValue],
+    [isAndroidFormSheetBelowStatusBar, headerEdgeContextValue],
   );
 
   const currentScreenRef = React.useRef<ScreenInstance | null>(null);
@@ -204,7 +207,7 @@ function ScreenStackItem(
       <ScreenStackHeaderConfig
         {...headerConfig}
         disableTopInsetApplication={disableTopInsetApplication}
-        isInAndroidFormSheet={isAndroidFormSheet}
+        isInAndroidFormSheet={isAndroidFormSheetBelowStatusBar}
       />
       {/* eslint-disable-next-line camelcase */}
       {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (

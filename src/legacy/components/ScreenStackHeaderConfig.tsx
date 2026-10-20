@@ -38,10 +38,10 @@ export interface ScreenStackHeaderConfigInstance
 
 type ScreenStackHeaderConfigInternalProps = ScreenStackHeaderConfigProps & {
   /**
-   * Internal: the header of an Android form sheet, which is never drawn under
-   * the status bar. Its top inset stays off even with
-   * `androidLegacyTopInsetBehavior`, which would otherwise apply it whatever
-   * `disableTopInsetApplication` says.
+   * Internal: the header of an Android form sheet that doesn't overflow the
+   * top inset, so isn't drawn under the status bar. Its top inset stays off
+   * even with `androidLegacyTopInsetBehavior`, which would otherwise apply it
+   * whatever `disableTopInsetApplication` says.
    */
   isInAndroidFormSheet?: boolean;
 };
