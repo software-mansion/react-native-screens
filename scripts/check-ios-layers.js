@@ -19,6 +19,11 @@
  *
  * The check fails when no core sources are found, so it cannot pass
  * vacuously.
+ *
+ * Passing files or directories (`yarn check-ios-layers ios/tabs/host ...`)
+ * also checks them as if they were already in `ios/core`, so a component can
+ * be verified before its move PR (phase-3 recipe, step c). They may import
+ * each other.
  */
 
 const fs = require('fs');
@@ -56,6 +61,14 @@ const isUnder = (file, dir) => !path.relative(dir, file).startsWith('..');
 
 const headers = listFiles(IOS_DIR, /\.h$/);
 const coreFiles = listFiles(CORE_DIR, /\.(h|m|mm|cpp)$/);
+const candidateFiles = process.argv.slice(2).flatMap(arg => {
+  const target = path.resolve(arg);
+  return fs.statSync(target).isDirectory()
+    ? listFiles(target, /\.(h|m|mm|cpp)$/)
+    : [target];
+});
+const isAllowedTarget = target =>
+  isUnder(target, CORE_DIR) || candidateFiles.includes(target);
 
 if (coreFiles.length === 0) {
   console.error(
@@ -97,7 +110,7 @@ function checkLine(file, line) {
     const targets = headersByBasename.get(path.basename(quoted[1])) ?? [];
     if (targets.length === 0) {
       reasons.push(`"${quoted[1]}" resolves to no header under ios/`);
-    } else if (!targets.some(target => isUnder(target, CORE_DIR))) {
+    } else if (!targets.some(isAllowedTarget)) {
       reasons.push(
         `core must not import ${relative(targets[0])} (outside ios/core)`,
       );
@@ -108,10 +121,7 @@ function checkLine(file, line) {
   const angled = line.match(ANGLE_INCLUDE);
   if (angled && /^(?:RNScreens\/)?[^/]+$/.test(angled[1])) {
     const targets = headersByBasename.get(path.basename(angled[1])) ?? [];
-    if (
-      targets.length > 0 &&
-      !targets.some(target => isUnder(target, CORE_DIR))
-    ) {
+    if (targets.length > 0 && !targets.some(isAllowedTarget)) {
       reasons.push(
         `core must not import ${relative(targets[0])} (outside ios/core)`,
       );
@@ -126,15 +136,16 @@ function checkLine(file, line) {
   return reasons;
 }
 
-const coreViolations = coreFiles.flatMap(file =>
-  fs
-    .readFileSync(file, 'utf8')
-    .split('\n')
-    .flatMap((line, index) =>
-      checkLine(file, line).map(
-        reason => `${relative(file)}:${index + 1}: ${reason}: ${line.trim()}`,
+const coreViolations = [...new Set([...coreFiles, ...candidateFiles])].flatMap(
+  file =>
+    fs
+      .readFileSync(file, 'utf8')
+      .split('\n')
+      .flatMap((line, index) =>
+        checkLine(file, line).map(
+          reason => `${relative(file)}:${index + 1}: ${reason}: ${line.trim()}`,
+        ),
       ),
-    ),
 );
 
 const violations = [
