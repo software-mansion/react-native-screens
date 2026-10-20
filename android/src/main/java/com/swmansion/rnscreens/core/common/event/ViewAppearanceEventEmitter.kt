@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.core.common.event
 
-internal interface ViewAppearanceEventEmitter {
+interface ViewAppearanceEventEmitter {
     fun emitOnWillAppear()
 
     fun emitOnDidAppear()

@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.tabs.screen
 
 import com.facebook.react.bridge.ReactContext
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.tabs.screen.TabsScreenEventEmitter.Companion.TAG
@@ -12,23 +13,24 @@ import com.swmansion.rnscreens.tabs.screen.event.TabsScreenWillDisappearEvent
 internal class TabsScreenEventEmitter(
     reactContext: ReactContext,
     viewTag: Int,
-) : BaseEventEmitter(reactContext, viewTag) {
-    fun emitOnWillAppear() {
+) : BaseEventEmitter(reactContext, viewTag),
+    ViewAppearanceEventEmitter {
+    override fun emitOnWillAppear() {
         logEventDispatch(viewTag, TabsScreenWillAppearEvent.EVENT_REGISTRATION_NAME)
         reactEventDispatcher.dispatchEvent(TabsScreenWillAppearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnDidAppear() {
+    override fun emitOnDidAppear() {
         logEventDispatch(viewTag, TabsScreenDidAppearEvent.EVENT_REGISTRATION_NAME)
         reactEventDispatcher.dispatchEvent(TabsScreenDidAppearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnWillDisappear() {
+    override fun emitOnWillDisappear() {
         logEventDispatch(viewTag, TabsScreenWillDisappearEvent.EVENT_REGISTRATION_NAME)
         reactEventDispatcher.dispatchEvent(TabsScreenWillDisappearEvent(surfaceId, viewTag))
     }
 
-    fun emitOnDidDisappear() {
+    override fun emitOnDidDisappear() {
         logEventDispatch(viewTag, TabsScreenDidDisappearEvent.EVENT_REGISTRATION_NAME)
         reactEventDispatcher.dispatchEvent(TabsScreenDidDisappearEvent(surfaceId, viewTag))
     }

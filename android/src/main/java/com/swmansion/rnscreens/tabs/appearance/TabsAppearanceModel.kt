@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.tabs.appearance
 
-internal data class TabsAppearance(
+data class TabsAppearance(
     val tabBarBackgroundColor: Int? = null,
     val tabBarItemRippleColor: Int? = null,
     val tabBarItemLabelVisibilityMode: String? = null,
@@ -22,7 +22,7 @@ internal data class TabsAppearance(
     val tabBarItemBadgeTextColor: Int? = null,
 )
 
-internal data class ItemStateAppearance(
+data class ItemStateAppearance(
     val tabBarItemIconColor: Int? = null,
     val tabBarItemTitleFontColor: Int? = null,
 )
