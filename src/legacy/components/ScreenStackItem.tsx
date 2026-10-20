@@ -86,18 +86,15 @@ function ScreenStackItem(
 ) {
   const headerVisible = !headerConfig?.hidden;
   // On Android, a form sheet is not drawn under the status bar (unless it
-  // overflows the top inset): neither its header nor the headers of the stacks
-  // nested in it have the status bar's top inset to apply.
+  // overflows the top inset), and has no native header of its own: the headers
+  // of the stacks nested in it have no status bar inset to apply.
   const isAndroidFormSheetBelowStatusBar =
     Platform.OS === 'android' &&
     stackPresentation === 'formSheet' &&
     !rest.sheetShouldOverflowTopInset;
-  const disableTopInsetApplication =
-    isAndroidFormSheetBelowStatusBar ||
-    (headerConfig?.disableTopInsetApplication ?? false);
   const { nextContextValue: headerEdgeContextValue } = useEdgeInsetApplication(
     headerVisible,
-    disableTopInsetApplication,
+    headerConfig?.disableTopInsetApplication ?? false,
     headerConfig?.disableLeftInsetApplication ?? false,
     headerConfig?.disableRightInsetApplication ?? false,
     headerConfig?.disableBottomInsetApplication ?? false,
@@ -208,11 +205,7 @@ function ScreenStackItem(
        * See https://github.com/software-mansion/react-native-screens/pull/1825
        * for detailed explanation.
        */}
-      <ScreenStackHeaderConfig
-        {...headerConfig}
-        disableTopInsetApplication={disableTopInsetApplication}
-        isInAndroidFormSheet={isAndroidFormSheetBelowStatusBar}
-      />
+      <ScreenStackHeaderConfig {...headerConfig} />
       {/* eslint-disable-next-line camelcase */}
       {stackPresentationWithDefault === 'formSheet' && unstable_sheetFooter && (
         <FooterComponent>{unstable_sheetFooter()}</FooterComponent>
