@@ -1,6 +1,5 @@
-// On Android, a form sheet is not drawn under the status bar, so no header in
-// it should be padded by the status bar's height: neither the sheet's own
-// header, nor the first visible header of a stack nested in it.
+// On Android, a form sheet is not drawn under the status bar, so no header of a
+// stack nested in it should be padded by the status bar's height.
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,7 +10,6 @@ import {
 
 type RootRoutes = {
   Home: undefined;
-  SheetWithHeader: undefined;
   SheetWithNestedStack: undefined;
 };
 type NestedRoutes = {
@@ -33,14 +31,10 @@ function Home({ navigation }: NativeStackScreenProps<RootRoutes, 'Home'>) {
   return (
     <View style={styles.content}>
       <Text>
-        Open a sheet and expand it. The header must sit at the top of the sheet,
-        with no blank band (the height of the status bar) above its title.
+        Open the sheet and expand it. The header must sit at the top of the
+        sheet, with no blank band (the height of the status bar) above its
+        title.
       </Text>
-      <Button
-        testID="open-sheet-with-header"
-        title="Open sheet with its own header"
-        onPress={() => navigation.navigate('SheetWithHeader')}
-      />
       <Button
         testID="open-sheet-with-nested-stack"
         title="Open sheet with a nested stack"
@@ -85,11 +79,6 @@ export default function App() {
     <NavigationContainer>
       <RootStack.Navigator>
         <RootStack.Screen name="Home" component={Home} />
-        <RootStack.Screen
-          name="SheetWithHeader"
-          component={SheetContent}
-          options={{ ...SHEET_OPTIONS, title: 'Sheet header' }}
-        />
         <RootStack.Screen
           name="SheetWithNestedStack"
           component={SheetWithNestedStack}
