@@ -9,4 +9,9 @@
  */
 + (void)overrideScrollViewBehaviorInFirstDescendantChainFrom:(nullable UIView *)view;
 
+/**
+ * Overrides contentInsetAdjustmentBehavior of the given ScrollView.
+ */
++ (void)overrideScrollViewBehavior:(nullable UIScrollView *)scrollView;
+
 @end

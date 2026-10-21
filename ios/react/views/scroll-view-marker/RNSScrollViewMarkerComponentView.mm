@@ -118,6 +118,9 @@ namespace react = facebook::react;
   [seekingAncestor registerDescendantScrollView:scrollView];
   _registeredSeekingAncestor = seekingAncestor;
   _registeredScrollView = scrollView;
+
+  // A screen applies its own edge effects to the scroll view it finds before the marker registers.
+  [self configureScrollView:scrollView];
 }
 
 - (void)unregisterFromSeekingAncestor
