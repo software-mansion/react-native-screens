@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSContainedModalHostEventEmitter : NSObject
 
 - (BOOL)emitOnPresentationRejected;
+- (BOOL)emitOnWillAppear;
+- (BOOL)emitOnDidAppear;
+- (BOOL)emitOnWillDisappear;
+- (BOOL)emitOnDidDisappear;
 
 @end
 
