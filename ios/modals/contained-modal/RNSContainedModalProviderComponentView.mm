@@ -40,9 +40,6 @@ namespace react = facebook::react;
   if (self.window != nil) {
     [self reactAddControllerToClosestParent:_wrappedContextViewController];
   } else {
-    // Detach on window exit: a stale parentViewController pointing at a
-    // removed screen controller would make the next presentation run from a
-    // detached controller - corrupt and mis-sized.
     [self reactRemoveControllerFromParent:_wrappedContextViewController];
   }
 }

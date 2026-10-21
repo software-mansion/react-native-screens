@@ -148,9 +148,8 @@ namespace react = facebook::react;
 
 - (void)modalControllerViewDidAppear:(RNSContainedModalContentController *)controller
 {
-  // The layout callback also re-syncs, but a restore after a suspension
-  // re-attaches without a layout pass, so appearance is the only trigger
-  // that fires then. The proxy dedupes by frame, so overlap is cheap.
+  // Restore after a suspension re-attaches without a layout pass,
+  // so appearance is the only trigger that fires then.
   [self syncShadowNodeState];
 }
 
@@ -256,8 +255,7 @@ namespace react = facebook::react;
   // presented controller's view (an ancestor ScrollView scrolls, a sibling
   // collapses) - the controller's layout/appearance callbacks never fire for a
   // pure position change, so re-sync after every transaction (scrolling and
-  // layout shifts each commit state). Cheap: the proxy dedupes by frame, so an
-  // unchanged origin schedules nothing.
+  // layout shifts each commit state).
   [self syncShadowNodeState];
 }
 
