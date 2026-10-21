@@ -122,12 +122,14 @@ internal class TabsAppearanceApplicator(
             intArrayOf(), // normal
         )
 
+    internal fun applyTabBarVisibility(isTabBarHidden: Boolean) {
+        bottomNavigationView.isVisible = !isTabBarHidden
+    }
+
     internal fun updateSharedAppearance(
         context: Context,
         tabBarAppearance: TabsAppearance?,
-        isTabBarHidden: Boolean,
     ) {
-        bottomNavigationView.isVisible = !isTabBarHidden
         bottomNavigationView.setBackgroundColor(
             tabBarAppearance?.tabBarBackgroundColor
                 ?: resolveColorAttr(context, R.attr.colorSurfaceContainer),
