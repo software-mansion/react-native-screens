@@ -129,6 +129,10 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   if (self.window != nil && _controller.parentViewController == nil) {
+    // Size the view to the host before attaching: the tabs were installed at the main screen's size and UIKit
+    // doesn't rebuild the tab bar on a later resize (iPhone Duo side rail).
+    // See https://github.com/software-mansion/react-native-screens/issues/4989.
+    _controller.view.frame = self.bounds;
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_controller
                                           toViewControllerManaging:self.reactSuperview
                                                  withContainerView:self];
