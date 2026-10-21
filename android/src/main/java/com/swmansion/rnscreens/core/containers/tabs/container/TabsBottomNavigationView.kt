@@ -3,6 +3,10 @@ package com.swmansion.rnscreens.core.containers.tabs.container
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewTreeObserver
+import androidx.core.view.children
+import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 
@@ -46,6 +50,48 @@ open class TabsBottomNavigationView(
      */
     internal fun resetMenuItemStates() {
         menuItemStates.clear()
+    }
+
+    // endregion
+
+    // region Active indicator bounds
+
+    /**
+     * Material masks each item's ripple with the item's active indicator drawable, so laying out the
+     * ripple resizes that drawable to the icon container. The active indicator view resizes its
+     * background only when its own size changes, so with an icon box larger than the active indicator
+     * it would draw the indicator as tall as the icon box. This puts the bounds back before each draw.
+     */
+    private val activeIndicatorBoundsRestorer =
+        ViewTreeObserver.OnPreDrawListener {
+            restoreActiveIndicatorBounds()
+            true
+        }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        viewTreeObserver.addOnPreDrawListener(activeIndicatorBoundsRestorer)
+    }
+
+    override fun onDetachedFromWindow() {
+        viewTreeObserver.removeOnPreDrawListener(activeIndicatorBoundsRestorer)
+        super.onDetachedFromWindow()
+    }
+
+    private fun restoreActiveIndicatorBounds() {
+        menuViewGroup.children.forEach { itemView ->
+            val indicatorView = itemView.findViewById<View>(R.id.navigation_bar_item_active_indicator_view) ?: return@forEach
+            val indicator = indicatorView.background ?: return@forEach
+            val width = indicatorView.width
+            val height = indicatorView.height
+            val bounds = indicator.bounds
+            if (width == 0 || height == 0 || (bounds.left == 0 && bounds.top == 0 && bounds.right == width && bounds.bottom == height)) {
+                return@forEach
+            }
+            indicator.setBounds(0, 0, width, height)
+            // The drawable reports changes to the ripple, not to the indicator view.
+            indicatorView.invalidate()
+        }
     }
 
     // endregion
