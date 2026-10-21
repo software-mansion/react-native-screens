@@ -1,6 +1,7 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON } from '@e2e/framework/native-classes-android';
+import { tapHeaderView } from '@e2e/framework/header-items-ios';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
 
 const awaitValidEventBehavior = async () => {
@@ -83,7 +84,7 @@ describe('Test593', () => {
     await element(by.id('privacy-button-go-to-another')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).atIndex(0).tap();
+      await tapHeaderView(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON));
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON))
         .atIndex(0)
@@ -101,7 +102,7 @@ describe('Test593', () => {
     await element(by.id('privacy-button-go-to-another')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).atIndex(0).tap();
+      await tapHeaderView(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON));
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON))
         .atIndex(0)
