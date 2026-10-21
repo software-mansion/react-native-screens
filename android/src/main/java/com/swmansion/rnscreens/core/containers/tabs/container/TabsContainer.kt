@@ -112,7 +112,30 @@ class TabsContainer internal constructor(
         get() =
             checkNotNull(getFragmentForScreenKey(navState.selectedScreenKey)) { "[RNScreens] No selected tab present" }
 
-    internal val invalidationFlags = TabsContainerInvalidationFlags()
+    private var invalidationFlags = TabsContainerInvalidationFlags.NONE
+
+    /**
+     * Records [flags] and requests an update to apply them.
+     */
+    private fun invalidate(flags: TabsContainerInvalidationFlags) {
+        recordInvalidation(flags)
+        updateScheduler.requestUpdate()
+    }
+
+    /**
+     * Records [flags] without requesting an update, for invalidations raised by an update that goes
+     * on to apply them, or before the container can run one.
+     */
+    private fun recordInvalidation(flags: TabsContainerInvalidationFlags) {
+        invalidationFlags = invalidationFlags or flags
+    }
+
+    /**
+     * Clears [flags] and returns those of them that were pending. The caller takes over applying
+     * what they name.
+     */
+    private fun takeInvalidationFlags(flags: TabsContainerInvalidationFlags): TabsContainerInvalidationFlags =
+        (invalidationFlags and flags).also { invalidationFlags = invalidationFlags without flags }
 
     private var pendingStateUpdateRequest: TabsNavigationStateUpdateRequest? = null
 
@@ -172,8 +195,7 @@ class TabsContainer internal constructor(
     internal var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             updateInterfaceInsets()
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            updateScheduler.requestUpdate()
+            invalidate(TabsContainerInvalidationFlags.NAVIGATION_MENU_APPEARANCE)
         }
     }
 
@@ -182,7 +204,7 @@ class TabsContainer internal constructor(
         addView(bottomNavigationView)
 
         bottomNavigationView.setOnItemSelectedListener(this::onMenuItemSelected)
-        invalidationFlags.invalidateAll()
+        recordInvalidation(TabsContainerInvalidationFlags.ALL)
     }
 
     // region Public API (third-party stable)
@@ -228,9 +250,10 @@ class TabsContainer internal constructor(
      */
     internal fun setPendingNavigationStateUpdate(request: TabsNavigationStateUpdateRequest?) {
         pendingStateUpdateRequest = request
-        invalidationFlags.isSelectedTabInvalidated = request != null
         if (request != null) {
-            updateScheduler.requestUpdate()
+            invalidate(TabsContainerInvalidationFlags.SELECTED_TAB)
+        } else {
+            invalidationFlags = invalidationFlags without TabsContainerInvalidationFlags.SELECTED_TAB
         }
     }
 
@@ -240,31 +263,27 @@ class TabsContainer internal constructor(
     ) {
         tabsModel.add(index, TabsScreenFragment(item, viewIdProvider.generateViewId(), WeakReference(this)))
         item.setConfigurationObserver { flags -> onItemInvalidated(item, flags) }
-        invalidationFlags.invalidateAll()
-        updateScheduler.requestUpdate()
+        invalidate(TabsContainerInvalidationFlags.ALL)
     }
 
     internal fun removeItemAt(index: Int): TabsContainerItem? =
         tabsModel.removeAt(index).item.also {
             it.setConfigurationObserver(null)
-            invalidationFlags.invalidateAll()
-            updateScheduler.requestUpdate()
+            invalidate(TabsContainerInvalidationFlags.ALL)
         }
 
     internal fun removeItem(item: TabsContainerItem): Boolean =
         tabsModel.removeIf { it.item === item }.also { isRemoved ->
             if (isRemoved) {
                 item.setConfigurationObserver(null)
-                invalidationFlags.invalidateAll()
-                updateScheduler.requestUpdate()
+                invalidate(TabsContainerInvalidationFlags.ALL)
             }
         }
 
     internal fun removeAllItems() {
         tabsModel.forEach { it.item.setConfigurationObserver(null) }
         tabsModel.clear()
-        invalidationFlags.invalidateAll()
-        updateScheduler.requestUpdate()
+        invalidate(TabsContainerInvalidationFlags.ALL)
     }
 
     internal fun setupFragmentManager() {
@@ -438,19 +457,19 @@ class TabsContainer internal constructor(
             // Icon box is bar-wide, so this must run even when the changed tab is not selected.
             // Skip when detached; reattachment reapplies the full appearance anyway.
             if (isAttachedToWindow) {
-                invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+                recordInvalidation(TabsContainerInvalidationFlags.NAVIGATION_MENU_APPEARANCE)
             }
         } else if (flags.containsAny(TabsItemInvalidationFlags.APPEARANCE)) {
             if (isAttachedToWindow && selectedTab.item === item) {
-                invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+                recordInvalidation(TabsContainerInvalidationFlags.NAVIGATION_MENU_APPEARANCE)
             }
         }
 
         if (flags.containsAny(TabsItemInvalidationFlags.MENU_ITEM_ATTRIBUTES)) {
-            invalidationFlags.isMenuItemsInvalidated = true
+            recordInvalidation(TabsContainerInvalidationFlags.MENU_ITEMS)
         }
 
-        if (invalidationFlags.any()) {
+        if (!invalidationFlags.isEmpty) {
             updateScheduler.requestUpdate()
         }
     }
@@ -501,7 +520,7 @@ class TabsContainer internal constructor(
      * The update the [updateScheduler] runs. Skipped while detached: [onAttachedToWindow] flushes.
      */
     private fun performContainerUpdateIfNeeded() {
-        if (invalidationFlags.any() && isAttachedToWindow) {
+        if (!invalidationFlags.isEmpty && isAttachedToWindow) {
             performContainerUpdate()
         }
     }
@@ -544,30 +563,26 @@ class TabsContainer internal constructor(
      */
     private fun updateMenuItemsIfNeeded() {
         // Nothing is selected yet; the appearance update that follows the first selection applies them.
-        if (!invalidationFlags.isMenuItemsInvalidated || navState.isEmpty()) {
+        if (navState.isEmpty() || takeInvalidationFlags(TabsContainerInvalidationFlags.MENU_ITEMS).isEmpty) {
             return
         }
-        invalidationFlags.isMenuItemsInvalidated = false
         tabsModel.forEach { updateMenuItem(it.item) }
     }
 
     private fun updateNavigationMenuStructureIfNeeded() {
-        if (invalidationFlags.isNavigationMenuStructureInvalidated) {
-            invalidationFlags.isNavigationMenuStructureInvalidated = false
+        if (!takeInvalidationFlags(TabsContainerInvalidationFlags.NAVIGATION_MENU_STRUCTURE).isEmpty) {
             updateNavigationMenuStructure()
         }
     }
 
     private fun performSelectedTabUpdateIfNeeded() {
-        if (invalidationFlags.isSelectedTabInvalidated) {
-            invalidationFlags.isSelectedTabInvalidated = false
+        if (!takeInvalidationFlags(TabsContainerInvalidationFlags.SELECTED_TAB).isEmpty) {
             performSelectedTabUpdate()
         }
     }
 
     private fun updateBottomNavigationViewAppearanceIfNeeded() {
-        if (invalidationFlags.isNavigationMenuAppearanceInvalidated) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = false
+        if (!takeInvalidationFlags(TabsContainerInvalidationFlags.NAVIGATION_MENU_APPEARANCE).isEmpty) {
             // Accessibility is re-applied to every tab together with the bar's appearance.
             bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ACCESSIBILITY)
             updateBottomNavigationViewAppearance()
@@ -746,7 +761,7 @@ class TabsContainer internal constructor(
         if (stateChanged && !isRepeated) {
             // If we've effectively changed the tab, we need to raise appropriate flags. Programmatic
             // changes apply them in [performContainerUpdate], right after this listener returns.
-            invalidationFlags.invalidateOnSelectedTabChanged()
+            recordInvalidation(TabsContainerInvalidationFlags.NAVIGATION_MENU_APPEARANCE)
             if (actionOrigin == TabsActionOrigin.USER) {
                 applySelectedTabChangeOnUserSelection()
             }
@@ -777,7 +792,7 @@ class TabsContainer internal constructor(
      * Should one be pending, the whole update is left to the scheduler.
      */
     private fun applySelectedTabChangeOnUserSelection() {
-        if (invalidationFlags.isNavigationMenuStructureInvalidated) {
+        if (invalidationFlags.containsAny(TabsContainerInvalidationFlags.NAVIGATION_MENU_STRUCTURE)) {
             updateScheduler.requestUpdate()
             return
         }
@@ -928,29 +943,5 @@ class TabsContainer internal constructor(
 
     companion object {
         const val TAG = "TabsContainer"
-    }
-}
-
-internal class TabsContainerInvalidationFlags(
-    var isSelectedTabInvalidated: Boolean = false,
-    var isNavigationMenuAppearanceInvalidated: Boolean = false,
-    var isNavigationMenuStructureInvalidated: Boolean = false,
-    var isMenuItemsInvalidated: Boolean = false,
-) {
-    internal fun any(): Boolean =
-        isSelectedTabInvalidated ||
-            isNavigationMenuAppearanceInvalidated ||
-            isNavigationMenuStructureInvalidated ||
-            isMenuItemsInvalidated
-
-    internal fun invalidateAll() {
-        isSelectedTabInvalidated = true
-        isNavigationMenuAppearanceInvalidated = true
-        isNavigationMenuStructureInvalidated = true
-        isMenuItemsInvalidated = true
-    }
-
-    internal fun invalidateOnSelectedTabChanged() {
-        isNavigationMenuAppearanceInvalidated = true
     }
 }
