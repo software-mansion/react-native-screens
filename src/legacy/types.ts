@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import type {
+  AdditionalSafeAreaInsets,
   BlurEffect,
   Direction,
   PlatformIconIOS,
@@ -99,12 +100,7 @@ export type GestureResponseDistanceType = {
   bottom?: number | undefined;
 };
 
-export type AdditionalSafeAreaInsetsType = {
-  top?: number | undefined;
-  right?: number | undefined;
-  bottom?: number | undefined;
-  left?: number | undefined;
-};
+export type AdditionalSafeAreaInsetsType = AdditionalSafeAreaInsets;
 
 export type SearchBarPlacement =
   | 'automatic'

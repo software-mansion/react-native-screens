@@ -3,10 +3,14 @@ package com.swmansion.rnscreens.react.containers.stack.screen
 import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.core.common.FragmentProviding
 import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
+import com.swmansion.rnscreens.core.common.safearea.insetsWithAdditionalSafeArea
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
@@ -65,6 +69,25 @@ internal class StackScreen(
             ) { "[RNScreens] StackScreen can't change its screenKey." }
             field = value
         }
+
+    var additionalSafeAreaInsets: Insets = Insets.NONE
+        set(value) {
+            if (field != value) {
+                field = value
+                ViewCompat.requestApplyInsets(this)
+            }
+        }
+
+    override fun dispatchApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        if (additionalSafeAreaInsets == Insets.NONE) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        val result = super.dispatchApplyWindowInsets(insetsWithAdditionalSafeArea(this, insets, additionalSafeAreaInsets))
+        // Before API 30, a parent passes the insets returned by one child on to the next one,
+        // so the extra insets must not leak to the screen's siblings.
+        return if (result.isConsumed) result else insets
+    }
 
     // region Shadow State synchronization
 

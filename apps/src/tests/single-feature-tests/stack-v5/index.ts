@@ -38,6 +38,7 @@ import TestStackHeaderBackground from './test-stack-header-background-android';
 import TestStackHeaderStatusBarScrim from './test-stack-header-status-bar-scrim-android';
 import TestStackColorScheme from './test-stack-color-scheme';
 import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
+import TestStackAdditionalSafeAreaInsets from './test-stack-additional-safe-area-insets';
 import TestStackLayoutDirection from './test-stack-layout-direction-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
 // Scenario entry-point components — each scenario's default export re-exported
@@ -80,6 +81,7 @@ export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
 export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
+export { default as TestStackAdditionalSafeAreaInsets } from './test-stack-additional-safe-area-insets';
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
@@ -119,6 +121,7 @@ const scenarios = {
   TestStackColorScheme,
   TestStackHeaderHiddenRestore,
   TestStackLayoutDirection,
+  TestStackAdditionalSafeAreaInsets,
 };
 
 const StackScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

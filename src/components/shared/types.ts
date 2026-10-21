@@ -23,6 +23,13 @@ export type BlurEffect =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 
+export type AdditionalSafeAreaInsets = {
+  top?: number | undefined;
+  right?: number | undefined;
+  bottom?: number | undefined;
+  left?: number | undefined;
+};
+
 export type ColorScheme = 'light' | 'dark';
 
 export type Direction = 'ltr' | 'rtl';

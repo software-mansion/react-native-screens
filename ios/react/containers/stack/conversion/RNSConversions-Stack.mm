@@ -11,6 +11,12 @@ RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActi
   return static_cast<RNSStackScreenActivityMode>(mode);
 }
 
+UIEdgeInsets UIEdgeInsetsFromReactRNSStackScreenAdditionalSafeAreaInsets(
+    const react::RNSStackScreenAdditionalSafeAreaInsetsStruct &insets)
+{
+  return UIEdgeInsetsMake(insets.top, insets.left, insets.bottom, insets.right);
+}
+
 RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
     react::RNSStackHeaderItemIOSPlacement placement)
 {

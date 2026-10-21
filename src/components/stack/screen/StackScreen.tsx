@@ -22,6 +22,7 @@ function StackScreen({
   onNativeDismissPrevented,
   // Configuration
   preventNativeDismiss,
+  additionalSafeAreaInsets,
 }: StackScreenProps) {
   const onDismissWrapper = React.useCallback(
     (event: OnDismissEvent) => {
@@ -54,7 +55,13 @@ function StackScreen({
       onDismiss={onDismissWrapper}
       onNativeDismissPrevented={onNativeDismissPrevented}
       // Configuration
-      preventNativeDismiss={preventNativeDismiss}>
+      preventNativeDismiss={preventNativeDismiss}
+      additionalSafeAreaInsets={{
+        top: additionalSafeAreaInsets?.top ?? 0,
+        right: additionalSafeAreaInsets?.right ?? 0,
+        bottom: additionalSafeAreaInsets?.bottom ?? 0,
+        left: additionalSafeAreaInsets?.left ?? 0,
+      }}>
       {children}
     </StackScreenNativeComponent>
   );

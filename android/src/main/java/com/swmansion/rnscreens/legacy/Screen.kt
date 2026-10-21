@@ -17,7 +17,6 @@ import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -31,6 +30,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.safearea.insetsWithAdditionalSafeArea
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
@@ -588,41 +588,10 @@ class Screen(
             return super.dispatchApplyWindowInsets(insets)
         }
 
-        val result = super.dispatchApplyWindowInsets(insetsWithAdditionalSafeArea(insets))
+        val result = super.dispatchApplyWindowInsets(insetsWithAdditionalSafeArea(this, insets, additionalSafeAreaInsets))
         // Before API 30, a parent passes the insets returned by one child on to the next one,
         // so the extra insets must not leak to the screen's siblings.
         return if (result.isConsumed) result else insets
-    }
-
-    private fun insetsWithAdditionalSafeArea(insets: WindowInsets): WindowInsets {
-        val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
-        val extra = additionalSafeAreaInsets
-        val safeArea =
-            insetsCompat.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
-        val statusBars = insetsCompat.getInsets(WindowInsetsCompat.Type.statusBars())
-        val navigationBars = insetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars())
-
-        fun grow(
-            current: Int,
-            safe: Int,
-            extra: Int,
-        ) = if (extra == 0) current else safe + extra
-
-        return WindowInsetsCompat
-            .Builder(insetsCompat)
-            .setInsets(
-                WindowInsetsCompat.Type.statusBars(),
-                Insets.of(statusBars.left, grow(statusBars.top, safeArea.top, extra.top), statusBars.right, statusBars.bottom),
-            ).setInsets(
-                WindowInsetsCompat.Type.navigationBars(),
-                Insets.of(
-                    grow(navigationBars.left, safeArea.left, extra.left),
-                    navigationBars.top,
-                    grow(navigationBars.right, safeArea.right, extra.right),
-                    grow(navigationBars.bottom, safeArea.bottom, extra.bottom),
-                ),
-            ).build()
-            .toWindowInsets() ?: insets
     }
 
     override fun onDetachedFromWindow() {
