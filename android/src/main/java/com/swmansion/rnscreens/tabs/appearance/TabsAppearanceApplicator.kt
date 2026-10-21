@@ -217,7 +217,7 @@ internal class TabsAppearanceApplicator(
                 titleFontResolver.resolveTypeface(
                     tabBarAppearance?.tabBarItemTitleFontFamily,
                     tabBarAppearance?.tabBarItemTitleFontWeight,
-                    tabBarAppearance?.tabBarItemTitleFontItalic ?: false,
+                    tabBarAppearance?.tabBarItemTitleFontItalic,
                 )
 
             /*

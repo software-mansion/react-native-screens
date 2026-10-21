@@ -14,12 +14,19 @@ import com.swmansion.rnscreens.core.common.text.FontResolver
 internal class ReactFontResolver(
     private val context: Context,
 ) : FontResolver {
-    // An unset weight makes ReactFontManager apply React Native's default weight (400).
+    // React Native's defaults: an empty family is the platform default family, an unset weight
+    // makes ReactFontManager apply 400, and text is upright unless italic is requested.
     override fun resolveTypeface(
         family: String?,
         weight: Int?,
-        isItalic: Boolean,
-    ): Typeface = ReactFontManager.getInstance().getTypeface(family ?: "", weight ?: ReactConstants.UNSET, isItalic, context.assets)
+        isItalic: Boolean?,
+    ): Typeface =
+        ReactFontManager.getInstance().getTypeface(
+            family ?: "",
+            weight ?: ReactConstants.UNSET,
+            isItalic ?: false,
+            context.assets,
+        )
 
     override fun resolveTextSizePx(sizeSp: Float): Float = PixelUtil.toPixelFromSP(sizeSp)
 }
