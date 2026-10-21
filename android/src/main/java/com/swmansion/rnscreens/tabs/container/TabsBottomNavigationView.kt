@@ -56,7 +56,7 @@ open class TabsBottomNavigationView(
         this.actionOrigin = null
     }
 
-    override fun setSelectedItemId(itemId: Int) {
+    final override fun setSelectedItemId(itemId: Int) {
         if (this.actionOrigin == null) {
             this.actionOrigin = TabsActionOrigin.USER
         }
