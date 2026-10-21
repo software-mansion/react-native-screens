@@ -10,7 +10,7 @@ import androidx.core.view.children
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
 
-class TabsHostA11yCoordinator(
+internal class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
     /**
