@@ -611,7 +611,10 @@ RNS_IGNORE_SUPER_CALL_END
 #endif
   navitem.titleView = nil;
   navitem.leftBarButtonItems = nil;
-  navitem.rightBarButtonItems = nil;
+  // Right items are collected here and set once, below: clearing
+  // `navitem.rightBarButtonItems` first would make every header update replace
+  // the items without animation, so iOS 26 could never morph them.
+  NSMutableArray<UIBarButtonItem *> *rightItems = [NSMutableArray new];
 
 #if !TARGET_OS_TV
   // We want to set navitem.searchController to nil only if we are sure
@@ -631,10 +634,7 @@ RNS_IGNORE_SUPER_CALL_END
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:[subview getUIBarButtonItem]];
-        navitem.rightBarButtonItems = mutableItems;
+        [rightItems addObject:[subview getUIBarButtonItem]];
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
@@ -701,8 +701,10 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.title = config.title;
   navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
                                                 withCurrentItems:navitem.leftBarButtonItems];
-  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
-                                                 withCurrentItems:navitem.rightBarButtonItems];
+  [self setRightBarButtonItems:[config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                withCurrentItems:rightItems]
+              onNavigationItem:navitem
+                      animated:animated && vc.transitionCoordinator == nil];
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
@@ -831,6 +833,27 @@ RNS_IGNORE_SUPER_CALL_END
     [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navCtrl.navigationBar.class ]]
         setSemanticContentAttribute:self.direction];
   }
+}
+
++ (void)setRightBarButtonItems:(NSArray<UIBarButtonItem *> *)items
+              onNavigationItem:(UINavigationItem *)navitem
+                      animated:(BOOL)animated
+{
+  // Items are recreated on every header update, so animating each assignment
+  // would animate unrelated changes (a new title, a new tint). Animate only when
+  // the set of items changes, matched by `identifier` (or by count when items
+  // have none), and only outside a push or pop, which animates the bar itself.
+  // On iOS 26 this is what lets UIKit morph the Liquid Glass between the old and
+  // the new items.
+  NSArray<UIBarButtonItem *> *previousItems = navitem.rightBarButtonItems ?: @[];
+  BOOL setChanged = NO;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  if (@available(iOS 26.0, *)) {
+    setChanged = previousItems.count > 0 &&
+        ![[previousItems valueForKey:@"identifier"] isEqualToArray:[items valueForKey:@"identifier"]];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+  [navitem setRightBarButtonItems:items animated:animated && setChanged];
 }
 
 - (NSArray<UIBarButtonItem *> *)barButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
