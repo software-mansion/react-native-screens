@@ -9,6 +9,7 @@ import {
 type Routes = { Home: undefined; Sheet: undefined };
 const Stack = createNativeStackNavigator<Routes>();
 
+/** Root screen: pushes the sheet-like screen. */
 function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
   return (
     <View style={styles.home}>
@@ -21,9 +22,13 @@ function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
   );
 }
 
-// iOS: drag down a short way and let go. The screen must glide back over the
-// transition's duration, starting at the finger's speed, not snap back in a
-// frame. Drag past half and let go: it must close at the finger's speed.
+/**
+ * Pushed with a vertical, gesture-matched custom animation.
+ *
+ * iOS: drag down a short way and let go. The screen must glide back over the
+ * transition's duration, starting at the finger's speed, not snap back in a
+ * frame. Drag past half and let go: it must close at the finger's speed.
+ */
 function Sheet() {
   return (
     <View style={styles.sheet}>
@@ -41,6 +46,7 @@ function Sheet() {
   );
 }
 
+/** Reproduction for #5009. */
 export default function App() {
   return (
     <NavigationContainer>

@@ -43,6 +43,8 @@
 
 #pragma mark - Helpers
 
+/// Completes the in-flight transition, forward or reversed (`cancelled`), with a critically damped
+/// spring that starts at `releaseVelocity` and settles over the transition's full duration.
 - (void)finalizeInteractiveTransitionWithAnimationWasCancelled:(BOOL)cancelled
 {
   if (_animationController == nil) {
