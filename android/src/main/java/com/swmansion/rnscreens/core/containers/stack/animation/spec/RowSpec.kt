@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.animation.spec
+package com.swmansion.rnscreens.core.containers.stack.animation.spec
 
 internal data class RowSpec(
     val inSlot: SlotSpec,

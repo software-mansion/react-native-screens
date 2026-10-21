@@ -1,16 +1,16 @@
-package com.swmansion.rnscreens.stack.animation
+package com.swmansion.rnscreens.core.containers.stack.animation
 
-import com.swmansion.rnscreens.stack.animation.engine.Easings
-import com.swmansion.rnscreens.stack.animation.model.Easing
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
-import com.swmansion.rnscreens.stack.animation.presets.PresetTable
-import com.swmansion.rnscreens.stack.animation.presets.RowTemplate
-import com.swmansion.rnscreens.stack.animation.presets.SlotTemplate
-import com.swmansion.rnscreens.stack.animation.spec.RowSpec
-import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
-import com.swmansion.rnscreens.stack.animation.spec.TrackSpec
-import com.swmansion.rnscreens.stack.animation.spec.ZPolicy
-import com.swmansion.rnscreens.stack.screen.StackContainerItem
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.Easings
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
+import com.swmansion.rnscreens.core.containers.stack.animation.presets.PresetTable
+import com.swmansion.rnscreens.core.containers.stack.animation.presets.RowTemplate
+import com.swmansion.rnscreens.core.containers.stack.animation.presets.SlotTemplate
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.RowSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.SlotSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.TrackSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.ZPolicy
+import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import kotlin.math.roundToLong
 
 /**

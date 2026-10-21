@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.animation.engine
+package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
-import com.swmansion.rnscreens.stack.animation.model.TrackProperty
-import com.swmansion.rnscreens.stack.animation.model.Value
-import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
-import com.swmansion.rnscreens.stack.animation.spec.TrackSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.model.TrackProperty
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.SlotSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.TrackSpec
 
 internal object SlotAnimator {
     /**

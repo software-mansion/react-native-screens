@@ -10,6 +10,7 @@ import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.core.containers.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.core.containers.stack.screen.PreventNativeDismissChangeObserver
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
@@ -20,7 +21,6 @@ import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderC
 import com.swmansion.rnscreens.react.containers.stack.host.StackHost
 import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewMarker
 import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewSeeking
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 

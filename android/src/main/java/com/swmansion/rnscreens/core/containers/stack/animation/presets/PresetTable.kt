@@ -1,9 +1,9 @@
-package com.swmansion.rnscreens.stack.animation.presets
+package com.swmansion.rnscreens.core.containers.stack.animation.presets
 
-import com.swmansion.rnscreens.stack.animation.model.Easing
-import com.swmansion.rnscreens.stack.animation.model.EasingName
-import com.swmansion.rnscreens.stack.animation.model.PresetName
-import com.swmansion.rnscreens.stack.animation.model.Value
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
+import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
+import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetName
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
 import java.util.EnumMap
 
 internal object PresetTable {

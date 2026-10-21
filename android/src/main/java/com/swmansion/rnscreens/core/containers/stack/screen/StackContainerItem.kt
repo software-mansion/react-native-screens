@@ -3,8 +3,8 @@ package com.swmansion.rnscreens.core.containers.stack.screen
 import android.view.View
 import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.core.containers.stack.header.config.OnHeaderConfigurationAttachListener
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 
 /**
  * What the stack container, its fragments and the header need from an item of the stack.

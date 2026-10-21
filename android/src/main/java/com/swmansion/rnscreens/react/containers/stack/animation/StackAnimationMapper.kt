@@ -1,11 +1,11 @@
-package com.swmansion.rnscreens.stack.animation
+package com.swmansion.rnscreens.react.containers.stack.animation
 
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
+import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetName
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
 import com.swmansion.rnscreens.react.utils.requireNotNullString
-import com.swmansion.rnscreens.stack.animation.model.PresetName
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 
 /**
  * Parses the React `animation` prop (Dynamic) into the native descriptor.

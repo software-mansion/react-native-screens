@@ -1,9 +1,9 @@
-package com.swmansion.rnscreens.stack.animation.engine
+package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Interpolator
-import com.swmansion.rnscreens.stack.animation.model.Easing
-import com.swmansion.rnscreens.stack.animation.model.EasingName
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
+import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
 import java.util.EnumMap
 
 internal object Easings {

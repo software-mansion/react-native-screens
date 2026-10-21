@@ -1,14 +1,14 @@
-package com.swmansion.rnscreens.stack.animation.engine
+package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
 import android.animation.Animator
 import android.view.View
 import android.view.ViewGroup
 import androidx.transition.TransitionValues
 import androidx.transition.Visibility
-import com.swmansion.rnscreens.stack.animation.spec.Slot
-import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
-import com.swmansion.rnscreens.stack.animation.spec.ZPolicy
-import com.swmansion.rnscreens.stack.host.StackContainer
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.Slot
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.SlotSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.ZPolicy
+import com.swmansion.rnscreens.core.containers.stack.host.StackContainer
 
 /**
  * One instance per fragment transition slot. Holds no view references: FragmentManager clones

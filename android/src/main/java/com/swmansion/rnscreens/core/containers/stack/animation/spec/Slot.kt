@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.animation.spec
+package com.swmansion.rnscreens.core.containers.stack.animation.spec
 
 /**
  * The four fragment transition slots.

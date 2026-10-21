@@ -1,8 +1,8 @@
-package com.swmansion.rnscreens.stack.animation.spec
+package com.swmansion.rnscreens.core.containers.stack.animation.spec
 
 import android.view.animation.Interpolator
-import com.swmansion.rnscreens.stack.animation.model.TrackProperty
-import com.swmansion.rnscreens.stack.animation.model.Value
+import com.swmansion.rnscreens.core.containers.stack.animation.model.TrackProperty
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
 
 internal data class TrackSpec(
     val property: TrackProperty,

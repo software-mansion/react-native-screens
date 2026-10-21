@@ -1,7 +1,7 @@
-package com.swmansion.rnscreens.stack.animation.presets
+package com.swmansion.rnscreens.core.containers.stack.animation.presets
 
-import com.swmansion.rnscreens.stack.animation.model.TrackProperty
-import com.swmansion.rnscreens.stack.animation.model.Value
+import com.swmansion.rnscreens.core.containers.stack.animation.model.TrackProperty
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
 
 internal enum class Edge {
     LEFT,

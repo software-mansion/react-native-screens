@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.stack.animation.model
+package com.swmansion.rnscreens.core.containers.stack.animation.model
 
 internal enum class PresetName(
     val stringName: String,

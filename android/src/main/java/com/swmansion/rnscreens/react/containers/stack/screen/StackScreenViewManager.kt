@@ -13,6 +13,8 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationDescriptor
+import com.swmansion.rnscreens.react.containers.stack.animation.StackAnimationMapper
 import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidDisappearEvent
@@ -21,8 +23,6 @@ import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenNa
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWillAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWillDisappearEvent
 import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
-import com.swmansion.rnscreens.stack.animation.StackAnimationMapper
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationDescriptor
 
 @ReactModule(name = StackScreenViewManager.REACT_CLASS)
 internal class StackScreenViewManager :

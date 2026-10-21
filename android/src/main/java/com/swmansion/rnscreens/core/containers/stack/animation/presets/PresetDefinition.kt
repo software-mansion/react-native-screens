@@ -1,8 +1,8 @@
-package com.swmansion.rnscreens.stack.animation.presets
+package com.swmansion.rnscreens.core.containers.stack.animation.presets
 
-import com.swmansion.rnscreens.stack.animation.model.Easing
-import com.swmansion.rnscreens.stack.animation.model.TrackProperty
-import com.swmansion.rnscreens.stack.animation.model.Value
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
+import com.swmansion.rnscreens.core.containers.stack.animation.model.TrackProperty
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
 
 /**
  * Presets are authored in fractions of one reference duration (the push row's), so a

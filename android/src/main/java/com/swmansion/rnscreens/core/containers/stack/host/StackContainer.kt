@@ -16,6 +16,8 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.containers.stack.animation.StackAnimationAssigner
+import com.swmansion.rnscreens.core.containers.stack.animation.StackAnimationBatchKind
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -23,9 +25,6 @@ import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragmentD
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.isMeasured
-import com.swmansion.rnscreens.stack.animation.StackAnimationAssigner
-import com.swmansion.rnscreens.stack.animation.model.StackAnimationBatchKind
-import com.swmansion.rnscreens.stack.animation.StackAnimationBatchKind
 import java.lang.ref.WeakReference
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.

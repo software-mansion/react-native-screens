@@ -1,10 +1,10 @@
-package com.swmansion.rnscreens.stack.animation
+package com.swmansion.rnscreens.core.containers.stack.animation
 
-import com.swmansion.rnscreens.stack.animation.engine.SpecTransition
-import com.swmansion.rnscreens.stack.animation.spec.Slot
-import com.swmansion.rnscreens.stack.animation.spec.SlotSpec
-import com.swmansion.rnscreens.stack.animation.spec.ZPolicy
-import com.swmansion.rnscreens.stack.screen.StackScreenFragment
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.SpecTransition
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.Slot
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.SlotSpec
+import com.swmansion.rnscreens.core.containers.stack.animation.spec.ZPolicy
+import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
 
 /**
  * Writes fragment transition slots ahead of FragmentManager reading them: at batch
