@@ -9,6 +9,7 @@ import {
 type Routes = { Home: undefined; Items: undefined };
 const Stack = createNativeStackNavigator<Routes>();
 
+/** Root screen: pushes the screen with header items. */
 function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
   return (
     <View style={styles.content}>
@@ -21,13 +22,16 @@ function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
   );
 }
 
+/** A custom (React element) header item. */
 function Badge() {
   return <Text style={styles.badge}>custom</Text>;
 }
 
-// iOS 26: switching between [Edit] and [Delete, Done] must morph the Liquid Glass
-// (UIKit matches the items by `identifier`). A title-only change must not animate
-// the items. Custom (React element) items must keep rendering.
+/**
+ * iOS 26: switching between [Edit] and [Delete, Done] must morph the Liquid Glass
+ * (UIKit matches the items by `identifier`). A title-only change must not animate
+ * the items. Custom (React element) items must keep rendering.
+ */
 function Items({ navigation }: NativeStackScreenProps<Routes, 'Items'>) {
   const [editing, setEditing] = useState(false);
   const [custom, setCustom] = useState(false);
@@ -92,6 +96,7 @@ function Items({ navigation }: NativeStackScreenProps<Routes, 'Items'>) {
   );
 }
 
+/** Reproduction for #5003. */
 export default function App() {
   return (
     <NavigationContainer>

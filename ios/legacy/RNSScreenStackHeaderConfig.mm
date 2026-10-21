@@ -509,6 +509,8 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
+/// Applies `config` to the navigation item of `vc`: appearance, title, back button, search bar and
+/// bar button items. `animated` is YES for updates of a visible header.
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -837,6 +839,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+/// Sets the right bar button items of `navitem`, animated only when `animated` is YES and the set of
+/// items changed (see `matchingKeysForBarButtonItems:`).
 + (void)setRightBarButtonItems:(NSArray<UIBarButtonItem *> *)items
               onNavigationItem:(UINavigationItem *)navitem
                       animated:(BOOL)animated
@@ -857,6 +861,8 @@ RNS_IGNORE_SUPER_CALL_END
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV
+/// Returns one key per item to compare two sets of bar button items: the item's `identifier`, the item
+/// itself for an identifier-less custom view, or `NSNull`.
 + (NSArray *)matchingKeysForBarButtonItems:(NSArray<UIBarButtonItem *> *)items API_AVAILABLE(ios(26.0))
 {
   NSMutableArray *keys = [NSMutableArray arrayWithCapacity:items.count];
