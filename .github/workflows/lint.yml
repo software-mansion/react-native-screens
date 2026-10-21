@@ -27,6 +27,8 @@ jobs:
         run: yarn lint-js
       - name: Check types
         run: yarn check-types
+      - name: Check shared AI skills and agents
+        run: yarn check-agent-config
   lint-android:
     runs-on: ubuntu-latest
     concurrency:

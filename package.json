@@ -21,7 +21,9 @@
     "lint-ios": "yarn check-ios-layers",
     "check-ios-layers": "node ./scripts/check-ios-layers.js",
     "generate-spm-header-paths": "node ./scripts/generate-spm-header-paths.js",
-    "lint": "yarn lint-js && yarn lint-android && yarn lint-ios",
+    "sync-agent-skills": "node ./scripts/sync-agent-skills.js",
+    "check-agent-config": "node ./scripts/sync-agent-skills.js --check",
+    "lint": "yarn lint-js && yarn lint-android && yarn lint-ios && yarn check-agent-config",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install"
   },

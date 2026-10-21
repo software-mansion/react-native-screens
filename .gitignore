@@ -70,10 +70,20 @@ android/.settings
 # e2e
 *Example/artifacts
 
-# AI assistant configuration (local only)
+# AI assistant configuration
+# Everything is local by default. Shared skills and agents are opted in one by
+# one below, so personal setups never show up in `git status`.
+# See "AI tooling" in AGENTS.md.
 /CLAUDE.local.md
-/.claude/
-/.agents
+/.claude/*
+!/.claude/agents/
+/.claude/agents/*
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/README.md
+# Shared agents (`!/.claude/agents/<name>.md`) and skills
+# (`!/.agents/skills/<name>/`) go below.
 
 # General rule for files explicitly marked as local
 *.local.*

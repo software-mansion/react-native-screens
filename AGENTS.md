@@ -101,6 +101,38 @@ Runs `tsc --noEmit` against the root `tsconfig.json` (covers `./src/`).
 
 Be extremely frank and focused on thoroughness.
 
+## AI tooling
+
+Shared skills and agents are checked in; everything else in `.agents/` and
+`.claude/` stays local and gitignored.
+
+| Kind   | Location                           |
+| ------ | ---------------------------------- |
+| Skills | `.agents/skills/<name>/SKILL.md`   |
+| Agents | `.claude/agents/<name>.md`         |
+
+Claude Code reads skills only from `.claude/skills/`. After cloning, and
+whenever shared skills change, run:
+
+```bash
+yarn sync-agent-skills
+```
+
+It links every skill from `.agents/skills/` into `.claude/skills/`. Existing
+entries in `.claude/skills/` are never overwritten.
+
+To share a skill or an agent:
+
+1. Add it in the location above.
+2. Opt it into git in `.gitignore` (`!/.agents/skills/<name>/` or
+   `!/.claude/agents/<name>.md`).
+3. Run `yarn check-agent-config` (also run in CI). It requires `name` and
+   `description` in the frontmatter (a skill's `name` must match its
+   directory) and rejects absolute home paths such as `/Users/<you>/...`.
+4. Make sure it does not depend on your machine: no personal paths, local
+   tools or credentials. For agent memory use `memory: project` rather than
+   a hardcoded directory; `.claude/agent-memory/` stays local.
+
 ## Issue creation
 
 If you intend to create an issue on this repository, adhere to templates from `./.github/ISSUE_TEMPLATE/`!
