@@ -791,7 +791,7 @@ class TabsContainer internal constructor(
         bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.BADGE)
         tabsModel.forEach { fragment ->
             applyPendingMenuItemChanges(
-                bottomNavigationView.menu.requireMenuItemForFragment(fragment),
+                bottomNavigationView.requireMenuItem(fragment.menuItemId),
                 fragment.item,
                 appearance,
                 iconBoxDp,
@@ -813,7 +813,7 @@ class TabsContainer internal constructor(
     private fun getMenuItemForItem(item: TabsContainerItem): MenuItem? =
         tabsModel
             .find { it.item === item }
-            ?.let { fragment -> bottomNavigationView.menu.findMenuItemForFragment(fragment) }
+            ?.let { fragment -> bottomNavigationView.findMenuItem(fragment.menuItemId) }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireItemKey == screenKey }
 

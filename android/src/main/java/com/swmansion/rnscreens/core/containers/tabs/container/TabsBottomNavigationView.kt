@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.core.containers.tabs.container
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 
@@ -15,6 +16,11 @@ open class TabsBottomNavigationView(
     val container: TabsContainer,
 ) : BottomNavigationView(context) {
     private var actionOrigin: TabsActionOrigin? = null
+
+    internal fun findMenuItem(menuItemId: Int): MenuItem? = menu.findItem(menuItemId)
+
+    internal fun requireMenuItem(menuItemId: Int): MenuItem =
+        checkNotNull(findMenuItem(menuItemId)) { "[RNScreens] Missing MenuItem for id: $menuItemId" }
 
     // region Menu item state
 
