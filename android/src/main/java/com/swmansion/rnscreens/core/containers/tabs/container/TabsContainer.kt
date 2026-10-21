@@ -411,8 +411,9 @@ class TabsContainer internal constructor(
     // region Tab configuration changes
 
     /**
-     * Maps a tab's fine-grained [flags] to tab bar updates: the menu item records them, so the
-     * applicator re-applies only the invalidated parts, and the container decides what to run.
+     * Maps a tab's fine-grained [flags] to tab bar updates: the menu item records them, so its next
+     * update ([applyPendingMenuItemChanges]) re-applies only the invalidated parts, and the container
+     * decides what to run (bar-wide changes such as `APPEARANCE` go through the whole-bar update).
      */
     private fun onItemInvalidated(
         item: TabsContainerItem,
@@ -464,7 +465,7 @@ class TabsContainer internal constructor(
         appearanceCoordinator.updateMenuItemAppearance(themedContext, menuItem, item, appearance, iconBoxDp, flags)
         if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY)) {
             if (!a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)) {
-                // The menu item's view doesn't exist yet; retry on the next update.
+                // The menu item's view doesn't exist yet; keep it pending for the menu item's next update.
                 bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACCESSIBILITY)
             }
         }

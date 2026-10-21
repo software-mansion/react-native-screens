@@ -84,7 +84,7 @@ internal class TabsAppearanceCoordinator(
 
         if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)) {
             if (!appearanceApplicator.applyActiveIndicatorSize(menuItem, item, bottomNavigationView.menuItemState(menuItem.itemId))) {
-                // The menu item's view doesn't exist yet; retry on the next update.
+                // The menu item's view doesn't exist yet; keep it pending for the menu item's next update.
                 bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)
             }
         }
