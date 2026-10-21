@@ -48,7 +48,7 @@ class TabsHostA11yCoordinator(
         }
     }
 
-    // Third-party SDKs can freely assign their own ids to id-less views in CustomBottomNavigationView's subtree and there is no way to
+    // Third-party SDKs can freely assign their own ids to id-less views in TabsBottomNavigationView's subtree and there is no way to
     // coordinate that id space with them, so we should search ids only inside Material's menu items scope.
     private fun findTabItemView(menuItemId: Int): View? = bottomNavigationView.menuViewGroup.children.firstOrNull { it.id == menuItemId }
 
