@@ -213,7 +213,7 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+  [_controller.contentView insertSubview:childComponentView atIndex:index];
 
   // Assuming that for `fitToContents` the RNSFormSheetContentWrapperComponentView will be a direct child of
   // RNSFormSheetHostComponentView.
@@ -228,7 +228,7 @@ namespace react = facebook::react;
     ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = nil;
   }
 
-  [_controller.contentView removeReactSubview:childComponentView];
+  [childComponentView removeFromSuperview];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
