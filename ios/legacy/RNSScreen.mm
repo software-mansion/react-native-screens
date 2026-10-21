@@ -1268,7 +1268,9 @@ RNS_IGNORE_SUPER_CALL_END
   // The marker registers once it is in a window, after `willMoveToParentViewController:` has applied the screen's
   // behavior override to the scroll view found by the heuristic. The marker applies its own edge effects after
   // registering.
-  [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehavior:scrollView];
+  }
 }
 
 - (void)unregisterDescendantScrollView:(UIScrollView *)scrollView
@@ -1278,6 +1280,7 @@ RNS_IGNORE_SUPER_CALL_END
   }
   _contentScrollView = nil;
   [_controller setContentScrollView:nil forEdge:NSDirectionalRectEdgeAll];
+  [self updateContentScrollViewEdgeEffectsIfExists];
 }
 
 - (nullable UIScrollView *)cachedContentScrollView
