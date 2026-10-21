@@ -283,6 +283,11 @@ open class ScreenViewManager :
         value: ReadableMap?,
     ) = Unit
 
+    override fun setAdditionalSafeAreaInsets(
+        view: Screen?,
+        value: ReadableMap?,
+    ) = Unit
+
     override fun setHomeIndicatorHidden(
         view: Screen?,
         value: Boolean,

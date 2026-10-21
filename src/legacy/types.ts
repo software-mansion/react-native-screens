@@ -99,6 +99,13 @@ export type GestureResponseDistanceType = {
   bottom?: number | undefined;
 };
 
+export type AdditionalSafeAreaInsetsType = {
+  top?: number | undefined;
+  right?: number | undefined;
+  bottom?: number | undefined;
+  left?: number | undefined;
+};
+
 export type SearchBarPlacement =
   | 'automatic'
   | 'inline' // deprecated starting from iOS 26
@@ -129,6 +136,23 @@ export interface ScreenProps extends ViewProps {
     | 2
     | Animated.AnimatedInterpolation<number>
     | undefined;
+  /**
+   * Insets, in points, added to the safe area of the screen's view controller,
+   * on top of the insets coming from the system and its containers.
+   * Edges that are not set default to `0`.
+   *
+   * Use it to keep content clear of UI drawn over the screen, e.g. a custom tab bar
+   * floating over its bottom edge. Scroll views with `contentInsetAdjustmentBehavior="automatic"`,
+   * `SafeAreaView` and other safe-area-aware views inside the screen take these insets into account,
+   * the same way they do for a native `UITabBar`.
+   *
+   * Maps to `UIViewController.additionalSafeAreaInsets`.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiviewcontroller/additionalsafeareainsets|additionalSafeAreaInsets}
+   *
+   * @platform ios
+   */
+  additionalSafeAreaInsets?: AdditionalSafeAreaInsetsType | undefined;
   /**
    * Boolean indicating that the screen should be frozen with `react-freeze`.
    */

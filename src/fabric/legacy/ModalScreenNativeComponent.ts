@@ -37,6 +37,13 @@ type GestureResponseDistanceType = Readonly<{
   bottom: CT.Float;
 }>;
 
+type AdditionalSafeAreaInsetsType = Readonly<{
+  top: CT.Float;
+  right: CT.Float;
+  bottom: CT.Float;
+  left: CT.Float;
+}>;
+
 type StackPresentation =
   | 'push'
   | 'modal'
@@ -111,6 +118,7 @@ export interface NativeProps extends ViewProps {
   statusBarStyle?: string | undefined;
   statusBarTranslucent?: boolean | undefined;
   gestureResponseDistance?: GestureResponseDistanceType | undefined;
+  additionalSafeAreaInsets?: AdditionalSafeAreaInsetsType | undefined;
   stackPresentation?: CT.WithDefault<StackPresentation, 'push'>;
   stackAnimation?: CT.WithDefault<StackAnimation, 'default'>;
   transitionDuration?: CT.WithDefault<CT.Int32, 500>;
