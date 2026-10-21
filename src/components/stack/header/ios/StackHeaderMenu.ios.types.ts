@@ -69,10 +69,11 @@ export interface StackHeaderMenuItemIOS {
    * @summary Icon displayed for the menu item.
    *
    * @description
-   * Supports SF Symbols, xcassets, and image sources. Local files (including
-   * images bundled with a release build) are loaded synchronously. For other
-   * image sources (e.g. remote URLs or images served by Metro),
-   * the menu item renders without an icon first and updates when loaded.
+   * Supports SF Symbols, xcassets, and image sources. Image sources that point
+   * to a local file, including images bundled in a release build, are loaded
+   * synchronously. Other image sources (remote URLs, images served by Metro in
+   * development) are loaded asynchronously: the menu item renders without an icon
+   * first and updates when loaded.
    *
    * @platform ios
    */
@@ -167,10 +168,11 @@ export interface StackHeaderMenuIOS {
    * @summary Icon displayed for the submenu.
    *
    * @description
-   * Supports SF Symbols, xcassets, and image sources. Local files (including
-   * images bundled with a release build) are loaded synchronously. For other
-   * image sources (e.g. remote URLs or images served by Metro),
-   * the menu renders without an icon first and updates when loaded.
+   * Supports SF Symbols, xcassets, and image sources. Image sources that point
+   * to a local file, including images bundled in a release build, are loaded
+   * synchronously. Other image sources (remote URLs, images served by Metro in
+   * development) are loaded asynchronously: the menu renders without an icon
+   * first and updates when loaded.
    *
    * @platform ios
    */

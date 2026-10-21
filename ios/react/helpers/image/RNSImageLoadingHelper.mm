@@ -39,13 +39,12 @@
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
   RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
 
-  // `RCTImageLoader` loads synchronously only images from the app bundle. Any other local file
-  // (e.g. an icon rendered to disk or an asset downloaded by an OTA update) goes through
-  // `RCTNetworking` and is always delivered asynchronously, so we read it here instead.
-  // Reading on the calling thread keeps the guarantee that `completionBlock` runs on main queue.
-  if (RCTIsMainQueue() && [self isLocalFileOutsideOfAppBundle:imageSource]) {
-    UIImage *image = [self loadImageFromLocalFileSource:imageSource];
-    // A missing or undecodable file falls through, so `RCTImageLoader` handles (and reports) it as before.
+  // `RCTImageLoader` is synchronous only for png/jpg inside the app bundle; any other local file goes
+  // through `RCTNetworking`. `+[RCTConvert UIImage:]` is RN's synchronous loader for local files and
+  // sizes them like bundle assets do (pixels / `scale`, `width` / `height` are not applied).
+  if (RCTIsMainQueue() && imageSource.request.URL.isFileURL) {
+    UIImage *image = [RCTConvert UIImage:[self jsonSourceFromImageSource:imageSource]];
+    // A missing file falls through, so `RCTImageLoader` reports it as before.
     if (image != nil) {
       imageLoadingCompletionBlock([RNSImageLoadingHelper handleRenderingModeForImage:image isTemplate:isTemplate]);
       return;
@@ -73,21 +72,14 @@
       }];
 }
 
-+ (BOOL)isLocalFileOutsideOfAppBundle:(nonnull RCTImageSource *)imageSource
++ (nonnull NSDictionary *)jsonSourceFromImageSource:(nonnull RCTImageSource *)imageSource
 {
-  NSURL *url = imageSource.request.URL;
-  return url.isFileURL && !RCTIsBundleAssetURL(url);
-}
-
-+ (nullable UIImage *)loadImageFromLocalFileSource:(nonnull RCTImageSource *)imageSource
-{
-  // Like `RCTImageLoader`, we decode exactly the referenced file at the scale of the source
-  // (`imageWithContentsOfFile:` would pick `@2x` / `@3x` variants and infer the scale on its own).
-  NSData *data = [NSData dataWithContentsOfURL:imageSource.request.URL];
-  if (data == nil) {
-    return nil;
-  }
-  return [UIImage imageWithData:data scale:imageSource.scale > 0 ? imageSource.scale : 1.0];
+  return @{
+    @"uri" : imageSource.request.URL.absoluteString,
+    @"width" : @(imageSource.size.width),
+    @"height" : @(imageSource.size.height),
+    @"scale" : @(imageSource.scale),
+  };
 }
 
 + (nullable UIImage *)symbolImageNamed:(nonnull NSString *)name
