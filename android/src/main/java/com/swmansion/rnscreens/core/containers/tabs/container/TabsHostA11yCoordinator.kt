@@ -13,17 +13,20 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
 class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
 ) {
+    /**
+     * @return `false` when the menu item's view doesn't exist yet, so the test ID could not be set.
+     */
     fun setA11yPropertiesToTabItem(
         menuItem: MenuItem,
         item: TabsContainerItem,
-    ) {
+    ): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // The setting will overwrite default item title when building a11y description
             // see https://github.com/material-components/material-components-android/blob/9cc5d57d7b5a41d0ceafa29b98d2cd6d4094d19c/lib/java/com/google/android/material/navigation/NavigationBarItemView.java#L692
             menuItem.contentDescription = item.tabBarItemAccessibilityLabel
         }
 
-        findTabItemView(menuItem.itemId)?.let { tabItemView ->
+        return findTabItemView(menuItem.itemId)?.let { tabItemView ->
             // when matching view by id, espresso driver seems to look for tag property
             tabItemView.tag = item.tabBarItemTestID
 
@@ -42,7 +45,8 @@ class TabsHostA11yCoordinator(
                     }
                 },
             )
-        }
+            true
+        } ?: false
     }
 
     // Third-party SDKs can freely assign their own ids to id-less views in TabsBottomNavigationView's subtree and there is no way to

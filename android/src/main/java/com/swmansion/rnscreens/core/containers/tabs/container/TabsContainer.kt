@@ -462,8 +462,9 @@ class TabsContainer internal constructor(
     ) {
         val flags = bottomNavigationView.menuItemState(menuItem.itemId).consumePendingFlags()
         appearanceCoordinator.updateMenuItemAppearance(themedContext, menuItem, item, appearance, iconBoxDp, flags)
-        if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY)) {
-            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)
+        if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY) && !a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)) {
+            // The menu item's view doesn't exist yet; retry on the next update.
+            bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACCESSIBILITY)
         }
     }
 
