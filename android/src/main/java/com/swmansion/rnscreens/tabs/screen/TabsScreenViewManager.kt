@@ -199,11 +199,16 @@ class TabsScreenViewManager :
             tabBarItemTitleFontFamily = appearance.readOptionalString("tabBarItemTitleFontFamily"),
             tabBarItemTitleSmallLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleSmallLabelFontSize"),
             tabBarItemTitleLargeLabelFontSize = appearance.readOptionalFloat("tabBarItemTitleLargeLabelFontSize"),
-            tabBarItemTitleFontWeight = appearance.readOptionalString("tabBarItemTitleFontWeight"),
-            tabBarItemTitleFontStyle = appearance.readOptionalString("tabBarItemTitleFontStyle"),
+            tabBarItemTitleFontWeight = appearance.readOptionalString("tabBarItemTitleFontWeight")?.let(::parseFontWeight),
+            tabBarItemTitleFontItalic = appearance.readOptionalString("tabBarItemTitleFontStyle")?.let { it == "italic" },
             tabBarItemBadgeBackgroundColor = appearance.readOptionalColor(context, "tabBarItemBadgeBackgroundColor"),
             tabBarItemBadgeTextColor = appearance.readOptionalColor(context, "tabBarItemBadgeTextColor"),
         )
+
+    // Bold is 700 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
+    // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
+    // Anything else (e.g. "normal") is left unset: `ReactFontResolver` then applies React Native's default weight.
+    private fun parseFontWeight(fontWeight: String): Int? = if (fontWeight == "bold") 700 else fontWeight.toIntOrNull()
 
     private fun parseItemStateAppearance(
         context: Context,

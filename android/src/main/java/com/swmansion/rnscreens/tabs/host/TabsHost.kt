@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.common.text.ReactFontResolver
 import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
 import com.swmansion.rnscreens.react.utils.ViewIdGenerator
 import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
@@ -44,7 +45,13 @@ class TabsHost(
     private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
-        TabsContainer(reactContext, WeakReference(this), ViewIdGenerator).apply {
+        TabsContainer(
+            reactContext,
+            WeakReference(this),
+            ViewIdGenerator,
+            ReactFontResolver(reactContext),
+            ::ReactTabsBottomNavigationView,
+        ).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,

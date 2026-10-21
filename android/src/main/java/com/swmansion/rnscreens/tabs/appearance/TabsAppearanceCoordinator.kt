@@ -2,16 +2,18 @@ package com.swmansion.rnscreens.tabs.appearance
 
 import android.content.Context
 import android.view.MenuItem
-import com.swmansion.rnscreens.tabs.container.CustomBottomNavigationView
+import com.swmansion.rnscreens.core.common.text.FontResolver
+import com.swmansion.rnscreens.tabs.container.TabsBottomNavigationView
 import com.swmansion.rnscreens.tabs.container.TabsContainer
 import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
 
 internal class TabsAppearanceCoordinator(
-    private val bottomNavigationView: CustomBottomNavigationView,
+    private val bottomNavigationView: TabsBottomNavigationView,
     private val tabsScreenFragments: MutableList<TabsScreenFragment>,
+    titleFontResolver: FontResolver,
 ) {
-    private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView)
+    private val appearanceApplicator = TabsAppearanceApplicator(bottomNavigationView, titleFontResolver)
 
     private var appliedIconBoxDp: Float? = null
 

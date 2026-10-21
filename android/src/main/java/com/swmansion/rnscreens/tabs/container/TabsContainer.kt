@@ -26,6 +26,7 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.common.safearea.EdgeInsets
 import com.swmansion.rnscreens.core.common.safearea.OnInterfaceInsetsChangeListener
 import com.swmansion.rnscreens.core.common.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
@@ -55,6 +56,8 @@ class TabsContainer internal constructor(
     private val context: Context,
     private val delegate: WeakReference<TabsContainerDelegate>,
     private val viewIdProvider: ViewIdProviding,
+    titleFontResolver: FontResolver,
+    bottomNavigationViewFactory: (Context, TabsContainer) -> TabsBottomNavigationView = ::TabsBottomNavigationView,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -130,8 +133,8 @@ class TabsContainer internal constructor(
             R.style.Theme_Material3_DayNight_NoActionBar,
         )
 
-    internal val bottomNavigationView: CustomBottomNavigationView =
-        CustomBottomNavigationView(themedContext, this).apply {
+    internal val bottomNavigationView: TabsBottomNavigationView =
+        bottomNavigationViewFactory(themedContext, this).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -159,7 +162,7 @@ class TabsContainer internal constructor(
         }
 
     private val appearanceCoordinator =
-        TabsAppearanceCoordinator(bottomNavigationView, tabsModel)
+        TabsAppearanceCoordinator(bottomNavigationView, tabsModel, titleFontResolver)
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsModel)
 
