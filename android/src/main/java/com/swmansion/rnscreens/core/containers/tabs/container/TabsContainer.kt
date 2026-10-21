@@ -462,9 +462,11 @@ class TabsContainer internal constructor(
     ) {
         val flags = bottomNavigationView.menuItemState(menuItem.itemId).consumePendingFlags()
         appearanceCoordinator.updateMenuItemAppearance(themedContext, menuItem, item, appearance, iconBoxDp, flags)
-        if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY) && !a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)) {
-            // The menu item's view doesn't exist yet; retry on the next update.
-            bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACCESSIBILITY)
+        if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY)) {
+            if (!a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)) {
+                // The menu item's view doesn't exist yet; retry on the next update.
+                bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACCESSIBILITY)
+            }
         }
     }
 
@@ -788,12 +790,12 @@ class TabsContainer internal constructor(
         // Badge colours come from the selected tab's appearance.
         bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.BADGE)
         tabsModel.forEach { fragment ->
-            val menuItemId = fragment.menuItemId
-            val menuItem =
-                checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
-                    "[RNScreens] Missing MenuItem for id: $menuItemId"
-                }
-            applyPendingMenuItemChanges(menuItem, fragment.item, appearance, iconBoxDp)
+            applyPendingMenuItemChanges(
+                bottomNavigationView.menu.requireMenuItemForFragment(fragment),
+                fragment.item,
+                appearance,
+                iconBoxDp,
+            )
         }
         appearanceCoordinator.updateFontStyles(themedContext, appearance) // It needs to be updated after the menu items
     }
@@ -811,9 +813,7 @@ class TabsContainer internal constructor(
     private fun getMenuItemForItem(item: TabsContainerItem): MenuItem? =
         tabsModel
             .find { it.item === item }
-            ?.let { fragment ->
-                bottomNavigationView.menu.findItem(fragment.menuItemId)
-            }
+            ?.let { fragment -> bottomNavigationView.menu.findMenuItemForFragment(fragment) }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireItemKey == screenKey }
 

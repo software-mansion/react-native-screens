@@ -39,7 +39,7 @@ internal class TabsAppearanceApplicator(
         item.appearance?.tabBarItemIconSize?.takeIf { it > 0f } ?: defaultIconSizeDp
 
     // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
-    fun applyIconBox(iconBoxDp: Float) {
+    internal fun applyIconBox(iconBoxDp: Float) {
         val iconBoxPx = bottomNavigationView.dpToPx(iconBoxDp).toInt()
         if (bottomNavigationView.itemIconSize != iconBoxPx) {
             bottomNavigationView.itemIconSize = iconBoxPx
@@ -72,7 +72,7 @@ internal class TabsAppearanceApplicator(
      * @return `false` when the menu item's view doesn't exist yet, so nothing could be applied.
      */
     @SuppressLint("RestrictedApi")
-    fun applyActiveIndicatorSize(
+    internal fun applyActiveIndicatorSize(
         menuItem: MenuItem,
         item: TabsContainerItem,
         state: TabsMenuItemState,
@@ -122,7 +122,7 @@ internal class TabsAppearanceApplicator(
             intArrayOf(), // normal
         )
 
-    fun updateSharedAppearance(
+    internal fun updateSharedAppearance(
         context: Context,
         tabBarAppearance: TabsAppearance?,
         isTabBarHidden: Boolean,
@@ -203,7 +203,7 @@ internal class TabsAppearanceApplicator(
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
     }
 
-    fun updateFontStyles(
+    internal fun updateFontStyles(
         context: Context,
         tabBarAppearance: TabsAppearance?,
     ) {
@@ -248,14 +248,14 @@ internal class TabsAppearanceApplicator(
         }
     }
 
-    fun applyTitle(
+    internal fun applyTitle(
         menuItem: MenuItem,
         item: TabsContainerItem,
     ) {
         menuItem.title = item.tabTitle
     }
 
-    fun applyIcon(
+    internal fun applyIcon(
         menuItem: MenuItem,
         item: TabsContainerItem,
         iconBoxDp: Float,

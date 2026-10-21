@@ -40,7 +40,7 @@ internal class TabsAppearanceCoordinator(
      * box the menu items are sized in. Menu items whose icons depend on a changed icon box are
      * invalidated.
      */
-    fun updateBarAppearance(
+    internal fun updateBarAppearance(
         context: Context,
         appearance: TabsAppearance?,
         isTabBarHidden: Boolean,
@@ -55,7 +55,7 @@ internal class TabsAppearanceCoordinator(
         return iconBoxDp
     }
 
-    fun updateFontStyles(
+    internal fun updateFontStyles(
         context: Context,
         appearance: TabsAppearance?,
     ) {
@@ -82,11 +82,11 @@ internal class TabsAppearanceCoordinator(
             appearanceApplicator.applyIcon(menuItem, item, iconBoxDp)
         }
 
-        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE) &&
-            !appearanceApplicator.applyActiveIndicatorSize(menuItem, item, bottomNavigationView.menuItemState(menuItem.itemId))
-        ) {
-            // The menu item's view doesn't exist yet; retry on the next update.
-            bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)) {
+            if (!appearanceApplicator.applyActiveIndicatorSize(menuItem, item, bottomNavigationView.menuItemState(menuItem.itemId))) {
+                // The menu item's view doesn't exist yet; retry on the next update.
+                bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)
+            }
         }
 
         if (flags.containsAny(TabsItemInvalidationFlags.BADGE)) {
