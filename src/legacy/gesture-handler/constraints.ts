@@ -2,6 +2,7 @@ import {
   ScreenTransition,
   AnimatedScreenTransition,
   GoBackGesture,
+  MeasuredDimensions,
 } from 'react-native-reanimated';
 import { AnimationForGesture } from './defaults';
 import {
@@ -86,4 +87,41 @@ export function checkIfTransitionCancelled(
     isTransitionCanceled = isCanceledHorizontally && isCanceledVertically;
   }
   return isTransitionCanceled;
+}
+
+export function computeProgress(
+  goBackGesture: string | undefined,
+  event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
+  screenDimensions: Pick<MeasuredDimensions, 'width' | 'height'>,
+  startingPosition: Pick<
+    PanGestureHandlerEventPayload,
+    'absoluteX' | 'absoluteY'
+  >,
+) {
+  'worklet';
+  let progress = 0;
+  if (goBackGesture === 'swipeRight') {
+    progress =
+      event.translationX /
+      (screenDimensions.width - startingPosition.absoluteX);
+  } else if (goBackGesture === 'swipeLeft') {
+    progress = (-1 * event.translationX) / startingPosition.absoluteX;
+  } else if (goBackGesture === 'swipeDown') {
+    progress =
+      event.translationY /
+      (screenDimensions.height - startingPosition.absoluteY);
+  } else if (goBackGesture === 'swipeUp') {
+    progress = (-1 * event.translationY) / startingPosition.absoluteY;
+  } else if (goBackGesture === 'horizontalSwipe') {
+    progress = Math.abs(event.translationX / screenDimensions.width / 2);
+  } else if (goBackGesture === 'verticalSwipe') {
+    progress = Math.abs(event.translationY / screenDimensions.height / 2);
+  } else if (goBackGesture === 'twoDimensionalSwipe') {
+    const progressX = Math.abs(event.translationX / screenDimensions.width / 2);
+    const progressY = Math.abs(
+      event.translationY / screenDimensions.height / 2,
+    );
+    progress = Math.max(progressX, progressY);
+  }
+  return progress;
 }
