@@ -5,6 +5,7 @@
 #import <React/RCTViewManager.h>
 #endif // __cplusplus
 
+#import "RNSContainerItem.h"
 #import "RNSLegacyEnums.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
@@ -38,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <RNSViewControllerDelegate
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate,
+                                         RNSContainerItem
 #if !TARGET_OS_TV
                                          ,
                                          RNSOrientationProviding
@@ -176,6 +178,12 @@ NS_ASSUME_NONNULL_BEGIN
  * tree.
  */
 - (BOOL)registerContentWrapper:(nonnull RNSScreenContentWrapper *)contentWrapper contentHeightErrata:(float)errata;
+
+/**
+ * Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`, or nil if
+ * none has been registered. Queried by the owning controller (`RNSContainerItem`).
+ */
+- (nullable UIScrollView *)cachedContentScrollView;
 
 @end
 

@@ -19,6 +19,7 @@
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
 
+#import "RNSContainerItemSupport.h"
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewComponentView.h"
 #import "RNSSafeAreaViewNotifications.h"
@@ -27,6 +28,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSScrollViewMarkerComponentView.h"
 #import "RNSScrollViewSeeking.h"
 #import "RNSTabBarController.h"
 
@@ -64,6 +66,7 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  __weak UIScrollView *_Nullable _contentScrollView;
   UITapGestureRecognizer *_backdropTapGestureRecognizer;
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -1149,12 +1152,16 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
 {
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
-    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+    [RNSScrollViewHelper overrideScrollViewBehavior:[_controller findContentScrollView]];
   }
 }
 
 - (void)updateContentScrollViewEdgeEffectsIfExists
 {
+  // The marker's edge effects take priority over the screen's.
+  if (_contentScrollView != nil) {
+    return;
+  }
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
                                       withProvider:self];
 }
@@ -1165,31 +1172,26 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // UIKit looks for the content scroll view only in the first descendant chain, unless it is set explicitly.
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
-  [[self findSeekingAncestorOutsideLegacyScreens] registerDescendantScrollView:scrollView fromMarker:marker];
+  _contentScrollView = scrollView;
+
+  // The marker registers once it is in a window, after `willMoveToParentViewController:` has applied the screen's
+  // edge effects and behavior override to the scroll view found by the heuristic.
+  [RNSScrollEdgeEffectApplicator applyToScrollView:scrollView withProvider:marker];
+  [self overrideScrollViewBehaviorInFirstDescendantChainIfNeeded];
 }
 
 - (void)unregisterDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
 {
-  // Another marker that is still mounted in this screen is not registered again. The content scroll view stays
-  // unset (UIKit falls back to its own lookup) until that marker registers on the next window attach.
-  if ([_controller contentScrollViewForEdge:NSDirectionalRectEdgeTop] == scrollView) {
-    [_controller setContentScrollView:nil forEdge:NSDirectionalRectEdgeAll];
+  if (_contentScrollView != scrollView) {
+    return;
   }
+  _contentScrollView = nil;
+  [_controller setContentScrollView:nil forEdge:NSDirectionalRectEdgeAll];
 }
 
-/**
- * Passes the registration on to the ancestor (e.g. a tabs screen) that the marker would have registered with
- * before screens of the legacy stack and screen container became seeking ancestors.
- */
-- (nullable id<RNSScrollViewSeeking>)findSeekingAncestorOutsideLegacyScreens
+- (nullable UIScrollView *)cachedContentScrollView
 {
-  for (UIView *ancestor = self.reactSuperview; ancestor != nil; ancestor = ancestor.reactSuperview) {
-    if (![ancestor isKindOfClass:RNSScreenView.class] &&
-        [ancestor respondsToSelector:@selector(registerDescendantScrollView:fromMarker:)]) {
-      return static_cast<id<RNSScrollViewSeeking>>(ancestor);
-    }
-  }
-  return nil;
+  return _contentScrollView;
 }
 
 #pragma mark - RNSSafeAreaProviding
@@ -1500,6 +1502,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _shouldNotify;
   BOOL _isRemovedFromParent;
   BOOL _hasNotifiedDismissed;
+  RNSContainerItemSupport *_Nonnull _containerItemSupport;
 }
 
 #pragma mark - Common
@@ -1512,6 +1515,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
     _hasNotifiedDismissed = NO;
+    _containerItemSupport = [RNSContainerItemSupport new];
   }
   return self;
 }
@@ -2051,6 +2055,29 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (RNSScreenView *)screenView
 {
   return static_cast<RNSScreenView *>(self.view);
+}
+
+#pragma mark - RNSContainerItem
+
+- (void)registerNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport registerNestedContainer:container];
+}
+
+- (void)unregisterNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport unregisterNestedContainer:container];
+}
+
+- (nullable id<RNSContainer>)resolveNestedContainer
+{
+  return [_containerItemSupport resolveNestedContainer];
+}
+
+- (nullable UIScrollView *)findContentScrollView
+{
+  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[self.screenView cachedContentScrollView]
+                                                            heuristicRoot:self.screenView];
 }
 
 - (void)hideHeaderIfNecessary

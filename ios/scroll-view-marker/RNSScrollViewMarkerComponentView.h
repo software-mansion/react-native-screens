@@ -1,10 +1,11 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSScrollViewMarkerComponentView : RNSReactBaseView
+@interface RNSScrollViewMarkerComponentView : RNSReactBaseView <RNSScrollEdgeEffectProviding>
 
 @end
 

@@ -15,9 +15,6 @@
 
 namespace react = facebook::react;
 
-@interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding>
-@end
-
 @implementation RNSScrollViewMarkerComponentView {
   BOOL _hasAttemptedRegistration;
   BOOL _needsEdgeEffectUpdate;
