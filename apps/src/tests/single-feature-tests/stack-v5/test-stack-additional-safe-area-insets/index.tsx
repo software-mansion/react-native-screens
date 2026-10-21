@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -33,9 +33,9 @@ function HomeScreen() {
   }, [insetsEnabled, routeKey, setRouteOptions]);
 
   return mode === 'List' ? (
-    <InsetsListContent topEdge={false} />
+    <InsetsListContent topEdge={Platform.OS === 'ios'} />
   ) : (
-    <InsetsSafeAreaViewContent topEdge={false} />
+    <InsetsSafeAreaViewContent topEdge={Platform.OS === 'ios'} />
   );
 }
 
