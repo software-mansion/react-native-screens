@@ -20,7 +20,6 @@ import { DefaultEvent, DefaultScreenDimensions } from './defaults';
 import {
   checkBoundaries,
   checkIfTransitionCancelled,
-  computeProgress,
   getAnimationForTransition,
 } from './constraints';
 import { GestureProviderProps } from '../types';
@@ -92,6 +91,41 @@ const ScreenGestureDetector = ({
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
   }, [currentScreenId, goBackGesture]);
 
+  function computeProgress(
+    event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
+  ) {
+    'worklet';
+    let progress = 0;
+    const screenDimensions = screenTransitionConfig.value.screenDimensions;
+    const startingPosition = startingGesturePosition.value;
+    if (goBackGesture === 'swipeRight') {
+      progress =
+        event.translationX /
+        (screenDimensions.width - startingPosition.absoluteX);
+    } else if (goBackGesture === 'swipeLeft') {
+      progress = (-1 * event.translationX) / startingPosition.absoluteX;
+    } else if (goBackGesture === 'swipeDown') {
+      progress =
+        event.translationY /
+        (screenDimensions.height - startingPosition.absoluteY);
+    } else if (goBackGesture === 'swipeUp') {
+      progress = (-1 * event.translationY) / startingPosition.absoluteY;
+    } else if (goBackGesture === 'horizontalSwipe') {
+      progress = Math.abs(event.translationX / screenDimensions.width / 2);
+    } else if (goBackGesture === 'verticalSwipe') {
+      progress = Math.abs(event.translationY / screenDimensions.height / 2);
+    } else if (goBackGesture === 'twoDimensionalSwipe') {
+      const progressX = Math.abs(
+        event.translationX / screenDimensions.width / 2,
+      );
+      const progressY = Math.abs(
+        event.translationY / screenDimensions.height / 2,
+      );
+      progress = Math.max(progressX, progressY);
+    }
+    return progress;
+  }
+
   function onStart(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
     'worklet';
     sharedEvent.value = event;
@@ -143,12 +177,7 @@ const ScreenGestureDetector = ({
       return;
     }
     checkBoundaries(goBackGesture, event);
-    const progress = computeProgress(
-      goBackGesture,
-      event,
-      screenTransitionConfig.value.screenDimensions,
-      startingGesturePosition.value,
-    );
+    const progress = computeProgress(event);
     sharedEvent.value = event;
     const stackTag = screenTransitionConfig.value.stackTag;
     RNScreensTurboModule.updateTransition(stackTag, progress);
