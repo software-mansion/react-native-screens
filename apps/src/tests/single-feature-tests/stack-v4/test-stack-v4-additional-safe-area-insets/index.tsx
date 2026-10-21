@@ -67,7 +67,7 @@ function SafeAreaContextInsets() {
 
 function SafeAreaViewTab() {
   return (
-    <View style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
       <SafeAreaView
         edges={{ top: true, bottom: true, left: true, right: true }}
         style={styles.container}>
@@ -76,12 +76,12 @@ function SafeAreaViewTab() {
             The red border fills the SafeAreaView. Its bottom edge stays above
             the floating bar when the insets are on.
           </Text>
+          <View style={styles.contextInsets}>
+            <SafeAreaContextInsets />
+          </View>
         </View>
       </SafeAreaView>
-      <SafeAreaProvider style={styles.provider} pointerEvents="none">
-        <SafeAreaContextInsets />
-      </SafeAreaProvider>
-    </View>
+    </SafeAreaProvider>
   );
 }
 
@@ -157,16 +157,16 @@ const styles = StyleSheet.create({
   rowText: {
     fontSize: 16,
   },
-  provider: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   safeAreaContent: {
     flex: 1,
     padding: 16,
     borderWidth: 6,
     borderColor: Colors.RedLight100,
+  },
+  contextInsets: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   barContainer: {
     position: 'absolute',
