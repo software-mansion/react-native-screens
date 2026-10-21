@@ -12,6 +12,11 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFla
 internal class TabsMenuItemState {
     var pendingFlags = TabsItemInvalidationFlags.ALL
 
+    /**
+     * Returns the pending flags and clears them. The caller takes over applying all of them.
+     */
+    fun consumePendingFlags(): TabsItemInvalidationFlags = pendingFlags.also { pendingFlags = TabsItemInvalidationFlags.NONE }
+
     var appliedActiveIndicatorWidthPx: Int? = null
 
     var appliedActiveIndicatorHeightPx: Int? = null

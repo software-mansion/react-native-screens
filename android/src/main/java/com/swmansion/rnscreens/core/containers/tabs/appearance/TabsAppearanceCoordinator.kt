@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.MenuItem
 import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.tabs.container.TabsBottomNavigationView
-import com.swmansion.rnscreens.core.containers.tabs.container.TabsContainer
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragment
@@ -36,43 +35,36 @@ internal class TabsAppearanceCoordinator(
         return if (unevenIndicatorsOutgrowIcons) tallestIndicatorDp else largestIconDp
     }
 
-    fun updateTabAppearance(
+    /**
+     * Applies the bar-wide appearance (icon box, shared colours and visibility) and returns the icon
+     * box the menu items are sized in. Menu items whose icons depend on a changed icon box are
+     * invalidated.
+     */
+    fun updateBarAppearance(
         context: Context,
-        tabsContainer: TabsContainer,
-    ) {
-        val selectedTabAppearance = tabsContainer.selectedTab.item.appearance
+        appearance: TabsAppearance?,
+        isTabBarHidden: Boolean,
+    ): Float {
         val iconBoxDp = resolveIconBoxDp()
         if (iconBoxDp != appliedIconBoxDp) {
             appliedIconBoxDp = iconBoxDp
-            bottomNavigationView.invalidateMenuItemIcons()
+            bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ICON)
         }
         appearanceApplicator.applyIconBox(iconBoxDp)
-        appearanceApplicator.updateSharedAppearance(context, selectedTabAppearance, tabsContainer.tabBarHidden)
-        updateMenuItems(context, selectedTabAppearance, iconBoxDp)
-        appearanceApplicator.updateFontStyles(context, selectedTabAppearance) // It needs to be updated after updateMenuItems
+        appearanceApplicator.updateSharedAppearance(context, appearance, isTabBarHidden)
+        return iconBoxDp
     }
 
-    private fun updateMenuItems(
+    fun updateFontStyles(
         context: Context,
-        tabsAppearance: TabsAppearance?,
-        iconBoxDp: Float,
+        appearance: TabsAppearance?,
     ) {
-        tabsScreenFragments.forEach { fragment ->
-            val menuItemId = fragment.menuItemId
-            val menuItem =
-                checkNotNull(bottomNavigationView.menu.findItem(menuItemId)) {
-                    "[RNScreens] Missing MenuItem for id: $menuItemId"
-                }
-            updateMenuItemAppearance(context, menuItem, fragment.item, tabsAppearance, iconBoxDp, isWholeBarUpdate = true)
-        }
+        appearanceApplicator.updateFontStyles(context, appearance)
     }
 
     /**
-     * Applies the invalidated parts of a single menu item.
-     *
-     * @param isWholeBarUpdate Whether this runs as part of the whole-bar appearance update, which
-     * re-applies every badge: badge colours come from the selected tab's appearance.
-     * @return The flags that were pending for the menu item.
+     * Applies the parts of a single menu item's appearance that [flags] invalidate. The caller
+     * consumed [flags] from the menu item's state.
      */
     internal fun updateMenuItemAppearance(
         context: Context,
@@ -80,13 +72,25 @@ internal class TabsAppearanceCoordinator(
         item: TabsContainerItem,
         appearance: TabsAppearance?,
         iconBoxDp: Float,
-        isWholeBarUpdate: Boolean,
-    ): TabsItemInvalidationFlags {
-        val flags =
-            appearanceApplicator.updateMenuItemAppearance(menuItem, item, bottomNavigationView.menuItemState(menuItem.itemId), iconBoxDp)
-        if (isWholeBarUpdate || flags.containsAny(TabsItemInvalidationFlags.BADGE)) {
+        flags: TabsItemInvalidationFlags,
+    ) {
+        if (flags.containsAny(TabsItemInvalidationFlags.TITLE)) {
+            appearanceApplicator.applyTitle(menuItem, item)
+        }
+
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON or TabsItemInvalidationFlags.ICON_SIZE)) {
+            appearanceApplicator.applyIcon(menuItem, item, iconBoxDp)
+        }
+
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE) &&
+            !appearanceApplicator.applyActiveIndicatorSize(menuItem, item, bottomNavigationView.menuItemState(menuItem.itemId))
+        ) {
+            // The menu item's view doesn't exist yet; retry on the next update.
+            bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)
+        }
+
+        if (flags.containsAny(TabsItemInvalidationFlags.BADGE)) {
             appearanceApplicator.updateBadgeAppearance(context, menuItem, item, appearance)
         }
-        return flags
     }
 }

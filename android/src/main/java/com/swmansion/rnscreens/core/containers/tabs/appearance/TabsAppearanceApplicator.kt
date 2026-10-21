@@ -19,7 +19,6 @@ import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.tabs.container.TabsMenuItemState
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
-import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
@@ -69,8 +68,11 @@ internal class TabsAppearanceApplicator(
         item.appearance?.tabBarItemActiveIndicatorHeight?.takeIf { it > 0f }
             ?: (effectiveIconSizeDp(item) + autoIndicatorVerticalPaddingDp)
 
+    /**
+     * @return `false` when the menu item's view doesn't exist yet, so nothing could be applied.
+     */
     @SuppressLint("RestrictedApi")
-    private fun applyActiveIndicatorSize(
+    fun applyActiveIndicatorSize(
         menuItem: MenuItem,
         item: TabsContainerItem,
         state: TabsMenuItemState,
@@ -246,51 +248,32 @@ internal class TabsAppearanceApplicator(
         }
     }
 
-    /**
-     * Applies the invalidated parts of the menu item's title, icon and active indicator, and clears
-     * the menu item's pending flags.
-     *
-     * @return The flags that were pending, so the caller can apply the parts it owns (badge,
-     * accessibility).
-     */
-    fun updateMenuItemAppearance(
+    fun applyTitle(
         menuItem: MenuItem,
         item: TabsContainerItem,
-        state: TabsMenuItemState,
+    ) {
+        menuItem.title = item.tabTitle
+    }
+
+    fun applyIcon(
+        menuItem: MenuItem,
+        item: TabsContainerItem,
         iconBoxDp: Float,
-    ): TabsItemInvalidationFlags {
-        val flags = state.pendingFlags
-        state.pendingFlags = TabsItemInvalidationFlags.NONE
-
-        if (flags.containsAny(TabsItemInvalidationFlags.TITLE)) {
-            menuItem.title = item.tabTitle
-        }
-
-        if (flags.containsAny(TabsItemInvalidationFlags.ICON or TabsItemInvalidationFlags.ICON_SIZE)) {
-            // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
-            // single inset computed from one child would mis-size the other when their resolutions differ.
-            val effectiveDp = effectiveIconSizeDp(item)
-            val iconDrawable = sizeIcon(item.iconDrawable, effectiveDp, iconBoxDp)
-            val selectedIconDrawable = sizeIcon(item.selectedIconDrawable, effectiveDp, iconBoxDp)
-            menuItem.icon =
-                if (selectedIconDrawable != null && iconDrawable != null) {
-                    StateListDrawable().apply {
-                        addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
-                        addState(intArrayOf(), iconDrawable.mutate())
-                    }
-                } else {
-                    iconDrawable
+    ) {
+        // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
+        // single inset computed from one child would mis-size the other when their resolutions differ.
+        val effectiveDp = effectiveIconSizeDp(item)
+        val iconDrawable = sizeIcon(item.iconDrawable, effectiveDp, iconBoxDp)
+        val selectedIconDrawable = sizeIcon(item.selectedIconDrawable, effectiveDp, iconBoxDp)
+        menuItem.icon =
+            if (selectedIconDrawable != null && iconDrawable != null) {
+                StateListDrawable().apply {
+                    addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
+                    addState(intArrayOf(), iconDrawable.mutate())
                 }
-        }
-
-        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE) &&
-            !applyActiveIndicatorSize(menuItem, item, state)
-        ) {
-            // The menu item's view doesn't exist yet; retry on the next update.
-            state.pendingFlags = state.pendingFlags or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE
-        }
-
-        return flags
+            } else {
+                iconDrawable
+            }
     }
 
     internal fun updateBadgeAppearance(

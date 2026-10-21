@@ -30,8 +30,8 @@ open class TabsBottomNavigationView(
         state.pendingFlags = state.pendingFlags or flags
     }
 
-    internal fun invalidateMenuItemIcons() {
-        menuItemStates.values.forEach { it.pendingFlags = it.pendingFlags or TabsItemInvalidationFlags.ICON }
+    internal fun invalidateAllMenuItems(flags: TabsItemInvalidationFlags) {
+        menuItemStates.values.forEach { it.pendingFlags = it.pendingFlags or flags }
     }
 
     /**

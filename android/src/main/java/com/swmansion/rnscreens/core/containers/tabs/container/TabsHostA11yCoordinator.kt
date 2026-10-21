@@ -7,14 +7,11 @@ import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.children
-import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
-import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragment
 
 class TabsHostA11yCoordinator(
     private val bottomNavigationView: BottomNavigationView,
-    private val tabsScreenFragments: List<TabsScreenFragment>,
 ) {
     fun setA11yPropertiesToTabItem(
         menuItem: MenuItem,
@@ -51,11 +48,4 @@ class TabsHostA11yCoordinator(
     // Third-party SDKs can freely assign their own ids to id-less views in TabsBottomNavigationView's subtree and there is no way to
     // coordinate that id space with them, so we should search ids only inside Material's menu items scope.
     private fun findTabItemView(menuItemId: Int): View? = bottomNavigationView.menuViewGroup.children.firstOrNull { it.id == menuItemId }
-
-    fun setA11yPropertiesToAllTabItems() {
-        tabsScreenFragments.forEachIndexed { index, fragment ->
-            val menuItem = bottomNavigationView.menu[index]
-            setA11yPropertiesToTabItem(menuItem, fragment.item)
-        }
-    }
 }
