@@ -516,11 +516,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 #pragma mark - Public API
 
-- (nullable id<UITimingCurveProvider>)timingParamsForAnimationCompletion
-{
-  return [RNSScreenStackAnimator defaultSpringTimingParametersApprox];
-}
-
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
 {
   return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);

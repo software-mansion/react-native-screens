@@ -246,3 +246,4 @@ export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
 export { default as TestStackNesting } from './TestStackNesting';
 export { default as TestScreenFooterKeyboardInsets } from './TestScreenFooterKeyboardInsets';
 export { default as Test4551 } from './Test4551';
+export { default as Test5009 } from './Test5009'; // [E2E skipped]: can't check animation in a meaningful way

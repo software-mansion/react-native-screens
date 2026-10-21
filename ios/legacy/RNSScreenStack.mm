@@ -1101,6 +1101,8 @@ RNS_IGNORE_SUPER_CALL_END
       float gestureDistance = translation + velocity * 0.3;
       gestureDistance = isInverted ? gestureDistance * -1 : gestureDistance;
       BOOL shouldFinishTransition = gestureDistance > snapPoint;
+      _interactionController.releaseVelocity = isInverted ? -velocity : velocity;
+      _interactionController.transitionDistance = distance;
       if (shouldFinishTransition) {
         [_interactionController finishInteractiveTransition];
       } else {

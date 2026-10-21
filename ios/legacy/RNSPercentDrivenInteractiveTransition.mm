@@ -56,11 +56,21 @@
 
   BOOL shouldReverseAnimation = cancelled;
 
-  id<UITimingCurveProvider> timingParams = [_animationController timingParamsForAnimationCompletion];
-
   [animator pauseAnimation];
   [animator setReversed:shouldReverseAnimation];
-  [animator continueAnimationWithTimingParameters:timingParams durationFactor:(1 - animator.fractionComplete)];
+
+  // Continue at the finger's speed, over the transition's full duration. The spring's initial
+  // velocity is relative to the distance left to travel, and it points toward the target, so a
+  // cancel flips the sign. `1 - fractionComplete` is not the distance left once the animator is
+  // reversed, and as a duration factor it replayed a short cancel in a frame or two.
+  CGFloat remaining =
+      (shouldReverseAnimation ? animator.fractionComplete : 1 - animator.fractionComplete) * _transitionDistance;
+  CGFloat velocityTowardTarget = shouldReverseAnimation ? -_releaseVelocity : _releaseVelocity;
+  CGFloat relativeVelocity = remaining > 1 ? velocityTowardTarget / remaining : 0;
+  UISpringTimingParameters *timingParams =
+      [[UISpringTimingParameters alloc] initWithDampingRatio:1
+                                             initialVelocity:CGVectorMake(relativeVelocity, relativeVelocity)];
+  [animator continueAnimationWithTimingParameters:timingParams durationFactor:1];
 
   // System retains it & we don't need it anymore.
   _animationController = nil;
