@@ -30,6 +30,12 @@ internal class SheetAnimationCoordinator(
     private var isSheetAnimationInProgress: Boolean = false
     private var currentContentAnimator: ValueAnimator? = null
 
+    /**
+     * translationY the resize animation offsets from and returns to, captured when the animation
+     * starts. Null when no resize animation runs - then it is simply the current translationY.
+     */
+    private var resizeAnimationOriginTranslationY: Float? = null
+
     private var lastKeyboardBottomOffset: Int = 0
     private var lastScreenContainerBottomOffset: Int = 0
     private val screenContainerRect = android.graphics.Rect()
@@ -87,13 +93,13 @@ internal class SheetAnimationCoordinator(
         oldHeight: Int,
         newHeight: Int,
     ) {
-        val currentTranslationY = screen.translationY
+        val originTranslationY = resizeAnimationOriginTranslationY ?: screen.translationY
 
         /*
          * WHY OVERFLOW MATTERS:
          * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
          * If the new content height exceeds this limit (by its size or keyboard offset), simply
-         * animating translationY back to 'currentTranslationY' would attempt to render the sheet
+         * animating translationY back to its origin would attempt to render the sheet
          * larger than the screen.
          *
          * We need to constrain the height within the container's bounds.
@@ -101,8 +107,8 @@ internal class SheetAnimationCoordinator(
          * expanding exactly at the maxHeight, preventing from being pushed
          * off-screen or causing layout synchronization issues with the CoordinatorLayout.
          */
-        val clampedOldHeight = screen.resolveClampedHeight(oldHeight, currentTranslationY)
-        val clampedNewHeight = screen.resolveClampedHeight(newHeight, currentTranslationY)
+        val clampedOldHeight = screen.resolveClampedHeight(oldHeight, originTranslationY)
+        val clampedNewHeight = screen.resolveClampedHeight(newHeight, originTranslationY)
 
         // If an entry/exit animation or a keyboard animation is in progress - it owns
         // translationY writes. Then when the content size is changing, we silently
@@ -119,9 +125,9 @@ internal class SheetAnimationCoordinator(
         if (visibleDelta == 0f) return
 
         if (visibleDelta > 0) {
-            animateContentExpanding(behavior, clampedNewHeight, currentTranslationY, visibleDelta)
+            animateContentExpanding(behavior, clampedNewHeight, originTranslationY, visibleDelta)
         } else {
-            animateContentShrinking(behavior, clampedNewHeight, currentTranslationY, visibleDelta)
+            animateContentShrinking(behavior, clampedNewHeight, originTranslationY, visibleDelta)
         }
     }
 
@@ -142,13 +148,14 @@ internal class SheetAnimationCoordinator(
     private fun animateContentExpanding(
         behavior: BottomSheetBehavior<Screen>,
         clampedNewHeight: Int,
-        currentTranslationY: Float,
+        originTranslationY: Float,
         visibleDelta: Float,
     ) {
         screen.translationY += visibleDelta
         cancelCurrentContentAnimation()
+        resizeAnimationOriginTranslationY = originTranslationY
         currentContentAnimator =
-            ValueAnimator.ofFloat(screen.translationY, currentTranslationY).apply {
+            ValueAnimator.ofFloat(screen.translationY, originTranslationY).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationStart(animation: Animator) {
@@ -158,6 +165,7 @@ internal class SheetAnimationCoordinator(
 
                         override fun onAnimationEnd(animation: Animator) {
                             currentContentAnimator = null
+                            resizeAnimationOriginTranslationY = null
                             screen.finalizeBottomSheetLayoutUpdates()
                         }
                     },
@@ -190,13 +198,16 @@ internal class SheetAnimationCoordinator(
     private fun animateContentShrinking(
         behavior: BottomSheetBehavior<Screen>,
         clampedNewHeight: Int,
-        currentTranslationY: Float,
+        originTranslationY: Float,
         visibleDelta: Float,
     ) {
-        val targetTranslationY = currentTranslationY - visibleDelta
+        val targetTranslationY = originTranslationY - visibleDelta
         cancelCurrentContentAnimation()
+        resizeAnimationOriginTranslationY = originTranslationY
+        // Start animation from where the sheet is drawn to properly handle the translationY origin,
+        // when this content change is interrupting another content resize animation.
         currentContentAnimator =
-            ValueAnimator.ofFloat(currentTranslationY, targetTranslationY).apply {
+            ValueAnimator.ofFloat(screen.translationY, targetTranslationY).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationStart(animation: Animator) {
@@ -205,8 +216,9 @@ internal class SheetAnimationCoordinator(
 
                         override fun onAnimationEnd(animation: Animator) {
                             currentContentAnimator = null
+                            resizeAnimationOriginTranslationY = null
                             screen.layoutBottomSheetAtHeight(clampedNewHeight)
-                            screen.translationY = currentTranslationY
+                            screen.translationY = originTranslationY
                             screen.finalizeBottomSheetLayoutUpdates()
                         }
                     },
@@ -344,6 +356,7 @@ internal class SheetAnimationCoordinator(
         currentContentAnimator?.removeAllUpdateListeners()
         currentContentAnimator?.cancel()
         currentContentAnimator = null
+        resizeAnimationOriginTranslationY = null
     }
 
     private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
