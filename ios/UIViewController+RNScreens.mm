@@ -1,10 +1,40 @@
-#import "RNSConversions.h"
 #import "RNSEnums.h"
+#import "RNSLog.h"
 #import "RNSOrientationProviding.h"
 #import "RNSScreenContainer.h"
 #import "UIViewController+RNScreens.h"
 
 #import <objc/runtime.h>
+
+#if !TARGET_OS_TV
+static UIInterfaceOrientationMask RNSInterfaceOrientationMaskFromOrientation(RNSOrientation orientation)
+{
+  switch (orientation) {
+    case RNSOrientationAll:
+      return UIInterfaceOrientationMaskAll;
+    case RNSOrientationAllButUpsideDown:
+      return UIInterfaceOrientationMaskAllButUpsideDown;
+    case RNSOrientationPortrait:
+      return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+    case RNSOrientationPortraitUp:
+      return UIInterfaceOrientationMaskPortrait;
+    case RNSOrientationPortraitDown:
+      return UIInterfaceOrientationMaskPortraitUpsideDown;
+    case RNSOrientationLandscape:
+      return UIInterfaceOrientationMaskLandscape;
+    case RNSOrientationLandscapeLeft:
+      return UIInterfaceOrientationMaskLandscapeLeft;
+    case RNSOrientationLandscapeRight:
+      return UIInterfaceOrientationMaskLandscapeRight;
+    case RNSOrientationInherit:
+      RNSLogE(@"[RNScreens] RNSOrientationInherit does not map directly to any UIInterfaceOrientationMask");
+      return 0;
+    default:
+      RNSLogE(@"[RNScreens] Unsupported orientation");
+      return 0;
+  }
+}
+#endif // !TARGET_OS_TV
 
 @implementation UIViewController (RNScreens)
 
@@ -38,7 +68,7 @@
       return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:self.view.window];
     }
 
-    return rnscreens::conversion::UIInterfaceOrientationMaskFromRNSOrientation(orientation);
+    return RNSInterfaceOrientationMaskFromOrientation(orientation);
   }
 
   return [self reactNativeScreensSupportedInterfaceOrientations];

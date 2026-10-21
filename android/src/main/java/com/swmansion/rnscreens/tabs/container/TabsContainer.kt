@@ -33,11 +33,12 @@ import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
 import com.swmansion.rnscreens.tabs.appearance.TabsAppearanceCoordinator
-import com.swmansion.rnscreens.tabs.host.TabsHost
 import com.swmansion.rnscreens.tabs.host.TabsHostA11yCoordinator
-import com.swmansion.rnscreens.tabs.screen.TabsScreen
-import com.swmansion.rnscreens.tabs.screen.TabsScreenDelegate
+import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
+import com.swmansion.rnscreens.tabs.screen.TabsContainerItemDelegate
+import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.tabs.screen.TabsScreenFragment
+import com.swmansion.rnscreens.tabs.screen.TabsScreenFragmentDelegate
 import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
@@ -57,7 +58,8 @@ class TabsContainer internal constructor(
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
-    TabsScreenDelegate,
+    TabsContainerItemDelegate,
+    TabsScreenFragmentDelegate,
     SafeAreaProvider,
     View.OnLayoutChangeListener {
     init {
@@ -66,15 +68,15 @@ class TabsContainer internal constructor(
 
     private inner class SpecialEffectsHandler {
         fun handleRepeatedTabSelection(): Boolean {
-            val selectedTabScreen = this@TabsContainer.selectedTab.tabsScreen
+            val selectedItem = this@TabsContainer.selectedTab.item
 
-            if (selectedTabScreen.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
-                if (selectedTabScreen.resolveNestedContainer()?.requestPopToRoot() == true) {
+            if (selectedItem.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+                if (selectedItem.resolveNestedContainer()?.requestPopToRoot() == true) {
                     return true
                 }
             }
-            if (selectedTabScreen.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-                val scrollView = selectedTabScreen.findContentScrollView()
+            if (selectedItem.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+                val scrollView = selectedItem.findContentScrollView()
                 scrollView?.let { return trySmoothScrollToTop(it) }
             }
             return false
@@ -231,25 +233,31 @@ class TabsContainer internal constructor(
         invalidationFlags.isSelectedTabInvalidated = request != null
     }
 
-    internal fun addTabsScreenAt(
+    internal fun addItemAt(
         index: Int,
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
     ) {
-        tabsModel.add(index, TabsScreenFragment(tabsScreen, viewIdProvider.generateViewId()))
+        tabsModel.add(index, TabsScreenFragment(item, viewIdProvider.generateViewId(), WeakReference(this)))
+        item.setConfigurationObserver { flags -> onItemInvalidated(item, flags) }
         invalidationFlags.invalidateAll()
     }
 
-    internal fun removeTabsScreenAt(index: Int): TabsScreen? =
-        tabsModel.removeAt(index).tabsScreen.also {
+    internal fun removeItemAt(index: Int): TabsContainerItem? =
+        tabsModel.removeAt(index).item.also {
+            it.setConfigurationObserver(null)
             invalidationFlags.invalidateAll()
         }
 
-    internal fun removeTabsScreen(tabsScreen: TabsScreen): Boolean =
-        tabsModel.removeIf { it.tabsScreen === tabsScreen }.also { isRemoved ->
-            if (isRemoved) invalidationFlags.invalidateAll()
+    internal fun removeItem(item: TabsContainerItem): Boolean =
+        tabsModel.removeIf { it.item === item }.also { isRemoved ->
+            if (isRemoved) {
+                item.setConfigurationObserver(null)
+                invalidationFlags.invalidateAll()
+            }
         }
 
-    internal fun removeAllTabsScreens() {
+    internal fun removeAllItems() {
+        tabsModel.forEach { it.item.setConfigurationObserver(null) }
         tabsModel.clear()
         invalidationFlags.invalidateAll()
     }
@@ -397,54 +405,67 @@ class TabsContainer internal constructor(
 
     // endregion
 
-    // region TabsScreenDelegate impl
+    // region Tab configuration changes
 
-    override fun onAppearanceChanged(tabsScreen: TabsScreen) {
-        if (isAttachedToWindow && selectedTab.tabsScreen === tabsScreen) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                this.flushPendingUpdates()
+    /**
+     * Maps a tab's fine-grained [flags] to tab bar updates: the menu item records them, so the
+     * applicator re-applies only the invalidated parts, and the container decides what to run.
+     */
+    private fun onItemInvalidated(
+        item: TabsContainerItem,
+        flags: TabsItemInvalidationFlags,
+    ) {
+        val fragment = getFragmentForItem(item) ?: return
+        bottomNavigationView.invalidateMenuItem(fragment.menuItemId, flags)
+
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE)) {
+            // Icon box is bar-wide, so this must run even when the changed tab is not selected.
+            // Skip when detached; reattachment reapplies the full appearance anyway.
+            if (isAttachedToWindow) {
+                invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+                post {
+                    this.flushPendingUpdates()
+                }
             }
+        } else if (flags.containsAny(TabsItemInvalidationFlags.APPEARANCE)) {
+            if (isAttachedToWindow && selectedTab.item === item) {
+                invalidationFlags.isNavigationMenuAppearanceInvalidated = true
+                post {
+                    this.flushPendingUpdates()
+                }
+            }
+        }
+
+        if (flags.containsAny(TabsItemInvalidationFlags.MENU_ITEM_ATTRIBUTES)) {
+            updateMenuItem(item)
         }
     }
 
-    override fun onMenuItemAttributesChange(tabsScreen: TabsScreen) {
-        getMenuItemForTabsScreen(tabsScreen)?.let { menuItem ->
-            val appearance = selectedTab.tabsScreen.appearance
+    private fun updateMenuItem(item: TabsContainerItem) {
+        getMenuItemForItem(item)?.let { menuItem ->
+            val appearance = selectedTab.item.appearance
             appearanceCoordinator.updateMenuItemAppearance(
                 themedContext,
                 menuItem,
-                tabsScreen,
+                item,
                 appearance,
                 appearanceCoordinator.resolveIconBoxDp(),
             )
-            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, tabsScreen)
+            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)
         }
     }
 
-    override fun onItemSizeChange(tabsScreen: TabsScreen) {
-        // Icon box is bar-wide, so this must run even when the changed tab is not selected.
-        // Skip when detached; reattachment reapplies the full appearance anyway.
-        if (isAttachedToWindow) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                this.flushPendingUpdates()
-            }
-        }
-    }
+    // endregion
 
-    override fun getFragmentForTabsScreen(tabsScreen: TabsScreen): TabsScreenFragment? =
-        tabsModel.find {
-            it.tabsScreen ===
-                tabsScreen
-        }
+    // region TabsContainerItemDelegate impl
 
-    override fun onFragmentConfigurationChange(
-        tabsScreen: TabsScreen,
-        config: Configuration,
-    ) {
-        this.onConfigurationChanged(config)
-    }
+    override fun getFragmentForItem(item: TabsContainerItem): TabsScreenFragment? = tabsModel.find { it.item === item }
+
+    // endregion
+
+    // region TabsScreenFragmentDelegate impl
+
+    override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
     // endregion
 
@@ -563,7 +584,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { fragment ->
             menu.getOrCreateMenuItemForFragment(fragment)
         }
-        appearanceCoordinator.invalidateRebuiltMenuItems()
+        bottomNavigationView.resetMenuItemStates()
     }
 
     private fun updateBottomNavigationViewAppearance() {
@@ -582,7 +603,7 @@ class TabsContainer internal constructor(
     ): Boolean {
         if (navState.isEmpty()) {
             check(isInExternalOperationContext && pendingStateUpdateRequest != null)
-            initNavigationState(nextSelectedFragment.requireScreenKey)
+            initNavigationState(nextSelectedFragment.requireItemKey)
             applyInitialStateToFragmentManagerSync(nextSelectedFragment)
             return true
         }
@@ -594,7 +615,7 @@ class TabsContainer internal constructor(
             return true
         }
 
-        progressNavigationState(nextSelectedFragment.requireScreenKey, actionOrigin)
+        progressNavigationState(nextSelectedFragment.requireItemKey, actionOrigin)
         applyNextSelectedFragmentToFragmentManagerSync(
             currentSelectedFragment,
             nextSelectedFragment,
@@ -642,7 +663,7 @@ class TabsContainer internal constructor(
     }
 
     private fun onMenuItemSelected(item: MenuItem): Boolean {
-        RNSLog.d(TabsHost.Companion.TAG, "Item selected $item")
+        RNSLog.d(TAG, "Item selected $item")
 
         val currSelectedFragment = if (navState.isNotEmpty()) selectedTab else null
         val nextSelectedFragment =
@@ -663,7 +684,7 @@ class TabsContainer internal constructor(
         if (!isRepeated && actionOrigin == TabsActionOrigin.USER && nextSelectedFragment.isPreventNativeSelectionEnabled) {
             observerRegistry.emitOnNavigationStateUpdatePrevented(
                 navState,
-                nextSelectedFragment.requireScreenKey,
+                nextSelectedFragment.requireItemKey,
             )
             return false
         }
@@ -751,17 +772,17 @@ class TabsContainer internal constructor(
 
     private fun getSelectedTabsScreenFragmentId(): Int? =
         tabsModel
-            .indexOfFirst { it.requireScreenKey == navState.selectedScreenKey }
+            .indexOfFirst { it.requireItemKey == navState.selectedScreenKey }
             .takeIf { it != -1 }
 
-    private fun getMenuItemForTabsScreen(tabsScreen: TabsScreen): MenuItem? =
+    private fun getMenuItemForItem(item: TabsContainerItem): MenuItem? =
         tabsModel
-            .find { it.tabsScreen === tabsScreen }
+            .find { it.item === item }
             ?.let { fragment ->
                 bottomNavigationView.menu.findItem(fragment.menuItemId)
             }
 
-    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireScreenKey == screenKey }
+    private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireItemKey == screenKey }
 
     private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
         checkNotNull(getFragmentForScreenKey(screenKey)) {
@@ -801,21 +822,21 @@ class TabsContainer internal constructor(
 
     override fun resolveCurrentContentScrollView(): ViewGroup? {
         // We assume here that the selectedTab actually corresponds to whats in FragmentManager
-        return selectedTab.tabsScreen.findContentScrollView()
+        return selectedTab.item.findContentScrollView()
     }
 
     // Only the active item is consulted - a preventing screen inside an inactive tab
     // does not veto the dismissal.
     override fun wantsToPreventStackNativeDismiss(): ContainerItem? =
         if (navState.isNotEmpty()) {
-            selectedTab.tabsScreen.wantsToPreventStackNativeDismiss()
+            selectedTab.item.wantsToPreventStackNativeDismiss()
         } else {
             null
         }
 
     // Tabs have no stack of their own - the request goes to the selected tab's nested container.
     override fun requestPopToRoot(): Boolean =
-        navState.isNotEmpty() && selectedTab.tabsScreen.resolveNestedContainer()?.requestPopToRoot() == true
+        navState.isNotEmpty() && selectedTab.item.resolveNestedContainer()?.requestPopToRoot() == true
 
     // endregion
 
