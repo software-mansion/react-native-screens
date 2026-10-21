@@ -29,6 +29,7 @@ import com.swmansion.rnscreens.core.common.safearea.SafeAreaProvider
 import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ContainerUpdateScheduler
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
 import com.swmansion.rnscreens.core.containers.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.core.containers.tabs.appearance.TabsAppearanceCoordinator
@@ -172,9 +173,7 @@ class TabsContainer internal constructor(
         if (newValue != oldValue) {
             updateInterfaceInsets()
             invalidationFlags.isNavigationMenuAppearanceInvalidated = true
-            post {
-                flushPendingUpdates()
-            }
+            updateScheduler.requestUpdate()
         }
     }
 
@@ -196,8 +195,8 @@ class TabsContainer internal constructor(
         get() = navState
 
     /**
-     * Queue a navigation state update. Apply via [flushPendingUpdates] or rely on the
-     * host's next render cycle to apply automatically.
+     * Queue a navigation state update. The container applies it with its next scheduled update;
+     * call [flushPendingUpdates] to apply it right away.
      */
     fun submitSelectionOfTabsScreenWithKey(screenKey: String) {
         setPendingNavigationStateUpdate(
@@ -210,14 +209,10 @@ class TabsContainer internal constructor(
     }
 
     /**
-     * Apply any pending invalidations and state updates in a single coordinated pass.
-     * No-op when nothing is dirty or the view is detached.
+     * Apply any pending invalidations and state updates in a single coordinated pass, right away
+     * instead of with the next scheduled update. No-op when nothing is dirty or the view is detached.
      */
-    fun flushPendingUpdates() {
-        if (invalidationFlags.any() && isAttachedToWindow) {
-            performContainerUpdate()
-        }
-    }
+    fun flushPendingUpdates() = updateScheduler.flush()
 
     fun addNavigationStateObserver(observer: TabsNavigationStateObserver): Boolean = observerRegistry.add(observer)
 
@@ -228,12 +223,15 @@ class TabsContainer internal constructor(
     // region Host-internal API
 
     /**
-     * Queue a navigation state update. Apply via [flushPendingUpdates] or rely on the
-     * host's next render cycle to apply automatically.
+     * Queue a navigation state update. The container applies it with its next scheduled update;
+     * call [flushPendingUpdates] to apply it right away.
      */
     internal fun setPendingNavigationStateUpdate(request: TabsNavigationStateUpdateRequest?) {
         pendingStateUpdateRequest = request
         invalidationFlags.isSelectedTabInvalidated = request != null
+        if (request != null) {
+            updateScheduler.requestUpdate()
+        }
     }
 
     internal fun addItemAt(
@@ -243,12 +241,14 @@ class TabsContainer internal constructor(
         tabsModel.add(index, TabsScreenFragment(item, viewIdProvider.generateViewId(), WeakReference(this)))
         item.setConfigurationObserver { flags -> onItemInvalidated(item, flags) }
         invalidationFlags.invalidateAll()
+        updateScheduler.requestUpdate()
     }
 
     internal fun removeItemAt(index: Int): TabsContainerItem? =
         tabsModel.removeAt(index).item.also {
             it.setConfigurationObserver(null)
             invalidationFlags.invalidateAll()
+            updateScheduler.requestUpdate()
         }
 
     internal fun removeItem(item: TabsContainerItem): Boolean =
@@ -256,6 +256,7 @@ class TabsContainer internal constructor(
             if (isRemoved) {
                 item.setConfigurationObserver(null)
                 invalidationFlags.invalidateAll()
+                updateScheduler.requestUpdate()
             }
         }
 
@@ -263,6 +264,7 @@ class TabsContainer internal constructor(
         tabsModel.forEach { it.item.setConfigurationObserver(null) }
         tabsModel.clear()
         invalidationFlags.invalidateAll()
+        updateScheduler.requestUpdate()
     }
 
     internal fun setupFragmentManager() {
@@ -284,6 +286,7 @@ class TabsContainer internal constructor(
     internal fun tearDown() {
         observerRegistry.clear()
         setPendingNavigationStateUpdate(null)
+        updateScheduler.cancel()
     }
 
     internal fun onAfterSetSelectedItemId(
@@ -408,35 +411,22 @@ class TabsContainer internal constructor(
 
     // endregion
 
-    // region Update batch
-
-    private var isUpdateBatchPending = false
+    // region Update scheduling
 
     /**
-     * Announces that the host is applying a batch of updates (e.g. a React transaction). Tab
-     * configuration changes raised until [endUpdateBatch] are only recorded and applied together
-     * when the batch ends.
+     * Every invalidation requests an update; the scheduler coalesces the requests into a single
+     * [performContainerUpdateIfNeeded]. Outside a batch (e.g. an icon loaded asynchronously) the
+     * update is posted to the main thread's message queue.
      */
-    internal fun beginUpdateBatch() {
-        isUpdateBatchPending = true
-    }
-
-    internal fun endUpdateBatch() {
-        isUpdateBatchPending = false
-        flushPendingUpdates()
-    }
+    private val updateScheduler = ContainerUpdateScheduler(::performContainerUpdateIfNeeded)
 
     /**
-     * Changes raised outside a batch (e.g. an icon loaded asynchronously) have no batch end to flush
-     * them, so they schedule a flush of their own.
+     * Announces that the host is applying a batch of updates (e.g. a React transaction). Updates
+     * requested until [endUpdateBatch] are applied together, once, when the batch ends.
      */
-    private fun scheduleFlushOutsideUpdateBatch() {
-        if (!isUpdateBatchPending) {
-            post {
-                flushPendingUpdates()
-            }
-        }
-    }
+    internal fun beginUpdateBatch() = updateScheduler.beginBatch()
+
+    internal fun endUpdateBatch() = updateScheduler.endBatch()
 
     // endregion
 
@@ -471,7 +461,7 @@ class TabsContainer internal constructor(
         }
 
         if (invalidationFlags.any()) {
-            scheduleFlushOutsideUpdateBatch()
+            updateScheduler.requestUpdate()
         }
     }
 
@@ -516,6 +506,15 @@ class TabsContainer internal constructor(
     // endregion
 
     // region Private helpers
+
+    /**
+     * The update the [updateScheduler] runs. Skipped while detached: [onAttachedToWindow] flushes.
+     */
+    private fun performContainerUpdateIfNeeded() {
+        if (invalidationFlags.any() && isAttachedToWindow) {
+            performContainerUpdate()
+        }
+    }
 
     /**
      * This is where programmatic update flow starts.
