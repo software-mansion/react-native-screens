@@ -9,6 +9,11 @@ typedef NS_ENUM(NSInteger, RNSScreenDetentType) {
   RNSScreenDetentTypeAll,
 };
 
+typedef NS_ENUM(NSInteger, RNSScreenSheetBackgroundEffect) {
+  RNSScreenSheetBackgroundEffectAutomatic,
+  RNSScreenSheetBackgroundEffectColor,
+};
+
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,

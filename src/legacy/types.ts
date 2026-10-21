@@ -65,6 +65,8 @@ export type ScreenReplaceTypes = 'push' | 'pop';
 
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 
+export type SheetBackgroundEffectTypes = 'automatic' | 'color';
+
 export type ScreenOrientationTypes =
   | 'default'
   | 'all'
@@ -416,6 +418,19 @@ export interface ScreenProps extends ViewProps {
     | 'large'
     | 'all'
     | undefined;
+  /**
+   * Material rendered by the system behind the sheet's content.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * - `automatic` - whatever the system uses for sheets on the current iOS version; on iOS 26 this is Liquid Glass,
+   *   including its interactive highlight,
+   * - `color` - a flat fill with the screen's `backgroundColor`, which makes the sheet look opaque.
+   *
+   * Defaults to `automatic`. Has no effect on iOS versions below 26.1.
+   *
+   * @platform ios
+   */
+  sheetBackgroundEffect?: SheetBackgroundEffectTypes | undefined;
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
