@@ -760,6 +760,11 @@ class TabsContainer internal constructor(
             // This line assumes that any required e.g. appearance actions will be performed
             // synchronously later in the flow.
             invalidationFlags.invalidateOnSelectedTabChanged()
+            if (actionOrigin == TabsActionOrigin.USER) {
+                // A tap reaches this listener through the menu's item action, not `setSelectedItemId`,
+                // so [onAfterSetSelectedItemId] doesn't run for it: schedule the update instead.
+                updateScheduler.requestUpdate()
+            }
         }
 
         if (stateChanged) {
