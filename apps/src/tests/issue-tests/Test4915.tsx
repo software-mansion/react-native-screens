@@ -45,13 +45,13 @@ export default function App() {
               {
                 type: 'button',
                 label: 'Local file',
-                icon: { type: 'imageSource', imageSource: LOCAL_FILE_ICON },
+                icon: { type: 'image', source: LOCAL_FILE_ICON, tinted: false },
                 onPress: () => Alert.alert('Local file pressed'),
               },
               {
                 type: 'button',
                 label: 'Remote',
-                icon: { type: 'imageSource', imageSource: REMOTE_ICON },
+                icon: { type: 'image', source: REMOTE_ICON, tinted: false },
                 onPress: () => Alert.alert('Remote pressed'),
               },
               {
@@ -63,10 +63,7 @@ export default function App() {
                     {
                       type: 'action',
                       label: 'Local file (template)',
-                      icon: {
-                        type: 'templateSource',
-                        templateSource: LOCAL_FILE_ICON,
-                      },
+                      icon: { type: 'image', source: LOCAL_FILE_ICON },
                       onPress: () => Alert.alert('Local file (template)'),
                     },
                     {
@@ -79,8 +76,9 @@ export default function App() {
                       type: 'submenu',
                       label: 'Local file submenu',
                       icon: {
-                        type: 'imageSource',
-                        imageSource: LOCAL_FILE_ICON,
+                        type: 'image',
+                        source: LOCAL_FILE_ICON,
+                        tinted: false,
                       },
                       items: [
                         {
