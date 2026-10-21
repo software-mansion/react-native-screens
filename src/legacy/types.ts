@@ -814,7 +814,14 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * - `onScrollDown` – the navigation bar minimizes when the user scrolls down
    * - `onScrollUp` – the navigation bar minimizes when the user scrolls up
    *
-   * @default `automatic`
+   * When the prop is not specified (`undefined`), the behavior depends on the header's `translucent` prop:
+   *
+   * - translucent header – `automatic`
+   * - opaque header – `never`. Minimization of an opaque header is not reliably supported
+   *   by the legacy stack (it breaks the content insets applied for an opaque header), so it is
+   *   disabled by default. Set the prop explicitly (e.g. to `automatic`) to opt in anyway.
+   *
+   * @default `undefined` (`automatic` for translucent header, `never` for opaque header)
    *
    * @platform ios
    *

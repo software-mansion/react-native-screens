@@ -10,11 +10,17 @@ import {
   type HeaderMinimizationBehavior,
   type HeaderRestorationBehavior,
 } from 'react-native-screens';
-import { SettingsPicker, ThemedText } from '@apps/shared';
+import { SettingsPicker, SettingsSwitch, ThemedText } from '@apps/shared';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Colors } from '@apps/shared/styling';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
 
-const MINIMIZATION_BEHAVIORS: HeaderMinimizationBehavior[] = [
+const UNDEFINED = 'undefined';
+type MinimizationBehaviorOption = HeaderMinimizationBehavior | typeof UNDEFINED;
+
+const MINIMIZATION_BEHAVIORS: MinimizationBehaviorOption[] = [
+  UNDEFINED,
   'automatic',
   'never',
   'onScrollDown',
@@ -42,17 +48,23 @@ function ResizingItem() {
   );
 }
 
-export default function Test4729() {
+function TestStackV4HeaderBarMinimization() {
   const [minimizationBehavior, setMinimizationBehavior] =
-    React.useState<HeaderMinimizationBehavior>('automatic');
+    React.useState<MinimizationBehaviorOption>(UNDEFINED);
   const [restorationBehavior, setRestorationBehavior] =
     React.useState<HeaderRestorationBehavior>('automatic');
+  const [translucent, setTranslucent] = React.useState(true);
 
   return (
     <ScreenStack style={styles.container}>
       <Screen key="scroll" activityState={2} isNativeStack>
         <ScrollView contentInsetAdjustmentBehavior="automatic">
-          <SettingsPicker<HeaderMinimizationBehavior>
+          <SettingsSwitch
+            label="translucent"
+            value={translucent}
+            onValueChange={setTranslucent}
+          />
+          <SettingsPicker<MinimizationBehaviorOption>
             label="minimizationBehavior"
             value={minimizationBehavior}
             onValueChange={setMinimizationBehavior}
@@ -70,13 +82,15 @@ export default function Test4729() {
             </ThemedText>
           ))}
         </ScrollView>
-        {/* HeaderConfig must not be the first child of a Screen, otherwise
-            UIKit does not find the scroll view that drives bar minimization.
-            See https://github.com/software-mansion/react-native-screens/pull/1825 */}
         <ScreenStackHeaderConfig
           title="Scroll"
-          backgroundColor="transparent"
-          minimizationBehavior={minimizationBehavior}
+          translucent={translucent}
+          backgroundColor={translucent ? 'transparent' : Colors.BlueLight100}
+          minimizationBehavior={
+            minimizationBehavior === UNDEFINED
+              ? undefined
+              : minimizationBehavior
+          }
           restorationBehavior={restorationBehavior}
           headerLeftBarButtonItems={LEFT_BAR_BUTTON_ITEMS}
           headerRightBarButtonItems={RIGHT_BAR_BUTTON_ITEMS}>
@@ -97,6 +111,11 @@ export default function Test4729() {
     </ScreenStack>
   );
 }
+
+export default createScenario(
+  TestStackV4HeaderBarMinimization,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   container: {

@@ -303,19 +303,39 @@
   }
 }
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
-+ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromCppEquivalent:
++ (RNSHeaderMinimizationBehavior)RNSHeaderMinimizationBehaviorFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior
 {
   switch (minimizationBehavior) {
     using enum react::RNSScreenStackHeaderConfigMinimizationBehavior;
+    case RnsUnset:
+      return RNSHeaderMinimizationBehaviorUnset;
     case Automatic:
-      return UIBarMinimizationBehaviorAutomatic;
+      return RNSHeaderMinimizationBehaviorAutomatic;
     case Never:
-      return UIBarMinimizationBehaviorNever;
+      return RNSHeaderMinimizationBehaviorNever;
     case OnScrollDown:
-      return UIBarMinimizationBehaviorOnScrollDown;
+      return RNSHeaderMinimizationBehaviorOnScrollDown;
     case OnScrollUp:
+      return RNSHeaderMinimizationBehaviorOnScrollUp;
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
++ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:
+    (RNSHeaderMinimizationBehavior)minimizationBehavior
+{
+  switch (minimizationBehavior) {
+    case RNSHeaderMinimizationBehaviorUnset:
+      RCTLogError(@"[RNScreens] RNSHeaderMinimizationBehaviorUnset must be resolved before conversion to UIKit value");
+      return UIBarMinimizationBehaviorAutomatic;
+    case RNSHeaderMinimizationBehaviorAutomatic:
+      return UIBarMinimizationBehaviorAutomatic;
+    case RNSHeaderMinimizationBehaviorNever:
+      return UIBarMinimizationBehaviorNever;
+    case RNSHeaderMinimizationBehaviorOnScrollDown:
+      return UIBarMinimizationBehaviorOnScrollDown;
+    case RNSHeaderMinimizationBehaviorOnScrollUp:
       return UIBarMinimizationBehaviorOnScrollUp;
   }
 }
