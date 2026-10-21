@@ -144,13 +144,13 @@ export interface ScreenProps extends ViewProps {
    * Use it to keep content clear of UI drawn over the screen, e.g. a custom tab bar
    * floating over its bottom edge. Scroll views with `contentInsetAdjustmentBehavior="automatic"`,
    * `SafeAreaView` and other safe-area-aware views inside the screen take these insets into account,
-   * the same way they do for a native `UITabBar`.
+   * the same way they do for a native `UITabBar` on iOS.
    *
-   * Maps to `UIViewController.additionalSafeAreaInsets`.
+   * On iOS, maps to `UIViewController.additionalSafeAreaInsets`.
+   * On Android, the screen adds these insets to the window insets it dispatches to its children,
+   * which the library's `SafeAreaView` reads.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uiviewcontroller/additionalsafeareainsets|additionalSafeAreaInsets}
-   *
-   * @platform ios
    */
   additionalSafeAreaInsets?: AdditionalSafeAreaInsetsType | undefined;
   /**

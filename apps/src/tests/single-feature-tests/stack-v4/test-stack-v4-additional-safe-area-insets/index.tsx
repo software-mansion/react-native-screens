@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { Screen, ScreenContainer } from 'react-native-screens';
 import { SafeAreaView } from 'react-native-screens/experimental';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -13,11 +24,9 @@ const BAR_INSET = BAR_HEIGHT + 2 * BAR_MARGIN;
 const TABS = ['List', 'SafeAreaView'] as const;
 type Tab = (typeof TABS)[number];
 
-function ListTab() {
+function ListRows() {
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      testID="additional-insets-scroll-view">
+    <>
       {Array.from({ length: 30 }, (_, index) => (
         <View key={index} style={styles.row}>
           <Text style={styles.rowText}>Row {index + 1}</Text>
@@ -26,24 +35,57 @@ function ListTab() {
       <View style={[styles.row, styles.lastRow]}>
         <Text style={styles.rowText}>Last row</Text>
       </View>
+    </>
+  );
+}
+
+function ListTab() {
+  return (
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      testID="additional-insets-scroll-view">
+      {Platform.OS === 'android' ? (
+        <SafeAreaView edges={{ top: true, bottom: true }}>
+          <ListRows />
+        </SafeAreaView>
+      ) : (
+        <ListRows />
+      )}
     </ScrollView>
+  );
+}
+
+function SafeAreaContextInsets() {
+  const insets = useSafeAreaInsets();
+  return (
+    <Text style={styles.rowText} testID="additional-insets-context-insets">
+      useSafeAreaInsets: top {Math.round(insets.top)}, bottom{' '}
+      {Math.round(insets.bottom)}
+    </Text>
   );
 }
 
 function SafeAreaViewTab() {
   return (
-    <SafeAreaView
-      edges={{ top: true, bottom: true, left: true, right: true }}
-      style={styles.safeArea}>
-      <Text style={styles.rowText}>
-        The red border is the SafeAreaView frame. Its bottom edge stays above
-        the floating bar when the insets are on.
-      </Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <SafeAreaView
+        edges={{ top: true, bottom: true, left: true, right: true }}
+        style={styles.container}>
+        <View style={styles.safeAreaContent}>
+          <Text style={styles.rowText}>
+            The red border fills the SafeAreaView. Its bottom edge stays above
+            the floating bar when the insets are on.
+          </Text>
+        </View>
+      </SafeAreaView>
+      <SafeAreaProvider style={styles.provider} pointerEvents="none">
+        <SafeAreaContextInsets />
+      </SafeAreaProvider>
+    </View>
   );
 }
 
-function TestStackV4AdditionalSafeAreaInsetsIOS() {
+function TestStackV4AdditionalSafeAreaInsets() {
   const [selectedTab, setSelectedTab] = useState<Tab>('List');
   const [insetsEnabled, setInsetsEnabled] = useState(true);
 
@@ -94,7 +136,7 @@ function TestStackV4AdditionalSafeAreaInsetsIOS() {
 }
 
 export default createScenario(
-  TestStackV4AdditionalSafeAreaInsetsIOS,
+  TestStackV4AdditionalSafeAreaInsets,
   scenarioDescription,
 );
 
@@ -115,7 +157,12 @@ const styles = StyleSheet.create({
   rowText: {
     fontSize: 16,
   },
-  safeArea: {
+  provider: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  safeAreaContent: {
     flex: 1,
     padding: 16,
     borderWidth: 6,

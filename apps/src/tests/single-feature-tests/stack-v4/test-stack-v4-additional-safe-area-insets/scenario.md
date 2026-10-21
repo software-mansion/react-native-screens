@@ -3,14 +3,14 @@
 ## Details
 
 **Description:** Verifies that `additionalSafeAreaInsets` on a v4 `Screen`
-extends the safe area of the screen's view controller. The scenario renders
-two tab-like `Screen`s in a `ScreenContainer`, the way JS tab navigators do,
+extends the safe area of the screen's content. The scenario renders two
+tab-like `Screen`s in a `ScreenContainer`, the way JS tab navigators do,
 under a custom bar floating over their bottom edge. With the insets on, the
-`ScrollView` (`contentInsetAdjustmentBehavior="automatic"`) and the
-`SafeAreaView` inside the screens keep clear of the bar, like they do for a
-native `UITabBar`. With the insets off, content ends behind the bar.
+list and the `SafeAreaView` inside the screens keep clear of the bar, like
+they do for a native `UITabBar` on iOS. With the insets off, content ends
+behind the bar.
 
-**OS test creation version:** iOS 27.0.
+**OS test creation version:** iOS 27.0, Android API 30.
 
 ## E2E test
 
@@ -19,7 +19,7 @@ They could be automated by comparing element frames.
 
 ## Prerequisites
 
-- iOS simulator or device.
+- iOS simulator or device, Android emulator or device.
 
 ## Note
 
@@ -27,6 +27,13 @@ They could be automated by comparing element frames.
   `ScreenContainer`. It is not part of the screens and does not change their
   layout; only the `additionalSafeAreaInsets` prop does.
 - The scenario starts with the insets on.
+- On iOS the list relies on `contentInsetAdjustmentBehavior="automatic"`.
+  Android has no automatic scroll view insets, so the list content is
+  wrapped in a `SafeAreaView` there.
+- The `useSafeAreaInsets` line comes from a `react-native-safe-area-context`
+  provider inside the screen. On Android it only reflects the extra bottom
+  inset with a version of that library that reads the insets dispatched to
+  the provider; older versions keep showing the navigation bar inset.
 
 ## Steps
 
@@ -54,8 +61,11 @@ They could be automated by comparing element frames.
 1. Tap `SafeAreaView` in the floating bar.
 
     - [ ] The bottom edge of the red border sits above the floating bar.
+    - [ ] The `useSafeAreaInsets` bottom value includes the extra 80 points
+          (see Note for Android).
 
 2. Tap `Insets: on`.
 
     - [ ] The bottom edge of the red border moves down behind the bar, to
-          the top of the home indicator area.
+          the top of the home indicator or navigation bar area.
+    - [ ] The `useSafeAreaInsets` bottom value drops by 80.

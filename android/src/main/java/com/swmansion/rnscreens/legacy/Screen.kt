@@ -9,11 +9,15 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -115,6 +119,14 @@ class Screen(
      * we delay the transition until both layout and insets have been applied.
      */
     var shouldTriggerPostponedTransitionAfterLayout = false
+
+    var additionalSafeAreaInsets: Insets = Insets.NONE
+        set(value) {
+            if (field != value) {
+                field = value
+                ViewCompat.requestApplyInsets(this)
+            }
+        }
 
     var footer: ScreenFooter? = null
         set(value) {
@@ -569,6 +581,48 @@ class Screen(
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
         updateShadowNodeScreenSize(width, height, top + translationY.toInt())
+    }
+
+    override fun dispatchApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        if (additionalSafeAreaInsets == Insets.NONE) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        val result = super.dispatchApplyWindowInsets(insetsWithAdditionalSafeArea(insets))
+        // Before API 30, a parent passes the insets returned by one child on to the next one,
+        // so the extra insets must not leak to the screen's siblings.
+        return if (result.isConsumed) result else insets
+    }
+
+    private fun insetsWithAdditionalSafeArea(insets: WindowInsets): WindowInsets {
+        val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
+        val extra = additionalSafeAreaInsets
+        val safeArea =
+            insetsCompat.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+        val statusBars = insetsCompat.getInsets(WindowInsetsCompat.Type.statusBars())
+        val navigationBars = insetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars())
+
+        fun grow(
+            current: Int,
+            safe: Int,
+            extra: Int,
+        ) = if (extra == 0) current else safe + extra
+
+        return WindowInsetsCompat
+            .Builder(insetsCompat)
+            .setInsets(
+                WindowInsetsCompat.Type.statusBars(),
+                Insets.of(statusBars.left, grow(statusBars.top, safeArea.top, extra.top), statusBars.right, statusBars.bottom),
+            ).setInsets(
+                WindowInsetsCompat.Type.navigationBars(),
+                Insets.of(
+                    grow(navigationBars.left, safeArea.left, extra.left),
+                    navigationBars.top,
+                    grow(navigationBars.right, safeArea.right, extra.right),
+                    grow(navigationBars.bottom, safeArea.bottom, extra.bottom),
+                ),
+            ).build()
+            .toWindowInsets() ?: insets
     }
 
     override fun onDetachedFromWindow() {
