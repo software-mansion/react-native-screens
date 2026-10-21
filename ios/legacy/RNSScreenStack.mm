@@ -1570,6 +1570,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   [_presentedModals removeAllObjects];
   [_controller willMoveToParentViewController:nil];
+  [_controller.view removeFromSuperview];
   [_controller removeFromParentViewController];
   [_controller setViewControllers:@[ [UIViewController new] ]];
 }

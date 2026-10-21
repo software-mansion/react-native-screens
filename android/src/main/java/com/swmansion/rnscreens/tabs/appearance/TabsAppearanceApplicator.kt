@@ -12,20 +12,22 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import com.facebook.react.common.assets.ReactFontManager
-import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
-import com.swmansion.rnscreens.tabs.screen.TabsScreen
+import com.swmansion.rnscreens.tabs.container.TabsMenuItemState
+import com.swmansion.rnscreens.tabs.screen.TabsContainerItem
+import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
+    private val titleFontResolver: FontResolver,
 ) {
     // Resolved on each access: tracks the display density of the current configuration.
     internal val defaultIconSizeDp: Float
@@ -34,8 +36,8 @@ internal class TabsAppearanceApplicator(
                 bottomNavigationView.resources.getDimension(R.dimen.mtrl_navigation_bar_item_default_icon_size),
             )
 
-    internal fun effectiveIconSizeDp(tabsScreen: TabsScreen): Float =
-        tabsScreen.appearance?.tabBarItemIconSize?.takeIf { it > 0f } ?: defaultIconSizeDp
+    internal fun effectiveIconSizeDp(item: TabsContainerItem): Float =
+        item.appearance?.tabBarItemIconSize?.takeIf { it > 0f } ?: defaultIconSizeDp
 
     // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
     fun applyIconBox(iconBoxDp: Float) {
@@ -59,24 +61,25 @@ internal class TabsAppearanceApplicator(
     private val autoIndicatorVerticalPaddingDp: Float
         get() = bottomNavigationView.pxToDp(defaultIndicatorHeightPx.toFloat()) - defaultIconSizeDp
 
-    internal fun effectiveIndicatorWidthDp(tabsScreen: TabsScreen): Float =
-        tabsScreen.appearance?.tabBarItemActiveIndicatorWidth?.takeIf { it > 0f }
-            ?: (effectiveIconSizeDp(tabsScreen) + autoIndicatorHorizontalPaddingDp)
+    internal fun effectiveIndicatorWidthDp(item: TabsContainerItem): Float =
+        item.appearance?.tabBarItemActiveIndicatorWidth?.takeIf { it > 0f }
+            ?: (effectiveIconSizeDp(item) + autoIndicatorHorizontalPaddingDp)
 
-    internal fun effectiveIndicatorHeightDp(tabsScreen: TabsScreen): Float =
-        tabsScreen.appearance?.tabBarItemActiveIndicatorHeight?.takeIf { it > 0f }
-            ?: (effectiveIconSizeDp(tabsScreen) + autoIndicatorVerticalPaddingDp)
+    internal fun effectiveIndicatorHeightDp(item: TabsContainerItem): Float =
+        item.appearance?.tabBarItemActiveIndicatorHeight?.takeIf { it > 0f }
+            ?: (effectiveIconSizeDp(item) + autoIndicatorVerticalPaddingDp)
 
     @SuppressLint("RestrictedApi")
     private fun applyActiveIndicatorSize(
         menuItem: MenuItem,
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
+        state: TabsMenuItemState,
     ): Boolean {
-        val widthPx = bottomNavigationView.dpToPx(effectiveIndicatorWidthDp(tabsScreen)).toInt()
-        val heightPx = bottomNavigationView.dpToPx(effectiveIndicatorHeightDp(tabsScreen)).toInt()
+        val widthPx = bottomNavigationView.dpToPx(effectiveIndicatorWidthDp(item)).toInt()
+        val heightPx = bottomNavigationView.dpToPx(effectiveIndicatorHeightDp(item)).toInt()
         val isAlreadyApplied =
-            widthPx == (tabsScreen.appliedActiveIndicatorWidthPx ?: defaultIndicatorWidthPx) &&
-                heightPx == (tabsScreen.appliedActiveIndicatorHeightPx ?: defaultIndicatorHeightPx)
+            widthPx == (state.appliedActiveIndicatorWidthPx ?: defaultIndicatorWidthPx) &&
+                heightPx == (state.appliedActiveIndicatorHeightPx ?: defaultIndicatorHeightPx)
         if (isAlreadyApplied) {
             return true
         }
@@ -88,8 +91,8 @@ internal class TabsAppearanceApplicator(
         itemView.setActiveIndicatorWidth(widthPx)
         itemView.setActiveIndicatorHeight(heightPx)
 
-        tabsScreen.appliedActiveIndicatorWidthPx = widthPx
-        tabsScreen.appliedActiveIndicatorHeightPx = heightPx
+        state.appliedActiveIndicatorWidthPx = widthPx
+        state.appliedActiveIndicatorHeightPx = heightPx
 
         return true
     }
@@ -210,26 +213,11 @@ internal class TabsAppearanceApplicator(
             val smallLabel =
                 menuItem.findViewById<TextView>(R.id.navigation_bar_item_small_label_view)
 
-            val isFontStyleItalic = tabBarAppearance?.tabBarItemTitleFontStyle == "italic"
-
-            // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
-            // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
-            // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-            val fontWeight =
-                if (tabBarAppearance?.tabBarItemTitleFontWeight ==
-                    "bold"
-                ) {
-                    700
-                } else {
-                    tabBarAppearance?.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
-                }
-
             val fontFamily =
-                ReactFontManager.getInstance().getTypeface(
-                    tabBarAppearance?.tabBarItemTitleFontFamily ?: "",
-                    fontWeight,
-                    isFontStyleItalic,
-                    context.assets,
+                titleFontResolver.resolveTypeface(
+                    tabBarAppearance?.tabBarItemTitleFontFamily,
+                    tabBarAppearance?.tabBarItemTitleFontWeight,
+                    tabBarAppearance?.tabBarItemTitleFontItalic,
                 )
 
             /*
@@ -242,10 +230,10 @@ internal class TabsAppearanceApplicator(
                 `allowFontScaling` prop.
              */
             val smallFontSize =
-                tabBarAppearance?.tabBarItemTitleSmallLabelFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance?.tabBarItemTitleSmallLabelFontSize?.takeIf { it > 0 }?.let(titleFontResolver::resolveTextSizePx)
                     ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                tabBarAppearance?.tabBarItemTitleLargeLabelFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance?.tabBarItemTitleLargeLabelFontSize?.takeIf { it > 0 }?.let(titleFontResolver::resolveTextSizePx)
                     ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
@@ -260,20 +248,24 @@ internal class TabsAppearanceApplicator(
 
     fun updateMenuItemAppearance(
         menuItem: MenuItem,
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
+        state: TabsMenuItemState,
         iconBoxDp: Float,
     ) {
-        if (menuItem.title != tabsScreen.tabTitle) {
-            menuItem.title = tabsScreen.tabTitle
+        val flags = state.pendingFlags
+        state.pendingFlags = TabsItemInvalidationFlags.NONE
+
+        // The title is diffed; the icon and the active indicator are re-applied only when invalidated.
+        if (menuItem.title != item.tabTitle) {
+            menuItem.title = item.tabTitle
         }
 
-        if (tabsScreen.isMenuItemIconInvalidated) {
-            tabsScreen.isMenuItemIconInvalidated = false
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON or TabsItemInvalidationFlags.ICON_SIZE)) {
             // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
             // single inset computed from one child would mis-size the other when their resolutions differ.
-            val effectiveDp = effectiveIconSizeDp(tabsScreen)
-            val iconDrawable = sizeIcon(tabsScreen.icon.drawable, effectiveDp, iconBoxDp)
-            val selectedIconDrawable = sizeIcon(tabsScreen.selectedIcon.drawable, effectiveDp, iconBoxDp)
+            val effectiveDp = effectiveIconSizeDp(item)
+            val iconDrawable = sizeIcon(item.iconDrawable, effectiveDp, iconBoxDp)
+            val selectedIconDrawable = sizeIcon(item.selectedIconDrawable, effectiveDp, iconBoxDp)
             menuItem.icon =
                 if (selectedIconDrawable != null && iconDrawable != null) {
                     StateListDrawable().apply {
@@ -285,19 +277,22 @@ internal class TabsAppearanceApplicator(
                 }
         }
 
-        if (tabsScreen.isMenuItemActiveIndicatorInvalidated && applyActiveIndicatorSize(menuItem, tabsScreen)) {
-            tabsScreen.isMenuItemActiveIndicatorInvalidated = false
+        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE) &&
+            !applyActiveIndicatorSize(menuItem, item, state)
+        ) {
+            // The menu item's view doesn't exist yet; retry on the next update.
+            state.pendingFlags = state.pendingFlags or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE
         }
     }
 
     internal fun updateBadgeAppearance(
         context: Context,
         menuItem: MenuItem,
-        tabsScreen: TabsScreen,
+        item: TabsContainerItem,
         appearance: TabsAppearance?,
     ) {
         val menuItemId = menuItem.itemId
-        val badgeValue = tabsScreen.badgeValue
+        val badgeValue = item.badgeValue
 
         if (badgeValue == null) {
             val badge = bottomNavigationView.getBadge(menuItemId)

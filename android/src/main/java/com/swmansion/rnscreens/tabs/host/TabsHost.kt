@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.react.common.text.ReactFontResolver
 import com.swmansion.rnscreens.react.utils.FragmentManagerHelper
 import com.swmansion.rnscreens.react.utils.ViewIdGenerator
 import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
@@ -44,7 +45,13 @@ class TabsHost(
     private var hasFirstLayoutWithInsets: Boolean = false
 
     private val container: TabsContainer =
-        TabsContainer(reactContext, WeakReference(this), ViewIdGenerator).apply {
+        TabsContainer(
+            reactContext,
+            WeakReference(this),
+            ViewIdGenerator,
+            ReactFontResolver(reactContext),
+            ::ReactTabsBottomNavigationView,
+        ).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -105,30 +112,30 @@ class TabsHost(
         }
 
         renderedScreens.add(index, tabsScreen)
-        tabsScreen.setTabsScreenDelegate(container)
+        tabsScreen.setContainerItemDelegate(container)
 
-        container.addTabsScreenAt(index, tabsScreen)
+        container.addItemAt(index, tabsScreen)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
         renderedScreens.removeAt(index).also { tabsScreen ->
-            container.removeTabsScreenAt(index)
-            tabsScreen.setTabsScreenDelegate(null)
+            container.removeItemAt(index)
+            tabsScreen.setContainerItemDelegate(null)
         }
     }
 
     internal fun unmountReactSubview(reactSubview: TabsScreen) {
         if (renderedScreens.removeIf { it === reactSubview }) {
-            assert(container.removeTabsScreen(reactSubview))
-            reactSubview.setTabsScreenDelegate(null)
+            assert(container.removeItem(reactSubview))
+            reactSubview.setContainerItemDelegate(null)
         }
     }
 
     internal fun unmountAllReactSubviews() {
-        renderedScreens.forEach { it.setTabsScreenDelegate(null) }
+        renderedScreens.forEach { it.setContainerItemDelegate(null) }
         renderedScreens.clear()
 
-        container.removeAllTabsScreens()
+        container.removeAllItems()
     }
 
     internal fun updateJSNavigationStateUpdateRequest(navStateRequest: TabsNavigationStateUpdateRequest) {
