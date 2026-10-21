@@ -34,18 +34,18 @@ They could be automated by comparing element frames.
 
 1. Open the scenario and scroll the list to the bottom.
 
-   - [ ] The green "Last row" rests fully visible above the floating bar.
+    - [ ] The green "Last row" rests fully visible above the floating bar.
 
 2. Tap `Insets: on` in the floating bar.
 
-   - [ ] The label changes to `Insets: off`.
-   - [ ] The list can no longer scroll the "Last row" above the bar; it
-         ends behind the bar.
+    - [ ] The label changes to `Insets: off`.
+    - [ ] The list can no longer scroll the "Last row" above the bar; it
+          ends behind the bar.
 
 3. Tap `Insets: off`.
 
-   - [ ] The label changes to `Insets: on` and the "Last row" can again be
-         scrolled fully above the bar.
+    - [ ] The label changes to `Insets: on` and the "Last row" can again be
+          scrolled fully above the bar.
 
 ---
 
@@ -53,9 +53,9 @@ They could be automated by comparing element frames.
 
 1. Tap `SafeAreaView` in the floating bar.
 
-   - [ ] The bottom edge of the red border sits above the floating bar.
+    - [ ] The bottom edge of the red border sits above the floating bar.
 
 2. Tap `Insets: on`.
 
-   - [ ] The bottom edge of the red border moves down behind the bar, to
-         the home indicator area.
+    - [ ] The bottom edge of the red border moves down behind the bar, to
+          the top of the home indicator area.
