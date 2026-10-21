@@ -1,12 +1,14 @@
 package com.swmansion.rnscreens.tabs.screen
 
-import android.content.res.Configuration
+import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.util.SparseArray
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.ThemedReactContext
 import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
@@ -25,8 +27,30 @@ class TabsScreen(
 ) : ViewGroup(reactContext),
     FragmentProviding,
     ScrollViewSeeking,
-    ContainerItem {
-    private var tabsScreenDelegate: WeakReference<TabsScreenDelegate> = WeakReference(null)
+    TabsContainerItem {
+    private var containerItemDelegate: WeakReference<TabsContainerItemDelegate> = WeakReference(null)
+
+    // region Handling configuration changes
+
+    private var configObserver: TabsItemConfigurationObserver? = null
+
+    override fun setConfigurationObserver(observer: TabsItemConfigurationObserver?) {
+        configObserver = observer
+    }
+
+    private fun invalidate(flags: TabsItemInvalidationFlags) {
+        configObserver?.onInvalidated(flags)
+    }
+
+    private fun <T> invalidatingProperty(
+        initialValue: T,
+        flags: TabsItemInvalidationFlags,
+    ) = Delegates.observable(initialValue) { _, oldValue, newValue ->
+        if (oldValue != newValue) invalidate(flags)
+    }
+
+    // endregion
+
     private val containerItemSupport = ContainerItemSupport()
 
     internal lateinit var eventEmitter: TabsScreenEventEmitter
@@ -41,22 +65,13 @@ class TabsScreen(
                 }
         }
 
-    internal val requireScreenKey: String
-        get() = checkNotNull(screenKey) { "[RNScreens] screenKey MUST NOT be null" }
-
-    var tabTitle: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
+    override var tabTitle: String? by invalidatingProperty(null, TabsItemInvalidationFlags.TITLE)
 
     // region Appearance
 
-    internal var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
+    override var appearance: TabsAppearance? by Delegates.observable(null) { _, oldValue, newValue ->
         if (oldValue != newValue) {
-            if (invalidateMenuItemSizesIfNeeded(oldValue, newValue)) {
-                tabsScreenDelegate.get()?.onItemSizeChange(this)
-            } else {
-                tabsScreenDelegate.get()?.onAppearanceChanged(this)
-            }
+            invalidate(resolveAppearanceInvalidationFlags(oldValue, newValue))
         }
     }
 
@@ -64,20 +79,14 @@ class TabsScreen(
 
     // region Badge
 
-    var badgeValue: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
+    override var badgeValue: String? by invalidatingProperty(null, TabsItemInvalidationFlags.BADGE)
 
     // endregion
 
     // region Accessibility
-    var tabBarItemTestID: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
+    override var tabBarItemTestID: String? by invalidatingProperty(null, TabsItemInvalidationFlags.ACCESSIBILITY)
 
-    var tabBarItemAccessibilityLabel: String? by Delegates.observable(null) { _, oldValue, newValue ->
-        updateMenuItemAttributesIfNeeded(oldValue, newValue)
-    }
+    override var tabBarItemAccessibilityLabel: String? by invalidatingProperty(null, TabsItemInvalidationFlags.ACCESSIBILITY)
 
     // endregion
 
@@ -86,52 +95,39 @@ class TabsScreen(
     internal val icon = TabsScreenIcon(reactContext, ::onIconChange)
     internal val selectedIcon = TabsScreenIcon(reactContext, ::onIconChange)
 
-    internal var isMenuItemIconInvalidated = true
+    override val iconDrawable: Drawable?
+        get() = icon.drawable
 
-    internal var isMenuItemActiveIndicatorInvalidated = true
-
-    internal var appliedActiveIndicatorWidthPx: Int? = null
-
-    internal var appliedActiveIndicatorHeightPx: Int? = null
+    override val selectedIconDrawable: Drawable?
+        get() = selectedIcon.drawable
 
     internal fun resolveIconsIfNeeded() {
         icon.resolveIfNeeded()
         selectedIcon.resolveIfNeeded()
     }
 
-    private fun invalidateMenuItemSizesIfNeeded(
+    private fun resolveAppearanceInvalidationFlags(
         oldValue: TabsAppearance?,
         newValue: TabsAppearance?,
-    ): Boolean {
-        val isIconSizeChanged = oldValue?.tabBarItemIconSize != newValue?.tabBarItemIconSize
-        val isActiveIndicatorSizeChanged =
-            oldValue?.tabBarItemActiveIndicatorWidth != newValue?.tabBarItemActiveIndicatorWidth ||
-                oldValue?.tabBarItemActiveIndicatorHeight != newValue?.tabBarItemActiveIndicatorHeight
-        if (isIconSizeChanged) {
-            isMenuItemIconInvalidated = true
+    ): TabsItemInvalidationFlags {
+        var flags = TabsItemInvalidationFlags.APPEARANCE
+        if (oldValue?.tabBarItemIconSize != newValue?.tabBarItemIconSize) {
+            flags = flags or TabsItemInvalidationFlags.ICON_SIZE
         }
-        if (isIconSizeChanged || isActiveIndicatorSizeChanged) {
-            isMenuItemActiveIndicatorInvalidated = true
-            return true
+        if (oldValue?.tabBarItemActiveIndicatorWidth != newValue?.tabBarItemActiveIndicatorWidth ||
+            oldValue?.tabBarItemActiveIndicatorHeight != newValue?.tabBarItemActiveIndicatorHeight
+        ) {
+            flags = flags or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE
         }
-        return false
+        return flags
     }
 
     // endregion
 
-    var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
-    var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
+    override var shouldUseRepeatedTabSelectionScrollToTopSpecialEffect: Boolean = true
+    override var shouldUseRepeatedTabSelectionPopToRootSpecialEffect: Boolean = true
 
-    var preventNativeSelection: Boolean = false
-
-    private fun <T> updateMenuItemAttributesIfNeeded(
-        oldValue: T,
-        newValue: T,
-    ) {
-        if (newValue != oldValue) {
-            onMenuItemAttributesChange()
-        }
-    }
+    override var preventNativeSelection: Boolean = false
 
     override fun onAttachedToWindow() {
         RNSLog.d(TAG, "TabsScreen [$id] attached to window")
@@ -159,20 +155,13 @@ class TabsScreen(
         // Ignore restoring instance state too, as we are not saving anything anyways.
     }
 
-    internal fun setTabsScreenDelegate(delegate: TabsScreenDelegate?) {
-        tabsScreenDelegate = WeakReference(delegate)
+    internal fun setContainerItemDelegate(delegate: TabsContainerItemDelegate?) {
+        containerItemDelegate = WeakReference(delegate)
     }
 
-    override fun getAssociatedFragment(): Fragment? = tabsScreenDelegate.get()?.getFragmentForTabsScreen(this)
+    override fun getAssociatedFragment(): Fragment? = containerItemDelegate.get()?.getFragmentForItem(this)
 
-    private fun onMenuItemAttributesChange() {
-        tabsScreenDelegate.get()?.onMenuItemAttributesChange(this)
-    }
-
-    private fun onIconChange() {
-        isMenuItemIconInvalidated = true
-        onMenuItemAttributesChange()
-    }
+    private fun onIconChange() = invalidate(TabsItemInvalidationFlags.ICON)
 
     internal fun onViewManagerAddEventEmitters() {
         // When this is called from View Manager the view tag is already set
@@ -180,18 +169,8 @@ class TabsScreen(
         eventEmitter = TabsScreenEventEmitter(reactContext, id)
     }
 
-    /**
-     * Notify the view that it's associated fragment got its config updated.
-     *
-     * There are cases where the fragment will receive configuration change, but it's view will not,
-     * e.g. theme update from JS via Appearance.setColorScheme.
-     */
-    internal fun onFragmentConfigurationChange(
-        fragment: TabsScreenFragment,
-        config: Configuration,
-    ) {
-        tabsScreenDelegate.get()?.onFragmentConfigurationChange(this, config)
-    }
+    override val appearanceEventEmitter: ViewAppearanceEventEmitter
+        get() = eventEmitter
 
     // region ScrollViewSeeking
     override fun registerScrollView(
@@ -204,6 +183,12 @@ class TabsScreen(
     // endregion
 
     // region ContainerItem
+
+    override val view: View
+        get() = this
+
+    override val itemKey: String?
+        get() = screenKey
 
     override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
 

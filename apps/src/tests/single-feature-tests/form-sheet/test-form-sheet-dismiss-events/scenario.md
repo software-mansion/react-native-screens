@@ -8,7 +8,8 @@
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Full: Covers all manual scenario steps on iPhone, iPad and Android phone. The
+system back step runs on Android only.
 
 ## Prerequisites
 
