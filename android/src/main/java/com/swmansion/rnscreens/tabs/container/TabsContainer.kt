@@ -26,6 +26,7 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.common.safearea.EdgeInsets
 import com.swmansion.rnscreens.core.common.safearea.OnInterfaceInsetsChangeListener
 import com.swmansion.rnscreens.core.common.safearea.SafeAreaProvider
+import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
@@ -55,6 +56,7 @@ class TabsContainer internal constructor(
     private val context: Context,
     private val delegate: WeakReference<TabsContainerDelegate>,
     private val viewIdProvider: ViewIdProviding,
+    titleFontResolver: FontResolver,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -159,7 +161,7 @@ class TabsContainer internal constructor(
         }
 
     private val appearanceCoordinator =
-        TabsAppearanceCoordinator(bottomNavigationView, tabsModel)
+        TabsAppearanceCoordinator(bottomNavigationView, tabsModel, titleFontResolver)
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsModel)
 

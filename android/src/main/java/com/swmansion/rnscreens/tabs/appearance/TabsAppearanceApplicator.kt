@@ -12,12 +12,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import com.facebook.react.common.assets.ReactFontManager
-import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
+import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
@@ -28,6 +27,7 @@ import com.swmansion.rnscreens.tabs.screen.TabsItemInvalidationFlags
 @SuppressLint("PrivateResource") // We want to use variables from material design for default values
 internal class TabsAppearanceApplicator(
     private val bottomNavigationView: BottomNavigationView,
+    private val titleFontResolver: FontResolver,
 ) {
     // Resolved on each access: tracks the display density of the current configuration.
     internal val defaultIconSizeDp: Float
@@ -213,26 +213,11 @@ internal class TabsAppearanceApplicator(
             val smallLabel =
                 menuItem.findViewById<TextView>(R.id.navigation_bar_item_small_label_view)
 
-            val isFontStyleItalic = tabBarAppearance?.tabBarItemTitleFontStyle == "italic"
-
-            // Bold is 700, normal is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L150
-            // It can be any other int -> https://reactnative.dev/docs/text-style-props#fontweight
-            // Default is 400 -> https://github.com/facebook/react-native/blob/e0efd3eb5b637bd00fb7528ab4d129f6b3e13d03/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/common/assets/ReactFontManager.kt#L117
-            val fontWeight =
-                if (tabBarAppearance?.tabBarItemTitleFontWeight ==
-                    "bold"
-                ) {
-                    700
-                } else {
-                    tabBarAppearance?.tabBarItemTitleFontWeight?.toIntOrNull() ?: 400
-                }
-
             val fontFamily =
-                ReactFontManager.getInstance().getTypeface(
-                    tabBarAppearance?.tabBarItemTitleFontFamily ?: "",
-                    fontWeight,
-                    isFontStyleItalic,
-                    context.assets,
+                titleFontResolver.resolveTypeface(
+                    tabBarAppearance?.tabBarItemTitleFontFamily,
+                    tabBarAppearance?.tabBarItemTitleFontWeight,
+                    tabBarAppearance?.tabBarItemTitleFontItalic,
                 )
 
             /*
@@ -245,10 +230,10 @@ internal class TabsAppearanceApplicator(
                 `allowFontScaling` prop.
              */
             val smallFontSize =
-                tabBarAppearance?.tabBarItemTitleSmallLabelFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance?.tabBarItemTitleSmallLabelFontSize?.takeIf { it > 0 }?.let(titleFontResolver::resolveTextSizePx)
                     ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
             val largeFontSize =
-                tabBarAppearance?.tabBarItemTitleLargeLabelFontSize?.takeIf { it > 0 }?.let { PixelUtil.toPixelFromSP(it) }
+                tabBarAppearance?.tabBarItemTitleLargeLabelFontSize?.takeIf { it > 0 }?.let(titleFontResolver::resolveTextSizePx)
                     ?: context.resources.getDimension(R.dimen.design_bottom_navigation_text_size)
 
             // Inactive
