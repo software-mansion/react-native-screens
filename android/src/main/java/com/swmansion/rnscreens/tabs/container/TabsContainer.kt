@@ -550,7 +550,12 @@ class TabsContainer internal constructor(
             return
         }
 
-        if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
+        // When the selected tab has been removed, rebuilding the menu already moved the
+        // BottomNavigationView selection, so the ids can match while `navState` still points at the
+        // removed tab. The selection still has to go through [onMenuItemSelected] then.
+        val isSelectedTabRemoved =
+            navState.isNotEmpty() && getFragmentForScreenKey(navState.selectedScreenKey) == null
+        if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty() || isSelectedTabRemoved) {
             isInExternalOperationContext = true
             // This triggers on OnMenuItemClicked callback, where we perform actual update from
             bottomNavigationView.setSelectedItemIdWithActionOrigin(
@@ -608,7 +613,9 @@ class TabsContainer internal constructor(
             return true
         }
 
-        val currentSelectedFragment = selectedTab
+        // The previously selected tab may have been removed from the model (e.g. JS swapped the
+        // set of tabs), so don't use the throwing `selectedTab` getter here.
+        val currentSelectedFragment = getFragmentForScreenKey(navState.selectedScreenKey)
 
         if (nextSelectedFragment === currentSelectedFragment) {
             progressNavigationState(navState.selectedScreenKey, actionOrigin)
@@ -636,14 +643,30 @@ class TabsContainer internal constructor(
     }
 
     private fun applyNextSelectedFragmentToFragmentManagerSync(
-        currSelectedFragment: TabsScreenFragment,
+        currSelectedFragment: TabsScreenFragment?,
         nextSelectedFragment: TabsScreenFragment,
     ) {
-        requireFragmentManager
+        val fragmentManager = requireFragmentManager
+        fragmentManager
             .createTransactionWithReordering()
             .let {
-                it.detach(currSelectedFragment)
-                it.attach(nextSelectedFragment)
+                // Fragments are added to the FragmentManager only in
+                // [applyInitialStateToFragmentManagerSync]. Tabs removed from the model afterwards
+                // stay there, so remove the ones that are still attached. Tabs added afterwards
+                // have never been added, so `attach` alone would leave the content empty.
+                // The FragmentManager can be shared with other TabsHosts, so only touch fragments
+                // added to this container's content view.
+                fragmentManager.fragments
+                    .filterIsInstance<TabsScreenFragment>()
+                    .filter { fragment -> fragment.id == contentView.id && fragment !in tabsModel }
+                    .forEach { fragment -> it.remove(fragment) }
+                currSelectedFragment?.let { fragment -> it.detach(fragment) }
+                // A detached fragment reports `isAdded == false` too, so check `isDetached` as well.
+                if (nextSelectedFragment.isAdded || nextSelectedFragment.isDetached) {
+                    it.attach(nextSelectedFragment)
+                } else {
+                    it.add(contentView.id, nextSelectedFragment)
+                }
             }.commitNowAllowingStateLoss()
     }
 
@@ -665,7 +688,9 @@ class TabsContainer internal constructor(
     private fun onMenuItemSelected(item: MenuItem): Boolean {
         RNSLog.d(TAG, "Item selected $item")
 
-        val currSelectedFragment = if (navState.isNotEmpty()) selectedTab else null
+        // See [updateNavigationStateAndSelectedFragment]: the previously selected tab may be gone.
+        val currSelectedFragment =
+            if (navState.isNotEmpty()) getFragmentForScreenKey(navState.selectedScreenKey) else null
         val nextSelectedFragment =
             checkNotNull(getFragmentForMenuItemId(item.itemId)) {
                 "[RNScreens] Can not select item with id: ${item.itemId} - associated fragment does not exist"
