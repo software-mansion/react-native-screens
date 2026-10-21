@@ -31,7 +31,16 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalOverContext(props: ContainedModalProps) {
-  const { children, isOpen, targetContainerId, onPresentationRejected } = props;
+  const {
+    children,
+    isOpen,
+    targetContainerId,
+    onPresentationRejected,
+    onWillAppear,
+    onDidAppear,
+    onWillDisappear,
+    onDidDisappear,
+  } = props;
 
   const context = useContext(ContainedModalContext);
   // An empty string is never a valid containerId; native maps it to nil and
@@ -53,7 +62,11 @@ export function ContainedModalOverContext(props: ContainedModalProps) {
       style={styles.host}
       isOpen={isOpen}
       targetContainerId={resolvedTargetContainerId}
-      onPresentationRejected={onPresentationRejected}>
+      onPresentationRejected={onPresentationRejected}
+      onWillAppear={onWillAppear}
+      onDidAppear={onDidAppear}
+      onWillDisappear={onWillDisappear}
+      onDidDisappear={onDidDisappear}>
       {children}
     </ContainedModalHostNativeComponent>
   );

@@ -146,17 +146,29 @@ namespace react = facebook::react;
 }
 #endif
 
+- (void)modalControllerViewWillAppear:(RNSContainedModalContentController *)controller
+{
+  [_reactEventEmitter emitOnWillAppear];
+}
+
 - (void)modalControllerViewDidAppear:(RNSContainedModalContentController *)controller
 {
   // Restore after a suspension re-attaches without a layout pass,
   // so appearance is the only trigger that fires then.
   [self syncShadowNodeState];
+  [_reactEventEmitter emitOnDidAppear];
+}
+
+- (void)modalControllerViewWillDisappear:(RNSContainedModalContentController *)controller
+{
+  [_reactEventEmitter emitOnWillDisappear];
 }
 
 - (void)modalControllerViewDidDisappear:(RNSContainedModalContentController *)controller
 {
   // Nothing to tear down: touch delivery is owned by the main surface's touch
   // handler (see the note in `hitTest:`), which has no per-modal lifecycle.
+  [_reactEventEmitter emitOnDidDisappear];
 }
 
 - (void)modalControllerDidRejectPresentation:(RNSContainedModalContentController *)controller
