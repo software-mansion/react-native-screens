@@ -642,6 +642,11 @@ RNS_IGNORE_SUPER_CALL_END
   } else {
     [_touchHandler detachFromView:self];
   }
+
+  // An ancestor screen attached to its container re-applies its own effects to this scroll view first.
+  if (self.window != nil && ![RNSScrollEdgeEffectApplicator hasOnlyAutomaticEffects:self]) {
+    [self updateContentScrollViewEdgeEffectsIfExists];
+  }
 }
 
 - (nullable RCTSurfaceTouchHandler *)touchHandler
