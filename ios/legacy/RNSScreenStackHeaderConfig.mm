@@ -154,7 +154,10 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
   if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
-    [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
+    // A screen without stack animation (`stackAnimation="none"`) appears without animation, so its header config must
+    // not animate the navigation bar either. Otherwise, showing it over a screen with a hidden header slides the bar in.
+    BOOL animated = _screenView.stackAnimation != RNSScreenStackAnimationNone;
+    [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:animated];
     // As the header might have change in `updateViewController` we need to ensure that header height
     // returned by the `onHeaderHeightChange` event is correct.
     [self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
