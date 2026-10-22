@@ -22,7 +22,7 @@ function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
     <View style={styles.home}>
       {probeMounted && <KeyboardProbe />}
       <Text style={styles.instructions}>
-        1. Open sheet: the marker must sit below the status bar. Close it.{'\n'}
+        1. Open sheet: the sheet must sit below the status bar. Close it.{'\n'}
         2. Mount, then unmount the keyboard probe.{'\n'}
         3. Open sheet again: before the fix it is laid out under the status bar.
         Open keyboard sheet: before the fix it stays at the half detent although
