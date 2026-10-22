@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verify header statusBarScrimColor customization and default scrims.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

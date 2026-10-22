@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-tab-bar-minimize-behavior-ios',
   details: 'Test tab bar minimize behavior for iOS 26+.',
   platforms: ['ios'],
-  devices: ['iphone', 'ipad'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

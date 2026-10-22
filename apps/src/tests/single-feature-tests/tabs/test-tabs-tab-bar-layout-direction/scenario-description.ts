@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests how tabs handle system, React Native and prop layout direction.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'full',
   smokeTest: false,
 };

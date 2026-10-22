@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-simple-nav',
   details: 'Test simple push and pop operations',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

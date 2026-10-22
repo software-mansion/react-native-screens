@@ -9,7 +9,6 @@ export const scenarioDescription: ScenarioDescription = {
     'applied to the container edges. The top scroll edge effect can be ' +
     'switched at runtime with the on-screen selector.',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

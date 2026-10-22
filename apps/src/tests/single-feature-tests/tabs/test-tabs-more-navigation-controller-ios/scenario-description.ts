@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-more-navigation-controller-ios',
   details: 'Test navigation and interactions with "More Navigation Controller"',
   platforms: ['ios'],
-  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

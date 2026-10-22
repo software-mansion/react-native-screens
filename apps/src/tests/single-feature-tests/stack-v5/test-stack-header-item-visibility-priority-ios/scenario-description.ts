@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Three trailing items, the rightmost one grows when pressed. Each button cycles the visibilityPriority of one item between the named values.',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

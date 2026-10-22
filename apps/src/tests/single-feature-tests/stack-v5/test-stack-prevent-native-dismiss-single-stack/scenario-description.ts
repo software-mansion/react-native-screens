@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Test prevent native dismiss behavior in simple single-stack scenario',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

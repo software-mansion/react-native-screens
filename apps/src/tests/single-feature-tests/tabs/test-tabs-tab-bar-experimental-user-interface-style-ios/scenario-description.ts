@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Test experimental_userInterfaceStyle prop on TabsScreen (iOS) - force light/dark interface style for the tab/navigation bar chrome',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

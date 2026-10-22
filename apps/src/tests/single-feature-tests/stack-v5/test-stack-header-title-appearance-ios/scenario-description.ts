@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests title/large title/subtitle appearance via standardAppearance and scrollEdgeAppearance. Subtitle appearance applies to both regular and large subtitle as well.',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

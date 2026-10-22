@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-tabs-stack-in-tabs-base-navigation',
   details: 'Test common navigation flows in Stack in Tabs configuration',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

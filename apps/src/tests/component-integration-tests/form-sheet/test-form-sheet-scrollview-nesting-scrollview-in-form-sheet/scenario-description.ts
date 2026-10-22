@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'ScrollView inside a two-detent sheet: scrolling expands/collapses the sheet.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

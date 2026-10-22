@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
     'Configuration in Stack contained within TabScreen always takes precedence',
   key: 'cit-orientation-stack-in-tabs',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests the icon and state-aware tint props on toolbar menu items, both via props and via the updateToolbarMenuElements view command.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

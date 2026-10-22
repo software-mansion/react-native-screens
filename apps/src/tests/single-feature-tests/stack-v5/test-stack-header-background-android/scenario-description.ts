@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verify header backgroundColor and scrolledBackgroundColor customization.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

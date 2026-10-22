@@ -8,7 +8,6 @@ export const scenarioDescription: ScenarioDescription = {
     ' xcasset, imageSource) with tabBarItemIconColor overrides; Android' +
     ' tabBarItemIconColor in normal, selected and focused states.',
   platforms: ['ios', 'android'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

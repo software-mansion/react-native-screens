@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Pushing a stack screen that has a nested TabsContainer should play an enter transition without visual content jumps',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

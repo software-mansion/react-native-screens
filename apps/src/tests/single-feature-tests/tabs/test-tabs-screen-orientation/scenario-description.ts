@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-screen-orientation',
   details: 'Test screen orientation behavior for TabsScreen',
   platforms: ['ios', 'android'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

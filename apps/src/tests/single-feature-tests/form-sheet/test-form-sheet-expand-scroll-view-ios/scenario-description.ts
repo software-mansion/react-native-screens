@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'prefersScrollingExpandsWhenScrolledToEdge with a nested ScrollView: does scrolling expand the sheet.',
   platforms: ['ios'],
-  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

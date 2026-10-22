@@ -9,7 +9,6 @@ export const scenarioDescription: ScenarioDescription = {
     '(tonal/elevation) state stays stable — does not flash — while scrolling, ' +
     'because the marker lets the app bar resolve the correct scroll view.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

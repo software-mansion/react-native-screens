@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'prefersGrabberVisible: toggled before presenting and while the sheet is presented.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

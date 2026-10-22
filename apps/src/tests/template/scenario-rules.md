@@ -3,43 +3,110 @@
 Rules for writing `scenario.md` files. Start from the template in
 [scenario.md](scenario.md) and follow the rules below.
 
-## Details
+## What goes where
 
-**OS test creation version:** list every device family the scenario was written
-on, e.g. `iOS 26.5 (iPhone), iPadOS 26.5, iOS 27.1 (iPhone Duo), Android: API Level 36`.
+`scenario-description.ts` is the only place for the scenario's metadata. Do not
+write it by hand in `scenario.md`:
 
-## E2E test
+| Information | `scenario-description.ts` field |
+| ----------- | ------------------------------- |
+| Short description shown in the example app | `details` |
+| Platforms | `platforms` |
+| Devices the scenario must run on | `devices` |
+| OS versions to test on and OS versions the scenario was created on, per device | `osVersions` (`testOn`, `createdOn`) |
+| Setup a device needs (orientation, window size, size class, posture set) | `deviceSetup` |
+| E2E coverage status | `e2eCoverage` |
+| What the E2E test covers and why the rest is not automated | `e2eCoverageDetails` |
+| Smoke test | `smokeTest` |
 
-E2E coverage is per device: state which devices the E2E test runs on (e.g. iPhone
-only, iPad via the `@ipad` suite). iPhone Duo is manual-only for now.
+`scenario.md` holds only:
 
-## Prerequisites and `devices`
+- the title (`# Test Scenario: <name>`),
+- the metadata block, generated from `scenario-description.ts`,
+- `## Description` - what the scenario validates and why (the regression,
+  glitch or behavior it guards against). `details` in
+  `scenario-description.ts` is the short in-app text, this is the full one,
+- `## Note` - Known Issues (KI) and expected behavior that might not be
+  intuitive,
+- the steps (`## Steps` and optional `## Steps - <device>` sections).
 
-List the devices required to run the test, with the setup each one needs
-(orientation, window size, size class, posture).
+### Metadata block
 
-The list MUST match the `devices` field in `scenario-description.ts`
-(`'iphone' | 'ipad' | 'iphone-duo' | 'android-phone' | 'android-tablet'`). `devices` is
-required: list every device this scenario must be run on, and only those. It is
-used to group release test runs per device, so a tester can do all iPhone runs,
-then all iPad runs, then all Duo runs, without switching back and forth.
+The block between `<!-- scenario-metadata:start ... -->` and
+`<!-- scenario-metadata:end -->` is generated. Do not edit it. After changing
+`scenario-description.ts`, run:
+
+```bash
+yarn scenario-metadata
+```
+
+`yarn scenario-metadata --check` fails when a block is missing or
+does not match `scenario-description.ts`, when `scenario.md` has a hand-written
+`## Details`, `## E2E test`, `## Prerequisites` or `**OS test creation
+version:**`, or when the metadata is inconsistent (e.g. an `osVersions` key not
+in `devices`, an iOS device without `'ios'` in `platforms`).
+
+### Example
+
+```ts
+export const scenarioDescription: ScenarioDescription = {
+  name: 'Tab Bar Item Badge',
+  key: 'test-tabs-item-badge',
+  details: 'Validates the badgeValue prop on TabsScreen and badge colors.',
+  platforms: ['ios', 'android'],
+  devices: ['iphone', 'iphone-duo', 'android-phone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 26.5'], testOn: ['iOS 18.6', 'iOS 26.5'] },
+    'iphone-duo': { createdOn: ['iOS 27.1'], testOn: ['iOS 27.1'] },
+    'android-phone': { createdOn: ['API Level 36'], testOn: ['API Level 36'] },
+  },
+  deviceSetup: {
+    'iphone-duo':
+      'Closed in portrait at launch. Postures: closed portrait, open portrait; close and open with the screen shown.',
+  },
+  e2eCoverage: 'incomplete',
+  e2eCoverageDetails:
+    'Only Baseline step 1 is automated on iPhone. Badge colors need screenshot diffs, not implemented yet. iPhone Duo is manual-only.',
+  smokeTest: false,
+};
+```
+
+## `devices`, `osVersions` and `deviceSetup`
+
+`devices` (`'iphone' | 'ipad' | 'iphone-duo' | 'android-phone' |
+'android-tablet'`) is required: list every device this scenario must be run on,
+and only those. It is used to group release test runs per device, so a tester
+can do all iPhone runs, then all iPad runs, then all Duo runs, without switching
+back and forth.
+
+`osVersions` has two lists per device. Fill both for every device in `devices`:
+
+- `testOn` - OS versions a tester must run the scenario on (e.g. both iOS 18
+  and iOS 26 when the expected results differ between them).
+- `createdOn` - OS versions the scenario was written on and confirmed to work.
+  It stays in `scenario-description.ts` only and is not shown in `scenario.md`.
+
+The generated table has one row per device in `devices` and no other devices,
+with columns Device, Test on (and Setup when any device has
+`deviceSetup`).
+
+`deviceSetup` describes what a device needs before the scenario is run. Add it
+only for devices that need more than the default (e.g. iPad in full screen,
+iPhone Duo posture set).
+
+E2E coverage is per device: state in `e2eCoverageDetails` which devices the E2E
+test runs on (e.g. iPhone only, iPad via the `@ipad` suite). iPhone Duo is
+manual-only for now.
 
 Not every test needs iPad or iPhone Duo coverage. Add `ipad` or `iphone-duo` only when
 the tested feature looks or behaves differently on that device, or exists only
 there (e.g. sidebar on iPad, vertical tab bar on iPhone Duo). Most scenarios run
 on iPhone and/or Android phone only.
 
-Example (list only the devices the test actually covers):
-
-- iPhone: simulator or device, iOS 18.6 and 26.5.
-- iPad: simulator or device, app in full screen (regular width and height).
-- iPhone Duo: simulator with iOS 27.1+, closed in portrait at launch. Postures:
-  closed portrait, open portrait; close and open the device with the screen shown.
-- Android: emulator or device, API Level 36.
-
 ### iPhone Duo posture set
 
-Only for tests that list `iphone-duo` in `devices`.
+Only for tests that list `iphone-duo` in `devices`. Write the chosen posture
+set into `deviceSetup['iphone-duo']`.
 
 iPhone Duo has three postures (closed, half-open, open), each in portrait or
 landscape, plus transitions between them. Do NOT run every step in every posture.
@@ -97,21 +164,21 @@ Keep one `scenario.md` per test. Do not create per-device files
 - **Device-only scenarios.** If no step is shared by all listed devices (e.g. a
   test run only on iPad and iPhone Duo), skip the base `## Steps` and write one
   `## Steps - <device>` section per device.
-- A device section starts by naming what it builds on and its setup, e.g.
-  `Run Baseline steps 1-3 from ## Steps first.` and, for Duo, the posture set:
-  `Postures: closed portrait, open portrait; close and open with the screen shown.`
+- A device section starts by naming what it builds on, e.g.
+  `Run Baseline steps 1-3 from ## Steps first.` The device setup (e.g. the Duo
+  posture set) goes into `deviceSetup`, not into the section.
 
 ### Where device-specific bugs and tests go
 
 | Case | Example | How to handle it |
 | ---- | ------- | ---------------- |
 | Generic feature, bug found only on one device | blinking back button on Duo | Add the step that caught the bug to the `## Steps - <device>` section of the **generic** test's `scenario.md`, with the posture/setup where it reproduces. Add the device to that test's `devices`. The issue test (`issue-tests/TestXXXX`) stays only for reproducing and fixing the bug - it has no `scenario-description.ts`, so it does not carry `devices` and is not on the release list. |
-| Shared feature that looks or behaves differently on a device | vertical tab bar on Duo, sidebar on iPad | Same `scenario.md`, plus a `## Steps - <device>` section only for the differing steps; posture set / setup in Prerequisites. |
+| Shared feature that looks or behaves differently on a device | vertical tab bar on Duo, sidebar on iPad | Same `scenario.md`, plus a `## Steps - <device>` section only for the differing steps; posture set / setup in `deviceSetup`. |
 | Device-only feature, same screen works for it | a Duo-only prop | Normal test dir with the platform suffix (`-ios`) and `devices: ['iphone-duo']`; the whole `scenario.md` is the device scenario with its own posture set. |
 | Same feature, but the device needs a **different `index.tsx`** (different layout) | a generic `test-tabs-foo-ios` exists, Duo needs its own screen | Create a separate test dir named after the generic one with the device suffix instead of the platform suffix: `test-tabs-foo-duo` (`-ipad` for iPad). `devices` lists only that device. The generic test does not list the device. |
 | Native platform bug, not fixable in the library | UIKit layout bug on fold | Record it in `## Note` as a Known issue with a link, not as a failing step. |
 
-### Example
+### Steps example
 
 See [scenario.md](scenario.md) for an example of the base `## Steps` and an
 optional `## Steps - iPhone Duo` section.

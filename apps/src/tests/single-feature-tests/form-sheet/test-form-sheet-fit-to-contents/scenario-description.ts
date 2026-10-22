@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'detents="fitToContents": the sheet wraps its content and follows dynamic content height changes.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

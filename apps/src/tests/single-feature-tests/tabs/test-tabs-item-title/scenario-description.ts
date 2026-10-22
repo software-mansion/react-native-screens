@@ -8,7 +8,6 @@ export const scenarioDescription: ScenarioDescription = {
     ' Android, single size on iOS), font style, font weight, and (iOS only)' +
     ' position adjustment and tint override.',
   platforms: ['ios', 'android'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

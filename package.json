@@ -18,6 +18,7 @@
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "yarn check-android-layers && ./android/gradlew -p android spotlessCheck -q",
     "check-android-layers": "node ./scripts/check-android-layers.js",
+    "scenario-metadata": "node ./scripts/scenario-metadata.cts",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install"

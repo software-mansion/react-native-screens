@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-subviews-android',
   details: 'Tests header config and subview customization.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

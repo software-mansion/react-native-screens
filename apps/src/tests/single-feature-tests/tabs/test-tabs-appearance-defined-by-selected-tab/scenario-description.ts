@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verifies that the tab bar dynamically updates to reflect the styling of the selected tab.',
   platforms: ['ios', 'android'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

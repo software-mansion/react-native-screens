@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verify lifecycle events (onWillAppear, etc.) fire on stack navigation',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

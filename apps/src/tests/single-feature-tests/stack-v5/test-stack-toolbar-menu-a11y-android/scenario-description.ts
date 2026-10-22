@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-toolbar-menu-a11y-android',
   details: 'Tests accessibilityLabel on toolbar menu items.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'full',
   smokeTest: false,
 };

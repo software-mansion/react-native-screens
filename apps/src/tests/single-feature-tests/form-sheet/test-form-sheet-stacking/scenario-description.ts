@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Three sheets presented on top of each other: dismissing the top, middle and bottom sheet.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

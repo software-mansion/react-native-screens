@@ -4,7 +4,6 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Orientation',
   key: 'stack-v4-orientation',
   platforms: ['ios', 'android'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

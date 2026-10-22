@@ -5,7 +5,6 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-tabs-system-item-ios',
   details: 'Validates different configurations of the systemItem prop.',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Text inputs inside sheets with 1, 2, 3 detents and fitToContents: keyboard show / hide, focused input visibility, dismissal with the keyboard shown.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

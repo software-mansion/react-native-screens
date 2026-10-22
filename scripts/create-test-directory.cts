@@ -8,7 +8,7 @@
 //   apps/src/tests/<category>/<domain>/<test-dir-name>/
 //     index.tsx               (empty)
 //     scenario-description.ts (from template, name/key filled in)
-//     scenario.md             (copied from the repo scenario.md template)
+//     scenario.md             (from the repo scenario.md template, metadata block generated)
 //
 // The <domain> directory is created automatically if it does not exist yet.
 //
@@ -26,6 +26,9 @@
 // this CommonJS script must use `require` rather than `import`/`import =`.
 const fs = require('node:fs') as typeof import('node:fs');
 const path = require('node:path') as typeof import('node:path');
+const { writeScenarioMetadata } = require('./scenario-metadata.cts') as {
+  writeScenarioMetadata: (dir: string) => void;
+};
 
 const USAGE = `Usage: node scripts/create-test-directory.cts <test-dir-name> <screen-name> <domain> <category>
 
@@ -57,6 +60,10 @@ export const scenarioDescription: ScenarioDescription = {
   details: '',
   platforms: ['android', 'ios'],
   devices: ['iphone', 'android-phone'],
+  osVersions: {
+    iphone: { createdOn: [], testOn: [] },
+    'android-phone': { createdOn: [], testOn: [] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
@@ -131,15 +138,21 @@ function main(): void {
 
   // 3. scenario.md copied from the template (placeholders left intact).
   fs.copyFileSync(templateScenario, path.join(targetDir, 'scenario.md'));
+  writeScenarioMetadata(targetDir);
 
   console.log(`Created test screen: ${path.relative(repoRoot, targetDir)}`);
   console.log('  - index.tsx (empty)');
   console.log(
     `  - scenario-description.ts (name='${screenName}', key='${testDirName}')`,
   );
-  console.log('  - scenario.md (from template)');
+  console.log(
+    '  - scenario.md (from template, metadata block generated from scenario-description.ts)',
+  );
   console.log(
     'Before writing the scenario, read apps/src/tests/template/scenario-rules.md',
+  );
+  console.log(
+    'After editing scenario-description.ts, run `yarn scenario-metadata` to update scenario.md',
   );
 }
 

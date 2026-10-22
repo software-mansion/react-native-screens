@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Stack v5 nested in a sheet: layout across detents and navigation state kept across dismiss/reopen.',
   platforms: ['ios'],
-  devices: ['iphone', 'ipad'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

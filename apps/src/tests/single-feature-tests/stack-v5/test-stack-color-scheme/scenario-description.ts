@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests how the stack handles system, React Native, and StackHost color schemes.',
   platforms: ['android'], // TODO: add iOS
-  devices: ['android-phone'],
   e2eCoverage: 'incomplete',
   smokeTest: true,
 };

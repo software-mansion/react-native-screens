@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests that header item updates are scoped — only the changed item rebuilds. On iOS 26+, item rebuild causes a visible flash/blur on the affected bar button.',
   platforms: ['ios'],
-  devices: ['iphone'],
   e2eCoverage: 'incomplete',
   smokeTest: false,
 };

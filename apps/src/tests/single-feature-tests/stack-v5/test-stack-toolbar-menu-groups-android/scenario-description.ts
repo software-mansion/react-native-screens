@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests toolbar menu groups: multi-toggle, single-selection, nested submenu groups, callbacks, imperative commands (checked, title, hidden), dividers, and props rebuild.',
   platforms: ['android'],
-  devices: ['android-phone'],
   e2eCoverage: 'full',
   smokeTest: true,
 };

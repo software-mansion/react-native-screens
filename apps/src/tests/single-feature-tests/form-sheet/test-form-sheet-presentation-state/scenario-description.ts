@@ -6,7 +6,6 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Rapid open/close toggles from JS: the presentation state machine must stay in sync.',
   platforms: ['android', 'ios'],
-  devices: ['iphone', 'ipad', 'android-phone'],
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
