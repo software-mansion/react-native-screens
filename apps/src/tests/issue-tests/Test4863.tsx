@@ -45,7 +45,7 @@ function Sheet({ navigation }: NativeStackScreenProps<Routes, 'Sheet'>) {
   return (
     <View style={styles.sheet}>
       <Text style={styles.marker}>TOP OF THE SHEET</Text>
-      <Text>This line must stay below the status bar.</Text>
+      <Text>The sheet must stay below the status bar.</Text>
       <Button title="Close" onPress={() => navigation.goBack()} />
     </View>
   );
