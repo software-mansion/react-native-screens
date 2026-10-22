@@ -30,6 +30,7 @@ import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.containers.tabs.appearance.TabsAppearance
 import com.swmansion.rnscreens.core.containers.tabs.appearance.TabsAppearanceCoordinator
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItemDelegate
@@ -163,7 +164,7 @@ class TabsContainer internal constructor(
     private val appearanceCoordinator =
         TabsAppearanceCoordinator(bottomNavigationView, tabsModel, titleFontResolver)
 
-    private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView, tabsModel)
+    private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView)
 
     private var interfaceInsetsChangeListener: OnInterfaceInsetsChangeListener? = null
 
@@ -410,8 +411,9 @@ class TabsContainer internal constructor(
     // region Tab configuration changes
 
     /**
-     * Maps a tab's fine-grained [flags] to tab bar updates: the menu item records them, so the
-     * applicator re-applies only the invalidated parts, and the container decides what to run.
+     * Maps a tab's fine-grained [flags] to tab bar updates: the menu item records them, so its next
+     * update ([applyPendingMenuItemChanges]) re-applies only the invalidated parts, and the container
+     * decides what to run (bar-wide changes such as `APPEARANCE` go through the whole-bar update).
      */
     private fun onItemInvalidated(
         item: TabsContainerItem,
@@ -445,15 +447,27 @@ class TabsContainer internal constructor(
 
     private fun updateMenuItem(item: TabsContainerItem) {
         getMenuItemForItem(item)?.let { menuItem ->
-            val appearance = selectedTab.item.appearance
-            appearanceCoordinator.updateMenuItemAppearance(
-                themedContext,
-                menuItem,
-                item,
-                appearance,
-                appearanceCoordinator.resolveIconBoxDp(),
-            )
-            a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)
+            applyPendingMenuItemChanges(menuItem, item, selectedTab.item.appearance, appearanceCoordinator.resolveIconBoxDp())
+        }
+    }
+
+    /**
+     * The only consumer of a menu item's pending flags: takes them off the menu item's state, then
+     * each coordinator applies the parts it owns.
+     */
+    private fun applyPendingMenuItemChanges(
+        menuItem: MenuItem,
+        item: TabsContainerItem,
+        appearance: TabsAppearance?,
+        iconBoxDp: Float,
+    ) {
+        val flags = bottomNavigationView.menuItemState(menuItem.itemId).consumePendingFlags()
+        appearanceCoordinator.updateMenuItemAppearance(themedContext, menuItem, item, appearance, iconBoxDp, flags)
+        if (flags.containsAny(TabsItemInvalidationFlags.ACCESSIBILITY)) {
+            if (!a11yCoordinator.setA11yPropertiesToTabItem(menuItem, item)) {
+                // The menu item's view doesn't exist yet; keep it pending for the menu item's next update.
+                bottomNavigationView.invalidateMenuItem(menuItem.itemId, TabsItemInvalidationFlags.ACCESSIBILITY)
+            }
         }
     }
 
@@ -521,8 +535,9 @@ class TabsContainer internal constructor(
     private fun updateBottomNavigationViewAppearanceIfNeeded() {
         if (invalidationFlags.isNavigationMenuAppearanceInvalidated) {
             invalidationFlags.isNavigationMenuAppearanceInvalidated = false
+            // Accessibility is re-applied to every tab together with the bar's appearance.
+            bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ACCESSIBILITY)
             updateBottomNavigationViewAppearance()
-            a11yCoordinator.setA11yPropertiesToAllTabItems()
         }
     }
 
@@ -592,7 +607,7 @@ class TabsContainer internal constructor(
     private fun updateBottomNavigationViewAppearance() {
         RNSLog.d(TAG, "updateBottomNavigationViewAppearance")
 
-        appearanceCoordinator.updateTabAppearance(themedContext, this)
+        updateTabBarAppearance()
 
         post {
             requestLayout()
@@ -764,7 +779,26 @@ class TabsContainer internal constructor(
             }
         }
 
-        appearanceCoordinator.updateTabAppearance(themedContext, this)
+        updateTabBarAppearance()
+    }
+
+    /**
+     * Applies the selected tab's appearance to the whole bar, then every menu item's pending changes.
+     */
+    private fun updateTabBarAppearance() {
+        val appearance = selectedTab.item.appearance
+        val iconBoxDp = appearanceCoordinator.updateBarAppearance(themedContext, appearance, tabBarHidden)
+        // Badge colours come from the selected tab's appearance.
+        bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.BADGE)
+        tabsModel.forEach { fragment ->
+            applyPendingMenuItemChanges(
+                bottomNavigationView.requireMenuItem(fragment.menuItemId),
+                fragment.item,
+                appearance,
+                iconBoxDp,
+            )
+        }
+        appearanceCoordinator.updateFontStyles(themedContext, appearance) // It needs to be updated after the menu items
     }
 
     private fun getFragmentForMenuItemId(itemId: Int): TabsScreenFragment? = tabsModel.find { it.menuItemId == itemId }
@@ -780,9 +814,7 @@ class TabsContainer internal constructor(
     private fun getMenuItemForItem(item: TabsContainerItem): MenuItem? =
         tabsModel
             .find { it.item === item }
-            ?.let { fragment ->
-                bottomNavigationView.menu.findItem(fragment.menuItemId)
-            }
+            ?.let { fragment -> bottomNavigationView.findMenuItem(fragment.menuItemId) }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireItemKey == screenKey }
 

@@ -19,7 +19,6 @@ import com.google.android.material.navigation.NavigationBarView
 import com.swmansion.rnscreens.core.common.text.FontResolver
 import com.swmansion.rnscreens.core.containers.tabs.container.TabsMenuItemState
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItem
-import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.core.utils.dpToPx
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.core.utils.resolveColorAttr
@@ -40,7 +39,7 @@ internal class TabsAppearanceApplicator(
         item.appearance?.tabBarItemIconSize?.takeIf { it > 0f } ?: defaultIconSizeDp
 
     // Material allows only one icon size for all items; iconBoxDp is the largest effective per-tab size.
-    fun applyIconBox(iconBoxDp: Float) {
+    internal fun applyIconBox(iconBoxDp: Float) {
         val iconBoxPx = bottomNavigationView.dpToPx(iconBoxDp).toInt()
         if (bottomNavigationView.itemIconSize != iconBoxPx) {
             bottomNavigationView.itemIconSize = iconBoxPx
@@ -69,8 +68,11 @@ internal class TabsAppearanceApplicator(
         item.appearance?.tabBarItemActiveIndicatorHeight?.takeIf { it > 0f }
             ?: (effectiveIconSizeDp(item) + autoIndicatorVerticalPaddingDp)
 
+    /**
+     * @return `false` when the menu item's view doesn't exist yet, so nothing could be applied.
+     */
     @SuppressLint("RestrictedApi")
-    private fun applyActiveIndicatorSize(
+    internal fun applyActiveIndicatorSize(
         menuItem: MenuItem,
         item: TabsContainerItem,
         state: TabsMenuItemState,
@@ -120,7 +122,7 @@ internal class TabsAppearanceApplicator(
             intArrayOf(), // normal
         )
 
-    fun updateSharedAppearance(
+    internal fun updateSharedAppearance(
         context: Context,
         tabBarAppearance: TabsAppearance?,
         isTabBarHidden: Boolean,
@@ -201,7 +203,7 @@ internal class TabsAppearanceApplicator(
         bottomNavigationView.itemActiveIndicatorColor = ColorStateList.valueOf(activeIndicatorColor)
     }
 
-    fun updateFontStyles(
+    internal fun updateFontStyles(
         context: Context,
         tabBarAppearance: TabsAppearance?,
     ) {
@@ -246,43 +248,32 @@ internal class TabsAppearanceApplicator(
         }
     }
 
-    fun updateMenuItemAppearance(
+    internal fun applyTitle(
         menuItem: MenuItem,
         item: TabsContainerItem,
-        state: TabsMenuItemState,
+    ) {
+        menuItem.title = item.tabTitle
+    }
+
+    internal fun applyIcon(
+        menuItem: MenuItem,
+        item: TabsContainerItem,
         iconBoxDp: Float,
     ) {
-        val flags = state.pendingFlags
-        state.pendingFlags = TabsItemInvalidationFlags.NONE
-
-        // The title is diffed; the icon and the active indicator are re-applied only when invalidated.
-        if (menuItem.title != item.tabTitle) {
-            menuItem.title = item.tabTitle
-        }
-
-        if (flags.containsAny(TabsItemInvalidationFlags.ICON or TabsItemInvalidationFlags.ICON_SIZE)) {
-            // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
-            // single inset computed from one child would mis-size the other when their resolutions differ.
-            val effectiveDp = effectiveIconSizeDp(item)
-            val iconDrawable = sizeIcon(item.iconDrawable, effectiveDp, iconBoxDp)
-            val selectedIconDrawable = sizeIcon(item.selectedIconDrawable, effectiveDp, iconBoxDp)
-            menuItem.icon =
-                if (selectedIconDrawable != null && iconDrawable != null) {
-                    StateListDrawable().apply {
-                        addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
-                        addState(intArrayOf(), iconDrawable.mutate())
-                    }
-                } else {
-                    iconDrawable
+        // Sized per slot: a StateListDrawable's intrinsic size follows its current state, so a
+        // single inset computed from one child would mis-size the other when their resolutions differ.
+        val effectiveDp = effectiveIconSizeDp(item)
+        val iconDrawable = sizeIcon(item.iconDrawable, effectiveDp, iconBoxDp)
+        val selectedIconDrawable = sizeIcon(item.selectedIconDrawable, effectiveDp, iconBoxDp)
+        menuItem.icon =
+            if (selectedIconDrawable != null && iconDrawable != null) {
+                StateListDrawable().apply {
+                    addState(intArrayOf(android.R.attr.state_checked), selectedIconDrawable.mutate())
+                    addState(intArrayOf(), iconDrawable.mutate())
                 }
-        }
-
-        if (flags.containsAny(TabsItemInvalidationFlags.ICON_SIZE or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE) &&
-            !applyActiveIndicatorSize(menuItem, item, state)
-        ) {
-            // The menu item's view doesn't exist yet; retry on the next update.
-            state.pendingFlags = state.pendingFlags or TabsItemInvalidationFlags.ACTIVE_INDICATOR_SIZE
-        }
+            } else {
+                iconDrawable
+            }
     }
 
     internal fun updateBadgeAppearance(
