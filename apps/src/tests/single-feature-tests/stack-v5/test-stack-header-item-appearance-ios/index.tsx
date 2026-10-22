@@ -18,43 +18,127 @@ import { Button, ScrollView, Text, StyleSheet, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { SettingsSwitch, ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
-import {
-  HeaderAppearanceSection,
-  buildHeaderAppearance,
-  makeDefaultHeaderAppearanceConfig,
-  type HeaderAppearanceConfig,
-} from '@apps/tests/shared/components/stack-v5/HeaderAppearanceControls';
+import type {
+  StackHeaderAppearanceIOS,
+  StackHeaderButtonAppearanceIOS,
+  StackHeaderButtonStateAppearanceIOS,
+} from 'react-native-screens';
 
-const BUTTON_SLOTS = [
-  'button',
-  'buttonHighlighted',
-  'buttonDisabled',
-  'buttonFocused',
-  'prominentButton',
-  'prominentButtonHighlighted',
-  'prominentButtonDisabled',
-  'prominentButtonFocused',
-] as const;
-
-type ButtonSlotKey = (typeof BUTTON_SLOTS)[number];
-
-type AppearanceKey = 'standard' | 'scrollEdge';
+// Predefined, visually distinct styles — one per scenario step. Each style
+// pairs a unique color with a second attribute, so it is immediately visible
+// which configuration a given label follows (derived vs overridden).
+const BUTTON_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'red',
+  fontStyle: 'italic',
+};
+const PROMINENT_BUTTON_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'orange',
+  fontFamily: 'Courier New',
+};
+const SCROLL_EDGE_BUTTON_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'green',
+  fontSize: 22,
+};
+const SCROLL_EDGE_PROMINENT_BUTTON_STYLE: StackHeaderButtonStateAppearanceIOS =
+  {
+    fontColor: 'teal',
+  };
+const DISABLED_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'purple',
+  fontWeight: '100',
+};
+const SCROLL_EDGE_DISABLED_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'red',
+};
+const HIGHLIGHTED_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'blue',
+  fontSize: 22,
+};
+const SCROLL_EDGE_HIGHLIGHTED_STYLE: StackHeaderButtonStateAppearanceIOS = {
+  fontColor: 'magenta',
+};
 
 interface Config {
   // When enabled, items render short text labels instead of sfSymbol icons,
   // so that button appearance text attributes have visible effect.
   textItems: boolean;
   overflow: boolean;
-  standard: HeaderAppearanceConfig<ButtonSlotKey>;
-  scrollEdge: HeaderAppearanceConfig<ButtonSlotKey>;
+  // Per-step style presets.
+  styleButtons: boolean;
+  styleProminentButtons: boolean;
+  styleScrollEdge: boolean;
+  styleDisabled: boolean;
+  styleHighlighted: boolean;
 }
 
 const DEFAULT_CONFIG: Config = {
-  textItems: false,
+  textItems: true,
   overflow: false,
-  standard: makeDefaultHeaderAppearanceConfig(BUTTON_SLOTS),
-  scrollEdge: makeDefaultHeaderAppearanceConfig(BUTTON_SLOTS),
+  styleButtons: true,
+  styleProminentButtons: true,
+  styleScrollEdge: true,
+  styleDisabled: true,
+  styleHighlighted: true,
 };
+
+function makeButtonAppearance(
+  normal?: StackHeaderButtonStateAppearanceIOS,
+  highlighted?: StackHeaderButtonStateAppearanceIOS,
+  disabled?: StackHeaderButtonStateAppearanceIOS,
+): StackHeaderButtonAppearanceIOS | undefined {
+  if (!normal && !highlighted && !disabled) {
+    return undefined;
+  }
+  return { normal, highlighted, disabled };
+}
+
+function buildAppearances(config: Config): {
+  standardAppearance?: StackHeaderAppearanceIOS;
+  scrollEdgeAppearance?: StackHeaderAppearanceIOS;
+} {
+  const standardButton = makeButtonAppearance(
+    config.styleButtons ? BUTTON_STYLE : undefined,
+    config.styleHighlighted ? HIGHLIGHTED_STYLE : undefined,
+    config.styleDisabled ? DISABLED_STYLE : undefined,
+  );
+  const standardProminentButton = makeButtonAppearance(
+    config.styleProminentButtons ? PROMINENT_BUTTON_STYLE : undefined,
+    config.styleHighlighted ? HIGHLIGHTED_STYLE : undefined,
+    config.styleDisabled ? DISABLED_STYLE : undefined,
+  );
+  // The scroll edge appearance is built only when its preset is enabled: an
+  // explicit scrollEdgeAppearance is a standalone definition, so emitting one
+  // that carries only per-state attributes would strip the normal-state
+  // styling at the scroll edge.
+  const scrollEdgeButton = config.styleScrollEdge
+    ? makeButtonAppearance(
+        SCROLL_EDGE_BUTTON_STYLE,
+        config.styleHighlighted ? SCROLL_EDGE_HIGHLIGHTED_STYLE : undefined,
+        config.styleDisabled ? SCROLL_EDGE_DISABLED_STYLE : undefined,
+      )
+    : undefined;
+  const scrollEdgeProminentButton = config.styleScrollEdge
+    ? makeButtonAppearance(
+        SCROLL_EDGE_PROMINENT_BUTTON_STYLE,
+        config.styleHighlighted ? SCROLL_EDGE_HIGHLIGHTED_STYLE : undefined,
+        config.styleDisabled ? SCROLL_EDGE_DISABLED_STYLE : undefined,
+      )
+    : undefined;
+
+  return {
+    standardAppearance:
+      standardButton || standardProminentButton
+        ? { button: standardButton, prominentButton: standardProminentButton }
+        : undefined,
+    scrollEdgeAppearance:
+      scrollEdgeButton || scrollEdgeProminentButton
+        ? {
+            button: scrollEdgeButton,
+            prominentButton: scrollEdgeProminentButton,
+          }
+        : undefined,
+  };
+}
 
 const ConfigContext = createContext<{
   config: Config;
@@ -89,8 +173,7 @@ const buildHeaderConfig = (
   return {
     title,
     ios: {
-      standardAppearance: buildHeaderAppearance(config.standard),
-      scrollEdgeAppearance: buildHeaderAppearance(config.scrollEdge),
+      ...buildAppearances(config),
       trailingItems: [
         {
           type: 'item',
@@ -176,14 +259,13 @@ function useApplyHeaderConfig(title: string) {
 function ConfigControls() {
   const { config, setConfig } = useConfig();
 
-  const updateAppearance = useCallback(
-    (
-      appearance: AppearanceKey,
-      next: HeaderAppearanceConfig<ButtonSlotKey>,
-    ) => {
-      setConfig(prev => ({ ...prev, [appearance]: next }));
-    },
-    [setConfig],
+  const makeToggle = (key: keyof Config, label: string, testID?: string) => (
+    <SettingsSwitch
+      label={label}
+      testID={testID}
+      value={config[key]}
+      onValueChange={v => setConfig(prev => ({ ...prev, [key]: v }))}
+    />
   );
 
   return (
@@ -193,34 +275,27 @@ function ConfigControls() {
         onPress={() =>
           setConfig(prev => ({
             ...prev,
-            standard: makeDefaultHeaderAppearanceConfig(BUTTON_SLOTS),
-            scrollEdge: makeDefaultHeaderAppearanceConfig(BUTTON_SLOTS),
+            styleButtons: false,
+            styleProminentButtons: false,
+            styleScrollEdge: false,
+            styleDisabled: false,
+            styleHighlighted: false,
           }))
         }
       />
-      <SettingsSwitch
-        label="Use text items"
-        value={config.textItems}
-        onValueChange={v => setConfig(prev => ({ ...prev, textItems: v }))}
-      />
-      <SettingsSwitch
-        label="Push to overflow"
-        testID="push-to-overflow-switch"
-        value={config.overflow}
-        onValueChange={v => setConfig(prev => ({ ...prev, overflow: v }))}
-      />
-      <HeaderAppearanceSection
-        label="standardAppearance"
-        slotKeys={BUTTON_SLOTS}
-        value={config.standard}
-        onChange={next => updateAppearance('standard', next)}
-      />
-      <HeaderAppearanceSection
-        label="scrollEdgeAppearance"
-        slotKeys={BUTTON_SLOTS}
-        value={config.scrollEdge}
-        onChange={next => updateAppearance('scrollEdge', next)}
-      />
+      {makeToggle('textItems', 'Use text items')}
+      {makeToggle('overflow', 'Push to overflow', 'push-to-overflow-switch')}
+      {makeToggle('styleButtons', 'Style buttons (red italic)')}
+      {makeToggle(
+        'styleProminentButtons',
+        'Style prominent buttons (orange Courier)',
+      )}
+      {makeToggle('styleScrollEdge', 'Style scroll edge (green 22pt / teal)')}
+      {makeToggle('styleDisabled', 'Style disabled (purple thin; red at edge)')}
+      {makeToggle(
+        'styleHighlighted',
+        'Style highlighted (blue 24pt; magenta at edge)',
+      )}
     </>
   );
 }
