@@ -36,7 +36,7 @@ const CORE_DIR = path.join(IOS_DIR, 'core');
 
 const REACT_NATIVE_INCLUDE =
   /#\s*(?:import|include)\s*<(?:React|react|ReactCommon|jsi|folly|yoga)\/|@import\s+React\b/;
-const RCT_SYMBOL = /\bRCT[A-Z]\w*/;
+const RCT_SYMBOL = /\bRCT_?[A-Z]\w*/;
 const QUOTED_INCLUDE = /#\s*(?:import|include)\s*"([^"]+)"/;
 const ANGLE_INCLUDE = /#\s*(?:import|include)\s*<([^>]+)>/;
 const COMPONENT_VIEW = /\b\w+ComponentView\b/;
