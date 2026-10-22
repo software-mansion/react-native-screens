@@ -118,8 +118,10 @@ whenever shared skills change, run:
 yarn sync-agent-skills
 ```
 
-It links every skill from `.agents/skills/` into `.claude/skills/`. Existing
-entries in `.claude/skills/` are never overwritten.
+It links every shared skill from `.agents/skills/` into `.claude/skills/`;
+local, gitignored skills there are skipped. Existing entries in
+`.claude/skills/` are never overwritten or removed; after a shared skill is
+deleted, remove its link by hand.
 
 To share a skill or an agent:
 

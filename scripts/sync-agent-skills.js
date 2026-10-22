@@ -3,12 +3,14 @@
  *
  * Skills live in `.agents/skills/<name>/SKILL.md` (the cross-agent location),
  * but Claude Code only discovers skills under `.claude/skills/`. By default
- * this script links every skill from `.agents/skills/` into `.claude/skills/`:
+ * this script links every shared skill (one not ignored by git) from
+ * `.agents/skills/` into `.claude/skills/`:
  *
  * 1. A link is created only when `.claude/skills/<name>` does not exist yet,
  *    so personal skills with the same name are never overwritten.
- * 2. Links created by this script whose skill no longer exists are removed.
- *    Anything else in `.claude/skills/` is left untouched.
+ * 2. Nothing in `.claude/skills/` is ever removed. Other tools also link
+ *    their local skills from there into `.agents/skills/`, so those links
+ *    cannot be told apart from ours.
  *
  * The links are gitignored, so nothing platform-specific is committed (git
  * checks out symlinks as plain files on Windows without `core.symlinks`).
@@ -34,21 +36,20 @@ const CLAUDE_AGENTS_DIR = path.join(ROOT, '.claude', 'agents');
 
 const HOME_PATH = /\/Users\/[^/\s]+|\/home\/[^/\s]+|[A-Za-z]:\\Users\\/;
 
+// Only shared skills: tracked, or opted in but not committed yet. Skills
+// installed locally (e.g. by other tools) are gitignored and skipped.
 function listSkillNames() {
-  if (!fs.existsSync(AGENTS_SKILLS_DIR)) {
-    return [];
-  }
-  return fs
-    .readdirSync(AGENTS_SKILLS_DIR, { withFileTypes: true })
-    .filter(entry => entry.isDirectory())
-    .map(entry => entry.name)
+  return listTrackedFiles(AGENTS_SKILLS_DIR, { includeUntracked: true })
+    .map(file => path.relative(AGENTS_SKILLS_DIR, file).split(path.sep))
+    .filter(parts => parts.length === 2 && parts[1] === 'SKILL.md')
+    .map(parts => parts[0])
     .filter(name =>
       fs.existsSync(path.join(AGENTS_SKILLS_DIR, name, 'SKILL.md')),
     );
 }
 
 // Returns true for links in `.claude/skills/` that point into
-// `.agents/skills/`, i.e. the ones this script manages.
+// `.agents/skills/`, i.e. skills that are already linked.
 function isManagedLink(linkPath) {
   const stat = fs.lstatSync(linkPath, { throwIfNoEntry: false });
   if (!stat || !stat.isSymbolicLink()) {
@@ -78,7 +79,6 @@ function sync() {
   const skillNames = new Set(listSkillNames());
   const linked = [];
   const skipped = [];
-  const removed = [];
 
   for (const name of skillNames) {
     const linkPath = path.join(CLAUDE_SKILLS_DIR, name);
@@ -93,26 +93,13 @@ function sync() {
     linked.push(name);
   }
 
-  for (const name of fs.readdirSync(CLAUDE_SKILLS_DIR)) {
-    const linkPath = path.join(CLAUDE_SKILLS_DIR, name);
-    if (
-      isManagedLink(linkPath) &&
-      !fs.existsSync(path.join(AGENTS_SKILLS_DIR, name, 'SKILL.md'))
-    ) {
-      fs.unlinkSync(linkPath);
-      removed.push(name);
-    }
-  }
-
   linked.forEach(name => console.log(`linked   ${name}`));
-  removed.forEach(name => console.log(`removed  ${name}`));
   skipped.forEach(name =>
     console.log(`skipped  ${name} (.claude/skills/${name} already exists)`),
   );
   console.log(
-    `${skillNames.size} skill(s) in .agents/skills: ` +
-      `${linked.length} linked, ${removed.length} removed, ` +
-      `${skipped.length} skipped.`,
+    `${skillNames.size} shared skill(s) in .agents/skills: ` +
+      `${linked.length} linked, ${skipped.length} skipped.`,
   );
 }
 
@@ -132,10 +119,13 @@ function parseFrontmatter(content) {
   return fields;
 }
 
-function listTrackedFiles(dir) {
+function listTrackedFiles(dir, { includeUntracked = false } = {}) {
+  const untrackedArgs = includeUntracked
+    ? ['--cached', '--others', '--exclude-standard']
+    : [];
   const output = execFileSync(
     'git',
-    ['ls-files', '-z', '--', path.relative(ROOT, dir)],
+    ['ls-files', '-z', ...untrackedArgs, '--', path.relative(ROOT, dir)],
     { cwd: ROOT, encoding: 'utf8' },
   );
   return output
