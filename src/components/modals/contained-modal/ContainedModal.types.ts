@@ -51,6 +51,69 @@ export interface ContainedModalProps {
    * @since 5.0
    */
   onPresentationRejected?: (() => void) | undefined;
+
+  /**
+   * Called when the modal's view is about to appear.
+   *
+   * @remarks
+   * Fires on the initial presentation, and again on every restore after a
+   * suspension - e.g. a stack screen pushed over the provider is popped, or
+   * the modal's containing native sheet is re-presented. A restore is not a
+   * re-open: the presentation relationship was kept and `isOpen` stayed
+   * `true` throughout the suspension.
+   *
+   * @platform ios
+   * @since 5.0
+   */
+  onWillAppear?: (() => void) | undefined;
+
+  /**
+   * Called when the modal's view has appeared.
+   *
+   * @remarks
+   * Fires on the initial presentation, and again on every restore after a
+   * suspension - e.g. a stack screen pushed over the provider is popped, or
+   * the modal's containing native sheet is re-presented. A restore is not a
+   * re-open: the presentation relationship was kept and `isOpen` stayed
+   * `true` throughout the suspension.
+   *
+   * @platform ios
+   * @since 5.0
+   */
+  onDidAppear?: (() => void) | undefined;
+
+  /**
+   * Called when the modal's view is about to disappear.
+   *
+   * @remarks
+   * Fires on a programmatic dismissal (`isOpen` set to `false`), and when a
+   * suspension begins - e.g. a stack screen is pushed over the provider, or
+   * the modal's containing native sheet is dismissed natively. A suspension
+   * is not a dismissal: the presentation relationship is kept, `isOpen`
+   * stays `true`, and the appear events fire again on restore. Note that
+   * `onDidDisappear` is not guaranteed to follow on the suspension path -
+   * see its remarks.
+   *
+   * @platform ios
+   * @since 5.0
+   */
+  onWillDisappear?: (() => void) | undefined;
+
+  /**
+   * Called when the modal's view has disappeared.
+   *
+   * @remarks
+   * Fires on a programmatic dismissal (`isOpen` set to `false`). On a
+   * suspension it is NOT guaranteed: a react-native-screens stack push over
+   * the provider detaches the views before the disappearance transition
+   * completes, so only `onWillDisappear` fires there. Don't rely on a
+   * balanced Will/Did disappear pair around suspensions - key suspension
+   * logic off `onWillDisappear` and `onDidAppear` (restore) instead.
+   *
+   * @platform ios
+   * @since 5.0
+   */
+  onDidDisappear?: (() => void) | undefined;
 }
 
 /**

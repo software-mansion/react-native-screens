@@ -38,6 +38,13 @@
   [self.delegate modalControllerViewDidLayoutSubviews:self];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];
+
+  [self.delegate modalControllerViewWillAppear:self];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -49,6 +56,13 @@
   [self updatePresentationState];
 
   [self.delegate modalControllerViewDidAppear:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+
+  [self.delegate modalControllerViewWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated

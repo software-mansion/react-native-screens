@@ -17,7 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
  * re-attaches without a layout pass, so appearance - not layout - is the
  * signal to rebuild state after a disappearance.
  */
+- (void)modalControllerViewWillAppear:(RNSContainedModalContentController *)controller;
 - (void)modalControllerViewDidAppear:(RNSContainedModalContentController *)controller;
+- (void)modalControllerViewWillDisappear:(RNSContainedModalContentController *)controller;
 - (void)modalControllerViewDidDisappear:(RNSContainedModalContentController *)controller;
 
 /**
