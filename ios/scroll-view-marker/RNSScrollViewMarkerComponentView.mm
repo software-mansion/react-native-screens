@@ -15,12 +15,12 @@
 
 namespace react = facebook::react;
 
-@interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding>
-@end
-
 @implementation RNSScrollViewMarkerComponentView {
   BOOL _hasAttemptedRegistration;
   BOOL _needsEdgeEffectUpdate;
+
+  __weak id<RNSScrollViewSeeking> _Nullable _registeredSeekingAncestor;
+  __weak UIScrollView *_Nullable _registeredScrollView;
 
   RNSScrollEdgeEffect _leftScrollEdgeEffect;
   RNSScrollEdgeEffect _topScrollEdgeEffect;
@@ -113,6 +113,23 @@ namespace react = facebook::react;
   }
 
   [seekingAncestor registerDescendantScrollView:scrollView fromMarker:self];
+  _registeredSeekingAncestor = seekingAncestor;
+  _registeredScrollView = scrollView;
+}
+
+- (void)unregisterFromSeekingAncestor
+{
+  id<RNSScrollViewSeeking> seekingAncestor = _registeredSeekingAncestor;
+  UIScrollView *scrollView = _registeredScrollView;
+  _registeredSeekingAncestor = nil;
+  _registeredScrollView = nil;
+
+  if (scrollView == nil ||
+      ![seekingAncestor respondsToSelector:@selector(unregisterDescendantScrollView:fromMarker:)]) {
+    return;
+  }
+
+  [seekingAncestor unregisterDescendantScrollView:scrollView fromMarker:self];
 }
 
 - (void)configureScrollView:(nullable UIScrollView *)scrollView
@@ -250,6 +267,11 @@ namespace react = facebook::react;
 + (BOOL)shouldBeRecycled
 {
   return NO;
+}
+
+- (void)invalidate
+{
+  [self unregisterFromSeekingAncestor];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

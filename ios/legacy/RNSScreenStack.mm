@@ -18,7 +18,6 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
-#import "RNSScrollViewFinder.h"
 #import "RNSTabsScreenViewController.h"
 #import "UINavigationBar+RNSUtility.h"
 #import "UIScrollView+RNScreens.h"
@@ -238,9 +237,11 @@ namespace react = facebook::react;
       tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
     return [[self popToRootViewControllerAnimated:true] count] > 0;
   } else if (tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
-    UIScrollView *scrollView =
-        [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
-    return [scrollView rnscreens_scrollToTop];
+    UIViewController *topController = self.topViewController;
+    if (![topController isKindOfClass:RNSScreen.class]) {
+      return false;
+    }
+    return [[static_cast<RNSScreen *>(topController) findContentScrollView] rnscreens_scrollToTop];
   }
 
   return false;
