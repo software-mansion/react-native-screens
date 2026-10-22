@@ -4,10 +4,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * The presented controller's root view. Children are mounted straight into it
+ * with the UIKit subview API; it only presets the background and the
+ * autoresizing mask so it keeps filling the presentation container.
+ */
 @interface RNSContainedModalContentView : UIView
-
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index;
-- (void)removeReactSubview:(UIView *)subview;
 
 @end
 
