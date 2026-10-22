@@ -206,12 +206,12 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+  [_controller.contentView insertSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller.contentView removeReactSubview:childComponentView];
+  [childComponentView removeFromSuperview];
 }
 
 - (void)updateProps:(const react::Props::Shared &)props oldProps:(const react::Props::Shared &)oldProps
