@@ -117,7 +117,7 @@ function sync() {
 }
 
 function parseFrontmatter(content) {
-  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/);
   if (!match) {
     return null;
   }
@@ -125,7 +125,8 @@ function parseFrontmatter(content) {
   for (const line of match[1].split(/\r?\n/)) {
     const field = line.match(/^([\w-]+):\s*(.*)$/);
     if (field) {
-      fields[field[1]] = field[2].trim();
+      // Unquote `"foo"` / `'foo'`; full YAML parsing is not needed here.
+      fields[field[1]] = field[2].trim().replace(/^(["'])(.*)\1$/, '$2');
     }
   }
   return fields;
