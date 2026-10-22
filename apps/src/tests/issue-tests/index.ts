@@ -219,9 +219,12 @@ export { default as Test4519 } from './Test4519';
 export { default as Test4571 } from './Test4571';
 export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
 export { default as Test4709 } from './Test4709';
+export { default as Test4723 } from './Test4723';
 export { default as Test4725 } from './Test4725';
 export { default as Test4757 } from './Test4757';
+export { default as Test4811 } from './Test4811';
 export { default as Test4872 } from './Test4872';
+export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

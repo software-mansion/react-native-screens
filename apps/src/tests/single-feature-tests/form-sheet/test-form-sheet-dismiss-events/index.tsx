@@ -22,32 +22,43 @@ function TestFormSheetDismissEvents() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>FormSheet Dismiss Test</Text>
+    <View style={styles.container} testID="formsheet-dismiss-events-view">
+      <Text style={styles.title} testID="formsheet-dismiss-events-title">
+        FormSheet Dismiss Test
+      </Text>
 
       <View style={styles.row}>
         <Button
           title="Open FormSheet"
           color={Colors.primary}
           onPress={() => setIsOpen(true)}
+          testID="open-formsheet-button"
         />
         <Button
           title="Clear Logs"
           color={Colors.primary}
           onPress={() => setLogs([])}
+          testID="clear-logs-button"
         />
       </View>
 
-      <View style={styles.logsContainer}>
+      <View style={styles.logsContainer} testID="event-logs-container">
         <Text style={styles.logsHeader}>Event Logs:</Text>
         <ScrollView style={styles.scrollView}>
           {logs.map((log, index) => (
-            <Text key={index} style={styles.logText}>
+            <Text
+              key={index}
+              style={styles.logText}
+              testID="event-logs-container-text">
               {log}
             </Text>
           ))}
           {logs.length === 0 && (
-            <Text style={styles.emptyLogText}>No events recorded yet.</Text>
+            <Text
+              style={styles.emptyLogText}
+              testID="empty-event-logs-container-text">
+              No events recorded yet.
+            </Text>
           )}
         </ScrollView>
       </View>
@@ -61,12 +72,15 @@ function TestFormSheetDismissEvents() {
         onDismiss={() => addLog('onDismiss')}
         detents={[0.6, 1.0]}>
         <View style={styles.sheetContent}>
-          <Text style={styles.sheetTitle}>FormSheet Content</Text>
+          <Text style={styles.sheetTitle} testID="formsheet-base-content">
+            FormSheet Content
+          </Text>
           <View style={styles.spacing} />
           <Button
             title="Dismiss from JS"
             color={Colors.primary}
             onPress={() => setIsOpen(false)}
+            testID="dismiss-formsheet-button"
           />
         </View>
       </FormSheet>
