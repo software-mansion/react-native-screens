@@ -42,7 +42,6 @@ let headerSearchPaths: [String] = [
     "ios/react/views/scroll-view-marker/conversion",
     "ios/scroll-view-marker",
     "ios/split",
-    "ios/stack",
     "ios/stack/header",
     "ios/stack/host",
     "ios/stack/screen",
