@@ -1,7 +1,7 @@
 # Test Scenario: Test case name
 
 > Before writing, read the scenario writing rules:
-> `apps/src/tests/template/scenario-rules.md`. Remove this note afterwards.
+> `guides/SCENARIO_RULES.md`. Remove this note afterwards.
 
 Example: Test Scenario: colorScheme
 

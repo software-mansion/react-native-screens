@@ -1,7 +1,7 @@
 # Scenario writing rules
 
 Rules for writing `scenario.md` files. Start from the template in
-[scenario.md](scenario.md) and follow the rules below.
+[scenario.md](../apps/src/tests/template/scenario.md) and follow the rules below.
 
 ## What goes where
 
@@ -180,5 +180,5 @@ Keep one `scenario.md` per test. Do not create per-device files
 
 ### Steps example
 
-See [scenario.md](scenario.md) for an example of the base `## Steps` and an
+See [scenario.md](../apps/src/tests/template/scenario.md) for an example of the base `## Steps` and an
 optional `## Steps - iPhone Duo` section.
