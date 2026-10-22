@@ -4,8 +4,8 @@
 //
 // Generates the metadata block of every scenario.md from the
 // scenario-description.ts in the same directory. scenario-description.ts is the
-// single source of truth for description, platforms, devices, OS versions,
-// device setup and E2E coverage; scenario.md only holds the generated block,
+// single source of truth for platforms, devices, OS versions, device setup and
+// E2E coverage; scenario.md only holds the generated block, the Description,
 // the Note and the Steps.
 //
 // The block is placed between SCENARIO_METADATA_START and SCENARIO_METADATA_END
