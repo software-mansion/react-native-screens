@@ -138,6 +138,7 @@ function HomeScreen() {
     // bar, so the top inset has to take over while `hidden` is set.
     <SafeAreaView edges={{ top: headerHidden }}>
       <ScrollView
+        testID="header-persistence-home-scrollview"
         style={styles.container}
         contentContainerStyle={styles.content}
         nestedScrollEnabled>
@@ -224,6 +225,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />,
     options: {
       title: 'Stack',
+      tabBarItemAccessibilityLabel: 'stack-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },
@@ -232,6 +234,7 @@ const TABS_ROUTE_CONFIGS: TabRouteConfig[] = [
     element: <OtherTabScreen />,
     options: {
       title: 'Other',
+      tabBarItemAccessibilityLabel: 'other-tab-item-label',
       ...DEFAULT_TAB_ROUTE_OPTIONS,
     },
   },

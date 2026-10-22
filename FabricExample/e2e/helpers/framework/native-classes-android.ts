@@ -36,6 +36,10 @@ export const CLASS_NAME_ANDROID_APP_BAR_LAYOUT =
   'com.google.android.material.appbar.AppBarLayout';
 export const CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW =
   'androidx.appcompat.view.menu.ActionMenuItemView';
+// The medium / large Stack v5 header's title host. The title is drawn, not a
+// `TextView`, but mirrored into the content description (`by.label`).
+export const CLASS_NAME_ANDROID_COLLAPSING_TOOLBAR_LAYOUT =
+  'com.google.android.material.appbar.CollapsingToolbarLayout';
 
 // A row of a popup menu — the anchor for addressing its widgets by item title.
 export const CLASS_NAME_ANDROID_LIST_MENU_ITEM_VIEW =

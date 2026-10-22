@@ -14,7 +14,21 @@ Pass: nothing about the header resets on a tab switch.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Incomplete: every step is automated except two purely visual checks. The
+subtitle of a collapsing header is drawn by Material rather than rendered as a
+view, so Detox cannot read it (steps 1 and 3), and the absence of a header
+flash on a tab switch cannot be observed either (step 3).
+
+The automated round-trip checks verify the final header state only: a header
+that is rebuilt on the way back and settles into the same state (expanded or
+collapsed, title, menu selections) still passes. The no-flash check in step 3
+is the only guard against that, so it stays a required manual check.
+
+The `describe` blocks of the spec follow the step groups below, in order:
+"baseline" covers steps 1-2, "header survives a tab round trip" steps 3-5,
+"collapse state survives a tab round trip" steps 6-7, "menu selection survives
+a tab round trip" steps 8-10, "configuration changed while the tab is away"
+steps 11-19 and "pushed screen" steps 20-21.
 
 ## Prerequisites
 
