@@ -5,11 +5,17 @@ import {
   chevronFor,
   dismissContextMenu,
   menuRow,
-  openContextMenu,
+  openHeaderItemMenu,
+  openHeaderViewMenu,
   submenuTitleRow,
 } from '@e2e/framework/context-menu-ios';
-import { headerItem } from '@e2e/framework/header-items-ios';
-import { describeIfIOS, describeIfIOS26 } from '@e2e/framework/platform';
+import {
+  expectHeaderItemShown,
+  expectHeaderViewShown,
+  headerItem,
+  tapHeaderItem,
+} from '@e2e/framework/header-items-ios';
+import { describeIfIOS, describeIfIOSAtLeast } from '@e2e/framework/platform';
 
 /**
  * A selectable row of the presented menu. A submenu's pinned title/back row
@@ -19,7 +25,7 @@ import { describeIfIOS, describeIfIOS26 } from '@e2e/framework/platform';
 const actionRow = (title: string) => menuRow(title, { actionsOnly: true });
 
 /** UIKit's automatic identifier for the iOS 26 toolbar overflow ("More") item. */
-const overflowButton = element(by.id('OverflowBarButtonItem'));
+const OVERFLOW_BUTTON = by.id('OverflowBarButtonItem');
 
 async function toggleItemsCount() {
   await element(by.id('toggle-items-count-button')).tap();
@@ -35,17 +41,17 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
   });
 
   it('should display the header with both trailing items initially', async () => {
-    await expect(headerItem('Menu 1')).toBeVisible();
-    await expect(headerItem('Item 0')).toBeVisible();
+    await expectHeaderItemShown('Menu 1');
+    await expectHeaderItemShown('Item 0');
   });
 
   it('should fire the onPress toast when tapping Item 0 (it has both onPress and a menu)', async () => {
-    await headerItem('Item 0').tap();
+    await tapHeaderItem('Item 0');
     await dismissNextToast('onPress Item 0');
   });
 
   it('should open a native menu with two actions on a single tap of Menu 1, which has no onPress', async () => {
-    await openContextMenu(headerItem('Menu 1'));
+    await openHeaderItemMenu('Menu 1');
 
     await expect(actionRow('Action 1-1')).toBeVisible();
     await expect(actionRow('Action 1-2')).toBeVisible();
@@ -54,19 +60,16 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
   });
 
   it("should require a long press (not a tap) to open Item 0's own menu, since a tap fires onPress instead", async () => {
-    // Detox limitation: `longPress` is implemented as a tap that is then held,
-    // so the initial touch-down still fires Item 0's `onPress` and surfaces its
-    // toast. The scenario expects only the native menu to appear on a real long
-    // press, so we assert the menu opened and dismiss it (rather than the toast)
-    // to leave a clean state for the following tests.
-    await openContextMenu(headerItem('Item 0'), { gesture: 'longPress' });
+    // The long press is made by coordinates, so - as for a real long press -
+    // only the native menu appears and Item 0's `onPress` toast does not.
+    await openHeaderItemMenu('Item 0', { gesture: 'longPress' });
 
     await expect(actionRow('Action 0-1')).toBeVisible();
     await expect(actionRow('Action 0-2')).toBeVisible();
     await dismissContextMenu();
   });
 
-  describeIfIOS26('iOS 26 toolbar overflow ("More") menu', () => {
+  describeIfIOSAtLeast('26.0')('iOS 26 toolbar overflow ("More") menu', () => {
     it('should move Item 0 and Menu 1 into the overflow button once 5 items are configured', async () => {
       await toggleItemsCount(); // 2 -> 3
       await toggleItemsCount(); // 3 -> 4
@@ -74,14 +77,14 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
 
       await expect(headerItem('Item 0')).not.toExist();
       await expect(headerItem('Menu 1')).not.toExist();
-      await expect(headerItem('Item 2')).toBeVisible();
-      await expect(headerItem('Menu 3')).toBeVisible();
-      await expect(headerItem('Item 4')).toBeVisible();
-      await expect(overflowButton).toBeVisible();
+      await expectHeaderItemShown('Item 2');
+      await expectHeaderItemShown('Menu 3');
+      await expectHeaderItemShown('Item 4');
+      await expectHeaderViewShown(OVERFLOW_BUTTON);
     });
 
     it('should list Item 0 and Menu 1 as entries when opening the overflow menu', async () => {
-      await openContextMenu(overflowButton);
+      await openHeaderViewMenu(OVERFLOW_BUTTON, 'the overflow button');
 
       await expect(actionRow('Item 0')).toBeVisible();
       await expect(actionRow('Menu 1')).toBeVisible();
@@ -102,7 +105,7 @@ describeIfIOS('Stack Header Subview onPress (iOS)', () => {
     });
 
     it("should open a 2-row submenu (Action 1-1, Action 1-2) for the overflow's Menu 1 entry, which has no onPress", async () => {
-      await openContextMenu(overflowButton);
+      await openHeaderViewMenu(OVERFLOW_BUTTON, 'the overflow button');
       await actionRow('Menu 1').tap();
 
       await expect(actionRow('Action 1-1')).toBeVisible();
