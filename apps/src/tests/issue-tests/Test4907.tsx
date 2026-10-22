@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
@@ -9,6 +10,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 
 type Routes = { Home: undefined; Opaque: undefined; Transparent: undefined };
 const Stack = createNativeStackNavigator<Routes>();
+const Tab = createBottomTabNavigator();
 
 // Android + TalkBack: with `headerTransparent: true` the header (back button, title,
 // headerRight) must still be read BEFORE the screen content, the same as with an opaque header.
@@ -16,9 +18,10 @@ function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
   return (
     <View style={styles.content}>
       <Text>
-        Turn TalkBack on. Open both screens below and swipe right (next) from
-        the top of each. The header must be read first on both: back button,
-        title, "Header action", then "First content button".
+        Turn TalkBack on. Open both screens below and swipe right (next) through
+        the header and all content rows. On both, the last content row must be
+        followed by the tab bar. With the bug, the transparent screen reads
+        title and "Header action" again before the tab bar.
       </Text>
       <Button
         testID="push-opaque"
@@ -75,22 +78,39 @@ function HeaderAction() {
   );
 }
 
+function StackTab() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen
+        name="Opaque"
+        component={Opaque}
+        options={{ headerRight: HeaderAction }}
+      />
+      <Stack.Screen
+        name="Transparent"
+        component={Transparent}
+        options={{ headerTransparent: true, headerRight: HeaderAction }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function OtherTab() {
+  return (
+    <View style={styles.content}>
+      <Text>Other tab</Text>
+    </View>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen
-          name="Opaque"
-          component={Opaque}
-          options={{ headerRight: HeaderAction }}
-        />
-        <Stack.Screen
-          name="Transparent"
-          component={Transparent}
-          options={{ headerTransparent: true, headerRight: HeaderAction }}
-        />
-      </Stack.Navigator>
+      <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Screen name="Stack" component={StackTab} />
+        <Tab.Screen name="Other" component={OtherTab} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
