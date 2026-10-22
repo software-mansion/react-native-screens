@@ -774,6 +774,14 @@ RNS_IGNORE_SUPER_CALL_END
     auto shouldUseCustomBackBarButtonItem = config.disableBackButtonMenu;
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
+    // On iOS 26 the Liquid Glass back button ignores the navigation bar's tintColor,
+    // so the header's `color` has to be set on the back item itself. The item is
+    // then assigned (see below), at the cost of the automatic "Back" shortening.
+    if (config.color) {
+      shouldUseCustomBackBarButtonItem = YES;
+      backBarButtonItem.tintColor = config.color;
+    }
+
     if ((config.backTitleFontFamily &&
          // While being used by react-navigation, the `backTitleFontFamily` will
          // be set to "System" by default - which is the system default font.
