@@ -158,12 +158,12 @@ function ImageTab() {
         {Platform.OS === 'ios' ? (
           <>
             `icon`: imageSource icon.png, `renderingMode` NOT set (default:
-            original colors)
+            tinted)
             {'\n'}
             {'\n'}
-            The icon renders in its original black color in both states. The
-            host <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint
-            is ignored.
+            Selected: tinted{' '}
+            <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.{'\n'}
+            Unselected: the icon renders in the system theme color.
           </>
         ) : (
           <>
@@ -180,20 +180,19 @@ function ImageTab() {
   );
 }
 
-function ImageTemplateTab() {
+function ImageOriginalTab() {
   return (
     <View style={styles.screen}>
-      <Text style={styles.label}>Template Image Source</Text>
+      <Text style={styles.label}>Original Image Source</Text>
       <Text style={styles.hint}>
         Host `tabBarTintColor`:{' '}
         <Text style={{ color: Colors.GreenDark100 }}>GreenDark100</Text>
         {'\n'}
-        `icon`: imageSource icon.png, `renderingMode`: template{'\n'}
+        `icon`: imageSource icon.png, `renderingMode`: original{'\n'}
         {'\n'}
-        The icon is used as a template image.{'\n'}
-        Selected: tinted{' '}
-        <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text>.{'\n'}
-        Unselected: the icon renders in the system theme color.
+        The icon renders in its original black color in both states. The host{' '}
+        <Text style={{ color: Colors.GreenDark100 }}>GREEN</Text> tint is
+        ignored.
       </Text>
     </View>
   );
@@ -353,16 +352,16 @@ const IOS_ROUTES: TabRouteConfig[] = [
     },
   },
   {
-    name: 'ImageTemplate',
-    element: <ImageTemplateTab />,
+    name: 'ImageOriginal',
+    element: <ImageOriginalTab />,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
-      title: 'Template',
+      title: 'Original',
       ios: {
         icon: {
           type: 'imageSource',
           imageSource: require('@assets/variableIcons/icon.png'),
-          renderingMode: 'template',
+          renderingMode: 'original',
         },
       },
     },
