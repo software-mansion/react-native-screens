@@ -243,7 +243,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - RNSViewFrameChangeDelegate
 
-- (void)viewFrameDidChange:(nonnull UINavigationBar *)navigationBar
+- (void)viewFrameDidChange:(nonnull UIView *)view
 {
   if (_state == nullptr || self.superview == nil) {
     return;
@@ -251,12 +251,12 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   for (UIView *child in _children) {
     if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
-      [(id<RNSViewFrameChangeDelegate>)(child) viewFrameDidChange:navigationBar];
+      [(id<RNSViewFrameChangeDelegate>)(child) viewFrameDidChange:view];
     }
   }
 
   UIView *screenView = self.superview;
-  CGRect navBarFrame = [navigationBar convertRect:navigationBar.bounds toView:screenView];
+  CGRect navBarFrame = [view convertRect:view.bounds toView:screenView];
   [_shadowStateProxy updateShadowStateWithFrame:navBarFrame];
 }
 

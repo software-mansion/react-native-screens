@@ -1,15 +1,14 @@
 #import "RNSSplitNavigationController.h"
 #import "RNSSplitNavigationControllerFrameObserver.h"
-#import "RNSSplitNavigationControllerFrameOriginChangeDelegate.h"
+#import "RNSViewFrameChangeDelegate.h"
 
 @implementation RNSSplitNavigationController {
   RNSSplitNavigationControllerFrameObserver *_frameObserver;
-  id<RNSSplitNavigationControllerFrameOriginChangeDelegate> __weak _frameOriginChangeDelegate;
+  id<RNSViewFrameChangeDelegate> __weak _frameOriginChangeDelegate;
 }
 
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController
-                 frameOriginChangeDelegate:
-                     (id<RNSSplitNavigationControllerFrameOriginChangeDelegate>)frameOriginChangeDelegate
+                 frameOriginChangeDelegate:(id<RNSViewFrameChangeDelegate>)frameOriginChangeDelegate
 {
   if (self = [super initWithRootViewController:rootViewController]) {
     _frameOriginChangeDelegate = frameOriginChangeDelegate;
