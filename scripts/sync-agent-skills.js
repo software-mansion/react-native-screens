@@ -16,7 +16,7 @@
  * checks out symlinks as plain files on Windows without `core.symlinks`).
  *
  * With `--check`, the script instead validates the skills and agents tracked
- * in git (used in CI):
+ * in git:
  *
  * 1. Every tracked skill has a `SKILL.md` whose frontmatter `name` matches its
  *    directory and which has a `description`.
