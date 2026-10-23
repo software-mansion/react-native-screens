@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *largeSubtitle;
 @property (nonatomic, readonly) BOOL largeTitleEnabled;
 @property (nonatomic, readonly, nullable) NSString *prompt;
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic, readonly) UIBarMinimizationBehavior minimizationBehavior API_AVAILABLE(ios(27.0));
 @property (nonatomic, readonly) UIBarMinimizationRestorationBehavior restorationBehavior API_AVAILABLE(ios(27.0));
-#endif // Check for iOS >= 27
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic, readonly, nullable) NSString *backButtonTitle;
 @property (nonatomic, readonly) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic, readonly) BOOL backButtonMenuEnabled;

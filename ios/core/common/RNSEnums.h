@@ -14,6 +14,14 @@ typedef NS_ENUM(NSInteger, RNSSplitScreenColumnType) {
   RNSSplitScreenColumnTypeInspector,
 };
 
+typedef NS_ENUM(NSInteger, RNSHeaderMinimizationBehavior) {
+  RNSHeaderMinimizationBehaviorUnset,
+  RNSHeaderMinimizationBehaviorAutomatic,
+  RNSHeaderMinimizationBehaviorNever,
+  RNSHeaderMinimizationBehaviorOnScrollDown,
+  RNSHeaderMinimizationBehaviorOnScrollUp,
+};
+
 // Redefinition of UIBlurEffectStyle. We need to represent additional cases of `None` and `SystemDefault`.
 typedef NS_ENUM(NSInteger, RNSBlurEffectStyle) {
   /// Default blur effect should be used
