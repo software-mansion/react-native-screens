@@ -103,10 +103,8 @@ Be extremely frank and focused on thoroughness.
 
 ## AI tooling
 
-Shared skills live in `.agents/skills/` and shared agents in `.claude/agents/`;
-everything else in `.agents/` and `.claude/` is local and gitignored. When
-adding, renaming or removing a shared skill or agent, follow
-[`.agents/skills/add-shared-agent-tooling/SKILL.md`](.agents/skills/add-shared-agent-tooling/SKILL.md).
+When adding, renaming or removing a shared skill or agent, follow
+`.agents/skills/add-shared-agent-tooling/SKILL.md`.
 
 ## Issue creation
 
