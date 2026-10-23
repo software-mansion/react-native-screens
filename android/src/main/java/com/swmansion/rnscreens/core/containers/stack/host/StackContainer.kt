@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.transition.Transition
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
@@ -16,8 +17,12 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
-import com.swmansion.rnscreens.core.containers.stack.animation.StackAnimationAssigner
-import com.swmansion.rnscreens.core.containers.stack.animation.StackAnimationBatchKind
+import com.swmansion.rnscreens.core.containers.stack.animation.ScreenTransitionProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionContext
+import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionKind
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.UnderlayProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.resolveStackTransition
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -38,7 +43,9 @@ internal class StackContainer(
     ColorSchemeProviding,
     StackHeaderBackPressHandler,
     StackScreenFragmentDelegate,
-    StackUpdateBatchStateProviding {
+    StackUpdateBatchStateProviding,
+    ScreenTransitionProviding,
+    UnderlayProviding {
     private var fragmentManager: FragmentManager? = null
 
     private fun requireFragmentManager(): FragmentManager =
@@ -70,7 +77,7 @@ internal class StackContainer(
      * Permanent child 0. Screens exiting under an entering screen are hosted in its overlay,
      * so they draw before every fragment view FragmentManager appends after it.
      */
-    internal val underlay: FrameLayout = FrameLayout(context)
+    override val underlay: FrameLayout = FrameLayout(context)
 
     override fun onViewAdded(child: View) {
         super.onViewAdded(child)
@@ -124,6 +131,7 @@ internal class StackContainer(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
+        transitionContext = null
         fragmentManager = null
         parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
@@ -224,13 +232,7 @@ internal class StackContainer(
             )
         }
 
-        val previousTop = stackModel.lastOrNull()
-        val batchKind =
-            when {
-                pendingPopOperations.isEmpty() -> StackAnimationBatchKind.PUSH
-                pendingPushOperations.isEmpty() -> StackAnimationBatchKind.POP
-                else -> StackAnimationBatchKind.REPLACE
-            }
+        val modelBeforeBatch = stackModel.toList()
 
         pendingPopOperations.forEach { operation ->
             val fragment =
@@ -267,19 +269,50 @@ internal class StackContainer(
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
         if (hasPendingOperations) {
-            StackAnimationAssigner.assignBatch(
-                previousTop,
-                batchKind,
-                newTop = stackModel.last(),
-                belowNewTop = fragmentBelowTop(),
-            )
+            writeTransitionContext(modelBeforeBatch)
         }
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()
     }
 
-    private fun fragmentBelowTop(): StackScreenFragment? = stackModel.getOrNull(stackModel.lastIndex - 1)
+    // region Transition provision
+
+    /**
+     * The operation FragmentManager is about to execute, consulted by [transitionFor]. Written right
+     * before FragmentManager asks for the transitions ([writeTransitionContext],
+     * [onBackStackChangeStarted]) and cleared after it, in [onBackStackChanged] (both in
+     * `FragmentManager.executeOpsTogether`). A predictive back commit asks for nothing; the gesture
+     * start already did.
+     */
+    private var transitionContext: StackTransitionContext? = null
+
+    /**
+     * The outgoing screen is FragmentManager's current top, not the model's: a batch computed while
+     * an earlier one is pending executes together with it.
+     */
+    private fun writeTransitionContext(modelBeforeBatch: List<StackScreenFragment>) {
+        val incoming = stackModel.last()
+        val outgoing = determineTopFragment()
+        val kind =
+            when {
+                // The first screen is not a back stack record; nothing animates.
+                outgoing == null -> null
+                // The top did not change, e.g. a screen pushed and popped before execution.
+                outgoing === incoming -> null
+                stackModel.contains(outgoing) -> StackTransitionKind.PUSH
+                modelBeforeBatch.contains(incoming) -> StackTransitionKind.POP
+                else -> StackTransitionKind.REPLACE
+            }
+        transitionContext = kind?.let { StackTransitionContext(it, checkNotNull(outgoing), incoming) }
+    }
+
+    override fun transitionFor(
+        fragment: StackScreenFragment,
+        slot: TransitionSlot,
+    ): Transition? = resolveStackTransition(fragment, slot, transitionContext)
+
+    // endregion
 
     private fun onNativeFragmentPop(fragment: StackScreenFragment) {
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
@@ -291,15 +324,6 @@ internal class StackContainer(
             "[RNScreens] Primary navigation fragment not updated by native pop"
         }
         updateTopFragment()
-        StackAnimationAssigner.refreshTopPair(stackModel.last(), fragmentBelowTop())
-    }
-
-    internal fun onItemAnimationChanged(item: StackContainerItem) {
-        // A non-top item's value is read at the next batch that involves it.
-        val top = stackModel.lastOrNull() ?: return
-        if (top.item === item) {
-            StackAnimationAssigner.refreshTopPair(top, fragmentBelowTop())
-        }
     }
 
     private fun dumpStackModel() {
@@ -320,6 +344,7 @@ internal class StackContainer(
             backPressHandler = WeakReference(this),
             updateBatchStateProvider = WeakReference(this),
             colorSchemeProvider = WeakReference(this),
+            transitionProvider = WeakReference(this),
         ).also {
             RNSLog.d(TAG, "Created Fragment $it for item ${item.itemKey}")
         }
@@ -361,7 +386,34 @@ internal class StackContainer(
     }
 
     // This is called after special effects (animations) are dispatched
-    override fun onBackStackChanged() = Unit
+    override fun onBackStackChanged() {
+        transitionContext = null
+    }
+
+    // Called before FragmentManager asks for transitions, for every fragment of the back stack record
+    // (hence the model check).
+    override fun onBackStackChangeStarted(
+        fragment: Fragment,
+        pop: Boolean,
+    ) {
+        if (fragment !is StackScreenFragment || !stackModel.contains(fragment)) {
+            return
+        }
+
+        // A pop FragmentManager starts by itself (header back, system back, predictive back gesture
+        // start) arrives without a context. So does a JS push and pop executed together (the batch
+        // with no net change wrote none, and the last record is a pop); FragmentManager starts no
+        // transition for it, so the context written here is never read. The model is mutated later,
+        // in `onBackStackChangeCommitted`, so its top is still the popped fragment.
+        if (pop && transitionContext == null && stackModel.size > 1) {
+            transitionContext =
+                StackTransitionContext(
+                    StackTransitionKind.POP,
+                    outgoing = stackModel.last(),
+                    incoming = stackModel[stackModel.lastIndex - 1],
+                )
+        }
+    }
 
     // This is called before the special effects (animations) are dispatched, however mid transaction!
     // Therefore make sure to not execute any action that might cause synchronous transaction synchronously

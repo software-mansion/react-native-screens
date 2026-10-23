@@ -28,8 +28,24 @@ const REFERENCE_COLORS = [
   Colors.RedLight100,
 ];
 
+/**
+ * A picker entry. A preset name is its own label; the object form needs one, because the
+ * picker shows strings only.
+ */
+export type AnimationPresetOption =
+  | Extract<StackScreenAnimation, string>
+  | { label: string; animation: StackScreenAnimation };
+
+type LabeledAnimation = { label: string; animation: StackScreenAnimation };
+
+function toLabeled(option: AnimationPresetOption): LabeledAnimation {
+  return typeof option === 'string'
+    ? { label: option, animation: option }
+    : option;
+}
+
 type PlaygroundConfig = {
-  animationOptions: readonly StackScreenAnimation[];
+  animationOptions: readonly LabeledAnimation[];
   initialAnimation: StackScreenAnimation;
   hasDirectionPicker: boolean;
   direction: DirectionOption;
@@ -55,7 +71,7 @@ export function AnimationPresetPlayground({
   withDirectionPicker = false,
   withColorReference = false,
 }: {
-  animationOptions: readonly StackScreenAnimation[];
+  animationOptions: readonly AnimationPresetOption[];
   initialAnimation: StackScreenAnimation;
   withDirectionPicker?: boolean;
   withColorReference?: boolean;
@@ -64,7 +80,7 @@ export function AnimationPresetPlayground({
 
   const config = React.useMemo<PlaygroundConfig>(
     () => ({
-      animationOptions,
+      animationOptions: animationOptions.map(toLabeled),
       initialAnimation,
       hasDirectionPicker: withDirectionPicker,
       direction,
@@ -146,27 +162,39 @@ function AnimationControls() {
     setDirection,
   } = React.useContext(PlaygroundContext);
 
-  // The pickers only offer one family of the library's union.
-  const asOption = (animation: StackScreenAnimation | undefined) =>
-    animationOptions.find(option => option === animation) ?? initialAnimation;
+  // The pickers only offer the scenario's subset of the library's union. Object forms are
+  // matched by identity, so a value always comes from `animationOptions`.
+  const labelOf = (animation: StackScreenAnimation | undefined) =>
+    (
+      animationOptions.find(option => option.animation === animation) ??
+      animationOptions.find(option => option.animation === initialAnimation)
+    )?.label ?? '';
+  const animationOf = (label: string) =>
+    animationOptions.find(option => option.label === label)?.animation ??
+    initialAnimation;
+  const labels = animationOptions.map(option => option.label);
 
   return (
     <View style={styles.controls}>
-      <SettingsPicker<StackScreenAnimation>
+      <SettingsPicker<string>
         label="next push"
-        value={asOption(routeConfigs[0]?.options?.animation)}
-        onValueChange={animation =>
+        value={labelOf(routeConfigs[0]?.options?.animation)}
+        onValueChange={label =>
           routeConfigs.forEach(config =>
-            updateRouteConfigWithOptions(config.name, { animation }),
+            updateRouteConfigWithOptions(config.name, {
+              animation: animationOf(label),
+            }),
           )
         }
-        items={[...animationOptions]}
+        items={labels}
       />
-      <SettingsPicker<StackScreenAnimation>
+      <SettingsPicker<string>
         label="this screen"
-        value={asOption(routeOptions.animation)}
-        onValueChange={animation => setRouteOptions(routeKey, { animation })}
-        items={[...animationOptions]}
+        value={labelOf(routeOptions.animation)}
+        onValueChange={label =>
+          setRouteOptions(routeKey, { animation: animationOf(label) })
+        }
+        items={labels}
       />
       {hasDirectionPicker ? (
         <>

@@ -2,11 +2,11 @@ package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
 import android.view.View
 import android.view.ViewGroup
-import com.swmansion.rnscreens.core.containers.stack.animation.model.TrackProperty
-import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Axis
 
 /**
- * The pixel space one slot animates in; the only place density and layout direction are read.
+ * The pixel space one screen animates in; the only place density and layout direction are read.
  */
 internal data class LayoutMetrics(
     val containerWidth: Int,
@@ -15,7 +15,7 @@ internal data class LayoutMetrics(
     val isRTL: Boolean,
 ) {
     companion object {
-        fun of(
+        internal fun of(
             view: View,
             container: ViewGroup,
         ) = LayoutMetrics(
@@ -28,21 +28,21 @@ internal data class LayoutMetrics(
 }
 
 /**
- * The concrete value for [property]: pixels for translations, the raw scalar otherwise.
+ * Pixels along [axis]; a logical X mirrors in a right-to-left container.
  */
-internal fun Value.resolve(
-    property: TrackProperty,
+internal fun Length.toPx(
+    axis: Axis,
     metrics: LayoutMetrics,
-): Float =
-    when (this) {
-        is Value.Scalar -> value
-        is Value.Dp -> value * metrics.density
-        is Value.Percent ->
-            fraction *
-                when (property) {
-                    TrackProperty.TRANSLATE_X -> metrics.containerWidth
-                    TrackProperty.TRANSLATE_Y -> metrics.containerHeight
-                    TrackProperty.OPACITY, TrackProperty.SCALE ->
-                        error("[RNScreens] Percent values are only valid on translate tracks")
-                }
-    }
+): Float {
+    val px =
+        when (this) {
+            is Length.Dp -> value * metrics.density
+            is Length.Percent ->
+                fraction *
+                    when (axis) {
+                        Axis.X, Axis.LOGICAL_X -> metrics.containerWidth
+                        Axis.Y -> metrics.containerHeight
+                    }
+        }
+    return if (axis == Axis.LOGICAL_X && metrics.isRTL) -px else px
+}

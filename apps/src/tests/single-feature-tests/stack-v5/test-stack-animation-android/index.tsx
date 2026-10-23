@@ -24,8 +24,10 @@ function TestStackAnimationAndroid() {
           element: <BlueScreen />,
         },
         {
+          // The only route with a header, so its back arrow pops through the native header.
           name: 'Red',
           element: <RedScreen />,
+          options: { headerConfig: { title: 'Red' } },
         },
         {
           // The only route with a non-default animation. A vertical slide moves over a screen
