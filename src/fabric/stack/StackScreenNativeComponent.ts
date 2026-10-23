@@ -18,10 +18,16 @@ type OnDismissEventPayload = Readonly<{
 type ActivityMode = 'detached' | 'attached';
 
 type StackScreenAnimation =
+  | 'default'
   | 'slideFromRight'
   | 'slideFromLeft'
   | 'slideFromBottom'
   | 'slideFromTop'
+  | 'fade'
+  | 'fadeFromBottom'
+  | 'fadeFromTop'
+  | 'iosFromRight'
+  | 'iosFromLeft'
   | 'none';
 
 export interface NativeProps extends ViewProps {
