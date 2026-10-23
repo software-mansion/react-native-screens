@@ -7,6 +7,9 @@ const CURRENT_SCREENS_VERSION = 'current';
 const KNOWN_REF_TYPES = ['branch', 'tag', 'commit'];
 const SCREENS_VERSION_HELP = `'${CURRENT_SCREENS_VERSION}', 'branch:<name>', 'tag:<name>', or 'commit:<sha>'`;
 const EMPTY_TEMPLATE = 'empty';
+const DEFAULT_METRO_PORT = 8081;
+const MIN_METRO_PORT = 1024;
+const MAX_METRO_PORT = 65535;
 
 function parseBooleanFlag(value) {
   if (typeof value === 'string') {
@@ -113,6 +116,10 @@ function getConfig() {
       'android-device': {
         type: 'string',
       },
+      'metro-port': {
+        type: 'string',
+        default: String(DEFAULT_METRO_PORT),
+      },
     },
     strict: true,
   });
@@ -156,6 +163,10 @@ function getConfig() {
                                          install, and launch the app.
         -v, --variant <variant>          Build variant: 'debug' or 'release' (default: 'debug')
         -p, --platform <platform>        Platforms to build: 'ios', 'android', or 'both' (default: 'both')
+            --metro-port <port>          Metro port (default: ${DEFAULT_METRO_PORT}). Use a different port for each
+                                         parallel run (with a different -a). Fails if the port is taken,
+                                         unless by a Metro left over from a previous run of the same app,
+                                         which is stopped.
 
       Device options (require --run):
             --ios-simulator <name>       iOS simulator name
@@ -184,6 +195,7 @@ function getConfig() {
         node scripts/release_tests/create_playground.js --run -p ios --ios-simulator "iPhone 16"
         node scripts/release_tests/create_playground.js --run -p ios --ios-device "Karol's iPhone"
         node scripts/release_tests/create_playground.js --run -p android --android-device "emulator-5554"
+        node scripts/release_tests/create_playground.js --run -p android --metro-port 8090
         node scripts/release_tests/create_playground.js -s branch:4.26-stable --run -t tabsAndStack4.x
         node scripts/release_tests/create_playground.js -r 0.74.0 --run -v release
     `);
@@ -253,6 +265,17 @@ function getConfig() {
 
   const run = config.run;
 
+  const metroPort = Number(config['metro-port']);
+  if (
+    !/^\d+$/.test(config['metro-port']) ||
+    metroPort < MIN_METRO_PORT ||
+    metroPort > MAX_METRO_PORT
+  ) {
+    fatal(
+      `Invalid --metro-port '${config['metro-port']}'. Expected a number between ${MIN_METRO_PORT} and ${MAX_METRO_PORT}.`,
+    );
+  }
+
   const argvHasFlag = (...flags) =>
     process.argv.some(arg =>
       flags.some(flag => arg === flag || arg.startsWith(`${flag}=`)),
@@ -265,6 +288,7 @@ function getConfig() {
     iosDevice && '--ios-device',
     iosUdid && '--ios-udid',
     androidDevice && '--android-device',
+    argvHasFlag('--metro-port') && '--metro-port',
   ].filter(Boolean);
 
   if (runOnlyFlags.length > 0 && !run) {
@@ -282,11 +306,7 @@ function getConfig() {
   const playground = path.join(releaseTests, 'playground');
 
   if (config.template !== EMPTY_TEMPLATE) {
-    const templateAppFile = path.join(
-      templates,
-      config.template,
-      'App.tsx',
-    );
+    const templateAppFile = path.join(templates, config.template, 'App.tsx');
     if (!fs.existsSync(templateAppFile)) {
       fatal(
         `File ${templateAppFile} not found. Please ensure the template exists.`,
@@ -302,6 +322,7 @@ function getConfig() {
     'ios-device': iosDevice,
     'ios-udid': iosUdid,
     'android-device': androidDevice,
+    'metro-port': metroPort,
     'screens-ref-type': screensRefType,
     'screens-ref-target': screensRefTarget,
     platform,
@@ -313,7 +334,7 @@ function getConfig() {
       templates,
       screens,
       app: path.join(playground, appName),
-      log: path.join(releaseTests, 'setup.log'),
+      log: path.join(releaseTests, `setup-${appName}.log`),
     },
   };
 }
@@ -321,3 +342,4 @@ function getConfig() {
 module.exports = getConfig;
 module.exports.CURRENT_SCREENS_VERSION = CURRENT_SCREENS_VERSION;
 module.exports.EMPTY_TEMPLATE = EMPTY_TEMPLATE;
+module.exports.DEFAULT_METRO_PORT = DEFAULT_METRO_PORT;
