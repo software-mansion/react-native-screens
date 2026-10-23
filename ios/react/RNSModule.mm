@@ -5,7 +5,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
-#import "RNSScreenStack.h"
+#import "RNSScreenStack.h" // legacy-compat: the transition commands drive legacy RNSScreenStackView (D3)
 #import "RNScreensTurboModule.h"
 
 NS_ASSUME_NONNULL_BEGIN

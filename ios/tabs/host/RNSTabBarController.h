@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "RNSContainer.h"
 #import "RNSContainerTransactionSupporting.h"
+#import "RNSOrientationDelegate.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarItemCoordinator.h"
 #import "RNSTabsNavigationState.h"
@@ -110,6 +111,12 @@ NS_ASSUME_NONNULL_BEGIN
  * The reference is retained strongly and it is expected to be managed by `TabsHost`.
  */
 @property (nonatomic, readonly, nullable) RNSTabsHostComponentView *tabsHostComponentView;
+
+/**
+ * Asked to enforce the supported orientation after it may have changed. Without a delegate, orientation updates have
+ * no effect.
+ */
+@property (nonatomic, weak, nullable) id<RNSOrientationDelegate> orientationDelegate;
 
 /**
  * Tab bar appearance coordinator. If you need to update tab bar appearance avoid using this one

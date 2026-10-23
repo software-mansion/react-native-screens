@@ -2,7 +2,6 @@
 
 #import <React/RCTAssert.h>
 #import "RNSDefines.h"
-#import "RNSScreenWindowTraits.h"
 #import "RNSSplitHostController.h"
 
 @implementation RNSSplitAppearanceApplicator
@@ -43,10 +42,11 @@
                            [strongSelf updateSplitViewDisplayModeFor:provider withController:splitHostController];
                          }];
 
-  [appearanceCoordinator updateIfNeeded:RNSSplitAppearanceUpdateFlagsOrientationUpdate
-                         updateCallback:^{
-                           [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
-                         }];
+  [appearanceCoordinator
+      updateIfNeeded:RNSSplitAppearanceUpdateFlagsOrientationUpdate
+      updateCallback:^{
+        [splitHostController.orientationDelegate containerDidRequestOrientationUpdate:splitHostController];
+      }];
 }
 
 /**

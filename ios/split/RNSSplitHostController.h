@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSContainerTransactionSupporting.h"
+#import "RNSOrientationDelegate.h"
 #import "RNSOrientationProviding.h"
 #import "RNSSplitHostProviders.h"
 
@@ -37,6 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<RNSSplitHostAppearanceProvider> appearanceProvider;
 @property (nonatomic, weak, nullable) id<RNSSplitHostBehaviorProvider> behaviorProvider;
 @property (nonatomic, weak, nullable) id<RNSSplitHostColumnsProvider> columnsProvider;
+
+/**
+ * Asked to enforce the supported orientation after it may have changed. Without a delegate, orientation updates have
+ * no effect.
+ */
+@property (nonatomic, weak, nullable) id<RNSOrientationDelegate> orientationDelegate;
 
 /**
  * @brief Initializes the Split host controller with provided style.
