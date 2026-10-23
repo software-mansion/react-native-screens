@@ -90,9 +90,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - RNSImageLoading
 
-- (void)loadImageFromJsonSource:(NSDictionary *)jsonSource
-                     asTemplate:(BOOL)isTemplate
-         withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
+- (void)loadImageFromSource:(id)source
+                 asTemplate:(BOOL)isTemplate
+     withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
 {
   if (_imageLoader == nil) {
     RCTLogError(@"[RNScreens] imageLoader must not be nil when loading images");
@@ -100,7 +100,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     return;
   }
 
-  RCTImageSource *imageSource = [RCTConvert RCTImageSource:jsonSource];
+  // The Stack header provides the JSON image source from its props.
+  RCTImageSource *imageSource = [RCTConvert RCTImageSource:source];
   if (imageSource == nil) {
     RCTLogError(@"[RNScreens] Expected nonnil image source");
     completionBlock(nil);
