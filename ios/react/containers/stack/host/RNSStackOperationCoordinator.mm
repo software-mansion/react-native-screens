@@ -1,11 +1,10 @@
 #import "RNSStackOperationCoordinator.h"
 #import "RNSStackNavigationController.h"
-#import "RNSStackOperation.h"
 #import "RNSStackScreenComponentView.h"
 
 @implementation RNSStackOperationCoordinator {
-  NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
-  NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
+  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _pendingPushScreens;
+  NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _pendingPopScreens;
 }
 
 - (instancetype)init
@@ -18,25 +17,23 @@
 
 - (void)initState
 {
-  _pendingPushOperations = [NSMutableArray array];
-  _pendingPopOperations = [NSMutableArray array];
+  _pendingPushScreens = [NSMutableArray array];
+  _pendingPopScreens = [NSMutableArray array];
 }
 
 - (BOOL)hasPendingOperations
 {
-  return _pendingPushOperations.count > 0 || _pendingPopOperations.count > 0;
+  return _pendingPushScreens.count > 0 || _pendingPopScreens.count > 0;
 }
 
 - (void)addPushOperation:(nonnull RNSStackScreenComponentView *)stackScreen
 {
-  RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreen:stackScreen];
-  [_pendingPushOperations addObject:operation];
+  [_pendingPushScreens addObject:stackScreen];
 }
 
 - (void)addPopOperation:(nonnull RNSStackScreenComponentView *)stackScreen
 {
-  RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreen:stackScreen];
-  [_pendingPopOperations addObject:operation];
+  [_pendingPopScreens addObject:stackScreen];
 }
 
 - (void)enqueuePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
@@ -46,30 +43,30 @@
     return;
   }
 
-  auto popOperations = [[[self orderedOperations:(NSMutableArray<RNSStackOperation *> *)_pendingPopOperations
-                                 withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects];
+  auto popScreens = [[[self orderedScreens:_pendingPopScreens
+                           withIndicesFrom:renderedScreens] reverseObjectEnumerator] allObjects];
 
-  for (RNSStackOperation *operation in popOperations) {
-    [controller enqueuePopOperation:static_cast<RNSPopOperation *>(operation).stackScreen];
+  for (RNSStackScreenComponentView *screen in popScreens) {
+    [controller enqueuePopOperation:screen.controller];
   }
 
-  auto pushOperations = [self orderedOperations:(NSMutableArray<RNSStackOperation *> *)_pendingPushOperations
-                                withIndicesFrom:renderedScreens];
+  auto pushScreens = [self orderedScreens:_pendingPushScreens withIndicesFrom:renderedScreens];
 
-  for (RNSStackOperation *operation in pushOperations) {
-    [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).stackScreen];
+  for (RNSStackScreenComponentView *screen in pushScreens) {
+    [controller enqueuePushOperation:screen.controller];
   }
 
-  [_pendingPopOperations removeAllObjects];
-  [_pendingPushOperations removeAllObjects];
+  [_pendingPopScreens removeAllObjects];
+  [_pendingPushScreens removeAllObjects];
 }
 
-- (NSArray<RNSStackOperation *> *)orderedOperations:(nonnull NSMutableArray<RNSStackOperation *> *)operations
-                                    withIndicesFrom:
-                                        (nonnull NSMutableArray<RNSStackScreenComponentView *> *)stackScreens
+- (NSArray<RNSStackScreenComponentView *> *)orderedScreens:(nonnull NSArray<RNSStackScreenComponentView *> *)screens
+                                           withIndicesFrom:
+                                               (nonnull NSArray<RNSStackScreenComponentView *> *)renderedScreens
 {
-  return [operations sortedArrayUsingComparator:^NSComparisonResult(RNSStackOperation *obj1, RNSStackOperation *obj2) {
-    return [@([stackScreens indexOfObject:obj1.stackScreen]) compare:@([stackScreens indexOfObject:obj2.stackScreen])];
+  return [screens sortedArrayUsingComparator:^NSComparisonResult(RNSStackScreenComponentView *screen1,
+                                                                 RNSStackScreenComponentView *screen2) {
+    return [@([renderedScreens indexOfObject:screen1]) compare:@([renderedScreens indexOfObject:screen2])];
   }];
 }
 

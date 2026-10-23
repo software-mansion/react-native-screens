@@ -3,11 +3,11 @@
 
 @implementation RNSStackOperation
 
-- (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen
+- (instancetype)initWithScreenController:(nonnull RNSStackScreenController *)screenController
 {
-  RCTAssert(stackScreen != nil, @"[RNScreens] Expected nonnull stackScreen!");
+  RCTAssert(screenController != nil, @"[RNScreens] Expected nonnull screenController!");
   if (self = [super init]) {
-    _stackScreen = stackScreen;
+    _screenController = screenController;
   }
   return self;
 }
