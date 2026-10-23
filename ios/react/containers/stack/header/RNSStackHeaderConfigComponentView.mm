@@ -11,6 +11,7 @@
 #import "RNSStackHeaderMenuFinder.h"
 #import "RNSStackHeaderMenuMapper.h"
 #import "RNSStackHeaderMenuUpdateOptions.h"
+#import "RNSStackHeaderMenuUpdateOptionsMapper.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
@@ -287,7 +288,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     return;
   }
 
-  RNSMenuItemUpdateOptions *updateOptions = [RNSMenuItemUpdateOptions fromDictionary:dict];
+  RNSMenuItemUpdateOptions *updateOptions =
+      [RNSStackHeaderMenuUpdateOptionsMapper menuItemUpdateOptionsFromDictionary:dict];
   RNSStackHeaderMenuItemData *oldItemData = (RNSStackHeaderMenuItemData *)locator.searchResult.element;
   RNSStackHeaderMenuItemData *newItemData = [RNSMenuItemUpdateOptions applyOptions:updateOptions
                                                                         toMenuItem:oldItemData];
@@ -348,7 +350,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     return;
   }
 
-  RNSMenuUpdateOptions *updateOptions = [RNSMenuUpdateOptions fromDictionary:dict];
+  RNSMenuUpdateOptions *updateOptions = [RNSStackHeaderMenuUpdateOptionsMapper menuUpdateOptionsFromDictionary:dict];
   RNSStackHeaderMenuData *oldMenuItem = (RNSStackHeaderMenuData *)locator.searchResult.element;
   RNSStackHeaderMenuData *newMenuItem = [RNSMenuUpdateOptions applyOptions:updateOptions toMenu:oldMenuItem];
 
