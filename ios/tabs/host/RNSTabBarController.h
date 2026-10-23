@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSContainer.h"
-#import "RNSReactMountingTransactionObserving.h"
+#import "RNSContainerTransactionSupporting.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarItemCoordinator.h"
 #import "RNSTabsNavigationState.h"
@@ -24,10 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
  * fact of inheritance from `UITabBarController`. It is limited only to the child view controllers
  * of type `RNSTabsScreenViewController`, however.
  *
- * Updates made by this controller are synchronized by `RNSReactMountingTransactionObserving` protocol,
+ * Updates made by this controller are synchronized by `RNSContainerTransactionSupporting` protocol,
  * i.e. if you made changes through one of signals method, unless you flush them immediately, they
- * will be executed only after react finishes the transaction (from within transaction execution
- * block).
+ * will be executed only when the transaction is committed (under React Native, after React finishes
+ * the mounting transaction).
  *
  * # Public API
  *
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Members under `#pragma mark - Internal API` are host-only (`RNSTabsHostComponentView`)
  * implementation detail and may change without notice. Do not call from third-party code.
  */
-@interface RNSTabBarController : UITabBarController <RNSReactMountingTransactionObserving,
+@interface RNSTabBarController : UITabBarController <RNSContainerTransactionSupporting,
                                                      RNSContainer
 #if !TARGET_OS_TV
                                                      ,
@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Request a tab change. The transition is recorded with `RNSTabsActionOriginProgrammaticNative`,
  * and is built against the current `navigationState.provenance` so it is never treated as stale.
  *
- * The update is applied on the next `RNSReactMountingTransactionObserving` callback, or call
+ * The update is applied on the next `commitTransaction`, or call
  * `flushPendingUpdates` to apply it immediately. If you want to execute multiple updates in
  * sequence you must flush the container after each one separately.
  */
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Pass nil to clear any queued update.
  *
- * The update is applied on the next `RNSReactMountingTransactionObserving` callback, or call
+ * The update is applied on the next `commitTransaction`, or call
  * `flushPendingUpdates` to apply it immediately. If you want to execute multiple updates in
  * sequence you must flush the container after each one separately.
  *

@@ -217,20 +217,20 @@
   return nil;
 }
 
-#pragma mark - RNSReactMountingTransactionObserving
+#pragma mark - RNSContainerTransactionSupporting
 
-/** @brief Called before mounting transaction. */
-- (void)reactMountingTransactionWillMount
+/** @brief Called before a transaction. */
+- (void)beginTransaction
 {
   // noop
 }
 
 /**
- * @brief Called after mounting transaction.
+ * @brief Called to commit a transaction.
  *
  * Updates children and the appearance, checks if the hierarchy is valid after applying updates.
  */
-- (void)reactMountingTransactionDidMount
+- (void)commitTransaction
 {
   [self updateChildViewControllersIfNeeded];
   [self updateSplitAppearanceIfNeeded];

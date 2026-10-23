@@ -96,7 +96,14 @@
   [_pendingPopOperations addObject:operation];
 }
 
-- (void)performContainerUpdateIfNeeded
+#pragma mark - RNSContainerTransactionSupporting
+
+- (void)beginTransaction
+{
+  // noop
+}
+
+- (void)commitTransaction
 {
   // NOTE: We consider UINavigationController.viewControllers to be part of
   // the internal state of our stack implementation and expect it to be

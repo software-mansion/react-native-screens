@@ -60,7 +60,7 @@
     [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).stackScreen];
   }
 
-  [controller performContainerUpdateIfNeeded];
+  [controller commitTransaction];
 
   [_pendingPopOperations removeAllObjects];
   [_pendingPushOperations removeAllObjects];
