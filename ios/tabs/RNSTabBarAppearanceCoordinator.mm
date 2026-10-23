@@ -7,6 +7,7 @@
 #import "RNSDefines.h"
 #import "RNSImageLoadingHelper.h"
 #import "RNSTabBarController.h"
+#import "RNSTabBarItemCoordinator.h"
 #import "RNSTabsHostComponentView.h"
 #import "RNSTabsScreenComponentView.h"
 #import "RNSTabsScreenViewController.h"
@@ -116,16 +117,14 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
              screenView:screenView];
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
-      std::optional<UITabBarSystemItem> systemItem =
-          rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      if (!systemItem) {
+      UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+      if (systemTabBarItem == nil) {
         RCTLogError(
             @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
             (long)screenView.systemItem);
         return;
       }
-      UIImage *_Nullable systemItemImage =
-          [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].image;
+      UIImage *_Nullable systemItemImage = systemTabBarItem.image;
       [self setTabImage:systemItemImage forTabBarItem:tabBarItem screenView:screenView];
     } else {
       [self setTabImage:nil forTabBarItem:tabBarItem screenView:screenView];
@@ -141,15 +140,14 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
           RNSImageWithSymbolRenderingMode(selectedImage, screenView.selectedIconSymbolRenderingMode);
     } else if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
       // Restore default system item icon
-      std::optional<UITabBarSystemItem> systemItem =
-          rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-      if (!systemItem) {
+      UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+      if (systemTabBarItem == nil) {
         RCTLogError(
             @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
             (long)screenView.systemItem);
         return;
       }
-      tabBarItem.selectedImage = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].selectedImage;
+      tabBarItem.selectedImage = systemTabBarItem.selectedImage;
     } else {
       tabBarItem.selectedImage = nil;
     }
