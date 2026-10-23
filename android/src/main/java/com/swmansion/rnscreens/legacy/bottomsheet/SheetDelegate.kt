@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.legacy.InsetsObserverProxy
 import com.swmansion.rnscreens.legacy.KeyboardDidHide
 import com.swmansion.rnscreens.legacy.KeyboardNotVisible
@@ -21,7 +22,6 @@ import com.swmansion.rnscreens.legacy.KeyboardVisible
 import com.swmansion.rnscreens.legacy.Screen
 import com.swmansion.rnscreens.legacy.ScreenStackFragment
 import com.swmansion.rnscreens.legacy.utils.isSoftKeyboardVisibleOrNull
-import com.swmansion.rnscreens.utils.RNSLog
 
 class SheetDelegate(
     val screen: Screen,
