@@ -6,4 +6,4 @@ Code picks them up through links created by `yarn sync-agent-skills`.
 
 Everything in this directory is gitignored unless explicitly opted in, so
 skills you installed locally stay local. See "AI tooling" in
-[`AGENTS.md`](../../AGENTS.md) for how to add one.
+[`CONTRIBUTING.md`](../../guides/CONTRIBUTING.md) for how to add one.

@@ -73,7 +73,7 @@ android/.settings
 # AI assistant configuration
 # Everything is local by default. Shared skills and agents are opted in one by
 # one below, so personal setups never show up in `git status`.
-# See "AI tooling" in AGENTS.md.
+# See "AI tooling" in guides/CONTRIBUTING.md.
 /CLAUDE.local.md
 /.claude/*
 !/.claude/agents/
@@ -84,6 +84,7 @@ android/.settings
 !/.agents/skills/README.md
 # Shared agents (`!/.claude/agents/<name>.md`) and skills
 # (`!/.agents/skills/<name>/`) go below.
+!/.agents/skills/add-shared-agent-tooling/
 
 # General rule for files explicitly marked as local
 *.local.*
