@@ -23,6 +23,21 @@ type MinimizationBehavior =
 
 type RestorationBehavior = 'automatic' | 'atScrollEdge';
 
+export type ButtonStateAppearance = {
+  fontFamily?: string | undefined;
+  fontSize?: CT.Float | undefined;
+  fontWeight?: string | undefined;
+  fontStyle?: string | undefined;
+  fontColor?: ProcessedColorValue | null | undefined;
+};
+
+export type ButtonAppearance = {
+  normal?: ButtonStateAppearance | undefined;
+  highlighted?: ButtonStateAppearance | undefined;
+  disabled?: ButtonStateAppearance | undefined;
+  focused?: ButtonStateAppearance | undefined;
+};
+
 export type HeaderAppearance = {
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.Float | undefined;
@@ -41,6 +56,9 @@ export type HeaderAppearance = {
   subtitleFontWeight?: string | undefined;
   subtitleFontStyle?: string | undefined;
   subtitleFontColor?: ProcessedColorValue | null | undefined;
+
+  button?: ButtonAppearance | undefined;
+  prominentButton?: ButtonAppearance | undefined;
 };
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
