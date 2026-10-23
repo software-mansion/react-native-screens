@@ -40,14 +40,14 @@
       }
       // Weak ref to iconData to avoid retaining it if the item is removed before load completes
       __weak RNSStackHeaderIconData *weakIconData = iconData;
-      [imageLoader loadImageFromJsonSource:iconData.jsonSource
-                                asTemplate:iconData.iconType == RNSStackHeaderIconTypeTemplateSource
-                    withCompletionCallback:^(UIImage *_Nullable image) {
-                      weakIconData.resolvedImage = image;
-                      if (completionBlock) {
-                        completionBlock(image);
-                      }
-                    }];
+      [imageLoader loadImageFromSource:iconData.jsonSource
+                            asTemplate:iconData.iconType == RNSStackHeaderIconTypeTemplateSource
+                withCompletionCallback:^(UIImage *_Nullable image) {
+                  weakIconData.resolvedImage = image;
+                  if (completionBlock) {
+                    completionBlock(image);
+                  }
+                }];
       return iconData.resolvedImage;
     }
   }
