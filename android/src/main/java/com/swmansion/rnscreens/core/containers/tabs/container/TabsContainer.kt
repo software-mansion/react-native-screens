@@ -58,7 +58,7 @@ class TabsContainer internal constructor(
     private val delegate: WeakReference<TabsContainerDelegate>,
     private val viewIdProvider: ViewIdProviding,
     titleFontResolver: FontResolver,
-    bottomNavigationViewFactory: (Context, TabsContainer) -> TabsBottomNavigationView = ::TabsBottomNavigationView,
+    bottomNavigationViewFactory: (Context) -> TabsBottomNavigationView = ::TabsBottomNavigationView,
 ) : FrameLayout(context),
     Container,
     ColorSchemeProviding,
@@ -135,7 +135,7 @@ class TabsContainer internal constructor(
         )
 
     internal val bottomNavigationView: TabsBottomNavigationView =
-        bottomNavigationViewFactory(themedContext, this).apply {
+        bottomNavigationViewFactory(themedContext).apply {
             layoutParams =
                 LayoutParams(
                     LayoutParams.MATCH_PARENT,
@@ -287,16 +287,6 @@ class TabsContainer internal constructor(
         observerRegistry.clear()
         setPendingNavigationStateUpdate(null)
         updateScheduler.cancel()
-    }
-
-    internal fun onAfterSetSelectedItemId(
-        itemId: Int,
-        actionOrigin: TabsActionOrigin,
-    ) {
-        if (actionOrigin === TabsActionOrigin.USER) {
-            // For non-user actions these will be performed in [performContainerUpdate]
-            performPostSelectedTabUpdateActions()
-        }
     }
 
     // endregion
@@ -528,10 +518,10 @@ class TabsContainer internal constructor(
      * Pre-selection actions are run only here, in programmatic flow. This is not a hard requirement,
      * it is just not needed now.
      *
-     * Post-selection actions are performed here or in parallel flow triggered on user selection.
+     * Post-selection actions are performed here, or in [onMenuItemSelected] for user selections.
      *
      * The selected tab update takes place here only for programmatic changes.
-     * User triggered changes have separate entry-point.
+     * User triggered changes have separate entry-point: [onMenuItemSelected].
      */
     private fun performContainerUpdate() {
         performPreSelectedTabUpdateActions()
@@ -612,11 +602,9 @@ class TabsContainer internal constructor(
 
         if (bottomNavigationView.selectedItemId != nextSelectedMenuItemId || navState.isEmpty()) {
             isInExternalOperationContext = true
-            // This triggers on OnMenuItemClicked callback, where we perform actual update from
-            bottomNavigationView.setSelectedItemIdWithActionOrigin(
-                nextSelectedMenuItemId,
-                stateUpdateRequest.actionOrigin,
-            )
+            // This triggers [onMenuItemSelected], where we perform the actual update with the request's
+            // action origin.
+            bottomNavigationView.selectedItemId = nextSelectedMenuItemId
             isInExternalOperationContext = false
         } else {
             observerRegistry.emitOnNavigationStateUpdateRejected(
@@ -756,14 +744,11 @@ class TabsContainer internal constructor(
             if (isRepeated) specialEffectsHandler.handleRepeatedTabSelection() else false
 
         if (stateChanged && !isRepeated) {
-            // If we've effectively changed the tab, we need to raise appropriate flags.
-            // This line assumes that any required e.g. appearance actions will be performed
-            // synchronously later in the flow.
+            // If we've effectively changed the tab, we need to raise appropriate flags. Programmatic
+            // changes apply them in [performContainerUpdate], right after this listener returns.
             invalidationFlags.invalidateOnSelectedTabChanged()
             if (actionOrigin == TabsActionOrigin.USER) {
-                // A tap reaches this listener through the menu's item action, not `setSelectedItemId`,
-                // so [onAfterSetSelectedItemId] doesn't run for it: schedule the update instead.
-                updateScheduler.requestUpdate()
+                applySelectedTabChangeOnUserSelection()
             }
         }
 
@@ -778,6 +763,25 @@ class TabsContainer internal constructor(
 
         // Block other callbacks
         return true
+    }
+
+    /**
+     * A user selection (a tap, or a direct `selectedItemId` assignment) has no container update of its
+     * own. Apply the new tab's appearance right away, so that the frame showing the new selection shows
+     * its appearance too.
+     *
+     * We're inside Material's `performItemAction`, before it checks the selected item, so only the
+     * post-selection actions may run here: a menu rebuild would leave Material checking an item that's
+     * no longer in the menu. No rebuild is pending at tap time today, since structure changes are
+     * applied at the end of the React transaction that raised them and taps never happen inside one.
+     * Should one be pending, the whole update is left to the scheduler.
+     */
+    private fun applySelectedTabChangeOnUserSelection() {
+        if (invalidationFlags.isNavigationMenuStructureInvalidated) {
+            updateScheduler.requestUpdate()
+            return
+        }
+        performPostSelectedTabUpdateActions()
     }
 
     /**

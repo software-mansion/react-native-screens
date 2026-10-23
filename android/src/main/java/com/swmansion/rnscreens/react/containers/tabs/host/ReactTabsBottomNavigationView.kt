@@ -1,18 +1,14 @@
 package com.swmansion.rnscreens.react.containers.tabs.host
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.view.isVisible
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.swmansion.rnscreens.core.containers.tabs.container.TabsBottomNavigationView
-import com.swmansion.rnscreens.core.containers.tabs.container.TabsContainer
 
-@SuppressLint("ViewConstructor") // Should not be restored & should only be constructed by us.
 internal class ReactTabsBottomNavigationView(
     context: Context,
-    container: TabsContainer,
-) : TabsBottomNavigationView(context, container),
+) : TabsBottomNavigationView(context),
     ReactPointerEventsView {
     /**
      * The tab bar is hidden by setting its visibility to `GONE`. A `GONE` view is skipped by its
