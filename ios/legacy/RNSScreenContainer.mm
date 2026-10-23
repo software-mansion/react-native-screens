@@ -157,10 +157,12 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateContainer
 {
+  // Loop over copies of `_reactSubviews`: attaching or detaching a screen can run a synchronous layout pass that
+  // commits and mounts a pending React transaction inline, which inserts into or removes from this array (#4168).
   BOOL screenRemoved = NO;
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
-  for (RNSScreenView *screen in _reactSubviews) {
+  for (RNSScreenView *screen in [_reactSubviews copy]) {
     if (screen.activityState == RNSActivityStateInactive && [_activeScreens containsObject:screen]) {
       screenRemoved = YES;
       [self detachScreen:screen];
@@ -174,7 +176,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   // detect if new screen is going to be activated
   BOOL screenAdded = NO;
-  for (RNSScreenView *screen in _reactSubviews) {
+  for (RNSScreenView *screen in [_reactSubviews copy]) {
     if (screen.activityState != RNSActivityStateInactive && ![_activeScreens containsObject:screen]) {
       screenAdded = YES;
     }
@@ -183,7 +185,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (screenAdded) {
     // add new screens in order they are placed in subviews array
     NSInteger index = 0;
-    for (RNSScreenView *screen in _reactSubviews) {
+    for (RNSScreenView *screen in [_reactSubviews copy]) {
       if (screen.activityState != RNSActivityStateInactive) {
         if ([_activeScreens containsObject:screen] && screen.activityState == RNSActivityStateTransitioningOrBelowTop) {
           // for screens that were already active we want to mimick the effect UINavigationController
@@ -197,7 +199,7 @@ RNS_IGNORE_SUPER_CALL_END
     }
   }
 
-  for (RNSScreenView *screen in _reactSubviews) {
+  for (RNSScreenView *screen in [_reactSubviews copy]) {
     if (screen.activityState == RNSActivityStateOnTop) {
       [screen notifyFinishTransitioning];
     }
