@@ -133,6 +133,13 @@ class FormSheetHostViewManager :
         view.nativeContainerBackgroundColor = value
     }
 
+    override fun selectDetent(
+        view: FormSheetHost,
+        index: Int,
+    ) {
+        view.selectDetent(index)
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(FormSheetDismissEvent),

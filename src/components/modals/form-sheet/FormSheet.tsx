@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import FormSheetHostNativeComponent from '../../../fabric/modals/form-sheet/FormSheetHostNativeComponent';
+import FormSheetHostNativeComponent, {
+  Commands as FormSheetHostNativeCommands,
+} from '../../../fabric/modals/form-sheet/FormSheetHostNativeComponent';
 import FormSheetContentWrapperNativeComponent from '../../../fabric/modals/form-sheet/FormSheetContentWrapperNativeComponent';
 import type { FormSheetProps } from './FormSheet.types';
 import {
@@ -8,11 +10,16 @@ import {
   resolveLargestUndimmedDetentIndex,
   resolveNativeCornerRadius,
   resolveNativeDetents,
+  resolveSelectedDetentIndex,
 } from './FormSheetUtils';
+
+type NativeRef = React.ComponentRef<typeof FormSheetHostNativeComponent>;
 
 export function FormSheet(props: FormSheetProps) {
   const {
+    ref,
     children,
+    isOpen,
     detents,
     initialDetentIndex,
     largestUndimmedDetentIndex,
@@ -38,9 +45,45 @@ export function FormSheet(props: FormSheetProps) {
 
   const isFitToContents = detents === 'fitToContents';
 
+  const nativeRef = React.useRef<NativeRef>(null);
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      selectDetent: index => {
+        const nativeIndex = resolveSelectedDetentIndex(index, detentsCount);
+        if (nativeIndex === undefined) {
+          return;
+        }
+
+        if (!isOpen) {
+          console.warn(
+            "[RNScreens] 'selectDetent' was called while the FormSheet is closed. Ignoring the call. Use 'initialDetentIndex' to choose the detent the sheet opens at.",
+          );
+          return;
+        }
+
+        if (!nativeRef.current) {
+          console.warn(
+            '[RNScreens] Reference to native FormSheet component has not been updated yet',
+          );
+          return;
+        }
+
+        FormSheetHostNativeCommands.selectDetent(
+          nativeRef.current,
+          nativeIndex,
+        );
+      },
+    }),
+    [isOpen, detentsCount],
+  );
+
   return (
     <FormSheetHostNativeComponent
+      ref={nativeRef}
       style={styles.host}
+      isOpen={isOpen}
       detents={nativeDetents}
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
