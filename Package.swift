@@ -6,12 +6,12 @@ import PackageDescription
 let headerSearchPaths: [String] = [
     "ios",
     "ios/core/common",
+    "ios/core/containers/common",
     "ios/core/modals/contained-modal",
     "ios/core/modals/form-sheet",
     "ios/core/scroll-view",
     "ios/core/utils",
     "ios/core/views/scroll-to-top-guard",
-    "ios/helpers/container",
     "ios/legacy",
     "ios/legacy/events",
     "ios/legacy/integrations",
