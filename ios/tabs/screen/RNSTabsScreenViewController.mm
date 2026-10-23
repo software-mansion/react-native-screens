@@ -41,25 +41,25 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [self.tabScreenComponentView.reactEventEmitter emitOnWillAppear];
+  [_delegate tabsScreenViewControllerWillAppear:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
+  [_delegate tabsScreenViewControllerDidAppear:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  [self.tabScreenComponentView.reactEventEmitter emitOnWillDisappear];
+  [_delegate tabsScreenViewControllerWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [self.tabScreenComponentView.reactEventEmitter emitOnDidDisappear];
+  [_delegate tabsScreenViewControllerDidDisappear:self];
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
