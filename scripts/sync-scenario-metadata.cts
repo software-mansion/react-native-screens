@@ -206,6 +206,12 @@ function renderMetadata(description: ScenarioDescription): string {
 
 // Returns scenario.md content with the metadata block replaced or inserted.
 function applyMetadata(markdown: string, block: string): string {
+  if (
+    markdown.split(START_MARKER_PREFIX).length > 2 ||
+    markdown.split(SCENARIO_METADATA_END).length > 2
+  ) {
+    throw new Error('must contain only one scenario-metadata block');
+  }
   const start = markdown.indexOf(START_MARKER_PREFIX);
   const end = markdown.indexOf(SCENARIO_METADATA_END);
 
@@ -239,6 +245,9 @@ function main(): void {
     const relativeDir = path.relative(repoRoot, dir);
     const scenarioPath = path.join(dir, 'scenario.md');
     if (!fs.existsSync(scenarioPath)) {
+      if (check) {
+        problems.push(`${relativeDir}/scenario.md: missing`);
+      }
       continue;
     }
 
@@ -269,7 +278,13 @@ function main(): void {
     }
 
     const markdown = fs.readFileSync(scenarioPath, 'utf8');
-    const expected = applyMetadata(markdown, renderMetadata(description));
+    let expected: string;
+    try {
+      expected = applyMetadata(markdown, renderMetadata(description));
+    } catch (error) {
+      problems.push(`${relativeDir}/scenario.md: ${(error as Error).message}`);
+      continue;
+    }
 
     const expectedWithoutBlock = expected.replace(
       /<!-- scenario-metadata:start[\s\S]*?<!-- scenario-metadata:end -->/,

@@ -171,9 +171,10 @@ Keep one `scenario.md` per test. Do not create per-device files
 - **Device-only scenarios.** If no step is shared by all listed devices (e.g. a
   test run only on iPad and iPhone Duo), skip the base `## Steps` and write one
   `## Steps - <device>` section per device.
-- A device section starts by naming what it builds on, e.g.
-  `Run Baseline steps 1-3 from ## Steps first.` The device setup (e.g. the Duo
-  posture set) goes into `deviceSetup`, not into the section.
+- When there is a base `## Steps`, a device section starts by naming the
+  steps it builds on, e.g. `Run Baseline steps 1-3 from ## Steps first.`
+  The device setup (e.g. the Duo posture set) goes into `deviceSetup`, not
+  into the section.
 
 ### Where device-specific bugs and tests go
 
