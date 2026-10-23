@@ -3,9 +3,11 @@
 #import <UIKit/UIKit.h>
 #import "RNSContainer.h"
 #import "RNSContainerTransactionSupporting.h"
+#import "RNSImageLoading.h"
 #import "RNSOrientationDelegate.h"
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSTabBarItemCoordinator.h"
+#import "RNSTabsHostAppearanceProvider.h"
 #import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
 
@@ -15,7 +17,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSTabsHostComponentView;
 @class RNSTabBarController;
 
 /**
@@ -45,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * # Internal API
  *
- * Members under `#pragma mark - Internal API` are host-only (`RNSTabsHostComponentView`)
+ * Members under `#pragma mark - Internal API` are host-only (the view that owns this controller)
  * implementation detail and may change without notice. Do not call from third-party code.
  */
 @interface RNSTabBarController : UITabBarController <RNSContainerTransactionSupporting,
@@ -105,15 +106,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Internal API (host-only; subject to change without notice)
 
-- (instancetype)initWithTabsHostComponentView:(nullable RNSTabsHostComponentView *)tabsHostComponentView;
+/**
+ * Provides the host-level tab bar configuration (tint color, layout direction).
+ */
+@property (nonatomic, weak, nullable) id<RNSTabsHostAppearanceProvider> appearanceProvider;
 
 /**
- * Get reference to the host component view that owns this tab bar controller.
- *
- * Might return null in cases where the controller view hierararchy is not attached to parent.
- * The reference is retained strongly and it is expected to be managed by `TabsHost`.
+ * Loads the tab icons given as image sources.
  */
-@property (nonatomic, readonly, nullable) RNSTabsHostComponentView *tabsHostComponentView;
+@property (nonatomic, weak, nullable) id<RNSImageLoading> imageLoader;
 
 /**
  * Asked to enforce the supported orientation after it may have changed. Without a delegate, orientation updates have
@@ -208,7 +209,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The requested update is performed immediately. If you do not need this, consider just raising
  * an appropriate invalidation signal & let the controller decide when to flush the updates.
  */
-- (void)updateReactChildrenControllers;
+- (void)updateChildViewControllers;
 
 /**
  * If any state update operation is pending - perform it.
