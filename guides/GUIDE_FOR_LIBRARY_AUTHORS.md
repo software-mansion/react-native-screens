@@ -352,7 +352,9 @@ Defaults to `false`.
 
 ### `statusBarStyle`
 
-Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc)), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
+Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (UIKit's [default style](https://developer.apple.com/documentation/uikit/uistatusbarstyle/default)), `inverted` (opposite to the [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc)), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
+
+On iOS 17 and later, `auto` continuously adjusts the status bar's appearance to maintain contrast with the content below it. `inverted` remains based on the user interface style, while `light` and `dark` use fixed appearances.
 
 Defaults to `auto`.
 
