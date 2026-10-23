@@ -731,7 +731,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
 
-  if (screenController.tabScreenComponentView.tabRole == RNSTabsScreenTabRoleSearch) {
+  if (screenController.tabScreenView.tabRole == RNSTabsScreenTabRoleSearch) {
     // The designated initializer of `UISearchTab` takes no identifier - UIKit assigns a system one.
     UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
       return weakScreenController;
@@ -739,14 +739,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // Set the custom title here, like `initWithTitle:` does for a regular tab. Setting it
     // after the tab is installed results in incorrect title truncation for the other tabs.
     // See https://github.com/software-mansion/react-native-screens/issues/5015
-    NSString *_Nullable title = screenController.tabScreenComponentView.title;
+    NSString *_Nullable title = screenController.tabScreenView.title;
     if (title != nil) {
       searchTab.title = title;
     }
 #if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
     if (@available(iOS 26.0, *)) {
       if (RNS_UITAB_API_ENABLED) {
-        searchTab.automaticallyActivatesSearch = screenController.tabScreenComponentView.automaticallyActivatesSearch;
+        searchTab.automaticallyActivatesSearch = screenController.tabScreenView.automaticallyActivatesSearch;
       }
     }
 #endif // RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
@@ -754,9 +754,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return searchTab;
   }
 
-  return [[UITab alloc] initWithTitle:[screenController.tabScreenComponentView title] ?: @""
+  return [[UITab alloc] initWithTitle:[screenController.tabScreenView title] ?: @""
                                 image:nil
-                           identifier:[screenController.tabScreenComponentView screenKey]
+                           identifier:[screenController.tabScreenView screenKey]
                viewControllerProvider:^UIViewController *(UITab *) {
                  return weakScreenController;
                }];
@@ -915,9 +915,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // On iOS 26, we need to set user interface style 2 parent views above the tab bar
     // for this prop to take effect.
     self.tabBar.superview.superview.overrideUserInterfaceStyle =
-        nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
+        nextSelectedViewController.tabScreenView.userInterfaceStyle;
   } else {
-    self.tabBar.overrideUserInterfaceStyle = nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
+    self.tabBar.overrideUserInterfaceStyle = nextSelectedViewController.tabScreenView.userInterfaceStyle;
   }
 
   RNSLogD(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
@@ -965,7 +965,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)updateTabBarA11yIfNeeded
 {
   for (RNSTabsScreenViewController *tabViewController in [self installedScreenControllers]) {
-    auto screenView = tabViewController.tabScreenComponentView;
+    auto screenView = tabViewController.tabScreenView;
     if (!screenView.tabBarItemNeedsA11yUpdate) {
       continue;
     }
@@ -991,7 +991,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
         }
         auto *searchTab = static_cast<UISearchTab *>(tab);
         auto *screenController = static_cast<RNSTabsScreenViewController *>(tab.viewController);
-        auto *screenView = screenController.tabScreenComponentView;
+        auto *screenView = screenController.tabScreenView;
 
         if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
           searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;

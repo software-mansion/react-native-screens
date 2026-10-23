@@ -2,7 +2,6 @@
 #import <React/RCTLog.h>
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
-#import "RNSTabsScreenComponentView.h"
 
 @implementation RNSTabBarItemCoordinator
 
@@ -13,9 +12,9 @@
 - (void)createTabBarItemsForTabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
 {
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
-    RNSTabsScreenComponentView *screenView = tabScreenCtrl.tabScreenComponentView;
+    UIView<RNSTabsScreenDataProviding> *screenView = tabScreenCtrl.tabScreenView;
     if (screenView == nil) {
-      RCTLogWarn(@"[RNScreens] Nullish component view of TabScreen while tab bar item creation!");
+      RCTLogWarn(@"[RNScreens] Nullish view of TabScreen while tab bar item creation!");
       continue;
     }
 
@@ -33,9 +32,9 @@
 - (void)updateTabBarItemsForTabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
 {
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
-    RNSTabsScreenComponentView *screenView = tabScreenCtrl.tabScreenComponentView;
+    UIView<RNSTabsScreenDataProviding> *screenView = tabScreenCtrl.tabScreenView;
     if (screenView == nil) {
-      RCTLogWarn(@"[RNScreens] Nullish component view of TabScreen while tab bar item update!");
+      RCTLogWarn(@"[RNScreens] Nullish view of TabScreen while tab bar item update!");
       continue;
     }
 
@@ -48,7 +47,7 @@
 
 - (void)createTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
 {
-  RNSTabsScreenComponentView *screenView = tabScreenCtrl.tabScreenComponentView;
+  UIView<RNSTabsScreenDataProviding> *screenView = tabScreenCtrl.tabScreenView;
 
   UITabBarItem *tabBarItem = nil;
   if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
@@ -87,7 +86,7 @@
 
 - (void)updateTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
 {
-  RNSTabsScreenComponentView *screenView = tabScreenCtrl.tabScreenComponentView;
+  UIView<RNSTabsScreenDataProviding> *screenView = tabScreenCtrl.tabScreenView;
 
   NSString *evaluatedTitle = screenView.title;
   if (screenView.title == nil && screenView.systemItem != RNSTabsScreenSystemItemNone) {

@@ -235,9 +235,9 @@ namespace react = facebook::react;
 - (bool)onRepeatedTabSelectionOfTabScreenController:(RNSTabsScreenViewController *)tabScreenController
 {
   if ([[self viewControllers] count] > 1 &&
-      tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
+      tabScreenController.tabScreenView.shouldUseRepeatedTabSelectionPopToRootSpecialEffect) {
     return [[self popToRootViewControllerAnimated:true] count] > 0;
-  } else if (tabScreenController.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+  } else if (tabScreenController.tabScreenView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
     UIScrollView *scrollView =
         [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:[[self topViewController] view]];
     return [scrollView rnscreens_scrollToTop];
