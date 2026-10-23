@@ -24,7 +24,7 @@ namespace react = facebook::react;
 
 #pragma mark - View implementation
 
-@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
+@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking, RNSTabsScreenViewControllerDelegate>
 @end
 
 @implementation RNSTabsScreenComponentView {
@@ -60,6 +60,7 @@ namespace react = facebook::react;
 
   _controller = [RNSTabsScreenViewController new];
   _controller.view = self;
+  _controller.delegate = self;
 
   _reactSuperview = nil;
   _reactEventEmitter = [RNSTabsScreenEventEmitter new];
@@ -148,6 +149,28 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RNSTabBarController *)findTabBarController
 {
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
+}
+
+#pragma mark - RNSTabsScreenViewControllerDelegate
+
+- (void)tabsScreenViewControllerWillAppear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnWillAppear];
+}
+
+- (void)tabsScreenViewControllerDidAppear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnDidAppear];
+}
+
+- (void)tabsScreenViewControllerWillDisappear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)tabsScreenViewControllerDidDisappear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnDidDisappear];
 }
 
 #pragma mark - RNSScrollViewBehaviorOverriding
