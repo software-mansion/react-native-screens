@@ -8,7 +8,6 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
-#import "RNSScreenWindowTraits.h"
 #import "RNSTabsHostComponentView.h"
 #import "RNSTabsNavigationStateObserverRegistry.h"
 
@@ -1435,7 +1434,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)updateOrientation
 {
   _needsOrientationUpdate = false;
-  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+  [_orientationDelegate containerDidRequestOrientationUpdate:self];
 }
 
 - (void)updateLayoutDirectionBelowIOS17IfNeeded
