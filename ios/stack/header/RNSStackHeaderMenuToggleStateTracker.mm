@@ -1,5 +1,5 @@
 #import "RNSStackHeaderMenuToggleStateTracker.h"
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 
 @implementation RNSStackHeaderMenuToggleStateTracker {
   NSMutableDictionary<NSString *, NSNumber *> *_states;
@@ -15,7 +15,7 @@
 
 /**
  For singleSelection menus, only one item should have initialState set to true.
- This is enforced by JS-side and validated by an RCTAssert in RNSStackHeaderMenuCoordinator during menu build.
+ This is enforced by JS-side and validated by an RNSAssert in RNSStackHeaderMenuCoordinator during menu build.
  */
 - (BOOL)getToggleStateForItemWithId:(NSString *)menuItemId initialState:(BOOL)initialState
 {
@@ -47,7 +47,7 @@
     }
   }
 
-  RCTAssert(
+  RNSAssert(
       givenItemIsSelected, @"[RNScreens] Attempt to select item \"%@\" that is not present in the list", menuItemId);
 }
 
