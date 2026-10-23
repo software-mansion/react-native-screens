@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
@@ -15,6 +16,8 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.containers.stack.animation.StackAnimationAssigner
+import com.swmansion.rnscreens.core.containers.stack.animation.StackAnimationBatchKind
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -63,6 +66,17 @@ internal class StackContainer(
     private val fragmentOpExecutor: FragmentOperationExecutor = FragmentOperationExecutor()
     private val fragmentOps: MutableList<FragmentOperation> = arrayListOf()
 
+    /**
+     * Permanent child 0. Screens exiting under an entering screen are hosted in its overlay,
+     * so they draw before every fragment view FragmentManager appends after it.
+     */
+    internal val underlay: FrameLayout = FrameLayout(context)
+
+    override fun onViewAdded(child: View) {
+        super.onViewAdded(child)
+        check(getChildAt(0) === underlay) { "[RNScreens] underlay must stay at index 0" }
+    }
+
     // region Color Scheme
 
     private val colorSchemeCoordinator = ColorSchemeCoordinator()
@@ -79,6 +93,7 @@ internal class StackContainer(
 
     init {
         id = viewIdProvider.generateViewId()
+        addView(underlay, 0, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
     override fun onAttachedToWindow() {
@@ -209,6 +224,14 @@ internal class StackContainer(
             )
         }
 
+        val previousTop = stackModel.lastOrNull()
+        val batchKind =
+            when {
+                pendingPopOperations.isEmpty() -> StackAnimationBatchKind.PUSH
+                pendingPushOperations.isEmpty() -> StackAnimationBatchKind.POP
+                else -> StackAnimationBatchKind.REPLACE
+            }
+
         pendingPopOperations.forEach { operation ->
             val fragment =
                 checkNotNull(stackModel.find { it.item === operation.item }) {
@@ -243,9 +266,20 @@ internal class StackContainer(
 
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
+        if (hasPendingOperations) {
+            StackAnimationAssigner.assignBatch(
+                previousTop,
+                batchKind,
+                newTop = stackModel.last(),
+                belowNewTop = fragmentBelowTop(),
+            )
+        }
+
         pendingPopOperations.clear()
         pendingPushOperations.clear()
     }
+
+    private fun fragmentBelowTop(): StackScreenFragment? = stackModel.getOrNull(stackModel.lastIndex - 1)
 
     private fun onNativeFragmentPop(fragment: StackScreenFragment) {
         require(stackModel.remove(fragment)) { "[RNScreens] onNativeFragmentPop must be called with the fragment present in stack model" }
@@ -257,6 +291,15 @@ internal class StackContainer(
             "[RNScreens] Primary navigation fragment not updated by native pop"
         }
         updateTopFragment()
+        StackAnimationAssigner.refreshTopPair(stackModel.last(), fragmentBelowTop())
+    }
+
+    internal fun onItemAnimationChanged(item: StackContainerItem) {
+        // A non-top item's value is read at the next batch that involves it.
+        val top = stackModel.lastOrNull() ?: return
+        if (top.item === item) {
+            StackAnimationAssigner.refreshTopPair(top, fragmentBelowTop())
+        }
     }
 
     private fun dumpStackModel() {
