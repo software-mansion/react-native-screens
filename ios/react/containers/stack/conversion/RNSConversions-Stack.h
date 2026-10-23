@@ -45,7 +45,7 @@ UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationB
     react::RNSStackHeaderConfigIOSRestorationBehavior restorationBehavior);
 
 #endif // Check for iOS >= 27
-  
+
 RNSHeaderItemVisibilityPriority
 RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority);
