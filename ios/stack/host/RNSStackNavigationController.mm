@@ -1,5 +1,5 @@
 #import "RNSStackNavigationController.h"
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 #import "RNSContainer.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
@@ -116,8 +116,8 @@
   }
 
   for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
-    RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-    RCTAssert(self.topViewController == static_cast<UIViewController *>(op.screenController),
+    RNSAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
+    RNSAssert(self.topViewController == static_cast<UIViewController *>(op.screenController),
               @"[RNScreens] Attempt to pop non-top screen");
     [self popViewControllerAnimated:YES];
   }
@@ -126,7 +126,7 @@
     [self pushViewController:op.screenController animated:YES];
   }
 
-  RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
+  RNSAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
 
   [self dumpStackModel];
 

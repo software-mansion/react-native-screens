@@ -1,7 +1,7 @@
 #import "RNSStackScreenHeaderCoordinator.h"
-#import <React/RCTAssert.h>
-#import <React/RCTLog.h>
+#import "RNSAssert.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -197,7 +197,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
         if (index != NSNotFound) {
           _leadingBarButtonItems[index] = newBarButtonItem;
         } else {
-          RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+          RNSLogW(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
@@ -212,7 +212,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
         if (index != NSNotFound) {
           _trailingBarButtonItems[index] = newBarButtonItem;
         } else {
-          RCTLogWarn(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
+          RNSLogW(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
         }
       }
 
@@ -458,7 +458,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 
 - (RNSStackScreenController *)requireScreenController
 {
-  RCTAssert(_screenController != nil, @"[RNScreens] Screen Controller cannot be nil");
+  RNSAssert(_screenController != nil, @"[RNScreens] Screen Controller cannot be nil");
   return _screenController;
 }
 
@@ -470,7 +470,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     return nil;
   }
 
-  RCTAssert([navController isKindOfClass:RNSStackNavigationController.class],
+  RNSAssert([navController isKindOfClass:RNSStackNavigationController.class],
             @"[RNScreens] NavigationController should be instance of RNSStackNavigationController");
   return (RNSStackNavigationController *)navController;
 }

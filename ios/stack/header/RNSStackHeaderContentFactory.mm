@@ -1,6 +1,6 @@
 #import "RNSStackHeaderContentFactory.h"
-#import <React/RCTLog.h>
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSStackHeaderIconResolver.h"
 #import "RNSStackHeaderItemWrapperView.h"
 #import "RNSStackHeaderMenuCoordinator.h"
@@ -60,7 +60,7 @@
                                                  withImageLoader:imageLoader
                                             asyncCompletionBlock:^(UIImage *_Nullable image) {
                                               if (weakBarButtonItem == nil) {
-                                                RCTLogWarn(@"[RNScreens] Attempt to set image on nil UIBarButtonItem");
+                                                RNSLogW(@"[RNScreens] Attempt to set image on nil UIBarButtonItem");
                                                 return;
                                               }
                                               weakBarButtonItem.image = image;
