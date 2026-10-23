@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) RNSStackHeaderIconData *icon;
 @property (nonatomic, readonly) BOOL hasToggleState;
 @property (nonatomic, readonly) BOOL toggleState;
+@property (nonatomic, readonly) BOOL hasState;
+@property (nonatomic, readonly) UIMenuElementState state;
 
 + (instancetype)fromDictionary:(NSDictionary *)dict;
 
