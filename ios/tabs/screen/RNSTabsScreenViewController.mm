@@ -1,4 +1,5 @@
 #import "RNSTabsScreenViewController.h"
+#import "RNSAssert.h"
 #import "RNSContainer.h"
 #import "RNSContainerItemSupport.h"
 #import "RNSDefines.h"
@@ -23,9 +24,9 @@
   return static_cast<RNSTabBarController *_Nullable>(self.tabBarController);
 }
 
-- (nullable RNSTabsScreenComponentView *)tabScreenComponentView
+- (nullable UIView<RNSTabsScreenDataProviding> *)tabScreenView
 {
-  return static_cast<RNSTabsScreenComponentView *>(self.view);
+  return static_cast<UIView<RNSTabsScreenDataProviding> *>(self.view);
 }
 
 - (void)tabItemAppearanceHasChanged
@@ -64,14 +65,14 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  RNSLogD(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
+  RNSLogD(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenView.tag, parent);
 
   if (parent == nil) {
     return;
   }
 
   // Can be UINavigationController in case of MoreNavigationController
-  RCTAssert([parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
+  RNSAssert([parent isKindOfClass:RNSTabBarController.class] || [parent isKindOfClass:UINavigationController.class],
             @"[RNScreens] TabScreenViewController added to parent of unexpected type: %@",
             parent.class);
 
@@ -82,7 +83,7 @@
 
   RNSTabBarController *tabBarCtrl = [self findTabBarController];
 
-  RCTAssert(tabBarCtrl != nil,
+  RNSAssert(tabBarCtrl != nil,
             @"[RNScreens] nullish tabBarCtrl after TabScreenViewController has been added to parent");
 
   [tabBarCtrl setNeedsUpdateOfTabBarAppearance:true];
@@ -91,7 +92,7 @@
 
 - (void)setTabsSpecialEffectsDelegate:(id<RNSTabsSpecialEffectsSupporting>)delegate
 {
-  RCTAssert(
+  RNSAssert(
       delegate != nil,
       @"[RNScreens] can't set special effects delegate to nil. Use clearTabsSpecialEffectsDelegateIfNeeded instead.");
   _tabsSpecialEffectsDelegate = delegate;
@@ -108,7 +109,7 @@
 {
   if ([self tabsSpecialEffectsDelegate] != nil) {
     return [[self tabsSpecialEffectsDelegate] onRepeatedTabSelectionOfTabScreenController:self];
-  } else if (self.tabScreenComponentView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
+  } else if (self.tabScreenView.shouldUseRepeatedTabSelectionScrollToTopSpecialEffect) {
     return [[self findContentScrollView] rnscreens_scrollToTop];
   }
 
@@ -134,9 +135,8 @@
 
 - (nullable UIScrollView *)findContentScrollView
 {
-  return [_containerItemSupport
-      findContentScrollViewWithCachedScrollView:[self.tabScreenComponentView cachedContentScrollView]
-                                  heuristicRoot:self.tabScreenComponentView];
+  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[self.tabScreenView cachedContentScrollView]
+                                                            heuristicRoot:self.tabScreenView];
 }
 
 #if !TARGET_OS_TV
@@ -152,7 +152,7 @@
     }
   }
 
-  return self.tabScreenComponentView.orientation;
+  return self.tabScreenView.orientation;
 }
 
 #endif // !TARGET_OS_TV
@@ -163,12 +163,12 @@
 
 - (nullable NSString *)getScreenKeyOrNull
 {
-  return self.tabScreenComponentView.screenKey;
+  return self.tabScreenView.screenKey;
 }
 
 - (BOOL)isPreventNativeSelectionEnabled
 {
-  return self.tabScreenComponentView.preventNativeSelection;
+  return self.tabScreenView.preventNativeSelection;
 }
 
 @end

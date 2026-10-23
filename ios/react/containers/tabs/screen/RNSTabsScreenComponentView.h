@@ -7,6 +7,7 @@
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
 #import "RNSScrollViewBehaviorOverriding.h"
+#import "RNSTabsScreenDataProviding.h"
 #import "RNSTabsScreenEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -128,6 +129,15 @@ NS_ASSUME_NONNULL_BEGIN
  * none has been registered. Queried by the owning controller (`RNSContainerItem`).
  */
 - (nullable UIScrollView *)cachedContentScrollView;
+
+@end
+
+#pragma mark - Tab screen data
+
+/**
+ * Adopted after the declarations above, which implement it.
+ */
+@interface RNSTabsScreenComponentView () <RNSTabsScreenDataProviding>
 
 @end
 
