@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.core.containers.tabs.container
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -10,10 +9,8 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFla
  * The tab bar of [TabsContainer]. Hosts may subclass it to integrate with their view system;
  * the container creates it through the factory it is given.
  */
-@SuppressLint("ViewConstructor") // Should not be restored & should only be constructed by us.
 open class TabsBottomNavigationView(
     context: Context,
-    val container: TabsContainer,
 ) : BottomNavigationView(context) {
     internal fun findMenuItem(menuItemId: Int): MenuItem? = menu.findItem(menuItemId)
 
