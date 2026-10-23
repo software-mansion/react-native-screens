@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
 @property (nonatomic, retain) NSString *largeTitleFontWeight;
+@property (nonatomic) float largeTitleLetterSpacing;
 @property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;

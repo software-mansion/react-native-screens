@@ -61,6 +61,7 @@ export interface NativeProps extends ViewProps {
   largeTitleFontFamily?: string | undefined;
   largeTitleFontSize?: CT.Int32 | undefined;
   largeTitleFontWeight?: string | undefined;
+  largeTitleLetterSpacing?: CT.Float | undefined;
   largeTitleBackgroundColor?: ColorValue | undefined;
   largeTitleHideShadow?: boolean | undefined;
   largeTitleColor?: ColorValue | undefined;
