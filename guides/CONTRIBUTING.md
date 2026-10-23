@@ -177,7 +177,7 @@ It links every shared skill into `.claude/skills/`. It never overwrites or remov
 
 #### Adding a skill or an agent
 
-**With an agent** &ndash; ask it to follow the [`add-shared-agent-tooling`](/.agents/skills/add-shared-agent-tooling/SKILL.md) skill.
+**With an agent** &ndash; ask it to follow the [`add-shared-agent-tooling`](../.agents/skills/add-shared-agent-tooling/SKILL.md) skill.
 
 **Manually:**
 
