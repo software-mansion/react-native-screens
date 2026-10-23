@@ -63,6 +63,8 @@ interface Config {
   // so that button appearance text attributes have visible effect.
   textItems: boolean;
   overflow: boolean;
+  // Applied as a red `tintColor` to all four items.
+  tintItems: boolean;
   // Per-step style presets.
   styleButtons: boolean;
   styleProminentButtons: boolean;
@@ -74,6 +76,7 @@ interface Config {
 const DEFAULT_CONFIG: Config = {
   textItems: true,
   overflow: false,
+  tintItems: false,
   styleButtons: true,
   styleProminentButtons: true,
   styleScrollEdge: true,
@@ -170,6 +173,8 @@ const buildHeaderConfig = (
           icon: { type: 'sfSymbol', name: sfSymbol } as const,
         };
 
+  const tintColor = config.tintItems ? 'red' : undefined;
+
   return {
     title,
     ios: {
@@ -180,6 +185,7 @@ const buildHeaderConfig = (
           id: 'prominent-disabled-item',
           ...itemContent('dd', 'Prominent Disabled', '4.circle'),
           variant: 'prominent',
+          tintColor,
           disabled: true,
           onPress: () => showToast('Prominent disabled item pressed'),
         },
@@ -193,6 +199,7 @@ const buildHeaderConfig = (
           id: 'prominent-item',
           ...itemContent('cc', 'Prominent', '3.circle'),
           variant: 'prominent',
+          tintColor,
           onPress: () => showToast('Prominent item pressed'),
         },
         {
@@ -204,6 +211,7 @@ const buildHeaderConfig = (
           type: 'item',
           id: 'disabled-item',
           ...itemContent('bb', 'Disabled', '2.circle'),
+          tintColor,
           disabled: true,
           onPress: () => showToast('Disabled item pressed'),
         },
@@ -216,6 +224,7 @@ const buildHeaderConfig = (
           type: 'item',
           id: 'regular-item',
           ...itemContent('aa', 'Regular', '1.circle'),
+          tintColor,
           onPress: () => showToast('Regular item pressed'),
         },
         ...(config.overflow
@@ -285,6 +294,7 @@ function ConfigControls() {
       />
       {makeToggle('textItems', 'Use text items')}
       {makeToggle('overflow', 'Push to overflow', 'push-to-overflow-switch')}
+      {makeToggle('tintItems', 'Tint items (red)')}
       {makeToggle('styleButtons', 'Style buttons (red italic)')}
       {makeToggle(
         'styleProminentButtons',
