@@ -1,9 +1,63 @@
 #import "RNSTabBarItemCoordinator.h"
 #import <React/RCTLog.h>
-#import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
 
+static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemItem systemItem,
+                                                          UITabBarSystemItem *outSystemItem)
+{
+  switch (systemItem) {
+    case RNSTabsScreenSystemItemNone:
+      return NO;
+    case RNSTabsScreenSystemItemBookmarks:
+      *outSystemItem = UITabBarSystemItemBookmarks;
+      return YES;
+    case RNSTabsScreenSystemItemContacts:
+      *outSystemItem = UITabBarSystemItemContacts;
+      return YES;
+    case RNSTabsScreenSystemItemDownloads:
+      *outSystemItem = UITabBarSystemItemDownloads;
+      return YES;
+    case RNSTabsScreenSystemItemFavorites:
+      *outSystemItem = UITabBarSystemItemFavorites;
+      return YES;
+    case RNSTabsScreenSystemItemFeatured:
+      *outSystemItem = UITabBarSystemItemFeatured;
+      return YES;
+    case RNSTabsScreenSystemItemHistory:
+      *outSystemItem = UITabBarSystemItemHistory;
+      return YES;
+    case RNSTabsScreenSystemItemMore:
+      *outSystemItem = UITabBarSystemItemMore;
+      return YES;
+    case RNSTabsScreenSystemItemMostRecent:
+      *outSystemItem = UITabBarSystemItemMostRecent;
+      return YES;
+    case RNSTabsScreenSystemItemMostViewed:
+      *outSystemItem = UITabBarSystemItemMostViewed;
+      return YES;
+    case RNSTabsScreenSystemItemRecents:
+      *outSystemItem = UITabBarSystemItemRecents;
+      return YES;
+    case RNSTabsScreenSystemItemSearch:
+      *outSystemItem = UITabBarSystemItemSearch;
+      return YES;
+    case RNSTabsScreenSystemItemTopRated:
+      *outSystemItem = UITabBarSystemItemTopRated;
+      return YES;
+  }
+  return NO;
+}
+
 @implementation RNSTabBarItemCoordinator
+
++ (nullable UITabBarItem *)tabBarItemWithSystemItem:(RNSTabsScreenSystemItem)systemItem
+{
+  UITabBarSystemItem uiSystemItem;
+  if (!RNSUITabBarSystemItemFromTabsScreenSystemItem(systemItem, &uiSystemItem)) {
+    return nil;
+  }
+  return [[UITabBarItem alloc] initWithTabBarSystemItem:uiSystemItem tag:0];
+}
 
 /**
  * Creates UITabBarItem instance with set systemItem. Needs to be called before UITab creation for the same
@@ -51,15 +105,13 @@
 
   UITabBarItem *tabBarItem = nil;
   if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-    if (!systemItem) {
+    tabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+    if (tabBarItem == nil) {
       RCTLogError(
           @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
           (long)screenView.systemItem);
       return;
     }
-    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
   }
@@ -91,15 +143,14 @@
   NSString *evaluatedTitle = screenView.title;
   if (screenView.title == nil && screenView.systemItem != RNSTabsScreenSystemItemNone) {
     // Restore default system item title
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-    if (!systemItem) {
+    UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+    if (systemTabBarItem == nil) {
       RCTLogError(
           @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
           (long)screenView.systemItem);
       return;
     }
-    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].title;
+    evaluatedTitle = systemTabBarItem.title;
   }
 
   [self updateTabBarItemTitle:evaluatedTitle forTabScreenController:tabScreenCtrl];
