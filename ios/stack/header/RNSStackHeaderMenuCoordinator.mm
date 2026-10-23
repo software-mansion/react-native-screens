@@ -1,8 +1,7 @@
 #import "RNSStackHeaderMenuCoordinator.h"
+#import "RNSAssert.h"
 #import "RNSDefines.h"
 #import "RNSStackHeaderIconResolver.h"
-
-#import <React/RCTAssert.h>
 
 @implementation RNSStackHeaderMenuCoordinator
 
@@ -152,13 +151,13 @@
     RNSMenuItemType effectiveItemType = [self resolveItemType:itemData.itemType
                                         insideSingleSelection:insideSingleSelection];
 
-    RCTAssert(!(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
+    RNSAssert(!(insideSingleSelection && effectiveItemType == RNSMenuItemTypeAction),
               @"[RNScreens] 'action' itemType is disallowed in singleSelection menus (id: %@)",
               itemData.menuElementId);
 
     if (effectiveItemType == RNSMenuItemTypeToggle) {
       if (insideSingleSelection && itemData.initialToggleState) {
-        RCTAssert(
+        RNSAssert(
             !*initialSingleSelectionStateClaimed,
             @"[RNScreens] Multiple items with initialToggleState=YES in singleSelection menu hierarchy starting from \"%@\".",
             singleSelectionRoot.menuElementId);
