@@ -28,7 +28,8 @@ write it by hand in `scenario.md`:
   `scenario-description.ts` is the short in-app text, this is the full one,
 - `## Note` - Known Issues (KI) and expected behavior that might not be
   intuitive,
-- the steps (`## Steps` and optional `## Steps - <device>` sections).
+- the steps (`## Steps` and optional `## Steps - <platform>` /
+  `## Steps - <device>` sections).
 
 ### Metadata block
 
@@ -132,23 +133,27 @@ results for that action immediately follow as Markdown checkboxes
 outcomes. Use subheadings to group steps logically (e.g., ### Baseline).
 
 **Numbering Convention:** Numbering restarts from 1 in every `###` subsection and
-in every `## Steps - <device>` section. Separate subsections with a horizontal
+in every platform and device section. Separate subsections with a horizontal
 rule (`---`). When referring to another step, always name its section and
 subsection, e.g. "Baseline step 2" or "iPhone Duo, Unfolding step 1" - a bare
 "step 2" is ambiguous.
 
-**Indentation Convention:** Expected-result checkboxes are indented with
-4 spaces (`    - [ ] Expected result`). When a checkbox wraps onto more lines,
-align the continuation lines with the checkbox text (10 spaces).
+**Indentation Convention:** Expected-result checkboxes must be nested under
+their numbered step, and wrapped lines must stay inside their list item,
+following the [CommonMark list item rules](https://spec.commonmark.org/current/#list-items).
+The required indentation depends on the width of the list marker (e.g.
+`10.` needs more than `1.`), so do not count a fixed number of spaces - check
+that the Markdown renders as intended.
 
 ### How to write OS and device differences
 
 Keep one `scenario.md` per test. Do not create per-device files
 (`scenario-ipad.md`, `scenario-iphone-duo.md`, ...).
 
-- **OS / platform differences** (iOS 18 vs 26, iOS vs Android) go as prefixed
-  checkboxes inside the step, not as separate sections. Write the prefix with a
-  space: `iOS 18:`, `iOS 26:`, `Android:`.
+- **Small OS / platform differences** inside a shared step (iOS 18 vs 26, iOS
+  vs Android) go as prefixed checkboxes. Write the prefix with a space:
+  `iOS 18:`, `iOS 26:`, `Android:`. When the steps themselves differ per
+  platform, use a platform section (see below).
 
   ```text
       - [ ] iOS 18: the tab bar is opaque.
@@ -156,11 +161,16 @@ Keep one `scenario.md` per test. Do not create per-device files
       - [ ] Android: the tab bar is at the bottom.
   ```
 
-- **Device differences** go into a `## Steps - <device>` section, using exactly
-  one of: `## Steps - iPhone`, `## Steps - iPad`, `## Steps - iPhone Duo`,
-  `## Steps - Android`. Add a device section **only for steps whose expected
-  result differs** on that device. Steps that behave the same everywhere stay in
-  the base `## Steps`.
+- **Platform and device sections** use exactly one of these headings:
+  - platform: `## Steps - iOS`, `## Steps - Android` - for steps whose
+    expected result is shared by every listed device of that platform,
+  - device: `## Steps - iPhone`, `## Steps - iPad`, `## Steps - iPhone Duo`,
+    `## Steps - Android phone`, `## Steps - Android tablet` - for steps
+    whose expected result differs between devices of the same platform.
+
+  Add a section **only for steps whose expected result differs**. Steps that
+  behave the same everywhere stay in the base `## Steps`. A step goes into
+  either the platform section or the device sections, never both.
 - **Device-only scenarios.** If no step is shared by all listed devices (e.g. a
   test run only on iPad and iPhone Duo), skip the base `## Steps` and write one
   `## Steps - <device>` section per device.
