@@ -14,6 +14,7 @@
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
+#import "RNSImageLoadingHelper.h"
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSTabBarController.h"
@@ -76,7 +77,9 @@ namespace react = facebook::react;
 {
   [self resetProps];
 
-  _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
+  _controller = [RNSTabBarController new];
+  _controller.appearanceProvider = self;
+  _controller.imageLoader = self;
   _controller.orientationDelegate = self;
   [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];
   RCTAssert(didRegisterObserver,
@@ -492,6 +495,25 @@ namespace react = facebook::react;
 - (nullable RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
+}
+
+#pragma mark - RNSImageLoading
+
+- (void)loadImageFromSource:(id)source
+                 asTemplate:(BOOL)isTemplate
+     withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
+{
+  if (_imageLoader == nil) {
+    RCTLogWarn(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
+    return;
+  }
+
+  // Tab screens provide `RCTImageSource` icon sources, converted from their props.
+  RCTAssert([source isKindOfClass:RCTImageSource.class], @"[RNScreens] Expected RCTImageSource, got %@", source);
+  [RNSImageLoadingHelper loadImageFromSource:static_cast<RCTImageSource *>(source)
+                             withImageLoader:_imageLoader
+                                  asTemplate:isTemplate
+                             completionBlock:completionBlock];
 }
 
 #pragma mark - RNSOrientationDelegate

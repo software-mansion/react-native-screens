@@ -42,6 +42,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) RNSTabsIconImageRenderingMode iconImageRenderingMode;
 @property (nonatomic, readonly) RNSTabsIconSymbolRenderingMode iconSymbolRenderingMode;
 @property (nonatomic, readonly, nullable) NSString *iconResourceName;
+
+/**
+ * Image sources of the icons, loaded through `RNSImageLoading`. Opaque to the tab bar controller.
+ */
+@property (nonatomic, readonly, nullable) id iconImageSource;
+@property (nonatomic, readonly, nullable) id selectedIconImageSource;
+
 @property (nonatomic, readonly) RNSTabsIconImageRenderingMode selectedIconImageRenderingMode;
 @property (nonatomic, readonly) RNSTabsIconSymbolRenderingMode selectedIconSymbolRenderingMode;
 @property (nonatomic, readonly, nullable) NSString *selectedIconResourceName;
