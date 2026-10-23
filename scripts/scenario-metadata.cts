@@ -254,8 +254,18 @@ function main(): void {
       continue;
     }
 
-    for (const error of validate(description)) {
-      problems.push(`${relativeDir}/scenario-description.ts: ${error}`);
+    // Scenarios without `devices` are not migrated yet; leave them alone in
+    // write mode, but keep --check strict.
+    if (!check && description.devices === undefined) {
+      continue;
+    }
+
+    const errors = validate(description);
+    if (errors.length > 0) {
+      for (const error of errors) {
+        problems.push(`${relativeDir}/scenario-description.ts: ${error}`);
+      }
+      continue;
     }
 
     const markdown = fs.readFileSync(scenarioPath, 'utf8');
