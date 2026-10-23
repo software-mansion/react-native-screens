@@ -1,29 +1,16 @@
 #import "RNSSplitScreenController.h"
 
 #import <React/RCTAssert.h>
-#import "RNSSplitHostComponentView.h"
 #import "RNSSplitHostController.h"
-#import "RNSSplitScreenComponentView.h"
 
-@implementation RNSSplitScreenController {
-  RNSSplitScreenComponentView *_splitScreenComponentView;
-}
-
-- (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView
-{
-  if (self = [super init]) {
-    _splitScreenComponentView = splitScreenComponentView;
-  }
-
-  return self;
-}
+@implementation RNSSplitScreenController
 
 /**
  * @brief Searching for the SplitHost controller
  *
  * It checks whether the parent controller is our host controller.
  * If we're outside the structure, e. g. for inspector represented as a modal,
- * we're searching for that controller using a reference that Screen keeps for Host component view.
+ * we ask the delegate for that controller.
  *
  * @return If found - a RNSSplitHostController instance, otherwise nil.
  */
@@ -33,12 +20,7 @@
     return (RNSSplitHostController *)self.splitViewController;
   }
 
-  RNSSplitHostComponentView *splitHost = _splitScreenComponentView.splitHost;
-  if (splitHost != nil) {
-    return splitHost.splitHostController;
-  }
-
-  return nil;
+  return [_delegate splitHostControllerForSplitScreenController:self];
 }
 
 - (BOOL)isInSplitHostSubtree
