@@ -7,7 +7,6 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
-#import "RNSTabsHostComponentView.h"
 #import "RNSTabsNavigationStateObserverRegistry.h"
 
 #define RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE !TARGET_OS_TV && !TARGET_OS_VISION
@@ -122,7 +121,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _installedScreenControllers = nil;
     _tabBarAppearanceCoordinator = [RNSTabBarAppearanceCoordinator new];
     _tabBarItemCoordinator = [RNSTabBarItemCoordinator new];
-    _tabsHostComponentView = nil;
     _navigationState = nil;
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
@@ -171,15 +169,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   [_observerRegistry clear];
   _pendingStateUpdate = nil;
-  _tabsHostComponentView = nil;
-}
-
-- (instancetype)initWithTabsHostComponentView:(nullable RNSTabsHostComponentView *)tabsHostComponentView
-{
-  if (self = [self init]) {
-    _tabsHostComponentView = tabsHostComponentView;
-  }
-  return self;
 }
 
 #pragma mark - RNSContainer
@@ -833,17 +822,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)updateChildViewControllersIfNeeded
 {
   if (_needsUpdateOfChildViewControllers) {
-    [self updateReactChildrenControllers];
+    [self updateChildViewControllers];
   }
 }
 
-- (void)updateReactChildrenControllers
+- (void)updateChildViewControllers
 {
-  RNSLogD(@"TabBarCtrl updateReactChildrenControllers");
+  RNSLogD(@"TabBarCtrl updateChildViewControllers");
   _needsUpdateOfChildViewControllers = false;
 
   if (_tabScreenControllers == nil) {
-    RNSLogW(@"[RNScreens] Attempt to update react children while the _updatedChildren array is nil!");
+    RNSLogW(@"[RNScreens] Attempt to update children while the _updatedChildren array is nil!");
     return;
   }
 
@@ -955,10 +944,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RNSLogD(@"TabBarCtrl updateTabBarAppearance");
   _needsUpdateOfTabBarAppearance = false;
 
-  [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
-                                   withHostComponentView:self.tabsHostComponentView
-                                    tabScreenControllers:_tabScreenControllers
-                                             imageLoader:[self.tabsHostComponentView reactImageLoader]];
+  [_tabBarAppearanceCoordinator updateAppearanceOfTabBarController:self
+                                                     withTintColor:_appearanceProvider.tabBarTintColor
+                                              tabScreenControllers:_tabScreenControllers
+                                                       imageLoader:_imageLoader];
 }
 
 - (void)updateTabBarA11yIfNeeded
@@ -1457,7 +1446,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
             @"[RNScreens] Expected non-null parent view controller for layout direction update.");
   [self.parentViewController
       setOverrideTraitCollection:[UITraitCollection
-                                     traitCollectionWithLayoutDirection:self.tabsHostComponentView.layoutDirection]
+                                     traitCollectionWithLayoutDirection:_appearanceProvider.layoutDirection]
           forChildViewController:self];
 }
 

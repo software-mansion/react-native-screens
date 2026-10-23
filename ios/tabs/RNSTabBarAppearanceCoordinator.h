@@ -1,37 +1,27 @@
 #pragma once
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "RNSImageLoading.h"
 #import "RNSTabsScreenViewController.h"
 
-@class RNSTabsHostComponentView;
-
 NS_ASSUME_NONNULL_BEGIN
-
-#if defined(__cplusplus)
-@class RCTImageLoader;
-#endif // defined(__cplusplus)
 
 /**
  * Responsible for creating & applying appearance to the tab bar.
  *
- * It does take into account all properties from host component view & tab screen controllers related to tab bar
+ * It does take into account the host's tint color & all properties of the tab screen controllers related to tab bar
  * appearance and applies them accordingly in correct order.
  */
 @interface RNSTabBarAppearanceCoordinator : NSObject
 
-#if defined(__cplusplus)
 /**
- * Applies the tab bar appearance props to the tab bar and respective tab bar items, basing on information contained in
- * provided params.
- *
- * TODO: Do not take references to component view & controllers here. Put the tab bar appearance properites in single
- * type & only take it here.
+ * Applies the tint color to the tab bar of the given controller, and the appearance and icons of every tab screen to
+ * its tab bar item. Icons given as image sources are loaded through `imageLoader`.
  */
-- (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
-           withHostComponentView:(nullable RNSTabsHostComponentView *)hostComponentView
-            tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
-                     imageLoader:(nullable RCTImageLoader *)imageLoader;
-#endif // defined(__cplusplus)
+- (void)updateAppearanceOfTabBarController:(nonnull UITabBarController *)tabBarController
+                             withTintColor:(nullable UIColor *)tintColor
+                      tabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
+                               imageLoader:(nullable id<RNSImageLoading>)imageLoader;
 
 @end
 
