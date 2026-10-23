@@ -2,21 +2,15 @@
 #import "RNSContainer.h"
 #import "RNSContainerItemSupport.h"
 #import "RNSLog.h"
-#import "RNSStackHostComponentView.h"
-#import "RNSStackNavigationController.h"
-#import "RNSStackScreenComponentEventEmitter.h"
-#import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenHeaderCoordinator.h"
 
 @implementation RNSStackScreenController {
-  RNSStackScreenComponentView *_Nonnull _screenView;
   RNSContainerItemSupport *_Nonnull _containerItemSupport;
 }
 
-- (instancetype)initWithComponentView:(RNSStackScreenComponentView *)componentView
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
 {
-  if (self = [super initWithNibName:nil bundle:nil]) {
-    _screenView = componentView;
+  if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
     _headerCoordinator = [[RNSStackScreenHeaderCoordinator alloc] initWithScreenController:self];
     _containerItemSupport = [RNSContainerItemSupport new];
   }
@@ -42,13 +36,8 @@
 
 - (nullable UIScrollView *)findContentScrollView
 {
-  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[_screenView cachedContentScrollView]
-                                                            heuristicRoot:_screenView];
-}
-
-- (RNSStackScreenComponentEventEmitter *)reactEventEmitter
-{
-  return [_screenView reactEventEmitter];
+  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[_dataProvider cachedContentScrollView]
+                                                            heuristicRoot:self.view];
 }
 
 #pragma mark - Lifecycle Events
@@ -60,30 +49,30 @@
 #if !TARGET_OS_TV
   [self.headerCoordinator updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
-  [[self reactEventEmitter] emitOnWillAppear];
+  [_delegate stackScreenControllerWillAppear:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [[self reactEventEmitter] emitOnDidAppear];
+  [_delegate stackScreenControllerDidAppear:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  [[self reactEventEmitter] emitOnWillDisappear];
+  [_delegate stackScreenControllerWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [[self reactEventEmitter] emitOnDidDisappear];
+  [_delegate stackScreenControllerDidDisappear:self];
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  RNSLogD(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)_screenView.tag, parent);
+  RNSLogD(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)self.view.tag, parent);
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {
@@ -95,12 +84,7 @@
     [_headerCoordinator clearAppliedBackButtonConfig];
 #endif // !TARGET_OS_TV
 
-    if (_screenView.activityMode == RNSStackScreenActivityModeDetached) {
-      [[self reactEventEmitter] emitOnDismiss];
-    } else {
-      _screenView.isNativelyDismissed = YES;
-      [[self reactEventEmitter] emitOnNativeDismiss];
-    }
+    [_delegate stackScreenControllerDidLeaveStack:self];
   }
 }
 
