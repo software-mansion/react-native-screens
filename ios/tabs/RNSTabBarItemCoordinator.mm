@@ -1,6 +1,6 @@
 #import "RNSTabBarItemCoordinator.h"
-#import <React/RCTLog.h>
 #import "RNSDefines.h"
+#import "RNSLog.h"
 
 static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemItem systemItem,
                                                           UITabBarSystemItem *outSystemItem)
@@ -68,7 +68,7 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
     UIView<RNSTabsScreenDataProviding> *screenView = tabScreenCtrl.tabScreenView;
     if (screenView == nil) {
-      RCTLogWarn(@"[RNScreens] Nullish view of TabScreen while tab bar item creation!");
+      RNSLogW(@"[RNScreens] Nullish view of TabScreen while tab bar item creation!");
       continue;
     }
 
@@ -88,7 +88,7 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
     UIView<RNSTabsScreenDataProviding> *screenView = tabScreenCtrl.tabScreenView;
     if (screenView == nil) {
-      RCTLogWarn(@"[RNScreens] Nullish view of TabScreen while tab bar item update!");
+      RNSLogW(@"[RNScreens] Nullish view of TabScreen while tab bar item update!");
       continue;
     }
 
@@ -107,9 +107,8 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
   if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
     tabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
     if (tabBarItem == nil) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)screenView.systemItem);
+      RNSLogE(@"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+              (long)screenView.systemItem);
       return;
     }
   } else {
@@ -145,9 +144,8 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
     // Restore default system item title
     UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
     if (systemTabBarItem == nil) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)screenView.systemItem);
+      RNSLogE(@"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
+              (long)screenView.systemItem);
       return;
     }
     evaluatedTitle = systemTabBarItem.title;
