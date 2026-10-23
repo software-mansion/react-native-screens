@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSContainerItem.h"
-#import "RNSTabsScreenComponentView.h"
+#import "RNSTabsContainerItemConfigProviding.h"
 #import "RNSTabsSpecialEffectsSupporting.h"
 
 #if !TARGET_OS_TV
@@ -32,7 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // !TARGET_OS_TV
                                                            >
 
-@property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
+/**
+ * The view of this controller, as the provider of the tab screen data.
+ */
+@property (nonatomic, readonly, nullable) UIView<RNSTabsContainerItemConfigProviding> *configProvider;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
 @property (nonatomic, weak, nullable) id<RNSTabsScreenViewControllerDelegate> delegate;
 
