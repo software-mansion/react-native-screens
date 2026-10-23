@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class RNSSplitScreenComponentView;
+@class RNSSplitHostController;
 @class RNSSplitScreenController;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -26,6 +26,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)splitScreenControllerWillDisappear:(RNSSplitScreenController *)controller;
 - (void)splitScreenControllerDidDisappear:(RNSSplitScreenController *)controller;
 
+/**
+ * @brief Returns the SplitHost controller the column belongs to.
+ *
+ * Asked when the column is presented outside the SplitHost subtree (e.g. the inspector as a modal), where
+ * `splitViewController` doesn't lead to the host.
+ */
+- (nullable RNSSplitHostController *)splitHostControllerForSplitScreenController:(RNSSplitScreenController *)controller;
+
 @end
 
 /**
@@ -37,8 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitScreenController : UIViewController
 
 @property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
-
-- (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView;
 
 #pragma mark - Signals
 

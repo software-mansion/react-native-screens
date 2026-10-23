@@ -4,6 +4,7 @@
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions-SplitView.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitHostComponentView.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
 #import "RNSSplitScreenShadowStateProxy.h"
@@ -52,7 +53,7 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
+  _controller = [RNSSplitScreenController new];
   _controller.view = self;
   _controller.delegate = self;
 }
@@ -139,6 +140,11 @@ namespace react = facebook::react;
 - (void)splitScreenControllerDidDisappear:(RNSSplitScreenController *)controller
 {
   [_reactEventEmitter emitOnDidDisappear];
+}
+
+- (nullable RNSSplitHostController *)splitHostControllerForSplitScreenController:(RNSSplitScreenController *)controller
+{
+  return _splitHost.splitHostController;
 }
 
 #pragma mark - RNSSafeAreaProviding
