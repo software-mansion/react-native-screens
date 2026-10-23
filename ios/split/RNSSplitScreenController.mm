@@ -1,6 +1,6 @@
 #import "RNSSplitScreenController.h"
 
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 #import "RNSSplitHostController.h"
 
 @implementation RNSSplitScreenController
@@ -43,14 +43,14 @@
 
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
   // we're attaching our touch handler and we don't need to apply any offset corrections,
-  // because it's positioned relatively to our RNSSplitScreenComponentView
+  // because it's positioned relatively to the column view
   if (![self isInSplitHostSubtree]) {
     [_delegate splitScreenController:self didChangeColumnFrame:self.view.frame];
     return;
   }
 
   UIView *ancestorView = [self findSplitHostController].view;
-  RCTAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
+  RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
   [self reportColumnFrameInContextOfView:ancestorView];
 }

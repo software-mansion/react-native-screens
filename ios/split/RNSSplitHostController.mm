@@ -1,6 +1,6 @@
 #import "RNSSplitHostController.h"
 
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 #import "RNSDefines.h"
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
@@ -99,7 +99,7 @@
 
 - (void)updateChildViewControllers
 {
-  RCTAssert(_needsChildViewControllersUpdate,
+  RNSAssert(_needsChildViewControllersUpdate,
             @"[RNScreens] Child view controller must be invalidated when update is forced!");
 
   NSArray<RNSSplitScreenController *> *currentColumns = [self.columnsProvider columnControllers];
@@ -136,9 +136,9 @@
 - (void)refreshSecondaryNavBar
 {
   UIViewController *secondaryViewController = [self viewControllerForColumn:UISplitViewControllerColumnSecondary];
-  RCTAssert(secondaryViewController != nil,
+  RNSAssert(secondaryViewController != nil,
             @"[RNScreens] Failed to refresh secondary nav bar. Secondary view controller is nil.");
-  RCTAssert([secondaryViewController isKindOfClass:UINavigationController.class],
+  RNSAssert([secondaryViewController isKindOfClass:UINavigationController.class],
             @"[RNScreens] Expected UINavigationController but got %@",
             NSStringFromClass(secondaryViewController.class));
   UINavigationController *navigationController = (UINavigationController *)secondaryViewController;
@@ -188,7 +188,7 @@
 - (void)showColumnNamed:(NSString *)columnName
 {
   NSNumber *column = [self splitViewColumnFromString:columnName];
-  RCTAssert(column != nil, @"[RNScreens] Unknown column name: %@", columnName);
+  RNSAssert(column != nil, @"[RNScreens] Unknown column name: %@", columnName);
   if (column == nil) {
     return;
   }
@@ -256,19 +256,19 @@
 /** @brief Ensures that number of columns is valid and hasn't changed dynamically. */
 - (void)validateColumns:(NSArray<RNSSplitScreenController *> *)columns
 {
-  RCTAssert((NSInteger)columns.count >= minNumberOfColumns && (NSInteger)columns.count <= maxNumberOfColumns,
+  RNSAssert((NSInteger)columns.count >= minNumberOfColumns && (NSInteger)columns.count <= maxNumberOfColumns,
             @"[RNScreens] Split can only have from %ld to %ld columns",
             (long)minNumberOfColumns,
             (long)maxNumberOfColumns);
 
-  RCTAssert((NSInteger)columns.count == _fixedColumnsCount,
+  RNSAssert((NSInteger)columns.count == _fixedColumnsCount,
             @"[RNScreens] Split number of columns shouldn't change dynamically");
 }
 
 /** @brief Ensures that at most one inspector is present. */
 - (void)validateInspectors:(NSArray<RNSSplitScreenController *> *)inspectors
 {
-  RCTAssert((NSInteger)inspectors.count <= maxNumberOfInspectors,
+  RNSAssert((NSInteger)inspectors.count <= maxNumberOfInspectors,
             @"[RNScreens] Split can only have %ld inspector",
             (long)maxNumberOfInspectors);
 }
@@ -289,20 +289,20 @@
   for (NSNumber *columnNumber in _visibleColumns) {
     UISplitViewControllerColumn column = (UISplitViewControllerColumn)columnNumber.integerValue;
     UIViewController *viewController = [self viewControllerForColumn:column];
-    RCTAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
+    RNSAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
 
     RNSSplitNavigationController *splitNavigationController =
         [viewController isKindOfClass:RNSSplitNavigationController.class]
         ? (RNSSplitNavigationController *)viewController
         : nil;
-    RCTAssert(splitNavigationController != nil,
+    RNSAssert(splitNavigationController != nil,
               @"[RNScreens] Expected RNSSplitNavigationController but got %@",
               NSStringFromClass(viewController.class));
 
     UIViewController *maybeSplitScreenController = splitNavigationController.topViewController;
-    RCTAssert(
+    RNSAssert(
         maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for column %ld", (long)column);
-    RCTAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
+    RNSAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
               @"[RNScreens] Expected RNSSplitScreenController but got %@",
               NSStringFromClass(maybeSplitScreenController.class));
 
