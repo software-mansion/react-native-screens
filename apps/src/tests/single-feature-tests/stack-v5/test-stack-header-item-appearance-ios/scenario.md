@@ -23,7 +23,13 @@ TBD
    runtime reassignment of `standardAppearance` / `scrollEdgeAppearance` and
    standard <-> scroll-edge transitions for already-attached bar button items.
    After toggling any style preset, double tap Use text items.
-2. menu overflow doesn't appear on iOS 18 by default, some steps won't work
+2. **Unset backButton attributes inherit the buttons style** (verified on
+   iOS 18, 26 and 27). UIKit derives `backButtonAppearance` from
+   `buttonAppearance`, so a backButton appearance that sets only the color
+   keeps e.g. the italic style of the buttons. A long press (~0.4 s) on the
+   back button opens the back navigation menu (also on iOS 18), which ends
+   the highlighted-state window — release before it appears.
+3. menu overflow doesn't appear on iOS 18 by default, some steps won't work
 
 `tintColor` is an item property, not part of the appearance — it updates at
 runtime on both iOS 26 and 27.
@@ -67,10 +73,8 @@ whole configuration as applied at attach time (no runtime changes involved).
 
     - [ ] The items are styled as in steps 1-2 (fresh attach)
     
-    - [ ] The back button title follows the buttons style: green 22pt at the
-          top of the content, red italic after scrolling away (on iOS 26 the
-          title shows only after scrolling away from the top; Note #1
-          applies)
+    - [ ] The back button title is deep pink; on iOS 26+ the title shows
+          when device is horizontal, standard is italics, edge is regular font
 
 6. Pop to the first screen. Scroll away from the edge, toggle "Style buttons (red italic)" off
 
@@ -115,3 +119,17 @@ whole configuration as applied at attach time (no runtime changes involved).
           following the appearance styles
     
     - [ ] Disable "Tint items (red)" — the bubble returns to the default tint
+
+12. Press and hold the back button
+
+    - [ ] During the initial press the title shows dark cyan
+    
+    - [ ] When released, after dismissing the menu, the title returns to deep pink
+
+13. Toggle "Style back button (deep pink)" off, then pop and re-push the
+    details screen
+
+    - [ ] The back button title follows the buttons style again: green 22pt
+          at the scroll edge, red italic after scrolling away on both iOS 26 and 27
+    
+    - [ ] Toggle it back on and re-push — the title is deep pink again

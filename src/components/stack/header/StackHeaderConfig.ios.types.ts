@@ -631,8 +631,9 @@ export interface StackHeaderAppearanceIOS {
   /**
    * @summary Appearance of plain header items.
    *
-   * @description Applies to the text of header items with the `plain` variant,
-   * including the back button title. Attributes can be customized per control
+   * @description Applies to the text of header items with the `plain` variant.
+   * Also applies to the back button title; the `backButton` attributes
+   * override it per attribute. Attributes can be customized per control
    * state: `normal`, `highlighted`, `disabled` and `focused`.
    *
    * @platform ios
@@ -649,6 +650,18 @@ export interface StackHeaderAppearanceIOS {
    * @platform ios
    */
   prominentButton?: StackHeaderButtonAppearanceIOS | undefined;
+  /**
+   * @summary Appearance of the back button title.
+   *
+   * @description Overrides the `button` attributes for the back button title,
+   * attribute by attribute — the unset attributes keep following the `button`
+   * appearance (UIKit derives the back button appearance from the buttons
+   * appearance; verified on iOS 18 and 27). Attributes can be customized per
+   * control state: `normal`, `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
+   */
+  backButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
 
 export interface StackHeaderConfigPropsIOS {
