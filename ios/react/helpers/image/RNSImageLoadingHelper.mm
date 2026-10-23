@@ -1,4 +1,5 @@
 #import "RNSImageLoadingHelper.h"
+#import <React/RCTUtils.h>
 #import "RCTImageSource+AccessHiddenMembers.h"
 
 @implementation RNSImageLoadingHelper
@@ -38,6 +39,18 @@
   RCTAssert(imageSource != nil, @"[RNScreens] imageSource must not be nil");
   RCTAssert(imageLoader != nil, @"[RNScreens] imageLoader must not be nil");
 
+  // `RCTImageLoader` is synchronous only for png/jpg inside the app bundle; any other local file goes
+  // through `RCTNetworking`. `+[RCTConvert UIImage:]` is RN's synchronous loader for local files and
+  // sizes them like bundle assets do (pixels / `scale`, `width` / `height` are not applied).
+  if (RCTIsMainQueue() && imageSource.request.URL.isFileURL) {
+    UIImage *image = [RCTConvert UIImage:[self jsonSourceFromImageSource:imageSource]];
+    // A missing file falls through, so `RCTImageLoader` reports it as before.
+    if (image != nil) {
+      imageLoadingCompletionBlock([RNSImageLoadingHelper handleRenderingModeForImage:image isTemplate:isTemplate]);
+      return;
+    }
+  }
+
   [imageLoader loadImageWithURLRequest:imageSource.request
       size:imageSource.size
       scale:imageSource.scale
@@ -57,6 +70,16 @@
           });
         }
       }];
+}
+
++ (nonnull NSDictionary *)jsonSourceFromImageSource:(nonnull RCTImageSource *)imageSource
+{
+  return @{
+    @"uri" : imageSource.request.URL.absoluteString,
+    @"width" : @(imageSource.size.width),
+    @"height" : @(imageSource.size.height),
+    @"scale" : @(imageSource.scale),
+  };
 }
 
 + (nullable UIImage *)symbolImageNamed:(nonnull NSString *)name
