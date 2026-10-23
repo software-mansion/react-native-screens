@@ -1,8 +1,8 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSContainerTransactionSupporting.h"
 #import "RNSOrientationProviding.h"
-#import "RNSReactMountingTransactionObserving.h"
 #import "RNSSplitHostProviders.h"
 
 @class RNSSplitHostController;
@@ -31,8 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Installs the column controllers, synchronizes appearance settings with the configuration exposed by the providers,
  * observes the UISplitViewController lifecycle and reports it to the delegate.
  */
-@interface RNSSplitHostController
-    : UISplitViewController <RNSReactMountingTransactionObserving, RNSOrientationProviding>
+@interface RNSSplitHostController : UISplitViewController <RNSContainerTransactionSupporting, RNSOrientationProviding>
 
 @property (nonatomic, weak, nullable) id<RNSSplitHostControllerEventsDelegate> eventsDelegate;
 @property (nonatomic, weak, nullable) id<RNSSplitHostAppearanceProvider> appearanceProvider;
