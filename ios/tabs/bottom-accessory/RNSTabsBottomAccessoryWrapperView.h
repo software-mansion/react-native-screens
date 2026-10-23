@@ -9,9 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @class RNSTabsBottomAccessoryWrapperView
- * @brief Content view of UITabAccessory, wraps RNSTabsBottomAccessoryComponentView.
+ * @brief Content view of UITabAccessory, wraps the bottom accessory content view.
  *
- * It is a plain UIView (not RCTViewComponentView) to maintain native corner radius
+ * It is a plain UIView (not a React component view) to maintain native corner radius
  * and it answers UIKit's size queries so that the accessory takes full available width.
  */
 API_AVAILABLE(ios(26.0))
