@@ -8,6 +8,7 @@
 #import "RNSImageLoadingHelper.h"
 #import "RNSTabBarController.h"
 #import "RNSTabsHostComponentView.h"
+#import "RNSTabsScreenComponentView.h"
 #import "RNSTabsScreenViewController.h"
 
 static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable image,
@@ -76,13 +77,12 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
                                       imageLoader:(nullable RCTImageLoader *)imageLoader
 {
   UITabBarItem *tabBarItem = tabScreenCtrl.tabBarItem;
+  auto *screenView = static_cast<RNSTabsScreenComponentView *>(tabScreenCtrl.view);
 
-  tabBarItem.standardAppearance = tabScreenCtrl.tabScreenComponentView.standardAppearance;
-  tabBarItem.scrollEdgeAppearance = tabScreenCtrl.tabScreenComponentView.scrollEdgeAppearance;
+  tabBarItem.standardAppearance = screenView.standardAppearance;
+  tabBarItem.scrollEdgeAppearance = screenView.scrollEdgeAppearance;
 
-  [self setIconsForTabBarItem:tabBarItem
-               fromScreenView:tabScreenCtrl.tabScreenComponentView
-              withImageLoader:imageLoader];
+  [self setIconsForTabBarItem:tabBarItem fromScreenView:screenView withImageLoader:imageLoader];
 }
 
 /// Sets the normal icon on both the item (renders the iPhone bar) and the UITab (renders the
