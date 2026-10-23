@@ -176,6 +176,12 @@ namespace react = facebook::react;
 
 #pragma mark - RCTMountingTransactionObserving
 
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  [_stackNavigationController beginTransaction];
+}
+
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
