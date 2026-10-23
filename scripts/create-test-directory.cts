@@ -26,7 +26,7 @@
 // this CommonJS script must use `require` rather than `import`/`import =`.
 const fs = require('node:fs') as typeof import('node:fs');
 const path = require('node:path') as typeof import('node:path');
-const { writeScenarioMetadata } = require('./scenario-metadata.cts') as {
+const { writeScenarioMetadata } = require('./sync-scenario-metadata.cts') as {
   writeScenarioMetadata: (dir: string) => void;
 };
 
@@ -152,7 +152,7 @@ function main(): void {
     'Before writing the scenario, read guides/SCENARIO_RULES.md',
   );
   console.log(
-    'After editing scenario-description.ts, run `yarn scenario-metadata` to update scenario.md',
+    'After editing scenario-description.ts, run `yarn sync-scenario-metadata` to update scenario.md',
   );
 }
 

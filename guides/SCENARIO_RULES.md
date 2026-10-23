@@ -37,10 +37,10 @@ The block between `<!-- scenario-metadata:start ... -->` and
 `scenario-description.ts`, run:
 
 ```bash
-yarn scenario-metadata
+yarn sync-scenario-metadata
 ```
 
-`yarn scenario-metadata --check` fails when a block is missing or
+`yarn sync-scenario-metadata --check` fails when a block is missing or
 does not match `scenario-description.ts`, when `scenario.md` has a hand-written
 `## Details`, `## E2E test`, `## Prerequisites` or `**OS test creation
 version:**`, or when the metadata is inconsistent (e.g. an `osVersions` key not
