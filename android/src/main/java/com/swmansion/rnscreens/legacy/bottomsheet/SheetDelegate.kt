@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.legacy.bottomsheet
 import android.animation.Animator
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -50,9 +51,13 @@ class SheetDelegate(
     private val stackFragment: ScreenStackFragment
         get() = screen.fragment as ScreenStackFragment
 
-    private fun requireDecorView(): View =
-        checkNotNull(screen.reactContext.currentActivity) { "[RNScreens] Attempt to access activity on detached context" }
-            .window.decorView
+    private val decorViewOrNull: View?
+        get() =
+            screen.reactContext.currentActivity
+                ?.window
+                ?.decorView
+
+    private var isInsetsObserverRegistrationPending = false
 
     private var viewToRestoreFocus: View? = null
 
@@ -87,11 +92,39 @@ class SheetDelegate(
     }
 
     private fun handleHostFragmentOnStart() {
-        InsetsObserverProxy.registerOnView(requireDecorView())
+        registerInsetsObserver()
     }
 
     private fun handleHostFragmentOnResume() {
+        if (isInsetsObserverRegistrationPending) {
+            registerInsetsObserver()
+        }
         InsetsObserverProxy.addOnApplyWindowInsetsListener(this)
+    }
+
+    /**
+     * Registers the insets observer on the current activity's decor view, deferring to ON_RESUME
+     * when there is no current activity yet.
+     *
+     * The host fragment can reach ON_START while React holds no current activity: the sheet is
+     * open, the activity hosting it is stopped, another ReactActivity is destroyed as the current
+     * one, and the user then returns to the app. Fragment ON_START is dispatched before
+     * ReactActivity.onResume calls onHostResume, so at that moment currentActivity is still null.
+     * ON_RESUME runs after onHostResume has restored it, which is why the retry lands there.
+     *
+     * Requiring an activity here turned that return into a fatal IllegalStateException. Nothing
+     * about the sheet needs the decor view this early, and preserveBackgroundFocus below already
+     * treats a missing current activity as an ordinary condition.
+     */
+    private fun registerInsetsObserver() {
+        val decorView = decorViewOrNull
+        if (decorView == null) {
+            Log.w(TAG, "[RNScreens] No current activity while registering the sheet insets observer, deferring to ON_RESUME")
+            isInsetsObserverRegistrationPending = true
+            return
+        }
+        InsetsObserverProxy.registerOnView(decorView)
+        isInsetsObserverRegistrationPending = false
     }
 
     private fun handleHostFragmentOnPause() {
