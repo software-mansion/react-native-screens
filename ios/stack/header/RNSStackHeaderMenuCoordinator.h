@@ -26,6 +26,19 @@ NS_ASSUME_NONNULL_BEGIN
      menuInvalidatedCallback:(nullable void (^)(void))onMenuInvalidated;
 
 /**
+ * Applies menu representation to the item - a menu element substituting the item
+ * when it is displayed in a menu (e.g. the navigation bar overflow menu).
+ * Passing nil `data` clears the representation. Works like regular `applyMenu`.
+ * No-op below iOS 16 and on tvOS, where `UIBarButtonItem.menuRepresentation` is unavailable.
+ */
++ (void)applyMenuRepresentation:(nullable RNSStackHeaderMenuData *)data
+                toBarButtonItem:(UIBarButtonItem *)item
+       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
+                   stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+                withImageLoader:(id<RNSImageLoading>)imageLoader
+        menuInvalidatedCallback:(nullable void (^)(void))onMenuInvalidated;
+
+/**
  * Collects IDs of all toggle items in a single selection hierarchy rooted at the given menu.
  */
 + (NSArray<NSString *> *)getAllToggleItemsIdsInSingleSelectionHierarchy:(RNSStackHeaderMenuData *)menu;

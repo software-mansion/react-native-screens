@@ -1,0 +1,133 @@
+#import "RNSConversions-Stack.h"
+#import "RNSDefines.h"
+
+namespace rnscreens::conversion {
+
+namespace react = facebook::react;
+
+RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
+    react::RNSStackScreenActivityMode mode)
+{
+  return static_cast<RNSStackScreenActivityMode>(mode);
+}
+
+RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
+    react::RNSStackHeaderItemIOSPlacement placement)
+{
+  switch (placement) {
+    case react::RNSStackHeaderItemIOSPlacement::Leading:
+      return RNSHeaderItemPlacementLeading;
+    case react::RNSStackHeaderItemIOSPlacement::Trailing:
+      return RNSHeaderItemPlacementTrailing;
+    case react::RNSStackHeaderItemIOSPlacement::Title:
+      return RNSHeaderItemPlacementTitle;
+    case react::RNSStackHeaderItemIOSPlacement::Subtitle:
+      return RNSHeaderItemPlacementSubtitle;
+    case react::RNSStackHeaderItemIOSPlacement::LargeSubtitle:
+      return RNSHeaderItemPlacementLargeSubtitle;
+  }
+}
+
+UIBarButtonItemStyle UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(
+    react::RNSStackHeaderItemIOSVariant variant)
+{
+  switch (variant) {
+    case react::RNSStackHeaderItemIOSVariant::Plain:
+      return UIBarButtonItemStylePlain;
+    case react::RNSStackHeaderItemIOSVariant::Prominent:
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+      if (@available(iOS 26.0, *)) {
+        return UIBarButtonItemStyleProminent;
+      }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+      // Bold text look, closest counterpart of prominent style before iOS 26
+      return UIBarButtonItemStyleDone;
+  }
+}
+
+RNSHeaderItemSpacerPlacement RNSHeaderItemSpacerPlacementFromReactRNSStackHeaderItemSpacerIOSPlacement(
+    react::RNSStackHeaderItemSpacerIOSPlacement placement)
+{
+  switch (placement) {
+    case react::RNSStackHeaderItemSpacerIOSPlacement::Leading:
+      return RNSHeaderItemSpacerPlacementLeading;
+    case react::RNSStackHeaderItemSpacerIOSPlacement::Trailing:
+      return RNSHeaderItemSpacerPlacementTrailing;
+  }
+}
+
+UINavigationItemBackButtonDisplayMode
+UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
+    react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode)
+{
+  switch (displayMode) {
+    case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Default:
+      return UINavigationItemBackButtonDisplayModeDefault;
+    case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Generic:
+      return UINavigationItemBackButtonDisplayModeGeneric;
+    case react::RNSStackHeaderConfigIOSBackButtonDisplayMode::Minimal:
+      return UINavigationItemBackButtonDisplayModeMinimal;
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+
+UIBarMinimizationBehavior UIBarMinimizationBehaviorFromReactRNSStackHeaderConfigIOSMinimizationBehavior(
+    react::RNSStackHeaderConfigIOSMinimizationBehavior minimizationBehavior)
+{
+  switch (minimizationBehavior) {
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::Automatic:
+      return UIBarMinimizationBehaviorAutomatic;
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::Never:
+      return UIBarMinimizationBehaviorNever;
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::OnScrollDown:
+      return UIBarMinimizationBehaviorOnScrollDown;
+    case react::RNSStackHeaderConfigIOSMinimizationBehavior::OnScrollUp:
+      return UIBarMinimizationBehaviorOnScrollUp;
+  }
+}
+
+UIBarMinimizationRestorationBehavior
+UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationBehavior(
+    react::RNSStackHeaderConfigIOSRestorationBehavior restorationBehavior)
+{
+  switch (restorationBehavior) {
+    case react::RNSStackHeaderConfigIOSRestorationBehavior::Automatic:
+      return UIBarMinimizationRestorationBehaviorAutomatic;
+    case react::RNSStackHeaderConfigIOSRestorationBehavior::AtScrollEdge:
+      return UIBarMinimizationRestorationBehaviorAtScrollEdge;
+  }
+}
+
+#endif // Check for iOS >= 27
+
+RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
+    react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case react::RNSStackHeaderItemIOSVisibilityPriority::Low:
+      return RNSHeaderItemVisibilityPriorityLow;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::Standard:
+      return RNSHeaderItemVisibilityPriorityStandard;
+    case react::RNSStackHeaderItemIOSVisibilityPriority::High:
+      return RNSHeaderItemVisibilityPriorityHigh;
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case RNSHeaderItemVisibilityPriorityLow:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case RNSHeaderItemVisibilityPriorityStandard:
+      return UIBarButtonItemVisibilityPriorityStandard;
+    case RNSHeaderItemVisibilityPriorityHigh:
+      return UIBarButtonItemVisibilityPriorityHigh;
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+}; // namespace rnscreens::conversion

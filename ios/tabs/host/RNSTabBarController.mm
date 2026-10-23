@@ -92,9 +92,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
   /// delegate handling). Setter overrides skip reconciliation while this flag is set.
   BOOL _isHandlingExplicitSelectionUpdate;
 
-  /// UITab path only. Set when `shouldSelectTab:` admits a user selection, consumed by
-  /// `didSelectTab:` - which fires also for programmatic selection and this flag allows for filtering the latter.
-  BOOL _isHandlingUserTabSelection;
+  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab` /
+  /// `selectedViewController`. UIKit sends `didSelectTab:` synchronously from inside those writes -
+  /// this flag filters them out, so that only UIKit-driven (user) selections reach the delegate
+  /// logic. Marking user selections instead is not viable: for `UISearchTab`, a mount transaction
+  /// can land between `shouldSelectTab:` and `didSelectTab:`.
+  BOOL _isApplyingProgrammaticTabSelection;
 
   /// UITab path only. Set in `tabBar:didSelectItem:` when the user selects the More tab while
   /// another tab is active. Tapping More does not necessarily show the More list - the stack may
@@ -106,6 +109,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
   RNSTabsNavigationStateObserverRegistry *_observerRegistry;
 
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
+
+  /// Screen key of the prominent tab (iOS 27+); nil when not set, letting UIKit decide. Kept as the screen key,
+  /// because `UISearchTab` gets a system-assigned identifier & the tabs are rebuilt on children updates.
+  NSString *_Nullable _prominentScreenKey;
+
+  BOOL _needsUpdateOfProminentIdentifier;
 }
 
 - (instancetype)init
@@ -119,8 +128,10 @@ static void rns_pushViewController(__unsafe_unretained id self,
     _navigationState = nil;
     _pendingStateUpdate = nil;
     _shouldProgressStateOnMoreNavigationControllerPush = NO;
-    _isHandlingUserTabSelection = NO;
+    _isApplyingProgrammaticTabSelection = NO;
     _pendingMoreTabSelectedEmit = NO;
+    _prominentScreenKey = nil;
+    _needsUpdateOfProminentIdentifier = NO;
     _observerRegistry = [RNSTabsNavigationStateObserverRegistry new];
     _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 
@@ -318,12 +329,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)reactMountingTransactionWillMount
 {
-  RNSLog(@"TabBarCtrl mountintTransactionWillMount");
+  RNSLogD(@"TabBarCtrl mountintTransactionWillMount");
 }
 
 - (void)reactMountingTransactionDidMount
 {
-  RNSLog(@"TabBarCtrl mountintTransactionDidMount running updates");
+  RNSLogD(@"TabBarCtrl mountintTransactionDidMount running updates");
   [self performContainerUpdate];
 }
 
@@ -331,16 +342,17 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)performContainerUpdate
 {
-  _isHandlingUserTabSelection = NO;
   _isHandlingExplicitSelectionUpdate = YES;
   [self createTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
+  [self updateSearchTabsIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
 
   [self updateTabBarItemsIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
+  [self updateProminentIdentifierIfNeeded];
   [self updateOrientationIfNeeded];
 }
 
@@ -536,19 +548,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectTab:(UITab *)tab API_AVAILABLE(ios(18.0))
 {
-  BOOL shouldSelect = [self tabBarController:tabBarController shouldSelectViewController:tab.viewController];
-  _isHandlingUserTabSelection = shouldSelect;
-  return shouldSelect;
+  return [self tabBarController:tabBarController shouldSelectViewController:tab.viewController];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
             didSelectTab:(UITab *)selectedTab
              previousTab:(nullable UITab *)previousTab API_AVAILABLE(ios(18.0))
 {
-  if (!_isHandlingUserTabSelection) {
+  if (_isApplyingProgrammaticTabSelection) {
     return;
   }
-  _isHandlingUserTabSelection = NO;
 
   RCTAssert(self.selectedTab == selectedTab, @"[RNScreens] Expected UIKit to update selectedTab");
   [self tabBarController:tabBarController didSelectViewController:selectedTab.viewController];
@@ -580,17 +589,42 @@ static void rns_pushViewController(__unsafe_unretained id self,
     for (RNSTabsScreenViewController *screenController in screenControllers) {
       [tabs addObject:[self tabForTabScreenController:screenController]];
     }
+    _isApplyingProgrammaticTabSelection = YES;
     [self setTabs:tabs animated:animated];
+    [self assertAtMostOneSearchTabInstalled];
 
     if (shouldRestoreSelectedTab && [tabs containsObject:previouslySelectedTab]) {
       self.selectedTab = previouslySelectedTab;
     }
+    _isApplyingProgrammaticTabSelection = NO;
+
+    // The prominent screen key might point to a tab created in this update - re-resolve it.
+    _needsUpdateOfProminentIdentifier = YES;
     return;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
 
   [self setViewControllers:screenControllers animated:animated];
 }
+
+#if RNS_UITAB_API_SDK_AVAILABLE
+/// Debug-build sanity check run after the tabs are installed: UIKit gives only the system search
+/// role special placement & behavior, so more than one `role: 'search'` screen is a config error.
+- (void)assertAtMostOneSearchTabInstalled API_AVAILABLE(ios(18.0))
+{
+#if RCT_DEBUG
+  NSUInteger searchTabCount = 0;
+  for (UITab *tab in self.tabs) {
+    if ([tab isKindOfClass:UISearchTab.class]) {
+      searchTabCount += 1;
+    }
+  }
+  RCTAssert(searchTabCount <= 1,
+            @"[RNScreens] At most one tab screen can have `role: 'search'`, got %lu",
+            (unsigned long)searchTabCount);
+#endif // RCT_DEBUG
+}
+#endif // RNS_UITAB_API_SDK_AVAILABLE
 
 // Controllers currently installed in UIKit, not including more controller.
 - (nonnull NSArray<RNSTabsScreenViewController *> *)installedScreenControllers
@@ -607,13 +641,23 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
 #if RNS_UITAB_API_SDK_AVAILABLE
   if (RNS_UITAB_API_ENABLED) {
+    // Both writes below are our own. UIKit sends `didSelectTab:` synchronously from inside them, and
+    // `didSelectTab:` must not treat that as a user selection - otherwise the state is progressed
+    // twice and a second, `user`-origin event is emitted.
+    _isApplyingProgrammaticTabSelection = YES;
     if (![self isMoreNavigationControllerTabBarItemSelected]) {
       RCTAssert(screenController.tab != nil,
                 @"[RNScreens] No installed UITab for screenKey: %@",
                 [self screenKeyForViewController:screenController]);
       self.selectedTab = screenController.tab;
-      return;
+    } else {
+      // While More is active `selectedTab` lags behind UIKit's selection, so the write goes through
+      // the legacy setter (our own override, so that reconciliation of implicit UIKit-driven updates
+      // keeps working).
+      [self setSelectedViewController:screenController];
     }
+    _isApplyingProgrammaticTabSelection = NO;
+    return;
   }
 #endif // RNS_UITAB_API_SDK_AVAILABLE
 
@@ -662,11 +706,24 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (UITab *)tabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
+  // Return existing tab if present. Note that this "latches"
+  // the type of the tab: you cannot swap regular UITab with UISearchTab;
+  // and we want it this way because tabs hold view controller references
+  // and UIKit asserts they are unique even for the detached, not-deallocated tabs
   if (screenController.tab) {
     return screenController.tab;
   }
 
-  return [self makeTabForTabScreenController:screenController];
+  UITab *tab = [self makeTabForTabScreenController:screenController];
+  [self disableUserCustomizationOfTab:tab];
+  return tab;
+}
+
+/// Customizable tab would force the Edit button into the iPad sidebar,
+/// and we don't support tab editing as of now.
+- (void)disableUserCustomizationOfTab:(UITab *)tab API_AVAILABLE(ios(18.0))
+{
+  tab.preferredPlacement = UITabPlacementFixed;
 }
 
 /// Always builds a FRESH instance, seeded with current content - the bar reads a `UITab` only
@@ -674,6 +731,22 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (UITab *)makeTabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
+
+  if (screenController.tabScreenComponentView.tabRole == RNSTabsScreenTabRoleSearch) {
+    // The designated initializer of `UISearchTab` takes no identifier - UIKit assigns a system one.
+    UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
+      return weakScreenController;
+    }];
+#if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+    if (@available(iOS 26.0, *)) {
+      if (RNS_UITAB_API_ENABLED) {
+        searchTab.automaticallyActivatesSearch = screenController.tabScreenComponentView.automaticallyActivatesSearch;
+      }
+    }
+#endif // RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+    return searchTab;
+  }
 
   return [[UITab alloc] initWithTitle:[screenController.tabScreenComponentView title] ?: @""
                                 image:nil
@@ -761,7 +834,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateReactChildrenControllers
 {
-  RNSLog(@"TabBarCtrl updateReactChildrenControllers");
+  RNSLogD(@"TabBarCtrl updateReactChildrenControllers");
   _needsUpdateOfChildViewControllers = false;
 
   if (_tabScreenControllers == nil) {
@@ -785,7 +858,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  RNSLog(@"TabBarCtrl updateSelectedViewController");
+  RNSLogD(@"TabBarCtrl updateSelectedViewController");
   [self updateSelectedViewControllerInner];
   _pendingStateUpdate = nil;
 }
@@ -841,7 +914,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     self.tabBar.overrideUserInterfaceStyle = nextSelectedViewController.tabScreenComponentView.userInterfaceStyle;
   }
 
-  RNSLog(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
+  RNSLogD(@"Change selected view controller to: %@", nextSelectedViewControllerKey);
   BOOL hasStateProgressed = [self updateSelectedViewControllerTo:nextSelectedViewController
                                                          withKey:nextSelectedViewControllerKey
                                                     actionOrigin:_pendingStateUpdate.actionOrigin];
@@ -874,7 +947,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
 - (void)updateTabBarAppearance
 {
-  RNSLog(@"TabBarCtrl updateTabBarAppearance");
+  RNSLogD(@"TabBarCtrl updateTabBarAppearance");
   _needsUpdateOfTabBarAppearance = false;
 
   [_tabBarAppearanceCoordinator updateAppearanceOfTabBar:[self tabBar]
@@ -895,6 +968,77 @@ static void rns_pushViewController(__unsafe_unretained id self,
     tabViewController.tabBarItem.accessibilityIdentifier = screenView.tabItemTestID;
     tabViewController.tabBarItem.accessibilityLabel = screenView.tabItemAccessibilityLabel;
   }
+}
+
+/**
+ * Perform SearchTab-related updates. This should be called before tab selection update has run,
+ * otherwise the search activation may not trigger.
+ */
+- (void)updateSearchTabsIfNeeded
+{
+#if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    if (RNS_UITAB_API_ENABLED) {
+      for (UITab *tab in self.tabs) {
+        if (![tab isKindOfClass:UISearchTab.class]) {
+          continue;
+        }
+        auto *searchTab = static_cast<UISearchTab *>(tab);
+        auto *screenController = static_cast<RNSTabsScreenViewController *>(tab.viewController);
+        auto *screenView = screenController.tabScreenComponentView;
+
+        if (searchTab.automaticallyActivatesSearch != screenView.automaticallyActivatesSearch) {
+          searchTab.automaticallyActivatesSearch = screenView.automaticallyActivatesSearch;
+        }
+      }
+    }
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+#pragma mark - Prominent tab
+
+- (void)setProminentScreenKey:(nullable NSString *)screenKey
+{
+  NSString *_Nullable newScreenKey = screenKey.length > 0 ? [screenKey copy] : nil;
+  if (newScreenKey == _prominentScreenKey || [newScreenKey isEqualToString:_prominentScreenKey]) {
+    return;
+  }
+  _prominentScreenKey = newScreenKey;
+  _needsUpdateOfProminentIdentifier = YES;
+}
+
+/// Resolves `_prominentScreenKey` against the installed tabs & pushes the result to UIKit.
+- (void)updateProminentIdentifierIfNeeded
+{
+  if (!_needsUpdateOfProminentIdentifier) {
+    return;
+  }
+  _needsUpdateOfProminentIdentifier = NO;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.0, *)) {
+    NSString *_Nullable tabIdentifier = nil;
+
+    if (_prominentScreenKey != nil) {
+      // The lookup goes through the view controller, because `UISearchTab` carries
+      // a system-assigned identifier.
+      UITab *_Nullable tab = [self findChildViewControllerForKey:_prominentScreenKey].tab;
+      if (tab != nil) {
+        tabIdentifier = tab.identifier;
+      } else {
+        RCTLogWarn(@"[RNScreens] prominentScreenKey '%@' does not match the screenKey of any tab screen",
+                   _prominentScreenKey);
+      }
+    }
+
+    if (tabIdentifier == self.prominentTabIdentifier || [tabIdentifier isEqualToString:self.prominentTabIdentifier]) {
+      return;
+    }
+    // Animate only runtime changes, not the initial setup before the tab bar is on screen.
+    [self setProminentTabIdentifier:tabIdentifier animated:self.viewIfLoaded.window != nil];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 #pragma mark - Utility
@@ -997,9 +1141,9 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return;
   }
 
-  RNSLog(@"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
-         _navigationState.selectedScreenKey,
-         selectedScreenKey);
+  RNSLogD(@"TabBarCtrl reconcileNavigationStateWithUIKitState: %@ -> %@",
+          _navigationState.selectedScreenKey,
+          selectedScreenKey);
   [self progressNavigationState:selectedScreenKey withOrigin:RNSTabsActionOriginImplicit];
 
   if ([self isViewControllerHostedByMoreNavigationController:self.selectedViewController]) {

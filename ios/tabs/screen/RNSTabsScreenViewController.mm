@@ -1,6 +1,7 @@
 #import "RNSTabsScreenViewController.h"
 #import "RNSContainer.h"
 #import "RNSContainerItemSupport.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSTabBarController.h"
 #import "UIScrollView+RNScreens.h"
@@ -63,7 +64,7 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  RNSLog(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
+  RNSLogD(@"TabScreen [%ld] ctrl moved to parent: %@", self.tabScreenComponentView.tag, parent);
 
   if (parent == nil) {
     return;

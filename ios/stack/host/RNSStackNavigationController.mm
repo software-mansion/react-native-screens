@@ -133,9 +133,9 @@
 - (void)dumpStackModel
 {
 #ifdef RNS_DEBUG_LOGGING
-  RNSLog(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
+  RNSLogD(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
-    RNSLog(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
+    RNSLogD(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
   }
 #endif // RNS_DEBUG_LOGGING
 }

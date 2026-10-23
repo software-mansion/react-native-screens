@@ -1,5 +1,5 @@
 import { device, expect, element, by } from 'detox';
-import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
+import { tapBarBackButton } from '@e2e/framework/back-button';
 
 describe('Bottom tabs and native stack', () => {
   beforeEach(async () => {
@@ -32,7 +32,7 @@ describe('Bottom tabs and native stack', () => {
       element(by.id('bottom-tabs-A-more-details-button')),
     ).toHaveLabel('More details 1');
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await tapBarBackButton();
     } else {
       await device.pressBack();
     }
@@ -83,13 +83,9 @@ describe('Bottom tabs and native stack', () => {
       element(by.id('bottom-tabs-B-more-details-button')),
     ).toHaveLabel('More details 0');
 
-    // TODO(kkafar): For some reason tapping the button here hangs test runner.
-    // The app itself stays fully responsive & in valid state (the expectation
-    // defined below should succeed).
-    // This happens on new architecture only. Maybe its runner / detox bug on new arch.
-    //await element(by.id('bottom-tabs-A-tab')).tap();
-    //await expect(
-    //  element(by.id('bottom-tabs-A-more-details-button')),
-    //).toHaveLabel('More details 2');
+    await element(by.id('bottom-tabs-A-tab')).tap();
+    await expect(
+      element(by.id('bottom-tabs-A-more-details-button')),
+    ).toHaveLabel('More details 2');
   });
 });

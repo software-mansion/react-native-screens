@@ -51,6 +51,9 @@
                                                     action:nil];
   }
 
+  barButtonItem.style = item.style;
+  barButtonItem.enabled = !item.disabled;
+
   if (item.icon != nil) {
     __weak UIBarButtonItem *weakBarButtonItem = barButtonItem;
     UIImage *syncImage = [RNSStackHeaderIconResolver resolveIcon:item.icon

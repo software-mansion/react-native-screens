@@ -1,17 +1,12 @@
 import React, {
   type ComponentRef,
-  type Ref,
-  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
 } from 'react';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigRef,
-} from './StackHeaderConfig.types';
+import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
   Commands as StackHeaderConfigIOSNativeCommands,
   HeaderAppearance,
@@ -39,13 +34,10 @@ import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
-function StackHeaderConfig(
-  props: StackHeaderConfigProps,
-  forwardedRef: Ref<StackHeaderConfigRef>,
-) {
+function StackHeaderConfig(props: StackHeaderConfigProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { ios, android, ...restProps } = props;
+  const { ref: forwardedRef, ios, android, ...restProps } = props;
 
   const {
     leadingItems,
@@ -58,6 +50,8 @@ function StackHeaderConfig(
     largeSubtitle,
     largeTitleEnabled,
     prompt,
+    minimizationBehavior,
+    restorationBehavior,
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
@@ -110,10 +104,10 @@ function StackHeaderConfig(
       [
         ...(leadingItems ?? [])
           .filter(it => it && it.type === 'item')
-          .map(it => it.menu),
+          .flatMap(it => [it.menu, it.menuRepresentation]),
         ...(trailingItems ?? [])
           .filter(it => it && it.type === 'item')
-          .map(it => it.menu),
+          .flatMap(it => [it.menu, it.menuRepresentation]),
         titleMenu,
       ].filter(it => !!it),
     [leadingItems, trailingItems, titleMenu],
@@ -166,6 +160,8 @@ function StackHeaderConfig(
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
       prompt={prompt}
+      minimizationBehavior={minimizationBehavior}
+      restorationBehavior={restorationBehavior}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       titleMenu={resolvedTitleMenu}
@@ -298,6 +294,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(
-  StackHeaderConfig,
-);
+export default StackHeaderConfig;

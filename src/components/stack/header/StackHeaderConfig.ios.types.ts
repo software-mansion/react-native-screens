@@ -93,6 +93,20 @@ export interface SupportsMenuIOS {
    * @platform iOS
    */
   menu?: StackHeaderMenuIOS | undefined;
+  /**
+   * @summary Menu definition substituting the item when it is displayed in a menu.
+   *
+   * @description
+   * When the system moves the item into a menu (e.g. the navigation bar
+   * overflow menu), this menu is displayed in its place. Useful for custom items
+   * ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS doesn't display in the overflow menu otherwise.
+   * The `id`s used in the menu are expected to be unique across every `menu` and `menuRepresentation`.
+   *
+   * @platform iOS
+   *
+   * @supported iOS 16 and higher
+   */
+  menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
 
 export interface SupportsSharedBackgroundIOS {
@@ -172,6 +186,18 @@ export interface SupportsIdentifierIOS {
 }
 
 /**
+ * @summary Visual variant (style) of a header item.
+ *
+ * @description
+ * - `plain`: the default look of a bar button item.
+ * - `prominent`: the item is emphasized with a tinted background.
+ *   On iOS below 26 it falls back to bold text (the `done` style).
+ *
+ * @platform iOS
+ */
+export type StackHeaderItemVariantIOS = 'plain' | 'prominent';
+
+/**
  * @summary Native header item with text label.
  *
  * @platform iOS
@@ -188,6 +214,27 @@ export interface StackHeaderInlineItemIOS
    * @platform iOS
    */
   type: 'item';
+  /**
+   * @summary Visual variant (style) of the item.
+   *
+   * @default 'plain'
+   *
+   * @platform iOS
+   */
+  variant?: StackHeaderItemVariantIOS | undefined;
+  /**
+   * @summary Whether the item is disabled.
+   *
+   * @description
+   * A disabled item is grayed out and does not respond to user interaction:
+   * neither {@link StackHeaderInlineItemIOS.onPress | onPress} nor
+   * {@link SupportsMenuIOS.menu | menu} is triggered.
+   *
+   * @default false
+   *
+   * @platform iOS
+   */
+  disabled?: boolean | undefined;
   /**
    * @summary Callback invoked when the header item is pressed.
    *
@@ -351,6 +398,37 @@ export type StackHeaderBackButtonDisplayModeIOS =
   | 'default'
   | 'generic'
   | 'minimal';
+
+/**
+ * @summary Controls when the navigation bar minimizes in response to scrolling.
+ *
+ * @description
+ * - `automatic`: the system determines the minimization behavior.
+ * - `never`: the navigation bar does not minimize.
+ * - `onScrollDown`: the navigation bar minimizes when the user scrolls down.
+ * - `onScrollUp`: the navigation bar minimizes when the user scrolls up.
+ *
+ * @platform iOS
+ */
+export type StackHeaderMinimizationBehaviorIOS =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+/**
+ * @summary Controls when a minimized navigation bar restores.
+ *
+ * @description
+ * - `automatic`: the system determines the restoration behavior. By default
+ *   the navigation bar restores when the user reverses scroll direction.
+ * - `atScrollEdge`: the navigation bar restores only when the scroll view's
+ *   content reaches the scroll edge. Honored only together with
+ *   `minimizationBehavior: 'onScrollDown'`.
+ *
+ * @platform iOS
+ */
+export type StackHeaderRestorationBehaviorIOS = 'automatic' | 'atScrollEdge';
 
 export interface StackHeaderAppearanceIOS {
   /**
@@ -610,6 +688,33 @@ export interface StackHeaderConfigPropsIOS {
    * @platform iOS
    */
   prompt?: string | undefined;
+  /**
+   * @summary Controls when the navigation bar minimizes in response to scrolling.
+   *
+   * @description
+   * When the navigation bar minimizes, an integrated top tab bar minimizes as well.
+   *
+   * @default 'automatic'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  minimizationBehavior?: StackHeaderMinimizationBehaviorIOS | undefined;
+  /**
+   * @summary Controls when a minimized navigation bar restores.
+   *
+   * @description
+   * Currently honored only together with `minimizationBehavior: 'onScrollDown'`.
+   * With other minimization behaviors, the system falls back to `automatic`.
+   *
+   * @default 'automatic'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  restorationBehavior?: StackHeaderRestorationBehaviorIOS | undefined;
   /**
    * @summary Appearance of the header when the edge of scrollable content
    * is not aligned with the edge of the header.
