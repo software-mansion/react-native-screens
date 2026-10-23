@@ -371,7 +371,7 @@ RNS_IGNORE_SUPER_CALL_END
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   _hasModifiedReactSubviewsInCurrentTransaction = false;
-  [_controller reactMountingTransactionWillMount];
+  [_controller beginTransaction];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -380,7 +380,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (_hasModifiedReactSubviewsInCurrentTransaction) {
     [_controller setNeedsUpdateOfChildViewControllers];
   }
-  [_controller reactMountingTransactionDidMount];
+  [_controller commitTransaction];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
