@@ -84,15 +84,15 @@
   return _pendingPushOperations.count > 0 || _pendingPopOperations.count > 0;
 }
 
-- (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen
+- (void)enqueuePushOperation:(nonnull RNSStackScreenController *)screenController
 {
-  RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreen:stackScreen];
+  RNSPushOperation *operation = [[RNSPushOperation alloc] initWithScreenController:screenController];
   [_pendingPushOperations addObject:operation];
 }
 
-- (void)enqueuePopOperation:(nonnull RNSStackScreenComponentView *)stackScreen
+- (void)enqueuePopOperation:(nonnull RNSStackScreenController *)screenController
 {
-  RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreen:stackScreen];
+  RNSPopOperation *operation = [[RNSPopOperation alloc] initWithScreenController:screenController];
   [_pendingPopOperations addObject:operation];
 }
 
@@ -117,14 +117,13 @@
 
   for ([[maybe_unused]] RNSPopOperation *op in _pendingPopOperations) {
     RCTAssert([self.viewControllers count] > 1, @"[RNScreens] Attempt to pop last screen from the stack");
-    RCTAssert(self.topViewController == static_cast<UIViewController *>(op.stackScreen.controller),
+    RCTAssert(self.topViewController == static_cast<UIViewController *>(op.screenController),
               @"[RNScreens] Attempt to pop non-top screen");
     [self popViewControllerAnimated:YES];
   }
 
   for (RNSPushOperation *op in _pendingPushOperations) {
-    RNSStackScreenController *controller = op.stackScreen.controller;
-    [self pushViewController:controller animated:YES];
+    [self pushViewController:op.screenController animated:YES];
   }
 
   RCTAssert([self.viewControllers count] > 0, @"[RNScreens] Stack should never be empty after updates");
@@ -142,7 +141,7 @@
 #ifdef RNS_DEBUG_LOGGING
   RNSLogD(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
-    RNSLogD(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
+    RNSLogD(@"[RNScreens] %@", viewController.view);
   }
 #endif // RNS_DEBUG_LOGGING
 }
