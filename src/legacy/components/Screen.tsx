@@ -136,10 +136,21 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
       onWillDisappear,
     } = rest;
 
+    const resolvedSheetAllowedDetents =
+      resolveSheetAllowedDetents(sheetAllowedDetents);
+    const lastSheetDetentIndex = resolvedSheetAllowedDetents.length - 1;
+
     React.useImperativeHandle(
       sheetRef,
       () => ({
         selectDetent: index => {
+          if (!enabled || !isNativePlatformSupported) {
+            console.warn(
+              "[RNScreens] 'selectDetent' requires native screens to be enabled. Ignoring the call.",
+            );
+            return;
+          }
+
           if (stackPresentation !== 'formSheet') {
             console.warn(
               "[RNScreens] 'selectDetent' works only for screens with 'formSheet' stack presentation. Ignoring the call.",
@@ -149,7 +160,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
 
           const detentIndex = resolveSheetSelectedDetentIndex(
             index,
-            resolveSheetAllowedDetents(sheetAllowedDetents).length - 1,
+            lastSheetDetentIndex,
           );
           if (detentIndex === undefined) {
             return;
@@ -170,20 +181,18 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
           }
         },
       }),
-      [stackPresentation, sheetAllowedDetents],
+      [enabled, stackPresentation, lastSheetDetentIndex],
     );
 
     if (enabled && isNativePlatformSupported) {
-      const resolvedSheetAllowedDetents =
-        resolveSheetAllowedDetents(sheetAllowedDetents);
       const resolvedSheetLargestUndimmedDetent =
         resolveSheetLargestUndimmedDetent(
           sheetLargestUndimmedDetentIndex,
-          resolvedSheetAllowedDetents.length - 1,
+          lastSheetDetentIndex,
         );
       const resolvedSheetInitialDetentIndex = resolveSheetInitialDetentIndex(
         sheetInitialDetentIndex,
-        resolvedSheetAllowedDetents.length - 1,
+        lastSheetDetentIndex,
       );
 
       const AnimatedScreen = shouldUseModalScreenComponent(stackPresentation)

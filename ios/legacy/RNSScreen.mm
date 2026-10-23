@@ -924,9 +924,6 @@ RNS_IGNORE_SUPER_CALL_END
     } else {
       RCTLogError(@"[RNScreens] Unexpected detent identifier %@", identifier);
     }
-  } else {
-    // There is only single option.
-    return 0;
   }
   return 0;
 }
@@ -940,10 +937,8 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif // iOS 16 check
   // We're using system defined detents.
-  if ([sheet.detents[index] isEqual:UISheetPresentationControllerDetent.mediumDetent]) {
-    return UISheetPresentationControllerDetentIdentifierMedium;
-  }
-  return UISheetPresentationControllerDetentIdentifierLarge;
+  return index == 0 ? UISheetPresentationControllerDetentIdentifierMedium
+                    : UISheetPresentationControllerDetentIdentifierLarge;
 }
 
 /**
