@@ -223,6 +223,7 @@ export { default as Test4723 } from './Test4723';
 export { default as Test4725 } from './Test4725';
 export { default as Test4757 } from './Test4757';
 export { default as Test4811 } from './Test4811';
+export { default as Test4863 } from './Test4863';
 export { default as Test4872 } from './Test4872';
 export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
 export { default as TestScreenAnimation } from './TestScreenAnimation';
