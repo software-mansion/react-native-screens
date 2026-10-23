@@ -1,14 +1,16 @@
 #pragma once
 
-#import "RNSStackScreenComponentView.h"
+#import <Foundation/Foundation.h>
+
+@class RNSStackScreenController;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackOperation : NSObject
 
-@property (nonatomic, strong, readonly) RNSStackScreenComponentView *stackScreen;
+@property (nonatomic, strong, readonly) RNSStackScreenController *screenController;
 
-- (instancetype)initWithScreen:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (instancetype)initWithScreenController:(nonnull RNSStackScreenController *)screenController;
 
 @end
 
