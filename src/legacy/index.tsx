@@ -6,6 +6,10 @@ export {
   enableFreeze,
   screensEnabled,
   freezeEnabled,
+  // For a platform this library ships no native code for, which registers the
+  // components itself. See core.ts for why this is not `enableScreens`.
+  provideNativeScreens,
+  nativeScreensAvailable,
 } from '../core';
 
 /**

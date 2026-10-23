@@ -197,6 +197,33 @@ enableScreens(false);
 
 You can also disable the usage of native screens per navigator with [`detachInactiveScreens`](https://reactnavigation.org/docs/stack-navigator#detachinactivescreens).
 
+### On a platform this library ships no native code for
+
+This library ships native code for iOS, Android and Windows, and those are the
+platforms where native screens are used. An out-of-tree React Native, a desktop
+fork for instance, can register `RNSScreen` and the rest itself under the same
+names: the components are ordinary Fabric components and nothing about them is
+specific to those three platforms.
+
+Such a host says so with `provideNativeScreens()`, and then turns screens on as
+usual:
+
+```js
+import { enableScreens, provideNativeScreens } from 'react-native-screens';
+
+provideNativeScreens(); // this platform registers the components itself
+enableScreens();
+```
+
+Two calls, because they answer different questions: whether the components exist
+here, and whether to use them. `provideNativeScreens()` is an assertion that they
+are registered, so a platform where they are not must not call it. On iOS, Android
+and Windows it is unnecessary and does nothing.
+
+If you are writing an application rather than a platform, you do not need
+`provideNativeScreens()`. `enableScreens()` is unchanged and still means what it
+always has.
+
 ### Using `createNativeStackNavigator` with React Navigation
 
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
