@@ -1,5 +1,10 @@
 #import "RNSStackHeaderIconMapper.h"
 
+static CGSize RNSImageSourceSizeFromDictionary(NSDictionary *source)
+{
+  return CGSizeMake([source[@"width"] doubleValue], [source[@"height"] doubleValue]);
+}
+
 @implementation RNSStackHeaderIconMapper
 
 + (nullable RNSStackHeaderIconData *)iconFromDictionary:(nullable id)dictionary
@@ -17,13 +22,17 @@
   if ([type isEqualToString:@"sfSymbol"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeSfSymbol
                                            resourceName:dict[@"name"]
-                                             jsonSource:nil];
+                                            imageSource:nil
+                                        imageSourceSize:CGSizeZero
+                                       imageSourceScale:0];
   }
 
   if ([type isEqualToString:@"xcasset"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeXcasset
                                            resourceName:dict[@"name"]
-                                             jsonSource:nil];
+                                            imageSource:nil
+                                        imageSourceSize:CGSizeZero
+                                       imageSourceScale:0];
   }
 
   if ([type isEqualToString:@"imageSource"]) {
@@ -33,7 +42,9 @@
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeImageSource
                                            resourceName:nil
-                                             jsonSource:source];
+                                            imageSource:source
+                                        imageSourceSize:RNSImageSourceSizeFromDictionary(source)
+                                       imageSourceScale:[source[@"scale"] doubleValue]];
   }
 
   if ([type isEqualToString:@"templateSource"]) {
@@ -43,7 +54,9 @@
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeTemplateSource
                                            resourceName:nil
-                                             jsonSource:source];
+                                            imageSource:source
+                                        imageSourceSize:RNSImageSourceSizeFromDictionary(source)
+                                       imageSourceScale:[source[@"scale"] doubleValue]];
   }
 
   return nil;
