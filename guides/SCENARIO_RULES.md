@@ -141,9 +141,6 @@ subsection, e.g. "Baseline step 2" or "iPhone Duo, Unfolding step 1" - a bare
 **Indentation Convention:** Expected-result checkboxes must be nested under
 their numbered step, and wrapped lines must stay inside their list item,
 following the [CommonMark list item rules](https://spec.commonmark.org/current/#list-items).
-The required indentation depends on the width of the list marker (e.g.
-`10.` needs more than `1.`), so do not count a fixed number of spaces - check
-that the Markdown renders as intended.
 
 ### How to write OS and device differences
 
