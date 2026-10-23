@@ -132,7 +132,7 @@ typedef NS_ENUM(NSInteger, RNSTabsNavigationStateRejectionReason) {
  *
  * Multiple observers may register against a single container via
  * `RNSTabBarController addNavigationStateObserver:` / `removeNavigationStateObserver:`.
- * The host (`RNSTabsHostComponentView`) registers itself as an observer to relay events
+ * The host (the view that owns the tab bar controller) registers itself as an observer to relay events
  * to JS; downstream native libraries integrating directly against `RNSTabBarController`
  * may register additional observers.
  *
