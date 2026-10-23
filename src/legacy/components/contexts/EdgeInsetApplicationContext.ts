@@ -13,9 +13,13 @@ import { featureFlags } from '../../../flags';
  *   subtree: `true` means an ancestor header opted out, so the whole subtree should skip it.
  *   This context does NOT coordinate which header applies these insets — every header applies
  *   them on its own edges unless opted out.
+ * - `legacyTopInsetBehaviorDisabled`: the subtree is in an Android form sheet that isn't drawn under
+ *   the status bar, so its headers don't use `androidLegacyTopInsetBehavior`, which would apply the
+ *   top inset whatever an ancestor did.
  */
 export interface EdgeInsetApplicationState {
   topAlreadyApplied: boolean;
+  legacyTopInsetBehaviorDisabled: boolean;
   leftDisabled: boolean;
   rightDisabled: boolean;
   bottomDisabled: boolean;
@@ -23,6 +27,7 @@ export interface EdgeInsetApplicationState {
 
 const DEFAULT_STATE: EdgeInsetApplicationState = {
   topAlreadyApplied: false,
+  legacyTopInsetBehaviorDisabled: false,
   leftDisabled: false,
   rightDisabled: false,
   bottomDisabled: false,
@@ -38,11 +43,17 @@ export function useEdgeInsetApplication(
   disableRightInsetApplication: boolean,
   disableBottomInsetApplication: boolean,
 ) {
-  const { topAlreadyApplied, leftDisabled, rightDisabled, bottomDisabled } =
-    React.useContext(EdgeInsetApplicationContext);
+  const {
+    topAlreadyApplied,
+    legacyTopInsetBehaviorDisabled,
+    leftDisabled,
+    rightDisabled,
+    bottomDisabled,
+  } = React.useContext(EdgeInsetApplicationContext);
 
   const useLegacyBehavior =
-    featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false;
+    (featureFlags.experiment?.androidLegacyTopInsetBehavior ?? false) &&
+    !legacyTopInsetBehaviorDisabled;
 
   // We want to apply the top inset if:
   // - legacy mode (androidLegacyTopInsetBehavior)
@@ -62,12 +73,14 @@ export function useEdgeInsetApplication(
     () => ({
       // Once a header that may apply the top padding is found, mark it as consumed for the subtree.
       topAlreadyApplied: topAlreadyApplied || wantsToApplyTopInset,
+      legacyTopInsetBehaviorDisabled,
       leftDisabled: nextLeftDisabled,
       rightDisabled: nextRightDisabled,
       bottomDisabled: nextBottomDisabled,
     }),
     [
       topAlreadyApplied,
+      legacyTopInsetBehaviorDisabled,
       wantsToApplyTopInset,
       nextLeftDisabled,
       nextRightDisabled,
