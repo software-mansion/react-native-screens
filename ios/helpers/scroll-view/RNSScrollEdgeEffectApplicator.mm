@@ -20,6 +20,14 @@
 #endif
 }
 
++ (BOOL)hasOnlyAutomaticEffects:(nonnull id<RNSScrollEdgeEffectProviding>)provider
+{
+  return [provider bottomScrollEdgeEffect] == RNSScrollEdgeEffectAutomatic &&
+      [provider leftScrollEdgeEffect] == RNSScrollEdgeEffectAutomatic &&
+      [provider rightScrollEdgeEffect] == RNSScrollEdgeEffectAutomatic &&
+      [provider topScrollEdgeEffect] == RNSScrollEdgeEffectAutomatic;
+}
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 + (void)configureEffect:(UIScrollEdgeEffect *)edgeEffect
                withEnum:(RNSScrollEdgeEffect)effectEnum API_AVAILABLE(ios(26.0))
