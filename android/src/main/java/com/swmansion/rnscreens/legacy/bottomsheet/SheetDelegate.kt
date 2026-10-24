@@ -98,7 +98,12 @@ class SheetDelegate(
         InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
     }
 
+    /**
+     * Removes the insets subscription and restores background focus when the fragment is destroyed.
+     * Attachment can subscribe before resume, so destruction may need cleanup without a prior pause.
+     */
     private fun handleHostFragmentOnDestroy() {
+        InsetsObserverProxy.removeOnApplyWindowInsetsListener(this)
         restoreBackgroundFocus()
     }
 
@@ -338,7 +343,10 @@ class SheetDelegate(
         }
     }
 
-    // This is listener function, not the view's.
+    /**
+     * Updates the sheet's top inset and keyboard state from [InsetsObserverProxy] notifications.
+     * Returns [insets] unchanged; this listener does not apply or consume insets on [v].
+     */
     override fun onApplyWindowInsets(
         v: View,
         insets: WindowInsetsCompat,
@@ -372,9 +380,7 @@ class SheetDelegate(
             isKeyboardVisible = false
         }
 
-        // This listener runs at the decor-view level (via InsetsObserverProxy), so anything we
-        // return here propagates to the entire view hierarchy. We therefore return the insets
-        // unmodified and we should never consume insets globally.
+        // InsetsObserverProxy observes window insets without consuming them.
         return insets
     }
 
