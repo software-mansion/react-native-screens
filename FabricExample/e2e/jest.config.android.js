@@ -4,5 +4,8 @@ const baseConfig = require('./jest.config');
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
   ...baseConfig,
-  testPathIgnorePatterns: ['/node_modules/', '-ios\\.e2e\\.ts$'],
+  testPathIgnorePatterns: [
+    ...baseConfig.testPathIgnorePatterns,
+    '-ios\\.e2e\\.ts$',
+  ],
 };
