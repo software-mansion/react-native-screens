@@ -44,9 +44,15 @@ such as stack, tabs, split.
 
 - `yarn install` — installs JS dependencies. Triggers the `prepare` lifecycle
   hook, which builds the library to `./lib/` (see below).
-- `yarn submodules` — initializes and builds the `react-navigation` git
-  submodule. Only needed when working against that downstream library; not
-  required to build or type-check the screens library itself.
+- `yarn submodules` — initializes all git submodules: runs both scripts below.
+  Not required to build or type-check the screens library itself.
+- `yarn submodules:react-navigation` — initializes and builds the
+  `react-navigation` git submodule. Only needed when working against that
+  downstream library.
+- `yarn submodules:testing` — initializes the `react-native-screens-testing`
+  git submodule, which holds the Argent screenshot baselines
+  (`.argent/flows/__baselines__` is a symlink into it). Only needed to run
+  Argent flows.
 
 ### Build the library
 

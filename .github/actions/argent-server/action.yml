@@ -1,0 +1,38 @@
+name: Start Argent tool-server
+description: >-
+  Installs the Argent CLI and starts a tool-server for later steps and
+  ARGENT_SERVER_LOG for the caller to collect on failure.
+
+inputs:
+  port:
+    description: Port to serve the tool-server on.
+    required: false
+    default: '3001'
+  simulator-server-log:
+    description: >-
+      SIMSERVER_LOG level for the simulator-server backend the tool-server
+      spawns, e.g. `debug`. Left unset when empty.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # Install the pinned CLI globally first: `npx @swmansion/argent@<v> init`
+    # only pins the installer, which then installs the latest release globally.
+    - name: Install Argent
+      shell: bash
+      run: |
+        npm install --global @swmansion/argent@0.26.0
+        argent init --yes
+        argent --version
+
+    # The script exports ARGENT_SERVER_LOG and waits until the server serves.
+    - name: Start tool-server
+      shell: bash
+      env:
+        TOOL_SERVER_PORT: ${{ inputs.port }}
+        SIMULATOR_SERVER_LOG: ${{ inputs.simulator-server-log }}
+      run: |
+        "$GITHUB_WORKSPACE/scripts/e2e/start-argent-server.sh" \
+          "$TOOL_SERVER_PORT" "$SIMULATOR_SERVER_LOG"
