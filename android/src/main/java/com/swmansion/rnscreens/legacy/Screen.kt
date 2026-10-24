@@ -9,11 +9,14 @@ import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -27,6 +30,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.safearea.insetsWithAdditionalSafeArea
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
@@ -115,6 +119,14 @@ class Screen(
      * we delay the transition until both layout and insets have been applied.
      */
     var shouldTriggerPostponedTransitionAfterLayout = false
+
+    var additionalSafeAreaInsets: Insets = Insets.NONE
+        set(value) {
+            if (field != value) {
+                field = value
+                ViewCompat.requestApplyInsets(this)
+            }
+        }
 
     var footer: ScreenFooter? = null
         set(value) {
@@ -569,6 +581,17 @@ class Screen(
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
         updateShadowNodeScreenSize(width, height, top + translationY.toInt())
+    }
+
+    override fun dispatchApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        if (additionalSafeAreaInsets == Insets.NONE) {
+            return super.dispatchApplyWindowInsets(insets)
+        }
+
+        val result = super.dispatchApplyWindowInsets(insetsWithAdditionalSafeArea(this, insets, additionalSafeAreaInsets))
+        // Before API 30, a parent passes the insets returned by one child on to the next one,
+        // so the extra insets must not leak to the screen's siblings.
+        return if (result.isConsumed) result else insets
     }
 
     override fun onDetachedFromWindow() {

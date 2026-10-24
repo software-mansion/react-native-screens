@@ -1297,6 +1297,14 @@ RNS_IGNORE_SUPER_CALL_END
       setGestureResponseDistance:[RNSConvert
                                      gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
 
+  UIEdgeInsets newAdditionalSafeAreaInsets =
+      [RNSConvert UIEdgeInsetsFromAdditionalSafeAreaInsetsCppStruct:newScreenProps.additionalSafeAreaInsets];
+  if (!UIEdgeInsetsEqualToEdgeInsets(
+          newAdditionalSafeAreaInsets,
+          [RNSConvert UIEdgeInsetsFromAdditionalSafeAreaInsetsCppStruct:oldScreenProps.additionalSafeAreaInsets])) {
+    _controller.additionalSafeAreaInsets = newAdditionalSafeAreaInsets;
+  }
+
   [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
 
   [self setActivityStateOrNil:[NSNumber numberWithFloat:newScreenProps.activityState]];

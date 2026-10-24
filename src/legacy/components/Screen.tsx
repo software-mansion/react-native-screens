@@ -155,6 +155,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
         isNativeStack,
         fullScreenSwipeEnabled,
         gestureResponseDistance,
+        additionalSafeAreaInsets,
         scrollEdgeEffects,
         onGestureCancel,
         style,
@@ -252,6 +253,12 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
               end: gestureResponseDistance?.end ?? -1,
               top: gestureResponseDistance?.top ?? -1,
               bottom: gestureResponseDistance?.bottom ?? -1,
+            }}
+            additionalSafeAreaInsets={{
+              top: additionalSafeAreaInsets?.top ?? 0,
+              right: additionalSafeAreaInsets?.right ?? 0,
+              bottom: additionalSafeAreaInsets?.bottom ?? 0,
+              left: additionalSafeAreaInsets?.left ?? 0,
             }}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208

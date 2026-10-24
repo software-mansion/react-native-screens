@@ -16,6 +16,13 @@ type OnDismissEventPayload = Readonly<{
 
 type ActivityMode = 'detached' | 'attached';
 
+type AdditionalSafeAreaInsets = Readonly<{
+  top: CT.Float;
+  right: CT.Float;
+  bottom: CT.Float;
+  left: CT.Float;
+}>;
+
 export interface NativeProps extends ViewProps {
   // Control
 
@@ -39,6 +46,7 @@ export interface NativeProps extends ViewProps {
   // Configuration
 
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
+  additionalSafeAreaInsets?: AdditionalSafeAreaInsets | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {

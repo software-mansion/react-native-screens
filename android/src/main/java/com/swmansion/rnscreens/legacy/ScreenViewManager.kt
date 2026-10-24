@@ -1,10 +1,12 @@
 package com.swmansion.rnscreens.legacy
 
 import android.view.View
+import androidx.core.graphics.Insets
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
@@ -282,6 +284,19 @@ open class ScreenViewManager :
         view: Screen?,
         value: ReadableMap?,
     ) = Unit
+
+    override fun setAdditionalSafeAreaInsets(
+        view: Screen?,
+        value: ReadableMap?,
+    ) {
+        view?.additionalSafeAreaInsets =
+            Insets.of(
+                PixelUtil.toPixelFromDIP(value?.getDouble("left") ?: 0.0).toInt(),
+                PixelUtil.toPixelFromDIP(value?.getDouble("top") ?: 0.0).toInt(),
+                PixelUtil.toPixelFromDIP(value?.getDouble("right") ?: 0.0).toInt(),
+                PixelUtil.toPixelFromDIP(value?.getDouble("bottom") ?: 0.0).toInt(),
+            )
+    }
 
     override fun setHomeIndicatorHidden(
         view: Screen?,

@@ -220,6 +220,15 @@
   };
 }
 
++ (UIEdgeInsets)UIEdgeInsetsFromAdditionalSafeAreaInsetsCppStruct:
+    (const react::RNSScreenAdditionalSafeAreaInsetsStruct &)additionalSafeAreaInsets
+{
+  return UIEdgeInsetsMake(additionalSafeAreaInsets.top,
+                          additionalSafeAreaInsets.left,
+                          additionalSafeAreaInsets.bottom,
+                          additionalSafeAreaInsets.right);
+}
+
 #if !TARGET_OS_VISION
 + (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
     (react::RNSSearchBarAutoCapitalize)autoCapitalize

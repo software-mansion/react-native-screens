@@ -148,6 +148,15 @@ namespace react = facebook::react;
     _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
   }
 
+  UIEdgeInsets newAdditionalSafeAreaInsets =
+      rnscreens::conversion::UIEdgeInsetsFromReactRNSStackScreenAdditionalSafeAreaInsets(
+          newComponentProps.additionalSafeAreaInsets);
+  if (!UIEdgeInsetsEqualToEdgeInsets(newAdditionalSafeAreaInsets,
+                                     rnscreens::conversion::UIEdgeInsetsFromReactRNSStackScreenAdditionalSafeAreaInsets(
+                                         oldComponentProps.additionalSafeAreaInsets))) {
+    _controller.additionalSafeAreaInsets = newAdditionalSafeAreaInsets;
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 

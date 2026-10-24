@@ -42,6 +42,20 @@ The `ScreenStackItem` component is a convenience wrapper around `Screen` that's 
 
 Below is the list of additional properties that can be used for `ScreenStackItem` component:
 
+### `additionalSafeAreaInsets`
+
+Insets, in points, added to the safe area of the screen's view controller, on top of the insets coming from the system and the screen's containers. Accepts an object with optional `top`, `right`, `bottom` and `left` values. Edges that are not set default to `0`.
+
+Use it to keep content clear of UI drawn over the screen, e.g. a custom tab bar floating over its bottom edge. Scroll views with `contentInsetAdjustmentBehavior="automatic"`, `SafeAreaView` and other safe-area-aware views inside the screen take these insets into account, the same way they do for a native `UITabBar`. On iOS the prop maps to [`UIViewController.additionalSafeAreaInsets`](https://developer.apple.com/documentation/uikit/uiviewcontroller/additionalsafeareainsets). On Android the screen adds the insets to the window insets it dispatches to its children: the top edge to the status bars insets and the other edges to the navigation bars insets, so views reading the system bars insets, like `SafeAreaView`, see them. React Native's `ScrollView` has no automatic content insets on Android, so wrap its content in a `SafeAreaView` there.
+
+The prop is also accepted by `Screen` rendered in a `ScreenContainer`, which is how JS tab navigators render their screens, and by the experimental Stack v5 `StackScreen`, with the same behavior.
+
+```js
+<Screen additionalSafeAreaInsets={{ bottom: floatingTabBarHeight }}>
+  {tab}
+</Screen>
+```
+
 ### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.

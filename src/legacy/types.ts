@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import type {
+  AdditionalSafeAreaInsets,
   BlurEffect,
   Direction,
   PlatformIconIOS,
@@ -99,6 +100,8 @@ export type GestureResponseDistanceType = {
   bottom?: number | undefined;
 };
 
+export type AdditionalSafeAreaInsetsType = AdditionalSafeAreaInsets;
+
 export type SearchBarPlacement =
   | 'automatic'
   | 'inline' // deprecated starting from iOS 26
@@ -129,6 +132,23 @@ export interface ScreenProps extends ViewProps {
     | 2
     | Animated.AnimatedInterpolation<number>
     | undefined;
+  /**
+   * Insets, in points, added to the safe area of the screen's view controller,
+   * on top of the insets coming from the system and its containers.
+   * Edges that are not set default to `0`.
+   *
+   * Use it to keep content clear of UI drawn over the screen, e.g. a custom tab bar
+   * floating over its bottom edge. Scroll views with `contentInsetAdjustmentBehavior="automatic"`,
+   * `SafeAreaView` and other safe-area-aware views inside the screen take these insets into account,
+   * the same way they do for a native `UITabBar` on iOS.
+   *
+   * On iOS, maps to `UIViewController.additionalSafeAreaInsets`.
+   * On Android, the screen adds these insets to the window insets it dispatches to its children,
+   * which the library's `SafeAreaView` reads.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiviewcontroller/additionalsafeareainsets|additionalSafeAreaInsets}
+   */
+  additionalSafeAreaInsets?: AdditionalSafeAreaInsetsType | undefined;
   /**
    * Boolean indicating that the screen should be frozen with `react-freeze`.
    */
