@@ -11,10 +11,15 @@ export interface ContainedModalProps {
   children?: ViewProps['children'] | undefined;
 
   /**
-   * Determines whether the contained modal is currently visible.
+   * Requests the modal to be presented (`true`) or dismissed (`false`).
    *
    * @remarks
-   * `false` -> `true` presents the modal; `true` -> `false` dismisses it.
+   * `true` expresses intent, not a guarantee of visibility: the presentation
+   * is dropped when the targeted provider is already presenting another modal
+   * or UIKit rejects it, and `onPresentationRejected` fires instead. While
+   * the modal is suspended by navigation above its provider (e.g. a stack
+   * screen pushed over it) `isOpen` stays `true` although nothing is on
+   * screen; the presentation is restored when the covering content goes away.
    *
    * @platform ios
    * @since 5.0
