@@ -124,7 +124,7 @@ namespace react = facebook::react;
 // The attach point is observed, not documented, UIKit behavior, and the
 // container's bounds are the modal's touch-blocking area - an escaped
 // container means dead touch zones, not just a misplaced view. Detection
-// only: warn if an iOS release changes the contract.
+// only, but loud: this is never a valid state.
 - (void)validateContainmentIntegrity
 {
   if (_controller == nil || _controller.presentingViewController == nil || _controller.viewIfLoaded.window == nil) {
@@ -138,7 +138,7 @@ namespace react = facebook::react;
   }
 
   if (containerView.superview != providerView || !CGRectEqualToRect(containerView.frame, providerView.bounds)) {
-    RCTLogWarn(
+    RCTLogError(
         @"[RNScreens] ContainedModal presentation container escaped its provider (container: %@ in %@, provider bounds: %@). UIKit's context attach-point contract may have changed on this OS version.",
         NSStringFromCGRect(containerView.frame),
         NSStringFromClass([containerView.superview class]),
