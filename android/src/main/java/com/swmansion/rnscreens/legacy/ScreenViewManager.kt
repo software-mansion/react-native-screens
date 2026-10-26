@@ -64,6 +64,7 @@ open class ScreenViewManager :
         parent: Screen,
         index: Int,
     ) {
+        parent.startRemovalTransitionIfBeingRemoved()
         if (parent.getChildAt(index) is ScreenFooter) {
             parent.footer = null
         }
@@ -74,6 +75,7 @@ open class ScreenViewManager :
         parent: Screen,
         view: View,
     ) {
+        parent.startRemovalTransitionIfBeingRemoved()
         super.removeView(parent, view)
         if (view is ScreenFooter) {
             parent.footer = null
