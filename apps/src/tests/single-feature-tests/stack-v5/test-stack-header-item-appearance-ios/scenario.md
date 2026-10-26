@@ -120,13 +120,17 @@ whole configuration as applied at attach time (no runtime changes involved).
     
     - [ ] Disable "Tint items (red)" — the bubble returns to the default tint
 
-12. Press and hold the back button
+12. Tap "Push details screen". Scroll down
+
+    - [ ] The back button text is deep pink.
+
+13. Press and hold the back button
 
     - [ ] During the initial press the title shows dark cyan
     
     - [ ] When released, after dismissing the menu, the title returns to deep pink
 
-13. Toggle "Style back button (deep pink)" off, then pop and re-push the
+14. Toggle "Style back button (deep pink)" off, then pop and re-push the
     details screen
 
     - [ ] The back button title follows the buttons style again: green 22pt
