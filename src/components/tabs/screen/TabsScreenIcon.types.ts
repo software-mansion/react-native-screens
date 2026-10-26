@@ -44,6 +44,8 @@ type WithImageRenderingMode<Icon> = Icon & {
    * @summary How the tab bar renders this image. See
    * {@link TabsScreenIconImageRenderingModeIOS}.
    *
+   * Defaults to `default`, the system behavior.
+   *
    * `icon` and `selectedIcon` may use different values.
    */
   renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
