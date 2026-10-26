@@ -17,6 +17,8 @@ type OnDismissEventPayload = Readonly<{
 
 type ActivityMode = 'detached' | 'attached';
 
+type StackScreenReplaceAnimation = 'push' | 'pop';
+
 type StackScreenAnimationBezier = [number, number, number, number];
 
 type StackScreenAnimationEasingName =
@@ -102,6 +104,7 @@ export interface NativeProps extends ViewProps {
 
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
   animation?: UnsafeMixed<StackScreenAnimation> | undefined;
+  replaceAnimation?: CT.WithDefault<StackScreenReplaceAnimation, 'pop'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {

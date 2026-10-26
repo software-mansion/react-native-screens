@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.core.containers.stack.animation
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.ScreenTransition
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
 import com.swmansion.rnscreens.core.containers.stack.animation.presets.PresetDefinition
 import com.swmansion.rnscreens.core.containers.stack.animation.presets.presetDefinition
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
@@ -40,9 +41,12 @@ private fun timelineOf(context: StackTransitionContext): TransitionTimeline =
         StackTransitionKind.PUSH -> definitionOf(context.incoming).push
         // The outgoing screen's config governs a pop.
         StackTransitionKind.POP -> definitionOf(context.outgoing).pop
-        // A replace looks like a pop of the outgoing screen until the `replaceAnimation` PR
-        // lets the incoming screen choose a push look instead.
-        StackTransitionKind.REPLACE -> definitionOf(context.outgoing).pop
+        // The incoming screen chooses; the outgoing screen's z-order follows the chosen timeline.
+        StackTransitionKind.REPLACE ->
+            when (context.incoming.item.replaceAnimation) {
+                StackReplaceAnimation.PUSH -> definitionOf(context.incoming).push
+                StackReplaceAnimation.POP -> definitionOf(context.outgoing).pop
+            }
     }
 
 private fun definitionOf(fragment: StackScreenFragment): PresetDefinition =

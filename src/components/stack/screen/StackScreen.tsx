@@ -23,6 +23,7 @@ function StackScreen({
   // Configuration
   preventNativeDismiss,
   animation,
+  replaceAnimation,
 }: StackScreenProps) {
   const onDismissWrapper = React.useCallback(
     (event: OnDismissEvent) => {
@@ -56,7 +57,8 @@ function StackScreen({
       onNativeDismissPrevented={onNativeDismissPrevented}
       // Configuration
       preventNativeDismiss={preventNativeDismiss}
-      animation={animation}>
+      animation={animation}
+      replaceAnimation={replaceAnimation}>
       {children}
     </StackScreenNativeComponent>
   );
