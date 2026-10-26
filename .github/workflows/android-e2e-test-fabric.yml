@@ -137,7 +137,9 @@ jobs:
           disk-size: '10G'
           disable-animations: false
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # No snapshot on shutdown: on a cache hit nothing reads it, and on a miss it
+          # would replace the clean snapshot from the step above in the saved cache.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           avd-name: e2e_emulator
           arch: x86_64
           script: yarn test-e2e-android
