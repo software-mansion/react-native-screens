@@ -113,7 +113,6 @@ const toolbarButtonByText = (text: MenuText): Detox.NativeMatcher =>
 
 describeIfAndroid('Stack Toolbar Menu Title (Android)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-menu-title-android',

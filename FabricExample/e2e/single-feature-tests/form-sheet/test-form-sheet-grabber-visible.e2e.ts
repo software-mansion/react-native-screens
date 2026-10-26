@@ -57,7 +57,6 @@ async function dismissBySwipe(): Promise<void> {
 
 describe('Formsheet: grabber visibility', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'FormSheet',
       'test-form-sheet-grabber-visible',

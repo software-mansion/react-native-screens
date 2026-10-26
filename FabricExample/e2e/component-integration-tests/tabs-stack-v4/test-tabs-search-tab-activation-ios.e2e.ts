@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import type { IosElementAttributes } from 'detox/detox';
 import { selectComponentIntegrationTestsScreen } from '@e2e/app/test-screen-navigation';
 import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
@@ -36,7 +36,6 @@ async function tapCollapsedTabButton(label: string) {
 
 describeIfUISearchTab('Stack v4 & Tabs: search tab activation', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectComponentIntegrationTestsScreen(
       'Stack V4 & Native Tabs Integration Tests',
       'test-tabs-search-tab-activation-ios',

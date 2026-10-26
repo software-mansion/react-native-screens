@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { tapWithinFrame } from '@e2e/framework/gestures';
@@ -57,7 +57,6 @@ const shouldMoveTabBarItemOnRuntimeSearchSwitch =
 
 describeIfIOS('Tab Bar System Item', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-system-item-ios');
   });
   describe('Static System Item tab', () => {

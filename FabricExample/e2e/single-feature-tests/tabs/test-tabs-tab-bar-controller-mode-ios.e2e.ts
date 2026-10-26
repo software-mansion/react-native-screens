@@ -29,7 +29,6 @@ const setTabBarControllerMode = (mode: TabBarControllerMode) =>
 
 describeIfIPad('@ipad Tabs: tabBarControllerMode (iPad)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-tab-bar-controller-mode-ios',

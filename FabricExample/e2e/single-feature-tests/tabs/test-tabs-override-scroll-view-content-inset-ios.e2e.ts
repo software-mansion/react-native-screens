@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { forceTapByLabelIOS } from '@e2e/framework/gestures';
@@ -58,7 +58,6 @@ async function scrollToMaxTop(scrollViewId: string) {
 
 describeIfIOS('Override Scroll View Content Inset (iOS)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-override-scroll-view-content-inset-ios',

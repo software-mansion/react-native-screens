@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { describeIfIOS } from '@e2e/framework/platform';
 
@@ -28,7 +28,6 @@ describeIfIOS('Tabs: navigation state on search tab interactions', () => {
   let provenance = 0;
 
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-navigation-state-search-tab',

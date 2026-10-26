@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 
 async function checkScreenVisibility(visible: boolean[]) {
@@ -18,10 +18,6 @@ async function checkScreenVisibility(visible: boolean[]) {
 }
 
 describe('Test658', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test658 should exist', async () => {
     await selectIssueTestScreen('Test658');
   });

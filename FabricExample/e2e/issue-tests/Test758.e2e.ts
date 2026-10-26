@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { tapBarBackButton } from '@e2e/framework/back-button';
 import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
@@ -14,10 +14,6 @@ function getSearchBarCloseButton() {
 
 // PR related to iOS search bar
 describeIfIOS('Test758', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test758 should exist', async () => {
     await selectIssueTestScreen('Test758');
   });

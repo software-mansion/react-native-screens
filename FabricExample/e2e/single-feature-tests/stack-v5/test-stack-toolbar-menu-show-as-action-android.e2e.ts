@@ -148,7 +148,6 @@ async function expectNoActionItems() {
 
 describeIfAndroid('Stack Toolbar Menu Show As Action', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-menu-show-as-action-android',

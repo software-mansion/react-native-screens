@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import type { AndroidElementAttributes } from 'detox/detox';
 import {
   selectPickerOption,
@@ -295,7 +295,6 @@ async function tapMenuItem(path: readonly MenuText[], item: MenuText) {
 
 describeIfAndroid('Stack Toolbar Nested Menu', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-nested-menu-android',
