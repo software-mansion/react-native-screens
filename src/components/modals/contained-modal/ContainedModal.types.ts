@@ -27,20 +27,19 @@ export interface ContainedModalProps {
   isOpen: boolean;
 
   /**
-   * Selects which {@link ContainedModalProvider} this modal is presented in.
+   * The `containerId` of the {@link ContainedModalProvider} this modal is
+   * presented in.
    *
    * @remarks
-   * By default the modal is presented in the nearest `ContainedModalProvider`
-   * above it in the React tree. Set this to the `containerId` of an outer
-   * provider (given to it explicitly via its `containerId` prop) to present
-   * the modal within that provider's bounds instead. The targeted provider
-   * must be an ancestor of the modal. An empty string behaves like an omitted
-   * prop.
+   * The targeted provider must be an ancestor of the modal in the React tree;
+   * the modal presents within that provider's bounds. Rendering a modal with
+   * no matching ancestor provider is a programming error (asserts in debug,
+   * never presents in release). Must not be empty.
    *
    * @platform ios
    * @since 5.0
    */
-  targetContainerId?: string | undefined;
+  targetContainerId: string;
 
   /**
    * Called when `isOpen` flipped to `true` but the presentation was dropped:
@@ -69,19 +68,16 @@ export interface ContainedModalProviderProps {
   children?: ViewProps['children'] | undefined;
 
   /**
-   * Identifies this provider for a modal's `targetContainerId`.
+   * Identifies this provider; a modal targets it through `targetContainerId`.
    *
    * @remarks
-   * Defaults to an auto-generated id, which keeps nearest-provider matching
-   * working without any configuration. Set it explicitly only when a modal
-   * nested under an inner provider must target this (outer) provider. Must be
-   * unique among providers on the modal's ancestor chain; an empty string
-   * behaves like an omitted prop.
+   * Must be unique among the providers on a modal's ancestor chain (two
+   * providers in unrelated subtrees may share an id). Must not be empty.
    *
    * @platform ios
    * @since 5.0
    */
-  containerId?: string | undefined;
+  containerId: string;
 
   /**
    * Style applied to the provider's host view.

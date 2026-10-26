@@ -1,14 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import ContainedModalHostNativeComponent from '../../../fabric/modals/contained-modal/ContainedModalHostNativeComponent';
-import { ContainedModalContext } from './ContainedModalContext';
 import type { ContainedModalProps } from './ContainedModal.types';
 
 /**
- * A modal presented over the content of its `ContainedModalProvider`.
+ * A modal presented over the content of a `ContainedModalProvider`.
  *
  * @remarks
- * The modal fills the targeted provider's bounds. The provider's children
+ * The modal is paired with the provider whose `containerId` equals its
+ * `targetContainerId`; that provider must be an ancestor of the modal in the
+ * React tree. The modal fills the targeted provider's bounds. The provider's children
  * stay in place underneath and keep updating; touches inside the provider are
  * captured by the open modal, content outside stays interactive. The modal's
  * children stay mounted regardless of `isOpen`, so their React state survives
@@ -33,18 +34,11 @@ import type { ContainedModalProps } from './ContainedModal.types';
 export function ContainedModalOverContent(props: ContainedModalProps) {
   const { children, isOpen, targetContainerId, onPresentationRejected } = props;
 
-  const context = useContext(ContainedModalContext);
-  // An empty string is never a valid containerId; native maps it to nil and
-  // the modal would assert (debug) or silently never present (release), so it
-  // falls back to the nearest provider exactly like an omitted prop.
-  const resolvedTargetContainerId =
-    targetContainerId !== undefined && targetContainerId !== ''
-      ? targetContainerId
-      : context?.containerId;
-
-  if (resolvedTargetContainerId === undefined) {
+  // Native maps an empty string to nil, and the modal would assert (debug) or
+  // silently never present (release). Fail loudly instead.
+  if (targetContainerId === '') {
     throw new Error(
-      '[RNScreens] ContainedModalOverContent must be rendered inside a ContainedModalProvider, or be given an explicit targetContainerId.',
+      '[RNScreens] ContainedModalOverContent requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider.',
     );
   }
 
@@ -52,7 +46,7 @@ export function ContainedModalOverContent(props: ContainedModalProps) {
     <ContainedModalHostNativeComponent
       style={styles.host}
       isOpen={isOpen}
-      targetContainerId={resolvedTargetContainerId}
+      targetContainerId={targetContainerId}
       onPresentationRejected={onPresentationRejected}>
       {children}
     </ContainedModalHostNativeComponent>
