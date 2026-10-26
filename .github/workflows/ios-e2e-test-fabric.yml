@@ -32,7 +32,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
-    runs-on: xcode-27-xlarge
+    runs-on: xcode-27
     timeout-minutes: 90
     # Skip draft PRs and, in a PR stack, every PR but the lowest unmerged one.
     # Pushes and manual runs carry no `pull_request`, so they always run. The
@@ -81,18 +81,28 @@ jobs:
   test:
     # iPhone and iPad suites run in parallel on separate machines, both on the
     # app built once above. fail-fast off, so one failing does not cancel the other.
+    # Standard (free) runners are slower than xlarge, so the iPhone suite is
+    # split into jest shards.
     needs: build
-    runs-on: xcode-27-xlarge
+    runs-on: xcode-27
     timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
         include:
-          - device: iphone
+          - name: iphone-1
             script: test-e2e-ios
-          - device: ipad
+            args: --shard=1/3
+          - name: iphone-2
+            script: test-e2e-ios
+            args: --shard=2/3
+          - name: iphone-3
+            script: test-e2e-ios
+            args: --shard=3/3
+          - name: ipad
             script: test-e2e-ios-ipad
-    name: test (${{ matrix.device }})
+            args: ''
+    name: test (${{ matrix.name }})
     env:
       WORKING_DIRECTORY: FabricExample
       # Same Xcode as the build, so the simulator runtime matches the SDK.
@@ -126,9 +136,9 @@ jobs:
           tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$WORKING_DIRECTORY/ios/build/Build/Products"
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn ${{ matrix.script }}
+        run: yarn ${{ matrix.script }} ${{ matrix.args }}
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
-          name: ios-fail-screen-shots-${{ matrix.device }}
+          name: ios-fail-screen-shots-${{ matrix.name }}
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
