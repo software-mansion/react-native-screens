@@ -106,6 +106,14 @@
   _state = RNSContainedModalPresentationStatePresented;
 }
 
+// Only the provider's `isOpen` drives dismissal. This presentation style has no
+// user-driven dismissal (no gesture, no sheet, no system escape), and a parent
+// modal going away suspends the presentation instead of dismissing it: the
+// content controller gets no appearance callbacks and UIKit restores it when
+// the parent reappears. The one native path, a third party calling
+// `dismissViewControllerAnimated:` on the context chain, is not observed; it
+// leaves `presentingViewController` nil, which the check below folds back into
+// Dismissed on the next update.
 - (void)dismissIfNeededWithProvider:(id<RNSContainedModalPresentationProvider>)provider
                          controller:(RNSContainedModalContentController *)controller
 {
