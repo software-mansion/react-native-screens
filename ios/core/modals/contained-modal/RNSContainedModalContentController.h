@@ -21,8 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)modalControllerViewDidDisappear:(RNSContainedModalContentController *)controller;
 
 /**
- * The request was dropped (not queued): the target provider is already
- * presenting another modal, or an ancestor of it is being dismissed.
+ * The request was dropped (not queued): no provider resolves for the modal,
+ * the target provider is already presenting another modal, or an ancestor of
+ * it is being dismissed. Only a new `isOpen` value retries.
  */
 - (void)modalControllerDidRejectPresentation:(RNSContainedModalContentController *)controller;
 @end

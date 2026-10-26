@@ -26,44 +26,57 @@
   }
 }
 
+// Every early return below is one of two kinds. A DEFERRAL keeps the request
+// pending: `isOpen` still holds and a later update (window attach, dismiss
+// completion, appearance) re-runs this method. A REJECTION drops the request
+// for good and tells the delegate, because nothing would ever retry it.
 - (void)presentIfNeededWithProvider:(id<RNSContainedModalPresentationProvider>)provider
                          controller:(RNSContainedModalContentController *)controller
 {
+  // Deferral: already presented, or a dismissal is in flight and its
+  // completion re-runs the update.
   if (_state != RNSContainedModalPresentationStateDismissed) {
     return;
   }
 
-  // UIKit silently ignores a presentation request from an off-window view
-  // (the completion never fires); stay dismissed - the host re-flushes on
-  // window attach.
+  // Deferral: UIKit silently ignores a presentation request from an off-window
+  // view (the completion never fires); the host re-flushes on window attach.
   if (provider.hostWindow == nil) {
     return;
   }
 
+  // Rejection: no provider resolves for this modal (missing or mismatched
+  // target), and nothing retries a request until the next prop change.
   UIViewController *presentationSourceViewController = provider.presentationSourceViewController;
   if (presentationSourceViewController == nil) {
+    [controller.delegate modalControllerDidRejectPresentation:controller];
     return;
   }
 
   UIViewController *presentedViewController = presentationSourceViewController.presentedViewController;
 
-  // Our own request already landed (or was accepted this runloop); nothing to
-  // do - `handleDidPresent` syncs the state when the view appears.
+  // Deferral: our own request already landed (or was accepted this runloop);
+  // `handleDidPresent` syncs the state when the view appears.
   if (presentedViewController == controller) {
     return;
   }
 
-  // One open modal per provider. UIKit silently ignores a presentation
-  // request on an already-presenting controller (the completion never
-  // fires), so reject deterministically instead; the request is not queued.
-  if (presentedViewController != nil) {
+  // Rejection: one open modal per provider. `presentedViewController` also
+  // reports a presentation made by an ancestor (a sheet or a modal above the
+  // provider), which does not occupy this context, so only a presentation the
+  // source itself made counts as busy. UIKit silently ignores a presentation
+  // request on an already-presenting controller (the completion never fires),
+  // so reject deterministically instead; the request is not queued.
+  if (presentedViewController != nil &&
+      presentedViewController.presentingViewController == presentationSourceViewController) {
     [controller.delegate modalControllerDidRejectPresentation:controller];
     return;
   }
 
-  // A request made while an ancestor is being dismissed is unreliable: UIKit
-  // may ignore it, or perform it after the transition without ever calling
-  // its completion. Reject deterministically instead, like the busy case.
+  // Rejection: a request made while an ancestor is being dismissed is
+  // unreliable. UIKit may ignore it, or perform it after the transition
+  // without ever calling its completion. Reject deterministically, like the
+  // busy case.
   UIViewController *topmostAncestor = presentationSourceViewController;
   while (topmostAncestor.parentViewController != nil) {
     topmostAncestor = topmostAncestor.parentViewController;
@@ -108,17 +121,29 @@
 
   _state = RNSContainedModalPresentationStateDismissing;
 
+  // The content controller owns this manager, so a strong capture of either
+  // would keep both alive until the completion runs. Weak captures let an
+  // unmount mid-dismissal (host `invalidate`) release the whole chain; the
+  // completion then has nothing to update.
   __weak auto weakSelf = self;
+  __weak auto weakController = controller;
+  __weak auto weakProvider = provider;
   [presentingViewController dismissViewControllerAnimated:YES
                                                completion:^{
                                                  auto strongSelf = weakSelf;
-                                                 if (!strongSelf) {
+                                                 auto strongController = weakController;
+                                                 if (strongSelf == nil || strongController == nil) {
                                                    return;
                                                  }
 
                                                  strongSelf->_state = RNSContainedModalPresentationStateDismissed;
-                                                 [strongSelf updatePresentationIfNeededWithProvider:provider
-                                                                                         controller:controller];
+
+                                                 auto strongProvider = weakProvider;
+                                                 if (strongProvider == nil) {
+                                                   return;
+                                                 }
+                                                 [strongSelf updatePresentationIfNeededWithProvider:strongProvider
+                                                                                         controller:strongController];
                                                }];
 }
 
