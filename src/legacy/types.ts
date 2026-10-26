@@ -40,6 +40,14 @@ export type SheetCommands = {
 
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 
+export type HeaderMinimizationBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+export type HeaderRestorationBehavior = 'automatic' | 'atScrollEdge';
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -815,6 +823,44 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean | undefined;
+  /**
+   * Controls when the navigation bar minimizes in response to scrolling.
+   * The following values are currently supported (they correspond to [UIBarMinimizationBehavior](https://developer.apple.com/documentation/uikit/uibarminimizationbehavior?language=objc)):
+   *
+   * - `automatic` – the system determines the minimization behavior
+   * - `never` – the navigation bar does not minimize
+   * - `onScrollDown` – the navigation bar minimizes when the user scrolls down
+   * - `onScrollUp` – the navigation bar minimizes when the user scrolls up
+   *
+   * When the prop is not specified (`undefined`), the behavior depends on the header's `translucent` prop:
+   *
+   * - translucent header – `automatic`
+   * - opaque header – `never`. Minimization of an opaque header is not reliably supported
+   *   by the legacy stack (it breaks the content insets applied for an opaque header), so it is
+   *   disabled by default. Set the prop explicitly (e.g. to `automatic`) to opt in anyway.
+   *
+   * @default `undefined` (`automatic` for translucent header, `never` for opaque header)
+   *
+   * @platform ios
+   *
+   * @supported iOS 27 or higher
+   */
+  minimizationBehavior?: HeaderMinimizationBehavior | undefined;
+  /**
+   * Controls when a minimized navigation bar restores.
+   * It is honored only together with `minimizationBehavior: 'onScrollDown'`, otherwise the system falls back to `automatic`.
+   * The following values are currently supported (they correspond to [UIBarMinimizationRestorationBehavior](https://developer.apple.com/documentation/uikit/uibarminimizationrestorationbehavior?language=objc)):
+   *
+   * - `automatic` – the navigation bar restores when the user reverses scroll direction
+   * - `atScrollEdge` – the navigation bar restores only when the scroll view's content reaches the scroll edge
+   *
+   * @default `automatic`
+   *
+   * @platform ios
+   *
+   * @supported iOS 27 or higher
+   */
+  restorationBehavior?: HeaderRestorationBehavior | undefined;
   /**
    * Callback which is executed when screen header is attached
    */
