@@ -6,6 +6,7 @@ import PackageDescription
 let headerSearchPaths: [String] = [
     "ios",
     "ios/core/common",
+    "ios/core/modals/contained-modal",
     "ios/core/modals/form-sheet",
     "ios/core/utils",
     "ios/core/views/scroll-to-top-guard",
@@ -15,7 +16,6 @@ let headerSearchPaths: [String] = [
     "ios/legacy/events",
     "ios/legacy/integrations",
     "ios/legacy/utils",
-    "ios/modals/contained-modal",
     "ios/react",
     "ios/react/bridging",
     "ios/react/containers/split",
