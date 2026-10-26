@@ -3,17 +3,26 @@ on:
   pull_request:
     branches:
       - main
-    paths: &paths
+    # PRs run the suite only when the suite itself changes. Library changes
+    # are tested once they land on main (see `push`).
+    paths:
+      - '.github/workflows/android-e2e-test-fabric.yml'
+      - 'FabricExample/.detoxrc.js'
+      - 'FabricExample/e2e/**'
+      - 'scripts/e2e/**'
+  push:
+    branches:
+      - main
+    paths:
       - '.github/workflows/android-e2e-test-fabric.yml'
       - 'package.json'
       - 'android/**'
       - 'common/**'
-      - 'FabricExample/**'
+      - 'cpp/**'
       - 'src/**'
-  push:
-    branches:
-      - main
-    paths: *paths
+      - 'FabricExample/**'
+      - 'apps/**'
+      - 'scripts/e2e/**'
   workflow_dispatch:
 jobs:
   test:

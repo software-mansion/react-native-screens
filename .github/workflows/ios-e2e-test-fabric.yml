@@ -3,18 +3,27 @@ on:
   pull_request:
     branches:
       - main
-    paths: &paths
+    # PRs run the suite only when the suite itself changes. Library changes
+    # are tested once they land on main (see `push`).
+    paths:
+      - '.github/workflows/ios-e2e-test-fabric.yml'
+      - 'FabricExample/.detoxrc.js'
+      - 'FabricExample/e2e/**'
+      - 'scripts/e2e/**'
+  push:
+    branches:
+      - main
+    paths:
       - '.github/workflows/ios-e2e-test-fabric.yml'
       - 'RNScreens.podspec'
       - 'package.json'
       - 'ios/**'
       - 'common/**'
-      - 'FabricExample/**'
+      - 'cpp/**'
       - 'src/**'
-  push:
-    branches:
-      - main
-    paths: *paths
+      - 'FabricExample/**'
+      - 'apps/**'
+      - 'scripts/e2e/**'
   workflow_dispatch:
 concurrency:
   group: ios-e2e-fabric-${{ github.ref }}
