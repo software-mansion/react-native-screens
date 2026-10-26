@@ -102,7 +102,8 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3]
-    name: test (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+        shards: [3]
+    name: test (shard ${{ matrix.shard }}/${{ matrix.shards }})
     env:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
@@ -207,7 +208,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           avd-name: e2e_emulator
           arch: x86_64
-          script: yarn test-e2e-android --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+          script: yarn test-e2e-android --shard=${{ matrix.shard }}/${{ matrix.shards }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
