@@ -49,6 +49,17 @@
 }
 
 #if DEBUG
+// The owner's bounds come from Fabric's float layout metrics while UIKit
+// autoresizes the container in double precision, so after a rotation the two
+// can differ by a sub-pixel fraction. Compare on the pixel grid. (Core stays
+// React-free, hence no `react::floatEquality` here.)
+static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale)
+{
+  const CGFloat tolerance = 1.0 / MAX(screenScale, 1.0);
+  return fabs(lhs.origin.x - rhs.origin.x) < tolerance && fabs(lhs.origin.y - rhs.origin.y) < tolerance &&
+      fabs(lhs.size.width - rhs.size.width) < tolerance && fabs(lhs.size.height - rhs.size.height) < tolerance;
+}
+
 - (void)validateContainmentOfPresentedView:(UIView *)presentedView
 {
   if (presentedView == nil || presentedView.window == nil || self.window == nil) {
@@ -60,7 +71,8 @@
     return;
   }
 
-  if (containerView.superview != self || !CGRectEqualToRect(containerView.frame, self.bounds)) {
+  if (containerView.superview != self ||
+      !RNSRectsEqualWithinPixel(containerView.frame, self.bounds, self.window.screen.scale)) {
     RNSLogE(
         @"ContainedModal presentation container escaped its provider (container: %@ in %@, provider bounds: %@). UIKit's context attach-point contract may have changed on this OS version.",
         NSStringFromCGRect(containerView.frame),

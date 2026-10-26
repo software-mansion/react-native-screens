@@ -25,7 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  * controller to the closest parent view controller when it enters a window
  * and detaches it when it leaves. The views stay put either way: removing the
  * context view would tear UIKit's container (and a suspended presentation
- * with it) out of the hierarchy.
+ * with it) out of the hierarchy. The one party that does take the context
+ * view out is UIKit itself, for the lifetime of a replacing
+ * (`UIModalPresentationCurrentContext`) presentation, suspensions included;
+ * it puts the view back on dismissal, and nothing here may re-insert it
+ * earlier.
  */
 @interface RNSContainedModalProviderView : UIView
 
