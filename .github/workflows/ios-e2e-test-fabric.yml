@@ -89,20 +89,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        device: [iphone]
+        shard: [1, 2, 3]
+        shards: [3]
+        # Adds the script to the iPhone shards, and the iPad suite as one more,
+        # unsharded job.
         include:
-          - name: iphone-1
+          - device: iphone
             script: test-e2e-ios
-            args: --shard=1/3
-          - name: iphone-2
-            script: test-e2e-ios
-            args: --shard=2/3
-          - name: iphone-3
-            script: test-e2e-ios
-            args: --shard=3/3
-          - name: ipad
+          - device: ipad
             script: test-e2e-ios-ipad
-            args: ''
-    name: test (${{ matrix.name }})
+            shard: 1
+            shards: 1
+    name: test (${{ matrix.device }}, shard ${{ matrix.shard }}/${{ matrix.shards }})
     env:
       WORKING_DIRECTORY: FabricExample
       # Same Xcode as the build, so the simulator runtime matches the SDK.
@@ -136,9 +135,9 @@ jobs:
           tar -xzf "$RUNNER_TEMP/app/FabricExample-app.tar.gz" -C "$WORKING_DIRECTORY/ios/build/Build/Products"
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn ${{ matrix.script }} ${{ matrix.args }}
+        run: yarn ${{ matrix.script }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
-          name: ios-fail-screen-shots-${{ matrix.name }}
+          name: ios-fail-screen-shots-${{ matrix.device }}-${{ matrix.shard }}
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
