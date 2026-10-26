@@ -4,4 +4,4 @@ export type {
 } from './ContainedModal.types';
 
 export { ContainedModalProvider } from './ContainedModalProvider';
-export { ContainedModalOverContext } from './ContainedModalOverContext';
+export { ContainedModalOverContent } from './ContainedModalOverContent';

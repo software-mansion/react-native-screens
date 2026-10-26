@@ -12,7 +12,7 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * outer one by giving that provider an explicit `containerId` and setting the
  * modal's `targetContainerId` to the same value.
  *
- * Intended for region-scoped native modality - see `ContainedModalOverContext`
+ * Intended for region-scoped native modality - see `ContainedModalOverContent`
  * for when to prefer a plain absolutely-positioned `View` instead.
  *
  * @platform ios

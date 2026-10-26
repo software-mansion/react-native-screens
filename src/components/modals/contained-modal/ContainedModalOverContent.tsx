@@ -30,7 +30,7 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @since 5.0
  * @experimental
  */
-export function ContainedModalOverContext(props: ContainedModalProps) {
+export function ContainedModalOverContent(props: ContainedModalProps) {
   const { children, isOpen, targetContainerId, onPresentationRejected } = props;
 
   const context = useContext(ContainedModalContext);
@@ -44,7 +44,7 @@ export function ContainedModalOverContext(props: ContainedModalProps) {
 
   if (resolvedTargetContainerId === undefined) {
     throw new Error(
-      '[RNScreens] ContainedModalOverContext must be rendered inside a ContainedModalProvider, or be given an explicit targetContainerId.',
+      '[RNScreens] ContainedModalOverContent must be rendered inside a ContainedModalProvider, or be given an explicit targetContainerId.',
     );
   }
 
