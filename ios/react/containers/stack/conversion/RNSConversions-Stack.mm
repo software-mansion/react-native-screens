@@ -70,7 +70,6 @@ UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonD
   }
 }
 
-
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
 UIBarMinimizationBehavior UIBarMinimizationBehaviorFromReactRNSStackHeaderConfigIOSMinimizationBehavior(
@@ -101,7 +100,7 @@ UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationB
 }
 
 #endif // Check for iOS >= 27
-  
+
 RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
 {

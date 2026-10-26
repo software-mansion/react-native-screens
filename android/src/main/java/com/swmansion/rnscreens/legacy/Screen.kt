@@ -30,6 +30,7 @@ import com.swmansion.rnscreens.core.common.FragmentProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
+import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDetents
@@ -545,6 +546,16 @@ class Screen(
                     pxToDp(headerHeight.toFloat()).toDouble(),
                 ),
             )
+    }
+
+    internal fun selectSheetDetent(index: Int) {
+        val sheetDelegate = fragment?.asScreenStackFragment()?.sheetDelegate
+        if (!usesFormSheetPresentation() || sheetDelegate == null) {
+            RNSLog.w(TAG, "[RNScreens] selectDetent called on a screen that isn't presented as a form sheet. Command ignored.")
+            return
+        }
+
+        sheetDelegate.selectDetent(index)
     }
 
     internal fun onSheetDetentChanged(
