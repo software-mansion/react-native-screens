@@ -3,6 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions-SplitView.h"
+#import "RNSNavigationItemCustomizer.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
@@ -175,6 +176,15 @@ namespace react = facebook::react;
   // There won't be tens of instances of this component usually & it's easier for now.
   // We could consider enabling it someday though.
   return NO;
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [super mountChildComponentView:childComponentView index:index];
+
+  if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizerProtocol)]) {
+    [(id<RNSNavigationItemCustomizerProtocol>)childComponentView customizeNavigationItem:_controller.navigationItem];
+  }
 }
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
