@@ -8,7 +8,12 @@
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Incomplete: Covers grabber visibility in all steps and the lower detent on
+presentation, on iPhone and Android phone.
+
+Not automated: Android content position relative to the drag handle; on iOS,
+the grabber hiding in "Toggling from inside the sheet" step 2 (UIKit keeps
+`_UIGrabber` in the hierarchy at alpha 0, which Detox still reports visible).
 
 ## Prerequisites
 

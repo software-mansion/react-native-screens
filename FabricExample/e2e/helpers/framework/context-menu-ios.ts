@@ -1,8 +1,13 @@
 import { element, by, waitFor } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
-import { tapWithinFrame } from './gestures';
+import { longPressWithinFrame, tapWithinFrame } from './gestures';
 import { getFrame } from './matchers';
-import { headerTitle } from './header-items-ios';
+import {
+  headerItemMatcher,
+  headerTitle,
+  type HeaderItemOptions,
+} from './header-items-ios';
+import { isIOSVersionAtLeast } from './platform';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_CELL,
   CLASS_NAME_UI_CONTEXT_MENU_CELL_CONTENT_VIEW,
@@ -107,6 +112,57 @@ export async function openContextMenu(
     await anchor.longPress();
   } else {
     await anchor.tap();
+  }
+  await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
+}
+
+/**
+ * Opens the menu of the header item titled `title`. A long press is made by
+ * coordinates, and on iOS 27 a tap too — see `openHeaderViewMenu`.
+ */
+export async function openHeaderItemMenu(
+  title: string,
+  { control, ...options }: HeaderItemOptions & OpenContextMenuOptions = {},
+) {
+  await openHeaderViewMenu(
+    headerItemMatcher(title, { control }),
+    `header item "${title}"`,
+    options,
+  );
+}
+
+/**
+ * Opens the menu attached to the header view matched by `matcher` (e.g. the
+ * toolbar overflow button); `description` names it in the error if not found.
+ *
+ * A long press is always made by coordinates: Detox's element `longPress`
+ * starts as a tap, so it would also fire the item's `onPress`. A tap is made
+ * by coordinates on iOS 27 only, where the item cannot be gestured on as an
+ * element (see `header-items-ios.ts`).
+ */
+export async function openHeaderViewMenu(
+  matcher: NativeMatcher,
+  description: string,
+  {
+    gesture = 'tap',
+    timeout = CONTEXT_MENU_ANIMATION_TIMEOUT_MS,
+  }: OpenContextMenuOptions = {},
+) {
+  if (gesture === 'tap' && !isIOSVersionAtLeast('27.0')) {
+    await openContextMenu(element(matcher), { timeout });
+    return;
+  }
+
+  if (isIOSVersionAtLeast('27.0')) {
+    await waitFor(element(matcher)).toExist().withTimeout(timeout);
+  } else {
+    await waitFor(element(matcher)).toBeVisible().withTimeout(timeout);
+  }
+  const frame = await getFrame(matcher, description);
+  if (gesture === 'longPress') {
+    await longPressWithinFrame(frame);
+  } else {
+    await tapWithinFrame(frame);
   }
   await waitFor(contextMenu()).toBeVisible().withTimeout(timeout);
 }

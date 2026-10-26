@@ -4,9 +4,12 @@ import {
   chevronFor,
   dismissContextMenu,
   menuRow,
-  openContextMenu,
+  openHeaderItemMenu,
 } from '@e2e/framework/context-menu-ios';
-import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
+import {
+  expectHeaderItemShown,
+  headerTitle,
+} from '@e2e/framework/header-items-ios';
 import {
   CLASS_NAME_UI_CONTEXT_MENU_HEADER_VIEW,
   CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW,
@@ -22,8 +25,8 @@ import { IosElementAttributes } from 'detox/detox';
  * a row's chevron tells a collapsed submenu from an inlined one; and icon
  * frames tell a horizontal palette from a vertical list.
  */
-const optionsMenuButton = headerItem('Options');
-const paletteMenuButton = headerItem('Palette');
+const OPTIONS_MENU_TITLE = 'Options';
+const PALETTE_MENU_TITLE = 'Palette';
 
 /** The palette submenu title's chevron — its own class, not a menu row. */
 const paletteTitleChevron = element(
@@ -60,8 +63,8 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
 
   it('should display the header with Options and Palette trailing items', async () => {
     await expect(element(headerTitle('Menu Options'))).toExist();
-    await expect(optionsMenuButton).toBeVisible();
-    await expect(paletteMenuButton).toBeVisible();
+    await expectHeaderItemShown(OPTIONS_MENU_TITLE);
+    await expectHeaderItemShown(PALETTE_MENU_TITLE);
   });
 
   describe('Options menu: displayInline on nested submenus', () => {
@@ -75,7 +78,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('shows Copy, Paste, Share, Sort By, Delete at the top level', async () => {
-      await openContextMenu(optionsMenuButton);
+      await openHeaderItemMenu(OPTIONS_MENU_TITLE);
       await expect(element(by.text('Copy'))).toBeVisible();
       await expect(element(by.text('Paste'))).toBeVisible();
       await expect(element(by.text('Share'))).toBeVisible();
@@ -117,7 +120,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('still shows the same top-level items after inlining Rating', async () => {
-      await openContextMenu(optionsMenuButton);
+      await openHeaderItemMenu(OPTIONS_MENU_TITLE);
       await expect(element(by.text('Copy'))).toBeVisible();
       await expect(element(by.text('Paste'))).toBeVisible();
       await expect(element(by.text('Share'))).toBeVisible();
@@ -157,7 +160,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('inlines Name, Date, Size, Rating alongside Copy, Paste, Share, Delete at the top level', async () => {
-      await openContextMenu(optionsMenuButton);
+      await openHeaderItemMenu(OPTIONS_MENU_TITLE);
       await expect(element(by.text('Copy'))).toBeVisible();
       await expect(element(by.text('Paste'))).toBeVisible();
       await expect(element(by.text('Share'))).toBeVisible();
@@ -193,7 +196,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('fully flattens every item into a single top-level list when both displayInline flags are true', async () => {
-      await openContextMenu(optionsMenuButton);
+      await openHeaderItemMenu(OPTIONS_MENU_TITLE);
       await expect(element(by.text('Copy'))).toBeVisible();
       await expect(element(by.text('Paste'))).toBeVisible();
       await expect(element(by.text('Share'))).toBeVisible();
@@ -224,7 +227,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('shows Text Style and Reset Formatting at the top level', async () => {
-      await openContextMenu(paletteMenuButton);
+      await openHeaderItemMenu(PALETTE_MENU_TITLE);
       await expect(element(by.text('Text Style'))).toBeVisible();
       await expect(chevronFor('Text Style')).toBeVisible();
       await expect(element(by.text('Reset Formatting'))).toBeVisible();
@@ -256,7 +259,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('still shows Text Style as a collapsed submenu at the top level', async () => {
-      await openContextMenu(paletteMenuButton);
+      await openHeaderItemMenu(PALETTE_MENU_TITLE);
       await expect(element(by.text('Text Style'))).toBeVisible();
       await expect(chevronFor('Text Style')).toBeVisible();
       await expect(element(by.text('Reset Formatting'))).toBeVisible();
@@ -298,7 +301,7 @@ describeIfIOS('Stack Header Menu Options (iOS)', () => {
     });
 
     it('inlines Bold, Italic, Underline, Strikethrough alongside Reset Formatting at the top level', async () => {
-      await openContextMenu(paletteMenuButton);
+      await openHeaderItemMenu(PALETTE_MENU_TITLE);
       await expect(element(by.text('Bold'))).not.toBeVisible();
       await expect(element(by.text('Italic'))).not.toBeVisible();
       await expect(element(by.text('Underline'))).not.toBeVisible();

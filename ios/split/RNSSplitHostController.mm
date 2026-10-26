@@ -5,15 +5,14 @@
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
 #import "RNSSplitNavigationController.h"
-#import "RNSSplitNavigationControllerFrameOriginChangeDelegate.h"
 #import "RNSSplitScreenController.h"
+#import "RNSViewFrameChangeDelegate.h"
 
 [[maybe_unused]] static const NSInteger minNumberOfColumns = 2;
 [[maybe_unused]] static const NSInteger maxNumberOfColumns = 3;
 [[maybe_unused]] static const NSInteger maxNumberOfInspectors = 1;
 
-@interface RNSSplitHostController () <UISplitViewControllerDelegate,
-                                      RNSSplitNavigationControllerFrameOriginChangeDelegate>
+@interface RNSSplitHostController () <UISplitViewControllerDelegate, RNSViewFrameChangeDelegate>
 @end
 
 @implementation RNSSplitHostController {
@@ -315,16 +314,16 @@
   return splitScreenControllers;
 }
 
-#pragma mark - RNSSplitNavigationControllerFrameOriginChangeDelegate
+#pragma mark - RNSViewFrameChangeDelegate
 
 /**
- * @brief Notifies that an origin of parent RNSSplitNavigationController frame has changed.
+ * @brief Notifies that the origin of a child RNSSplitNavigationController's view frame has changed.
  *
  * It iterates over children controllers and notifies them for the layout update.
  *
- * @param splitNavCtrl The navigation controller whose frame origin changed.
+ * @param view The view of the navigation controller whose frame origin changed.
  */
-- (void)splitNavigationControllerFrameOriginDidChange:(RNSSplitNavigationController *)splitNavCtrl
+- (void)viewFrameDidChange:(nonnull UIView *)view
 {
   for (RNSSplitScreenController *controller in self.splitScreenControllers) {
     [controller columnPositioningDidChangeInSplitViewController:self];

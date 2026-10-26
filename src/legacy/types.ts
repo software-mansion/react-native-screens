@@ -34,6 +34,10 @@ export type SearchBarCommands = {
   cancelSearch: () => void;
 };
 
+export type SheetCommands = {
+  selectDetent: (index: number | 'last') => void;
+};
+
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 
 export type StackPresentationTypes =
@@ -500,6 +504,20 @@ export interface ScreenProps extends ViewProps {
    * Defaults to `0` - which represents first detent in the detents array.
    */
   sheetInitialDetentIndex?: number | 'last' | undefined;
+  /**
+   * Reference to imperatively control the sheet.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Currently supported operations are:
+   *
+   * * `selectDetent` - animates the presented sheet to the detent at the given index of `sheetAllowedDetents` array,
+   *   or to the last (largest) detent when `last` is passed. The user can still drag the sheet between all detents
+   *   afterwards. If the detent changes, `onSheetDetentChanged` is called, the same as after a user-driven change.
+   *
+   * The sheet has to be presented, earlier calls are ignored. To choose the detent the sheet opens at,
+   * use `sheetInitialDetentIndex` instead.
+   */
+  sheetRef?: React.Ref<SheetCommands> | undefined;
   /**
    * Whether the sheet content should be rendered behind the Status Bar or display cutouts.
    *

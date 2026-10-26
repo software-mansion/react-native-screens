@@ -23,15 +23,12 @@ describeIfAndroid('Test4551', () => {
     // A motionless tap can fire onPress despite stale shadow coordinates. A short swipe
     // adds the MOVE events of a normal finger tap while staying inside the press region.
     await counter.swipe('right', 'slow', 0.2, 0.5, 0.2);
-    await expect(element(by.id('orientation-count'))).toHaveText(
-      `Presses: 2`,
-    );
+    await expect(element(by.id('orientation-count'))).toHaveText(`Presses: 2`);
     await expect(element(by.id('orientation-restored'))).toHaveText(
       'Layout restored: true',
     );
     await expect(element(by.id('orientation-inside'))).toHaveText(
       'Touch inside measured bounds: true',
     );
-
   });
 });

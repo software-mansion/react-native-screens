@@ -83,7 +83,7 @@
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
-  RNSLog(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)_screenView.tag, parent);
+  RNSLogD(@"[RNScreens] Screen view with tag=%ld didMoveToParentViewController %@", (long)_screenView.tag, parent);
   [super didMoveToParentViewController:parent];
 
   if (parent == nil) {

@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol RNSSplitNavigationControllerFrameOriginChangeDelegate;
+@protocol RNSViewFrameChangeDelegate;
 
 /**
  * @class RNSSplitNavigationController
@@ -23,8 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  * view frame changes.
  */
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController
-                 frameOriginChangeDelegate:
-                     (nullable id<RNSSplitNavigationControllerFrameOriginChangeDelegate>)frameOriginChangeDelegate;
+                 frameOriginChangeDelegate:(nullable id<RNSViewFrameChangeDelegate>)frameOriginChangeDelegate;
 
 @end
 

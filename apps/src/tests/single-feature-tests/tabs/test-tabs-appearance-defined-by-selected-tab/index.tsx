@@ -196,8 +196,9 @@ function TestTabsAppearanceDefinedBySelectedTab() {
             title: 'Tab2',
             ios: {
               icon: {
-                type: 'templateSource',
-                templateSource: require('@assets/variableIcons/icon.png'),
+                type: 'imageSource',
+                imageSource: require('@assets/variableIcons/icon.png'),
+                renderingMode: 'template',
               },
               standardAppearance: TAB2_APPEARANCE_IOS,
               scrollEdgeAppearance: TAB2_APPEARANCE_IOS,
@@ -241,8 +242,9 @@ function TestTabsAppearanceDefinedBySelectedTab() {
             badgeValue: '123',
             ios: {
               icon: {
-                type: 'templateSource',
-                templateSource: require('@assets/variableIcons/icon_fill.png'),
+                type: 'imageSource',
+                imageSource: require('@assets/variableIcons/icon_fill.png'),
+                renderingMode: 'template',
               },
               standardAppearance: TAB3_APPEARANCE_IOS,
               scrollEdgeAppearance: TAB3_APPEARANCE_IOS,

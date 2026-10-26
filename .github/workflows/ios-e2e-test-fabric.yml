@@ -1,6 +1,18 @@
 name: Test iOS e2e - new architecture
 on:
   pull_request:
+    # The defaults plus ready_for_review, so marking a draft ready starts a run.
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+    # PRs run the suite only when the suite itself changes. Library changes
+    # are tested once they land on main (see `push`).
+    paths:
+      - '.github/workflows/ios-e2e-test-fabric.yml'
+      - 'FabricExample/.detoxrc.js'
+      - 'FabricExample/e2e/**'
+      - 'scripts/e2e/**'
+  push:
     branches:
       - main
     paths:
@@ -9,21 +21,29 @@ on:
       - 'package.json'
       - 'ios/**'
       - 'common/**'
-      - 'FabricExample/**'
+      - 'cpp/**'
       - 'src/**'
-  push:
-    branches:
-      - main
+      - 'FabricExample/**'
+      - 'apps/**'
+      - 'scripts/e2e/**'
   workflow_dispatch:
 concurrency:
   group: ios-e2e-fabric-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   build:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 90
+    # Skip draft PRs and, in a PR stack, every PR but the lowest unmerged one.
+    # Pushes and manual runs carry no `pull_request`, so they always run. The
+    # test jobs need this one, so they are skipped with it.
+    if: >-
+      !github.event.pull_request.draft &&
+      (github.event.pull_request.stack == null ||
+       github.event.pull_request.stack.base.ref == github.event.pull_request.base.ref)
     env:
       WORKING_DIRECTORY: FabricExample
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -32,10 +52,6 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install root node dependencies
@@ -66,7 +82,7 @@ jobs:
     # iPhone and iPad suites run in parallel on separate machines, both on the
     # app built once above. fail-fast off, so one failing does not cancel the other.
     needs: build
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -79,6 +95,8 @@ jobs:
     name: test (${{ matrix.device }})
     env:
       WORKING_DIRECTORY: FabricExample
+      # Same Xcode as the build, so the simulator runtime matches the SDK.
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -87,11 +105,8 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-        # Same Xcode as the build, so the simulator runtime matches the SDK.
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '26.2'
+      - name: Get Xcode version
+        run: xcodebuild -version
       - name: Install AppleSimulatorUtils
         run: brew tap wix/brew && brew trust wix/brew && brew install applesimutils
       - name: Install root node dependencies

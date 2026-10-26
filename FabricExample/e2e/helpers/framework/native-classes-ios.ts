@@ -12,6 +12,8 @@
 
 // --- react-native-screens views (iOS)---
 
+export const CLASS_NAME_RNS_SCREEN_VIEW = 'RNSScreenView';
+
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
 
@@ -74,6 +76,8 @@ export const CLASS_NAME_UI_CONTEXT_MENU_SUBMENU_TITLE_VIEW =
 // The backdrop UIKit inserts behind a presented sheet.
 export const CLASS_NAME_UI_DIMMING_VIEW = 'UIDimmingView';
 export const CLASS_NAME_UI_DROP_SHADOW_VIEW = 'UIDropShadowView';
+// The sheet grabber. UIKit keeps it in the hierarchy at alpha 0 when hidden.
+export const CLASS_NAME_UI_GRABBER = '_UIGrabber';
 
 // --- UIKit: other controls ---
 export const CLASS_NAME_UI_IMAGE_VIEW = 'UIImageView';

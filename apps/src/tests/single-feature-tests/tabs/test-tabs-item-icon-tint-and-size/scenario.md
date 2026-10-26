@@ -6,9 +6,9 @@
 `renderingMode` icon property decides whether the tab bar renders an icon in a
 single color, tinted with its state-dependent icon color (`template` for
 `imageSource`, `monochrome` for `sfSymbol`), or in its `original` colors. The
-`default` value, also used when the property is unset, keeps the behavior of
-previous versions: an `imageSource` icon keeps its own colors, an `sfSymbol`
-icon follows the system. On Android,
+`default` value, also used when the property is unset, is UIKit's automatic
+mode: the tab bar tints an `imageSource` icon, as with `template`, and an
+`sfSymbol` icon follows the system. On Android,
 the `tinting` icon property decides the same: `tinted` tints the icon,
 `original` keeps its own colors, and `default` (also used when unset) tints it,
 as in previous versions. `icon` and `selectedIcon` may use different
@@ -58,7 +58,7 @@ Android specific notes:
 
 1. Launch the app and navigate to the **Tab Bar Item Icon Tint and Size** screen.
 
-    - [ ] Five tabs are visible in the tab bar: **Symbol**, **Image**, **Template**,
+    - [ ] Five tabs are visible in the tab bar: **Symbol**, **Image**, **Original**,
           **Mixed** and **Controls**.
     - [ ] The **Symbol** tab is selected by default. Its icon is the custom
           `nano.swm` symbol (Software Mansion logo), tinted **green** by the host
@@ -66,21 +66,21 @@ Android specific notes:
 
 ---
 
-### `imageSource` icons keep their original colors by default
+### `imageSource` icons are tinted by default
 
 1. Tap the **Image** tab.
 
-    - [ ] The icon renders in its original **black** color, NOT green.
+    - [ ] The icon is tinted **green**.
     - [ ] The **Symbol** tab icon renders in the system theme color.
 
 ---
 
-### `imageSource` icon with `renderingMode: 'template'`
+### `imageSource` icon with `renderingMode: 'original'`
 
-1. Tap the **Template** tab.
+1. Tap the **Original** tab.
 
-    - [ ] The icon is tinted **green**.
-    - [ ] The **Image** tab icon stays **black**.
+    - [ ] The icon renders in its original **black** color, NOT green.
+    - [ ] The unselected **Image** icon renders in the system theme color.
 
 ---
 
@@ -91,7 +91,7 @@ Android specific notes:
     - [ ] The selected icon is the system `heart.fill` symbol in its own
           multicolor rendering: **red**, NOT green.
 
-2. Tap the **Template** tab.
+2. Tap the **Original** tab.
 
     - [ ] The unselected **Mixed** icon (`renderingMode: 'monochrome'`) is a
           single-color heart in the system theme color.
@@ -110,12 +110,11 @@ Android specific notes:
 
 3. Select `default` in the **renderingMode** picker.
 
-    - [ ] The **Controls** tab icon renders in its original **black** color, as
-          with `original`.
+    - [ ] The **Controls** tab icon is tinted **green**, as with `template`.
 
 4. Select `template` in the **renderingMode** picker.
 
-    - [ ] The **Controls** tab icon is tinted **green** again.
+    - [ ] The **Controls** tab icon stays tinted **green**.
 
 ---
 
@@ -124,8 +123,8 @@ Android specific notes:
 1. Cycle through all five tabs in order, then in reverse.
 
     - [ ] Each tab keeps its icon and color behavior: green when selected for
-          **Symbol**, **Template** and **Controls**; red when selected for **Mixed**;
-          always black for **Image**.
+          **Symbol**, **Image** and **Controls**; red when selected for **Mixed**;
+          always black for **Original**.
     - [ ] No crash, layout freeze, or visual artifact occurs during rapid cycling.
 
 ## Steps - Android
