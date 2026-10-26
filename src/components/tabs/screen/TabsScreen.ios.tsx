@@ -219,20 +219,9 @@ function parseIconToNativeProps(icon: TabsScreenIconIOS | undefined): {
       iconImageRenderingMode: icon.renderingMode,
       iconImageSource: icon.imageSource,
     };
-  } else if (icon.type === 'templateSource') {
-    return {
-      iconType: 'image',
-      iconImageRenderingMode: 'template',
-      iconImageSource: icon.templateSource,
-    };
-  } else if (icon.type === 'xcasset') {
-    return {
-      iconType: 'xcasset',
-      iconResourceName: icon.name,
-    };
   } else {
     throw new Error(
-      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol`, `imageSource`, `templateSource` or `xcasset`.',
+      '[RNScreens] Incorrect icon format for iOS. You must provide `sfSymbol` or `imageSource`.',
     );
   }
 }

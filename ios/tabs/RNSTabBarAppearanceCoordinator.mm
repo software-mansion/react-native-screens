@@ -24,6 +24,20 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
   }
 }
 
+static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable image,
+                                                         RNSTabsIconImageRenderingMode renderingMode)
+{
+  switch (renderingMode) {
+    case RNSTabsIconImageRenderingModeTemplate:
+      return [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    case RNSTabsIconImageRenderingModeOriginal:
+      return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    case RNSTabsIconImageRenderingModeDefault:
+    default:
+      return [image imageWithRenderingMode:UIImageRenderingModeAutomatic];
+  }
+}
+
 @implementation RNSTabBarAppearanceCoordinator
 
 - (void)updateAppearanceOfTabBar:(nullable UITabBar *)tabBar
@@ -91,19 +105,11 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                fromScreenView:(RNSTabsScreenComponentView *)screenView
               withImageLoader:(RCTImageLoader *_Nullable)imageLoader
 {
-  if (screenView.iconType == RNSTabsIconTypeSfSymbol || screenView.iconType == RNSTabsIconTypeXcasset) {
+  if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
     if (screenView.iconResourceName != nil) {
-      UIImage *image;
-      if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        image = [RNSImageLoadingHelper symbolImageNamed:screenView.iconResourceName];
-        if (image == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for tab bar item", screenView.iconResourceName);
-        }
-      } else {
-        image = [UIImage imageNamed:screenView.iconResourceName];
-        if (image == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for tab bar item", screenView.iconResourceName);
-        }
+      UIImage *image = [RNSImageLoadingHelper symbolImageNamed:screenView.iconResourceName];
+      if (image == nil) {
+        RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for tab bar item", screenView.iconResourceName);
       }
       [self setTabImage:RNSImageWithSymbolRenderingMode(image, screenView.iconSymbolRenderingMode)
           forTabBarItem:tabBarItem
@@ -126,19 +132,10 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
     }
 
     if (screenView.selectedIconResourceName != nil) {
-      UIImage *selectedImage;
-      if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
-        selectedImage = [RNSImageLoadingHelper symbolImageNamed:screenView.selectedIconResourceName];
-        if (selectedImage == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
-                     screenView.selectedIconResourceName);
-        }
-      } else {
-        selectedImage = [UIImage imageNamed:screenView.selectedIconResourceName];
-        if (selectedImage == nil) {
-          RCTLogWarn(@"[RNScreens] Failed to load xcasset \"%@\" for selected tab bar item",
-                     screenView.selectedIconResourceName);
-        }
+      UIImage *selectedImage = [RNSImageLoadingHelper symbolImageNamed:screenView.selectedIconResourceName];
+      if (selectedImage == nil) {
+        RCTLogWarn(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
+                   screenView.selectedIconResourceName);
       }
       tabBarItem.selectedImage =
           RNSImageWithSymbolRenderingMode(selectedImage, screenView.selectedIconSymbolRenderingMode);
@@ -157,8 +154,10 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
       tabBarItem.selectedImage = nil;
     }
   } else if (imageLoader != nil) {
-    bool isTemplate = screenView.iconImageRenderingMode == RNSTabsIconImageRenderingModeTemplate;
-    bool isSelectedTemplate = screenView.selectedIconImageRenderingMode == RNSTabsIconImageRenderingModeTemplate;
+    RNSTabsIconImageRenderingMode iconRenderingMode = screenView.iconImageRenderingMode;
+    RNSTabsIconImageRenderingMode selectedIconRenderingMode = screenView.selectedIconImageRenderingMode;
+    bool isTemplate = iconRenderingMode == RNSTabsIconImageRenderingModeTemplate;
+    bool isSelectedTemplate = selectedIconRenderingMode == RNSTabsIconImageRenderingModeTemplate;
 
     // Weak-capture to avoid updating a tab bar item whose internal
     // view hierarchy has been torn down (iOS 26 UIKit regression:
@@ -173,7 +172,7 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                                       asTemplate:isTemplate
                                  completionBlock:^(UIImage *image) {
                                    [self updateTabBarItem:weakTabBarItem
-                                                withImage:image
+                                                withImage:RNSImageWithImageRenderingMode(image, iconRenderingMode)
                                                isSelected:NO
                                             forScreenView:weakScreenView];
                                  }];
@@ -187,10 +186,11 @@ static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable ima
                                  withImageLoader:imageLoader
                                       asTemplate:isSelectedTemplate
                                  completionBlock:^(UIImage *image) {
-                                   [self updateTabBarItem:weakTabBarItem
-                                                withImage:image
-                                               isSelected:YES
-                                            forScreenView:weakScreenView];
+                                   [self
+                                       updateTabBarItem:weakTabBarItem
+                                              withImage:RNSImageWithImageRenderingMode(image, selectedIconRenderingMode)
+                                             isSelected:YES
+                                          forScreenView:weakScreenView];
                                  }];
     } else {
       tabBarItem.selectedImage = nil;
