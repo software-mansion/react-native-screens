@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify the lifecycle events of `ContainedModalOverContext`:
+**Description:** Verify the lifecycle events of `ContainedModalOverContent`:
 `onWillAppear` and `onDidAppear` must fire (in that order) when the modal is
 presented, and `onWillDisappear` and `onDidDisappear` must fire when it is
 dismissed programmatically. Also verify the suspension semantics of a stack

@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Lifecycle Events',
   key: 'test-contained-modal-lifecycle-events-ios',
   details:
-    'Lifecycle and rejection events of ContainedModalOverContext across presentation, dismissal, stack push/pop suspension, and a same-provider rejection.',
+    'Lifecycle and rejection events of ContainedModalOverContent across presentation, dismissal, stack push/pop suspension, and a same-provider rejection.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,

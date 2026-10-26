@@ -2,7 +2,7 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   ContainedModalProvider,
-  ContainedModalOverContext,
+  ContainedModalOverContent,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -122,7 +122,7 @@ function EventsScreen() {
         <View style={styles.providerContent}>
           <Text style={styles.providerLabel}>Provider area</Text>
         </View>
-        <ContainedModalOverContext
+        <ContainedModalOverContent
           isOpen={isOpen}
           onPresentationRejected={() => {
             addLog('onPresentationRejected');
@@ -140,11 +140,11 @@ function EventsScreen() {
               testID="dismiss-contained-modal-button"
             />
           </View>
-        </ContainedModalOverContext>
+        </ContainedModalOverContent>
         {/* Second modal targeting the SAME provider: opening it while the
             first is presented must be rejected (one open modal per
             provider), surfaced via onPresentationRejected. */}
-        <ContainedModalOverContext
+        <ContainedModalOverContent
           isOpen={isSecondOpen}
           onPresentationRejected={() => {
             addLog('onPresentationRejected (second modal)');
@@ -162,7 +162,7 @@ function EventsScreen() {
               testID="dismiss-second-contained-modal-button"
             />
           </View>
-        </ContainedModalOverContext>
+        </ContainedModalOverContent>
       </ContainedModalProvider>
 
       <View style={styles.logsContainer} testID="event-logs-container">
