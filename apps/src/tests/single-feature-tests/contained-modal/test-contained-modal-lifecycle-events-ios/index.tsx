@@ -118,12 +118,13 @@ function EventsScreen() {
         />
       </View>
 
-      <ContainedModalProvider style={styles.provider}>
+      <ContainedModalProvider containerId="events" style={styles.provider}>
         <View style={styles.providerContent}>
           <Text style={styles.providerLabel}>Provider area</Text>
         </View>
         <ContainedModalOverContent
           isOpen={isOpen}
+          targetContainerId="events"
           onPresentationRejected={() => {
             addLog('onPresentationRejected');
             setIsOpen(false);
@@ -146,6 +147,7 @@ function EventsScreen() {
             provider), surfaced via onPresentationRejected. */}
         <ContainedModalOverContent
           isOpen={isSecondOpen}
+          targetContainerId="events"
           onPresentationRejected={() => {
             addLog('onPresentationRejected (second modal)');
             setIsSecondOpen(false);
