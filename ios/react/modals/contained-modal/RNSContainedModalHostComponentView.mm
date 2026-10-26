@@ -10,7 +10,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
-#import <React/RCTRootComponentView.h>
+#import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RNSContainedModalHostComponentDescriptor.h>
 
@@ -281,27 +281,36 @@ namespace react = facebook::react;
     return;
   }
 
-  // The offset must be the content view's origin in the SURFACE ROOT's
+  // The offset must be the content view's origin in the TOUCH ROOT's
   // coordinate space: child measurement stops at this host's RootNodeKind
   // shadow node and adds this offset, and RCTSurfaceTouchHandler reports
-  // pageX/pageY relative to the root component view it is attached to - NOT
-  // the window. With an embedded surface (root view not at the window origin)
-  // a window-space offset would diverge from pageX/pageY by exactly the
-  // surface origin and presses would cancel on the first finger move.
-  CGPoint contentViewOriginInSurface = [_controller.contentView convertPoint:CGPointZero
-                                                                      toView:[self resolveSurfaceRootView]];
+  // pageX/pageY relative to the view it is attached to - NOT the window. Which
+  // view that is depends on where the provider lives: the surface view for the
+  // main surface, or the content view of a natively presented screen
+  // (FormSheet, modal stack screens) that attaches its own handler. Anything
+  // else desyncs the measured press rect from pageX/pageY by exactly that
+  // view's origin and presses cancel on the first finger move.
+  CGPoint contentViewOriginInTouchRoot = [_controller.contentView convertPoint:CGPointZero
+                                                                        toView:[self resolveTouchRootView]];
 
-  [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentViewOriginInSurface];
+  [_shadowStateProxy updateShadowStateWithBounds:_controller.contentView.bounds origin:contentViewOriginInTouchRoot];
 }
 
-- (nullable UIView *)resolveSurfaceRootView
+// The nearest ancestor an RCTSurfaceTouchHandler is attached to: that handler
+// delivers this content's touches and defines their pageX/pageY space.
+- (nullable UIView *)resolveTouchRootView
 {
-  UIView *currentView = _controller.contentView;
-  while (currentView != nil && ![currentView isKindOfClass:RCTRootComponentView.class]) {
+  UIView *currentView = _controller.contentView.superview;
+  while (currentView != nil) {
+    for (UIGestureRecognizer *recognizer in currentView.gestureRecognizers) {
+      if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
+        return currentView;
+      }
+    }
     currentView = currentView.superview;
   }
   // nil (not found) makes convertPoint:toView: fall back to window
-  // coordinates - the correct space for a full-window surface.
+  // coordinates - the best remaining guess.
   return currentView;
 }
 
