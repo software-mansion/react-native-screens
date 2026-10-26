@@ -40,6 +40,7 @@ jobs:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
       AVD_PROFILE: pixel_7
+      AVD_CORES: 4
     concurrency:
       group: android-e2e-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -104,7 +105,8 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}
+          # A snapshot only loads on the hardware config it was taken with.
+          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}-${{ env.AVD_CORES }}cores
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -113,6 +115,7 @@ jobs:
           api-level: ${{ env.API_LEVEL }}
           target: default
           profile: ${{ env.AVD_PROFILE }}
+          cores: ${{ env.AVD_CORES }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
@@ -129,6 +132,7 @@ jobs:
           api-level: ${{ env.API_LEVEL }}
           target: default
           profile: ${{ env.AVD_PROFILE }}
+          cores: ${{ env.AVD_CORES }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
