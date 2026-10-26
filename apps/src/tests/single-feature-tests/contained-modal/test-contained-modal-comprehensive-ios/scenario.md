@@ -6,7 +6,8 @@
 `ContainedModalOverContent` + `ContainedModalProvider`: containment, outside
 interactivity, presentation at a non-zero scroll offset, scroll tracking while
 open, provider resize, rotation, suspend/restore via stack push/pop,
-dismiss-while-suspended, counter state preservation, and nested providers. The
+dismiss-while-suspended, counter state preservation, nested providers, and a
+provider hosted inside a native sheet. The
 inner provider is a light-blue box inside a scroll view on the root screen of a
 two-screen stack; its modal is a dark, bottom-anchored, semi-transparent
 overlay. A second, outer provider spans the whole screen content and hosts a
@@ -156,3 +157,24 @@ TBD.
 - [ ] In React DevTools / the RN component tree, the modal's children report
       their real on-screen positions (inside the provider box), not
       content-local coordinates around the origin.
+
+### Provider inside a native sheet (touch coordinate space)
+
+15. Dismiss any open modal. Tap "Open sheet", then in the sheet tap "Open sheet
+    modal". Slowly press-and-hold "Press & move (sheet)", wiggling the finger
+    slightly before releasing.
+
+- [ ] The modal covers exactly the light-blue box inside the sheet, and the
+      sheet content outside the box stays interactive.
+- [ ] The button shows its pressed-in color while the finger moves and the
+      counter next to it increments on release — the sheet delivers touches
+      through its own touch handler, and the modal's press rects must be
+      expressed in that space (a window-space offset cancels the press on the
+      first move).
+- [ ] In React DevTools / the RN component tree, the sheet modal's children
+      report positions consistent with their on-screen place inside the sheet.
+
+16. Tap "Dismiss sheet modal", pull the sheet down, then tap "Open modal".
+
+- [ ] The sheet modal dismisses, the sheet closes, and the main-screen modal
+      still presents and dismisses normally afterwards.
