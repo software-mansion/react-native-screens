@@ -551,6 +551,18 @@ RNS_IGNORE_SUPER_CALL_END
 
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
     [navctr setNavigationBarHidden:YES animated:animated];
+
+    if (animated && vc.transitionCoordinator != nil) {
+      // A cancelled zoom dismissal (iOS 18+) restores `navigationBarHidden` but leaves the bar's alpha at 0,
+      // and the following `setNavigationBarHidden:NO` is a no-op, so restore the alpha here.
+      [vc.transitionCoordinator
+          animateAlongsideTransition:nil
+                          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                            if ([context isCancelled]) {
+                              navctr.navigationBar.alpha = 1.0;
+                            }
+                          }];
+    }
     return;
   }
 
