@@ -6,7 +6,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Axis
 
 /**
- * The pixel space one screen animates in; the only place density and layout direction are read.
+ * The pixel space one screen animates in.
  */
 internal data class LayoutMetrics(
     val containerWidth: Int,

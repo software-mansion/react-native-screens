@@ -5,8 +5,7 @@ import kotlin.math.roundToLong
 
 /**
  * What both screens of one operation do: [enter] is the side whose view appears, [exit] the side
- * whose view disappears. On a push FragmentManager reads them from the `enter` / `exit` fragment
- * slots, on a pop from `reenter` / `return`, Android's own "reverse of enter / exit".
+ * whose view disappears.
  */
 internal data class TransitionTimeline(
     val enter: ScreenTimeline,

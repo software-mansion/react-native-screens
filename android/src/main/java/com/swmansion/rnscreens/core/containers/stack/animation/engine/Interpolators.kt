@@ -11,13 +11,10 @@ import java.util.EnumMap
 import com.google.android.material.R as MaterialR
 
 /**
- * Curves are loaded from the platform's and Material Components' interpolator resources or
- * built from the CSS specification's bezier constants, never transcribed by hand.
- *
- * Loading an interpolator inflates it from XML every time (the platform does not cache it), so
- * named curves are cached here. Interpolators are immutable and theme-independent, so one
- * instance per curve serves every animator. A bezier is cheap to build (no resource parsing) and
- * is built on every request, so arbitrary curves never accumulate. Main thread only.
+ * Named curves come from the platform's and Material Components' interpolator resources or the
+ * CSS specification's bezier constants, never transcribed by hand. The platform inflates the XML
+ * on every load, so they are cached (immutable, theme-independent). Bezier easings are cheap and
+ * built per request, so arbitrary curves never accumulate. Main thread only.
  */
 internal object Interpolators {
     // CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords.

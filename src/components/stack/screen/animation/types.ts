@@ -44,8 +44,8 @@ export interface StackScreenAnimationTimingOptions {
    */
   duration?: number;
   /**
-   * Replaces the curve of every track of the preset. A predictive back gesture
-   * always scrubs linearly with the finger.
+   * Replaces the curve of every animated property of the preset. A predictive
+   * back gesture always scrubs linearly with the finger.
    */
   easing?: StackScreenAnimationEasing;
 }

@@ -24,12 +24,11 @@ internal enum class PresetName(
             when (this) {
                 DEFAULT, NONE -> emptySet()
 
-                FADE, IOS_FROM_RIGHT, IOS_FROM_LEFT -> TIMING_OPTIONS
+                FADE, IOS_FROM_RIGHT, IOS_FROM_LEFT, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, SLIDE_FROM_BOTTOM, SLIDE_FROM_TOP ->
+                    TIMING_OPTIONS
 
-                // A shorter slide is the parallax recede of a custom transition, not a top-level
-                // look, so `distance` is only offered where the preset's own travel is short.
-                SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, SLIDE_FROM_BOTTOM, SLIDE_FROM_TOP -> TIMING_OPTIONS
-
+                // Only these presets move by a short offset; a shortened full-screen slide is a
+                // custom transition.
                 FADE_FROM_BOTTOM, FADE_FROM_TOP -> TIMING_AND_DISTANCE_OPTIONS
             }
 

@@ -1,9 +1,5 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.model
 
-/**
- * Curves are named, never transcribed: the engine loads each one from the platform's or
- * Material Components' interpolator resources, or from the CSS specification's constants.
- */
 internal enum class EasingName(
     /**
      * The value accepted by the `easing` option of the `animation` prop; `null` for the legacy

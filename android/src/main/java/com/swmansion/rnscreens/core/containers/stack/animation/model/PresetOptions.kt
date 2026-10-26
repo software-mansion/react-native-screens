@@ -1,8 +1,5 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.model
 
-/**
- * The options a preset may accept in the object form of the `animation` prop.
- */
 internal enum class PresetOption(
     internal val key: String,
 ) {

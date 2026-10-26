@@ -8,8 +8,6 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Timing
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ViewProperty
 
-// Track helpers for the preset tables.
-
 /**
  * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives
  * at rest along it, a disappearing view departs from rest along it (exiting through the

@@ -1,8 +1,7 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.model
 
 /**
- * What a screen asked for through its `animation` prop, as parsed by the mapper. The rest of
- * the package only reads it.
+ * What a screen asked for through its `animation` prop, as parsed by the mapper.
  */
 internal sealed interface StackAnimationConfig {
     data class Preset(

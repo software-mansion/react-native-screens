@@ -36,9 +36,9 @@ internal fun resolveStackTransition(
 
 private fun timelineOf(context: StackTransitionContext): TransitionTimeline =
     when (context.kind) {
-        // The incoming screen's config governs a push: the covered screen goes under it.
+        // The incoming screen's config governs a push.
         StackTransitionKind.PUSH -> definitionOf(context.incoming).push
-        // The outgoing screen's config governs a pop: the popped screen stays on top.
+        // The outgoing screen's config governs a pop.
         StackTransitionKind.POP -> definitionOf(context.outgoing).pop
         // A replace looks like a pop of the outgoing screen until the `replaceAnimation` PR
         // lets the incoming screen choose a push look instead.

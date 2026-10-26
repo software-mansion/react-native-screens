@@ -73,10 +73,7 @@ internal class StackContainer(
     private val fragmentOpExecutor: FragmentOperationExecutor = FragmentOperationExecutor()
     private val fragmentOps: MutableList<FragmentOperation> = arrayListOf()
 
-    /**
-     * Permanent child 0. Screens exiting under an entering screen are hosted in its overlay,
-     * so they draw before every fragment view FragmentManager appends after it.
-     */
+    // Added in `init`, kept at index 0 (checked in `onViewAdded`).
     override val underlay: FrameLayout = FrameLayout(context)
 
     override fun onViewAdded(child: View) {
@@ -279,14 +276,13 @@ internal class StackContainer(
     // region Transition provision
 
     /**
-     * The operation FragmentManager is about to execute, consulted by [transitionFor]. Written
-     * right before FragmentManager asks for the transitions ([writeTransitionContext] for a batch,
-     * [onBackStackChangeStarted] for a pop FragmentManager starts itself, a predictive back gesture
-     * start included) and cleared in [onBackStackChanged], which follows the reads in every path.
-     * So a gesture start already clears it: the commit asks for nothing, and the cancel, which
-     * re-executes the record forward, must find no context and resolve to no transition.
-     * `onBackStackChangeCommitted` cannot take over the clear: FragmentManager dispatches it before
-     * the reads.
+     * The operation FragmentManager is about to execute, read by [transitionFor]. Written right
+     * before FragmentManager calls the transition getters: by [writeTransitionContext] for a batch,
+     * by [onBackStackChangeStarted] for a pop FragmentManager starts itself (predictive back included).
+     *
+     * Cleared in [onBackStackChanged], which follows the getter calls in every path
+     * (`onBackStackChangeCommitted` comes before them). So a predictive back gesture start clears it
+     * too: neither the commit nor the cancel (the record re-executed forward) resolves a transition.
      */
     private var transitionContext: StackTransitionContext? = null
 
@@ -303,6 +299,8 @@ internal class StackContainer(
                 outgoing == null -> null
                 // The top did not change, e.g. a screen pushed and popped before execution.
                 outgoing === incoming -> null
+                // Outgoing still in the model: it was covered. Incoming already in the model before
+                // the batch: it was revealed. Neither: the top was replaced.
                 stackModel.contains(outgoing) -> StackTransitionKind.PUSH
                 modelBeforeBatch.contains(incoming) -> StackTransitionKind.POP
                 else -> StackTransitionKind.REPLACE
@@ -403,11 +401,11 @@ internal class StackContainer(
             return
         }
 
-        // A pop FragmentManager starts by itself (header back, system back, predictive back gesture
-        // start) arrives without a context. So does a JS push and pop executed together (the batch
-        // with no net change wrote none, and the last record is a pop); FragmentManager starts no
-        // transition for it, so the context written here is never read. The model is mutated later,
-        // in `onBackStackChangeCommitted`, so its top is still the popped fragment.
+        // A pop FragmentManager starts itself (header back, system back, predictive back) has no
+        // context yet. The model changes only in `onBackStackChangeCommitted`, so its top is still
+        // the popped fragment.
+        // A JS push and pop executed together also gets here without a context, but FragmentManager
+        // starts no transition for it, so this context is never read.
         if (pop && transitionContext == null && stackModel.size > 1) {
             transitionContext =
                 StackTransitionContext(

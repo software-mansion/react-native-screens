@@ -2,12 +2,11 @@ package com.swmansion.rnscreens.core.containers.stack.animation.engine.binding
 
 /**
  * A track bound to one view's pixel space, evaluated per frame as a function of the screen
- * timeline's time. Endpoints and the interpolator are materialized once, per animator.
+ * timeline's time. Endpoints and the interpolator are resolved once per animator.
  */
 internal interface TrackBinding {
     /**
-     * [eased] is false while a seek controller drives the timeline: under the finger every track
-     * progresses linearly with the gesture and curves apply only when the transition plays.
+     * [eased] is false while a seek controller drives the timeline, see `createTimelineAnimator`.
      */
     fun apply(
         timeMs: Float,

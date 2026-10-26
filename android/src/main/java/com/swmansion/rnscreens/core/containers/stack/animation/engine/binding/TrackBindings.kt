@@ -9,9 +9,6 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Axis
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ViewProperty
 
-/**
- * The one place the engine decides which target a track drives.
- */
 internal fun bindTrack(
     track: Track,
     view: View,

@@ -1,9 +1,9 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
 /**
- * The four fragment transition slots. Only one bit of a slot matters to the animation code:
- * whether the fragment's view is appearing (`enter`, `reenter`) or disappearing (`exit`,
- * `return`); FragmentManager's push / pop half of the name is never consulted.
+ * The four fragment transition slots: FragmentManager uses `enter` / `exit` on a push and
+ * `reenter` / `return` on a pop. Only whether the fragment's view appears or disappears matters
+ * here; the push / pop half is never consulted, the container's context says which operation runs.
  */
 internal enum class TransitionSlot(
     internal val isAppearing: Boolean,

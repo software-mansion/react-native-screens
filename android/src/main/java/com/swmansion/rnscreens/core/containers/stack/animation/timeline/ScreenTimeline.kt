@@ -4,7 +4,6 @@ import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 
 /**
  * One screen's side of a transition: its tracks and how long the screen must stay hosted.
- * A timeline without tracks is a static screen that stays drawn for [durationMs].
  */
 internal class ScreenTimeline private constructor(
     internal val tracks: List<Track>,

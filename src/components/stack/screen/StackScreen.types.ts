@@ -50,11 +50,9 @@ export type StackScreenProps = {
    * - `duration` (ms) replaces the preset's reference duration, the longer of its
    *   push and pop; both are rescaled by the same factor, so `fadeFromBottom`
    *   with `duration: 500` pushes in 500 ms and pops in about 357 ms.
-   * - `easing` replaces the curve of every track of the preset: one of `'linear'`,
-   *   `'easeIn'`, `'easeOut'`, `'easeInOut'`, `'standard'`, `'standardAccelerate'`,
-   *   `'standardDecelerate'`, `'emphasized'`, `'emphasizedAccelerate'`,
-   *   `'emphasizedDecelerate'`, or a cubic bezier `[x1, y1, x2, y2]`. A predictive
-   *   back gesture always scrubs linearly with the finger.
+   * - `easing` replaces the curve of every animated property of the preset: a
+   *   curve name or a cubic bezier `[x1, y1, x2, y2]`. A predictive back gesture
+   *   always scrubs linearly with the finger.
    * - `distance`, accepted by `fadeFromBottom` and `fadeFromTop` only, replaces how
    *   far the moving screen rises or falls: a number is density-independent
    *   pixels, `'N%'` a fraction of the container. Defaults to `'8%'`.
