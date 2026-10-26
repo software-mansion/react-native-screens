@@ -45,8 +45,9 @@ internal fun createTimelineAnimator(
 
 /**
  * Fans the animator's and the root transition's lifecycle out to the bindings: start and
- * resume add what must be on screen, pause takes it away, and every way a transition can be
- * over (end, cancel, the transition ending or being canceled) restores the rest values.
+ * resume add what must be on screen, pause takes it away, and the ends restore the rest
+ * values. The transition's end and cancel restore unconditionally: a seeked animator is never
+ * started, so a canceled transition delivers no animator callback.
  */
 private class TimelineAnimatorListener(
     private val bindings: Array<TrackBinding>,
@@ -69,8 +70,9 @@ private class TimelineAnimatorListener(
         animation: Animator,
         isReverse: Boolean,
     ) {
-        // A reversed end is a canceled gesture: the screen is back where it started and the
-        // transition's own end restores the rest values.
+        // A reversed end is a canceled gesture's spring reaching the start; the forward replay
+        // that follows ends the animator again and restores. Same guard as `Visibility`'s own
+        // listeners, so the bindings stay in step with its overlay bookkeeping.
         if (!isReverse) forEach { it.restore() }
     }
 
@@ -82,6 +84,11 @@ private class TimelineAnimatorListener(
         forEach { it.restore() }
         transition.removeListener(this)
     }
+
+    override fun onTransitionEnd(
+        transition: Transition,
+        isReverse: Boolean,
+    ) = onTransitionEnd(transition)
 
     override fun onTransitionCancel(transition: Transition) = forEach { it.restore() }
 

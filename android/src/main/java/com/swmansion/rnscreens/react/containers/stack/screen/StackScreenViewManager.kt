@@ -14,7 +14,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
-import com.swmansion.rnscreens.core.containers.stack.animation.parseStackAnimationConfig
+import com.swmansion.rnscreens.react.containers.stack.animation.parseStackAnimationConfig
 import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidDisappearEvent

@@ -22,7 +22,8 @@ internal data class TransitionTimeline(
 
     /**
      * Both sides re-spanned to the scaled duration, which is re-derived from the scaled tracks
-     * so that rounding can never leave a track past the end.
+     * so that rounding can never leave a track past the end. A timeline without tracks has
+     * nothing to re-derive it from, so its span is scaled directly.
      */
     internal fun scaled(factor: Float): TransitionTimeline =
         if (enter.tracks.isEmpty() && exit.tracks.isEmpty()) {
@@ -47,7 +48,8 @@ internal data class TransitionTimeline(
             exitTracks: List<Track>,
             exitZOrder: ZOrder,
         ): TransitionTimeline {
-            val durationMs = (enterTracks + exitTracks).maxOfOrNull { it.timing.endMs } ?: 0L
+            // A rescaled side can round every track to 0 ms; the transition must stay positive.
+            val durationMs = ((enterTracks + exitTracks).maxOfOrNull { it.timing.endMs } ?: 0L).coerceAtLeast(1L)
             return TransitionTimeline(
                 enter = ScreenTimeline.spanning(enterTracks, durationMs),
                 exit = ScreenTimeline.spanning(exitTracks, durationMs),

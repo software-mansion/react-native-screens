@@ -46,7 +46,7 @@ function toLabeled(option: AnimationPresetOption): LabeledAnimation {
 
 type PlaygroundConfig = {
   animationOptions: readonly LabeledAnimation[];
-  initialAnimation: StackScreenAnimation;
+  initialAnimation: LabeledAnimation;
   hasDirectionPicker: boolean;
   direction: DirectionOption;
   setDirection: (direction: DirectionOption) => void;
@@ -54,7 +54,7 @@ type PlaygroundConfig = {
 
 const PlaygroundContext = React.createContext<PlaygroundConfig>({
   animationOptions: [],
-  initialAnimation: 'default',
+  initialAnimation: { label: 'default', animation: 'default' },
   hasDirectionPicker: false,
   direction: 'ltr',
   setDirection: () => {},
@@ -63,7 +63,8 @@ const PlaygroundContext = React.createContext<PlaygroundConfig>({
 /**
  * A three-screen stack whose `animation` can be switched from any screen, shared by the
  * per-family animation preset tests. `animationOptions` is the subset of the library's union
- * the pickers offer, so a scenario never exercises a value it does not check.
+ * the pickers offer, so a scenario never exercises a value it does not check;
+ * `initialAnimation` is the label of the option every screen starts with.
  */
 export function AnimationPresetPlayground({
   animationOptions,
@@ -72,26 +73,39 @@ export function AnimationPresetPlayground({
   withColorReference = false,
 }: {
   animationOptions: readonly AnimationPresetOption[];
-  initialAnimation: StackScreenAnimation;
+  initialAnimation: string;
   withDirectionPicker?: boolean;
   withColorReference?: boolean;
 }) {
   const [direction, setDirection] = React.useState<DirectionOption>('ltr');
 
+  const labeledOptions = React.useMemo(
+    () => animationOptions.map(toLabeled),
+    [animationOptions],
+  );
+  const initial = labeledOptions.find(
+    option => option.label === initialAnimation,
+  );
+  if (initial === undefined) {
+    throw new Error(
+      `AnimationPresetPlayground: initialAnimation '${initialAnimation}' is not one of animationOptions`,
+    );
+  }
+
   const config = React.useMemo<PlaygroundConfig>(
     () => ({
-      animationOptions: animationOptions.map(toLabeled),
-      initialAnimation,
+      animationOptions: labeledOptions,
+      initialAnimation: initial,
       hasDirectionPicker: withDirectionPicker,
       direction,
       setDirection,
     }),
-    [animationOptions, initialAnimation, withDirectionPicker, direction],
+    [labeledOptions, initial, withDirectionPicker, direction],
   );
 
   const options = React.useMemo(
-    () => ({ animation: initialAnimation }),
-    [initialAnimation],
+    () => ({ animation: initial.animation }),
+    [initial],
   );
 
   return (
@@ -162,16 +176,14 @@ function AnimationControls() {
     setDirection,
   } = React.useContext(PlaygroundContext);
 
-  // The pickers only offer the scenario's subset of the library's union. Object forms are
-  // matched by identity, so a value always comes from `animationOptions`.
+  // Every value comes from `animationOptions`, the initial one included, so identity is enough
+  // for the object forms.
   const labelOf = (animation: StackScreenAnimation | undefined) =>
-    (
-      animationOptions.find(option => option.animation === animation) ??
-      animationOptions.find(option => option.animation === initialAnimation)
-    )?.label ?? '';
+    animationOptions.find(option => option.animation === animation)?.label ??
+    initialAnimation.label;
   const animationOf = (label: string) =>
     animationOptions.find(option => option.label === label)?.animation ??
-    initialAnimation;
+    initialAnimation.animation;
   const labels = animationOptions.map(option => option.label);
 
   return (

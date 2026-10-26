@@ -37,7 +37,7 @@ export type StackScreenAnimationPresetName =
   | 'iosFromRight'
   | 'iosFromLeft';
 
-interface StackScreenAnimationTimingOptions {
+export interface StackScreenAnimationTimingOptions {
   /**
    * Replaces the preset's reference duration (the longer of its push and pop) in
    * milliseconds; both are rescaled by the same factor.

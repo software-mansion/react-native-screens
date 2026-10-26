@@ -46,6 +46,6 @@ private fun timelineOf(context: StackTransitionContext): TransitionTimeline =
     }
 
 private fun definitionOf(fragment: StackScreenFragment): PresetDefinition =
-    when (val config = fragment.animationConfig) {
+    when (val config = fragment.item.animation) {
         is StackAnimationConfig.Preset -> presetDefinition(config.name, config.options)
     }

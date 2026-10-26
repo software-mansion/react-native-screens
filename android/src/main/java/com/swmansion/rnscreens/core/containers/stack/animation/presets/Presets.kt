@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ZOrder
 // Taken from the legacy implementation's `rns_no_animation_20.xml`: "non-zero duration ensures
 // transition events are triggered correctly". In v5 a 0 ms transition would also complete a
 // predictive-back pop at gesture start and destroy the fragment before FragmentManager commits
-// it.
+// it; 1 ms already avoids that, 20 keeps the legacy value.
 private const val NONE_DURATION_MS = 20L
 
 /**

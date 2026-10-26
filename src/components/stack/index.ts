@@ -16,6 +16,13 @@ export type {
   StackScreenEventHandler,
   StackScreenProps,
   StackScreenAnimation,
+  StackScreenAnimationPresetName,
+  StackScreenAnimationPresetRef,
+  StackScreenAnimationTimingOptions,
+  StackScreenAnimationEasing,
+  StackScreenAnimationEasingName,
+  StackScreenAnimationBezier,
+  StackScreenAnimationLength,
 } from './screen';
 
 export type {

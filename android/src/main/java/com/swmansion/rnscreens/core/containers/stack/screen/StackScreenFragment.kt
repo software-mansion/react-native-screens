@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.ScreenTransitionProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
-import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderCoordinatorLayout
 import com.swmansion.rnscreens.core.containers.stack.host.StackUpdateBatchStateProviding
@@ -111,15 +110,8 @@ internal class StackScreenFragment(
 
     // region Transitions
 
-    /**
-     * What this screen asked for; the governing screen of an operation is not always this one,
-     * which is why the container, not the fragment, resolves the transition.
-     */
-    internal val animationConfig: StackAnimationConfig
-        get() = item.animation
-
     // FragmentManager calls these once per operation it executes; the container answers, since only
-    // it knows which operation that is.
+    // it knows which operation that is and which screen's config governs it.
 
     override fun getEnterTransition(): Any? = resolveTransition(TransitionSlot.ENTER)
 

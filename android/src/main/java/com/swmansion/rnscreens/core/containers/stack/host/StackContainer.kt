@@ -279,11 +279,14 @@ internal class StackContainer(
     // region Transition provision
 
     /**
-     * The operation FragmentManager is about to execute, consulted by [transitionFor]. Written right
-     * before FragmentManager asks for the transitions ([writeTransitionContext],
-     * [onBackStackChangeStarted]) and cleared after it, in [onBackStackChanged] (both in
-     * `FragmentManager.executeOpsTogether`). A predictive back commit asks for nothing; the gesture
-     * start already did.
+     * The operation FragmentManager is about to execute, consulted by [transitionFor]. Written
+     * right before FragmentManager asks for the transitions ([writeTransitionContext] for a batch,
+     * [onBackStackChangeStarted] for a pop FragmentManager starts itself, a predictive back gesture
+     * start included) and cleared in [onBackStackChanged], which follows the reads in every path.
+     * So a gesture start already clears it: the commit asks for nothing, and the cancel, which
+     * re-executes the record forward, must find no context and resolve to no transition.
+     * `onBackStackChangeCommitted` cannot take over the clear: FragmentManager dispatches it before
+     * the reads.
      */
     private var transitionContext: StackTransitionContext? = null
 

@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens.core.containers.stack.animation
+package com.swmansion.rnscreens.react.containers.stack.animation
 
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableArray
