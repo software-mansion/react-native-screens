@@ -61,12 +61,9 @@
     return;
   }
 
-  // Rejection: one open modal per provider. `presentedViewController` also
-  // reports a presentation made by an ancestor (a sheet or a modal above the
-  // provider), which does not occupy this context, so only a presentation the
-  // source itself made counts as busy. UIKit silently ignores a presentation
-  // request on an already-presenting controller (the completion never fires),
-  // so reject deterministically instead; the request is not queued.
+  // Rejection: one open modal per provider. Note that `presentedViewController`
+  // also reports a presentation made by an ancestor (a sheet or a modal above the provider),
+  // so we need to scope the check.
   if (presentedViewController != nil &&
       presentedViewController.presentingViewController == presentationSourceViewController) {
     [controller.delegate modalControllerDidRejectPresentation:controller];
@@ -75,8 +72,7 @@
 
   // Rejection: a request made while an ancestor is being dismissed is
   // unreliable. UIKit may ignore it, or perform it after the transition
-  // without ever calling its completion. Reject deterministically, like the
-  // busy case.
+  // without ever calling its completion. Reject deterministically instead.
   UIViewController *topmostAncestor = presentationSourceViewController;
   while (topmostAncestor.parentViewController != nil) {
     topmostAncestor = topmostAncestor.parentViewController;
@@ -108,12 +104,7 @@
 
 // Only the provider's `isOpen` drives dismissal. This presentation style has no
 // user-driven dismissal (no gesture, no sheet, no system escape), and a parent
-// modal going away suspends the presentation instead of dismissing it: the
-// content controller gets no appearance callbacks and UIKit restores it when
-// the parent reappears. The one native path, a third party calling
-// `dismissViewControllerAnimated:` on the context chain, is not observed; it
-// leaves `presentingViewController` nil, which the check below folds back into
-// Dismissed on the next update.
+// modal going away suspends the presentation instead of dismissing it.
 - (void)dismissIfNeededWithProvider:(id<RNSContainedModalPresentationProvider>)provider
                          controller:(RNSContainedModalContentController *)controller
 {
@@ -129,10 +120,6 @@
 
   _state = RNSContainedModalPresentationStateDismissing;
 
-  // The content controller owns this manager, so a strong capture of either
-  // would keep both alive until the completion runs. Weak captures let an
-  // unmount mid-dismissal (host `invalidate`) release the whole chain; the
-  // completion then has nothing to update.
   __weak auto weakSelf = self;
   __weak auto weakController = controller;
   __weak auto weakProvider = provider;
