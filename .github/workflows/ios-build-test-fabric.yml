@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - main
-    paths:
+    paths: &paths
       - '.github/workflows/ios-build-test-fabric.yml'
       - 'RNScreens.podspec'
       - 'package.json'
@@ -14,6 +14,7 @@ on:
   push:
     branches:
       - main
+    paths: *paths
   workflow_dispatch:
 jobs:
   build:
