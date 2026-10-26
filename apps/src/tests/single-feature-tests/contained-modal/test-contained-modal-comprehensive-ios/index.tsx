@@ -85,9 +85,11 @@ function ContainedModalScreen() {
 
   return (
     // Outer provider spans the whole screen content; the full-screen modal
-    // targets it as its nearest provider. The inner modal sits inside the
-    // inner provider, so nearest-provider resolution keeps them apart.
-    <ContainedModalProvider style={styles.fullScreenProvider}>
+    // targets it by id. The inner modal targets the inner provider, so the
+    // explicit pairing keeps them apart.
+    <ContainedModalProvider
+      containerId="full-screen"
+      style={styles.fullScreenProvider}>
       <View style={styles.container}>
         {/* Controls outside the inner provider — must stay interactive while
             the inner modal is open. Resize and push double as geometry /
@@ -122,6 +124,7 @@ function ContainedModalScreen() {
         <ScrollView style={styles.scroll} testID="contained-modal-scroll-view">
           <View style={styles.spacerTop} />
           <ContainedModalProvider
+            containerId="pane"
             style={[styles.provider, isLarge && styles.providerLarge]}>
             <View style={styles.providerContent}>
               <Text
@@ -136,7 +139,7 @@ function ContainedModalScreen() {
                 testID="open-contained-modal-button"
               />
             </View>
-            <ContainedModalOverContent isOpen={isOpen}>
+            <ContainedModalOverContent isOpen={isOpen} targetContainerId="pane">
               <View style={styles.modalContent}>
                 <Text
                   style={styles.modalCounter}
@@ -175,7 +178,9 @@ function ContainedModalScreen() {
           <View style={styles.spacer} />
         </ScrollView>
       </View>
-      <ContainedModalOverContent isOpen={isFullScreenOpen}>
+      <ContainedModalOverContent
+        isOpen={isFullScreenOpen}
+        targetContainerId="full-screen">
         <View style={styles.fullScreenModalContent}>
           <Text style={styles.modalCounter} testID="fullscreen-modal-counter">
             Full-screen modal counter: {seconds}

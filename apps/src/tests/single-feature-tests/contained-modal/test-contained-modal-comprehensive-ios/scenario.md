@@ -10,8 +10,7 @@ dismiss-while-suspended, counter state preservation, and nested providers. The
 inner provider is a light-blue box inside a scroll view on the root screen of a
 two-screen stack; its modal is a dark, bottom-anchored, semi-transparent
 overlay. A second, outer provider spans the whole screen content and hosts a
-full-screen dark-red modal; the two modals resolve to their respective nearest
-providers. Modal visibility state lives above the stack, so the pushed screen
+full-screen dark-red modal; each modal targets its own provider by id. Modal visibility state lives above the stack, so the pushed screen
 can flip `isOpen` to `false` while the inner modal is suspended.
 
 Out of scope here: the replacing variant (`ContainedModalCurrentContext`) and
@@ -113,8 +112,7 @@ TBD.
 
 - [ ] The overlay fades out and every control is interactive again. The inner
       (light-blue box) modal still opens and closes independently afterwards —
-      nearest-provider resolution keeps the two modals paired with their own
-      providers.
+      the explicit ids keep the two modals paired with their own providers.
 - [ ] (Optional) With the inner modal open, open the full-screen modal too: both
       can be open simultaneously (different providers — the one-modal limit is
       per provider), the full-screen overlay stacks ABOVE the inner one, and
