@@ -52,6 +52,10 @@ const testButlerApkPath = isRunningCI
  * @returns {Detox.DetoxConfig}
  */
 function commonDetoxConfigFactory(applicationName) {
+  // Per-platform jest configs skip the other platform's spec files.
+  const iosTestRunner = { args: { config: 'e2e/jest.config.ios.js' } };
+  const androidTestRunner = { args: { config: 'e2e/jest.config.android.js' } };
+
   return {
     testRunner: {
       args: {
@@ -112,26 +116,32 @@ function commonDetoxConfigFactory(applicationName) {
       'ios.sim.debug': {
         device: 'simulator',
         app: 'ios.debug',
+        testRunner: iosTestRunner,
       },
       'ios.sim.release': {
         device: 'simulator',
         app: 'ios.release',
+        testRunner: iosTestRunner,
       },
       'android.att.debug': {
         device: 'attached',
         app: 'android.debug',
+        testRunner: androidTestRunner,
       },
       'android.att.release': {
         device: 'attached',
         app: 'android.release',
+        testRunner: androidTestRunner,
       },
       'android.emu.debug': {
         device: 'emulator',
         app: 'android.debug',
+        testRunner: androidTestRunner,
       },
       'android.emu.release': {
         device: 'emulator',
         app: 'android.release',
+        testRunner: androidTestRunner,
       },
     },
   };
