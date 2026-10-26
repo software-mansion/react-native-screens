@@ -1,7 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#import "RNSContainedModalProviders.h"
+#import "RNSContainedModalContainmentProviding.h"
 #import "RNSReactBaseView.h"
 
 NS_ASSUME_NONNULL_BEGIN

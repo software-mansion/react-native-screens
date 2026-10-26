@@ -1,4 +1,5 @@
 #import "RNSContainedModalHostComponentView.h"
+#import "RNSContainedModalContainmentProviding.h"
 #import "RNSContainedModalContentController.h"
 #import "RNSContainedModalContentView.h"
 #import "RNSContainedModalHostEventEmitter.h"
