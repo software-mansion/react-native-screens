@@ -76,13 +76,13 @@ function commonDetoxConfigFactory(applicationName) {
       'android.debug': {
         type: 'android.apk',
         binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-        build: `cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
+        build: `cd android && ./gradlew :app:assembleDebug :app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
         reversePorts: [8081],
       },
       'android.release': {
         type: 'android.apk',
         binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-        build: `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
+        build: `cd android && ./gradlew :app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${apkBuildArchitecture} && cd ..`,
       },
     },
     devices: {
