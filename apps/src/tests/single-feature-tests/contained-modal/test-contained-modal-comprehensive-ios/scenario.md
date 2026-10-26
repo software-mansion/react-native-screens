@@ -3,7 +3,7 @@
 ## Details
 
 **Description:** One stack-hosted scenario exercising the core behaviors of
-`ContainedModalOverContext` + `ContainedModalProvider`: containment, outside
+`ContainedModalOverContent` + `ContainedModalProvider`: containment, outside
 interactivity, presentation at a non-zero scroll offset, scroll tracking while
 open, provider resize, rotation, suspend/restore via stack push/pop,
 dismiss-while-suspended, counter state preservation, and nested providers. The

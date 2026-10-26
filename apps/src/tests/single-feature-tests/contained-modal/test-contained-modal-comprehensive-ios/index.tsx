@@ -8,7 +8,7 @@ import React, {
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   ContainedModalProvider,
-  ContainedModalOverContext,
+  ContainedModalOverContent,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -136,7 +136,7 @@ function ContainedModalScreen() {
                 testID="open-contained-modal-button"
               />
             </View>
-            <ContainedModalOverContext isOpen={isOpen}>
+            <ContainedModalOverContent isOpen={isOpen}>
               <View style={styles.modalContent}>
                 <Text
                   style={styles.modalCounter}
@@ -170,12 +170,12 @@ function ContainedModalScreen() {
                   testID="dismiss-contained-modal-button"
                 />
               </View>
-            </ContainedModalOverContext>
+            </ContainedModalOverContent>
           </ContainedModalProvider>
           <View style={styles.spacer} />
         </ScrollView>
       </View>
-      <ContainedModalOverContext isOpen={isFullScreenOpen}>
+      <ContainedModalOverContent isOpen={isFullScreenOpen}>
         <View style={styles.fullScreenModalContent}>
           <Text style={styles.modalCounter} testID="fullscreen-modal-counter">
             Full-screen modal counter: {seconds}
@@ -187,7 +187,7 @@ function ContainedModalScreen() {
             testID="dismiss-fullscreen-contained-modal-button"
           />
         </View>
-      </ContainedModalOverContext>
+      </ContainedModalOverContent>
     </ContainedModalProvider>
   );
 }
