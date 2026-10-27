@@ -31,15 +31,16 @@ export type OnDismissEventPayload = {
 export type StackScreenActivityMode = 'detached' | 'attached';
 
 /**
- * Animation a replace plays.
+ * Transition a replace plays, see
+ * {@link StackScreenProps.replaceAnimation | replaceAnimation}.
  *
  * @remarks
  * The following values are supported:
- * - `'pop'` — plays the outgoing screen's pop animation: the outgoing screen
+ * - `'pop'` — plays the outgoing screen's pop transition: the outgoing screen
  *   leaves on top, as if it had been popped and the incoming screen had been
  *   underneath.
- * - `'push'` — plays the incoming screen's push animation: the incoming screen
- *   covers the outgoing one, as if it had been pushed.
+ * - `'push'` — plays the incoming screen's push transition: the incoming
+ *   screen covers the outgoing one, as if it had been pushed.
  */
 export type StackScreenReplaceAnimation = 'push' | 'pop';
 
@@ -147,29 +148,30 @@ export type StackScreenProps = {
    */
   preventNativeDismiss?: boolean | undefined;
   /**
-   * Transition played when this screen is pushed onto the stack and when it is
-   * popped.
+   * Animation of this screen: the transition played when it is pushed onto the
+   * stack and the one played when it is popped.
    *
    * @remarks
    * The value on the incoming screen drives a push; the value on the outgoing
-   * screen drives a pop, including the predictive back gesture. A replace
-   * plays the pop animation of the outgoing screen or the push animation of
-   * the incoming one, see
-   * {@link StackScreenProps.replaceAnimation | replaceAnimation}. Changing it
-   * on the top screen takes effect for the next pop.
+   * screen drives a pop, including the predictive back gesture. A replace plays
+   * the pop transition of the outgoing screen or the push transition of the
+   * incoming one, see
+   * {@link StackScreenProps.replaceAnimation | replaceAnimation}. Changing the
+   * value on the top screen takes effect for the next pop.
    *
    * @note
    * This is an implementation detail and may change. A value the native side
-   * cannot use (an unknown name, an option a preset does not accept, a bezier
-   * with `x` outside `[0, 1]`, a non-positive duration or distance) logs a
-   * warning and falls back to `default`.
+   * cannot use (an unknown name, an option a preset does not accept where it is
+   * written, a preset written where it is not allowed, a bezier with `x`
+   * outside `[0, 1]`, a non-positive duration or distance) logs a warning and
+   * falls back to `'default'` for the whole prop.
    *
    * @defaultValue `'default'`
    * @platform android
    */
   animation?: StackScreenAnimation | undefined;
   /**
-   * Which animation a replace plays when this screen is the one replacing the
+   * Which transition a replace plays when this screen is the one replacing the
    * top of the stack.
    *
    * @defaultValue `'pop'`

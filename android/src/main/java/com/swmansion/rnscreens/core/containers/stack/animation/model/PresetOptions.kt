@@ -17,6 +17,14 @@ internal data class PresetOptions(
     val easing: Easing? = null,
     val distance: Length? = null,
 ) {
+    internal val present: Set<PresetOption>
+        get() =
+            buildSet {
+                if (durationMs != null) add(PresetOption.DURATION)
+                if (easing != null) add(PresetOption.EASING)
+                if (distance != null) add(PresetOption.DISTANCE)
+            }
+
     companion object {
         internal val NONE = PresetOptions()
     }
