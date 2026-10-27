@@ -398,7 +398,7 @@ namespace react = facebook::react;
 {
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
-  [_controller reactMountingTransactionWillMount];
+  [_controller beginTransaction];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -407,7 +407,7 @@ namespace react = facebook::react;
   if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
   }
-  [_controller reactMountingTransactionDidMount];
+  [_controller commitTransaction];
 }
 
 #pragma mark - Common

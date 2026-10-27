@@ -325,16 +325,16 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _needsLayoutDirectionUpdateBelowIOS17 = needsLayoutDirectionUpdate;
 }
 
-#pragma mark - RNSReactMountingTransactionObserving
+#pragma mark - RNSContainerTransactionSupporting
 
-- (void)reactMountingTransactionWillMount
+- (void)beginTransaction
 {
-  RNSLogD(@"TabBarCtrl mountintTransactionWillMount");
+  RNSLogD(@"TabBarCtrl beginTransaction");
 }
 
-- (void)reactMountingTransactionDidMount
+- (void)commitTransaction
 {
-  RNSLogD(@"TabBarCtrl mountintTransactionDidMount running updates");
+  RNSLogD(@"TabBarCtrl commitTransaction running updates");
   [self performContainerUpdate];
 }
 
