@@ -1,7 +1,7 @@
 package com.swmansion.rnscreens.core.containers.stack.header.config
 
 @JvmInline
-internal value class StackHeaderInvalidationFlags(
+value class StackHeaderInvalidationFlags(
     val raw: Int,
 ) {
     companion object {

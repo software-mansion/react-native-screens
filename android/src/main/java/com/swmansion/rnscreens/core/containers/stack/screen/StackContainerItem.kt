@@ -8,7 +8,7 @@ import com.swmansion.rnscreens.core.containers.stack.header.config.OnHeaderConfi
 /**
  * What the stack container, its fragments and the header need from an item of the stack.
  */
-internal interface StackContainerItem : ContainerItem {
+interface StackContainerItem : ContainerItem {
     /**
      * The view displaying the screen's content.
      */
