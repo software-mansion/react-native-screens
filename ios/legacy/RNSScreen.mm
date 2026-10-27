@@ -157,7 +157,16 @@ RNS_IGNORE_SUPER_CALL_END
     const CGFloat effectiveContentOffsetY =
         config.largeTitle || config.translucent || self.isPresentedAsNativeModal ? 0 : [self originInNavigationView].y;
 
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
+    // A native modal is a shadow-tree root, but its UIKit viewport can start anywhere in the window.
+    CGPoint viewportOrigin = CGPointZero;
+    if (self.isPresentedAsNativeModal && self.window != nil && self.superview != nil) {
+      // Leave the screen's own transform to the shadow node.
+      CGPoint layoutOrigin = CGPointMake(
+          self.center.x - CGRectGetMidX(self.bounds), self.center.y - CGRectGetMidY(self.bounds));
+      viewportOrigin = [self.superview convertPoint:layoutOrigin toView:self.window];
+    }
+    auto newState = react::RNSScreenState{
+        RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}, RCTPointFromCGPoint(viewportOrigin)};
 
     _state->updateState(std::move(newState),
                         _synchronousShadowStateUpdatesEnabled

@@ -21,8 +21,10 @@ class JSI_EXPORT RNSScreenState final {
   using Shared = std::shared_ptr<const RNSScreenState>;
 
   RNSScreenState() {};
-  RNSScreenState(Size frameSize_, Point contentOffset_)
-      : frameSize(frameSize_), contentOffset(contentOffset_) {};
+  RNSScreenState(Size frameSize_, Point contentOffset_, Point viewportOffset_ = {})
+      : frameSize(frameSize_),
+        contentOffset(contentOffset_),
+        viewportOffset(viewportOffset_) {};
 
 #ifdef ANDROID
   RNSScreenState(RNSScreenState const &previousState, folly::dynamic data)
@@ -40,6 +42,7 @@ class JSI_EXPORT RNSScreenState final {
 
   Size frameSize{};
   Point contentOffset;
+  Point viewportOffset{};
 
 #ifdef ANDROID
   folly::dynamic getDynamic() const;

@@ -10,5 +10,11 @@ Point RNSModalScreenShadowNode::getContentOriginOffset(
   return getStateData().contentOffset;
 }
 
+Transform RNSModalScreenShadowNode::getTransform() const {
+  auto viewportOffset = getStateData().viewportOffset;
+  return Transform::Translate(viewportOffset.x, viewportOffset.y, 0) *
+      ConcreteViewShadowNode::getTransform();
+}
+
 } // namespace react
 } // namespace facebook
