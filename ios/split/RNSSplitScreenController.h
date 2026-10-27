@@ -2,7 +2,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class RNSSplitScreenComponentView;
 @class RNSSplitScreenController;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,8 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitScreenController : UIViewController
 
 @property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
-
-- (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView;
 
 #pragma mark - Signals
 
