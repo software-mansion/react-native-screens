@@ -10,8 +10,8 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * `containerId` presents within the provider's bounds, fully covering it.
  * The provider must be an ancestor of the modal in the React tree.
  *
- * Intended for region-scoped native modality - see `ContainedModalOverContent`
- * for when to prefer a plain absolutely-positioned `View` instead.
+ * Intended for region-scoped native modality; see `ContainedModalOverContent`
+ * for when it is the right tool.
  *
  * @platform ios
  * @since 5.0

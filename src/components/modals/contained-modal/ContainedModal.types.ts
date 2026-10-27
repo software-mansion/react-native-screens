@@ -16,7 +16,8 @@ export interface ContainedModalProps {
    * @remarks
    * `true` expresses intent, not a guarantee of visibility: the presentation
    * is dropped when the targeted provider is already presenting another modal
-   * or UIKit rejects it, and `onPresentationRejected` fires instead. While
+   * or an ancestor presentation is being dismissed at that moment, and
+   * `onPresentationRejected` fires instead. While
    * the modal is suspended by navigation above its provider (e.g. a stack
    * screen pushed over it) `isOpen` stays `true` although nothing is on
    * screen; the presentation is restored when the covering content goes away.
@@ -33,8 +34,9 @@ export interface ContainedModalProps {
    * @remarks
    * The targeted provider must be an ancestor of the modal in the React tree;
    * the modal presents within that provider's bounds. Rendering a modal with
-   * no matching ancestor provider is a programming error (asserts in debug,
-   * never presents in release). Must not be empty.
+   * no matching ancestor provider is a programming error (asserts in debug;
+   * in release the presentation is rejected and `onPresentationRejected`
+   * fires). Must not be empty.
    *
    * @platform ios
    * @since 5.0
@@ -43,8 +45,9 @@ export interface ContainedModalProps {
 
   /**
    * Called when `isOpen` flipped to `true` but the presentation was dropped:
-   * the target provider is already presenting another modal, or UIKit
-   * rejected the presentation.
+   * the target provider is already presenting another modal, an ancestor
+   * presentation is being dismissed at that moment, or no matching provider
+   * was found.
    *
    * @remarks
    * The request is not queued and nothing retries it; the modal stays closed

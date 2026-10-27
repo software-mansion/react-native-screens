@@ -80,8 +80,9 @@ namespace react = facebook::react;
 #pragma mark - Provider resolution
 
 // Presents from the provider whose `containerId` matches the modal's
-// `targetContainerId`. Resolved once: the provider is an ancestor in the
-// React tree, so it cannot unmount without also unmounting the modal.
+// `targetContainerId`. Cached after the first walk: the provider is an
+// ancestor in the React tree, so it cannot unmount without also unmounting the
+// modal; only a retarget (`updateProps`) invalidates the cache.
 - (nullable UIView<RNSContainedModalContainmentProviding> *)resolveProviderView
 {
   if (_cachedProviderView != nil) {
@@ -149,21 +150,23 @@ namespace react = facebook::react;
 
 - (void)modalControllerViewDidAppear:(RNSContainedModalContentController *)controller
 {
-  // Restore after a suspension re-attaches without a layout pass,
-  // so appearance is the only trigger that fires then.
+  // A restore after a suspension re-attaches the content view without a
+  // layout pass and after the covering transaction already mounted, so
+  // appearance is the only trigger that fires at that point.
   [self syncShadowNodeState];
 }
 
 - (void)modalControllerViewDidDisappear:(RNSContainedModalContentController *)controller
 {
-  // Nothing to tear down: touch delivery is owned by the main surface's touch
-  // handler (see the note in `hitTest:`), which has no per-modal lifecycle.
+  // Nothing to tear down: touch delivery is owned by the enclosing surface's
+  // touch handler (see the note in `hitTest:`), which has no per-modal
+  // lifecycle.
 }
 
 - (void)modalControllerDidRejectPresentation:(RNSContainedModalContentController *)controller
 {
   RCTLogWarn(
-      @"[RNScreens] ContainedModal (targetContainerId '%@') was not presented: its provider is already presenting another modal, or UIKit rejected the presentation. The request was dropped, not queued.",
+      @"[RNScreens] ContainedModal (targetContainerId '%@') was not presented: no matching provider was found, its provider is already presenting another modal, or an ancestor presentation is being dismissed. The request was dropped, not queued.",
       _targetContainerId);
   [_reactEventEmitter emitOnPresentationRejected];
 }
@@ -265,11 +268,12 @@ namespace react = facebook::react;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   // The modal's React children are teleported into the presented controller's
-  // content view, which stays inside the main surface's hierarchy - the main
-  // surface's RCTSurfaceTouchHandler delivers its touches, and a dedicated
-  // handler would emit a second, differently-offset event stream for the same
-  // touch and break Pressability. This host view is an empty anchor; return
-  // nil so it never swallows touches meant for views behind it.
+  // content view, which stays inside the enclosing surface's view hierarchy -
+  // the nearest RCTSurfaceTouchHandler up the chain (see
+  // `resolveTouchRootView`) delivers its touches, and a dedicated handler
+  // would emit a second, differently-offset event stream for the same touch
+  // and break Pressability. This host view is an empty anchor; return nil so
+  // it never swallows touches meant for views behind it.
   return nil;
 }
 

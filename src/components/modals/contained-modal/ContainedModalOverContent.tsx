@@ -24,8 +24,8 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * pane-scoped dialogs in split-view / multi-column layouts, correct stacking
  * and suspend/restore alongside native presentations and navigation,
  * accessibility modality, a presentation context other native presenters can
- * target. For a simple overlay inside a view, a conditionally rendered
- * absolutely-positioned `View` is simpler and behaves the same.
+ * target. When none of that is needed, a conditionally rendered overlay
+ * `View` is also an option.
  *
  * @platform ios
  * @since 5.0
@@ -54,9 +54,10 @@ export function ContainedModalOverContent(props: ContainedModalProps) {
 }
 
 const styles = StyleSheet.create({
-  // Absolute with explicit top/left: the host must not affect sibling layout
-  // and needs a predictable origin (relative to its containing box, not the
-  // window).
+  // Absolute: the host is an empty anchor and must not take part in sibling
+  // layout. Its own origin is irrelevant to the teleported children -
+  // measurement stops at this RootNodeKind node and adds the native state's
+  // content offset instead - so top/left only pin it predictably.
   host: {
     position: 'absolute',
     top: 0,

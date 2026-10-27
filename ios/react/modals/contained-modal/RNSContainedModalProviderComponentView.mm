@@ -9,8 +9,8 @@
 namespace react = facebook::react;
 
 @implementation RNSContainedModalProviderComponentView {
-  // Inner layer of the provider's double wrap: this component view tightly
-  // wraps the controller's view, which carries the presentation context and
+  // The provider is double-wrapped: this component view (outer) tightly wraps
+  // the controller's view (inner), which carries the presentation context and
   // the provider's React children (see RNSContainedModalProviderController.h).
   RNSContainedModalProviderController *_Nonnull _wrappedContextViewController;
   NSString *_Nullable _containerId;
