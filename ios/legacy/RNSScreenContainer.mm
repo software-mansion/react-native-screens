@@ -186,6 +186,10 @@ RNS_IGNORE_SUPER_CALL_END
     // add new screens in order they are placed in subviews array
     NSInteger index = 0;
     for (RNSScreenView *screen in [_reactSubviews copy]) {
+      // An earlier attach can run a nested update that unmounts this screen; don't attach it after that.
+      if (![_reactSubviews containsObject:screen]) {
+        continue;
+      }
       if (screen.activityState != RNSActivityStateInactive) {
         if ([_activeScreens containsObject:screen] && screen.activityState == RNSActivityStateTransitioningOrBelowTop) {
           // for screens that were already active we want to mimick the effect UINavigationController
