@@ -184,8 +184,6 @@ RNSTabsIconType RNSTabsIconTypeFromIcon(react::RNSTabsScreenIOSIconType iconType
       return RNSTabsIconTypeImage;
     case SfSymbol:
       return RNSTabsIconTypeSfSymbol;
-    case Xcasset:
-      return RNSTabsIconTypeXcasset;
   }
 }
 

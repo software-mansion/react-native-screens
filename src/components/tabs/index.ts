@@ -39,8 +39,6 @@ export type {
   TabsScreenIconIOS,
   TabsScreenIconImageRenderingModeIOS,
   TabsScreenIconSymbolRenderingModeIOS,
-  TabsScreenIconTemplateIOS,
-  TabsScreenIconXcassetIOS,
   TabsScreenBlurEffect,
   TabsScreenRole,
   TabsScreenSystemItem,

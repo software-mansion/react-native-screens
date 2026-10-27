@@ -3,21 +3,28 @@ on:
   pull_request:
     branches:
       - main
-    paths:
+    # Only what the iOS build of FabricExample compiles or installs.
+    paths: &paths
       - '.github/workflows/ios-build-test-fabric.yml'
       - 'RNScreens.podspec'
       - 'package.json'
+      - 'react-native.config.js'
       - 'ios/**'
       - 'common/**'
+      - 'cpp/**'
       - 'src/fabric/**'
-      - 'FabricExample/**'
+      - 'FabricExample/ios/**'
+      - 'FabricExample/package.json'
+      - 'FabricExample/yarn.lock'
+      - 'FabricExample/Gemfile*'
   push:
     branches:
       - main
+    paths: *paths
   workflow_dispatch:
 jobs:
   build:
-    runs-on: xcode-27-xlarge
+    runs-on: xcode-27
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricExample

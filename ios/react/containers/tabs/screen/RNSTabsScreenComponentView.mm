@@ -18,7 +18,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#import "RNSScrollViewMarkerComponentView.h"
 #import "RNSScrollViewSeeking.h"
 
 namespace react = facebook::react;
@@ -125,7 +124,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark RNSScrollViewSeeking
 
-- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView
 {
   // Native iOS-26 scroll-edge behavior (status-bar tap scroll-to-top, scroll edge appearance).
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];

@@ -9,7 +9,6 @@
 
 #import "RNSConversions-Stack.h"
 #import "RNSSafeAreaViewNotifications.h"
-#import "RNSScrollViewMarkerComponentView.h"
 #import "RNSScrollViewSeeking.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
@@ -87,7 +86,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSScrollViewSeeking
 
-- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView
 {
   // Native scroll-edge behavior (UINavigationBar scroll edge appearance, top-screen-tap scroll-to-top on iPad).
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
