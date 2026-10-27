@@ -8,6 +8,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
+#import <objc/runtime.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -524,11 +525,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (@available(iOS 18.0, *)) {
     id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
     // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
-    // hidden again. Checking it also registers the handlers once per transition, although header config updates call
-    // this method repeatedly while it is in progress.
-    // Known gap: if the revealed screen's header is shown and hidden again while the transition is in progress, a later
-    // call registers the handlers again and may capture an alpha UIKit has already lowered. A cancel then restores that
-    // alpha last, so the bar can stay faded. Left unhandled, as toggling the header mid-transition is rare.
+    // hidden again.
     if (!animated || wasHidden || !shouldHide || coordinator == nil ||
         coordinator.presentationStyle != UIModalPresentationNone) {
       return;
@@ -543,6 +540,14 @@ RNS_IGNORE_SUPER_CALL_END
     if (transitioningVC.preferredTransition == nil) {
       return;
     }
+
+    // Header config updates call this method repeatedly while the transition is in progress. Register the handler only
+    // once per transition, so that a later call cannot capture an alpha the transition has already lowered.
+    static char handlerRegisteredKey;
+    if (objc_getAssociatedObject(coordinator, &handlerRegisteredKey) != nil) {
+      return;
+    }
+    objc_setAssociatedObject(coordinator, &handlerRegisteredKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
     UINavigationBar *navigationBar = navctr.navigationBar;
     CGFloat alphaBeforeTransition = navigationBar.alpha;
