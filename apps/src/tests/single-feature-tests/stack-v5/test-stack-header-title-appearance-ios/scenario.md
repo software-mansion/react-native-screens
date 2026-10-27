@@ -4,10 +4,10 @@
 
 **Description:** Verifies customization of the title, large title and subtitle
 text appearance in the iOS stack v5 header — color, font size, font family,
-font weight and font style — configured through the `standardAppearance` and
-`scrollEdgeAppearance` objects of the header config. Subtitle appearance keys
-apply to both the regular and the large subtitle (UIKit derives the large
-subtitle appearance from `subtitleTextAttributes`).
+font weight, font style and letter spacing — configured through the
+`standardAppearance` and `scrollEdgeAppearance` objects of the header config.
+Subtitle appearance keys apply to both the regular and the large subtitle
+(UIKit derives the large subtitle appearance from `subtitleTextAttributes`).
 The two appearance objects are configured independently and can be toggled off 
 so they are not passed at all. The scenario checks that a default appearance
 renders identically to no appearance, that with `scrollEdgeAppearance` unset
@@ -71,3 +71,19 @@ TBD.
 7. Set large title `color` to `platform`.
 
     - [ ] Large title color is updated to a shade of green.
+
+8. Reset appearance. Enable `largeTitleEnabled` and `standardAppearance`. Under
+   largeTitle, select `-0.9`, then `2` for `letterSpacing`.
+
+    - [ ] The large title tightens, then widens, while keeping the default font.
+
+9. Select `0`, then `default` for the large title `letterSpacing`.
+
+    - [ ] At `0` the large title is slightly wider than at `default`, because
+      kerning is disabled. `default` restores it.
+
+10. Unset `largeTitleEnabled`, scroll down, and repeat steps 8 and 9 for title
+    and subtitle.
+
+    - [ ] Title and subtitle spacing behave the same way, independently of each
+      other and of the other font options.
