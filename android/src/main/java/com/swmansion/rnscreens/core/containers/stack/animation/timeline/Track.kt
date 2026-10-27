@@ -48,6 +48,12 @@ internal fun List<Track>.scaled(factor: Float): List<Track> = map { it.withTimin
 internal fun List<Track>.withEasing(easing: Easing): List<Track> = map { it.withTiming(it.timing.withEasing(easing)) }
 
 /**
+ * Every track scaled so the last one ends at [durationMs]. A list ending at 0 ms, without tracks
+ * or with only steps at its start, has nothing to scale.
+ */
+internal fun List<Track>.retimed(durationMs: Long): List<Track> = if (endMs == 0L) this else scaled(durationMs.toFloat() / endMs)
+
+/**
  * When the last track ends; 0 without tracks.
  */
 internal val List<Track>.endMs: Long
