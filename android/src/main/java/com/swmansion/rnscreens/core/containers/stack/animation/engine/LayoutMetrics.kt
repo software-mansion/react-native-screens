@@ -14,6 +14,26 @@ internal data class LayoutMetrics(
     val density: Float,
     val isRTL: Boolean,
 ) {
+    /**
+     * [length] in pixels along [axis]; a logical X mirrors in a right-to-left container.
+     */
+    internal fun toPx(
+        length: Length,
+        axis: Axis,
+    ): Float {
+        val px =
+            when (length) {
+                is Length.Dp -> length.value * density
+                is Length.Percent ->
+                    length.fraction *
+                        when (axis) {
+                            Axis.X, Axis.LOGICAL_X -> containerWidth
+                            Axis.Y -> containerHeight
+                        }
+            }
+        return if (axis == Axis.LOGICAL_X && isRTL) -px else px
+    }
+
     companion object {
         internal fun of(
             view: View,
@@ -25,24 +45,4 @@ internal data class LayoutMetrics(
             isRTL = container.layoutDirection == View.LAYOUT_DIRECTION_RTL,
         )
     }
-}
-
-/**
- * Pixels along [axis]; a logical X mirrors in a right-to-left container.
- */
-internal fun Length.toPx(
-    axis: Axis,
-    metrics: LayoutMetrics,
-): Float {
-    val px =
-        when (this) {
-            is Length.Dp -> value * metrics.density
-            is Length.Percent ->
-                fraction *
-                    when (axis) {
-                        Axis.X, Axis.LOGICAL_X -> metrics.containerWidth
-                        Axis.Y -> metrics.containerHeight
-                    }
-        }
-    return if (axis == Axis.LOGICAL_X && metrics.isRTL) -px else px
 }
