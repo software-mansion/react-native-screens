@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Text, View, type NativeSyntheticEvent } from 'react-native';
+import {
+  Button,
+  Modal,
+  Text,
+  View,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import {
   Tabs,
   type TabSelectedEvent,
@@ -18,10 +24,11 @@ const INITIAL_TEST_IDS: Record<TabKey, string> = {
   settings: 'tab-settings',
 };
 
-type Phase = 'gate' | 'loading' | 'tabs';
+type Phase = 'gate' | 'loading' | 'tabs' | 'modal-tabs';
 
 export default function Test4748() {
   const [phase, setPhase] = useState<Phase>('gate');
+  const [modalVisible, setModalVisible] = useState(true);
   const [testIDs, setTestIDs] =
     useState<Record<TabKey, string>>(INITIAL_TEST_IDS);
   const [navStateRequest, setNavStateRequest] =
@@ -51,6 +58,11 @@ export default function Test4748() {
           testID="mount-delayed"
           onPress={() => setPhase('loading')}
         />
+        <Button
+          title="Mount tabs in modal"
+          testID="mount-modal"
+          onPress={() => setPhase('modal-tabs')}
+        />
       </View>
     );
   }
@@ -63,8 +75,15 @@ export default function Test4748() {
     );
   }
 
-  return (
+  const content = (
     <View style={{ flex: 1 }}>
+      {phase === 'modal-tabs' && (
+        <Button
+          title="Detach tabs"
+          testID="detach-tabs"
+          onPress={() => setModalVisible(false)}
+        />
+      )}
       <Tabs.Host
         navStateRequest={navStateRequest}
         onTabSelected={(event: NativeSyntheticEvent<TabSelectedEvent>) =>
@@ -109,4 +128,22 @@ export default function Test4748() {
       </Tabs.Host>
     </View>
   );
+
+  if (phase === 'modal-tabs') {
+    return (
+      <View style={{ flex: 1 }}>
+        <Button
+          title="Reattach tabs"
+          testID="reattach-tabs"
+          onPress={() => setModalVisible(true)}
+        />
+        {!modalVisible && <Text testID="tabs-detached">tabs detached</Text>}
+        <Modal visible={modalVisible} animationType="none">
+          {content}
+        </Modal>
+      </View>
+    );
+  }
+
+  return content;
 }

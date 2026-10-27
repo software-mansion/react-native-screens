@@ -68,8 +68,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
-static const NSTimeInterval RNSTabBarTestIDRetryDelay = 0.15;
-static const NSUInteger RNSTabBarTestIDMaxRetryAttempts = 5;
 static const void *RNSTabBarViewOriginalAccessibilityIdentifierKey = &RNSTabBarViewOriginalAccessibilityIdentifierKey;
 
 static UIView *_Nullable RNSGetTabBarItemView(UITabBarItem *item)
@@ -132,9 +130,6 @@ static UIView *_Nullable RNSGetTabBarItemView(UITabBarItem *item)
   NSString *_Nullable _prominentScreenKey;
 
   BOOL _needsUpdateOfProminentIdentifier;
-
-  BOOL _tabBarTestIDRetryScheduled;
-  NSUInteger _tabBarTestIDRetryAttempts;
 }
 
 - (instancetype)init
@@ -1029,9 +1024,8 @@ static UIView *_Nullable RNSGetTabBarItemView(UITabBarItem *item)
       tabView, RNSTabBarViewOriginalAccessibilityIdentifierKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (BOOL)applyTabBarItemTestIDs
+- (void)applyTabBarItemTestIDs
 {
-  BOOL appliedAllTestIDs = YES;
   for (UITabBarItem *item in self.tabBar.items ?: @[]) {
     NSString *testID = item.accessibilityIdentifier;
     UIView *tabView = RNSGetTabBarItemView(item);
@@ -1039,40 +1033,15 @@ static UIView *_Nullable RNSGetTabBarItemView(UITabBarItem *item)
       [self applyTestID:testID toTabView:tabView];
     } else if (tabView != nil) {
       [self restoreOriginalAccessibilityIdentifierForTabView:tabView];
-    } else if (testID.length > 0) {
-      appliedAllTestIDs = NO;
     }
   }
-  return appliedAllTestIDs;
 }
 
 - (void)syncTabBarItemTestIDs
 {
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 26.0, *)) {
-    if ([self applyTabBarItemTestIDs]) {
-      _tabBarTestIDRetryScheduled = NO;
-      _tabBarTestIDRetryAttempts = 0;
-      return;
-    }
-    if (_tabBarTestIDRetryScheduled || _tabBarTestIDRetryAttempts >= RNSTabBarTestIDMaxRetryAttempts) {
-      return;
-    }
-
-    _tabBarTestIDRetryScheduled = YES;
-    _tabBarTestIDRetryAttempts += 1;
-    __weak RNSTabBarController *weakSelf = self;
-    dispatch_after(
-        dispatch_time(DISPATCH_TIME_NOW, (int64_t)(RNSTabBarTestIDRetryDelay * NSEC_PER_SEC)),
-        dispatch_get_main_queue(),
-        ^{
-          RNSTabBarController *controller = weakSelf;
-          if (controller == nil) {
-            return;
-          }
-          controller->_tabBarTestIDRetryScheduled = NO;
-          [controller syncTabBarItemTestIDs];
-        });
+    [self applyTabBarItemTestIDs];
   }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
