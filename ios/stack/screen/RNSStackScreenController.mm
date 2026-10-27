@@ -49,25 +49,25 @@
 #if !TARGET_OS_TV
   [self.headerCoordinator updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
-  [_delegate stackScreenControllerWillAppear:self];
+  [_delegate viewControllerViewWillAppear:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [_delegate stackScreenControllerDidAppear:self];
+  [_delegate viewControllerViewDidAppear:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  [_delegate stackScreenControllerWillDisappear:self];
+  [_delegate viewControllerViewWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [_delegate stackScreenControllerDidDisappear:self];
+  [_delegate viewControllerViewDidDisappear:self];
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
