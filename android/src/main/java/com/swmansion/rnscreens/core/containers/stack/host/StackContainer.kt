@@ -17,12 +17,12 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.containers.stack.animation.StackFragmentTransitionProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.StackOperationContext
 import com.swmansion.rnscreens.core.containers.stack.animation.StackOperationKind
-import com.swmansion.rnscreens.core.containers.stack.animation.StackScreenTransitionProviding
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackTransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackFragmentTransitionSlot
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackUnderlayProviding
-import com.swmansion.rnscreens.core.containers.stack.animation.resolveStackTransition
+import com.swmansion.rnscreens.core.containers.stack.animation.resolveFragmentTransition
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -44,7 +44,7 @@ internal class StackContainer(
     StackHeaderBackPressHandler,
     StackScreenFragmentDelegate,
     StackUpdateBatchStateProviding,
-    StackScreenTransitionProviding,
+    StackFragmentTransitionProviding,
     StackUnderlayProviding {
     private var fragmentManager: FragmentManager? = null
 
@@ -128,7 +128,7 @@ internal class StackContainer(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
-        transitionContext = null
+        operationContext = null
         fragmentManager = null
         parentContainerRegistry.detach(this)
         colorSchemeCoordinator.teardown()
@@ -266,25 +266,26 @@ internal class StackContainer(
         check(stackModel.isNotEmpty()) { "[RNScreens] Stack should never be empty after updates" }
 
         if (hasPendingOperations) {
-            writeTransitionContext(modelBeforeBatch)
+            writeOperationContext(modelBeforeBatch)
         }
 
         pendingPopOperations.clear()
         pendingPushOperations.clear()
     }
 
-    // region Transition provision
+    // region Fragment transition provision
 
     /**
-     * The operation FragmentManager is about to execute, read by [transitionFor]. Written right
-     * before FragmentManager calls the transition getters: by [writeTransitionContext] for a batch,
-     * by [onBackStackChangeStarted] for a pop FragmentManager starts itself (predictive back included).
+     * The operation FragmentManager is about to execute, read by [fragmentTransitionFor]. Written
+     * right before FragmentManager calls the transition getters: by [writeOperationContext] for a
+     * batch, by [onBackStackChangeStarted] for a pop FragmentManager starts itself (predictive back
+     * included).
      *
      * Cleared in [onBackStackChanged], which follows the getter calls in every path
      * (`onBackStackChangeCommitted` comes before them). So a predictive back gesture start clears it
      * too: neither the commit nor the cancel (the record re-executed forward) resolves a transition.
      */
-    private var transitionContext: StackOperationContext? = null
+    private var operationContext: StackOperationContext? = null
 
     /**
      * A batch computed while an earlier one is still pending in FragmentManager executes together
@@ -292,9 +293,9 @@ internal class StackContainer(
      * fragments are not used: the activity's FragmentManager also holds other containers' fragments
      * (a sibling stack, a stack left over from a JS reload).
      */
-    private fun writeTransitionContext(modelBeforeBatch: List<StackScreenFragment>) {
+    private fun writeOperationContext(modelBeforeBatch: List<StackScreenFragment>) {
         val incoming = stackModel.last()
-        val outgoing = transitionContext?.outgoing ?: modelBeforeBatch.lastOrNull()
+        val outgoing = operationContext?.outgoing ?: modelBeforeBatch.lastOrNull()
         val kind =
             when {
                 // The first screen is not a back stack record; nothing animates.
@@ -307,13 +308,13 @@ internal class StackContainer(
                 modelBeforeBatch.contains(incoming) -> StackOperationKind.POP
                 else -> StackOperationKind.REPLACE
             }
-        transitionContext = kind?.let { StackOperationContext(it, checkNotNull(outgoing), incoming) }
+        operationContext = kind?.let { StackOperationContext(it, checkNotNull(outgoing), incoming) }
     }
 
-    override fun transitionFor(
+    override fun fragmentTransitionFor(
         fragment: StackScreenFragment,
-        slot: StackTransitionSlot,
-    ): Transition? = resolveStackTransition(fragment, slot, transitionContext)
+        slot: StackFragmentTransitionSlot,
+    ): Transition? = resolveFragmentTransition(fragment, slot, operationContext)
 
     // endregion
 
@@ -347,7 +348,7 @@ internal class StackContainer(
             backPressHandler = WeakReference(this),
             updateBatchStateProvider = WeakReference(this),
             colorSchemeProvider = WeakReference(this),
-            transitionProvider = WeakReference(this),
+            fragmentTransitionProvider = WeakReference(this),
         ).also {
             RNSLog.d(TAG, "Created Fragment $it for item ${item.itemKey}")
         }
@@ -390,7 +391,7 @@ internal class StackContainer(
 
     // This is called after special effects (animations) are dispatched
     override fun onBackStackChanged() {
-        transitionContext = null
+        operationContext = null
     }
 
     // Called before FragmentManager asks for transitions, for every fragment of the back stack record
@@ -408,8 +409,8 @@ internal class StackContainer(
         // the popped fragment.
         // A JS push and pop executed together also gets here without a context, but FragmentManager
         // starts no transition for it, so this context is never read.
-        if (pop && transitionContext == null && stackModel.size > 1) {
-            transitionContext =
+        if (pop && operationContext == null && stackModel.size > 1) {
+            operationContext =
                 StackOperationContext(
                     StackOperationKind.POP,
                     outgoing = stackModel.last(),

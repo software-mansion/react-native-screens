@@ -10,13 +10,8 @@ import com.swmansion.rnscreens.core.containers.stack.animation.model.TransitionC
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.AnimationTimeline
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
-import com.swmansion.rnscreens.core.containers.stack.animation.timeline.endMs
-import com.swmansion.rnscreens.core.containers.stack.animation.timeline.scaled
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.retimed
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.withEasing
-
-// The tables are built on every request, which is cheap enough. Options rescale what they are
-// written on: a whole animation against its reference duration, a transition or a motion against
-// its own length.
 
 /**
  * The transition of [kind] that [config] plays: a preset's own, or, for a custom animation, the
@@ -88,7 +83,7 @@ private fun presetTransition(
 ): TransitionTimeline {
     val (name, options) = preset
     var transition = baseTransition(name, options.distance, kind)
-    options.durationMs?.let { transition = transition.scaled(it.toFloat() / transition.durationMs) }
+    options.durationMs?.let { transition = transition.retimed(it) }
     options.easing?.let { transition = transition.withEasing(it) }
     return transition
 }
@@ -102,14 +97,14 @@ private fun presetMotionTracks(
 ): List<Track> {
     val (name, options) = preset
     var tracks = baseMotionTracks(name, options.distance, isAppearing)
-    options.durationMs?.let { tracks = tracks.scaled(it.toFloat() / tracks.endMs) }
+    options.durationMs?.let { tracks = tracks.retimed(it) }
     options.easing?.let { tracks = tracks.withEasing(it) }
     return tracks
 }
 
 /**
- * The pushed or popped screen moves along the name's vector; the other screen moves with it only
- * for the names that move both. The position decides which screen is which and the z-order.
+ * The pushed or popped screen moves along the name's vector; the other screen is animated with it
+ * only for the names that animate both. The position decides which screen is which and the z-order.
  */
 private fun baseTransition(
     name: PresetName,
@@ -131,7 +126,7 @@ private fun baseTransition(
         -> {
             val isPush = kind == StackTransitionKind.PUSH
             val movingScreen = baseMotionTracks(name, distance, isAppearing = isPush)
-            val otherScreen = if (name.movesBothScreens) baseMotionTracks(name, distance, isAppearing = !isPush) else emptyList()
+            val otherScreen = if (name.animatesBothScreens) baseMotionTracks(name, distance, isAppearing = !isPush) else emptyList()
             TransitionTimeline.of(
                 kind,
                 enter = if (isPush) movingScreen else otherScreen,
