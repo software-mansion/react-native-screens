@@ -119,9 +119,8 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
       // Restore default system item icon
       UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
       if (systemTabBarItem == nil) {
-        RCTLogError(
-            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-            (long)screenView.systemItem);
+        RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]",
+                    (long)screenView.systemItem);
         return;
       }
       UIImage *_Nullable systemItemImage = systemTabBarItem.image;
@@ -142,9 +141,8 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
       // Restore default system item icon
       UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
       if (systemTabBarItem == nil) {
-        RCTLogError(
-            @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-            (long)screenView.systemItem);
+        RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]",
+                    (long)screenView.systemItem);
         return;
       }
       tabBarItem.selectedImage = systemTabBarItem.selectedImage;
