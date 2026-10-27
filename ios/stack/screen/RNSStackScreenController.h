@@ -14,10 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol RNSStackScreenControllerDelegate <NSObject>
 
-- (void)stackScreenControllerWillAppear:(RNSStackScreenController *)controller;
-- (void)stackScreenControllerDidAppear:(RNSStackScreenController *)controller;
-- (void)stackScreenControllerWillDisappear:(RNSStackScreenController *)controller;
-- (void)stackScreenControllerDidDisappear:(RNSStackScreenController *)controller;
+- (void)viewControllerViewWillAppear:(RNSStackScreenController *)controller;
+- (void)viewControllerViewDidAppear:(RNSStackScreenController *)controller;
+- (void)viewControllerViewWillDisappear:(RNSStackScreenController *)controller;
+- (void)viewControllerViewDidDisappear:(RNSStackScreenController *)controller;
 
 /**
  * Called when the controller has been removed from its navigation controller, after the pop transition completed.

@@ -114,22 +114,22 @@ namespace react = facebook::react;
 
 #pragma mark - RNSStackScreenControllerDelegate
 
-- (void)stackScreenControllerWillAppear:(RNSStackScreenController *)controller
+- (void)viewControllerViewWillAppear:(RNSStackScreenController *)controller
 {
   [self.reactEventEmitter emitOnWillAppear];
 }
 
-- (void)stackScreenControllerDidAppear:(RNSStackScreenController *)controller
+- (void)viewControllerViewDidAppear:(RNSStackScreenController *)controller
 {
   [self.reactEventEmitter emitOnDidAppear];
 }
 
-- (void)stackScreenControllerWillDisappear:(RNSStackScreenController *)controller
+- (void)viewControllerViewWillDisappear:(RNSStackScreenController *)controller
 {
   [self.reactEventEmitter emitOnWillDisappear];
 }
 
-- (void)stackScreenControllerDidDisappear:(RNSStackScreenController *)controller
+- (void)viewControllerViewDidDisappear:(RNSStackScreenController *)controller
 {
   [self.reactEventEmitter emitOnDidDisappear];
 }
