@@ -2,61 +2,20 @@
 #import <React/RCTLog.h>
 #import "RNSDefines.h"
 
-static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemItem systemItem,
-                                                          UITabBarSystemItem *outSystemItem)
-{
-  switch (systemItem) {
-    case RNSTabsScreenSystemItemNone:
-      return NO;
-    case RNSTabsScreenSystemItemBookmarks:
-      *outSystemItem = UITabBarSystemItemBookmarks;
-      return YES;
-    case RNSTabsScreenSystemItemContacts:
-      *outSystemItem = UITabBarSystemItemContacts;
-      return YES;
-    case RNSTabsScreenSystemItemDownloads:
-      *outSystemItem = UITabBarSystemItemDownloads;
-      return YES;
-    case RNSTabsScreenSystemItemFavorites:
-      *outSystemItem = UITabBarSystemItemFavorites;
-      return YES;
-    case RNSTabsScreenSystemItemFeatured:
-      *outSystemItem = UITabBarSystemItemFeatured;
-      return YES;
-    case RNSTabsScreenSystemItemHistory:
-      *outSystemItem = UITabBarSystemItemHistory;
-      return YES;
-    case RNSTabsScreenSystemItemMore:
-      *outSystemItem = UITabBarSystemItemMore;
-      return YES;
-    case RNSTabsScreenSystemItemMostRecent:
-      *outSystemItem = UITabBarSystemItemMostRecent;
-      return YES;
-    case RNSTabsScreenSystemItemMostViewed:
-      *outSystemItem = UITabBarSystemItemMostViewed;
-      return YES;
-    case RNSTabsScreenSystemItemRecents:
-      *outSystemItem = UITabBarSystemItemRecents;
-      return YES;
-    case RNSTabsScreenSystemItemSearch:
-      *outSystemItem = UITabBarSystemItemSearch;
-      return YES;
-    case RNSTabsScreenSystemItemTopRated:
-      *outSystemItem = UITabBarSystemItemTopRated;
-      return YES;
-  }
-  return NO;
-}
+#include <optional>
+
+static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSystemItem(
+    RNSTabsScreenSystemItem systemItem);
 
 @implementation RNSTabBarItemCoordinator
 
 + (nullable UITabBarItem *)tabBarItemWithSystemItem:(RNSTabsScreenSystemItem)systemItem
 {
-  UITabBarSystemItem uiSystemItem;
-  if (!RNSUITabBarSystemItemFromTabsScreenSystemItem(systemItem, &uiSystemItem)) {
+  std::optional<UITabBarSystemItem> uiSystemItem = RNSUITabBarSystemItemFromTabsScreenSystemItem(systemItem);
+  if (!uiSystemItem) {
     return nil;
   }
-  return [[UITabBarItem alloc] initWithTabBarSystemItem:uiSystemItem tag:0];
+  return [[UITabBarItem alloc] initWithTabBarSystemItem:uiSystemItem.value() tag:0];
 }
 
 /**
@@ -107,9 +66,7 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
   if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
     tabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
     if (tabBarItem == nil) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)screenView.systemItem);
+      RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
       return;
     }
   } else {
@@ -145,9 +102,7 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
     // Restore default system item title
     UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
     if (systemTabBarItem == nil) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)screenView.systemItem);
+      RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
       return;
     }
     evaluatedTitle = systemTabBarItem.title;
@@ -191,3 +146,37 @@ static BOOL RNSUITabBarSystemItemFromTabsScreenSystemItem(RNSTabsScreenSystemIte
 }
 
 @end
+
+static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSystemItem(
+    RNSTabsScreenSystemItem systemItem)
+{
+  switch (systemItem) {
+    case RNSTabsScreenSystemItemNone:
+      return std::nullopt;
+    case RNSTabsScreenSystemItemBookmarks:
+      return UITabBarSystemItemBookmarks;
+    case RNSTabsScreenSystemItemContacts:
+      return UITabBarSystemItemContacts;
+    case RNSTabsScreenSystemItemDownloads:
+      return UITabBarSystemItemDownloads;
+    case RNSTabsScreenSystemItemFavorites:
+      return UITabBarSystemItemFavorites;
+    case RNSTabsScreenSystemItemFeatured:
+      return UITabBarSystemItemFeatured;
+    case RNSTabsScreenSystemItemHistory:
+      return UITabBarSystemItemHistory;
+    case RNSTabsScreenSystemItemMore:
+      return UITabBarSystemItemMore;
+    case RNSTabsScreenSystemItemMostRecent:
+      return UITabBarSystemItemMostRecent;
+    case RNSTabsScreenSystemItemMostViewed:
+      return UITabBarSystemItemMostViewed;
+    case RNSTabsScreenSystemItemRecents:
+      return UITabBarSystemItemRecents;
+    case RNSTabsScreenSystemItemSearch:
+      return UITabBarSystemItemSearch;
+    case RNSTabsScreenSystemItemTopRated:
+      return UITabBarSystemItemTopRated;
+  }
+  return std::nullopt;
+}
