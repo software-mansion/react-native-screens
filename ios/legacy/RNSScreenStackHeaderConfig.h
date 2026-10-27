@@ -27,10 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSString *titleFontFamily;
 @property (nonatomic, retain) NSNumber *titleFontSize;
 @property (nonatomic, retain) NSString *titleFontWeight;
+@property (nonatomic, retain, nullable) NSNumber *titleLetterSpacing;
 @property (nonatomic, retain) UIColor *titleColor;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
+@property (nonatomic, retain, nullable) NSNumber *backTitleLetterSpacing;
 @property (nonatomic, getter=isBackTitleVisible) BOOL backTitleVisible;
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, retain) UIColor *color;
@@ -38,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
 @property (nonatomic, retain) NSString *largeTitleFontWeight;
-@property (nonatomic) float largeTitleLetterSpacing;
+@property (nonatomic, retain, nullable) NSNumber *largeTitleLetterSpacing;
 @property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;

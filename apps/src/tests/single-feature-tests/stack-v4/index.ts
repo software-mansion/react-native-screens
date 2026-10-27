@@ -1,14 +1,14 @@
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestStackV4Orientation from './stack-v4-orientation';
-import TestStackV4LargeTitleLetterSpacingIOS from './stack-v4-large-title-letter-spacing-ios';
+import TestStackV4HeaderLetterSpacing from './stack-v4-header-letter-spacing';
 import TestStackV4SheetSelectDetent from './test-stack-v4-sheet-select-detent';
 
 export { default as TestStackV4Orientation } from './stack-v4-orientation';
-export { default as TestStackV4LargeTitleLetterSpacingIOS } from './stack-v4-large-title-letter-spacing-ios';
+export { default as TestStackV4HeaderLetterSpacing } from './stack-v4-header-letter-spacing';
 export { default as TestStackV4SheetSelectDetent } from './test-stack-v4-sheet-select-detent';
 
 const scenarios = {
-  TestStackV4LargeTitleLetterSpacingIOS,
+  TestStackV4HeaderLetterSpacing,
   TestStackV4Orientation,
   TestStackV4SheetSelectDetent,
 };

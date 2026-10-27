@@ -500,10 +500,30 @@ RNS_IGNORE_SUPER_CALL_END
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-  if (config.largeTitleLetterSpacing != 0) {
+  // Kern is added on top of the attributes above, so letter spacing alone keeps UIKit's default font.
+  if (config.titleLetterSpacing != nil) {
+    NSMutableDictionary *attrs = [appearance.titleTextAttributes mutableCopy];
+    attrs[NSKernAttributeName] = config.titleLetterSpacing;
+    appearance.titleTextAttributes = attrs;
+  }
+
+  if (config.largeTitleLetterSpacing != nil) {
     NSMutableDictionary *largeAttrs = [appearance.largeTitleTextAttributes mutableCopy];
-    largeAttrs[NSKernAttributeName] = @(config.largeTitleLetterSpacing);
+    largeAttrs[NSKernAttributeName] = config.largeTitleLetterSpacing;
     appearance.largeTitleTextAttributes = largeAttrs;
+  }
+
+  if (config.backTitleLetterSpacing != nil) {
+    // Styling the back button through the appearance keeps the system back button item,
+    // which preserves its native title shortening.
+    UIBarButtonItemAppearance *backButtonAppearance = appearance.backButtonAppearance;
+    NSMutableDictionary *backAttrs = [backButtonAppearance.normal.titleTextAttributes mutableCopy];
+    backAttrs[NSKernAttributeName] = config.backTitleLetterSpacing;
+    backButtonAppearance.normal.titleTextAttributes = backAttrs;
+    backButtonAppearance.highlighted.titleTextAttributes = backAttrs;
+    backButtonAppearance.disabled.titleTextAttributes = backAttrs;
+    backButtonAppearance.focused.titleTextAttributes = backAttrs;
+    appearance.backButtonAppearance = backButtonAppearance;
   }
 
   UIImage *backButtonImage = [config loadBackButtonImageInViewController:vc];
@@ -801,6 +821,9 @@ RNS_IGNORE_SUPER_CALL_END
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
+      if (config.backTitleLetterSpacing != nil) {
+        attrs[NSKernAttributeName] = config.backTitleLetterSpacing;
+      }
       [RNSScreenStackHeaderConfig setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
 
@@ -1060,6 +1083,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   return nil;
 }
 
++ (nullable NSNumber *)numberOrNil:(nullable id)value
+{
+  return [value isKindOfClass:[NSNumber class]] ? value : nil;
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
@@ -1100,7 +1128,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   }
   _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
-  _largeTitleLetterSpacing = newScreenProps.largeTitleLetterSpacing;
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
   _largeTitleBackgroundColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleBackgroundColor);
 
@@ -1133,6 +1160,17 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
+  }
+
+  if (newScreenProps.letterSpacing != oldScreenProps.letterSpacing || !_initialPropsSet) {
+    // A missing key means the default spacing; 0 is a valid explicit value.
+    NSDictionary *letterSpacing = [RNSConvert idFromFollyDynamic:newScreenProps.letterSpacing];
+    if (![letterSpacing isKindOfClass:[NSDictionary class]]) {
+      letterSpacing = nil;
+    }
+    _titleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"title"]];
+    _largeTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"largeTitle"]];
+    _backTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"backTitle"]];
   }
 
   if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {

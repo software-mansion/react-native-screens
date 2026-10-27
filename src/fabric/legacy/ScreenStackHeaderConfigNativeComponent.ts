@@ -7,6 +7,7 @@ import type {
   ViewProps,
   ColorValue,
 } from 'react-native';
+import type { UnsafeMixed } from '../codegenUtils';
 
 type DirectionType = 'rtl' | 'ltr';
 
@@ -45,6 +46,12 @@ type BlurEffect =
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
+type HeaderLetterSpacing = {
+  title?: CT.Float | undefined;
+  largeTitle?: CT.Float | undefined;
+  backTitle?: CT.Float | undefined;
+};
+
 export interface NativeProps extends ViewProps {
   onAttached?: CT.DirectEventHandler<OnAttachedEvent> | undefined;
   onDetached?: CT.DirectEventHandler<OnDetachedEvent> | undefined;
@@ -61,7 +68,6 @@ export interface NativeProps extends ViewProps {
   largeTitleFontFamily?: string | undefined;
   largeTitleFontSize?: CT.Int32 | undefined;
   largeTitleFontWeight?: string | undefined;
-  largeTitleLetterSpacing?: CT.Float | undefined;
   largeTitleBackgroundColor?: ColorValue | undefined;
   largeTitleHideShadow?: boolean | undefined;
   largeTitleColor?: ColorValue | undefined;
@@ -72,6 +78,8 @@ export interface NativeProps extends ViewProps {
   titleFontWeight?: string | undefined;
   titleColor?: ColorValue | undefined;
   disableBackButtonMenu?: boolean | undefined;
+  // An object, so that an omitted spacing stays distinct from an explicit 0.
+  letterSpacing?: UnsafeMixed<HeaderLetterSpacing> | undefined;
   backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean | undefined;
   backButtonInCustomView?: boolean | undefined;
