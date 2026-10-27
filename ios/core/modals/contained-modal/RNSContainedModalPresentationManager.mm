@@ -80,8 +80,11 @@
 
   UIViewController *presentedViewController = presentationSourceViewController.presentedViewController;
 
-  // Deferral: our own request already landed (or was accepted this runloop);
-  // `handleDidPresent` syncs the state when the view appears.
+  // Deferral: our own request is in flight. UIKit already reports the
+  // controller as presented, but `_state` is still Dismissed: it only flips
+  // in `handleDidPresent`, once the view has actually appeared (the present
+  // completion carries no signal). Until then this check is what keeps the
+  // request from being re-issued onto a source that is already presenting.
   if (presentedViewController == controller) {
     return RNSContainedModalPresentationDecisionDefer;
   }
