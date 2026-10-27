@@ -18,10 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol RNSTabsScreenViewControllerDelegate <NSObject>
 
-- (void)tabsScreenViewControllerWillAppear:(RNSTabsScreenViewController *)controller;
-- (void)tabsScreenViewControllerDidAppear:(RNSTabsScreenViewController *)controller;
-- (void)tabsScreenViewControllerWillDisappear:(RNSTabsScreenViewController *)controller;
-- (void)tabsScreenViewControllerDidDisappear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewWillAppear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewDidAppear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewWillDisappear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewDidDisappear:(RNSTabsScreenViewController *)controller;
 
 @end
 

@@ -153,22 +153,22 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RNSTabsScreenViewControllerDelegate
 
-- (void)tabsScreenViewControllerWillAppear:(RNSTabsScreenViewController *)controller
+- (void)viewControllerViewWillAppear:(RNSTabsScreenViewController *)controller
 {
   [self.reactEventEmitter emitOnWillAppear];
 }
 
-- (void)tabsScreenViewControllerDidAppear:(RNSTabsScreenViewController *)controller
+- (void)viewControllerViewDidAppear:(RNSTabsScreenViewController *)controller
 {
   [self.reactEventEmitter emitOnDidAppear];
 }
 
-- (void)tabsScreenViewControllerWillDisappear:(RNSTabsScreenViewController *)controller
+- (void)viewControllerViewWillDisappear:(RNSTabsScreenViewController *)controller
 {
   [self.reactEventEmitter emitOnWillDisappear];
 }
 
-- (void)tabsScreenViewControllerDidDisappear:(RNSTabsScreenViewController *)controller
+- (void)viewControllerViewDidDisappear:(RNSTabsScreenViewController *)controller
 {
   [self.reactEventEmitter emitOnDidDisappear];
 }

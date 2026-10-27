@@ -41,25 +41,25 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [_delegate tabsScreenViewControllerWillAppear:self];
+  [_delegate viewControllerViewWillAppear:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [_delegate tabsScreenViewControllerDidAppear:self];
+  [_delegate viewControllerViewDidAppear:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  [_delegate tabsScreenViewControllerWillDisappear:self];
+  [_delegate viewControllerViewWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [_delegate tabsScreenViewControllerDidDisappear:self];
+  [_delegate viewControllerViewDidDisappear:self];
 }
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
