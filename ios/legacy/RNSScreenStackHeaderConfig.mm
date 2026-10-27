@@ -509,6 +509,58 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
+// Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
+// A zoom transition (iOS 18+) shows or hides the navigation bar by animating its alpha. When the transition is
+// cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The `setNavigationBarHidden:` call made by the
+// staying screen's update afterwards is then a no-op, so e.g. its visible bar stays at alpha 0. We restore the alpha
+// the bar had before the transition, animated along with the rest of the cancel animation. Remove once Apple fixes it.
++ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UIViewController *)vc
+                                    navigationController:(UINavigationController *)navctr
+                                                animated:(BOOL)animated
+                                               wasHidden:(BOOL)wasHidden
+                                              shouldHide:(BOOL)shouldHide
+{
+  if (@available(iOS 18.0, *)) {
+    id<UIViewControllerTransitionCoordinator> coordinator = vc.transitionCoordinator;
+    // Only a transition that changes the bar's visibility animates its alpha. Checking it also registers the handlers
+    // once per transition, although header config updates call this method repeatedly while it is in progress.
+    if (!animated || wasHidden == shouldHide || coordinator == nil ||
+        coordinator.presentationStyle != UIModalPresentationNone) {
+      return;
+    }
+
+    UINavigationBar *navigationBar = navctr.navigationBar;
+    CGFloat alphaBeforeTransition = navigationBar.alpha;
+
+    [coordinator
+        notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          if (!context.isCancelled) {
+            return;
+          }
+          // The cancel animation takes the transition back from `percentComplete` to 0.
+          [UIView animateWithDuration:context.transitionDuration * context.percentComplete
+                                delay:0
+                              options:UIViewAnimationOptionBeginFromCurrentState
+                           animations:^{
+                             navigationBar.alpha = alphaBeforeTransition;
+                           }
+                           completion:nil];
+        }];
+
+    __weak id<UIViewControllerTransitionCoordinator> weakCoordinator = coordinator;
+    [coordinator animateAlongsideTransition:nil
+                                 completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                                   // A non-interactive cancel doesn't go through the block above. Also skip if another
+                                   // transition has already started and owns the bar.
+                                   id<UIViewControllerTransitionCoordinator> current = navctr.transitionCoordinator;
+                                   if (!context.isCancelled || (current != nil && current != weakCoordinator)) {
+                                     return;
+                                   }
+                                   navigationBar.alpha = alphaBeforeTransition;
+                                 }];
+  }
+}
+
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -546,23 +598,17 @@ RNS_IGNORE_SUPER_CALL_END
 
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
+  [self restoreNavigationBarAlphaIfTransitionIsCancelled:vc
+                                   navigationController:navctr
+                                               animated:animated
+                                              wasHidden:wasHidden
+                                             shouldHide:shouldHide];
+
   if (shouldHide) {
     navitem.title = config.title;
 
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
     [navctr setNavigationBarHidden:YES animated:animated];
-
-    if (animated && vc.transitionCoordinator != nil) {
-      // A cancelled zoom dismissal (iOS 18+) restores `navigationBarHidden` but leaves the bar's alpha at 0,
-      // and the following `setNavigationBarHidden:NO` is a no-op, so restore the alpha here.
-      [vc.transitionCoordinator
-          animateAlongsideTransition:nil
-                          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-                            if ([context isCancelled]) {
-                              navctr.navigationBar.alpha = 1.0;
-                            }
-                          }];
-    }
     return;
   }
 
