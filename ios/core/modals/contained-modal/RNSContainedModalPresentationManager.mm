@@ -26,31 +26,56 @@
   }
 }
 
-// Every early return below is one of two kinds. A DEFERRAL keeps the request
-// pending: `isOpen` still holds and a later update (window attach, dismiss
-// completion, appearance) re-runs this method. A REJECTION drops the request
-// for good and tells the delegate, because nothing would ever retry it.
 - (void)presentIfNeededWithProvider:(id<RNSContainedModalPresentationProvider>)provider
                          controller:(RNSContainedModalContentController *)controller
+{
+  UIViewController *presentationSourceViewController = nil;
+  RNSContainedModalPresentationDecision decision =
+      [self presentationDecisionWithProvider:provider
+                                  controller:controller
+            presentationSourceViewController:&presentationSourceViewController];
+
+  switch (decision) {
+    case RNSContainedModalPresentationDecisionDefer:
+      return;
+    case RNSContainedModalPresentationDecisionReject:
+      [controller.delegate modalControllerDidRejectPresentation:controller];
+      return;
+    case RNSContainedModalPresentationDecisionPresent:
+      break;
+  }
+
+  // The call is optimistic: UIKit may perform it now, defer it past an
+  // in-flight transition, or never perform it - and the completion is not
+  // called in the deferred case, so it carries no signal. The state therefore
+  // stays Dismissed until the content controller actually appears
+  // (`handleDidPresent`); an unperformed request is retried by the next
+  // update, a deferred one is adopted when it lands.
+  [presentationSourceViewController presentViewController:controller animated:YES completion:nil];
+}
+
+- (RNSContainedModalPresentationDecision)
+    presentationDecisionWithProvider:(id<RNSContainedModalPresentationProvider>)provider
+                          controller:(RNSContainedModalContentController *)controller
+    presentationSourceViewController:(UIViewController *__autoreleasing _Nullable *_Nonnull)outSourceViewController
 {
   // Deferral: already presented, or a dismissal is in flight and its
   // completion re-runs the update.
   if (_state != RNSContainedModalPresentationStateDismissed) {
-    return;
+    return RNSContainedModalPresentationDecisionDefer;
   }
 
   // Deferral: UIKit silently ignores a presentation request from an off-window
   // view (the completion never fires); the host re-flushes on window attach.
   if (provider.hostWindow == nil) {
-    return;
+    return RNSContainedModalPresentationDecisionDefer;
   }
 
   // Rejection: no provider resolves for this modal (missing or mismatched
   // target), and nothing retries a request until the next prop change.
   UIViewController *presentationSourceViewController = provider.presentationSourceViewController;
   if (presentationSourceViewController == nil) {
-    [controller.delegate modalControllerDidRejectPresentation:controller];
-    return;
+    return RNSContainedModalPresentationDecisionReject;
   }
 
   UIViewController *presentedViewController = presentationSourceViewController.presentedViewController;
@@ -58,16 +83,14 @@
   // Deferral: our own request already landed (or was accepted this runloop);
   // `handleDidPresent` syncs the state when the view appears.
   if (presentedViewController == controller) {
-    return;
+    return RNSContainedModalPresentationDecisionDefer;
   }
 
-  // Rejection: one open modal per provider. Note that `presentedViewController`
-  // also reports a presentation made by an ancestor (a sheet or a modal above the provider),
-  // so we need to scope the check.
+  // Rejection: one open modal per provider. `presentedViewController` also
+  // reports presentations made by ancestors, hence the scoping.
   if (presentedViewController != nil &&
       presentedViewController.presentingViewController == presentationSourceViewController) {
-    [controller.delegate modalControllerDidRejectPresentation:controller];
-    return;
+    return RNSContainedModalPresentationDecisionReject;
   }
 
   // Rejection: a request made while an ancestor is being dismissed is
@@ -78,17 +101,11 @@
     topmostAncestor = topmostAncestor.parentViewController;
   }
   if (topmostAncestor.isBeingDismissed) {
-    [controller.delegate modalControllerDidRejectPresentation:controller];
-    return;
+    return RNSContainedModalPresentationDecisionReject;
   }
 
-  // The call is optimistic: UIKit may perform it now, defer it past an
-  // in-flight transition, or never perform it - and the completion is not
-  // called in the deferred case, so it carries no signal. The state therefore
-  // stays Dismissed until the content controller actually appears
-  // (`handleDidPresent`); an unperformed request is retried by the next
-  // update, a deferred one is adopted when it lands.
-  [presentationSourceViewController presentViewController:controller animated:YES completion:nil];
+  *outSourceViewController = presentationSourceViewController;
+  return RNSContainedModalPresentationDecisionPresent;
 }
 
 - (void)handleDidPresent
