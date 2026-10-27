@@ -510,7 +510,7 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 // Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
 // Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
 // its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
@@ -569,7 +569,7 @@ RNS_IGNORE_SUPER_CALL_END
         }];
   }
 }
-#endif // !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
@@ -608,12 +608,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
-#if !TARGET_OS_TV && !TARGET_OS_VISION
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
                                                 animated:animated
                                                wasHidden:wasHidden
                                               shouldHide:shouldHide];
-#endif // !TARGET_OS_TV && !TARGET_OS_VISION
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
   if (shouldHide) {
     navitem.title = config.title;
