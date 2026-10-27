@@ -3,7 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions-SplitView.h"
-#import "RNSNavigationItemCustomizerProtocol.h"
+#import "RNSNavigationItemCustomizing.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
@@ -182,8 +182,8 @@ namespace react = facebook::react;
 {
   [super mountChildComponentView:childComponentView index:index];
 
-  if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizerProtocol)]) {
-    [(id<RNSNavigationItemCustomizerProtocol>)childComponentView customizeNavigationItem:_controller.navigationItem];
+  if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizing)]) {
+    [(id<RNSNavigationItemCustomizing>)childComponentView configureNavigationItem:_controller.navigationItem];
   }
 }
 
