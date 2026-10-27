@@ -15,6 +15,12 @@ internal sealed interface Length {
         val fraction: Float,
     ) : Length
 
+    fun negated(): Length =
+        when (this) {
+            is Dp -> Dp(-value)
+            is Percent -> Percent(-fraction)
+        }
+
     companion object {
         internal val ZERO: Length = Percent(0f)
     }

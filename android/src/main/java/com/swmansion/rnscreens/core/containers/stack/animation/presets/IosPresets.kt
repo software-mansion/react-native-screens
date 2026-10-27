@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.core.containers.stack.animation.presets
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 
 // Every value below is taken from the legacy implementation's
 // `res/base/anim/rns_ios_from_{right,left}_{foreground,background}_{open,close}.xml` animations,
@@ -25,29 +27,35 @@ private val DISTANCE_PARALLAX = Length.Percent(0.3f)
 private const val DIM_ALPHA = 0.1f
 
 /**
- * The iOS push look: a full-width foreground over a background that recedes and darkens slightly.
+ * The iOS look: the pushed or popped screen travels the full width along [edge]'s vector over a
+ * background that moves 30 % with it and is darkened while covered.
  */
-internal fun iosFromPreset(edge: Edge) =
-    PresetDefinition(
-        push =
-            pushTimeline(
+internal fun iosFromTransition(
+    edge: Edge,
+    kind: StackTransitionKind,
+): TransitionTimeline =
+    when (kind) {
+        StackTransitionKind.PUSH ->
+            TransitionTimeline.of(
+                kind,
                 enter = listOf(travel(edge, DISTANCE_FULL, isAppearing = true)),
                 exit =
                     listOf(
                         travel(edge, DISTANCE_PARALLAX, isAppearing = false),
                         dimTrack(0f, DIM_ALPHA, DURATION_MS, EASING_ACCELERATE_DECELERATE),
                     ),
-            ),
-        pop =
-            popTimeline(
+            )
+        StackTransitionKind.POP ->
+            TransitionTimeline.of(
+                kind,
                 enter =
                     listOf(
-                        travel(edge.opposite(), DISTANCE_PARALLAX, isAppearing = true),
+                        travel(edge, DISTANCE_PARALLAX, isAppearing = true),
                         dimTrack(DIM_ALPHA, 0f, DURATION_MS, EASING_ACCELERATE_DECELERATE),
                     ),
-                exit = listOf(travel(edge.opposite(), DISTANCE_FULL, isAppearing = false)),
-            ),
-    )
+                exit = listOf(travel(edge, DISTANCE_FULL, isAppearing = false)),
+            )
+    }
 
 private fun travel(
     edge: Edge,

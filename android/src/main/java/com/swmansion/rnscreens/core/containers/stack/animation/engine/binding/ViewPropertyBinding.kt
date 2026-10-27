@@ -4,11 +4,16 @@ import android.view.View
 import android.view.animation.Interpolator
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Timing
 
-internal enum class ViewTarget {
-    TRANSLATION_X,
-    TRANSLATION_Y,
-    ALPHA,
-    SCALE,
+/**
+ * A view property a track is bound to; [restValue] is the `View` default it returns to.
+ */
+internal enum class ViewTarget(
+    internal val restValue: Float,
+) {
+    TRANSLATION_X(restValue = 0f),
+    TRANSLATION_Y(restValue = 0f),
+    ALPHA(restValue = 1f),
+    SCALE(restValue = 1f),
 }
 
 internal class ViewPropertyBinding(
@@ -40,12 +45,4 @@ internal class ViewPropertyBinding(
             }
         }
     }
-
-    // The `View` defaults.
-    private val ViewTarget.restValue: Float
-        get() =
-            when (this) {
-                ViewTarget.TRANSLATION_X, ViewTarget.TRANSLATION_Y -> 0f
-                ViewTarget.ALPHA, ViewTarget.SCALE -> 1f
-            }
 }

@@ -4,7 +4,10 @@ import android.os.Build
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.AnimationTimeline
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 
 // Every value below is taken from the legacy implementation's `rns_default_*.xml` animations.
 // Below API 33 those are `res/base/anim/rns_default_{enter,exit}_{in,out}.xml`, a recreation of
@@ -56,12 +59,13 @@ private val EASING_LINEAR = Easing.Named(EasingName.LINEAR)
  * The platform-style transition for the running API level: a cross-zoom below API 33, the
  * Android 13 horizontal slide from API 33 on.
  */
-internal fun defaultPreset(): PresetDefinition = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) slide() else crossZoom()
+internal fun defaultPreset(): AnimationTimeline = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) slide() else crossZoom()
 
 private fun crossZoom() =
-    PresetDefinition(
+    AnimationTimeline(
         push =
-            pushTimeline(
+            TransitionTimeline.of(
+                StackTransitionKind.PUSH,
                 enter =
                     zoom(
                         opacityFrom = 0f,
@@ -80,7 +84,8 @@ private fun crossZoom() =
                     ),
             ),
         pop =
-            popTimeline(
+            TransitionTimeline.of(
+                StackTransitionKind.POP,
                 enter =
                     zoom(
                         opacityFrom = 0f,
@@ -113,9 +118,10 @@ private fun zoom(
     )
 
 private fun slide() =
-    PresetDefinition(
+    AnimationTimeline(
         push =
-            pushTimeline(
+            TransitionTimeline.of(
+                StackTransitionKind.PUSH,
                 enter =
                     listOf(
                         quickFade(from = 0f, to = 1f, startMs = SLIDE_PUSH_FADE_START_MS),
@@ -124,7 +130,8 @@ private fun slide() =
                 exit = listOf(slide(Edge.END, isAppearing = false)),
             ),
         pop =
-            popTimeline(
+            TransitionTimeline.of(
+                StackTransitionKind.POP,
                 enter = listOf(slide(Edge.START, isAppearing = true)),
                 exit =
                     listOf(

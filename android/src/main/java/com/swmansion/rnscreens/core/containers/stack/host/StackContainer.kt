@@ -17,11 +17,11 @@ import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
-import com.swmansion.rnscreens.core.containers.stack.animation.ScreenTransitionProviding
-import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionContext
-import com.swmansion.rnscreens.core.containers.stack.animation.StackTransitionKind
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.UnderlayProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.StackOperationContext
+import com.swmansion.rnscreens.core.containers.stack.animation.StackOperationKind
+import com.swmansion.rnscreens.core.containers.stack.animation.StackScreenTransitionProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackTransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackUnderlayProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.resolveStackTransition
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
@@ -44,8 +44,8 @@ internal class StackContainer(
     StackHeaderBackPressHandler,
     StackScreenFragmentDelegate,
     StackUpdateBatchStateProviding,
-    ScreenTransitionProviding,
-    UnderlayProviding {
+    StackScreenTransitionProviding,
+    StackUnderlayProviding {
     private var fragmentManager: FragmentManager? = null
 
     private fun requireFragmentManager(): FragmentManager =
@@ -284,7 +284,7 @@ internal class StackContainer(
      * (`onBackStackChangeCommitted` comes before them). So a predictive back gesture start clears it
      * too: neither the commit nor the cancel (the record re-executed forward) resolves a transition.
      */
-    private var transitionContext: StackTransitionContext? = null
+    private var transitionContext: StackOperationContext? = null
 
     /**
      * A batch computed while an earlier one is still pending in FragmentManager executes together
@@ -303,16 +303,16 @@ internal class StackContainer(
                 outgoing === incoming -> null
                 // Outgoing still in the model: it was covered. Incoming already in the model before
                 // the batch: it was revealed. Neither: the top was replaced.
-                stackModel.contains(outgoing) -> StackTransitionKind.PUSH
-                modelBeforeBatch.contains(incoming) -> StackTransitionKind.POP
-                else -> StackTransitionKind.REPLACE
+                stackModel.contains(outgoing) -> StackOperationKind.PUSH
+                modelBeforeBatch.contains(incoming) -> StackOperationKind.POP
+                else -> StackOperationKind.REPLACE
             }
-        transitionContext = kind?.let { StackTransitionContext(it, checkNotNull(outgoing), incoming) }
+        transitionContext = kind?.let { StackOperationContext(it, checkNotNull(outgoing), incoming) }
     }
 
     override fun transitionFor(
         fragment: StackScreenFragment,
-        slot: TransitionSlot,
+        slot: StackTransitionSlot,
     ): Transition? = resolveStackTransition(fragment, slot, transitionContext)
 
     // endregion
@@ -410,8 +410,8 @@ internal class StackContainer(
         // starts no transition for it, so this context is never read.
         if (pop && transitionContext == null && stackModel.size > 1) {
             transitionContext =
-                StackTransitionContext(
-                    StackTransitionKind.POP,
+                StackOperationContext(
+                    StackOperationKind.POP,
                     outgoing = stackModel.last(),
                     incoming = stackModel[stackModel.lastIndex - 1],
                 )

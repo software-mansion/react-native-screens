@@ -7,35 +7,104 @@ import com.facebook.react.bridge.ReadableType
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.model.MotionConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetConfig
 import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetName
 import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetOption
 import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetOptions
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.TransitionConfig
 import com.swmansion.rnscreens.react.utils.requireNotNullString
 import kotlin.math.roundToLong
 
 private const val KEY_TYPE = "type"
 private const val KEY_NAME = "name"
+private const val KEY_PUSH = "push"
+private const val KEY_POP = "pop"
+private const val KEY_ENTER = "enter"
+private const val KEY_EXIT = "exit"
+private const val TYPE_PRESET = "preset"
+private const val TYPE_CUSTOM = "custom"
 private const val PERCENT_SUFFIX = "%"
 
 /**
- * Converts the `animation` prop into [StackAnimationConfig]. The value is validated only here:
- * every rejected value is an [IllegalArgumentException] the view manager turns into a warning
- * and the default animation.
+ * Converts the `animation` prop into [StackAnimationConfig]. The shape is checked here and the
+ * level validity of a preset by the config it is wrapped in; every rejected value is an
+ * [IllegalArgumentException] the view manager turns into a warning and the default animation.
  */
 internal fun parseStackAnimationConfig(value: Dynamic): StackAnimationConfig =
-    when (value.type) {
-        ReadableType.String -> StackAnimationConfig.Preset(PresetName.fromString(checkNotNull(value.asString())))
-        ReadableType.Map -> parseMap(checkNotNull(value.asMap()))
-        else -> throw IllegalArgumentException("[RNScreens] animation must be a preset name or an object.")
+    when (val shape = shapeOf(value)) {
+        is Shape.Preset -> StackAnimationConfig.Preset(shape.preset)
+        is Shape.Custom ->
+            StackAnimationConfig.Custom(
+                push = parseTransition(shape.map, KEY_PUSH),
+                pop = parseTransition(shape.map, KEY_POP),
+            )
     }
 
-private fun parseMap(map: ReadableMap): StackAnimationConfig {
-    when (val type = map.requireNotNullString(KEY_TYPE)) {
-        "preset" -> Unit
-        "custom" -> throw IllegalArgumentException("[RNScreens] Custom animations are not supported yet.")
-        else -> throw IllegalArgumentException("[RNScreens] Unknown animation type: $type.")
+private fun parseTransition(
+    map: ReadableMap,
+    key: String,
+): TransitionConfig =
+    if (map.isAbsent(key)) {
+        TransitionConfig.Preset(PresetConfig(PresetName.NONE))
+    } else {
+        when (val shape = shapeOf(map.getDynamic(key))) {
+            is Shape.Preset -> TransitionConfig.Preset(shape.preset)
+            is Shape.Custom ->
+                TransitionConfig.Custom(
+                    enter = parseMotion(shape.map, KEY_ENTER),
+                    exit = parseMotion(shape.map, KEY_EXIT),
+                )
+        }
     }
+
+private fun parseMotion(
+    map: ReadableMap,
+    key: String,
+): MotionConfig =
+    if (map.isAbsent(key)) {
+        MotionConfig.Preset(PresetConfig(PresetName.NONE))
+    } else {
+        when (val shape = shapeOf(map.getDynamic(key))) {
+            is Shape.Preset -> MotionConfig.Preset(shape.preset)
+            is Shape.Custom -> throw IllegalArgumentException("[RNScreens] Custom screen motions are not supported yet.")
+        }
+    }
+
+/**
+ * Every level is written the same way: a preset name, `{ type: 'preset', name, …options }` or
+ * `{ type: 'custom', …the next level }`. What a custom object holds depends on the level, so
+ * only its map is read here.
+ */
+private sealed interface Shape {
+    data class Preset(
+        val preset: PresetConfig,
+    ) : Shape
+
+    data class Custom(
+        val map: ReadableMap,
+    ) : Shape
+}
+
+private fun shapeOf(value: Dynamic): Shape =
+    when (value.type) {
+        ReadableType.String -> Shape.Preset(PresetConfig(PresetName.fromString(checkNotNull(value.asString()))))
+        ReadableType.Map -> {
+            val map = checkNotNull(value.asMap())
+            when (val type = map.requireNotNullString(KEY_TYPE)) {
+                TYPE_PRESET -> Shape.Preset(parsePresetConfig(map))
+                TYPE_CUSTOM -> Shape.Custom(map)
+                else -> throw IllegalArgumentException("[RNScreens] Unknown animation type: $type.")
+            }
+        }
+        else -> throw IllegalArgumentException("[RNScreens] An animation must be a preset name or an object.")
+    }
+
+// `isNull` alone throws for a missing key.
+private fun ReadableMap.isAbsent(key: String): Boolean = !hasKey(key) || isNull(key)
+
+private fun parsePresetConfig(map: ReadableMap): PresetConfig {
     val name = PresetName.fromString(map.requireNotNullString(KEY_NAME))
 
     var durationMs: Long? = null
@@ -45,17 +114,17 @@ private fun parseMap(map: ReadableMap): StackAnimationConfig {
     while (keys.hasNextKey()) {
         val key = keys.nextKey()
         if (key == KEY_TYPE || key == KEY_NAME || map.isNull(key)) continue
-        val option = PresetOption.entries.firstOrNull { it.key == key }
-        require(option != null && option in name.options) {
-            "[RNScreens] Option '$key' is not supported by animation preset '${name.stringName}'."
-        }
+        val option =
+            requireNotNull(PresetOption.entries.firstOrNull { it.key == key }) {
+                "[RNScreens] Unknown animation preset option: $key."
+            }
         when (option) {
             PresetOption.DURATION -> durationMs = parseDuration(map.getDynamic(key))
             PresetOption.EASING -> easing = parseEasing(map.getDynamic(key))
             PresetOption.DISTANCE -> distance = parseDistance(map.getDynamic(key))
         }
     }
-    return StackAnimationConfig.Preset(name, PresetOptions(durationMs, easing, distance))
+    return PresetConfig(name, PresetOptions(durationMs, easing, distance))
 }
 
 private fun parseDuration(value: Dynamic): Long {
