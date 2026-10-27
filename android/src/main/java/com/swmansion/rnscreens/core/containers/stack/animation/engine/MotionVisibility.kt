@@ -9,12 +9,11 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.MotionTi
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ZOrder
 
 /**
- * The androidx `Transition` of one screen: it plays that screen's motion in one operation, in
- * the enter / exit sense FragmentManager gives the word, not the push / pop sense of the model's
- * transition. One instance per request, never shared, holding only immutable data:
- * FragmentManager clones it and the seek controller attaches per-instance state.
+ * The androidx `Visibility` of one screen: it plays that screen's motion in one operation. One
+ * instance per request, never shared, holding only immutable data: FragmentManager clones it and
+ * the seek controller attaches per-instance state.
  */
-internal class ScreenTransition(
+internal class MotionVisibility(
     internal val timeline: MotionTimeline,
     isAppearing: Boolean,
     internal val exitZOrder: ZOrder,

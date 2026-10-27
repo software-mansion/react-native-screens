@@ -35,11 +35,13 @@ private const val PERCENT_SUFFIX = "%"
 internal fun parseStackAnimationConfig(value: Dynamic): StackAnimationConfig =
     when (val shape = shapeOf(value)) {
         is Shape.Preset -> StackAnimationConfig.Preset(shape.preset)
-        is Shape.Custom ->
+        is Shape.Custom -> {
+            shape.map.requireOnlyKeys(KEY_TYPE, KEY_PUSH, KEY_POP)
             StackAnimationConfig.Custom(
                 push = parseTransition(shape.map, KEY_PUSH),
                 pop = parseTransition(shape.map, KEY_POP),
             )
+        }
     }
 
 private fun parseTransition(
@@ -51,11 +53,13 @@ private fun parseTransition(
     } else {
         when (val shape = shapeOf(map.getDynamic(key))) {
             is Shape.Preset -> TransitionConfig.Preset(shape.preset)
-            is Shape.Custom ->
+            is Shape.Custom -> {
+                shape.map.requireOnlyKeys(KEY_TYPE, KEY_ENTER, KEY_EXIT)
                 TransitionConfig.Custom(
                     enter = parseMotion(shape.map, KEY_ENTER),
                     exit = parseMotion(shape.map, KEY_EXIT),
                 )
+            }
         }
     }
 
@@ -104,16 +108,32 @@ private fun shapeOf(value: Dynamic): Shape =
 // `isNull` alone throws for a missing key.
 private fun ReadableMap.isAbsent(key: String): Boolean = !hasKey(key) || isNull(key)
 
+// A `null` value means no value, as if the key were omitted (`undefined` never arrives, the
+// bridge drops it before conversion).
+private fun ReadableMap.presentKeys(): List<String> =
+    buildList {
+        val keys = keySetIterator()
+        while (keys.hasNextKey()) {
+            val key = keys.nextKey()
+            if (!isNull(key)) add(key)
+        }
+    }
+
+// A misplaced or misspelled key would otherwise read as omitted, which is `none`.
+private fun ReadableMap.requireOnlyKeys(vararg allowed: String) {
+    presentKeys().forEach { key ->
+        require(key in allowed) { "[RNScreens] Unknown animation key: $key." }
+    }
+}
+
 private fun parsePresetConfig(map: ReadableMap): PresetConfig {
     val name = PresetName.fromString(map.requireNotNullString(KEY_NAME))
 
     var durationMs: Long? = null
     var easing: Easing? = null
     var distance: Length? = null
-    val keys = map.keySetIterator()
-    while (keys.hasNextKey()) {
-        val key = keys.nextKey()
-        if (key == KEY_TYPE || key == KEY_NAME || map.isNull(key)) continue
+    for (key in map.presentKeys()) {
+        if (key == KEY_TYPE || key == KEY_NAME) continue
         val option =
             requireNotNull(PresetOption.entries.firstOrNull { it.key == key }) {
                 "[RNScreens] Unknown animation preset option: $key."

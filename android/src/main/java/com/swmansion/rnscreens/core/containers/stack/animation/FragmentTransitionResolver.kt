@@ -1,25 +1,26 @@
 package com.swmansion.rnscreens.core.containers.stack.animation
 
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.ScreenTransition
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackTransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.MotionVisibility
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackFragmentTransitionSlot
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
 import com.swmansion.rnscreens.core.containers.stack.animation.presets.transitionTimelineOf
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.core.utils.RNSLog
 
-private const val TAG = "StackTransitionResolver"
+private const val TAG = "FragmentTransitionResolver"
 
 /**
- * Picks the transition [fragment] plays in [slot] from the executing operation in [context] and
- * the screens' configs. Without a context nothing animates (the first screen, a stack torn down
- * with its FragmentManager); a fragment outside its role in the context is unexpected and logged.
+ * Picks the fragment transition [fragment] plays in [slot] from the executing operation in
+ * [context] and the screens' configs. Without a context nothing animates (the first screen, a
+ * stack torn down with its FragmentManager); a fragment outside its role in the context is
+ * unexpected and logged.
  */
-internal fun resolveStackTransition(
+internal fun resolveFragmentTransition(
     fragment: StackScreenFragment,
-    slot: StackTransitionSlot,
+    slot: StackFragmentTransitionSlot,
     context: StackOperationContext?,
-): ScreenTransition? {
+): MotionVisibility? {
     if (context == null) {
         return null
     }
@@ -30,7 +31,7 @@ internal fun resolveStackTransition(
     }
     val timeline = timelineOf(context)
     val motion = if (slot.isAppearing) timeline.enter else timeline.exit
-    return ScreenTransition(motion, slot.isAppearing, timeline.exitZOrder)
+    return MotionVisibility(motion, slot.isAppearing, timeline.exitZOrder)
 }
 
 /**
