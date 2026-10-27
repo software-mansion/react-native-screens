@@ -85,12 +85,30 @@ function ScreenStackItem(
   ref: React.ForwardedRef<ScreenInstance>,
 ) {
   const headerVisible = !headerConfig?.hidden;
-  const { nextContextValue: nextEdgeContextValue } = useEdgeInsetApplication(
+  // On Android, a form sheet is not drawn under the status bar (unless it
+  // overflows the top inset), and has no native header of its own: the headers
+  // of the stacks nested in it have no status bar inset to apply.
+  const isAndroidFormSheetBelowStatusBar =
+    Platform.OS === 'android' &&
+    stackPresentation === 'formSheet' &&
+    !rest.sheetShouldOverflowTopInset;
+  const { nextContextValue: headerEdgeContextValue } = useEdgeInsetApplication(
     headerVisible,
     headerConfig?.disableTopInsetApplication ?? false,
     headerConfig?.disableLeftInsetApplication ?? false,
     headerConfig?.disableRightInsetApplication ?? false,
     headerConfig?.disableBottomInsetApplication ?? false,
+  );
+  const nextEdgeContextValue = React.useMemo(
+    () =>
+      isAndroidFormSheetBelowStatusBar
+        ? {
+            ...headerEdgeContextValue,
+            topAlreadyApplied: true,
+            legacyTopInsetBehaviorDisabled: true,
+          }
+        : headerEdgeContextValue,
+    [isAndroidFormSheetBelowStatusBar, headerEdgeContextValue],
   );
 
   const currentScreenRef = React.useRef<ScreenInstance | null>(null);
