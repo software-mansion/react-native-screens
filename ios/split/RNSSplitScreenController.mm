@@ -6,13 +6,10 @@
 @implementation RNSSplitScreenController
 
 /**
- * @brief Searching for the SplitHost controller
+ * @brief Returns the SplitHost controller the column is installed in.
  *
- * It checks whether the parent controller is our host controller.
- * If we're outside the structure, e. g. for inspector represented as a modal,
- * we ask the delegate for that controller.
- *
- * @return If found - a RNSSplitHostController instance, otherwise nil.
+ * @return `splitViewController` if it is a RNSSplitHostController, otherwise nil (e.g. for the inspector presented as
+ * a modal, outside the split hierarchy).
  */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
@@ -20,7 +17,7 @@
     return (RNSSplitHostController *)self.splitViewController;
   }
 
-  return [_delegate splitHostControllerForSplitScreenController:self];
+  return nil;
 }
 
 - (BOOL)isInSplitHostSubtree
