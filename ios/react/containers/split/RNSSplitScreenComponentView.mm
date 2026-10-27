@@ -3,7 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions-SplitView.h"
-#import "RNSNavigationItemCustomizer.h"
+#import "RNSNavigationItemCustomizerProtocol.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
