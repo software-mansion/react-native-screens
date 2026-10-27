@@ -14,6 +14,10 @@ interface NativeProps extends ViewProps {
   isOpen?: CT.WithDefault<boolean, false>;
   targetContainerId?: CT.WithDefault<string, ''>;
   onPresentationRejected?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
+  onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSContainedModalHost', {

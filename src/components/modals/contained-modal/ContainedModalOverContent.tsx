@@ -32,7 +32,7 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalOverContent(props: ContainedModalProps) {
-  const { children, isOpen, targetContainerId, onPresentationRejected } = props;
+  const { targetContainerId, ...rest } = props;
 
   // Native maps an empty string to nil, and the modal would assert (debug) or
   // silently never present (release). Fail loudly instead.
@@ -45,11 +45,9 @@ export function ContainedModalOverContent(props: ContainedModalProps) {
   return (
     <ContainedModalHostNativeComponent
       style={styles.host}
-      isOpen={isOpen}
       targetContainerId={targetContainerId}
-      onPresentationRejected={onPresentationRejected}>
-      {children}
-    </ContainedModalHostNativeComponent>
+      {...rest}
+    />
   );
 }
 
