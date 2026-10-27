@@ -69,17 +69,5 @@
   },
   "engines": {
     "node": ">= 22.11.0"
-  },
-  "codegenConfig": {
-    "name": "FabricExampleSpec",
-    "type": "components",
-    "jsSrcsDir": "../apps/src/shared/native",
-    "ios": {
-      "components": {
-        "RNSExampleZoomTransition": {
-          "className": "RNSExampleZoomTransitionView"
-        }
-      }
-    }
   }
 }
