@@ -509,19 +509,20 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 // Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
-// A zoom transition (iOS 18+) shows or hides the navigation bar by animating its alpha. When the transition is
-// cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The `setNavigationBarHidden:` call made by the
-// staying screen's update afterwards is then a no-op, so its visible bar stays at alpha 0. We restore the alpha
-// the bar had before the transition, animated along with the rest of the cancel animation. Remove once Apple fixes it.
-+ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UIViewController *)vc
-                                    navigationController:(UINavigationController *)navctr
+// Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
+// its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
+// `setNavigationBarHidden:` call made by the staying screen's update afterwards is then a no-op, so its visible bar
+// stays at alpha 0. We restore the alpha the bar had before the transition, animated along with the rest of the cancel
+// animation. Remove once Apple fixes it.
++ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UINavigationController *)navctr
                                                 animated:(BOOL)animated
                                                wasHidden:(BOOL)wasHidden
                                               shouldHide:(BOOL)shouldHide
 {
   if (@available(iOS 18.0, *)) {
-    id<UIViewControllerTransitionCoordinator> coordinator = vc.transitionCoordinator;
+    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
     // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
     // hidden again. Checking it also registers the handlers once per transition, although header config updates call
     // this method repeatedly while it is in progress.
@@ -533,9 +534,20 @@ RNS_IGNORE_SUPER_CALL_END
       return;
     }
 
+    // Scoped to zoom transitions, the only ones known to leave the bar faded. The zoom is set with
+    // `preferredTransition` on the screen being pushed or popped; the from screen stays on the stack during a push,
+    // but not during a pop.
+    UIViewController *fromVC = [coordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIViewController *toVC = [coordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIViewController *transitioningVC = [navctr.viewControllers containsObject:fromVC] ? toVC : fromVC;
+    if (transitioningVC.preferredTransition == nil) {
+      return;
+    }
+
     UINavigationBar *navigationBar = navctr.navigationBar;
     CGFloat alphaBeforeTransition = navigationBar.alpha;
 
+    // Only interactive transitions can be cancelled, and this block is called when one is.
     [coordinator
         notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           if (!context.isCancelled) {
@@ -550,20 +562,9 @@ RNS_IGNORE_SUPER_CALL_END
                            }
                            completion:nil];
         }];
-
-    __weak id<UIViewControllerTransitionCoordinator> weakCoordinator = coordinator;
-    [coordinator animateAlongsideTransition:nil
-                                 completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-                                   // A non-interactive cancel doesn't go through the block above. Also skip if another
-                                   // transition has already started and owns the bar.
-                                   id<UIViewControllerTransitionCoordinator> current = navctr.transitionCoordinator;
-                                   if (!context.isCancelled || (current != nil && current != weakCoordinator)) {
-                                     return;
-                                   }
-                                   navigationBar.alpha = alphaBeforeTransition;
-                                 }];
   }
 }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
@@ -602,11 +603,12 @@ RNS_IGNORE_SUPER_CALL_END
 
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
-  [self restoreNavigationBarAlphaIfTransitionIsCancelled:vc
-                                   navigationController:navctr
-                                               animated:animated
-                                              wasHidden:wasHidden
-                                             shouldHide:shouldHide];
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
+                                                animated:animated
+                                               wasHidden:wasHidden
+                                              shouldHide:shouldHide];
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 
   if (shouldHide) {
     navitem.title = config.title;
