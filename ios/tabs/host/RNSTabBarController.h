@@ -27,7 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Updates made by this controller are synchronized by `RNSContainerTransactionSupporting` protocol,
  * i.e. if you made changes through one of signals method, unless you flush them immediately, they
  * will be executed only when the transaction is committed (under React Native, after React finishes
- * the mounting transaction).
+ * the mounting transaction). `beginTransaction` / `commitTransaction` belong to whatever drives
+ * the container (under React Native, the host component view); third-party code uses
+ * `flushPendingUpdates`.
  *
  * # Public API
  *
@@ -69,9 +71,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Request a tab change. The transition is recorded with `RNSTabsActionOriginProgrammaticNative`,
  * and is built against the current `navigationState.provenance` so it is never treated as stale.
  *
- * The update is applied on the next `commitTransaction`, or call
- * `flushPendingUpdates` to apply it immediately. If you want to execute multiple updates in
- * sequence you must flush the container after each one separately.
+ * The update is applied when the driving host commits its next transaction (under React Native,
+ * at the end of the next mounting transaction), or call `flushPendingUpdates` to apply it
+ * immediately. If you want to execute multiple updates in sequence you must flush the container
+ * after each one separately.
  */
 - (void)submitSelectionOfTabsScreenWithKey:(nonnull NSString *)screenKey;
 
@@ -150,9 +153,10 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Pass nil to clear any queued update.
  *
- * The update is applied on the next `commitTransaction`, or call
- * `flushPendingUpdates` to apply it immediately. If you want to execute multiple updates in
- * sequence you must flush the container after each one separately.
+ * The update is applied when the driving host commits its next transaction (under React Native,
+ * at the end of the next mounting transaction), or call `flushPendingUpdates` to apply it
+ * immediately. If you want to execute multiple updates in sequence you must flush the container
+ * after each one separately.
  *
  * Host-only: third-party native consumers should use `submitSelectionOfTabsScreenWithKey:` instead, which
  * forces `RNSTabsActionOriginProgrammaticNative`. This method allows the host to dispatch any

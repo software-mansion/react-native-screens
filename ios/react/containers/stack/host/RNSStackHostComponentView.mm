@@ -185,8 +185,9 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_stackOperationCoordinator executePendingOperationsIfNeeded:_stackNavigationController
+  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
                                            withRenderedScreens:_renderedScreens];
+  [_stackNavigationController commitTransaction];
 }
 
 #pragma mark - Dynamic frameworks support
