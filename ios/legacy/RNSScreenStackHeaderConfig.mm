@@ -512,7 +512,7 @@ RNS_IGNORE_SUPER_CALL_END
 // Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
 // A zoom transition (iOS 18+) shows or hides the navigation bar by animating its alpha. When the transition is
 // cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The `setNavigationBarHidden:` call made by the
-// staying screen's update afterwards is then a no-op, so e.g. its visible bar stays at alpha 0. We restore the alpha
+// staying screen's update afterwards is then a no-op, so its visible bar stays at alpha 0. We restore the alpha
 // the bar had before the transition, animated along with the rest of the cancel animation. Remove once Apple fixes it.
 + (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UIViewController *)vc
                                     navigationController:(UINavigationController *)navctr
@@ -522,9 +522,13 @@ RNS_IGNORE_SUPER_CALL_END
 {
   if (@available(iOS 18.0, *)) {
     id<UIViewControllerTransitionCoordinator> coordinator = vc.transitionCoordinator;
-    // Only a transition that changes the bar's visibility animates its alpha. Checking it also registers the handlers
-    // once per transition, although header config updates call this method repeatedly while it is in progress.
-    if (!animated || wasHidden == shouldHide || coordinator == nil ||
+    // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
+    // hidden again. Checking it also registers the handlers once per transition, although header config updates call
+    // this method repeatedly while it is in progress.
+    // Known gap: if the revealed screen's header is shown and hidden again while the transition is in progress, a later
+    // call registers the handlers again and may capture an alpha UIKit has already lowered. A cancel then restores that
+    // alpha last, so the bar can stay faded. Left unhandled, as toggling the header mid-transition is rare.
+    if (!animated || wasHidden || !shouldHide || coordinator == nil ||
         coordinator.presentationStyle != UIModalPresentationNone) {
       return;
     }
