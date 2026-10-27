@@ -1,0 +1,66 @@
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import ContainedModalHostNativeComponent from '../../../fabric/modals/contained-modal/ContainedModalHostNativeComponent';
+import type { ContainedModalProps } from './ContainedModal.types';
+
+/**
+ * A modal presented over the content of a `ContainedModalProvider`.
+ *
+ * @remarks
+ * The modal is paired with the provider whose `containerId` equals its
+ * `targetContainerId`; that provider must be an ancestor of the modal in the
+ * React tree. The modal fills the targeted provider's bounds. The provider's children
+ * stay in place underneath and keep updating; touches inside the provider are
+ * captured by the open modal, content outside stays interactive. The modal's
+ * children stay mounted regardless of `isOpen`, so their React state survives
+ * presentations.
+ *
+ * Modality is scoped to the provider's position in the view hierarchy, not
+ * the window: a sibling that overlaps the provider and renders later in the
+ * React tree draws above the open modal and receives touches in the overlap,
+ * exactly as it would above the provider's regular content.
+ *
+ * Reach for this when the region must behave like a native modal context:
+ * pane-scoped dialogs in split-view / multi-column layouts, correct stacking
+ * and suspend/restore alongside native presentations and navigation,
+ * accessibility modality, a presentation context other native presenters can
+ * target. When none of that is needed, a conditionally rendered overlay
+ * `View` is also an option.
+ *
+ * @platform ios
+ * @since 5.0
+ * @experimental
+ */
+export function ContainedModalOverContent(props: ContainedModalProps) {
+  const { children, isOpen, targetContainerId, onPresentationRejected } = props;
+
+  // Native maps an empty string to nil, and the modal would assert (debug) or
+  // silently never present (release). Fail loudly instead.
+  if (targetContainerId === '') {
+    throw new Error(
+      '[RNScreens] ContainedModalOverContent requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider.',
+    );
+  }
+
+  return (
+    <ContainedModalHostNativeComponent
+      style={styles.host}
+      isOpen={isOpen}
+      targetContainerId={targetContainerId}
+      onPresentationRejected={onPresentationRejected}>
+      {children}
+    </ContainedModalHostNativeComponent>
+  );
+}
+
+const styles = StyleSheet.create({
+  // Absolute: the host is an empty anchor and must not take part in sibling
+  // layout. Its own origin is irrelevant to the teleported children -
+  // measurement stops at this RootNodeKind node and adds the native state's
+  // content offset instead - so top/left only pin it predictably.
+  host: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+});
