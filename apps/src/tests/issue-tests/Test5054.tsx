@@ -1,17 +1,28 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Platform, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import ZoomTransition from '@apps/shared/native/ZoomTransitionNativeComponent';
+import NativeZoomTransition, {
+  type NativeProps as ZoomTransitionProps,
+} from '@apps/shared/native/ZoomTransitionNativeComponent';
 
 // Reproduces https://github.com/software-mansion/react-native-screens/issues/5054
 //
 // iOS 18+, FabricExample only (the zoom transition is set by a test-only
 // native component). Cancelling the zoom dismissal of a screen with a header,
 // pushed from a screen without one, left the navigation bar at alpha 0.
+
+// The native component exists only in FabricExample's iOS target. Elsewhere
+// the screens push with the default transition.
+function ZoomTransition(props: ZoomTransitionProps) {
+  if (Platform.OS !== 'ios' || Platform.isTV) {
+    return null;
+  }
+  return <NativeZoomTransition {...props} />;
+}
 
 const ZOOM_SOURCE_ID = 'home-zoom-source';
 
