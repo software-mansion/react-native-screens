@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.core.containers.stack.animation.presets
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 
 // Every value below is taken from the legacy implementation's `res/base/anim/rns_fade_*.xml`
 // animations.
@@ -33,40 +34,35 @@ private val EASING_DECELERATE_QUINT = Easing.Named(EasingName.DECELERATE_QUINT)
 private val EASING_ACCELERATE_QUINT = Easing.Named(EasingName.ACCELERATE_QUINT)
 private val EASING_LINEAR = Easing.Named(EasingName.LINEAR)
 
-internal fun fadePreset(): PresetDefinition {
-    val enter = listOf(opacityTrack(0f, 1f, FADE_DURATION_MS, EASING_ACCELERATE_DECELERATE))
-    val exit = listOf(opacityTrack(1f, 0f, FADE_DURATION_MS, EASING_ACCELERATE_DECELERATE))
-    return PresetDefinition(push = pushTimeline(enter, exit), pop = popTimeline(enter, exit))
-}
+internal fun fadeTracks(isAppearing: Boolean): List<Track> =
+    listOf(
+        if (isAppearing) {
+            opacityTrack(0f, 1f, FADE_DURATION_MS, EASING_ACCELERATE_DECELERATE)
+        } else {
+            opacityTrack(1f, 0f, FADE_DURATION_MS, EASING_ACCELERATE_DECELERATE)
+        },
+    )
 
 /**
- * The moving screen fades while travelling a short distance from [edge]; the other screen
- * stays put; the pop is shorter than the push (250 vs 350 ms), as in the legacy XMLs. A `null`
- * [distance] is the legacy 8 %.
+ * One screen fading while travelling a short distance along [edge]'s vector: the 350 ms rise when
+ * appearing, the 250 ms fall when disappearing, as in the legacy XMLs. A `null` [distance] is the
+ * legacy 8 %.
  */
-internal fun fadeFromPreset(
+internal fun fadeFromTracks(
     edge: Edge,
     distance: Length?,
-): PresetDefinition {
+    isAppearing: Boolean,
+): List<Track> {
     val travel = distance ?: DISTANCE_RISE
-    return PresetDefinition(
-        push =
-            pushTimeline(
-                enter =
-                    listOf(
-                        opacityTrack(0f, 1f, RISE_FADE_DURATION_MS, EASING_DECELERATE_QUINT),
-                        translationTrack(edge, travel, isAppearing = true, RISE_DURATION_MS, EASING_DECELERATE_QUINT),
-                    ),
-                exit = emptyList(),
-            ),
-        pop =
-            popTimeline(
-                enter = emptyList(),
-                exit =
-                    listOf(
-                        opacityTrack(1f, 0f, FALL_FADE_DURATION_MS, EASING_LINEAR, startMs = FALL_FADE_START_MS),
-                        translationTrack(edge.opposite(), travel, isAppearing = false, FALL_DURATION_MS, EASING_ACCELERATE_QUINT),
-                    ),
-            ),
-    )
+    return if (isAppearing) {
+        listOf(
+            opacityTrack(0f, 1f, RISE_FADE_DURATION_MS, EASING_DECELERATE_QUINT),
+            translationTrack(edge, travel, isAppearing = true, RISE_DURATION_MS, EASING_DECELERATE_QUINT),
+        )
+    } else {
+        listOf(
+            opacityTrack(1f, 0f, FALL_FADE_DURATION_MS, EASING_LINEAR, startMs = FALL_FADE_START_MS),
+            translationTrack(edge, travel, isAppearing = false, FALL_DURATION_MS, EASING_ACCELERATE_QUINT),
+        )
+    }
 }

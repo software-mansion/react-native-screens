@@ -5,16 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.transition.TransitionValues
 import androidx.transition.Visibility
-import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ScreenTimeline
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.MotionTimeline
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ZOrder
 
 /**
- * The androidx transition that plays one screen's timeline in one operation. One instance per
- * request, never shared, holding only immutable data: FragmentManager clones it and the seek
- * controller attaches per-instance state.
+ * The androidx `Transition` of one screen: it plays that screen's motion in one operation, in
+ * the enter / exit sense FragmentManager gives the word, not the push / pop sense of the model's
+ * transition. One instance per request, never shared, holding only immutable data:
+ * FragmentManager clones it and the seek controller attaches per-instance state.
  */
 internal class ScreenTransition(
-    internal val timeline: ScreenTimeline,
+    internal val timeline: MotionTimeline,
     isAppearing: Boolean,
     internal val exitZOrder: ZOrder,
 ) : Visibility() {
@@ -37,7 +38,7 @@ internal class ScreenTransition(
     ): Animator? {
         val host =
             if (exitZOrder == ZOrder.UNDER) {
-                (sceneRoot as? UnderlayProviding)?.underlay ?: sceneRoot
+                (sceneRoot as? StackUnderlayProviding)?.underlay ?: sceneRoot
             } else {
                 sceneRoot
             }
@@ -70,6 +71,6 @@ internal class ScreenTransition(
      */
     private fun ViewGroup.containerOrSelf(): ViewGroup {
         val parent = parent as? ViewGroup
-        return if (parent is UnderlayProviding && parent.underlay === this) parent else this
+        return if (parent is StackUnderlayProviding && parent.underlay === this) parent else this
     }
 }

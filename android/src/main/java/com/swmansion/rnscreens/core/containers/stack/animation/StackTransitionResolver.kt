@@ -1,11 +1,9 @@
 package com.swmansion.rnscreens.core.containers.stack.animation
 
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.ScreenTransition
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.TransitionSlot
-import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
-import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
-import com.swmansion.rnscreens.core.containers.stack.animation.presets.PresetDefinition
-import com.swmansion.rnscreens.core.containers.stack.animation.presets.presetDefinition
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackTransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
+import com.swmansion.rnscreens.core.containers.stack.animation.presets.transitionTimelineOf
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.core.utils.RNSLog
@@ -19,8 +17,8 @@ private const val TAG = "StackTransitionResolver"
  */
 internal fun resolveStackTransition(
     fragment: StackScreenFragment,
-    slot: TransitionSlot,
-    context: StackTransitionContext?,
+    slot: StackTransitionSlot,
+    context: StackOperationContext?,
 ): ScreenTransition? {
     if (context == null) {
         return null
@@ -31,25 +29,23 @@ internal fun resolveStackTransition(
         return null
     }
     val timeline = timelineOf(context)
-    val screenTimeline = if (slot.isAppearing) timeline.enter else timeline.exit
-    return ScreenTransition(screenTimeline, slot.isAppearing, timeline.exitZOrder)
+    val motion = if (slot.isAppearing) timeline.enter else timeline.exit
+    return ScreenTransition(motion, slot.isAppearing, timeline.exitZOrder)
 }
 
-private fun timelineOf(context: StackTransitionContext): TransitionTimeline =
+/**
+ * Which screen's config governs the operation, and which of its two transitions plays.
+ */
+private fun timelineOf(context: StackOperationContext): TransitionTimeline =
     when (context.kind) {
         // The incoming screen's config governs a push.
-        StackTransitionKind.PUSH -> definitionOf(context.incoming).push
+        StackOperationKind.PUSH -> transitionTimelineOf(context.incoming.item.animation, StackTransitionKind.PUSH)
         // The outgoing screen's config governs a pop.
-        StackTransitionKind.POP -> definitionOf(context.outgoing).pop
+        StackOperationKind.POP -> transitionTimelineOf(context.outgoing.item.animation, StackTransitionKind.POP)
         // The incoming screen chooses; the outgoing screen's z-order follows the chosen timeline.
-        StackTransitionKind.REPLACE ->
+        StackOperationKind.REPLACE ->
             when (context.incoming.item.replaceAnimation) {
-                StackReplaceAnimation.PUSH -> definitionOf(context.incoming).push
-                StackReplaceAnimation.POP -> definitionOf(context.outgoing).pop
+                StackTransitionKind.PUSH -> transitionTimelineOf(context.incoming.item.animation, StackTransitionKind.PUSH)
+                StackTransitionKind.POP -> transitionTimelineOf(context.outgoing.item.animation, StackTransitionKind.POP)
             }
-    }
-
-private fun definitionOf(fragment: StackScreenFragment): PresetDefinition =
-    when (val config = fragment.item.animation) {
-        is StackAnimationConfig.Preset -> presetDefinition(config.name, config.options)
     }
