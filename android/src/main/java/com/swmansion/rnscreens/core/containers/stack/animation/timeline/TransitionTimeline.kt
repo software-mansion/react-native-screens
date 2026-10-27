@@ -33,11 +33,16 @@ internal data class TransitionTimeline(
      */
     internal fun scaled(factor: Float): TransitionTimeline =
         if (enter.tracks.isEmpty() && exit.tracks.isEmpty()) {
-            val durationMs = (durationMs * factor).roundToLong().coerceAtLeast(1L)
-            TransitionTimeline(MotionTimeline.static(durationMs), MotionTimeline.static(durationMs), exitZOrder)
+            val staticDurationMs = (durationMs * factor).roundToLong().coerceAtLeast(1L)
+            TransitionTimeline(MotionTimeline.static(staticDurationMs), MotionTimeline.static(staticDurationMs), exitZOrder)
         } else {
             of(enter.tracks.scaled(factor), exit.tracks.scaled(factor), exitZOrder)
         }
+
+    /**
+     * Both motions scaled so the transition lasts [durationMs].
+     */
+    internal fun retimed(durationMs: Long): TransitionTimeline = scaled(durationMs.toFloat() / this.durationMs)
 
     internal fun withEasing(easing: Easing): TransitionTimeline = copy(enter = enter.withEasing(easing), exit = exit.withEasing(easing))
 

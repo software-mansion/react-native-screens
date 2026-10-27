@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeProviding
-import com.swmansion.rnscreens.core.containers.stack.animation.StackScreenTransitionProviding
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackTransitionSlot
+import com.swmansion.rnscreens.core.containers.stack.animation.StackFragmentTransitionProviding
+import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackFragmentTransitionSlot
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderCoordinatorLayout
 import com.swmansion.rnscreens.core.containers.stack.host.StackUpdateBatchStateProviding
@@ -22,7 +22,7 @@ internal class StackScreenFragment(
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,
     private val colorSchemeProvider: WeakReference<ColorSchemeProviding>,
-    private val transitionProvider: WeakReference<StackScreenTransitionProviding>,
+    private val fragmentTransitionProvider: WeakReference<StackFragmentTransitionProviding>,
 ) : Fragment() {
     private var screenLifecycleEventEmitter: StackScreenAppearanceEventsEmitter? = null
 
@@ -108,20 +108,21 @@ internal class StackScreenFragment(
         delegate.get()?.onFragmentConfigurationChanged(newConfig)
     }
 
-    // region Transitions
+    // region Fragment transitions
 
     // FragmentManager calls these once per operation it executes; the container answers, since only
     // it knows which operation that is and which screen's config governs it.
 
-    override fun getEnterTransition(): Any? = resolveTransition(StackTransitionSlot.ENTER)
+    override fun getEnterTransition(): Any? = fragmentTransitionFor(StackFragmentTransitionSlot.ENTER)
 
-    override fun getExitTransition(): Any? = resolveTransition(StackTransitionSlot.EXIT)
+    override fun getExitTransition(): Any? = fragmentTransitionFor(StackFragmentTransitionSlot.EXIT)
 
-    override fun getReturnTransition(): Any? = resolveTransition(StackTransitionSlot.RETURN)
+    override fun getReturnTransition(): Any? = fragmentTransitionFor(StackFragmentTransitionSlot.RETURN)
 
-    override fun getReenterTransition(): Any? = resolveTransition(StackTransitionSlot.REENTER)
+    override fun getReenterTransition(): Any? = fragmentTransitionFor(StackFragmentTransitionSlot.REENTER)
 
-    private fun resolveTransition(slot: StackTransitionSlot): Any? = transitionProvider.get()?.transitionFor(this, slot)
+    private fun fragmentTransitionFor(slot: StackFragmentTransitionSlot): Any? =
+        fragmentTransitionProvider.get()?.fragmentTransitionFor(this, slot)
 
     // endregion
 

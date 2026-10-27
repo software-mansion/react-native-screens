@@ -19,10 +19,12 @@ internal data class PresetOptions(
 ) {
     internal val present: Set<PresetOption>
         get() =
-            buildSet {
-                if (durationMs != null) add(PresetOption.DURATION)
-                if (easing != null) add(PresetOption.EASING)
-                if (distance != null) add(PresetOption.DISTANCE)
+            PresetOption.entries.filterTo(mutableSetOf()) { option ->
+                when (option) {
+                    PresetOption.DURATION -> durationMs != null
+                    PresetOption.EASING -> easing != null
+                    PresetOption.DISTANCE -> distance != null
+                }
             }
 
     companion object {

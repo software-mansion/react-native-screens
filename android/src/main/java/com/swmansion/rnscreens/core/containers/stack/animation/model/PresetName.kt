@@ -77,11 +77,11 @@ internal enum class PresetName(
             }
 
     /**
-     * Whether a transition of this preset moves the covered or revealed screen too. Both screens
-     * travel together in the horizontal slides and the fade; in the vertical slides and `fadeFrom*`
-     * the other screen stays put (legacy parity: `rns_no_animation_*.xml` on that side).
+     * Whether a transition of this preset animates the covered or revealed screen too. Both screens
+     * travel together in the horizontal slides and cross-fade in `fade`; in the vertical slides and
+     * `fadeFrom*` the other screen stays put (legacy parity: `rns_no_animation_*.xml` on that side).
      */
-    internal val movesBothScreens: Boolean
+    internal val animatesBothScreens: Boolean
         get() =
             when (this) {
                 FADE, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT -> true

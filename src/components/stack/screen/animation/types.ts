@@ -264,7 +264,10 @@ export type StackScreenAnimationMotion =
  * Transition built from the two screens' motions.
  *
  * @remarks
- * Both omitted equals `'none'`.
+ * Both omitted equals `'none'`. The draw order is the transition's: on a push
+ * the entering screen is drawn over the exiting one, on a pop the exiting
+ * screen stays on top. A motion written only on the screen underneath an
+ * opaque, still one is not visible.
  *
  * @platform android >= 21
  */
@@ -296,10 +299,12 @@ export interface StackScreenAnimationCustomTransition {
  *
  * @remarks
  * A name denotes a motion along its vector: the pushed or popped screen moves
- * along it, and so does the other screen for `'slideFromRight'`,
- * `'slideFromLeft'` and the `iosFrom*` presets. The position decides the role,
- * so `pop: 'slideFromLeft'` is the pop transition of the `'slideFromRight'`
- * preset, and `pop: 'slideFromRight'` keeps both screens moving left.
+ * along it. The position decides the role, so `pop: 'slideFromLeft'` is the
+ * pop transition of the `'slideFromRight'` preset, and `pop: 'slideFromRight'`
+ * keeps both screens moving left. The other screen is animated too by
+ * `'fade'` (a cross-fade), `'slideFromRight'`, `'slideFromLeft'` and the
+ * `iosFrom*` presets; the vertical slides and the `fadeFrom*` presets leave it
+ * still.
  *
  * Accepts any {@link StackScreenAnimationMotionPresetName} and any
  * {@link StackScreenAnimationIosFromPresetName}.
@@ -338,9 +343,10 @@ export type StackScreenAnimationTransition =
  * Animation whose push and pop transitions are named separately.
  *
  * @remarks
- * Every preset is `{ push: name, pop: <the name whose vector points the other
- * way> }`, so `{ type: 'custom', push: 'slideFromRight', pop: 'slideFromLeft' }`
- * is `'slideFromRight'` spelled out.
+ * Every preset but `'default'` is `{ push: name, pop: <the name whose vector
+ * points the other way> }`, so
+ * `{ type: 'custom', push: 'slideFromRight', pop: 'slideFromLeft' }` is
+ * `'slideFromRight'` spelled out.
  *
  * @platform android >= 21
  */
