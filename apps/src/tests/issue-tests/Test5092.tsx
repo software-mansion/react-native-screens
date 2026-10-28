@@ -12,7 +12,8 @@ const ROW_COUNT = 40;
 
 type ParamList = {
   Home: undefined;
-  Sheet: undefined;
+  SingleDetentSheet: undefined;
+  TwoDetentsSheet: undefined;
 };
 
 function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
@@ -20,16 +21,25 @@ function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
     <View style={styles.home}>
       <Text style={styles.text}>
         In the sheet, scroll the list down a little, then drag it back down in
-        one gesture, past its top, without lifting the finger.
+        one gesture, past its top, without lifting the finger. The list should
+        stop at its top and the sheet should stay in place. A drag that starts
+        with the list at its top should move the sheet.
       </Text>
-      <Button title="Open sheet" onPress={() => navigation.navigate('Sheet')} />
+      <Button
+        title="Open sheet (detents: [1])"
+        onPress={() => navigation.navigate('SingleDetentSheet')}
+      />
+      <Button
+        title="Open sheet (detents: [0.5, 1])"
+        onPress={() => navigation.navigate('TwoDetentsSheet')}
+      />
     </View>
   );
 }
 
 function SheetScreen({
   navigation,
-}: NativeStackScreenProps<ParamList, 'Sheet'>) {
+}: NativeStackScreenProps<ParamList, 'SingleDetentSheet' | 'TwoDetentsSheet'>) {
   return (
     <ScrollView nestedScrollEnabled contentContainerStyle={styles.content}>
       <Text style={styles.title}>Top of the list</Text>
@@ -45,17 +55,28 @@ function SheetScreen({
 
 const Stack = createNativeStackNavigator<ParamList>();
 
-export default function TestFormSheetScrollToTop() {
+export default function Test5092() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen
-          name="Sheet"
+          name="SingleDetentSheet"
           component={SheetScreen}
           options={{
             presentation: 'formSheet',
             sheetAllowedDetents: [1],
+            headerShown: false,
+            contentStyle: styles.sheet,
+          }}
+        />
+        <Stack.Screen
+          name="TwoDetentsSheet"
+          component={SheetScreen}
+          options={{
+            presentation: 'formSheet',
+            sheetAllowedDetents: [0.5, 1],
+            sheetInitialDetentIndex: 1,
             headerShown: false,
             contentStyle: styles.sheet,
           }}
