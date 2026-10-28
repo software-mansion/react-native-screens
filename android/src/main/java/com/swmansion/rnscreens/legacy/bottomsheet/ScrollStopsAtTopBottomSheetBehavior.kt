@@ -15,6 +15,9 @@ import com.swmansion.rnscreens.legacy.Screen
  * starts with the list already at its top moves the sheet as before.
  */
 internal class ScrollStopsAtTopBottomSheetBehavior : BottomSheetBehavior<Screen>() {
+    // Whether the ongoing touch nested scroll started with its target scrolled away from its top.
+    // Set when this behavior accepts a touch nested scroll and cleared when it stops; in between
+    // `CoordinatorLayout` dispatches the nested scroll callbacks of that type to this behavior only.
     private var nestedScrollStartedScrolled = false
 
     override fun onStartNestedScroll(
@@ -25,10 +28,11 @@ internal class ScrollStopsAtTopBottomSheetBehavior : BottomSheetBehavior<Screen>
         axes: Int,
         type: Int,
     ): Boolean {
-        if (type == ViewCompat.TYPE_TOUCH) {
+        val accepted = super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)
+        if (accepted && type == ViewCompat.TYPE_TOUCH) {
             nestedScrollStartedScrolled = target.canScrollVertically(-1)
         }
-        return super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)
+        return accepted
     }
 
     override fun onNestedPreScroll(
@@ -44,5 +48,17 @@ internal class ScrollStopsAtTopBottomSheetBehavior : BottomSheetBehavior<Screen>
             return
         }
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
+    }
+
+    override fun onStopNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: Screen,
+        target: View,
+        type: Int,
+    ) {
+        if (type == ViewCompat.TYPE_TOUCH) {
+            nestedScrollStartedScrolled = false
+        }
+        super.onStopNestedScroll(coordinatorLayout, child, target, type)
     }
 }
