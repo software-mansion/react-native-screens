@@ -59,8 +59,9 @@ export type StackScreenProps = {
    *
    * A value the native side cannot use (an unknown name, an option a preset
    * does not accept where it is written, a preset written where it is not
-   * allowed, a bezier with `x` outside `[0, 1]`, a non-positive duration or
-   * distance) logs a warning and falls back to `'default'` for the whole prop.
+   * allowed, a bezier with `x` outside `[0, 1]`, a duration under one
+   * millisecond, a non-positive distance, a track without a duration) logs a
+   * warning and falls back to `'default'` for the whole prop.
    *
    * @defaultValue `'default'`
    * @platform android >= 21
