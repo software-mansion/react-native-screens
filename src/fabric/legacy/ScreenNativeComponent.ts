@@ -60,6 +60,8 @@ type StackAnimation =
   | 'ios_from_right'
   | 'ios_from_left';
 
+type SheetBackgroundEffect = 'automatic' | 'color';
+
 type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
@@ -90,6 +92,7 @@ export interface NativeProps extends ViewProps {
     | undefined;
   screenId?: CT.WithDefault<string, ''>;
   sheetAllowedDetents?: number[] | undefined;
+  sheetBackgroundEffect?: CT.WithDefault<SheetBackgroundEffect, 'automatic'>;
   sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1>;
   sheetGrabberVisible?: CT.WithDefault<boolean, false>;
   sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0>;

@@ -158,6 +158,18 @@
   }
 }
 
++ (RNSScreenSheetBackgroundEffect)RNSScreenSheetBackgroundEffectFromCppEquivalent:
+    (react::RNSScreenSheetBackgroundEffect)sheetBackgroundEffect
+{
+  switch (sheetBackgroundEffect) {
+    using enum react::RNSScreenSheetBackgroundEffect;
+    case Automatic:
+      return RNSScreenSheetBackgroundEffectAutomatic;
+    case Color:
+      return RNSScreenSheetBackgroundEffectColor;
+  }
+}
+
 #define SWITCH_EDGE_EFFECT(X)                              \
   switch (edgeEffect) {                                    \
     using enum react::X;                                   \

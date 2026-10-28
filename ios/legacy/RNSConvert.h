@@ -42,6 +42,9 @@ namespace react = facebook::react;
 
 + (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:(react::RNSScreenSwipeDirection)swipeDirection;
 
++ (RNSScreenSheetBackgroundEffect)RNSScreenSheetBackgroundEffectFromCppEquivalent:
+    (react::RNSScreenSheetBackgroundEffect)sheetBackgroundEffect;
+
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents;
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:

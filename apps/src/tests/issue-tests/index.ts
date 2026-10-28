@@ -215,6 +215,7 @@ export { default as Test4504 } from './Test4504';
 export { default as Test4519 } from './Test4519';
 export { default as Test4551 } from './Test4551';
 export { default as Test4571 } from './Test4571';
+export { default as Test4605 } from './Test4605';
 export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
 export { default as Test4651 } from './Test4651';
 export { default as Test4702 } from './Test4702';
