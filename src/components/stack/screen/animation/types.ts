@@ -1,3 +1,5 @@
+import type { ColorValue } from 'react-native';
+
 /**
  * Cubic bezier curve `[x1, y1, x2, y2]`.
  *
@@ -258,12 +260,165 @@ export type StackScreenAnimationMotionPresetConfig =
   | StackScreenAnimationNonePresetConfig;
 
 /**
+ * Timing of one track of a {@link StackScreenAnimationCustomMotion}.
+ */
+export interface StackScreenAnimationTrackTiming {
+  /**
+   * Duration in milliseconds.
+   *
+   * @remarks
+   * Whole milliseconds, at least 1. Every track states its own duration. The
+   * transition lasts until the longest track of either screen ends, and both
+   * screens stay in place that long.
+   */
+  duration: number;
+  /**
+   * Milliseconds after the transition starts before the track runs.
+   *
+   * @remarks
+   * The property sits at `from` until the delay elapses, not at rest: a
+   * delayed `opacity: { from: 0 }` keeps the screen invisible that long.
+   *
+   * @defaultValue `0`
+   */
+  delay?: number | undefined;
+  /**
+   * Curve of the track.
+   *
+   * @remarks
+   * A predictive back gesture always scrubs linearly with the finger.
+   *
+   * @defaultValue `'linear'`
+   */
+  easing?: StackScreenAnimationEasing | undefined;
+}
+
+/**
+ * One animated property of a {@link StackScreenAnimationCustomMotion}, as a
+ * `from` / `to` span.
+ *
+ * @remarks
+ * An omitted endpoint is the property's rest value: `1` for `opacity` and the
+ * scales, `0` for `rotate`. With both omitted the track holds the rest value
+ * for its span, which only lengthens the transition.
+ */
+export interface StackScreenAnimationTrack
+  extends StackScreenAnimationTrackTiming {
+  /**
+   * Value at the start of the track.
+   */
+  from?: number | undefined;
+  /**
+   * Value at the end of the track.
+   */
+  to?: number | undefined;
+}
+
+/**
+ * A `translateX` or `translateY` track; the endpoints are lengths.
+ *
+ * @remarks
+ * `'N%'` is a fraction of the container's width on `translateX` and of its
+ * height on `translateY`. An omitted endpoint is `0`. `translateX` is
+ * physical: it does not mirror in a right-to-left container.
+ */
+export interface StackScreenAnimationTranslateTrack
+  extends StackScreenAnimationTrackTiming {
+  /**
+   * Value at the start of the track.
+   */
+  from?: StackScreenAnimationLength | undefined;
+  /**
+   * Value at the end of the track.
+   */
+  to?: StackScreenAnimationLength | undefined;
+}
+
+/**
+ * A scrim over this screen, its opacity animated from `from` to `to` in
+ * `[0, 1]`.
+ *
+ * @remarks
+ * The scrim covers this screen only and draws above its content, so either
+ * screen of a transition can carry one. An omitted endpoint is `0`, no scrim.
+ * The scrim's opacity multiplies the color's own alpha.
+ */
+export interface StackScreenAnimationDimTrack
+  extends StackScreenAnimationTrack {
+  /**
+   * Color of the scrim.
+   *
+   * @remarks
+   * A color that cannot be read is the default one.
+   *
+   * @defaultValue `'black'`
+   */
+  color?: ColorValue | undefined;
+}
+
+/**
+ * One screen's motion written as tracks, one per animated property.
+ *
+ * @remarks
+ * A property without a track stays at rest; a motion without tracks is a
+ * screen that stays put, like `'none'`. Scale and rotation apply about the
+ * screen's center, then the translation, as on an Android `View`.
+ */
+export interface StackScreenAnimationCustomMotion {
+  /**
+   * Discriminator of the object.
+   */
+  type: 'custom';
+  /**
+   * Horizontal translation.
+   */
+  translateX?: StackScreenAnimationTranslateTrack | undefined;
+  /**
+   * Vertical translation.
+   */
+  translateY?: StackScreenAnimationTranslateTrack | undefined;
+  /**
+   * Opacity of the screen, in `[0, 1]`.
+   */
+  opacity?: StackScreenAnimationTrack | undefined;
+  /**
+   * Uniform scale about the center.
+   *
+   * @remarks
+   * `scaleX` / `scaleY` take their axis over `scale`; an axis they leave out
+   * keeps it.
+   */
+  scale?: StackScreenAnimationTrack | undefined;
+  /**
+   * Horizontal scale about the center.
+   */
+  scaleX?: StackScreenAnimationTrack | undefined;
+  /**
+   * Vertical scale about the center.
+   */
+  scaleY?: StackScreenAnimationTrack | undefined;
+  /**
+   * Rotation about the center, clockwise, in degrees.
+   *
+   * @remarks
+   * A number, unlike the `'45deg'` strings of `transform`.
+   */
+  rotate?: StackScreenAnimationTrack | undefined;
+  /**
+   * A scrim over this screen.
+   */
+  dim?: StackScreenAnimationDimTrack | undefined;
+}
+
+/**
  * One screen's motion during a transition: the `enter` or `exit` value of a
- * {@link StackScreenAnimationCustomTransition}.
+ * {@link StackScreenAnimationCustomTransition}. A preset by name, a preset
+ * with options, or a motion written as tracks.
  */
 export type StackScreenAnimationMotion =
   | StackScreenAnimationMotionPresetName
-  | StackScreenAnimationMotionPresetConfig;
+  | StackScreenAnimationMotionPresetConfig
+  | StackScreenAnimationCustomMotion;
 
 /**
  * Transition built from the two screens' motions.
