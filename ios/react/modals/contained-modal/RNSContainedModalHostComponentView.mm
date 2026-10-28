@@ -5,6 +5,7 @@
 #import "RNSContainedModalHostEventEmitter.h"
 #import "RNSContainedModalHostShadowStateProxy.h"
 #import "RNSContainedModalProviders.h"
+#import "RNSConversions-ContainedModal.h"
 
 #import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
@@ -254,6 +255,13 @@ static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale
     // The cached provider was resolved for the previous target; keeping it
     // would present a retargeted modal inside the old provider's bounds.
     _cachedProviderView = nil;
+  }
+
+  // Before the `isOpen` check: on the first commit both arrive together and
+  // the flush that follows must present with the right style already set.
+  if (oldComponentProps.presentationStyle != newComponentProps.presentationStyle) {
+    _controller.presentationStyle =
+        rnscreens::conversion::ContainedModalPresentationStyleFromHostProp(newComponentProps.presentationStyle);
   }
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {

@@ -1,7 +1,8 @@
 import type { ViewProps, StyleProp, ViewStyle } from 'react-native';
 
 /**
- * Props for {@link ContainedModalOverContent}.
+ * Props for {@link ContainedModalOverContent} and
+ * {@link ContainedModalReplacingContent}.
  *
  * @platform ios
  * @since 5.0

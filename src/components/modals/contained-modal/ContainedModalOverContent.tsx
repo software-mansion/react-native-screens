@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import ContainedModalHostNativeComponent from '../../../fabric/modals/contained-modal/ContainedModalHostNativeComponent';
+import { ContainedModalHost } from './ContainedModalHost';
 import type { ContainedModalProps } from './ContainedModal.types';
 
 /**
@@ -25,40 +24,19 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * and suspend/restore alongside native presentations and navigation,
  * accessibility modality, a presentation context other native presenters can
  * target. When none of that is needed, a conditionally rendered overlay
- * `View` is also an option.
+ * `View` is also an option. See `ContainedModalReplacingContent` for the
+ * variant that takes the provider's content off screen while open.
  *
  * @platform ios
  * @since 5.0
  * @experimental
  */
 export function ContainedModalOverContent(props: ContainedModalProps) {
-  const { targetContainerId, ...rest } = props;
-
-  // Native maps an empty string to nil, and the modal would assert (debug) or
-  // silently never present (release). Fail loudly instead.
-  if (targetContainerId === '') {
-    throw new Error(
-      '[RNScreens] ContainedModalOverContent requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider.',
-    );
-  }
-
   return (
-    <ContainedModalHostNativeComponent
-      style={styles.host}
-      targetContainerId={targetContainerId}
-      {...rest}
+    <ContainedModalHost
+      presentationStyle="overContent"
+      componentName="ContainedModalOverContent"
+      {...props}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  // Absolute: the host is an empty anchor and must not take part in sibling
-  // layout. Its own origin is irrelevant to the teleported children -
-  // measurement stops at this RootNodeKind node and adds the native state's
-  // content offset instead - so top/left only pin it predictably.
-  host: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-});
