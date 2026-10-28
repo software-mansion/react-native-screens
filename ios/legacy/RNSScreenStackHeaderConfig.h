@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSHeaderMinimizationBehavior minimizationBehavior;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic) UIBarMinimizationRestorationBehavior restorationBehavior API_AVAILABLE(ios(27.0));
+@property (nonatomic) UIBarMinimizationSafeAreaAdjustment safeAreaAdjustment API_AVAILABLE(ios(27.0));
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
