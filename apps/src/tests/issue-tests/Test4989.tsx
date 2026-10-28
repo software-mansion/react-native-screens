@@ -5,7 +5,7 @@ import {
   type TabRouteConfig,
   DEFAULT_TAB_ROUTE_OPTIONS,
   useTabsNavigationContext,
-} from '@apps/shared/containers/tabs';
+} from '@apps/shared/gamma/containers/tabs';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 
 // Reproduces https://github.com/software-mansion/react-native-screens/issues/4989
@@ -37,7 +37,7 @@ function ContentView() {
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'First',
-    element: <ContentView />,
+    Component: ContentView,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'First',
@@ -45,7 +45,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Second',
-    element: <ContentView />,
+    Component: ContentView,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Second',
@@ -53,7 +53,7 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
   },
   {
     name: 'Third',
-    element: <ContentView />,
+    Component: ContentView,
     options: {
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Third',
