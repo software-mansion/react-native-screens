@@ -99,6 +99,10 @@ internal class StackHost(
         }
     }
 
+    internal fun stackScreenChangedAnimation(stackScreen: StackScreen) {
+        container.onItemAnimationChanged(stackScreen)
+    }
+
     override fun onItemDismissCommitted(item: StackContainerItem) {
         check(item is StackScreen) {
             "[RNScreens] Unexpected stack item type: ${item.javaClass.simpleName}"
