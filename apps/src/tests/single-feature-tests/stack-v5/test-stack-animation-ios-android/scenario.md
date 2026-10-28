@@ -2,11 +2,13 @@
 
 ## Details
 
-**Description:** Verify the two iOS presets of the `animation` prop of
+**Description:** Verify the four iOS presets of the `animation` prop of
 `Stack.Screen` on Android. Pass: the incoming screen travels the full width on
 top while the covered screen recedes about a third of the width and darkens, the
-pop reverses both, and the revealed screen carries no tint once a pop, a
-cancelled predictive back gesture or a committed one has finished.
+pop reverses both, the revealed screen carries no tint once a pop, a cancelled
+predictive back gesture or a committed one has finished, and when the host's
+layout direction is `rtl`, which the "START"/"END" row reports, `iosFromTrailing`
+and `iosFromLeading` swap sides while `iosFromRight` and `iosFromLeft` do not.
 
 **OS test creation version:** Android API Level 37.
 
@@ -48,9 +50,10 @@ back gesture are not assertable with Detox.
 
    - [ ] "Home" is yellow with a dark frame at the screen edge, the title
          "Home" and a yellow, blue and red swatch stacked flush with each side
-         edge. "next push" and "this screen" both read `iosFromRight`, and
-         "Push Blue" and "Push Red" are the only buttons: there is no "Pop"
-         button. The card is white, not grey.
+         edge. "next push" and "this screen" both read `iosFromRight`,
+         "direction" reads `ltr` with "START" on the left and "END" on the
+         right of the row below it, and "Push Blue" and "Push Red" are the
+         only buttons: there is no "Pop" button. The card is white, not grey.
 
 ---
 
@@ -86,6 +89,32 @@ back gesture are not assertable with Detox.
    - [ ] "Blue" leaves to the left on top and "Home" returns from the right: by
          the time "Blue" reaches the left edge "Home"'s yellow matches the
          yellow swatch at "Blue"'s right edge, and its card is white, not grey.
+
+---
+
+### `iosFromTrailing` and `iosFromLeading` (with extended animation duration scale)
+
+1. On "Home", set "next push" to `iosFromTrailing`, then tap "Push Blue".
+
+   - [ ] The same as `iosFromRight`: "Blue" travels in from the right edge
+         across the full width on top, and "Home" recedes about a third of the
+         width to the left and takes on a tint.
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" travels out to the right on top and "Home" returns from the
+         left; its card is white, not grey, once the pop has finished.
+
+3. On "Home", set "next push" to `iosFromLeading`, then tap "Push Blue".
+
+   - [ ] The same as `iosFromLeft`: "Blue" enters from the left edge across the
+         full width on top, and "Home" recedes about a third of the width to
+         the right and takes on a tint.
+
+4. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the left on top and "Home" returns from the right;
+         its card is white, not grey, once the pop has finished.
 
 ---
 
@@ -130,3 +159,43 @@ back gesture are not assertable with Detox.
 
    - [ ] The pop completes from the position the finger was released at, and
          "Home" ends untinted: its card is white, not grey.
+
+---
+
+### Layout direction
+
+1. Set "direction" to `rtl`.
+
+   - [ ] "START" moves to the right of the row and "END" to the left. The card,
+         the pickers, the buttons and the swatches stay where they are.
+
+2. Tap "Push Blue".
+
+   - [ ] "Blue" still enters from the right edge on top and "Home" still
+         recedes to the left.
+
+3. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right on top and "Home" returns from the left,
+         the same way as under `ltr`.
+
+4. On "Home", set "next push" to `iosFromTrailing`, then tap "Push Blue".
+
+   - [ ] Mirrored: "Blue" enters from the left edge on top and "Home" recedes
+         about a third of the width to the right.
+
+5. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the left on top and "Home" returns from the right.
+
+6. On "Home", set "next push" to `iosFromTrailing`, tap "Push Blue", then swipe
+   in from the left screen edge and release past the middle.
+
+   - [ ] "Blue" moves left as the finger moves right and "Home" is revealed on
+         the right; on release the pop completes and "Home" ends untinted: its
+         card is white, not grey.
+
+7. Set "direction" to `ltr`.
+
+   - [ ] "START" returns to the left of the row and "END" to the right. You end
+         on "Home" with "direction" reading `ltr`.
