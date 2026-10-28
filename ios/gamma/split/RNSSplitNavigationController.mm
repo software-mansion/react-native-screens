@@ -28,6 +28,11 @@
 {
   [super viewDidLoad];
 
+#if !TARGET_OS_TV
+  // Screens opt in via `largeTitleDisplayMode`, which defaults to `.never` (see RNSSplitScreenController).
+  self.navigationBar.prefersLargeTitles = YES;
+#endif // !TARGET_OS_TV
+
   if (_frameObserver == nil) {
     _frameObserver = [[RNSSplitNavigationControllerFrameObserver alloc]
         initWithSplitNavigationController:self
