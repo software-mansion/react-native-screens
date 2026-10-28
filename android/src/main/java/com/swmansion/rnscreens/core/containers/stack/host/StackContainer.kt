@@ -222,7 +222,13 @@ internal class StackContainer(
             // recognized.
             fragmentOps.add(
                 OnCommitCallbackOp(
-                    { updateTopFragment() },
+                    {
+                        // FragmentManager resolves transitions before runOnCommit. Root
+                        // replacements do not change its back stack, so they never reach
+                        // onBackStackChanged to clear this context.
+                        transitionContext = null
+                        updateTopFragment()
+                    },
                     allowStateLoss = true,
                     flushSync = false,
                 ),
@@ -288,7 +294,7 @@ internal class StackContainer(
      * before FragmentManager calls the transition getters: by [writeTransitionContext] for a batch,
      * by [onBackStackChangeStarted] for a pop FragmentManager starts itself (predictive back included).
      *
-     * Cleared in [onBackStackChanged], which follows the getter calls in every path
+     * Cleared by the batch's onCommit callback or [onBackStackChanged], after the getter calls
      * (`onBackStackChangeCommitted` comes before them). So a predictive back gesture start clears it
      * too: neither the commit nor the cancel (the record re-executed forward) resolves a transition.
      */
