@@ -5,6 +5,18 @@
 
 @implementation RNSSplitScreenController
 
+- (instancetype)init
+{
+  if (self = [super init]) {
+#if !TARGET_OS_TV
+    // Navigation bar prefers large titles, so opt out unless a navigation item customizer sets a mode.
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+#endif // !TARGET_OS_TV
+  }
+
+  return self;
+}
+
 /**
  * @brief Returns the SplitHost controller the column is installed in.
  *
