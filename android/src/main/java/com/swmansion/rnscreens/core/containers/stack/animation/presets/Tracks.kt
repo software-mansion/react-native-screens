@@ -2,99 +2,72 @@ package com.swmansion.rnscreens.core.containers.stack.animation.presets
 
 import android.graphics.Color
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
-import com.swmansion.rnscreens.core.containers.stack.animation.model.SlotRole
-import com.swmansion.rnscreens.core.containers.stack.animation.model.TrackProperty
-import com.swmansion.rnscreens.core.containers.stack.animation.model.Value
-import com.swmansion.rnscreens.core.containers.stack.animation.spec.DimSpec
-import com.swmansion.rnscreens.core.containers.stack.animation.spec.TrackSpec
-
-internal enum class Edge {
-    LEFT,
-    RIGHT,
-    TOP,
-    BOTTOM,
-    START,
-    END,
-    ;
-
-    fun opposite(): Edge =
-        when (this) {
-            LEFT -> RIGHT
-            RIGHT -> LEFT
-            TOP -> BOTTOM
-            BOTTOM -> TOP
-            START -> END
-            END -> START
-        }
-}
+import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Axis
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Timing
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ViewProperty
 
 /**
- * Track authoring helpers for the preset tables.
+ * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives
+ * at rest along it, a disappearing view departs from rest along it (exiting through the
+ * opposite edge). Logical edges are written for left-to-right and mirrored by the engine.
  */
-internal object Tracks {
-    /**
-     * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives
-     * at rest along it, a disappearing view departs from rest along it (exiting through the
-     * opposite edge). Logical edges are authored as their left-to-right counterparts and mirrored
-     * at run time.
-     */
-    fun translateFrom(
-        edge: Edge,
-        distance: Value,
-        role: SlotRole,
-        durationMs: Long,
-        easing: Easing,
-        startMs: Long = 0L,
-    ): TrackSpec {
-        val property =
-            when (edge) {
-                Edge.LEFT, Edge.RIGHT, Edge.START, Edge.END -> TrackProperty.TRANSLATE_X
-                Edge.TOP, Edge.BOTTOM -> TrackProperty.TRANSLATE_Y
-            }
-        val towardEdge =
-            when (edge) {
-                Edge.RIGHT, Edge.BOTTOM, Edge.END -> distance
-                Edge.LEFT, Edge.TOP, Edge.START -> distance.negated()
-            }
-        val rest = Value.Percent(0f)
-        val (from, to) =
-            when (role) {
-                SlotRole.IN -> towardEdge to rest
-                SlotRole.OUT -> rest to towardEdge.negated()
-            }
-        return TrackSpec(
-            property,
-            from,
-            to,
-            startMs,
-            durationMs,
-            easing,
-            mirrorInRtl = edge == Edge.START || edge == Edge.END,
-        )
-    }
-
-    fun opacity(
-        from: Float,
-        to: Float,
-        durationMs: Long,
-        easing: Easing,
-        startMs: Long = 0L,
-    ) = TrackSpec(TrackProperty.OPACITY, Value.Scalar(from), Value.Scalar(to), startMs, durationMs, easing, mirrorInRtl = false)
-
-    fun scale(
-        from: Float,
-        to: Float,
-        durationMs: Long,
-        easing: Easing,
-        startMs: Long = 0L,
-    ) = TrackSpec(TrackProperty.SCALE, Value.Scalar(from), Value.Scalar(to), startMs, durationMs, easing, mirrorInRtl = false)
-
-    fun dim(
-        from: Float,
-        to: Float,
-        durationMs: Long,
-        easing: Easing,
-        startMs: Long = 0L,
-        color: Int = Color.BLACK,
-    ) = DimSpec(color, from, to, startMs, durationMs, easing)
+internal fun translationTrack(
+    edge: Edge,
+    distance: Length,
+    isAppearing: Boolean,
+    durationMs: Long,
+    easing: Easing,
+    startMs: Long = 0L,
+): Track.Translate {
+    val axis =
+        when (edge) {
+            Edge.LEFT, Edge.RIGHT -> Axis.X
+            Edge.TOP, Edge.BOTTOM -> Axis.Y
+            Edge.START, Edge.END -> Axis.LOGICAL_X
+        }
+    val towardEdge =
+        when (edge) {
+            Edge.RIGHT, Edge.BOTTOM, Edge.END -> distance
+            Edge.LEFT, Edge.TOP, Edge.START -> distance.negated()
+        }
+    val (from, to) =
+        if (isAppearing) {
+            towardEdge to Length.ZERO
+        } else {
+            Length.ZERO to towardEdge.negated()
+        }
+    return Track.Translate(axis, from, to, Timing(startMs, durationMs, easing))
 }
+
+internal fun opacityTrack(
+    from: Float,
+    to: Float,
+    durationMs: Long,
+    easing: Easing,
+    startMs: Long = 0L,
+): Track.Property = Track.Property(ViewProperty.OPACITY, from, to, Timing(startMs, durationMs, easing))
+
+internal fun scaleTrack(
+    from: Float,
+    to: Float,
+    durationMs: Long,
+    easing: Easing,
+    startMs: Long = 0L,
+): Track.Property = Track.Property(ViewProperty.SCALE, from, to, Timing(startMs, durationMs, easing))
+
+internal fun dimTrack(
+    from: Float,
+    to: Float,
+    durationMs: Long,
+    easing: Easing,
+    startMs: Long = 0L,
+    color: Int = Color.BLACK,
+): Track.Dim = Track.Dim(color, from, to, Timing(startMs, durationMs, easing))
+
+private fun Length.negated(): Length =
+    when (this) {
+        is Length.Dp -> Length.Dp(-value)
+        is Length.Percent -> Length.Percent(-fraction)
+    }

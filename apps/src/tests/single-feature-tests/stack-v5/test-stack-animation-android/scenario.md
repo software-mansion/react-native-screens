@@ -4,10 +4,11 @@
 
 **Description:** Verify how the v5 `StackContainer` plays a transition on
 Android with the `default` `animation`, which is the platform look for the
-running API level: a push, a pop, the predictive back gesture and a nested
-container. Pass: every transition runs in the right direction and to completion,
-a screen that moves over a static one is drawn above it, and a nested container
-animates on its own. Changing `animation` at runtime is covered by
+running API level: a push, a pop, the predictive back gesture, the header back
+arrow, the system back button and a nested container. Pass: every transition
+runs in the right direction and to completion, a screen that moves over a
+static one is drawn above it, and a nested container animates on its own.
+Changing `animation` at runtime is covered by
 `test-stack-animation-update-android`; the other presets by
 `test-stack-animation-slide-android`, `-fade-android`, `-ios-android` and
 `-none-android`.
@@ -26,6 +27,9 @@ assertable with Detox.
 
 - Android emulator or device with gesture navigation enabled, on **API 33 or
   newer** for all groups except **`default` below API 33**.
+- Step 2 of **Header and system back button** on a **physical** device: use
+  3-button navigation for that step ("Settings → System → Navigation mode").
+  On emulator, you can use emulator's back button instead.
 - **`default` below API 33** needs a second emulator or device with gesture
   navigation enabled on **API 32 or older**, where `default` is a different
   animation.
@@ -103,6 +107,22 @@ assertable with Detox.
 
 ---
 
+### Header and system back button
+
+1. Tap "Push Red", then tap the back arrow in the header of "Red".
+
+   - [ ] "Red" slides the short distance to the right while fading out, and
+         "Home" slides back in from the left, the same pop as in step 2 of
+         **Push and pop**.
+
+2. Tap "Push Red", then press the system back button once: on an emulator, the
+   Back button in the emulator toolbar (see Prerequisites).
+
+   - [ ] The same pop as in step 1 plays to its end without any finger input,
+         leaving "Home".
+
+---
+
 ### Nested stack
 
 1. Tap "Push NestedHost".
@@ -113,8 +133,8 @@ assertable with Detox.
 2. On "NestedHome", tap "Push NestedBlue".
 
    - [ ] "NestedBlue" slides in from the right a short distance and fades in
-         while "NestedHome" slides the same distance to the left; nothing rises
-         from the bottom edge.
+         while "NestedHome" slides the same distance to the left; nothing
+         rises from the bottom edge.
 
 3. On "NestedBlue", tap "Pop".
 

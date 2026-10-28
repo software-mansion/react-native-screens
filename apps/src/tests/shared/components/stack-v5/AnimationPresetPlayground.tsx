@@ -28,9 +28,25 @@ const REFERENCE_COLORS = [
   Colors.RedLight100,
 ];
 
+/**
+ * A picker entry. A preset name is its own label; the object form needs one, because the
+ * picker shows strings only.
+ */
+export type AnimationPresetOption =
+  | Extract<StackScreenAnimation, string>
+  | { label: string; animation: StackScreenAnimation };
+
+type LabeledAnimation = { label: string; animation: StackScreenAnimation };
+
+function toLabeled(option: AnimationPresetOption): LabeledAnimation {
+  return typeof option === 'string'
+    ? { label: option, animation: option }
+    : option;
+}
+
 type PlaygroundConfig = {
-  animationOptions: readonly StackScreenAnimation[];
-  initialAnimation: StackScreenAnimation;
+  animationOptions: readonly LabeledAnimation[];
+  initialAnimation: LabeledAnimation;
   hasDirectionPicker: boolean;
   direction: DirectionOption;
   setDirection: (direction: DirectionOption) => void;
@@ -38,7 +54,7 @@ type PlaygroundConfig = {
 
 const PlaygroundContext = React.createContext<PlaygroundConfig>({
   animationOptions: [],
-  initialAnimation: 'default',
+  initialAnimation: { label: 'default', animation: 'default' },
   hasDirectionPicker: false,
   direction: 'ltr',
   setDirection: () => {},
@@ -47,7 +63,8 @@ const PlaygroundContext = React.createContext<PlaygroundConfig>({
 /**
  * A three-screen stack whose `animation` can be switched from any screen, shared by the
  * per-family animation preset tests. `animationOptions` is the subset of the library's union
- * the pickers offer, so a scenario never exercises a value it does not check.
+ * the pickers offer, so a scenario never exercises a value it does not check;
+ * `initialAnimation` is the label of the option every screen starts with.
  */
 export function AnimationPresetPlayground({
   animationOptions,
@@ -55,27 +72,40 @@ export function AnimationPresetPlayground({
   withDirectionPicker = false,
   withColorReference = false,
 }: {
-  animationOptions: readonly StackScreenAnimation[];
-  initialAnimation: StackScreenAnimation;
+  animationOptions: readonly AnimationPresetOption[];
+  initialAnimation: string;
   withDirectionPicker?: boolean;
   withColorReference?: boolean;
 }) {
   const [direction, setDirection] = React.useState<DirectionOption>('ltr');
 
+  const labeledOptions = React.useMemo(
+    () => animationOptions.map(toLabeled),
+    [animationOptions],
+  );
+  const initial = labeledOptions.find(
+    option => option.label === initialAnimation,
+  );
+  if (initial === undefined) {
+    throw new Error(
+      `AnimationPresetPlayground: initialAnimation '${initialAnimation}' is not one of animationOptions`,
+    );
+  }
+
   const config = React.useMemo<PlaygroundConfig>(
     () => ({
-      animationOptions,
-      initialAnimation,
+      animationOptions: labeledOptions,
+      initialAnimation: initial,
       hasDirectionPicker: withDirectionPicker,
       direction,
       setDirection,
     }),
-    [animationOptions, initialAnimation, withDirectionPicker, direction],
+    [labeledOptions, initial, withDirectionPicker, direction],
   );
 
   const options = React.useMemo(
-    () => ({ animation: initialAnimation }),
-    [initialAnimation],
+    () => ({ animation: initial.animation }),
+    [initial],
   );
 
   return (
@@ -146,27 +176,37 @@ function AnimationControls() {
     setDirection,
   } = React.useContext(PlaygroundContext);
 
-  // The pickers only offer one family of the library's union.
-  const asOption = (animation: StackScreenAnimation | undefined) =>
-    animationOptions.find(option => option === animation) ?? initialAnimation;
+  // Every value comes from `animationOptions`, the initial one included, so identity is enough
+  // for the object forms.
+  const labelOf = (animation: StackScreenAnimation | undefined) =>
+    animationOptions.find(option => option.animation === animation)?.label ??
+    initialAnimation.label;
+  const animationOf = (label: string) =>
+    animationOptions.find(option => option.label === label)?.animation ??
+    initialAnimation.animation;
+  const labels = animationOptions.map(option => option.label);
 
   return (
     <View style={styles.controls}>
-      <SettingsPicker<StackScreenAnimation>
+      <SettingsPicker<string>
         label="next push"
-        value={asOption(routeConfigs[0]?.options?.animation)}
-        onValueChange={animation =>
+        value={labelOf(routeConfigs[0]?.options?.animation)}
+        onValueChange={label =>
           routeConfigs.forEach(config =>
-            updateRouteConfigWithOptions(config.name, { animation }),
+            updateRouteConfigWithOptions(config.name, {
+              animation: animationOf(label),
+            }),
           )
         }
-        items={[...animationOptions]}
+        items={labels}
       />
-      <SettingsPicker<StackScreenAnimation>
+      <SettingsPicker<string>
         label="this screen"
-        value={asOption(routeOptions.animation)}
-        onValueChange={animation => setRouteOptions(routeKey, { animation })}
-        items={[...animationOptions]}
+        value={labelOf(routeOptions.animation)}
+        onValueChange={label =>
+          setRouteOptions(routeKey, { animation: animationOf(label) })
+        }
+        items={labels}
       />
       {hasDirectionPicker ? (
         <>

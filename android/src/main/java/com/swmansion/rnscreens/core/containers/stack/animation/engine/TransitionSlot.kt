@@ -1,15 +1,15 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.engine
 
-import com.swmansion.rnscreens.core.containers.stack.animation.model.SlotRole
-
 /**
- * The four fragment transition slots.
+ * The four fragment transition slots: FragmentManager uses `enter` / `exit` on a push and
+ * `reenter` / `return` on a pop. Only whether the fragment's view appears or disappears matters
+ * here; the push / pop half is never consulted, the container's context says which operation runs.
  */
 internal enum class TransitionSlot(
-    val role: SlotRole,
+    internal val isAppearing: Boolean,
 ) {
-    ENTER(SlotRole.IN),
-    EXIT(SlotRole.OUT),
-    RETURN(SlotRole.OUT),
-    REENTER(SlotRole.IN),
+    ENTER(isAppearing = true),
+    EXIT(isAppearing = false),
+    RETURN(isAppearing = false),
+    REENTER(isAppearing = true),
 }
