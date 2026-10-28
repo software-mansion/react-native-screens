@@ -919,6 +919,9 @@ RNS_IGNORE_SUPER_CALL_END
     // See: https://github.com/software-mansion/react-native-screens/issues/1589
     if (shouldUseCustomBackBarButtonItem) {
       prevItem.backBarButtonItem = backBarButtonItem;
+    } else {
+      // Drop an item left over from earlier customization, so the system back button is used again.
+      prevItem.backBarButtonItem = nil;
     }
   } else {
     // back button title should be not visible next to back button,
