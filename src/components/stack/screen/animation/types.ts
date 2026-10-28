@@ -577,9 +577,11 @@ export interface StackScreenAnimationCustom {
  * A preset's pop transition is the push transition of the preset whose vector
  * points the other way, so `'slideFromRight'` pops to the right.
  *
- * `'default'` and the `*Trailing` / `*Leading` presets follow the container's
- * layout direction; the `*Right` / `*Left` presets do not, so in a
- * right-to-left container `'default'` and `'iosFromRight'` move opposite ways.
+ * The `*Trailing` / `*Leading` presets and, from Android 13 on, `'default'`
+ * follow the container's layout direction; the `*Right` / `*Left` presets do
+ * not, so in a right-to-left container on Android 13+ `'default'` and
+ * `'iosFromRight'` move opposite ways. Below Android 13 `'default'` is the
+ * cross-zoom, which has no horizontal direction.
  *
  * @platform android >= 21
  */
