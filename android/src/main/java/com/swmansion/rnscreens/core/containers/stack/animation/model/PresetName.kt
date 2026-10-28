@@ -20,12 +20,17 @@ internal enum class PresetName(
     FADE("fade"),
     SLIDE_FROM_RIGHT("slideFromRight"),
     SLIDE_FROM_LEFT("slideFromLeft"),
+
+    SLIDE_FROM_TRAILING("slideFromTrailing"),
+    SLIDE_FROM_LEADING("slideFromLeading"),
     SLIDE_FROM_BOTTOM("slideFromBottom"),
     SLIDE_FROM_TOP("slideFromTop"),
     FADE_FROM_BOTTOM("fadeFromBottom"),
     FADE_FROM_TOP("fadeFromTop"),
     IOS_FROM_RIGHT("iosFromRight"),
     IOS_FROM_LEFT("iosFromLeft"),
+    IOS_FROM_TRAILING("iosFromTrailing"),
+    IOS_FROM_LEADING("iosFromLeading"),
     ;
 
     /**
@@ -36,9 +41,20 @@ internal enum class PresetName(
         get() =
             when (this) {
                 DEFAULT -> setOf(PresetLevel.ANIMATION)
-                IOS_FROM_RIGHT, IOS_FROM_LEFT -> setOf(PresetLevel.ANIMATION, PresetLevel.TRANSITION)
-                NONE, FADE, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, SLIDE_FROM_BOTTOM, SLIDE_FROM_TOP, FADE_FROM_BOTTOM, FADE_FROM_TOP ->
-                    ALL_LEVELS
+                IOS_FROM_RIGHT, IOS_FROM_LEFT, IOS_FROM_TRAILING, IOS_FROM_LEADING ->
+                    setOf(PresetLevel.ANIMATION, PresetLevel.TRANSITION)
+
+                NONE,
+                FADE,
+                SLIDE_FROM_RIGHT,
+                SLIDE_FROM_LEFT,
+                SLIDE_FROM_TRAILING,
+                SLIDE_FROM_LEADING,
+                SLIDE_FROM_BOTTOM,
+                SLIDE_FROM_TOP,
+                FADE_FROM_BOTTOM,
+                FADE_FROM_TOP,
+                -> ALL_LEVELS
             }
 
     /**
@@ -48,11 +64,11 @@ internal enum class PresetName(
         when (this) {
             DEFAULT, NONE -> emptySet()
 
-            FADE, IOS_FROM_RIGHT, IOS_FROM_LEFT -> TIMING_OPTIONS
+            FADE, IOS_FROM_RIGHT, IOS_FROM_LEFT, IOS_FROM_TRAILING, IOS_FROM_LEADING -> TIMING_OPTIONS
 
             // A shortened slide is the parallax recede of one screen (the background of `iosFrom*`);
             // a whole transition keeps the full width.
-            SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, SLIDE_FROM_BOTTOM, SLIDE_FROM_TOP ->
+            SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, SLIDE_FROM_TRAILING, SLIDE_FROM_LEADING, SLIDE_FROM_BOTTOM, SLIDE_FROM_TOP ->
                 if (level == PresetLevel.MOTION) TIMING_AND_DISTANCE_OPTIONS else TIMING_OPTIONS
 
             FADE_FROM_BOTTOM, FADE_FROM_TOP -> TIMING_AND_DISTANCE_OPTIONS
@@ -67,12 +83,16 @@ internal enum class PresetName(
             when (this) {
                 SLIDE_FROM_RIGHT -> SLIDE_FROM_LEFT
                 SLIDE_FROM_LEFT -> SLIDE_FROM_RIGHT
+                SLIDE_FROM_TRAILING -> SLIDE_FROM_LEADING
+                SLIDE_FROM_LEADING -> SLIDE_FROM_TRAILING
                 SLIDE_FROM_BOTTOM -> SLIDE_FROM_TOP
                 SLIDE_FROM_TOP -> SLIDE_FROM_BOTTOM
                 FADE_FROM_BOTTOM -> FADE_FROM_TOP
                 FADE_FROM_TOP -> FADE_FROM_BOTTOM
                 IOS_FROM_RIGHT -> IOS_FROM_LEFT
                 IOS_FROM_LEFT -> IOS_FROM_RIGHT
+                IOS_FROM_TRAILING -> IOS_FROM_LEADING
+                IOS_FROM_LEADING -> IOS_FROM_TRAILING
                 DEFAULT, NONE, FADE -> this
             }
 
@@ -84,7 +104,7 @@ internal enum class PresetName(
     internal val animatesBothScreens: Boolean
         get() =
             when (this) {
-                FADE, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT -> true
+                FADE, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, SLIDE_FROM_TRAILING, SLIDE_FROM_LEADING -> true
                 else -> false
             }
 

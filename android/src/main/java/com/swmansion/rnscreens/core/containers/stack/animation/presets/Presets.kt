@@ -115,11 +115,15 @@ private fun baseTransition(
     when (name) {
         PresetName.IOS_FROM_RIGHT -> iosFromTransition(Edge.RIGHT, kind)
         PresetName.IOS_FROM_LEFT -> iosFromTransition(Edge.LEFT, kind)
+        PresetName.IOS_FROM_TRAILING -> iosFromTransition(Edge.END, kind)
+        PresetName.IOS_FROM_LEADING -> iosFromTransition(Edge.START, kind)
         PresetName.DEFAULT -> error("[RNScreens] `default` is only a whole animation, see PresetName.levels.")
         PresetName.NONE,
         PresetName.FADE,
         PresetName.SLIDE_FROM_RIGHT,
         PresetName.SLIDE_FROM_LEFT,
+        PresetName.SLIDE_FROM_TRAILING,
+        PresetName.SLIDE_FROM_LEADING,
         PresetName.SLIDE_FROM_BOTTOM,
         PresetName.SLIDE_FROM_TOP,
         PresetName.FADE_FROM_BOTTOM,
@@ -146,10 +150,16 @@ private fun baseMotionTracks(
         PresetName.FADE -> fadeTracks(isAppearing)
         PresetName.SLIDE_FROM_RIGHT -> slideTracks(Edge.RIGHT, distance, isAppearing)
         PresetName.SLIDE_FROM_LEFT -> slideTracks(Edge.LEFT, distance, isAppearing)
+        PresetName.SLIDE_FROM_TRAILING -> slideTracks(Edge.END, distance, isAppearing)
+        PresetName.SLIDE_FROM_LEADING -> slideTracks(Edge.START, distance, isAppearing)
         PresetName.SLIDE_FROM_BOTTOM -> slideTracks(Edge.BOTTOM, distance, isAppearing)
         PresetName.SLIDE_FROM_TOP -> slideTracks(Edge.TOP, distance, isAppearing)
         PresetName.FADE_FROM_BOTTOM -> fadeFromTracks(Edge.BOTTOM, distance, isAppearing)
         PresetName.FADE_FROM_TOP -> fadeFromTracks(Edge.TOP, distance, isAppearing)
-        PresetName.DEFAULT, PresetName.IOS_FROM_RIGHT, PresetName.IOS_FROM_LEFT ->
-            error("[RNScreens] `${name.stringName}` has no single-screen motion, see PresetName.levels.")
+        PresetName.DEFAULT,
+        PresetName.IOS_FROM_RIGHT,
+        PresetName.IOS_FROM_LEFT,
+        PresetName.IOS_FROM_TRAILING,
+        PresetName.IOS_FROM_LEADING,
+        -> error("[RNScreens] `${name.stringName}` has no single-screen motion, see PresetName.levels.")
     }

@@ -2,12 +2,13 @@
 
 ## Details
 
-**Description:** Verify the four slide presets of the `animation` prop of
-`Stack.Screen` on Android. Pass: `slideFromRight` and `slideFromLeft` move both
-screens the full width in the same direction, `slideFromBottom` and
-`slideFromTop` move only the screen that enters or leaves, every preset reverses
-on pop and follows the predictive back gesture, and none of them mirrors when
-the host's layout direction is `rtl`, which the "START"/"END" row reports.
+**Description:** Verify the six slide presets of the `animation` prop of
+`Stack.Screen` on Android. Pass: the four horizontal presets move both screens
+the full width in the same direction, `slideFromBottom` and `slideFromTop` move
+only the screen that enters or leaves, every preset reverses on pop and follows
+the predictive back gesture, and when the host's layout direction is `rtl`,
+which the "START"/"END" row reports, `slideFromTrailing` and `slideFromLeading`
+swap sides while `slideFromRight` and `slideFromLeft` do not.
 
 **OS test creation version:** Android API Level 37.
 
@@ -69,6 +70,31 @@ interactive predictive back gesture are not assertable with Detox.
 
    - [ ] Mirrored: "Blue" enters from the left edge and "Home" leaves to the
          right, as one band.
+
+4. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the left and "Home" returns from the right, as one
+         band.
+
+---
+
+### `slideFromTrailing` and `slideFromLeading`
+
+1. On "Home", set "next push" to `slideFromTrailing`, then tap "Push Blue".
+
+   - [ ] The same as `slideFromRight`: "Blue" travels in from the right edge
+         across the full width while "Home" travels out to the left, as one
+         band.
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" travels out to the right across the full width while "Home"
+         travels back in from the left, as one band.
+
+3. On "Home", set "next push" to `slideFromLeading`, then tap "Push Blue".
+
+   - [ ] The same as `slideFromLeft`: "Blue" enters from the left edge and
+         "Home" leaves to the right, as one band.
 
 4. On "Blue", tap "Pop".
 
@@ -139,7 +165,27 @@ interactive predictive back gesture are not assertable with Detox.
    - [ ] "Blue" travels out to the right and "Home" returns from the left, the
          same way as under `ltr`.
 
-4. Set "direction" to `ltr`.
+4. On "Home", set "next push" to `slideFromTrailing`, then tap "Push Blue".
+
+   - [ ] Mirrored: "Blue" enters from the left edge and "Home" leaves to the
+         right, as one band.
+
+5. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the left and "Home" returns from the right, as one
+         band.
+
+6. On "Home", set "next push" to `slideFromLeading`, then tap "Push Blue".
+
+   - [ ] "Blue" enters from the right edge and "Home" leaves to the left, as
+         one band.
+
+7. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right and "Home" returns from the left, as one
+         band.
+
+8. Set "direction" to `ltr`.
 
    - [ ] "START" returns to the left of the row and "END" to the right. You end
          on "Home" with "direction" reading `ltr`.
