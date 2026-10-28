@@ -15,6 +15,7 @@
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSTabBarController.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
@@ -33,7 +34,7 @@ namespace react = facebook::react;
 
 #pragma mark - View implementation
 
-@interface RNSTabsHostComponentView () <RCTMountingTransactionObserving>
+@interface RNSTabsHostComponentView () <RCTMountingTransactionObserving, RNSOrientationDelegate>
 @end
 
 @implementation RNSTabsHostComponentView {
@@ -76,6 +77,7 @@ namespace react = facebook::react;
   [self resetProps];
 
   _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
+  _controller.orientationDelegate = self;
   [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];
   RCTAssert(didRegisterObserver,
             @"[RNScreens] Failed to register RNSTabsHostComponentView as navigation state observer");
@@ -398,7 +400,7 @@ namespace react = facebook::react;
 {
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
-  [_controller reactMountingTransactionWillMount];
+  [_controller beginTransaction];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -407,7 +409,7 @@ namespace react = facebook::react;
   if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
   }
-  [_controller reactMountingTransactionDidMount];
+  [_controller commitTransaction];
 }
 
 #pragma mark - Common
@@ -490,6 +492,13 @@ namespace react = facebook::react;
 - (nullable RCTImageLoader *)reactImageLoader
 {
   return _imageLoader;
+}
+
+#pragma mark - RNSOrientationDelegate
+
+- (void)containerDidRequestOrientationUpdate:(UIViewController *)container
+{
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
 
 #pragma mark - RNSTabsNavigationStateObserver

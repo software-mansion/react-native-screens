@@ -13,8 +13,17 @@ export type {
   EmptyEventPayload, // TODO: Remove this from public types (we need one shared type for this)
   OnDismissEvent,
   StackScreenActivityMode,
+  StackScreenReplaceAnimation,
   StackScreenEventHandler,
   StackScreenProps,
+  StackScreenAnimation,
+  StackScreenAnimationPresetName,
+  StackScreenAnimationPresetRef,
+  StackScreenAnimationTimingOptions,
+  StackScreenAnimationEasing,
+  StackScreenAnimationEasingName,
+  StackScreenAnimationBezier,
+  StackScreenAnimationLength,
 } from './screen';
 
 export type {

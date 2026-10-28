@@ -8,6 +8,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
+#import <objc/runtime.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -85,6 +86,13 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
   _blurEffect = RNSBlurEffectStyleNone;
+  _minimizationBehavior = RNSHeaderMinimizationBehaviorUndefined;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+    _safeAreaAdjustment = UIBarMinimizationSafeAreaAdjustmentAutomatic;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
   _synchronousShadowStateUpdatesEnabled = YES;
 }
 
@@ -535,6 +543,77 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+// Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
+// Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
+// its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
+// `setNavigationBarHidden:` call made by the staying screen's update afterwards is then a no-op, so its visible bar
+// stays at alpha 0. We restore the alpha the bar had before the transition, animated along with the rest of the cancel
+// animation. Remove once Apple fixes it.
++ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UINavigationController *)navctr
+                                                animated:(BOOL)animated
+                                               wasHidden:(BOOL)wasHidden
+                                              shouldHide:(BOOL)shouldHide
+{
+  if (@available(iOS 18.0, *)) {
+    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
+    // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
+    // hidden again.
+    if (!animated || wasHidden || !shouldHide || coordinator == nil ||
+        coordinator.presentationStyle != UIModalPresentationNone) {
+      return;
+    }
+
+    // Scoped to zoom transitions, the only ones known to leave the bar faded. The zoom is set with
+    // `preferredTransition` on the screen being pushed or popped; the from screen stays on the stack during a push,
+    // but not during a pop.
+    UIViewController *fromVC = [coordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIViewController *toVC = [coordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIViewController *transitioningVC = [navctr.viewControllers containsObject:fromVC] ? toVC : fromVC;
+    if (transitioningVC.preferredTransition == nil) {
+      return;
+    }
+
+    // Header config updates call this method repeatedly while the transition is in progress. Register the handler only
+    // once per transition, so that a later call cannot capture an alpha the transition has already lowered.
+    static char handlerRegisteredKey;
+    if (objc_getAssociatedObject(coordinator, &handlerRegisteredKey) != nil) {
+      return;
+    }
+    objc_setAssociatedObject(coordinator, &handlerRegisteredKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    UINavigationBar *navigationBar = navctr.navigationBar;
+    CGFloat alphaBeforeTransition = navigationBar.alpha;
+
+    // Only interactive transitions can be cancelled, and this block is called when one is.
+    [coordinator
+        notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          if (!context.isCancelled) {
+            return;
+          }
+          // The cancel animation takes the transition back from `percentComplete` to 0.
+          [UIView animateWithDuration:context.transitionDuration * context.percentComplete
+                                delay:0
+                              options:UIViewAnimationOptionBeginFromCurrentState
+                           animations:^{
+                             navigationBar.alpha = alphaBeforeTransition;
+                           }
+                           completion:nil];
+        }];
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+- (UIBarMinimizationBehavior)resolvedMinimizationBehavior
+{
+  if (_minimizationBehavior == RNSHeaderMinimizationBehaviorUndefined) {
+    return _translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
+  }
+  return [RNSConvert UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:_minimizationBehavior];
+}
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -572,6 +651,13 @@ RNS_IGNORE_SUPER_CALL_END
 
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
+                                                animated:animated
+                                               wasHidden:wasHidden
+                                              shouldHide:shouldHide];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
   if (shouldHide) {
     navitem.title = config.title;
 
@@ -582,6 +668,16 @@ RNS_IGNORE_SUPER_CALL_END
 
   navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    UIBarMinimization *minimization = [UIBarMinimization new];
+    minimization.minimizationBehavior = [config resolvedMinimizationBehavior];
+    minimization.restorationBehavior = config.restorationBehavior;
+    minimization.safeAreaAdjustment = config.safeAreaAdjustment;
+    navitem.navigationBarMinimization = minimization;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+
 #if !TARGET_OS_TV
   [config configureBackItem:prevItem withPrevVC:prevVC];
 
@@ -590,16 +686,6 @@ RNS_IGNORE_SUPER_CALL_END
   }
   navitem.largeTitleDisplayMode =
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
-  if (@available(iOS 27.0, *)) {
-    // Due to native limitations related to opaque header and minimization behavior, we disable it for opaque headers.
-    UIBarMinimization *minimization = [UIBarMinimization new];
-    minimization.minimizationBehavior =
-        config.translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
-    navitem.navigationBarMinimization = minimization;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 #endif
 
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
@@ -1171,6 +1257,46 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _titleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"title"]];
     _largeTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"largeTitle"]];
     _backTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"backTitle"]];
+  }
+
+  if (newScreenProps.minimizationBehavior != oldScreenProps.minimizationBehavior) {
+    _minimizationBehavior =
+        [RNSConvert RNSHeaderMinimizationBehaviorFromCppEquivalent:newScreenProps.minimizationBehavior];
+
+    BOOL isBarMinimizationSupported = NO;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      isBarMinimizationSupported = YES;
+    }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (!isBarMinimizationSupported && _minimizationBehavior != RNSHeaderMinimizationBehaviorUndefined &&
+        _minimizationBehavior != RNSHeaderMinimizationBehaviorAutomatic) {
+      RCTLogWarn(@"[RNScreens] minimizationBehavior is supported for iOS >= 27");
+    }
+  }
+
+  if (newScreenProps.restorationBehavior != oldScreenProps.restorationBehavior) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _restorationBehavior =
+          [RNSConvert UIBarMinimizationRestorationBehaviorFromCppEquivalent:newScreenProps.restorationBehavior];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.restorationBehavior != react::RNSScreenStackHeaderConfigRestorationBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (newScreenProps.safeAreaAdjustment != oldScreenProps.safeAreaAdjustment) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _safeAreaAdjustment =
+          [RNSConvert UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:newScreenProps.safeAreaAdjustment];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.safeAreaAdjustment != react::RNSScreenStackHeaderConfigSafeAreaAdjustment::Automatic) {
+        RCTLogWarn(@"[RNScreens] safeAreaAdjustment is supported for iOS >= 27");
+      }
   }
 
   if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {

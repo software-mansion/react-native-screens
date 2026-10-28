@@ -39,7 +39,7 @@
   [_pendingPopOperations addObject:operation];
 }
 
-- (void)executePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
+- (void)enqueuePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
                      withRenderedScreens:(nonnull NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens
 {
   if (![self hasPendingOperations]) {
@@ -59,8 +59,6 @@
   for (RNSStackOperation *operation in pushOperations) {
     [controller enqueuePushOperation:static_cast<RNSPushOperation *>(operation).stackScreen];
   }
-
-  [controller performContainerUpdateIfNeeded];
 
   [_pendingPopOperations removeAllObjects];
   [_pendingPushOperations removeAllObjects];

@@ -8,6 +8,7 @@
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-SplitView.h"
 #import "RNSDefines.h"
+#import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSSplitHostComponentEventEmitter.h"
 #import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
@@ -22,7 +23,8 @@ static const CGFloat epsilon = 1e-6;
 
 @interface RNSSplitHostComponentView () <RCTMountingTransactionObserving,
                                          RCTRNSSplitHostViewProtocol,
-                                         RNSSplitHostControllerEventsDelegate>
+                                         RNSSplitHostControllerEventsDelegate,
+                                         RNSOrientationDelegate>
 @end
 
 @implementation RNSSplitHostComponentView {
@@ -125,6 +127,7 @@ static const CGFloat epsilon = 1e-6;
     _controller.appearanceProvider = self;
     _controller.behaviorProvider = self;
     _controller.columnsProvider = self;
+    _controller.orientationDelegate = self;
   }
 }
 
@@ -371,7 +374,7 @@ RNS_IGNORE_SUPER_CALL_END
                 withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   _hasModifiedReactSubviewsInCurrentTransaction = false;
-  [_controller reactMountingTransactionWillMount];
+  [_controller beginTransaction];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -380,7 +383,7 @@ RNS_IGNORE_SUPER_CALL_END
   if (_hasModifiedReactSubviewsInCurrentTransaction) {
     [_controller setNeedsUpdateOfChildViewControllers];
   }
-  [_controller reactMountingTransactionDidMount];
+  [_controller commitTransaction];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -452,6 +455,13 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)splitHostControllerDidHideInspector:(RNSSplitHostController *)controller
 {
   [_reactEventEmitter emitOnHideInspector];
+}
+
+#pragma mark - RNSOrientationDelegate
+
+- (void)containerDidRequestOrientationUpdate:(UIViewController *)container
+{
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
 
 #pragma mark - Dynamic frameworks support

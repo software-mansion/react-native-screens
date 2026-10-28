@@ -40,6 +40,16 @@ export type SheetCommands = {
 
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 
+export type HeaderMinimizationBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+export type HeaderRestorationBehavior = 'automatic' | 'atScrollEdge';
+
+export type HeaderSafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -68,6 +78,8 @@ export type BlurEffectTypes = BlurEffect;
 export type ScreenReplaceTypes = 'push' | 'pop';
 
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
+
+export type SheetBackgroundEffectTypes = 'automatic' | 'color';
 
 export type ScreenOrientationTypes =
   | 'default'
@@ -420,6 +432,19 @@ export interface ScreenProps extends ViewProps {
     | 'large'
     | 'all'
     | undefined;
+  /**
+   * Material rendered by the system behind the sheet's content.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * - `automatic` - whatever the system uses for sheets on the current iOS version; on iOS 26 this is Liquid Glass,
+   *   including its interactive highlight,
+   * - `color` - a flat fill with the screen's `backgroundColor`, which makes the sheet look opaque.
+   *
+   * Defaults to `automatic`. Has no effect on iOS versions below 26.1.
+   *
+   * @platform ios
+   */
+  sheetBackgroundEffect?: SheetBackgroundEffectTypes | undefined;
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
@@ -829,6 +854,61 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean | undefined;
+  /**
+   * Controls when the navigation bar minimizes in response to scrolling.
+   * The following values are currently supported (they correspond to {@link https://developer.apple.com/documentation/uikit/uibarminimizationbehavior?language=objc|UIBarMinimizationBehavior}):
+   *
+   * - `automatic` – the system determines the minimization behavior
+   * - `never` – the navigation bar does not minimize
+   * - `onScrollDown` – the navigation bar minimizes when the user scrolls down
+   * - `onScrollUp` – the navigation bar minimizes when the user scrolls up
+   *
+   * When the prop is not specified (`undefined`), the behavior depends on the header's `translucent` prop:
+   *
+   * - translucent header – `automatic`
+   * - opaque header – `never`. Minimization of an opaque header is not reliably supported
+   *   by the legacy stack (it breaks the content insets applied for an opaque header), so it is
+   *   disabled by default. Set the prop explicitly (e.g. to `automatic`) to opt in anyway.
+   *
+   * @default `undefined` (`automatic` for translucent header, `never` for opaque header)
+   *
+   * @platform ios
+   *
+   * @supported iOS 27 or higher
+   */
+  minimizationBehavior?: HeaderMinimizationBehavior | undefined;
+  /**
+   * Controls when a minimized navigation bar restores.
+   * It is honored only together with `minimizationBehavior: 'onScrollDown'`, otherwise the system falls back to `automatic`.
+   * The following values are currently supported (they correspond to {@link https://developer.apple.com/documentation/uikit/uibarminimizationrestorationbehavior?language=objc|UIBarMinimizationRestorationBehavior}):
+   *
+   * - `automatic` – the navigation bar restores when the user reverses scroll direction
+   * - `atScrollEdge` – the navigation bar restores only when the scroll view's content reaches the scroll edge
+   *
+   * @default `automatic`
+   *
+   * @platform ios
+   *
+   * @supported iOS 27 or higher
+   */
+  restorationBehavior?: HeaderRestorationBehavior | undefined;
+  /**
+   * Controls whether the safe area adjusts while the navigation bar minimizes.
+   *
+   * @remarks
+   * The values correspond to
+   * {@link https://developer.apple.com/documentation/uikit/uibarminimizationsafeareaadjustment | UIBarMinimizationSafeAreaAdjustment}.
+   * The following values are supported:
+   * - `'automatic'` — the system determines the safe area adjustment.
+   * - `'enabled'` — the safe area adjusts as the navigation bar minimizes,
+   *   allowing content to reflow.
+   * - `'disabled'` — the safe area remains unchanged as the navigation bar
+   *   minimizes.
+   *
+   * @defaultValue `'automatic'`
+   * @platform ios >= 27
+   */
+  safeAreaAdjustment?: HeaderSafeAreaAdjustment | undefined;
   /**
    * Callback which is executed when screen header is attached
    */

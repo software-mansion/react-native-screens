@@ -66,6 +66,10 @@ struct ContentWrapperBox {
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   NSMutableArray<UIView *> *_reactSubviews;
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  UIVisualEffect *_appliedSheetBackgroundEffect;
+  UIColor *_appliedSheetBackgroundEffectColor;
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -100,6 +104,7 @@ struct ContentWrapperBox {
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
+  _sheetBackgroundEffect = RNSScreenSheetBackgroundEffectAutomatic;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _sheetsScrollViewTag = 0;
@@ -996,6 +1001,30 @@ RNS_IGNORE_SUPER_CALL_END
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
 
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+- (void)setBackgroundEffectForSheet:(UISheetPresentationController *)sheet
+                            animate:(BOOL)animate API_AVAILABLE(ios(26.1))
+{
+  UIColor *color = _sheetBackgroundEffect == RNSScreenSheetBackgroundEffectColor ? self.backgroundColor : nil;
+
+  BOOL alreadyApplied = color == nil
+      ? sheet.backgroundEffect == nil
+      : sheet.backgroundEffect == _appliedSheetBackgroundEffect && [_appliedSheetBackgroundEffectColor isEqual:color];
+  if (alreadyApplied) {
+    return;
+  }
+
+  UIVisualEffect *effect = color != nil ? [UIColorEffect effectWithColor:color] : nil;
+  _appliedSheetBackgroundEffect = effect;
+  _appliedSheetBackgroundEffectColor = color;
+  [self setPropertyForSheet:sheet
+                  withBlock:^{
+                    sheet.backgroundEffect = effect;
+                  }
+                    animate:animate];
+}
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+
 /**
  * Updates settings for sheet presentation controller.
  * On Fabric we run it from `finalizeUpdates` if props have changed.
@@ -1097,6 +1126,11 @@ RNS_IGNORE_SUPER_CALL_END
   sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
   [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
   [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
+    [self setBackgroundEffectForSheet:sheet animate:YES];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   // lud - largest undimmed detent
   // First we try to take value from the prop or default.
@@ -1392,6 +1426,12 @@ RNS_IGNORE_SUPER_CALL_END
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
+
+  if (newScreenProps.sheetBackgroundEffect != oldScreenProps.sheetBackgroundEffect) {
+    [self setSheetBackgroundEffect:[RNSConvert
+                                       RNSScreenSheetBackgroundEffectFromCppEquivalent:newScreenProps
+                                                                                           .sheetBackgroundEffect]];
+  }
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];

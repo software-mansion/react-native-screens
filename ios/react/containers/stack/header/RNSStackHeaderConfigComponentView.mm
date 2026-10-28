@@ -69,12 +69,12 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
   _prompt = nil;
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
   if (@available(iOS 27.0, *)) {
     _minimizationBehavior = UIBarMinimizationBehaviorAutomatic;
     _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
   }
-#endif // Check for iOS >= 27
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
   _backButtonTitle = nil;
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
@@ -452,26 +452,26 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   if (oldHeaderProps.minimizationBehavior != newHeaderProps.minimizationBehavior) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
     if (@available(iOS 27.0, *)) {
       _minimizationBehavior =
           rnscreens::conversion::UIBarMinimizationBehaviorFromReactRNSStackHeaderConfigIOSMinimizationBehavior(
               newHeaderProps.minimizationBehavior);
     } else
-#endif // Check for iOS >= 27
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
       if (newHeaderProps.minimizationBehavior != react::RNSStackHeaderConfigIOSMinimizationBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] minimizationBehavior is supported for iOS >= 27");
       }
   }
 
   if (oldHeaderProps.restorationBehavior != newHeaderProps.restorationBehavior) {
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
     if (@available(iOS 27.0, *)) {
       _restorationBehavior = rnscreens::conversion::
           UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationBehavior(
               newHeaderProps.restorationBehavior);
     } else
-#endif // Check for iOS >= 27
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
       if (newHeaderProps.restorationBehavior != react::RNSStackHeaderConfigIOSRestorationBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
       }

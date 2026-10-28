@@ -314,6 +314,21 @@ class ScreenStackHeaderConfigViewManager :
         value: String?,
     ) = Unit
 
+    override fun setMinimizationBehavior(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) = Unit
+
+    override fun setRestorationBehavior(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) = Unit
+
+    override fun setSafeAreaAdjustment(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) = Unit
+
     override fun setTopInsetEnabled(
         config: ScreenStackHeaderConfig,
         topInsetEnabled: Boolean,

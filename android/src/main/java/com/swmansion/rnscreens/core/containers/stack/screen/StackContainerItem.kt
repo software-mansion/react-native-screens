@@ -3,6 +3,8 @@ package com.swmansion.rnscreens.core.containers.stack.screen
 import android.view.View
 import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
 import com.swmansion.rnscreens.core.containers.stack.header.config.OnHeaderConfigurationAttachListener
 
 /**
@@ -17,6 +19,13 @@ internal interface StackContainerItem : ContainerItem {
     val itemKey: String?
 
     val isPreventNativeDismissEnabled: Boolean
+
+    /**
+     * The `animation` prop value used for transitions to and from this item.
+     */
+    val animation: StackAnimationConfig
+
+    val replaceAnimation: StackReplaceAnimation
 
     /**
      * Use this to set/unset the observer.

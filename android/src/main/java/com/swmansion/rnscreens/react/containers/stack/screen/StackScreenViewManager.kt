@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens.react.containers.stack.screen
 
+import android.util.Log
 import android.view.View
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
@@ -11,6 +13,9 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
+import com.swmansion.rnscreens.react.containers.stack.animation.parseStackAnimationConfig
 import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidDisappearEvent
@@ -145,7 +150,37 @@ internal class StackScreenViewManager :
         view.isPreventNativeDismissEnabled = value
     }
 
+    override fun setAnimation(
+        view: StackScreen,
+        value: Dynamic,
+    ) {
+        view.animation =
+            if (value.isNull) {
+                StackAnimationConfig.DEFAULT
+            } else {
+                try {
+                    parseStackAnimationConfig(value)
+                } catch (e: IllegalArgumentException) {
+                    Log.w(TAG, "${e.message} Falling back to the default animation.")
+                    StackAnimationConfig.DEFAULT
+                }
+            }
+    }
+
+    override fun setReplaceAnimation(
+        view: StackScreen,
+        value: String?,
+    ) {
+        view.replaceAnimation =
+            when (value) {
+                null, "pop" -> StackReplaceAnimation.POP
+                "push" -> StackReplaceAnimation.PUSH
+                else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid replace animation: $value.")
+            }
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackScreen"
+        private const val TAG = "StackScreenViewManager"
     }
 }
