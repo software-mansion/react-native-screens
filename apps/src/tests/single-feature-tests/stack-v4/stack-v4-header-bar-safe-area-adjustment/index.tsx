@@ -9,6 +9,8 @@ import {
 import { SafeAreaView } from 'react-native-screens/experimental';
 import { SettingsPicker, ThemedText } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
+import { scenarioDescription } from './scenario-description';
+import { createScenario } from '@apps/tests/shared/helpers';
 
 const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
   'automatic',
@@ -16,7 +18,7 @@ const SAFE_AREA_ADJUSTMENTS: HeaderSafeAreaAdjustment[] = [
   'disabled',
 ];
 
-export default function Test4732() {
+function TestStackV4HeaderBarSafeAreaAdjustment() {
   const [safeAreaAdjustment, setSafeAreaAdjustment] =
     React.useState<HeaderSafeAreaAdjustment>('automatic');
 
@@ -41,9 +43,6 @@ export default function Test4732() {
             ))}
           </ScrollView>
         </SafeAreaView>
-        {/* HeaderConfig must not be the first child of a Screen, otherwise
-            UIKit does not find the scroll view that drives bar minimization.
-            See https://github.com/software-mansion/react-native-screens/pull/1825 */}
         <ScreenStackHeaderConfig
           title="Safe area"
           // Translucent header, so that the screen is laid out under the bar
@@ -57,6 +56,11 @@ export default function Test4732() {
     </ScreenStack>
   );
 }
+
+export default createScenario(
+  TestStackV4HeaderBarSafeAreaAdjustment,
+  scenarioDescription,
+);
 
 const styles = StyleSheet.create({
   container: {
