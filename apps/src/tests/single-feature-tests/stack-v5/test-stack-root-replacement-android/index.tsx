@@ -14,7 +14,7 @@ function TestStackRootReplacementAndroid() {
     setRoutes(current => current.filter(route => route !== key));
 
   return (
-    <Stack.Host style={styles.host}>
+    <Stack.Host>
       {routes.map(key => (
         <Stack.Screen
           key={key}
@@ -64,7 +64,6 @@ function TestStackRootReplacementAndroid() {
 }
 
 const styles = StyleSheet.create({
-  host: { flex: 1 },
   screen: { flex: 1, justifyContent: 'center', backgroundColor: 'white' },
 });
 
