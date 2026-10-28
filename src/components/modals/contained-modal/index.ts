@@ -5,3 +5,4 @@ export type {
 
 export { ContainedModalProvider } from './ContainedModalProvider';
 export { ContainedModalOverContent } from './ContainedModalOverContent';
+export { ContainedModalReplacingContent } from './ContainedModalReplacingContent';
