@@ -59,13 +59,28 @@ namespace react = facebook::react;
       // during a suspension UIKit's container stays behind as a wrapper
       // subview, and re-attaching this transparent full-bounds view above it
       // would swallow every touch meant for the restored modal.
-      controller.view.frame = self.bounds;
-      [self insertSubview:controller.view atIndex:0];
+      if (![self isContextViewRemovedByReplacingPresentation:controller]) {
+        controller.view.frame = self.bounds;
+        [self insertSubview:controller.view atIndex:0];
+      }
       [controller didMoveToParentViewController:parentView.reactViewController];
       break;
     }
     parentView = (UIView *)parentView.reactSuperview;
   }
+}
+
+// A replacing presentation (`UIModalPresentationCurrentContext`) takes the
+// context view out of the hierarchy for the presentation's whole lifetime,
+// suspensions included, and puts it back itself when the modal is dismissed.
+// Re-inserting the view on a window re-entry (a restore after a covering
+// stack screen was popped) would show the replaced content under the modal
+// again.
+- (BOOL)isContextViewRemovedByReplacingPresentation:(UIViewController *)controller
+{
+  UIViewController *presentedViewController = controller.presentedViewController;
+  return presentedViewController != nil && presentedViewController.presentingViewController == controller &&
+      presentedViewController.modalPresentationStyle == UIModalPresentationCurrentContext;
 }
 
 - (void)reactRemoveControllerFromParent:(UIViewController *)controller

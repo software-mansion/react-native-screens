@@ -3,7 +3,8 @@
 ## Details
 
 **Description:** One stack-hosted scenario exercising the core behaviors of
-`ContainedModalOverContent` + `ContainedModalProvider`: containment, outside
+`ContainedModalOverContent` / `ContainedModalReplacingContent` +
+`ContainedModalProvider`: containment, outside
 interactivity, presentation at a non-zero scroll offset, scroll tracking while
 open, provider resize, rotation, suspend/restore via stack push/pop,
 dismiss-while-suspended, counter state preservation, nested providers, and a
@@ -14,8 +15,17 @@ overlay. A second, outer provider spans the whole screen content and hosts a
 full-screen dark-red modal; each modal targets its own provider by id. Modal visibility state lives above the stack, so the pushed screen
 can flip `isOpen` to `false` while the inner modal is suspended.
 
-Out of scope here: the replacing variant (`ContainedModalCurrentContext`) and
-modal stacking (only one modal can be open per provider).
+A "Variant" button switches every modal in the scenario between the two
+components. Run the steps once per variant. With the replacing variant the
+provider's children (counter, "Open modal") are removed from the screen while
+the modal is open: only the provider's light-blue background shows through
+the translucent modal, and the content returns intact on dismissal. Steps that
+mention the provider counter "visible through the modal" apply to the
+over-content variant only. Replacing-specific checks (restore geometry after
+resize/rotation while open, repeated cycles, off-screen children) live in the
+dedicated replacing-content scenario.
+
+Out of scope here: modal stacking (only one modal can be open per provider).
 
 **OS test creation version:** iOS: 26.5.
 
@@ -35,7 +45,8 @@ TBD.
    group).
 
 - [ ] The root stack screen shows an "Outside taps: 0" counter, "Outside tap",
-      "Grow provider", "Push screen over" and "Open full-screen modal" buttons,
+      "Variant: over content", "Grow provider", "Push screen over" and "Open
+      full-screen modal" buttons,
       and a scroll view. The light-blue provider box with a ticking "Provider
       counter" and "Open modal" is visible near the top of the scroll view; a
       tall spacer below it keeps the content scrollable.
@@ -126,6 +137,21 @@ TBD.
 - [ ] The overlay fades out, provider content is tappable again; re-presenting
       works identically (no leftover touch-dead zones, no misplaced overlay),
       counters continuous throughout.
+
+### Second variant
+
+17. Dismiss everything, tap "Variant: over content" (it reads "Variant:
+    replacing content" afterwards) and repeat steps 2-16.
+
+- [ ] Every expectation holds, except that while a modal is open the targeted
+      provider's children are gone rather than visible underneath: the
+      light-blue box shows only its background through the dark overlay, and
+      the full-screen modal hides every control it covers. After each dismissal
+      the children are back at their place and size, counters continuous.
+- [ ] In particular, after the suspend/restore of step 6 the restored modal
+      still shows only the provider's background underneath (the children
+      must not reappear under the modal on restore), and they are back once
+      the modal is dismissed.
 
 ### Scroll tracking while open — run LAST
 
