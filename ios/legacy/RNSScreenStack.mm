@@ -1051,6 +1051,9 @@ RNS_IGNORE_SUPER_CALL_END
   [self addGestureRecognizer:panRecognizer];
 }
 
+/// Drives an interactive pop from `RNSPanGestureRecognizer`: starts the pop when the gesture begins,
+/// updates its progress while it moves, and on release finishes or cancels it, handing the release
+/// velocity and the transition distance to the interaction controller for the completion spring.
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = _reactSubviews.lastObject;
@@ -1101,6 +1104,8 @@ RNS_IGNORE_SUPER_CALL_END
       float gestureDistance = translation + velocity * 0.3;
       gestureDistance = isInverted ? gestureDistance * -1 : gestureDistance;
       BOOL shouldFinishTransition = gestureDistance > snapPoint;
+      _interactionController.releaseVelocity = isInverted ? -velocity : velocity;
+      _interactionController.transitionDistance = distance;
       if (shouldFinishTransition) {
         [_interactionController finishInteractiveTransition];
       } else {
