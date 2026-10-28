@@ -737,6 +737,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
     UISearchTab *searchTab = [[UISearchTab alloc] initWithViewControllerProvider:^UIViewController *(UITab *) {
       return weakScreenController;
     }];
+    // Set the custom title here, like `initWithTitle:` does for a regular tab. Setting it
+    // after the tab is installed results in incorrect title truncation for the other tabs.
+    // See https://github.com/software-mansion/react-native-screens/issues/5015
+    NSString *_Nullable title = screenController.tabScreenComponentView.title;
+    if (title != nil) {
+      searchTab.title = title;
+    }
 #if RNS_UITAB_API_SDK_AVAILABLE && RNS_IPHONE_OS_VERSION_AVAILABLE(26_0) && !TARGET_OS_TV && !TARGET_OS_VISION
     if (@available(iOS 26.0, *)) {
       if (RNS_UITAB_API_ENABLED) {
