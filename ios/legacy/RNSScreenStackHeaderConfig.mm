@@ -8,6 +8,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
+#import <objc/runtime.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -509,6 +510,67 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+// Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
+// Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
+// its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
+// `setNavigationBarHidden:` call made by the staying screen's update afterwards is then a no-op, so its visible bar
+// stays at alpha 0. We restore the alpha the bar had before the transition, animated along with the rest of the cancel
+// animation. Remove once Apple fixes it.
++ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UINavigationController *)navctr
+                                                animated:(BOOL)animated
+                                               wasHidden:(BOOL)wasHidden
+                                              shouldHide:(BOOL)shouldHide
+{
+  if (@available(iOS 18.0, *)) {
+    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
+    // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
+    // hidden again.
+    if (!animated || wasHidden || !shouldHide || coordinator == nil ||
+        coordinator.presentationStyle != UIModalPresentationNone) {
+      return;
+    }
+
+    // Scoped to zoom transitions, the only ones known to leave the bar faded. The zoom is set with
+    // `preferredTransition` on the screen being pushed or popped; the from screen stays on the stack during a push,
+    // but not during a pop.
+    UIViewController *fromVC = [coordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIViewController *toVC = [coordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIViewController *transitioningVC = [navctr.viewControllers containsObject:fromVC] ? toVC : fromVC;
+    if (transitioningVC.preferredTransition == nil) {
+      return;
+    }
+
+    // Header config updates call this method repeatedly while the transition is in progress. Register the handler only
+    // once per transition, so that a later call cannot capture an alpha the transition has already lowered.
+    static char handlerRegisteredKey;
+    if (objc_getAssociatedObject(coordinator, &handlerRegisteredKey) != nil) {
+      return;
+    }
+    objc_setAssociatedObject(coordinator, &handlerRegisteredKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    UINavigationBar *navigationBar = navctr.navigationBar;
+    CGFloat alphaBeforeTransition = navigationBar.alpha;
+
+    // Only interactive transitions can be cancelled, and this block is called when one is.
+    [coordinator
+        notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          if (!context.isCancelled) {
+            return;
+          }
+          // The cancel animation takes the transition back from `percentComplete` to 0.
+          [UIView animateWithDuration:context.transitionDuration * context.percentComplete
+                                delay:0
+                              options:UIViewAnimationOptionBeginFromCurrentState
+                           animations:^{
+                             navigationBar.alpha = alphaBeforeTransition;
+                           }
+                           completion:nil];
+        }];
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -545,6 +607,13 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
+                                                animated:animated
+                                               wasHidden:wasHidden
+                                              shouldHide:shouldHide];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
   if (shouldHide) {
     navitem.title = config.title;

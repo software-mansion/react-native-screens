@@ -8,7 +8,7 @@ module.exports = {
   globalSetup: 'detox/runners/jest/globalSetup',
   globalTeardown: 'detox/runners/jest/globalTeardown',
   reporters: ['detox/runners/jest/reporter'],
-  testEnvironment: 'detox/runners/jest/testEnvironment',
+  testEnvironment: '<rootDir>/e2e/skip-after-failure-environment.js',
   verbose: true,
   preset: 'ts-jest',
   setupFilesAfterEnv: ['<rootDir>/e2e/jest.setup.ts'],

@@ -9,7 +9,11 @@
 
 - (void)addPopOperation:(nonnull RNSStackScreenComponentView *)screen;
 
-- (void)executePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
+/**
+ * Hands the pending operations to the navigation controller, ordered by the screens' React index. The caller commits
+ * the navigation controller's transaction.
+ */
+- (void)enqueuePendingOperationsIfNeeded:(nonnull RNSStackNavigationController *)controller
                      withRenderedScreens:(nonnull NSMutableArray<RNSStackScreenComponentView *> *)renderedScreens;
 
 @end

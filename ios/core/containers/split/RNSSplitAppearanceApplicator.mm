@@ -1,8 +1,7 @@
 #import "RNSSplitAppearanceApplicator.h"
 
-#import <React/RCTAssert.h>
+#import "RNSAssert.h"
 #import "RNSDefines.h"
-#import "RNSScreenWindowTraits.h"
 #import "RNSSplitHostController.h"
 
 @implementation RNSSplitAppearanceApplicator
@@ -43,10 +42,11 @@
                            [strongSelf updateSplitViewDisplayModeFor:provider withController:splitHostController];
                          }];
 
-  [appearanceCoordinator updateIfNeeded:RNSSplitAppearanceUpdateFlagsOrientationUpdate
-                         updateCallback:^{
-                           [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
-                         }];
+  [appearanceCoordinator
+      updateIfNeeded:RNSSplitAppearanceUpdateFlagsOrientationUpdate
+      updateCallback:^{
+        [splitHostController.orientationDelegate containerDidRequestOrientationUpdate:splitHostController];
+      }];
 }
 
 /**
@@ -172,7 +172,7 @@
   // Compare values only if both are non-negative.
   // The default value, which is -1, indicates that the constraint was not provided.
   if (minWidth >= 0 && maxWidth >= 0) {
-    RCTAssert(minWidth <= maxWidth,
+    RNSAssert(minWidth <= maxWidth,
               @"[RNScreens] Split column constraints are invalid: minWidth %f cannot be greater than maxWidth %f",
               minWidth,
               maxWidth);

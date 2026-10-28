@@ -11,6 +11,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSTabsScreenViewController;
+
+/**
+ * Receives the appearance lifecycle of a tab screen from its controller.
+ */
+@protocol RNSTabsScreenViewControllerDelegate <NSObject>
+
+- (void)viewControllerViewWillAppear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewDidAppear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewWillDisappear:(RNSTabsScreenViewController *)controller;
+- (void)viewControllerViewDidDisappear:(RNSTabsScreenViewController *)controller;
+
+@end
+
 @interface RNSTabsScreenViewController : UIViewController <RNSContainerItem
 #if !TARGET_OS_TV
                                                            ,
@@ -20,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly, nullable) RNSTabsScreenComponentView *tabScreenComponentView;
 @property (nonatomic, weak, readonly, nullable) id<RNSTabsSpecialEffectsSupporting> tabsSpecialEffectsDelegate;
+@property (nonatomic, weak, nullable) id<RNSTabsScreenViewControllerDelegate> delegate;
 
 /**
  * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.

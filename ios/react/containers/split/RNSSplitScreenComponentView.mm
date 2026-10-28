@@ -53,7 +53,7 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
+  _controller = [RNSSplitScreenController new];
   _controller.view = self;
   _controller.delegate = self;
 }

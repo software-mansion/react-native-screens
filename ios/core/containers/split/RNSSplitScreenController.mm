@@ -1,19 +1,13 @@
 #import "RNSSplitScreenController.h"
 
-#import <React/RCTAssert.h>
-#import "RNSSplitHostComponentView.h"
+#import "RNSAssert.h"
 #import "RNSSplitHostController.h"
-#import "RNSSplitScreenComponentView.h"
 
-@implementation RNSSplitScreenController {
-  RNSSplitScreenComponentView *_splitScreenComponentView;
-}
+@implementation RNSSplitScreenController
 
-- (instancetype)initWithSplitScreenComponentView:(RNSSplitScreenComponentView *)splitScreenComponentView
+- (instancetype)init
 {
   if (self = [super init]) {
-    _splitScreenComponentView = splitScreenComponentView;
-
 #if !TARGET_OS_TV
     // Navigation bar prefers large titles, so opt out unless a navigation item customizer sets a mode.
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
@@ -24,23 +18,15 @@
 }
 
 /**
- * @brief Searching for the SplitHost controller
+ * @brief Returns the SplitHost controller the column is installed in.
  *
- * It checks whether the parent controller is our host controller.
- * If we're outside the structure, e. g. for inspector represented as a modal,
- * we're searching for that controller using a reference that Screen keeps for Host component view.
- *
- * @return If found - a RNSSplitHostController instance, otherwise nil.
+ * @return `splitViewController` if it is a RNSSplitHostController, otherwise nil (e.g. for the inspector presented as
+ * a modal, outside the split hierarchy).
  */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
   if ([self.splitViewController isKindOfClass:RNSSplitHostController.class]) {
     return (RNSSplitHostController *)self.splitViewController;
-  }
-
-  RNSSplitHostComponentView *splitHost = _splitScreenComponentView.splitHost;
-  if (splitHost != nil) {
-    return splitHost.splitHostController;
   }
 
   return nil;
@@ -66,14 +52,14 @@
 
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
   // we're attaching our touch handler and we don't need to apply any offset corrections,
-  // because it's positioned relatively to our RNSSplitScreenComponentView
+  // because it's positioned relatively to the column view
   if (![self isInSplitHostSubtree]) {
     [_delegate splitScreenController:self didChangeColumnFrame:self.view.frame];
     return;
   }
 
   UIView *ancestorView = [self findSplitHostController].view;
-  RCTAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
+  RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
   [self reportColumnFrameInContextOfView:ancestorView];
 }
