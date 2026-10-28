@@ -11,6 +11,8 @@ export type OnDismissEvent = NativeSyntheticEvent<OnDismissEventPayload>;
 
 export type StackScreenActivityMode = 'detached' | 'attached';
 
+export type StackScreenReplaceAnimation = 'push' | 'pop';
+
 export type StackScreenEventHandler = (
   event: NativeSyntheticEvent<EmptyEventPayload>,
 ) => void;
@@ -42,7 +44,8 @@ export type StackScreenProps = {
    * @description
    * The value on the incoming screen drives a push; the value on the outgoing
    * screen drives a pop, including the predictive back gesture. A replace
-   * plays the outgoing screen's pop animation. Changing it on the top screen
+   * plays the pop animation of the outgoing screen or the push animation of
+   * the incoming one, see `replaceAnimation`. Changing it on the top screen
    * takes effect for the next pop.
    *
    * A preset is either its name or an object `{ type: 'preset', name, ...options }`:
@@ -69,4 +72,21 @@ export type StackScreenProps = {
    * @platform android
    */
   animation?: StackScreenAnimation | undefined;
+  /**
+   * @summary Which animation a replace plays when this screen is the one
+   * replacing the top of the stack.
+   *
+   * @description
+   * `'pop'` plays the outgoing screen's pop animation: the outgoing screen
+   * leaves on top, as if it had been popped and this screen had been
+   * underneath. `'push'` plays this screen's push animation: this screen
+   * covers the outgoing one, as if it had been pushed.
+   *
+   * Currently supported only on Android.
+   *
+   * @default 'pop'
+   *
+   * @platform android
+   */
+  replaceAnimation?: StackScreenReplaceAnimation | undefined;
 };

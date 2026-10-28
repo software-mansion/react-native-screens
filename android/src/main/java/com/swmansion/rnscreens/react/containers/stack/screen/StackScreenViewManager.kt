@@ -14,6 +14,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
 import com.swmansion.rnscreens.react.containers.stack.animation.parseStackAnimationConfig
 import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidAppearEvent
@@ -163,6 +164,18 @@ internal class StackScreenViewManager :
                     Log.w(TAG, "${e.message} Falling back to the default animation.")
                     StackAnimationConfig.DEFAULT
                 }
+            }
+    }
+
+    override fun setReplaceAnimation(
+        view: StackScreen,
+        value: String?,
+    ) {
+        view.replaceAnimation =
+            when (value) {
+                null, "pop" -> StackReplaceAnimation.POP
+                "push" -> StackReplaceAnimation.PUSH
+                else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid replace animation: $value.")
             }
     }
 

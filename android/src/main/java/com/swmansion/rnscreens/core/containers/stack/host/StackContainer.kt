@@ -287,12 +287,14 @@ internal class StackContainer(
     private var transitionContext: StackTransitionContext? = null
 
     /**
-     * The outgoing screen is FragmentManager's current top, not the model's: a batch computed while
-     * an earlier one is pending executes together with it.
+     * A batch computed while an earlier one is still pending in FragmentManager executes together
+     * with it, so the outgoing screen stays the one the pending context names. FragmentManager's
+     * fragments are not used: the activity's FragmentManager also holds other containers' fragments
+     * (a sibling stack, a stack left over from a JS reload).
      */
     private fun writeTransitionContext(modelBeforeBatch: List<StackScreenFragment>) {
         val incoming = stackModel.last()
-        val outgoing = determineTopFragment()
+        val outgoing = transitionContext?.outgoing ?: modelBeforeBatch.lastOrNull()
         val kind =
             when {
                 // The first screen is not a back stack record; nothing animates.
