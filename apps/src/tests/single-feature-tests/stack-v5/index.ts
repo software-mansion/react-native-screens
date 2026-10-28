@@ -15,6 +15,7 @@ import TestStackAnimationNoneAndroid from './test-stack-animation-none-android';
 import TestStackAnimationOptionsAndroid from './test-stack-animation-options-android';
 import TestStackAnimationReplaceAndroid from './test-stack-animation-replace-android';
 import TestStackAnimationPresetCompositionAndroid from './test-stack-animation-preset-composition-android';
+import TestStackAnimationCustomMotionsAndroid from './test-stack-animation-custom-motions-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
@@ -64,6 +65,7 @@ export { default as TestStackAnimationNoneAndroid } from './test-stack-animation
 export { default as TestStackAnimationOptionsAndroid } from './test-stack-animation-options-android';
 export { default as TestStackAnimationReplaceAndroid } from './test-stack-animation-replace-android';
 export { default as TestStackAnimationPresetCompositionAndroid } from './test-stack-animation-preset-composition-android';
+export { default as TestStackAnimationCustomMotionsAndroid } from './test-stack-animation-custom-motions-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
@@ -112,6 +114,7 @@ const scenarios = {
   TestStackAnimationOptionsAndroid,
   TestStackAnimationReplaceAndroid,
   TestStackAnimationPresetCompositionAndroid,
+  TestStackAnimationCustomMotionsAndroid,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
   TestStackLiftOnScrollAndroid,
