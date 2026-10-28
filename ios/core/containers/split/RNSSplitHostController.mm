@@ -200,7 +200,7 @@
 {
   NSNumber *column = [self splitViewColumnFromString:columnName];
   BOOL isSidebarColumn = column != nil && column.integerValue != UISplitViewControllerColumnSecondary;
-  RCTAssert(
+  RNSAssert(
       isSidebarColumn, @"[RNScreens] Cannot hide column %@. Only primary and supplementary are supported.", columnName);
   if (!isSidebarColumn) {
     return;
