@@ -825,7 +825,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   largeTitleHideShadow?: boolean | undefined;
   /**
    * Controls when the navigation bar minimizes in response to scrolling.
-   * The following values are currently supported (they correspond to [UIBarMinimizationBehavior](https://developer.apple.com/documentation/uikit/uibarminimizationbehavior?language=objc)):
+   * The following values are currently supported (they correspond to {@link https://developer.apple.com/documentation/uikit/uibarminimizationbehavior?language=objc|UIBarMinimizationBehavior}):
    *
    * - `automatic` – the system determines the minimization behavior
    * - `never` – the navigation bar does not minimize
@@ -849,7 +849,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls when a minimized navigation bar restores.
    * It is honored only together with `minimizationBehavior: 'onScrollDown'`, otherwise the system falls back to `automatic`.
-   * The following values are currently supported (they correspond to [UIBarMinimizationRestorationBehavior](https://developer.apple.com/documentation/uikit/uibarminimizationrestorationbehavior?language=objc)):
+   * The following values are currently supported (they correspond to {@link https://developer.apple.com/documentation/uikit/uibarminimizationrestorationbehavior?language=objc|UIBarMinimizationRestorationBehavior}):
    *
    * - `automatic` – the navigation bar restores when the user reverses scroll direction
    * - `atScrollEdge` – the navigation bar restores only when the scroll view's content reaches the scroll edge

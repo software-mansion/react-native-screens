@@ -45,10 +45,10 @@ type BlurEffect =
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
-// `rnsUnset` is an internal value used when the prop is not specified on the JS side.
+// `undefined` is an internal value used when the prop is not specified on the JS side.
 // It is resolved natively: `never` for an opaque header, `automatic` for a translucent one.
 type MinimizationBehavior =
-  | 'rnsUnset'
+  | 'undefined'
   | 'automatic'
   | 'never'
   | 'onScrollDown'
@@ -86,7 +86,7 @@ export interface NativeProps extends ViewProps {
   hideBackButton?: boolean | undefined;
   backButtonInCustomView?: boolean | undefined;
   blurEffect?: CT.WithDefault<BlurEffect, 'none'>;
-  minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'rnsUnset'>;
+  minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'undefined'>;
   restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean | undefined;

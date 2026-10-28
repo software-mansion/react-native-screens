@@ -77,8 +77,8 @@ NS_ASSUME_NONNULL_END
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 /**
  * Returns the minimization behavior that should be applied to the navigation item. When `minimizationBehavior` is
- * not specified (`RNSHeaderMinimizationBehaviorUnset`), it resolves to `UIBarMinimizationBehaviorNever` for an opaque
- * header and `UIBarMinimizationBehaviorAutomatic` for a translucent one. Minimization of an opaque header is not
+ * not specified (`RNSHeaderMinimizationBehaviorUndefined`), it resolves to `UIBarMinimizationBehaviorNever` for an
+ * opaque header and `UIBarMinimizationBehaviorAutomatic` for a translucent one. Minimization of an opaque header is not
  * reliably supported by the legacy stack.
  */
 - (UIBarMinimizationBehavior)resolvedMinimizationBehavior API_AVAILABLE(ios(27.0));

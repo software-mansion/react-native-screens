@@ -86,7 +86,7 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
   _blurEffect = RNSBlurEffectStyleNone;
-  _minimizationBehavior = RNSHeaderMinimizationBehaviorUnset;
+  _minimizationBehavior = RNSHeaderMinimizationBehaviorUndefined;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
   if (@available(iOS 27.0, *)) {
     _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
@@ -580,7 +580,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 - (UIBarMinimizationBehavior)resolvedMinimizationBehavior
 {
-  if (_minimizationBehavior == RNSHeaderMinimizationBehaviorUnset) {
+  if (_minimizationBehavior == RNSHeaderMinimizationBehaviorUndefined) {
     return _translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
   }
   return [RNSConvert UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:_minimizationBehavior];
@@ -1222,7 +1222,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
       isBarMinimizationSupported = YES;
     }
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
-    if (!isBarMinimizationSupported && _minimizationBehavior != RNSHeaderMinimizationBehaviorUnset &&
+    if (!isBarMinimizationSupported && _minimizationBehavior != RNSHeaderMinimizationBehaviorUndefined &&
         _minimizationBehavior != RNSHeaderMinimizationBehaviorAutomatic) {
       RCTLogWarn(@"[RNScreens] minimizationBehavior is supported for iOS >= 27");
     }

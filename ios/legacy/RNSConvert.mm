@@ -308,8 +308,8 @@
 {
   switch (minimizationBehavior) {
     using enum react::RNSScreenStackHeaderConfigMinimizationBehavior;
-    case RnsUnset:
-      return RNSHeaderMinimizationBehaviorUnset;
+    case Undefined:
+      return RNSHeaderMinimizationBehaviorUndefined;
     case Automatic:
       return RNSHeaderMinimizationBehaviorAutomatic;
     case Never:
@@ -326,8 +326,9 @@
     (RNSHeaderMinimizationBehavior)minimizationBehavior
 {
   switch (minimizationBehavior) {
-    case RNSHeaderMinimizationBehaviorUnset:
-      RCTLogError(@"[RNScreens] RNSHeaderMinimizationBehaviorUnset must be resolved before conversion to UIKit value");
+    case RNSHeaderMinimizationBehaviorUndefined:
+      RCTLogError(
+          @"[RNScreens] RNSHeaderMinimizationBehaviorUndefined must be resolved before conversion to UIKit value");
       return UIBarMinimizationBehaviorAutomatic;
     case RNSHeaderMinimizationBehaviorAutomatic:
       return UIBarMinimizationBehaviorAutomatic;
