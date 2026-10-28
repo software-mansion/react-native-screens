@@ -195,9 +195,6 @@ export { default as Test3910 } from './Test3910';
 export { default as Test4027 } from './Test4027';
 export { default as Test4064 } from './Test4064';
 export { default as Test4090 } from './Test4090';
-export { default as Test4651 } from './Test4651';
-export { default as Test4702 } from './Test4702';
-export { default as Test4785 } from './Test4785';
 export { default as Test4107 } from './Test4107';
 export { default as Test4132 } from './Test4132';
 export { default as Test4155 } from './Test4155';
@@ -218,10 +215,13 @@ export { default as Test4504 } from './Test4504';
 export { default as Test4519 } from './Test4519';
 export { default as Test4571 } from './Test4571';
 export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
+export { default as Test4651 } from './Test4651';
+export { default as Test4702 } from './Test4702';
 export { default as Test4709 } from './Test4709';
 export { default as Test4723 } from './Test4723';
 export { default as Test4725 } from './Test4725';
 export { default as Test4757 } from './Test4757';
+export { default as Test4785 } from './Test4785';
 export { default as Test4811 } from './Test4811';
 export { default as Test4872 } from './Test4872';
 export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded

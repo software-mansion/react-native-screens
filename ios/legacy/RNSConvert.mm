@@ -303,6 +303,57 @@
   }
 }
 
++ (RNSHeaderMinimizationBehavior)RNSHeaderMinimizationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior
+{
+  switch (minimizationBehavior) {
+    using enum react::RNSScreenStackHeaderConfigMinimizationBehavior;
+    case Undefined:
+      return RNSHeaderMinimizationBehaviorUndefined;
+    case Automatic:
+      return RNSHeaderMinimizationBehaviorAutomatic;
+    case Never:
+      return RNSHeaderMinimizationBehaviorNever;
+    case OnScrollDown:
+      return RNSHeaderMinimizationBehaviorOnScrollDown;
+    case OnScrollUp:
+      return RNSHeaderMinimizationBehaviorOnScrollUp;
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
++ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:
+    (RNSHeaderMinimizationBehavior)minimizationBehavior
+{
+  switch (minimizationBehavior) {
+    case RNSHeaderMinimizationBehaviorUndefined:
+      RCTLogError(
+          @"[RNScreens] RNSHeaderMinimizationBehaviorUndefined must be resolved before conversion to UIKit value");
+      return UIBarMinimizationBehaviorAutomatic;
+    case RNSHeaderMinimizationBehaviorAutomatic:
+      return UIBarMinimizationBehaviorAutomatic;
+    case RNSHeaderMinimizationBehaviorNever:
+      return UIBarMinimizationBehaviorNever;
+    case RNSHeaderMinimizationBehaviorOnScrollDown:
+      return UIBarMinimizationBehaviorOnScrollDown;
+    case RNSHeaderMinimizationBehaviorOnScrollUp:
+      return UIBarMinimizationBehaviorOnScrollUp;
+  }
+}
+
++ (UIBarMinimizationRestorationBehavior)UIBarMinimizationRestorationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigRestorationBehavior)restorationBehavior
+{
+  switch (restorationBehavior) {
+    using enum react::RNSScreenStackHeaderConfigRestorationBehavior;
+    case Automatic:
+      return UIBarMinimizationRestorationBehaviorAutomatic;
+    case AtScrollEdge:
+      return UIBarMinimizationRestorationBehaviorAtScrollEdge;
+  }
+}
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];

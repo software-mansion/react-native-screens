@@ -86,3 +86,11 @@ typedef NS_ENUM(NSInteger, RNSOptionalBoolean) {
   RNSOptionalBooleanTrue,
   RNSOptionalBooleanFalse
 };
+
+typedef NS_ENUM(NSInteger, RNSHeaderMinimizationBehavior) {
+  RNSHeaderMinimizationBehaviorUndefined,
+  RNSHeaderMinimizationBehaviorAutomatic,
+  RNSHeaderMinimizationBehaviorNever,
+  RNSHeaderMinimizationBehaviorOnScrollDown,
+  RNSHeaderMinimizationBehaviorOnScrollUp,
+};
