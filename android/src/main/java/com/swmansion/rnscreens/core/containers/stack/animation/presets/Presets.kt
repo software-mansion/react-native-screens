@@ -53,6 +53,7 @@ private fun motionTracksOf(
 ): List<Track> =
     when (config) {
         is MotionConfig.Preset -> presetMotionTracks(config.preset, isAppearing)
+        is MotionConfig.Custom -> customMotionTracks(config)
     }
 
 /**
