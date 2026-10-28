@@ -880,17 +880,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   restorationBehavior?: HeaderRestorationBehavior | undefined;
   /**
    * Controls whether the safe area adjusts while the navigation bar minimizes.
-   * The following values are currently supported (they correspond to [UIBarMinimizationSafeAreaAdjustment](https://developer.apple.com/documentation/uikit/uibarminimizationsafeareaadjustment?language=objc)):
    *
-   * - `automatic` – the system determines the safe area adjustment
-   * - `enabled` – the safe area adjusts as the navigation bar minimizes, allowing content to reflow
-   * - `disabled` – the safe area remains unchanged as the navigation bar minimizes
+   * @remarks
+   * The values correspond to
+   * {@link https://developer.apple.com/documentation/uikit/uibarminimizationsafeareaadjustment | UIBarMinimizationSafeAreaAdjustment}.
+   * The following values are supported:
+   * - `'automatic'` — the system determines the safe area adjustment.
+   * - `'enabled'` — the safe area adjusts as the navigation bar minimizes,
+   *   allowing content to reflow.
+   * - `'disabled'` — the safe area remains unchanged as the navigation bar
+   *   minimizes.
    *
-   * @default `automatic`
-   *
-   * @platform ios
-   *
-   * @supported iOS 27 or higher
+   * @defaultValue `'automatic'`
+   * @platform ios >= 27
    */
   safeAreaAdjustment?: HeaderSafeAreaAdjustment | undefined;
   /**
