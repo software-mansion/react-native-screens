@@ -7,6 +7,8 @@ import { AnimationPresetPlayground } from '@apps/tests/shared/components/stack-v
 const ANIMATION_OPTIONS = [
   'slideFromRight',
   'slideFromLeft',
+  'slideFromTrailing',
+  'slideFromLeading',
   'slideFromBottom',
   'slideFromTop',
 ] as const satisfies readonly StackScreenAnimation[];

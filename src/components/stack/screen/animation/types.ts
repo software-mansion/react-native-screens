@@ -88,14 +88,23 @@ export interface StackScreenAnimationTimingOptions {
  * The following values are supported:
  * - `'slideFromRight'`, `'slideFromLeft'` - a horizontal slide; both screens
  *   move together.
+ * - `'slideFromTrailing'`, `'slideFromLeading'` - a horizontal slide from the
+ *   trailing or leading edge of the container, the right or left one in a
+ *   left-to-right container; both screens move together.
  * - `'slideFromBottom'`, `'slideFromTop'` - a vertical slide; the other screen
  *   stays put.
+ *
+ * @remarks
+ * `'slideFromRight'` and `'slideFromLeft'` do not mirror in a right-to-left
+ * container; `'slideFromTrailing'` and `'slideFromLeading'` do.
  *
  * @platform android >= 21
  */
 export type StackScreenAnimationSlideFromPresetName =
   | 'slideFromRight'
   | 'slideFromLeft'
+  | 'slideFromTrailing'
+  | 'slideFromLeading'
   | 'slideFromBottom'
   | 'slideFromTop';
 
@@ -120,12 +129,22 @@ export type StackScreenAnimationFadeFromPresetName =
  * The following values are supported:
  * - `'iosFromRight'` - the pushed screen arrives from the right.
  * - `'iosFromLeft'` - the pushed screen arrives from the left.
+ * - `'iosFromTrailing'` - the pushed screen arrives from the trailing edge of
+ *   the container, the right one in a left-to-right container.
+ * - `'iosFromLeading'` - the pushed screen arrives from the leading edge of the
+ *   container, the left one in a left-to-right container.
+ *
+ * @remarks
+ * `'iosFromRight'` and `'iosFromLeft'` do not mirror in a right-to-left
+ * container; `'iosFromTrailing'` and `'iosFromLeading'` do.
  *
  * @platform android >= 21
  */
 export type StackScreenAnimationIosFromPresetName =
   | 'iosFromRight'
-  | 'iosFromLeft';
+  | 'iosFromLeft'
+  | 'iosFromTrailing'
+  | 'iosFromLeading';
 
 /**
  * Object form of a {@link StackScreenAnimationSlideFromPresetName} preset.
@@ -473,9 +492,8 @@ export interface StackScreenAnimationCustomTransition {
  * along it. The position decides the role, so `pop: 'slideFromLeft'` is the
  * pop transition of the `'slideFromRight'` preset, and `pop: 'slideFromRight'`
  * keeps both screens moving left. The other screen is animated too by
- * `'fade'` (a cross-fade), `'slideFromRight'`, `'slideFromLeft'` and the
- * `iosFrom*` presets; the vertical slides and the `fadeFrom*` presets leave it
- * still.
+ * `'fade'` (a cross-fade), the horizontal slides and the `iosFrom*` presets;
+ * the vertical slides and the `fadeFrom*` presets leave it still.
  *
  * Accepts any {@link StackScreenAnimationMotionPresetName} and any
  * {@link StackScreenAnimationIosFromPresetName}.
@@ -547,16 +565,21 @@ export interface StackScreenAnimationCustom {
  *   Android 13 horizontal slide from there on. Takes no options.
  * - `'none'` - no visible transition. Takes no options.
  * - `'fade'` - a cross-fade of both screens.
- * - `'slideFromRight'`, `'slideFromLeft'`, `'slideFromBottom'`,
- *   `'slideFromTop'` - see {@link StackScreenAnimationSlideFromPresetName}.
+ * - `'slideFromRight'`, `'slideFromLeft'`, `'slideFromTrailing'`,
+ *   `'slideFromLeading'`, `'slideFromBottom'`, `'slideFromTop'` - see
+ *   {@link StackScreenAnimationSlideFromPresetName}.
  * - `'fadeFromBottom'`, `'fadeFromTop'` - see
  *   {@link StackScreenAnimationFadeFromPresetName}; accept `distance`.
- * - `'iosFromRight'`, `'iosFromLeft'` - see
- *   {@link StackScreenAnimationIosFromPresetName}.
+ * - `'iosFromRight'`, `'iosFromLeft'`, `'iosFromTrailing'`, `'iosFromLeading'` -
+ *   see {@link StackScreenAnimationIosFromPresetName}.
  *
  * @remarks
  * A preset's pop transition is the push transition of the preset whose vector
  * points the other way, so `'slideFromRight'` pops to the right.
+ *
+ * `'default'` and the `*Trailing` / `*Leading` presets follow the container's
+ * layout direction; the `*Right` / `*Left` presets do not, so in a
+ * right-to-left container `'default'` and `'iosFromRight'` move opposite ways.
  *
  * @platform android >= 21
  */
