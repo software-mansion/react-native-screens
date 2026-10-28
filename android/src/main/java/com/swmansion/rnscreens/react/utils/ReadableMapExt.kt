@@ -8,20 +8,23 @@ import com.facebook.react.bridge.ReadableType
 
 private const val TAG = "ReadableMapExt"
 
+// `isNull` alone throws for a missing key.
+internal fun ReadableMap.isAbsent(key: String): Boolean = !hasKey(key) || isNull(key)
+
 // region Nullable variants
 
 internal fun ReadableMap.readOptionalString(key: String): String? {
-    if (!hasKey(key) || isNull(key)) return null
+    if (isAbsent(key)) return null
     return if (getType(key) == ReadableType.String) getString(key) else null
 }
 
 internal fun ReadableMap.readOptionalBoolean(key: String): Boolean? {
-    if (!hasKey(key) || isNull(key)) return null
+    if (isAbsent(key)) return null
     return if (getType(key) == ReadableType.Boolean) getBoolean(key) else null
 }
 
 internal fun ReadableMap.readOptionalFloat(key: String): Float? {
-    if (!hasKey(key) || isNull(key)) return null
+    if (isAbsent(key)) return null
     return if (getType(key) == ReadableType.Number) getDouble(key).toFloat() else null
 }
 
@@ -29,7 +32,7 @@ internal fun ReadableMap.readOptionalColor(
     context: Context,
     key: String,
 ): Int? {
-    if (!hasKey(key) || isNull(key)) return null
+    if (isAbsent(key)) return null
     return parseColor(context, key)
 }
 
@@ -51,7 +54,7 @@ internal fun ReadableMap.readColor(
     context: Context,
     key: String,
     default: Int?,
-): Int? = if (!hasKey(key) || isNull(key)) default else parseColor(context, key)
+): Int? = if (isAbsent(key)) default else parseColor(context, key)
 
 internal fun ReadableMap.readImageUri(
     key: String,
