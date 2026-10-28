@@ -237,15 +237,23 @@ internal class StackContainer(
                     "[RNScreens] Unable to find a fragment to pop"
                 }
 
-            check(stackModel.size > 1) {
-                "[RNScreens] Attempt to pop last screen from the stack"
-            }
-
-            fragmentOps.add(PopBackStackOp(fragment))
-
-            check(stackModel.removeAt(stackModel.lastIndex) === fragment) {
+            check(stackModel.last() === fragment) {
                 "[RNScreens] Attempt to pop non-top screen"
             }
+
+            if (stackModel.size == 1) {
+                check(pendingPushOperations.isNotEmpty()) {
+                    "[RNScreens] Attempt to pop last screen from the stack"
+                }
+                // The root was never added to FragmentManager's back stack. A replacement
+                // must remove it directly; the pending push installs a new root without a
+                // back stack record, so Back cannot reveal the replaced screen.
+                fragmentOps.add(RemoveOp(fragment))
+            } else {
+                fragmentOps.add(PopBackStackOp(fragment))
+            }
+
+            stackModel.removeAt(stackModel.lastIndex)
         }
 
         pendingPushOperations.forEach { operation ->

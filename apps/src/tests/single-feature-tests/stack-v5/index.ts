@@ -1,3 +1,4 @@
+import TestStackRootReplacementAndroid from './test-stack-root-replacement-android';
 import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 // Scenario objects (default exports) — carry metadata, used to build the
@@ -96,7 +97,10 @@ export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
 export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
+export { default as TestStackRootReplacementAndroid } from './test-stack-root-replacement-android';
+
 const scenarios = {
+  TestStackRootReplacementAndroid,
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
   TestStackLifecycleEvents,
