@@ -157,30 +157,30 @@ export type EmptyEventPayload = Record<string, never>;
  */
 export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
 
-export type PlatformIconShared = {
+export interface PlatformIconShared {
   type: 'imageSource';
   imageSource: ImageSourcePropType;
-};
+}
 
-export type PlatformIconAndroidDrawableResource = {
+export interface PlatformIconAndroidDrawableResource {
   type: 'drawableResource';
   name: string;
-};
+}
 
-export type PlatformIconIOSTemplate = {
+export interface PlatformIconIOSTemplate {
   type: 'templateSource';
   templateSource: ImageSourcePropType;
-};
+}
 
-export type PlatformIconIOSSfSymbol = {
+export interface PlatformIconIOSSfSymbol {
   type: 'sfSymbol';
   name: string;
-};
+}
 
-export type PlatformIconIOSXcasset = {
+export interface PlatformIconIOSXcasset {
   type: 'xcasset';
   name: string;
-};
+}
 
 export type PlatformIconIOS =
   | PlatformIconIOSSfSymbol
