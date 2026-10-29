@@ -54,6 +54,7 @@ export type {
   StackHeaderBackButtonDisplayModeIOS,
   StackHeaderMinimizationBehaviorIOS,
   StackHeaderRestorationBehaviorIOS,
+  StackHeaderSafeAreaAdjustmentIOS,
   StackHeaderItemVisibilityPriorityIOS,
   StackHeaderConfigPropsIOS,
   StackHeaderAppearanceIOS,
