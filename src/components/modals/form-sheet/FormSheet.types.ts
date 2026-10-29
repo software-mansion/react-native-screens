@@ -9,25 +9,69 @@ export interface FormSheetDetentChangedEvent {
   index: number;
 }
 
+/**
+ * `UIBlurEffect.Style` a {@link FormSheetBackgroundEffectBlur} is rendered with.
+ *
+ * @platform ios >= 26.1
+ */
 export type FormSheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
 
+/**
+ * Flat fill rendered behind the sheet's content.
+ *
+ * @platform ios >= 26.1
+ */
+export interface FormSheetBackgroundEffectColor {
+  /**
+   * Discriminator of the effect.
+   *
+   * @platform ios >= 26.1
+   */
+  type: 'color';
+  /**
+   * Color of the fill.
+   *
+   * @platform ios >= 26.1
+   */
+  color: ColorValue;
+}
+
+/**
+ * Blur material rendered behind the sheet's content.
+ *
+ * @platform ios >= 26.1
+ */
+export interface FormSheetBackgroundEffectBlur {
+  /**
+   * Discriminator of the effect.
+   *
+   * @platform ios >= 26.1
+   */
+  type: 'blur';
+  /**
+   * `UIBlurEffect.Style` the material is rendered with.
+   *
+   * @platform ios >= 26.1
+   */
+  style: FormSheetBackgroundEffectBlurStyle;
+}
+
+/**
+ * Material the system renders behind the sheet's content.
+ *
+ * @remarks
+ * - `'automatic'` - whatever UIKit uses for sheets on the current iOS version,
+ * - `'none'` - no material at all; the sheet is transparent and only its content is drawn,
+ * - {@link FormSheetBackgroundEffectColor} - a flat fill (`UIColorEffect`),
+ * - {@link FormSheetBackgroundEffectBlur} - a `UIBlurEffect` with the given `UIBlurEffect.Style`.
+ *
+ * @platform ios >= 26.1
+ */
 export type FormSheetBackgroundEffect =
   | 'automatic'
   | 'none'
-  | {
-      type: 'color';
-      /**
-       * Color of the flat fill.
-       */
-      color: ColorValue;
-    }
-  | {
-      type: 'blur';
-      /**
-       * `UIBlurEffect.Style` the sheet background is rendered with.
-       */
-      style: FormSheetBackgroundEffectBlurStyle;
-    };
+  | FormSheetBackgroundEffectColor
+  | FormSheetBackgroundEffectBlur;
 
 export type FormSheetNativeContainerStyleProps = {
   /**
@@ -166,22 +210,18 @@ export interface FormSheetProps {
   nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
 
   /**
-   * @summary The material the system renders behind the sheet's content.
+   * Material the system renders behind the sheet's content.
    *
-   * - `automatic` - whatever UIKit uses for sheets on the current iOS version,
-   * - `none` - no material at all; the sheet is transparent and only its content is drawn,
-   * - `{ type: 'color', color }` - a flat fill (`UIColorEffect`),
-   * - `{ type: 'blur', style }` - a `UIBlurEffect` with the given `UIBlurEffect.Style`.
-   *
+   * @remarks
    * The material is drawn behind the native container, so an opaque
    * `nativeContainerStyle.backgroundColor` covers it; replacing the material still matters then,
-   * because it removes the Liquid Glass highlight and edges of `automatic`.
+   * because it removes the Liquid Glass highlight and edges of `'automatic'`.
    *
    * On iOS, this maps to `UISheetPresentationController.backgroundEffect`.
    *
-   * @default 'automatic'
-   * @platform ios
-   * @supported iOS 26.1 or higher
+   * @defaultValue `'automatic'`
+   * @see {@link FormSheetBackgroundEffect}
+   * @platform ios >= 26.1
    */
   backgroundEffect?: FormSheetBackgroundEffect | undefined;
 
