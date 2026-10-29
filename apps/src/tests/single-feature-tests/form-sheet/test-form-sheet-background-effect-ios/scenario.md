@@ -70,13 +70,15 @@ TBD: Planned, but will be implemented separately.
 
     - [ ] The sheet is a flat magenta-tinted translucent fill, no blur.
 
-3. Dismiss. Set "color" to `navy`.
+3. Dismiss. Set "color" to `navy`, tap "Open FormSheet".
 
-    - [ ] Opaque navy sheet  with no glass highlight when dragged.
+    - [ ] Opaque navy sheet with no glass highlight when dragged.
 
 4. Dismiss. Set "container color" to `navy` and "effect" to `automatic`, tap "Open FormSheet".
 
-    - [ ] The sheet looks white from the inside, but dragging it still shows the Liquid Glass highlight; switching "effect" to `color` with `navy` removes it.
+    - [ ] The sheet looks navy from the inside, since the opaque container covers the material, but dragging it still shows the Liquid Glass highlight; switching "effect" to `color` with `navy` removes it.
+
+5. Dismiss. Set "container color" back to `none`, so the materials in the next sections stay visible.
 
 ---
 

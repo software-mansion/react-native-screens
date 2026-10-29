@@ -95,6 +95,10 @@ function TestFormSheetBackgroundEffect() {
   });
 
   const effect = buildEffect(config);
+  const darkSurface =
+    containerColor === 'navy' ||
+    (config.kind === 'color' && config.fillColor === 'navy') ||
+    (config.kind === 'blur' && /dark/i.test(config.blurStyle));
 
   const nativeContainerStyle =
     containerColor === 'none'
@@ -160,7 +164,9 @@ function TestFormSheetBackgroundEffect() {
         nativeContainerStyle={nativeContainerStyle}
         backgroundEffect={effect}>
         <View style={styles.sheetContent}>
-          <Text style={styles.sheetText}>{describeEffect(effect)}</Text>
+          <Text style={[styles.sheetText, darkSurface && styles.onDarkSurface]}>
+            {describeEffect(effect)}
+          </Text>
           <SettingsPicker
             label="effect"
             value={config.kind}
@@ -169,7 +175,7 @@ function TestFormSheetBackgroundEffect() {
           />
           <Button
             title="Dismiss from JS"
-            color={Colors.primary}
+            color={darkSurface ? '#ffffff' : Colors.primary}
             onPress={() => setIsOpen(false)}
           />
         </View>
@@ -216,6 +222,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: Colors.text,
+  },
+  onDarkSurface: {
+    color: '#ffffff',
   },
 });
 
