@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewProps } from 'react-native';
+import type { ScrollToTopGuardProps } from './ScrollToTopGuard.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -11,7 +11,7 @@ import { ViewProps } from 'react-native';
  *
  * Falls back to `React.Fragment` on platforms other than iOS.
  */
-function ScrollToTopGuard({ children }: ViewProps) {
+function ScrollToTopGuard({ children }: ScrollToTopGuardProps) {
   return <>{children}</>;
 }
 

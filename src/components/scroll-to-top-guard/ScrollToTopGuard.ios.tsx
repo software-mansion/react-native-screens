@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import type { ViewProps } from 'react-native';
 import ScrollToTopGuardNativeComponent from '../../fabric/scroll-to-top-guard/ScrollToTopGuardNativeComponent';
+import type { ScrollToTopGuardProps } from './ScrollToTopGuard.types';
 
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
@@ -12,6 +12,6 @@ import ScrollToTopGuardNativeComponent from '../../fabric/scroll-to-top-guard/Sc
  * only as a temporary workaround until the issue is fixed on `react-native`'s
  * side. The issue report: https://github.com/react/react-native/issues/56061.
  */
-export function ScrollToTopGuard(props: ViewProps) {
+export function ScrollToTopGuard(props: ScrollToTopGuardProps) {
   return <ScrollToTopGuardNativeComponent {...props} collapsable={false} />;
 }

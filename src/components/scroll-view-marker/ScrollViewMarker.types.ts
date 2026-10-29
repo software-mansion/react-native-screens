@@ -1,6 +1,13 @@
 import type { ViewProps } from 'react-native';
 import type { ScrollEdgeEffect } from '../shared/types';
 
+export interface ScrollViewMarkerScrollEdgeEffectsIOS {
+  bottom?: ScrollEdgeEffect | undefined;
+  left?: ScrollEdgeEffect | undefined;
+  right?: ScrollEdgeEffect | undefined;
+  top?: ScrollEdgeEffect | undefined;
+}
+
 export interface ScrollViewMarkerProps {
   children: NonNullable<ViewProps['children']>;
   style?: ViewProps['style'] | undefined;
@@ -31,12 +38,5 @@ export interface ScrollViewMarkerProps {
    *
    * @supported iOS 26 or higher
    */
-  scrollEdgeEffects?:
-    | {
-        bottom?: ScrollEdgeEffect | undefined;
-        left?: ScrollEdgeEffect | undefined;
-        right?: ScrollEdgeEffect | undefined;
-        top?: ScrollEdgeEffect | undefined;
-      }
-    | undefined;
+  scrollEdgeEffects?: ScrollViewMarkerScrollEdgeEffectsIOS | undefined;
 }
