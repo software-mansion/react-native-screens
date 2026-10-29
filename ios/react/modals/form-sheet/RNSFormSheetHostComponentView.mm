@@ -298,29 +298,22 @@ namespace react = facebook::react;
     [_controller setNeedsAppearanceUpdate];
   }
 
-  if (oldComponentProps.backgroundEffect != newComponentProps.backgroundEffect ||
-      oldComponentProps.backgroundEffectColor != newComponentProps.backgroundEffectColor ||
-      oldComponentProps.backgroundEffectBlurStyle != newComponentProps.backgroundEffectBlurStyle) {
-    [self rebuildBackgroundEffectFromProps:newComponentProps];
-    [_controller setNeedsAppearanceUpdate];
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
+    if (oldComponentProps.backgroundEffect != newComponentProps.backgroundEffect ||
+        oldComponentProps.backgroundEffectColor != newComponentProps.backgroundEffectColor ||
+        oldComponentProps.backgroundEffectBlurStyle != newComponentProps.backgroundEffectBlurStyle) {
+      _backgroundEffect = rnscreens::conversion::RNSFormSheetBackgroundEffectFromProps(newComponentProps);
+      [_controller setNeedsAppearanceUpdate];
+    }
   }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
   }
 
   [super updateProps:props oldProps:oldProps];
-}
-
-- (void)rebuildBackgroundEffectFromProps:(const react::RNSFormSheetHostProps &)props
-{
-  _backgroundEffect = nil;
-
-#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
-  if (@available(iOS 26.1, *)) {
-    _backgroundEffect = rnscreens::conversion::RNSFormSheetBackgroundEffectFromProps(props);
-  }
-#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 }
 
 - (void)invalidate

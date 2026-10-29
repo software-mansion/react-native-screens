@@ -11,47 +11,33 @@ export interface FormSheetDetentChangedEvent {
 
 /**
  * `UIBlurEffect.Style` a {@link FormSheetBackgroundEffectBlur} is rendered with.
- *
- * @platform ios >= 26.1
  */
 export type FormSheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
 
 /**
  * Flat fill rendered behind the sheet's content.
- *
- * @platform ios >= 26.1
  */
 export interface FormSheetBackgroundEffectColor {
   /**
    * Discriminator of the effect.
-   *
-   * @platform ios >= 26.1
    */
   type: 'color';
   /**
    * Color of the fill.
-   *
-   * @platform ios >= 26.1
    */
   color: ColorValue;
 }
 
 /**
  * Blur material rendered behind the sheet's content.
- *
- * @platform ios >= 26.1
  */
 export interface FormSheetBackgroundEffectBlur {
   /**
    * Discriminator of the effect.
-   *
-   * @platform ios >= 26.1
    */
   type: 'blur';
   /**
    * `UIBlurEffect.Style` the material is rendered with.
-   *
-   * @platform ios >= 26.1
    */
   style: FormSheetBackgroundEffectBlurStyle;
 }
@@ -64,8 +50,6 @@ export interface FormSheetBackgroundEffectBlur {
  * - `'none'` - no material at all; the sheet is transparent and only its content is drawn,
  * - {@link FormSheetBackgroundEffectColor} - a flat fill (`UIColorEffect`),
  * - {@link FormSheetBackgroundEffectBlur} - a `UIBlurEffect` with the given `UIBlurEffect.Style`.
- *
- * @platform ios >= 26.1
  */
 export type FormSheetBackgroundEffect =
   | 'automatic'
