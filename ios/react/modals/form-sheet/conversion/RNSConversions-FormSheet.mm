@@ -64,7 +64,7 @@ UIVisualEffect *_Nullable RNSFormSheetBackgroundEffectFromProps(const react::RNS
     case react::RNSFormSheetHostBackgroundEffect::Automatic:
       return nil;
     case react::RNSFormSheetHostBackgroundEffect::None:
-      // A color effect without a color renders no material at all.
+      // A color effect with a clear color renders no material at all.
       return [UIColorEffect effectWithColor:[UIColor clearColor]];
     case react::RNSFormSheetHostBackgroundEffect::Color:
       if (!props.backgroundEffectColor) {

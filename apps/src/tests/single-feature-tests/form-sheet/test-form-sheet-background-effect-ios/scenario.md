@@ -20,7 +20,7 @@ TBD
 - iOS only. Android ignores the property.
 - `backgroundEffect` maps to `UISheetPresentationController.backgroundEffect` (iOS 26.1+). On earlier iOS versions the property is ignored and the system material is used.
 - The sheet content has no background of its own; what you see behind the text is the sheet material.
-- `none` is a `UIColorEffect` with a `nil` color, which UIKit renders as no material at all: the sheet is transparent and only its content is drawn.
+- `none` is a `UIColorEffect` with a clear color, which UIKit renders as no material at all: the sheet is transparent and only its content is drawn.
 
 ## Steps
 
