@@ -490,13 +490,6 @@ namespace react = facebook::react;
   ]];
 }
 
-#pragma mark - React Image Loader
-
-- (nullable RCTImageLoader *)reactImageLoader
-{
-  return _imageLoader;
-}
-
 #pragma mark - RNSImageLoading
 
 - (void)loadImageFromSource:(id)source
@@ -504,12 +497,18 @@ namespace react = facebook::react;
      withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
 {
   if (_imageLoader == nil) {
-    RCTLogWarn(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
+    RNSLogW(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
+    completionBlock(nil);
     return;
   }
 
   // Tab screens provide `RCTImageSource` icon sources, converted from their props.
-  RCTAssert([source isKindOfClass:RCTImageSource.class], @"[RNScreens] Expected RCTImageSource, got %@", source);
+  if (![source isKindOfClass:RCTImageSource.class]) {
+    RNSLogE(@"[RNScreens] Expected RCTImageSource, got %@", source);
+    completionBlock(nil);
+    return;
+  }
+
   [RNSImageLoadingHelper loadImageFromSource:static_cast<RCTImageSource *>(source)
                              withImageLoader:_imageLoader
                                   asTemplate:isTemplate

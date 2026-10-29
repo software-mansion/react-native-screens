@@ -5,9 +5,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Provides the host-level configuration of the tab bar to `RNSTabBarController`.
+ * Provides the configuration of the tab bar and of the whole tab bar controller (e.g. tint color, layout direction)
+ * to `RNSTabBarController`.
  */
-@protocol RNSTabsHostAppearanceProvider <NSObject>
+@protocol RNSTabBarControllerAppearanceProvider <NSObject>
 
 @property (nonatomic, readonly, nullable) UIColor *tabBarTintColor;
 @property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;

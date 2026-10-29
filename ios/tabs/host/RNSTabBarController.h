@@ -6,8 +6,8 @@
 #import "RNSImageLoading.h"
 #import "RNSOrientationDelegate.h"
 #import "RNSTabBarAppearanceCoordinator.h"
+#import "RNSTabBarControllerAppearanceProvider.h"
 #import "RNSTabBarItemCoordinator.h"
-#import "RNSTabsHostAppearanceProvider.h"
 #import "RNSTabsNavigationState.h"
 #import "RNSTabsScreenViewController.h"
 
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Provides the host-level tab bar configuration (tint color, layout direction).
  */
-@property (nonatomic, weak, nullable) id<RNSTabsHostAppearanceProvider> appearanceProvider;
+@property (nonatomic, weak, nullable) id<RNSTabBarControllerAppearanceProvider> appearanceProvider;
 
 /**
  * Loads the tab icons given as image sources.
