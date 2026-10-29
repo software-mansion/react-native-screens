@@ -1,4 +1,4 @@
-import type { ImageSourcePropType } from 'react-native';
+import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
 
 export type BlurEffect =
   | 'none'
@@ -40,6 +40,10 @@ export type InterfaceOrientation =
 export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
+
+export type EmptyEventPayload = Record<string, never>;
+
+export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
 
 export type PlatformIconShared = {
   type: 'imageSource';

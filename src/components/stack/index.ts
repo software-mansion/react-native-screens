@@ -10,7 +10,6 @@ export type {
 
 export type {
   OnDismissEventPayload,
-  EmptyEventPayload, // TODO: Remove this from public types (we need one shared type for this)
   OnDismissEvent,
   StackScreenActivityMode,
   StackScreenReplaceAnimation,
