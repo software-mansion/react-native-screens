@@ -1,6 +1,7 @@
 #import "RNSFormSheetConfigurationApplicator.h"
 
 #import "RNSAssert.h"
+#import "RNSDefines.h"
 
 #import "RNSFormSheetContentController.h"
 #import "RNSFormSheetDetentResolver.h"
@@ -77,6 +78,11 @@
     sheet.preferredCornerRadius =
         preferredCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : preferredCornerRadius;
     sheet.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier;
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+    if (@available(iOS 26.1, *)) {
+      sheet.backgroundEffect = appearanceProvider.backgroundEffect;
+    }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
   }];
 #endif // !TARGET_OS_TV
 

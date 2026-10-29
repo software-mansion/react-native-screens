@@ -133,6 +133,27 @@ class FormSheetHostViewManager :
         view.nativeContainerBackgroundColor = value
     }
 
+    override fun setBackgroundEffect(
+        view: FormSheetHost,
+        value: String?,
+    ) {
+        // iOS only
+    }
+
+    override fun setBackgroundEffectColor(
+        view: FormSheetHost,
+        value: Int?,
+    ) {
+        // iOS only
+    }
+
+    override fun setBackgroundEffectBlurStyle(
+        view: FormSheetHost,
+        value: String?,
+    ) {
+        // iOS only
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
         mutableMapOf(
             makeEventRegistrationInfo(FormSheetDismissEvent),
