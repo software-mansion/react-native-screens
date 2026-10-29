@@ -163,8 +163,11 @@ class ScreenStackFragment :
             screenStack.onViewTransitionEnd(coordinatorLayout)
         }
 
-        // Rely on guards inside the callee to detect whether this was indeed removal transition.
-        screen.endRemovalTransition()
+        // Only an exit animation finishes a removal transition. An enter animation that ends after the
+        // removal has already started (e.g. a quick second back) must not reset `isBeingRemoved`.
+        if (isRemoving) {
+            screen.endRemovalTransition()
+        }
     }
 
     /**
