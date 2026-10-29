@@ -4,17 +4,6 @@
 #import "RNSTabBarItemCoordinator.h"
 #import "RNSTabsScreenViewController.h"
 
-/// Loads a symbol image by name: a built-in SF Symbol if one matches, otherwise a custom symbol from the app's asset
-/// catalog (custom symbols are semantically SF Symbols, but UIKit only resolves them via `imageNamed:`).
-static UIImage *_Nullable RNSSymbolImageNamed(NSString *name)
-{
-  UIImage *image = [UIImage systemImageNamed:name];
-  if (image == nil) {
-    image = [UIImage imageNamed:name];
-  }
-  return image;
-}
-
 static UIImage *_Nullable RNSImageWithSymbolRenderingMode(UIImage *_Nullable image,
                                                           RNSTabsIconSymbolRenderingMode renderingMode)
 {
@@ -114,7 +103,7 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
 
   if (screenView.iconType == RNSTabsIconTypeSfSymbol) {
     if (screenView.iconResourceName != nil) {
-      UIImage *image = RNSSymbolImageNamed(screenView.iconResourceName);
+      UIImage *image = [imageLoader symbolImageNamed:screenView.iconResourceName];
       if (image == nil) {
         RNSLogW(@"[RNScreens] Failed to load SF Symbol \"%@\" for tab bar item", screenView.iconResourceName);
       }
@@ -135,7 +124,7 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
     }
 
     if (screenView.selectedIconResourceName != nil) {
-      UIImage *selectedImage = RNSSymbolImageNamed(screenView.selectedIconResourceName);
+      UIImage *selectedImage = [imageLoader symbolImageNamed:screenView.selectedIconResourceName];
       if (selectedImage == nil) {
         RNSLogW(@"[RNScreens] Failed to load SF Symbol \"%@\" for selected tab bar item",
                 screenView.selectedIconResourceName);

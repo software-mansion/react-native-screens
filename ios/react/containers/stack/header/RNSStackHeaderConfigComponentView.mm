@@ -1,7 +1,7 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions-Stack.h"
 #import "RNSConversions.h"
-#import "RNSImageLoadingHelper.h"
+#import "RNSReactImageLoader.h"
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
@@ -44,7 +44,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
-  RCTImageLoader *_imageLoader;
+  RNSReactImageLoader *_Nonnull _reactImageLoader;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -55,6 +55,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _children = [NSMutableArray new];
     _shadowStateProxy = [[RNSStackHeaderConfigShadowStateProxy alloc] initWithHeaderConfigView:self];
     _reactEventEmitter = [RNSStackHeaderConfigEventEmitter new];
+    _reactImageLoader = [RNSReactImageLoader new];
     [self resetProps];
   }
   return self;
@@ -88,30 +89,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   return [_children copy];
 }
 
-#pragma mark - RNSImageLoading
-
-- (void)loadImageFromSource:(id)source
-                 asTemplate:(BOOL)isTemplate
-     withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
+- (nonnull id<RNSImageLoading>)imageLoader
 {
-  if (_imageLoader == nil) {
-    RCTLogError(@"[RNScreens] imageLoader must not be nil when loading images");
-    completionBlock(nil);
-    return;
-  }
-
-  // The Stack header provides the JSON image source from its props.
-  RCTImageSource *imageSource = [RCTConvert RCTImageSource:source];
-  if (imageSource == nil) {
-    RCTLogError(@"[RNScreens] Expected nonnil image source");
-    completionBlock(nil);
-    return;
-  }
-
-  [RNSImageLoadingHelper loadImageFromSource:imageSource
-                             withImageLoader:_imageLoader
-                                  asTemplate:isTemplate
-                             completionBlock:completionBlock];
+  return _reactImageLoader;
 }
 
 #pragma mark - UIView
@@ -408,7 +388,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   _state = std::static_pointer_cast<const react::RNSStackHeaderConfigShadowNode::ConcreteState>(state);
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+    _reactImageLoader.reactImageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
 }
 

@@ -16,6 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
                  asTemplate:(BOOL)isTemplate
      withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock;
 
+/**
+ * Loads a symbol image by name, synchronously: a built-in SF Symbol if one matches, otherwise a custom symbol from
+ * the app's asset catalog. Returns nil if neither exists.
+ */
+- (nullable UIImage *)symbolImageNamed:(NSString *)name;
+
 @end
 
 NS_ASSUME_NONNULL_END

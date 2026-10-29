@@ -74,9 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Tab bar controller providers
 
 /**
- * Adopted after the declarations above, which implement them.
+ * Adopted after the declarations above, which implement it.
  */
-@interface RNSTabsHostComponentView () <RNSTabBarControllerAppearanceProvider, RNSImageLoading>
+@interface RNSTabsHostComponentView () <RNSTabBarControllerAppearanceProvider>
 
 @end
 

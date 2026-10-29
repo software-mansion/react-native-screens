@@ -14,8 +14,8 @@
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
-#import "RNSImageLoadingHelper.h"
 #import "RNSLog.h"
+#import "RNSReactImageLoader.h"
 #import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSTabBarController.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
@@ -43,7 +43,7 @@ namespace react = facebook::react;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
-  RCTImageLoader *_Nullable _imageLoader;
+  RNSReactImageLoader *_Nonnull _imageLoader;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -79,7 +79,8 @@ namespace react = facebook::react;
 
   _controller = [RNSTabBarController new];
   _controller.appearanceProvider = self;
-  _controller.imageLoader = self;
+  _imageLoader = [RNSReactImageLoader new];
+  _controller.imageLoader = _imageLoader;
   _controller.orientationDelegate = self;
   [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];
   RCTAssert(didRegisterObserver,
@@ -359,7 +360,7 @@ namespace react = facebook::react;
   react::RNSTabsHostShadowNode::ConcreteState::Shared receivedState =
       std::static_pointer_cast<const react::RNSTabsHostShadowNode::ConcreteState>(state);
 
-  _imageLoader = [self retrieveImageLoaderFromState:receivedState];
+  _imageLoader.reactImageLoader = [self retrieveImageLoaderFromState:receivedState];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -488,31 +489,6 @@ namespace react = facebook::react;
     [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
     [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
   ]];
-}
-
-#pragma mark - RNSImageLoading
-
-- (void)loadImageFromSource:(id)source
-                 asTemplate:(BOOL)isTemplate
-     withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
-{
-  if (_imageLoader == nil) {
-    RNSLogW(@"[RNScreens] unable to load tab bar item icons: imageLoader should not be nil");
-    completionBlock(nil);
-    return;
-  }
-
-  // Tab screens provide `RCTImageSource` icon sources, converted from their props.
-  if (![source isKindOfClass:RCTImageSource.class]) {
-    RNSLogE(@"[RNScreens] Expected RCTImageSource, got %@", source);
-    completionBlock(nil);
-    return;
-  }
-
-  [RNSImageLoadingHelper loadImageFromSource:static_cast<RCTImageSource *>(source)
-                             withImageLoader:_imageLoader
-                                  asTemplate:isTemplate
-                             completionBlock:completionBlock];
 }
 
 #pragma mark - RNSOrientationDelegate
