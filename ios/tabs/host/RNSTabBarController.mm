@@ -67,6 +67,21 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
+static const void *RNSTabBarViewOriginalAccessibilityIdentifierKey = &RNSTabBarViewOriginalAccessibilityIdentifierKey;
+
+static UIView *_Nullable RNSGetTabBarItemView(UITabBarItem *item)
+{
+  @try {
+    id candidate = [item valueForKey:@"view"];
+    return [candidate isKindOfClass:UIView.class] ? candidate : nil;
+  } @catch (NSException *exception) {
+    if (![exception.name isEqualToString:NSUndefinedKeyException]) {
+      @throw;
+    }
+    return nil;
+  }
+}
+
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
@@ -207,6 +222,12 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 #pragma mark - UIKit callbacks
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  [self syncTabBarItemTestIDs];
+}
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
@@ -974,6 +995,61 @@ static void rns_pushViewController(__unsafe_unretained id self,
     tabViewController.tabBarItem.accessibilityIdentifier = screenView.tabItemTestID;
     tabViewController.tabBarItem.accessibilityLabel = screenView.tabItemAccessibilityLabel;
   }
+  [self syncTabBarItemTestIDs];
+}
+
+- (void)storeOriginalAccessibilityIdentifierIfNeededForTabView:(UIView *)tabView testID:(NSString *)testID
+{
+  if (objc_getAssociatedObject(tabView, RNSTabBarViewOriginalAccessibilityIdentifierKey) != nil) {
+    return;
+  }
+
+  NSString *currentIdentifier = tabView.accessibilityIdentifier;
+  id originalIdentifier =
+      [currentIdentifier isEqualToString:testID] ? [NSNull null] : (currentIdentifier ?: (id)[NSNull null]);
+  objc_setAssociatedObject(
+      tabView, RNSTabBarViewOriginalAccessibilityIdentifierKey, originalIdentifier, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)applyTestID:(NSString *)testID toTabView:(UIView *)tabView
+{
+  [self storeOriginalAccessibilityIdentifierIfNeededForTabView:tabView testID:testID];
+  tabView.accessibilityIdentifier = testID;
+}
+
+- (void)restoreOriginalAccessibilityIdentifierForTabView:(UIView *)tabView
+{
+  id originalIdentifier = objc_getAssociatedObject(tabView, RNSTabBarViewOriginalAccessibilityIdentifierKey);
+  if (originalIdentifier == nil) {
+    return;
+  }
+
+  tabView.accessibilityIdentifier =
+      [originalIdentifier isKindOfClass:NSNull.class] ? nil : static_cast<NSString *>(originalIdentifier);
+  objc_setAssociatedObject(
+      tabView, RNSTabBarViewOriginalAccessibilityIdentifierKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)applyTabBarItemTestIDs
+{
+  for (UITabBarItem *item in self.tabBar.items ?: @[]) {
+    NSString *testID = item.accessibilityIdentifier;
+    UIView *tabView = RNSGetTabBarItemView(item);
+    if (testID.length > 0 && tabView != nil) {
+      [self applyTestID:testID toTabView:tabView];
+    } else if (tabView != nil) {
+      [self restoreOriginalAccessibilityIdentifierForTabView:tabView];
+    }
+  }
+}
+
+- (void)syncTabBarItemTestIDs
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    [self applyTabBarItemTestIDs];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
 /**

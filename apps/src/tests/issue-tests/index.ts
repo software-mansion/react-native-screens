@@ -222,6 +222,7 @@ export { default as Test4702 } from './Test4702';
 export { default as Test4709 } from './Test4709';
 export { default as Test4723 } from './Test4723';
 export { default as Test4725 } from './Test4725';
+export { default as Test4748 } from './Test4748'; // [E2E created](iOS): tabBarItemTestID after a delayed Tabs.Host mount
 export { default as Test4757 } from './Test4757';
 export { default as Test4785 } from './Test4785';
 export { default as Test4811 } from './Test4811';
