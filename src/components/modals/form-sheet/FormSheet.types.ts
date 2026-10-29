@@ -217,7 +217,7 @@ export interface FormSheetProps {
    * `nativeContainerStyle.backgroundColor` covers it; replacing the material still matters then,
    * because it removes the Liquid Glass highlight and edges of `'automatic'`.
    *
-   * On iOS, this maps to `UISheetPresentationController.backgroundEffect`.
+   * On iOS, this maps to `UIPresentationController.backgroundEffect`.
    *
    * @defaultValue `'automatic'`
    * @see {@link FormSheetBackgroundEffect}
