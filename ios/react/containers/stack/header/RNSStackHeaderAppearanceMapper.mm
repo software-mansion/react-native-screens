@@ -65,6 +65,7 @@
   id fontWeight = appearanceDict[[keyPrefix stringByAppendingString:@"FontWeight"]];
   id fontStyle = appearanceDict[[keyPrefix stringByAppendingString:@"FontStyle"]];
   id fontColor = appearanceDict[[keyPrefix stringByAppendingString:@"FontColor"]];
+  id letterSpacing = appearanceDict[[keyPrefix stringByAppendingString:@"LetterSpacing"]];
 
   NSMutableDictionary *textAttributes = [baseAttributes mutableCopy] ?: [NSMutableDictionary new];
 
@@ -80,6 +81,11 @@
 
   if (fontColor != nil) {
     textAttributes[NSForegroundColorAttributeName] = [RCTConvert UIColor:fontColor];
+  }
+
+  // A missing key keeps the font's default kerning; 0 is a valid explicit value that disables it.
+  if ([letterSpacing isKindOfClass:[NSNumber class]]) {
+    textAttributes[NSKernAttributeName] = letterSpacing;
   }
 
   return textAttributes;

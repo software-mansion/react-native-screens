@@ -480,6 +480,17 @@ export interface StackHeaderAppearanceIOS {
    */
   titleFontColor?: TextStyle['color'] | undefined;
   /**
+   * @summary Specifies the letter spacing, in points, used for the title of the header.
+   *
+   * @description
+   * Maps to the attributed-string kern (`NSKernAttributeName`). The value
+   * replaces the font's default kerning rather than adding to it, so `0`
+   * disables kerning. When undefined, the default spacing is used.
+   *
+   * @platform ios
+   */
+  titleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
+  /**
    * @summary Specifies the font family used for the large title of the header.
    *
    * @platform ios
@@ -509,6 +520,17 @@ export interface StackHeaderAppearanceIOS {
    * @platform ios
    */
   largeTitleFontColor?: TextStyle['color'] | undefined;
+  /**
+   * @summary Specifies the letter spacing, in points, used for the large title of the header.
+   *
+   * @description
+   * Maps to the attributed-string kern (`NSKernAttributeName`). The value
+   * replaces the font's default kerning rather than adding to it, so `0`
+   * disables kerning. When undefined, the default spacing is used.
+   *
+   * @platform ios
+   */
+  largeTitleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
   /**
    * @summary Specifies the font family used for the subtitle of the header.
    *
@@ -559,6 +581,21 @@ export interface StackHeaderAppearanceIOS {
    * @supported iOS 26 and higher
    */
   subtitleFontColor?: TextStyle['color'] | undefined;
+  /**
+   * @summary Specifies the letter spacing, in points, used for the subtitle of the header.
+   *
+   * @description
+   * Maps to the attributed-string kern (`NSKernAttributeName`). The value
+   * replaces the font's default kerning rather than adding to it, so `0`
+   * disables kerning. When undefined, the default spacing is used.
+   *
+   * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios
+   *
+   * @supported iOS 26 and higher
+   */
+  subtitleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
 }
 
 export interface StackHeaderConfigPropsIOS {

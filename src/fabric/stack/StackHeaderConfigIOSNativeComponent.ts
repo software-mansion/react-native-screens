@@ -31,18 +31,21 @@ export type HeaderAppearance = {
   titleFontWeight?: string | undefined;
   titleFontStyle?: string | undefined;
   titleFontColor?: ProcessedColorValue | null | undefined;
+  titleLetterSpacing?: CT.Float | undefined;
 
   largeTitleFontFamily?: string | undefined;
   largeTitleFontSize?: CT.Float | undefined;
   largeTitleFontWeight?: string | undefined;
   largeTitleFontStyle?: string | undefined;
   largeTitleFontColor?: ProcessedColorValue | null | undefined;
+  largeTitleLetterSpacing?: CT.Float | undefined;
 
   subtitleFontFamily?: string | undefined;
   subtitleFontSize?: CT.Float | undefined;
   subtitleFontWeight?: string | undefined;
   subtitleFontStyle?: string | undefined;
   subtitleFontColor?: ProcessedColorValue | null | undefined;
+  subtitleLetterSpacing?: CT.Float | undefined;
 };
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
