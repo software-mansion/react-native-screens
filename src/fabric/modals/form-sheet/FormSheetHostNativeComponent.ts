@@ -15,6 +15,30 @@ type DetentChangedEvent = Readonly<{
   index: CT.Int32;
 }>;
 
+type BackgroundEffect = 'automatic' | 'none' | 'color' | 'blur';
+
+type BackgroundEffectBlurStyle =
+  | 'extraLight'
+  | 'light'
+  | 'dark'
+  | 'regular'
+  | 'prominent'
+  | 'systemUltraThinMaterial'
+  | 'systemThinMaterial'
+  | 'systemMaterial'
+  | 'systemThickMaterial'
+  | 'systemChromeMaterial'
+  | 'systemUltraThinMaterialLight'
+  | 'systemThinMaterialLight'
+  | 'systemMaterialLight'
+  | 'systemThickMaterialLight'
+  | 'systemChromeMaterialLight'
+  | 'systemUltraThinMaterialDark'
+  | 'systemThinMaterialDark'
+  | 'systemMaterialDark'
+  | 'systemThickMaterialDark'
+  | 'systemChromeMaterialDark';
+
 interface NativeProps extends ViewProps {
   // General
   isOpen?: CT.WithDefault<boolean, false>;
@@ -26,6 +50,12 @@ interface NativeProps extends ViewProps {
   prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue | undefined;
+  backgroundEffect?: CT.WithDefault<BackgroundEffect, 'automatic'>;
+  backgroundEffectColor?: ColorValue | undefined;
+  backgroundEffectBlurStyle?: CT.WithDefault<
+    BackgroundEffectBlurStyle,
+    'systemMaterial'
+  >;
   // Events
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;

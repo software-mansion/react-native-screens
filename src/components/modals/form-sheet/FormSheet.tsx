@@ -6,6 +6,7 @@ import type { FormSheetProps } from './FormSheet.types';
 import {
   resolveInitialDetentIndex,
   resolveLargestUndimmedDetentIndex,
+  resolveNativeBackgroundEffect,
   resolveNativeCornerRadius,
   resolveNativeDetents,
 } from './FormSheetUtils';
@@ -18,6 +19,7 @@ export function FormSheet(props: FormSheetProps) {
     largestUndimmedDetentIndex,
     preferredCornerRadius,
     nativeContainerStyle,
+    backgroundEffect,
     ...rest
   } = props;
 
@@ -46,6 +48,7 @@ export function FormSheet(props: FormSheetProps) {
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
       nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
+      {...resolveNativeBackgroundEffect(backgroundEffect)}
       {...rest}>
       {isFitToContents ? (
         <FormSheetContentWrapperNativeComponent

@@ -8,6 +8,9 @@
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSFormSheetProviders.h"
 
+#import "RNSConversions-FormSheet.h"
+#import "RNSDefines.h"
+
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
@@ -42,6 +45,7 @@ namespace react = facebook::react;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _preventNativeDismiss;
   UIColor *_Nullable _nativeContainerBackgroundColor;
+  UIVisualEffect *_Nullable _backgroundEffect;
 
   CGFloat _reactContentsHeight;
 }
@@ -77,6 +81,7 @@ namespace react = facebook::react;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _preventNativeDismiss = NO;
   _nativeContainerBackgroundColor = nil;
+  _backgroundEffect = nil;
 
   _reactContentsHeight = 0.0;
 }
@@ -292,6 +297,17 @@ namespace react = facebook::react;
     _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
     [_controller setNeedsAppearanceUpdate];
   }
+
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
+    if (oldComponentProps.backgroundEffect != newComponentProps.backgroundEffect ||
+        oldComponentProps.backgroundEffectColor != newComponentProps.backgroundEffectColor ||
+        oldComponentProps.backgroundEffectBlurStyle != newComponentProps.backgroundEffectBlurStyle) {
+      _backgroundEffect = rnscreens::conversion::RNSFormSheetBackgroundEffectFromProps(newComponentProps);
+      [_controller setNeedsAppearanceUpdate];
+    }
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;
