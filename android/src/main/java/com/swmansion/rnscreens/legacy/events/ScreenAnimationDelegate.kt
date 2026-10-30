@@ -67,7 +67,9 @@ class ScreenAnimationDelegate(
                 isExitAnimation,
             )
 
-            wrapper.screen.endRemovalTransition()
+            if (isExitAnimation) {
+                wrapper.screen.endRemovalTransition()
+            }
         }
     }
 
