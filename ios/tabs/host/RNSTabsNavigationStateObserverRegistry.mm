@@ -1,7 +1,6 @@
 #import "RNSTabsNavigationStateObserverRegistry.h"
 
-#import <React/RCTAssert.h>
-
+#import "RNSAssert.h"
 #import "RNSTabBarController.h"
 
 @implementation RNSTabsNavigationStateObserverRegistry {
@@ -86,7 +85,7 @@
 
 - (void)emitSignal:(void (^)(id<RNSTabsNavigationStateObserver> observer))emitBlock
 {
-  RCTAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
+  RNSAssert(!_isEmitting, @"[RNScreens] Recursive emission on RNSTabsNavigationStateObserverRegistry");
 
   // In release best we can do here is let it emit the event. Alternatives are to crash or not emit (certain wrong
   // state).

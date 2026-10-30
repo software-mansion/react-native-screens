@@ -1,6 +1,6 @@
 #import "RNSTabBarItemCoordinator.h"
-#import <React/RCTLog.h>
 #import "RNSDefines.h"
+#import "RNSLog.h"
 
 #include <optional>
 
@@ -27,7 +27,7 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
     UIView<RNSTabsContainerItemConfigProviding> *screenView = tabScreenCtrl.configProvider;
     if (screenView == nil) {
-      RCTLogWarn(@"[RNScreens] Nullish view of TabScreen while tab bar item creation!");
+      RNSLogW(@"[RNScreens] Nullish view of TabScreen while tab bar item creation!");
       continue;
     }
 
@@ -47,7 +47,7 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
   for (RNSTabsScreenViewController *tabScreenCtrl in tabScreenCtrls) {
     UIView<RNSTabsContainerItemConfigProviding> *screenView = tabScreenCtrl.configProvider;
     if (screenView == nil) {
-      RCTLogWarn(@"[RNScreens] Nullish view of TabScreen while tab bar item update!");
+      RNSLogW(@"[RNScreens] Nullish view of TabScreen while tab bar item update!");
       continue;
     }
 
@@ -66,7 +66,7 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
   if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
     tabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
     if (tabBarItem == nil) {
-      RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
+      RNSLogE(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
       return;
     }
   } else {
@@ -102,7 +102,7 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
     // Restore default system item title
     UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
     if (systemTabBarItem == nil) {
-      RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
+      RNSLogE(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
       return;
     }
     evaluatedTitle = systemTabBarItem.title;
