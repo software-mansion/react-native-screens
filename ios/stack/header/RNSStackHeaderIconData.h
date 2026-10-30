@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, RNSStackHeaderIconType) {
 
 /**
  * Image source of `RNSStackHeaderIconTypeImageSource` / `RNSStackHeaderIconTypeTemplateSource` icons, loaded through
- * `RNSImageLoading`. Opaque: whoever creates the icon data also provides the loader.
+ * `RNSImageLoading`. Opaque to `core`.
  */
 @property (nonatomic, strong, readonly, nullable) id imageSource;
 
