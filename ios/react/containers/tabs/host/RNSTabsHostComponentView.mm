@@ -9,7 +9,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
-#import "RNSTabsHostComponentView+RNSImageLoader.h"
+#import <react/utils/ManagedObjectWrapper.h>
 
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-Tabs.h"
@@ -360,7 +360,11 @@ namespace react = facebook::react;
   react::RNSTabsHostShadowNode::ConcreteState::Shared receivedState =
       std::static_pointer_cast<const react::RNSTabsHostShadowNode::ConcreteState>(state);
 
-  _imageLoader.reactImageLoader = [self retrieveImageLoaderFromState:receivedState];
+  if (auto imageLoaderPtr = receivedState.get()->getData().getImageLoader().lock()) {
+    _imageLoader.reactImageLoader = react::unwrapManagedObject(imageLoaderPtr);
+  } else {
+    RNSLogW(@"[RNScreens] unable to retrieve RCTImageLoader");
+  }
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter

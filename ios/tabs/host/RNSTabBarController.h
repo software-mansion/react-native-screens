@@ -107,12 +107,12 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Internal API (host-only; subject to change without notice)
 
 /**
- * Provides the host-level tab bar configuration (tint color, layout direction).
+ * Provides the configuration of the tab bar and of this controller (tint color, layout direction).
  */
 @property (nonatomic, weak, nullable) id<RNSTabBarControllerAppearanceProvider> appearanceProvider;
 
 /**
- * Loads the tab icons given as image sources.
+ * Loads the tab icons, both image sources and SF Symbols. Required for tabs to show any icons other than system items.
  */
 @property (nonatomic, weak, nullable) id<RNSImageLoading> imageLoader;
 
@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) BOOL rejectStaleNavigationStateUpdates;
 
 /**
- * Tell the controller that react provided tabs have changed (count / instances) & the child
+ * Tell the controller that the provided tabs have changed (count / instances) & the child
  * view controllers need to be updated.
  *
  * This also automatically raises `needsUpdateOfChildViewControllers` flag, no need to call it
@@ -173,7 +173,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate;
 
 /**
- * Set the React `screenKey` of the tab screen that should receive the prominent treatment
+ * Set the `screenKey` of the tab screen that should receive the prominent treatment
  * (`UITabBarController.prominentTabIdentifier`, iOS 27+). Pass nil or an empty string to
  * unset it, letting UIKit decide which tab (if any) is prominent.
  *
@@ -296,7 +296,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Individual invalidation flags (internal)
 
 /**
- * Tell the controller that react provided tabs have changed (count / instances) & the child
+ * Tell the controller that the provided tabs have changed (count / instances) & the child
  * view controllers need to be updated.
  *
  * Do not raise this signal only when you want to modify selected view controller. Use

@@ -286,13 +286,13 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _pendingStateUpdate = stateUpdate;
 }
 
-- (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)reactChildControllers
+- (void)childViewControllersHaveChangedTo:(NSArray<RNSTabsScreenViewController *> *)childControllers
 {
-  _tabScreenControllers = reactChildControllers;
+  _tabScreenControllers = childControllers;
   self.needsUpdateOfChildViewControllers = true;
 }
 
-- (void)setNeedsUpdateOfChildViewControllers:(bool)needsReactChildrenUpdate
+- (void)setNeedsUpdateOfChildViewControllers:(bool)needsChildrenUpdate
 {
   _needsUpdateOfChildViewControllers = true;
 }
@@ -832,7 +832,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   _needsUpdateOfChildViewControllers = false;
 
   if (_tabScreenControllers == nil) {
-    RNSLogW(@"[RNScreens] Attempt to update children while the _updatedChildren array is nil!");
+    RNSLogW(@"[RNScreens] Attempt to update children while the _tabScreenControllers array is nil!");
     return;
   }
 

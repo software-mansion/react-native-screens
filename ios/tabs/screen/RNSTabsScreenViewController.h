@@ -40,12 +40,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<RNSTabsScreenViewControllerDelegate> delegate;
 
 /**
- * Tell the controller that the tab screen it owns has got its react-props related to appearance changed.
+ * Tell the controller that the tab screen it owns has got its configuration related to appearance changed.
  */
 - (void)tabItemAppearanceHasChanged;
 
 /**
- * Tell the controller that the tab screen it owns has got its react-props-orientation changed.
+ * Tell the controller that the tab screen it owns has got its orientation changed.
  */
 - (void)tabScreenOrientationHasChanged;
 
