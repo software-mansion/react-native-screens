@@ -139,8 +139,6 @@ export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 /**
  * Payload of a native event that carries no data.
- *
- * @platform android >= 21, ios >= 13
  */
 export type EmptyEventPayload = Record<string, never>;
 
@@ -149,7 +147,6 @@ export type EmptyEventPayload = Record<string, never>;
  *
  * @typeParam T - Payload the native event carries.
  * @param event - The native event, with the payload in `event.nativeEvent`.
- * @platform android >= 21, ios >= 13
  */
 export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
 
