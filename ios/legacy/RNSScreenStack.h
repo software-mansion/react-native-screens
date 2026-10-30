@@ -10,6 +10,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Returns whether the navigation controller currently uses right-to-left layout.
+ */
+NS_INLINE BOOL RNSNavigationControllerIsRTL(UINavigationController *_Nullable navigationController)
+{
+  if (navigationController == nil) {
+    return NO;
+  }
+
+  UISemanticContentAttribute semanticContentAttribute = navigationController.view.semanticContentAttribute;
+  if (semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
+    return YES;
+  }
+  if (semanticContentAttribute == UISemanticContentAttributeForceLeftToRight) {
+    return NO;
+  }
+  return navigationController.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft;
+}
+
 @interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate,
                                                              RNSTabsSpecialEffectsSupporting
 #if !TARGET_OS_TV
