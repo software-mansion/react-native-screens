@@ -161,13 +161,13 @@ export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
  * Icon loaded from an image source.
  *
  * @remarks
- * The source is given the way React Native's `Image` takes its `source`: a
- * bundled asset from `require()` or an object with a `uri`.
+ * The source takes the same values as the `source` of React Native's `Image`.
  *
- * On iOS, the image is loaded with React Native's image loader, so `headers`
- * and the other fields of the source are used. On Android, only the `uri` of
- * the source is used: its other fields are ignored and animated images are not
- * supported.
+ * @note
+ * This is an implementation detail and may change. On iOS, the image is
+ * loaded with React Native's image loader, so `headers` and the other fields
+ * of the source are used. On Android, only the `uri` of the source is used:
+ * its other fields are ignored and animated images are not supported.
  *
  * @platform android >= 21, ios >= 13
  */
@@ -181,6 +181,7 @@ export interface PlatformIconShared {
   /**
    * Image source the icon is loaded from.
    *
+   * @see {@link https://reactnative.dev/docs/image#imagesource | React Native: ImageSource}
    * @platform android >= 21, ios >= 13
    */
   imageSource: ImageSourcePropType;
@@ -233,6 +234,7 @@ export interface PlatformIconIOSTemplate {
   /**
    * Image source the icon is loaded from.
    *
+   * @see {@link https://reactnative.dev/docs/image#imagesource | React Native: ImageSource}
    * @platform ios >= 13
    */
   templateSource: ImageSourcePropType;
