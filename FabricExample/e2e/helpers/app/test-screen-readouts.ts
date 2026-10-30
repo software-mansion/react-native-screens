@@ -1,6 +1,6 @@
 import { expect, element, by } from 'detox';
 import {
-  rewindAndScrollUntilVisible,
+  scrollIntoViewIfNeeded,
   type ScrollTargetOptions,
 } from '@e2e/framework/gestures';
 
@@ -11,7 +11,7 @@ export async function expectLastClicked(
   id: string,
   { scrollViewId, ...scroll }: ScrollTargetOptions,
 ) {
-  await rewindAndScrollUntilVisible('last-clicked-text', scrollViewId, scroll);
+  await scrollIntoViewIfNeeded('last-clicked-text', scrollViewId, scroll);
   await expect(element(by.id('last-clicked-text'))).toHaveText(
     `Last clicked: ${id}`,
   );
