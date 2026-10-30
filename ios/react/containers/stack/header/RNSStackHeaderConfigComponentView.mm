@@ -1,7 +1,6 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions-Stack.h"
 #import "RNSConversions.h"
-#import "RNSReactImageLoader.h"
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
@@ -44,7 +43,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
-  RNSReactImageLoader *_Nonnull _reactImageLoader;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -55,7 +53,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _children = [NSMutableArray new];
     _shadowStateProxy = [[RNSStackHeaderConfigShadowStateProxy alloc] initWithHeaderConfigView:self];
     _reactEventEmitter = [RNSStackHeaderConfigEventEmitter new];
-    _reactImageLoader = [RNSReactImageLoader new];
+    _imageLoader = [RNSImageLoader new];
     [self resetProps];
   }
   return self;
@@ -87,11 +85,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (NSArray<id> *)children
 {
   return [_children copy];
-}
-
-- (nonnull id<RNSImageLoading>)imageLoader
-{
-  return _reactImageLoader;
 }
 
 #pragma mark - UIView
@@ -388,7 +381,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   _state = std::static_pointer_cast<const react::RNSStackHeaderConfigShadowNode::ConcreteState>(state);
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    _reactImageLoader.reactImageLoader = react::unwrapManagedObject(imgLoaderPtr);
+    _imageLoader.reactImageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
 }
 

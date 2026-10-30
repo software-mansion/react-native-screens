@@ -8,13 +8,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * `RNSImageLoading` over React Native's `RCTImageLoader`, shared by the hosts that hand an image loader to `core`.
+ * The `RNSImageLoading` implementation shared by the hosts that hand an image loader to `core`.
  *
  * Accepts `RCTImageSource` objects and JSON image sources from props (anything `+[RCTConvert RCTImageSource:]`
- * converts). The owner sets `reactImageLoader` once it gets one from its state, and keeps the loader alive: `core`
+ * converts). The owner sets `reactImageLoader` once it gets one from its state, and keeps this object alive: `core`
  * holds it weakly.
  */
-@interface RNSReactImageLoader : NSObject <RNSImageLoading>
+@interface RNSImageLoader : NSObject <RNSImageLoading>
 
 @property (nonatomic, strong, nullable) RCTImageLoader *reactImageLoader;
 

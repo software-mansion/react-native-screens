@@ -14,8 +14,8 @@
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
+#import "RNSImageLoader.h"
 #import "RNSLog.h"
-#import "RNSReactImageLoader.h"
 #import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSTabBarController.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
@@ -43,7 +43,7 @@ namespace react = facebook::react;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
-  RNSReactImageLoader *_Nonnull _imageLoader;
+  RNSImageLoader *_Nonnull _imageLoader;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -79,7 +79,7 @@ namespace react = facebook::react;
 
   _controller = [RNSTabBarController new];
   _controller.appearanceProvider = self;
-  _imageLoader = [RNSReactImageLoader new];
+  _imageLoader = [RNSImageLoader new];
   _controller.imageLoader = _imageLoader;
   _controller.orientationDelegate = self;
   [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];

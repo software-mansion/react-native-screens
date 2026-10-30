@@ -1,11 +1,11 @@
-#import "RNSReactImageLoader.h"
+#import "RNSImageLoader.h"
 #import <React/RCTConvert.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import "RNSImageLoadingHelper.h"
 #import "RNSLog.h"
 
-@implementation RNSReactImageLoader
+@implementation RNSImageLoader
 
 #pragma mark - RNSImageLoading
 
