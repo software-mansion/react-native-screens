@@ -15,6 +15,9 @@
 
 namespace react = facebook::react;
 
+NSNotificationName const RNSScrollViewMarkerDidChangeScrollViewNotification =
+    @"RNSScrollViewMarkerDidChangeScrollViewNotification";
+
 @interface RNSScrollViewMarkerComponentView () <RNSScrollEdgeEffectProviding>
 @end
 
@@ -34,6 +37,13 @@ namespace react = facebook::react;
     [self initState];
   }
   return self;
+}
+
+#pragma mark - Public
+
+- (nullable UIScrollView *)scrollView
+{
+  return [self resolveScrollViewFromChildView:self.subviews.firstObject];
 }
 
 #pragma mark - Private
@@ -115,6 +125,12 @@ namespace react = facebook::react;
   [seekingAncestor registerDescendantScrollView:scrollView];
 }
 
+- (void)postScrollViewChange
+{
+  [NSNotificationCenter.defaultCenter postNotificationName:RNSScrollViewMarkerDidChangeScrollViewNotification
+                                                    object:self];
+}
+
 - (void)configureScrollView:(nullable UIScrollView *)scrollView
 {
   if (scrollView == nil) {
@@ -161,6 +177,7 @@ namespace react = facebook::react;
   if (self.window == nil) {
     _hasAttemptedRegistration = NO;
   }
+  [self postScrollViewChange];
 }
 
 #pragma mark - RNSScrollEdgeEffectProviding
@@ -240,11 +257,13 @@ namespace react = facebook::react;
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super mountChildComponentView:childComponentView index:index];
+  [self postScrollViewChange];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super unmountChildComponentView:childComponentView index:index];
+  [self postScrollViewChange];
 }
 
 + (BOOL)shouldBeRecycled
