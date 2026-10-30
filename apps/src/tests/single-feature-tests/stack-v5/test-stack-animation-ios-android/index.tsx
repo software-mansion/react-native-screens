@@ -9,6 +9,8 @@ import { AnimationPresetPlayground } from '@apps/tests/shared/components/stack-v
 const ANIMATION_OPTIONS = [
   'iosFromRight',
   'iosFromLeft',
+  'iosFromTrailing',
+  'iosFromLeading',
   'slideFromRight',
 ] as const satisfies readonly StackScreenAnimation[];
 
@@ -17,6 +19,7 @@ function TestStackAnimationIOSAndroid() {
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="iosFromRight"
+      withDirectionPicker
       withColorReference
     />
   );

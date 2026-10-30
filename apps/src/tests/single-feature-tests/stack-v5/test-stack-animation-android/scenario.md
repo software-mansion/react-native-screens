@@ -5,9 +5,11 @@
 **Description:** Verify how the v5 `StackContainer` plays a transition on
 Android with the `default` `animation`, which is the platform look for the
 running API level: a push, a pop, the predictive back gesture, the header back
-arrow, the system back button and a nested container. Pass: every transition
-runs in the right direction and to completion, a screen that moves over a
-static one is drawn above it, and a nested container animates on its own.
+arrow, the system back button, a nested container and a right-to-left host.
+Pass: every transition runs in the right direction and to completion, a screen
+that moves over a static one is drawn above it, a nested container animates on
+its own, and `default` swaps sides when the host's layout direction is `rtl`,
+which the "START"/"END" row reports.
 Changing `animation` at runtime is covered by
 `test-stack-animation-update-android`; the other presets by
 `test-stack-animation-slide-android`, `-fade-android`, `-ios-android` and
@@ -59,7 +61,9 @@ assertable with Detox.
 1. Launch the screen directly (see Prerequisites).
 
    - [ ] The screen is yellow, reads "Name: Home" and shows "Push Blue",
-         "Push Red" and "Push NestedHost" without a "Pop" button.
+         "Push Red" and "Push NestedHost" without a "Pop" button. "direction"
+         reads `ltr` with "START" on the left and "END" on the right of the
+         row below it.
 
 ---
 
@@ -144,6 +148,31 @@ assertable with Detox.
 4. On "NestedHome", tap "Pop".
 
    - [ ] The green screen sinks to the bottom edge above a static "Home".
+
+---
+
+### Layout direction
+
+1. Set "direction" to `rtl`.
+
+   - [ ] "START" moves to the right of the row and "END" to the left. The
+         picker and the buttons are centred, so they stay where they are.
+
+2. Tap "Push Blue".
+
+   - [ ] Mirrored: "Blue" slides in from the left a short distance while fading
+         in, and "Home" slides the same short distance to the right underneath.
+
+3. On "Blue", tap "Pop".
+
+   - [ ] "Blue" slides the short distance to the left on top while fading out,
+         and "Home" slides back in from the right. A narrow strip of window
+         background at the left edge late in the pop is expected (see Note).
+
+4. Set "direction" to `ltr`.
+
+   - [ ] "START" returns to the left of the row and "END" to the right. You end
+         on "Home" with "direction" reading `ltr`.
 
 ---
 

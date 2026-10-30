@@ -48,12 +48,18 @@ interface StackScreenAnimationTimingOptions {
 type StackScreenAnimationSlideFromPresetName =
   | 'slideFromRight'
   | 'slideFromLeft'
+  | 'slideFromTrailing'
+  | 'slideFromLeading'
   | 'slideFromBottom'
   | 'slideFromTop';
 
 type StackScreenAnimationFadeFromPresetName = 'fadeFromBottom' | 'fadeFromTop';
 
-type StackScreenAnimationIosFromPresetName = 'iosFromRight' | 'iosFromLeft';
+type StackScreenAnimationIosFromPresetName =
+  | 'iosFromRight'
+  | 'iosFromLeft'
+  | 'iosFromTrailing'
+  | 'iosFromLeading';
 
 interface StackScreenAnimationSlideFromPresetConfig
   extends StackScreenAnimationTimingOptions {
