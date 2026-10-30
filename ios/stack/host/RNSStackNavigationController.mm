@@ -142,7 +142,7 @@
 #ifdef RNS_DEBUG_LOGGING
   RNSLogD(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
-    RNSLogD(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
+    RNSLogD(@"[RNScreens] %@", static_cast<RNSStackScreenController *>(viewController).dataProvider.screenKey);
   }
 #endif // RNS_DEBUG_LOGGING
 }

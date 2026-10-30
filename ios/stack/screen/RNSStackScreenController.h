@@ -38,6 +38,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable UIScrollView *)cachedContentScrollView;
 
+/**
+ * Key identifying the screen within its stack.
+ */
+- (nullable NSString *)screenKey;
+
 @end
 
 @interface RNSStackScreenController : UIViewController <RNSContainerItem>
