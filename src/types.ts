@@ -5,6 +5,8 @@ export type {
   InterfaceOrientation,
   ScrollEdgeEffect,
   UserInterfaceStyle,
+  EmptyEventPayload,
+  NativeEventHandler,
   PlatformIconShared,
   PlatformIconAndroidDrawableResource,
   PlatformIconIOSTemplate,
