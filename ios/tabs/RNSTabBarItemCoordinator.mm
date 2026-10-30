@@ -1,9 +1,22 @@
 #import "RNSTabBarItemCoordinator.h"
 #import <React/RCTLog.h>
-#import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
 
+#include <optional>
+
+static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSystemItem(
+    RNSTabsScreenSystemItem systemItem);
+
 @implementation RNSTabBarItemCoordinator
+
++ (nullable UITabBarItem *)tabBarItemWithSystemItem:(RNSTabsScreenSystemItem)systemItem
+{
+  std::optional<UITabBarSystemItem> uiSystemItem = RNSUITabBarSystemItemFromTabsScreenSystemItem(systemItem);
+  if (!uiSystemItem) {
+    return nil;
+  }
+  return [[UITabBarItem alloc] initWithTabBarSystemItem:uiSystemItem.value() tag:0];
+}
 
 /**
  * Creates UITabBarItem instance with set systemItem. Needs to be called before UITab creation for the same
@@ -51,15 +64,11 @@
 
   UITabBarItem *tabBarItem = nil;
   if (screenView.systemItem != RNSTabsScreenSystemItemNone) {
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-    if (!systemItem) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)screenView.systemItem);
+    tabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+    if (tabBarItem == nil) {
+      RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
       return;
     }
-    tabBarItem = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0];
   } else {
     tabBarItem = [[UITabBarItem alloc] init];
   }
@@ -91,15 +100,12 @@
   NSString *evaluatedTitle = screenView.title;
   if (screenView.title == nil && screenView.systemItem != RNSTabsScreenSystemItemNone) {
     // Restore default system item title
-    std::optional<UITabBarSystemItem> systemItem =
-        rnscreens::conversion::RNSTabsScreenSystemItemToUITabBarSystemItem(screenView.systemItem);
-    if (!systemItem) {
-      RCTLogError(
-          @"[RNScreens] Conversion from tabs screen systemItem to UITabBarSystemItem failed for systemItem [%ld]",
-          (long)screenView.systemItem);
+    UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+    if (systemTabBarItem == nil) {
+      RCTLogError(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
       return;
     }
-    evaluatedTitle = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem.value() tag:0].title;
+    evaluatedTitle = systemTabBarItem.title;
   }
 
   [self updateTabBarItemTitle:evaluatedTitle forTabScreenController:tabScreenCtrl];
@@ -140,3 +146,37 @@
 }
 
 @end
+
+static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSystemItem(
+    RNSTabsScreenSystemItem systemItem)
+{
+  switch (systemItem) {
+    case RNSTabsScreenSystemItemNone:
+      return std::nullopt;
+    case RNSTabsScreenSystemItemBookmarks:
+      return UITabBarSystemItemBookmarks;
+    case RNSTabsScreenSystemItemContacts:
+      return UITabBarSystemItemContacts;
+    case RNSTabsScreenSystemItemDownloads:
+      return UITabBarSystemItemDownloads;
+    case RNSTabsScreenSystemItemFavorites:
+      return UITabBarSystemItemFavorites;
+    case RNSTabsScreenSystemItemFeatured:
+      return UITabBarSystemItemFeatured;
+    case RNSTabsScreenSystemItemHistory:
+      return UITabBarSystemItemHistory;
+    case RNSTabsScreenSystemItemMore:
+      return UITabBarSystemItemMore;
+    case RNSTabsScreenSystemItemMostRecent:
+      return UITabBarSystemItemMostRecent;
+    case RNSTabsScreenSystemItemMostViewed:
+      return UITabBarSystemItemMostViewed;
+    case RNSTabsScreenSystemItemRecents:
+      return UITabBarSystemItemRecents;
+    case RNSTabsScreenSystemItemSearch:
+      return UITabBarSystemItemSearch;
+    case RNSTabsScreenSystemItemTopRated:
+      return UITabBarSystemItemTopRated;
+  }
+  return std::nullopt;
+}
