@@ -52,7 +52,7 @@ TBD: Planned, but will be implemented separately.
 
 5. Scroll the list to its very top, then swipe down on the list.
 
-    - [ ] The sheet collapses to the lower detent (0.5) – on Android within the same gesture as soon as the list reaches its top edge. The list stays at its top.
+    - [ ] The sheet collapses to the lower detent (0.5). The list stays at its top. A swipe that starts on a scrolled list only scrolls the list and stops at its top, it never moves the sheet.
 
 6. Swipe down on the list again (list at its top, sheet at 0.5).
 
