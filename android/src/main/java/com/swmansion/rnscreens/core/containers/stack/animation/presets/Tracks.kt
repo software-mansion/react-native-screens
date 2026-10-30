@@ -8,6 +8,10 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Timing
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ViewProperty
 
+// Not in the legacy Android implementation; the legacy iOS `RNSScreenStackAnimator` dims with a
+// black shadow view.
+internal val DIM_COLOR: Int = Color.BLACK
+
 /**
  * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives
  * at rest along it, a disappearing view departs from rest along it (exiting through the
@@ -63,5 +67,5 @@ internal fun dimTrack(
     durationMs: Long,
     easing: Easing,
     startMs: Long = 0L,
-    color: Int = Color.BLACK,
+    color: Int = DIM_COLOR,
 ): Track.Dim = Track.Dim(color, from, to, Timing(startMs, durationMs, easing))

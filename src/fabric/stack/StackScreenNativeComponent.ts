@@ -3,6 +3,7 @@
 import type {
   CodegenTypes as CT,
   HostComponent,
+  ProcessedColorValue,
   ViewProps,
 } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
@@ -106,9 +107,43 @@ type StackScreenAnimationMotionPresetConfig =
   | StackScreenAnimationFadePresetConfig
   | StackScreenAnimationNonePresetConfig;
 
+interface StackScreenAnimationTrackTiming {
+  duration: number;
+  delay?: number | undefined;
+  easing?: StackScreenAnimationEasing | undefined;
+}
+
+interface StackScreenAnimationTrack extends StackScreenAnimationTrackTiming {
+  from?: number | undefined;
+  to?: number | undefined;
+}
+
+interface StackScreenAnimationTranslateTrack
+  extends StackScreenAnimationTrackTiming {
+  from?: StackScreenAnimationLength | undefined;
+  to?: StackScreenAnimationLength | undefined;
+}
+
+interface StackScreenAnimationDimTrack extends StackScreenAnimationTrack {
+  color?: ProcessedColorValue | null | undefined;
+}
+
+interface StackScreenAnimationCustomMotion {
+  type: 'custom';
+  translateX?: StackScreenAnimationTranslateTrack | undefined;
+  translateY?: StackScreenAnimationTranslateTrack | undefined;
+  opacity?: StackScreenAnimationTrack | undefined;
+  scale?: StackScreenAnimationTrack | undefined;
+  scaleX?: StackScreenAnimationTrack | undefined;
+  scaleY?: StackScreenAnimationTrack | undefined;
+  rotate?: StackScreenAnimationTrack | undefined;
+  dim?: StackScreenAnimationDimTrack | undefined;
+}
+
 type StackScreenAnimationMotion =
   | StackScreenAnimationMotionPresetName
-  | StackScreenAnimationMotionPresetConfig;
+  | StackScreenAnimationMotionPresetConfig
+  | StackScreenAnimationCustomMotion;
 
 interface StackScreenAnimationCustomTransition {
   type: 'custom';

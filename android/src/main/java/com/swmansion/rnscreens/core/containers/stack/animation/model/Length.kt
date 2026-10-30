@@ -6,14 +6,29 @@ package com.swmansion.rnscreens.core.containers.stack.animation.model
 internal sealed interface Length {
     data class Dp(
         val value: Float,
-    ) : Length
+    ) : Length {
+        init {
+            require(value.isFinite()) { "[RNScreens] A length must be finite." }
+        }
+    }
 
     /**
      * A fraction of the container's width (X tracks) or height (Y tracks): `0.3f` for `'30%'`.
      */
     data class Percent(
         val fraction: Float,
-    ) : Length
+    ) : Length {
+        init {
+            require(fraction.isFinite()) { "[RNScreens] A length must be finite." }
+        }
+    }
+
+    val isPositive: Boolean
+        get() =
+            when (this) {
+                is Dp -> value > 0f
+                is Percent -> fraction > 0f
+            }
 
     fun negated(): Length =
         when (this) {
