@@ -1,8 +1,8 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
-#import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -12,6 +12,12 @@
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority);
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
@@ -608,8 +614,7 @@
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 27.0, *)) {
     barButtonItem.visibilityPriority =
-        rnscreens::conversion::UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
-            item.visibilityPriority);
+        RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(item.visibilityPriority);
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -649,3 +654,22 @@
 }
 
 @end
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case RNSHeaderItemVisibilityPriorityLow:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case RNSHeaderItemVisibilityPriorityStandard:
+      return UIBarButtonItemVisibilityPriorityStandard;
+    case RNSHeaderItemVisibilityPriorityHigh:
+      return UIBarButtonItemVisibilityPriorityHigh;
+    default:
+      RNSLogE(@"[RNScreens] Unsupported visibility priority");
+      return UIBarButtonItemVisibilityPriorityStandard;
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
