@@ -8,9 +8,9 @@
   RNSContainerItemSupport *_Nonnull _containerItemSupport;
 }
 
-- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
+- (instancetype)init
 {
-  if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+  if (self = [super init]) {
     _headerCoordinator = [[RNSStackScreenHeaderCoordinator alloc] initWithScreenController:self];
     _containerItemSupport = [RNSContainerItemSupport new];
   }
@@ -36,7 +36,7 @@
 
 - (nullable UIScrollView *)findContentScrollView
 {
-  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[_dataProvider cachedContentScrollView]
+  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[_configProvider cachedContentScrollView]
                                                             heuristicRoot:self.view];
 }
 

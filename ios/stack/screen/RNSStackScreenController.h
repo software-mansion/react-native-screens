@@ -6,8 +6,18 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackController;
-@class RNSStackScreenController;
 @class RNSStackScreenHeaderCoordinator;
+@protocol RNSStackContainerItemConfigProviding;
+@protocol RNSStackScreenControllerDelegate;
+
+@interface RNSStackScreenController : UIViewController <RNSContainerItem>
+
+@property (nonatomic, strong, readonly, nonnull) RNSStackScreenHeaderCoordinator *headerCoordinator;
+
+@property (nonatomic, weak, nullable) id<RNSStackScreenControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id<RNSStackContainerItemConfigProviding> configProvider;
+
+@end
 
 /**
  * Receives the lifecycle of a stack screen from its controller.
@@ -29,28 +39,16 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- * Provides the stack screen data its controller needs.
+ * What the view of a stack screen provides to its `RNSStackScreenController`.
  */
-@protocol RNSStackScreenControllerDataProvider <NSObject>
+@protocol RNSStackContainerItemConfigProviding <NSObject>
+
+@property (nonatomic, readonly, nullable) NSString *screenKey;
 
 /**
  * Content scroll view registered within the screen, or nil if none has been registered.
  */
 - (nullable UIScrollView *)cachedContentScrollView;
-
-/**
- * Key identifying the screen within its stack.
- */
-- (nullable NSString *)screenKey;
-
-@end
-
-@interface RNSStackScreenController : UIViewController <RNSContainerItem>
-
-@property (nonatomic, strong, readonly, nonnull) RNSStackScreenHeaderCoordinator *headerCoordinator;
-
-@property (nonatomic, weak, nullable) id<RNSStackScreenControllerDelegate> delegate;
-@property (nonatomic, weak, nullable) id<RNSStackScreenControllerDataProvider> dataProvider;
 
 @end
 

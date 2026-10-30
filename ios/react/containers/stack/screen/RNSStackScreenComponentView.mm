@@ -21,7 +21,7 @@ namespace react = facebook::react;
 @interface RNSStackScreenComponentView () <RCTMountingTransactionObserving,
                                            RNSScrollViewSeeking,
                                            RNSStackScreenControllerDelegate,
-                                           RNSStackScreenControllerDataProvider>
+                                           RNSStackContainerItemConfigProviding>
 @end
 
 #pragma mark - View implementation
@@ -74,7 +74,7 @@ namespace react = facebook::react;
   _controller = [RNSStackScreenController new];
   _controller.view = self;
   _controller.delegate = self;
-  _controller.dataProvider = self;
+  _controller.configProvider = self;
 }
 
 - (void)invalidateImpl
