@@ -159,7 +159,7 @@ namespace react = facebook::react;
     _controller.headerCoordinator.configDataProvider = _headerConfig;
     _controller.headerCoordinator.frameChangeDelegate = _headerConfig;
     _controller.headerCoordinator.eventsDelegate = _headerConfig;
-    _controller.headerCoordinator.imageLoader = _headerConfig;
+    _controller.headerCoordinator.imageLoader = _headerConfig.imageLoader;
   }
   [super mountChildComponentView:childComponentView index:index];
 }

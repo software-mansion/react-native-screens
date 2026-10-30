@@ -9,11 +9,12 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
-#import "RNSTabsHostComponentView+RNSImageLoader.h"
+#import "RNSTabsHostComponentView+RNSImageLoaderRetrieval.h"
 
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
+#import "RNSImageLoader.h"
 #import "RNSLog.h"
 #import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSTabBarController.h"
@@ -42,7 +43,7 @@ namespace react = facebook::react;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
-  RCTImageLoader *_Nullable _imageLoader;
+  RNSImageLoader *_Nonnull _imageLoader;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -76,7 +77,10 @@ namespace react = facebook::react;
 {
   [self resetProps];
 
-  _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
+  _controller = [RNSTabBarController new];
+  _controller.appearanceProvider = self;
+  _imageLoader = [RNSImageLoader new];
+  _controller.imageLoader = _imageLoader;
   _controller.orientationDelegate = self;
   [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];
   RCTAssert(didRegisterObserver,
@@ -356,7 +360,10 @@ namespace react = facebook::react;
   react::RNSTabsHostShadowNode::ConcreteState::Shared receivedState =
       std::static_pointer_cast<const react::RNSTabsHostShadowNode::ConcreteState>(state);
 
-  _imageLoader = [self retrieveImageLoaderFromState:receivedState];
+  RCTImageLoader *reactImageLoader = [self retrieveImageLoaderFromState:receivedState];
+  if (reactImageLoader != nil) {
+    _imageLoader.reactImageLoader = reactImageLoader;
+  }
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -485,13 +492,6 @@ namespace react = facebook::react;
     [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
     [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
   ]];
-}
-
-#pragma mark - React Image Loader
-
-- (nullable RCTImageLoader *)reactImageLoader
-{
-  return _imageLoader;
 }
 
 #pragma mark - RNSOrientationDelegate

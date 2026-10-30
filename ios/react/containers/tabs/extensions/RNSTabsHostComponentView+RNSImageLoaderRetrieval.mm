@@ -1,9 +1,11 @@
-#import "RNSTabsHostComponentView+RNSImageLoader.h"
+#import "RNSTabsHostComponentView+RNSImageLoaderRetrieval.h"
 
 #import <React/RCTImageLoader.h>
 #import <react/utils/ManagedObjectWrapper.h>
 
-@implementation RNSTabsHostComponentView (RNSImageLoader)
+#import "RNSLog.h"
+
+@implementation RNSTabsHostComponentView (RNSImageLoaderRetrieval)
 
 - (nullable RCTImageLoader *)retrieveImageLoaderFromState:
     (facebook::react::RNSTabsHostShadowNode::ConcreteState::Shared)receivedState
@@ -12,7 +14,7 @@
     return react::unwrapManagedObject(imgLoaderPtr);
   }
 
-  RCTLogWarn(@"[RNScreens] unable to retrieve RCTImageLoader");
+  RNSLogW(@"[RNScreens] unable to retrieve RCTImageLoader");
   return nil;
 }
 
