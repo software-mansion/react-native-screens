@@ -2,7 +2,6 @@
 
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
-#import "RNSStackScreenComponentEventEmitter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +19,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 @property (nonatomic, weak, readwrite, nullable) RNSStackHostComponentView *stackHost;
 @property (nonatomic, weak, readonly, nullable) RNSStackHeaderConfigComponentView *headerConfig;
 @property (nonatomic, strong, readonly, nonnull) RNSStackScreenController *controller;
-@property (nonatomic) BOOL isNativelyDismissed;
+@property (nonatomic, readonly) BOOL isNativelyDismissed;
 
 @end
 
@@ -30,29 +29,6 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @property (nonatomic, strong, readonly, nullable) NSString *screenKey;
 @property (nonatomic, readonly) RNSStackScreenActivityMode activityMode;
-
-@end
-
-#pragma mark - Events
-
-@interface RNSStackScreenComponentView ()
-
-/**
- * Use returned object to emit appropriate React Events to Element Tree.
- */
-- (nonnull RNSStackScreenComponentEventEmitter *)reactEventEmitter;
-
-@end
-
-#pragma mark - Content scroll view
-
-@interface RNSStackScreenComponentView ()
-
-/**
- * Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`, or nil if
- * none has been registered. Queried by the owning controller (`RNSContainerItem`).
- */
-- (nullable UIScrollView *)cachedContentScrollView;
 
 @end
 

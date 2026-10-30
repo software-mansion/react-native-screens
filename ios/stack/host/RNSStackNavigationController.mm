@@ -5,7 +5,6 @@
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSStackNavigationBar.h"
 #import "RNSStackOperation.h"
-#import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
 
@@ -142,7 +141,7 @@
 #ifdef RNS_DEBUG_LOGGING
   RNSLogD(@"[RNScreens] StackContainer [%ld] MODEL BEGIN", self.view.tag);
   for (UIViewController *viewController in self.viewControllers) {
-    RNSLogD(@"[RNScreens] %@", static_cast<RNSStackScreenComponentView *>(viewController.view).screenKey);
+    RNSLogD(@"[RNScreens] %@", static_cast<RNSStackScreenController *>(viewController).configProvider.screenKey);
   }
 #endif // RNS_DEBUG_LOGGING
 }

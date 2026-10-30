@@ -13,12 +13,16 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
+#import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
 
 namespace react = facebook::react;
 
-@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving, RNSScrollViewSeeking>
+@interface RNSStackScreenComponentView () <RCTMountingTransactionObserving,
+                                           RNSScrollViewSeeking,
+                                           RNSStackScreenControllerDelegate,
+                                           RNSStackContainerItemConfigProviding>
 @end
 
 #pragma mark - View implementation
@@ -28,8 +32,8 @@ namespace react = facebook::react;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
 
   // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
-  // the owning `RNSStackScreenController` (as `RNSContainerItem`) when resolving the content
-  // scroll view for special effects.
+  // the owning `RNSStackScreenController` through `RNSStackContainerItemConfigProviding` when
+  // resolving the content scroll view for special effects.
   __weak UIScrollView *_Nullable _contentScrollView;
 
   // Flags
@@ -68,8 +72,10 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [[RNSStackScreenController alloc] initWithComponentView:self];
+  _controller = [RNSStackScreenController new];
   _controller.view = self;
+  _controller.delegate = self;
+  _controller.configProvider = self;
 }
 
 - (void)invalidateImpl
@@ -105,6 +111,39 @@ namespace react = facebook::react;
 {
   RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
   return _reactEventEmitter;
+}
+
+#pragma mark - RNSStackScreenControllerDelegate
+
+- (void)viewControllerViewWillAppear:(RNSStackScreenController *)controller
+{
+  [self.reactEventEmitter emitOnWillAppear];
+}
+
+- (void)viewControllerViewDidAppear:(RNSStackScreenController *)controller
+{
+  [self.reactEventEmitter emitOnDidAppear];
+}
+
+- (void)viewControllerViewWillDisappear:(RNSStackScreenController *)controller
+{
+  [self.reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)viewControllerViewDidDisappear:(RNSStackScreenController *)controller
+{
+  [self.reactEventEmitter emitOnDidDisappear];
+}
+
+- (void)stackScreenControllerDidLeaveStack:(RNSStackScreenController *)controller
+{
+  // A detached screen was popped on request; otherwise UIKit removed it (e.g. the back gesture).
+  if (_activityMode == RNSStackScreenActivityModeDetached) {
+    [self.reactEventEmitter emitOnDismiss];
+  } else {
+    _isNativelyDismissed = YES;
+    [self.reactEventEmitter emitOnNativeDismiss];
+  }
 }
 
 #pragma mark - RNSSafeAreaProviding
