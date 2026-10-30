@@ -7,6 +7,6 @@ import android.view.ViewGroup
  * FragmentManager appends after it. A disappearing screen hosted in the underlay's overlay is
  * therefore drawn under the entering one (`ZOrder.UNDER`).
  */
-internal interface UnderlayProviding {
+internal interface StackUnderlayProviding {
     val underlay: ViewGroup
 }

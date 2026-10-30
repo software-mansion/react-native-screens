@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.Interpolators
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.LayoutMetrics
-import com.swmansion.rnscreens.core.containers.stack.animation.engine.toPx
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Axis
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ViewProperty
@@ -24,8 +23,8 @@ internal fun bindTrack(
                         Axis.X, Axis.LOGICAL_X -> ViewTarget.TRANSLATION_X
                         Axis.Y -> ViewTarget.TRANSLATION_Y
                     },
-                from = track.from.toPx(track.axis, metrics),
-                to = track.to.toPx(track.axis, metrics),
+                from = metrics.toPx(track.from, track.axis),
+                to = metrics.toPx(track.to, track.axis),
                 timing = track.timing,
                 interpolator = interpolator,
             )

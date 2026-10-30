@@ -11,7 +11,7 @@ import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
-import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
 import com.swmansion.rnscreens.core.containers.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.core.containers.stack.screen.PreventNativeDismissChangeObserver
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
@@ -66,7 +66,7 @@ internal class StackScreen(
      */
     override var animation: StackAnimationConfig = StackAnimationConfig.DEFAULT
 
-    override var replaceAnimation: StackReplaceAnimation = StackReplaceAnimation.POP
+    override var replaceAnimation: StackTransitionKind = StackTransitionKind.POP
 
     var screenKey: String? = null
         set(value) {

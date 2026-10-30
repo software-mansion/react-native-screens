@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.core.containers.stack.animation.presets
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Easing
 import com.swmansion.rnscreens.core.containers.stack.animation.model.EasingName
 import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.Track
 
 // Every value below is taken from the legacy implementation's
 // `res/base/anim/rns_slide_{in_from,out_to}_{right,left,bottom}.xml` animations.
@@ -17,27 +18,12 @@ private val EASING_ACCELERATE_DECELERATE = Easing.Named(EasingName.ACCELERATE_DE
 // container.
 private val DISTANCE_FULL = Length.Percent(1f)
 
-internal fun slideFromPreset(edge: Edge): PresetDefinition =
-    when (edge) {
-        Edge.LEFT, Edge.RIGHT, Edge.START, Edge.END -> conveyor(edge)
-        Edge.TOP, Edge.BOTTOM -> oneSided(edge)
-    }
-
-// Both screens travel together; the pop is the same motion from the opposite edge.
-private fun conveyor(edge: Edge) =
-    PresetDefinition(
-        push = pushTimeline(enter = slide(edge, isAppearing = true), exit = slide(edge, isAppearing = false)),
-        pop = popTimeline(enter = slide(edge.opposite(), isAppearing = true), exit = slide(edge.opposite(), isAppearing = false)),
-    )
-
-// Only the moving screen travels; the covered / revealed screen stays put (legacy parity).
-private fun oneSided(edge: Edge) =
-    PresetDefinition(
-        push = pushTimeline(enter = slide(edge, isAppearing = true), exit = emptyList()),
-        pop = popTimeline(enter = emptyList(), exit = slide(edge.opposite(), isAppearing = false)),
-    )
-
-private fun slide(
+/**
+ * One screen sliding along [edge]'s vector over the full width or height, or over [distance] when
+ * given.
+ */
+internal fun slideTracks(
     edge: Edge,
+    distance: Length?,
     isAppearing: Boolean,
-) = listOf(translationTrack(edge, DISTANCE_FULL, isAppearing, DURATION_MS, EASING_ACCELERATE_DECELERATE))
+): List<Track> = listOf(translationTrack(edge, distance ?: DISTANCE_FULL, isAppearing, DURATION_MS, EASING_ACCELERATE_DECELERATE))
