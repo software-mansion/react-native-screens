@@ -4,30 +4,30 @@ import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
  * Blur effect applied to the background of a native view.
  *
  * @remarks
- * Apart from `'none'`, each value maps to the UIKit `UIBlurEffect.Style` of
- * the same name. The following values are supported:
- * - `'none'` — no blur effect.
- * - `'extraLight'` — makes the area lighter in hue than the underlying view.
- * - `'light'` — keeps the hue of the underlying view.
- * - `'dark'` — makes the area darker in hue than the underlying view.
- * - `'regular'` — adapts to the interface style.
- * - `'prominent'` — adapts to the interface style, more prominent than
- *   `'regular'`.
- * - `'systemUltraThinMaterial'` — the most translucent material.
- * - `'systemThinMaterial'` — a material more translucent than
- *   `'systemMaterial'`.
- * - `'systemMaterial'` — the standard material.
- * - `'systemThickMaterial'` — a material more opaque than `'systemMaterial'`.
- * - `'systemChromeMaterial'` — the material of the system chrome.
- * - `'systemUltraThinMaterialLight'`, `'systemThinMaterialLight'`,
- *   `'systemMaterialLight'`, `'systemThickMaterialLight'`,
- *   `'systemChromeMaterialLight'` — the materials above, always light.
- * - `'systemUltraThinMaterialDark'`, `'systemThinMaterialDark'`,
- *   `'systemMaterialDark'`, `'systemThickMaterialDark'`,
- *   `'systemChromeMaterialDark'` — the materials above, always dark.
- *
- * The materials without `Light` or `Dark` in the name adapt to the interface
- * style.
+ * `'none'` disables the blur effect. Every other value is the UIKit
+ * `UIBlurEffect.Style` of the same name; see the UIKit documentation for how
+ * each one looks. The following values are supported:
+ * - `'none'`
+ * - `'extraLight'`
+ * - `'light'`
+ * - `'dark'`
+ * - `'regular'`
+ * - `'prominent'`
+ * - `'systemUltraThinMaterial'`
+ * - `'systemThinMaterial'`
+ * - `'systemMaterial'`
+ * - `'systemThickMaterial'`
+ * - `'systemChromeMaterial'`
+ * - `'systemUltraThinMaterialLight'`
+ * - `'systemThinMaterialLight'`
+ * - `'systemMaterialLight'`
+ * - `'systemThickMaterialLight'`
+ * - `'systemChromeMaterialLight'`
+ * - `'systemUltraThinMaterialDark'`
+ * - `'systemThinMaterialDark'`
+ * - `'systemMaterialDark'`
+ * - `'systemThickMaterialDark'`
+ * - `'systemChromeMaterialDark'`
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  * @platform ios >= 13
@@ -93,9 +93,6 @@ export type Direction = 'ltr' | 'rtl';
  * - `'landscapeLeft'` — the landscape-left orientation.
  * - `'landscapeRight'` — the landscape-right orientation.
  *
- * The values without `portrait` in the name match the UIKit
- * `UIInterfaceOrientationMask` values of the same name.
- *
  * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
  * @platform ios >= 13
  */
@@ -120,7 +117,7 @@ export type InterfaceOrientation =
  * - `'soft'` — a soft-edged scroll edge effect.
  * - `'hidden'` — no scroll edge effect.
  *
- * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect | UIScrollEdgeEffect}
+ * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect/style-swift.class/ | UIScrollEdgeEffect.Style}
  * @platform ios >= 26
  */
 export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
@@ -129,8 +126,7 @@ export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
  * Interface style of a native view.
  *
  * @remarks
- * Each value maps to the UIKit `UIUserInterfaceStyle` of the same name. The
- * following values are supported:
+ * The following values are supported:
  * - `'unspecified'` — an unspecified interface style; the style of the parent
  *   is used.
  * - `'light'` — the light interface style.
