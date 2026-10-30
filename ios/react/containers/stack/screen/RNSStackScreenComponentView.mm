@@ -13,6 +13,7 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
+#import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
 
@@ -31,8 +32,8 @@ namespace react = facebook::react;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
 
   // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
-  // the owning `RNSStackScreenController` (as `RNSContainerItem`) when resolving the content
-  // scroll view for special effects.
+  // the owning `RNSStackScreenController` through `RNSStackContainerItemConfigProviding` when
+  // resolving the content scroll view for special effects.
   __weak UIScrollView *_Nullable _contentScrollView;
 
   // Flags
