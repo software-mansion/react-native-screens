@@ -13,7 +13,6 @@ const DETENTS = [0.6, 1.0];
 
 describe('Formsheet: base functionality', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('FormSheet', 'test-form-sheet-base');
   });
 

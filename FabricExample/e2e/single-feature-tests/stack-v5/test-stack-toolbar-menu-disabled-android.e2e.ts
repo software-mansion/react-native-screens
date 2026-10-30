@@ -2,7 +2,7 @@
 // through the native `enabled` attribute — AppCompat mirrors
 // `MenuItem.isEnabled()` onto the item view — plus **Last Event** staying put.
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by, waitFor } from 'detox';
+import { expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes, NativeMatcher } from 'detox/detox';
 import {
   selectPickerOption,
@@ -196,7 +196,6 @@ async function sendCommand(options: {
 // switch back off.
 describeIfAndroid('Stack Toolbar Menu Disabled', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-menu-disabled-android',

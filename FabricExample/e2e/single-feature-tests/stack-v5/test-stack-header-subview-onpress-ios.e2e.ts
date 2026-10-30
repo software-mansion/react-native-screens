@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { dismissNextToast } from '@e2e/app/toast';
 import {
@@ -33,7 +33,6 @@ async function toggleItemsCount() {
 
 describeIfIOS('Stack Header Subview onPress (iOS)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-header-subview-onpress-ios',

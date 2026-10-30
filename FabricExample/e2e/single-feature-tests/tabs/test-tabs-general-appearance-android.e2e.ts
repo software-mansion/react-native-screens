@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectPickerOption } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { describeIfAndroid } from '@e2e/framework/platform';
@@ -16,7 +16,6 @@ describeIfAndroid(
   'Tab Bar General Appearance (Android) - tabBarItemLabelVisibilityMode',
   () => {
     beforeAll(async () => {
-      await device.reloadReactNative();
       await selectSingleFeatureTestsScreen(
         'Tabs',
         'test-tabs-general-appearance-android',

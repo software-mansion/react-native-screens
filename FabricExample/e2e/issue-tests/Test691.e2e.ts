@@ -1,13 +1,9 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 // issue related to iOS modal behavior
 describeIfIOS('Test691', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test691 should exist', async () => {
     await selectIssueTestScreen('Test691');
   });

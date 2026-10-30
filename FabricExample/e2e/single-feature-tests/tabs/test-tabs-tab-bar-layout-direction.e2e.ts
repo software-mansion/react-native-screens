@@ -51,7 +51,6 @@ async function launchAppWithAttributes(launchArgs?: Record<string, any>) {
 
 describe('Tab Bar Layout Direction - system/RN settings: LTR', () => {
   beforeAll(async () => {
-    await launchAppWithAttributes();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-tab-bar-layout-direction',
