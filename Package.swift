@@ -28,6 +28,7 @@ let headerSearchPaths: [String] = [
     "ios/react/containers/tabs",
     "ios/react/containers/tabs/bottom-accessory",
     "ios/react/containers/tabs/conversion",
+    "ios/react/containers/tabs/extensions",
     "ios/react/containers/tabs/host",
     "ios/react/containers/tabs/screen",
     "ios/react/conversion",
