@@ -229,6 +229,7 @@ export { default as Test4857 } from './Test4857';
 export { default as Test4863 } from './Test4863';
 export { default as Test4872 } from './Test4872';
 export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
+export { default as Test5001 } from './Test5001'; // [E2E skipped]: can't check transition progress during a gesture
 export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
