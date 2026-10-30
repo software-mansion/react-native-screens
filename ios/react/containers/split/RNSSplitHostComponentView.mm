@@ -199,6 +199,20 @@ RNS_IGNORE_SUPER_CALL_END
   return NO;
 }
 
+- (void)invalidate
+{
+  // The parent view controller (e.g. the root one) keeps a strong reference to its children, therefore we need
+  // to detach the controller explicitly, otherwise it outlives this view with all its screens.
+  //
+  // We want to run after container updates are performed (transitions etc.). The block captures the controller
+  // rather than self, because nothing keeps this view alive until the block is run.
+  // The controller is created lazily (see `setupController`), thus it might be nil here.
+  RNSSplitHostController *_Nullable controller = _controller;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [RNSContainerHelpers removeChildViewController:controller];
+  });
+}
+
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {

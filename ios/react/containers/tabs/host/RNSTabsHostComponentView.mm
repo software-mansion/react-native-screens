@@ -121,6 +121,9 @@ namespace react = facebook::react;
     auto strongSelf = weakSelf;
     if (strongSelf) {
       [strongSelf->_controller tearDown];
+      // The parent view controller (e.g. the root one) keeps a strong reference to its children, therefore we need
+      // to detach the controller explicitly, otherwise it outlives this view with all its screens.
+      [RNSContainerHelpers removeChildViewController:strongSelf->_controller];
       strongSelf->_controller = nil;
     }
   });
