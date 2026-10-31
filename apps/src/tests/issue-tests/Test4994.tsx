@@ -9,6 +9,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
+  type NativeStackNavigationOptions,
   type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import { Button } from '@apps/shared';
@@ -117,12 +118,12 @@ function SheetNavigator({ delayed }: { delayed: boolean }) {
 const DelayedSheet = () => <SheetNavigator delayed />;
 const ImmediateSheet = () => <SheetNavigator delayed={false} />;
 
-const sheetOptions = {
+const sheetOptions: NativeStackNavigationOptions = {
   presentation: 'formSheet',
   sheetAllowedDetents: [0.5, 1],
   headerShown: false,
   contentStyle: { backgroundColor: Colors.cardBackground },
-} as const;
+};
 
 const Stack = createNativeStackNavigator<ParamList>();
 
