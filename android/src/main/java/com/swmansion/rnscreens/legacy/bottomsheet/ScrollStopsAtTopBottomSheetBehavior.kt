@@ -14,7 +14,7 @@ import com.swmansion.rnscreens.legacy.Screen
  * than the length of one drag can't be scrolled back up without closing the sheet. A drag that
  * starts with the list already at its top moves the sheet as before.
  */
-internal class ScrollStopsAtTopBottomSheetBehavior : BottomSheetBehavior<Screen>() {
+internal open class ScrollStopsAtTopBottomSheetBehavior : BottomSheetBehavior<Screen>() {
     // Whether the ongoing touch nested scroll started with its target scrolled away from its top.
     // Set when this behavior accepts a touch nested scroll and cleared when it stops; in between
     // `CoordinatorLayout` dispatches the nested scroll callbacks of that type to this behavior only.
