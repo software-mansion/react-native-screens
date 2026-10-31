@@ -61,6 +61,16 @@ internal class ScrollAwareBottomSheetBehavior : ScrollStopsAtTopBottomSheetBehav
     // starts at the top of a scroll view mounted later moves the sheet, as with one mounted with it.
     override fun isNestedScrollingCheckEnabled(): Boolean = false
 
+    // As Material does for the scrolling child it found, but for any scroll view (the check above
+    // is disabled): a fling below the expanded detent settles the sheet rather than the content.
+    override fun onNestedPreFling(
+        coordinatorLayout: CoordinatorLayout,
+        child: Screen,
+        target: View,
+        velocityX: Float,
+        velocityY: Float,
+    ): Boolean = state != STATE_EXPANDED
+
     private fun hasScrolledContentAt(
         view: View,
         rawX: Float,
