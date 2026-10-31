@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.core.containers.stack.screen
 
+import android.app.Activity
 import android.view.View
 import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
@@ -19,6 +20,8 @@ internal interface StackContainerItem : ContainerItem {
     val itemKey: String?
 
     val isPreventNativeDismissEnabled: Boolean
+
+    fun createBackPressInterceptor(activity: Activity): BackPressInterceptor? = null
 
     /**
      * The `animation` prop value used for transitions to and from this item.

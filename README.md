@@ -242,6 +242,27 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 | [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183) | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111)  |
 | [SplitView doesn't clear the blur under primary column after switching to color with `opacity: 0`](https://github.com/software-mansion/react-native-screens/issues/3327) | [workarounds](https://github.com/software-mansion/react-native-screens/issues/3327#issuecomment-3432488799) |
 
+## Android Back ownership integration
+
+Applications that opt into React Native's public `BackNavigationCoordinator` can
+set `rnscreens.nativeBackOwnershipEnabled=true` in `gradle.properties`. This
+compiles the native-ownership adapter and requires a ReactAndroid source build
+containing that API; an unmodified published ReactAndroid AAR cannot supply it.
+The default source set has no dependency on the new API and preserves existing
+applications' Back behavior.
+
+While native navigation is enabled, the top started stack screen gives an active
+JavaScript BackHandler owner priority over FragmentManager's native pop. The
+adapter binds to the fragment's actual activity and releases its coordinator
+listener when the fragment is destroyed. A JavaScript handler that declines Back
+can redispatch through the coordinator's bounded native-fallback phase without
+re-entering JavaScript. Existing `preventNativeDismiss` behavior remains in force.
+
+The core navigation layer receives a generic `BackPressInterceptor`; it does not
+import React Native. Tests exercise AndroidX callback priority, fragment lifecycle
+cleanup, and a real FragmentManager back stack. Device tests are still required
+to verify predictive progress and cancellation for the application's transitions.
+
 ## Contributing
 
 There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/software-mansion/react-native-screens/tree/main/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!

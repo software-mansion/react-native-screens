@@ -185,6 +185,9 @@ android {
         ]
     }
     sourceSets.main {
+        def nativeBackSource = providers.gradleProperty('rnscreens.nativeBackOwnershipEnabled').orNull == 'true' ? 'src/nativeBack/java' : 'src/defaultBack/java'
+        java.srcDir(nativeBackSource)
+        kotlin.srcDir(nativeBackSource)
         ext.androidResDir = "src/main/res"
         kotlin {
             srcDirs += [
@@ -217,6 +220,9 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.15.1'
+    testImplementation 'org.mockito:mockito-core:3.12.4'
     implementation 'com.facebook.react:react-native:+'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.fragment:fragment-ktx:1.8.9'
