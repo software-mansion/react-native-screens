@@ -122,6 +122,11 @@ file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { rea
 def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
 def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
 
+// Public build capability: consumers may validate support without relying on
+// autolink project names. The enabled value shares the source-selection flag.
+def nativeBackOwnershipEnabled = providers.gradleProperty('rnscreens.nativeBackOwnershipEnabled').orNull == 'true'
+extensions.extraProperties.set('rnscreens.nativeBackOwnership', [apiVersion: 1, enabled: nativeBackOwnershipEnabled].asImmutable())
+
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
     namespace "com.swmansion.rnscreens"
@@ -185,7 +190,7 @@ android {
         ]
     }
     sourceSets.main {
-        def nativeBackSource = providers.gradleProperty('rnscreens.nativeBackOwnershipEnabled').orNull == 'true' ? 'src/nativeBack/java' : 'src/defaultBack/java'
+        def nativeBackSource = nativeBackOwnershipEnabled ? 'src/nativeBack/java' : 'src/defaultBack/java'
         java.srcDir(nativeBackSource)
         kotlin.srcDir(nativeBackSource)
         ext.androidResDir = "src/main/res"
