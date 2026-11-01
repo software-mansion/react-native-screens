@@ -3,7 +3,7 @@ package com.swmansion.rnscreens.react.modals.formsheet.event
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
-import com.swmansion.rnscreens.common.event.NamingAwareEventType
+import com.swmansion.rnscreens.react.common.event.NamingAwareEventType
 
 class FormSheetNativeDismissPreventedEvent(
     surfaceId: Int,

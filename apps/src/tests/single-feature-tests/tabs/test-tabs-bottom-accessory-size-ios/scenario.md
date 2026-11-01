@@ -33,144 +33,161 @@ TBD
 
 1. Launch the app and navigate to the **Bottom Accessory Size** screen.
 
-   - [ ] The tab bar is at the top of the screen.
-   - [ ] The bottom accessory spans the screen width with equal margins on both
-         sides and shows "Width:" followed by a number.
+    - [ ] The tab bar is at the top of the screen.
+    - [ ] The bottom accessory spans the screen width with equal margins on both
+          sides and shows "Width:" followed by a number.
+
+---
 
 ### Sidebar
 
+1. Tap the sidebar button.
+
+    - [ ] The sidebar is shown on the leading edge.
+    - [ ] The accessory lies next to the sidebar, not under it. "Width" shows a
+          smaller number than in step 1 of **Baseline**.
+
 2. Tap the sidebar button.
 
-   - [ ] The sidebar is shown on the leading edge.
-   - [ ] The accessory lies next to the sidebar, not under it. "Width" shows a
-         smaller number than in step 1.
+    - [ ] The sidebar is hidden and the tab bar is back at the top.
+    - [ ] The accessory spans the screen width. "Width" shows the same number as
+          in step 1 of **Baseline**.
 
-3. Tap the sidebar button.
-
-   - [ ] The sidebar is hidden and the tab bar is back at the top.
-   - [ ] The accessory spans the screen width. "Width" shows the same number as
-         in step 1.
+---
 
 ### Rotation
 
-4. Rotate the device to landscape.
+1. Rotate the device to landscape.
 
-   - [ ] The accessory spans the screen width with equal margins on both sides.
-         "Width" shows a larger number than in step 1.
+    - [ ] The accessory spans the screen width with equal margins on both sides.
+          "Width" shows a larger number than in step 1 of **Baseline**.
 
-5. Tap the sidebar button.
+2. Tap the sidebar button.
 
-   - [ ] The accessory lies next to the sidebar. "Width" shows a smaller number
-         than in step 4.
+    - [ ] The accessory lies next to the sidebar. "Width" shows a smaller number
+          than in step 1.
 
-6. Tap the sidebar button.
+3. Tap the sidebar button.
 
-   - [ ] The sidebar is hidden. "Width" shows the same number as in step 4.
+    - [ ] The sidebar is hidden. "Width" shows the same number as in step 1.
 
-7. Rotate the device to portrait.
+4. Rotate the device to portrait.
 
-   - [ ] The accessory spans the screen width. "Width" shows the same number as
-         in step 1.
+    - [ ] The accessory spans the screen width. "Width" shows the same number as
+          in step 1 of **Baseline**.
+
+---
 
 ### Change while hidden
 
-8. Toggle "hidden" on, rotate the device to landscape, then toggle "hidden" off.
+1. Toggle "hidden" on, rotate the device to landscape, then toggle "hidden" off.
 
-   - [ ] The accessory spans the screen width. "Width" shows the same number as
-         in step 4.
+    - [ ] The accessory spans the screen width. "Width" shows the same number as
+          in step 1 of **Rotation**.
 
-9. Toggle "rendered" off, rotate the device to portrait, then toggle "rendered"
+2. Toggle "rendered" off, rotate the device to portrait, then toggle "rendered"
    on.
 
-   - [ ] The accessory spans the screen width. "Width" shows the same number as
-         in step 1.
+    - [ ] The accessory spans the screen width. "Width" shows the same number as
+          in step 1 of **Baseline**.
 
 ## Steps - iPhone Duo
 
 ### Cover screen
 
-10. With the device closed in portrait, launch the app and navigate to the
-    **Bottom Accessory Size** screen.
+1. With the device closed in portrait, launch the app and navigate to the
+   **Bottom Accessory Size** screen.
 
     - [ ] The tab bar is vertical on the trailing edge.
     - [ ] The accessory lies along the bottom edge next to the tab bar and shows
           "Width:" followed by a number.
 
-11. Rotate the device to landscape.
+2. Rotate the device to landscape.
 
     - [ ] The tab bar is vertical on the trailing edge.
-    - [ ] "Width" shows a larger number than in step 10.
+    - [ ] "Width" shows a larger number than in step 1.
 
-12. Rotate the device to portrait.
+3. Rotate the device to portrait.
 
-    - [ ] "Width" shows the same number as in step 10.
+    - [ ] "Width" shows the same number as in step 1.
+
+---
 
 ### Unfolding
 
-13. Open the device to half-open.
+1. Open the device to half-open.
 
     - [ ] The tab bar is vertical on the trailing edge.
     - [ ] The accessory lies only on the leading part of the screen and does not
           cross the fold.
 
-14. Open the device fully.
+2. Open the device fully.
 
     - [ ] The accessory lies along the bottom edge from the leading edge to the
-          tab bar. "Width" shows a larger number than in step 13.
+          tab bar. "Width" shows a larger number than in step 1.
+
+---
 
 ### Rotation when open
 
-15. Rotate the device to portrait.
+1. Rotate the device to portrait.
 
     - [ ] The tab bar moves to the bottom edge.
     - [ ] The accessory lies centered above the tab bar and is as wide as the
           tab bar.
 
-16. Rotate the device to landscape.
+2. Rotate the device to landscape.
 
     - [ ] The tab bar is vertical on the trailing edge.
-    - [ ] "Width" shows the same number as in step 14.
+    - [ ] "Width" shows the same number as in step 2 of **Unfolding**.
+
+---
 
 ### Minimized tab bar
 
-17. Rotate the device to portrait, switch to the "Scroll" tab, then scroll down
-    one full screen.
+1. Rotate the device to portrait, switch to the "Scroll" tab, then scroll down
+   one full screen.
 
     - [ ] The tab bar minimizes and the accessory moves into the same row,
           next to it.
-    - [ ] "Width" shows a smaller number than in step 15.
+    - [ ] "Width" shows a smaller number than in step 1 of
+          **Rotation when open**.
 
-18. Rotate the device to landscape.
+2. Rotate the device to landscape.
 
     - [ ] The tab bar is vertical on the trailing edge.
     - [ ] The accessory leaves a gap next to the tab bar. "Width" shows a smaller
-          number than in step 14 (see Note).
+          number than in step 2 of **Unfolding** (see Note).
 
-19. Rotate the device to portrait.
+3. Rotate the device to portrait.
 
     - [ ] The tab bar is at full size at the bottom edge.
-    - [ ] "Width" shows the same number as in step 15.
+    - [ ] "Width" shows the same number as in step 1 of **Rotation when open**.
+
+---
 
 ### Change while hidden
 
-20. Switch to the "Config" tab, toggle "hidden" on, rotate the device to
-    landscape, then toggle "hidden" off.
+1. Switch to the "Config" tab, toggle "hidden" on, rotate the device to
+   landscape, then toggle "hidden" off.
 
-    - [ ] "Width" shows the same number as in step 14.
+    - [ ] "Width" shows the same number as in step 2 of **Unfolding**.
 
-21. Toggle "rendered" off, rotate the device to portrait, then toggle "rendered"
-    on.
+2. Toggle "rendered" off, rotate the device to portrait, then toggle "rendered"
+   on.
 
-    - [ ] "Width" shows the same number as in step 15.
+    - [ ] "Width" shows the same number as in step 1 of **Rotation when open**.
+
+---
 
 ### Closing
 
-22. Close the device.
+1. Close the device.
 
     - [ ] The cover screen shows the app in landscape with the tab bar vertical
           on the trailing edge.
-    - [ ] "Width" shows the same number as in step 11.
+    - [ ] "Width" shows the same number as in step 2 of **Cover screen**.
 
-23. Rotate the device to portrait.
+2. Rotate the device to portrait.
 
-    - [ ] "Width" shows the same number as in step 10.
+    - [ ] "Width" shows the same number as in step 1 of **Cover screen**.

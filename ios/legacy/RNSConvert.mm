@@ -158,6 +158,18 @@
   }
 }
 
++ (RNSScreenSheetBackgroundEffect)RNSScreenSheetBackgroundEffectFromCppEquivalent:
+    (react::RNSScreenSheetBackgroundEffect)sheetBackgroundEffect
+{
+  switch (sheetBackgroundEffect) {
+    using enum react::RNSScreenSheetBackgroundEffect;
+    case Automatic:
+      return RNSScreenSheetBackgroundEffectAutomatic;
+    case Color:
+      return RNSScreenSheetBackgroundEffectColor;
+  }
+}
+
 #define SWITCH_EDGE_EFFECT(X)                              \
   switch (edgeEffect) {                                    \
     using enum react::X;                                   \
@@ -302,6 +314,71 @@
       RCTLogError(@"[RNScreens] unsupported user interface style");
   }
 }
+
++ (RNSHeaderMinimizationBehavior)RNSHeaderMinimizationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior
+{
+  switch (minimizationBehavior) {
+    using enum react::RNSScreenStackHeaderConfigMinimizationBehavior;
+    case Undefined:
+      return RNSHeaderMinimizationBehaviorUndefined;
+    case Automatic:
+      return RNSHeaderMinimizationBehaviorAutomatic;
+    case Never:
+      return RNSHeaderMinimizationBehaviorNever;
+    case OnScrollDown:
+      return RNSHeaderMinimizationBehaviorOnScrollDown;
+    case OnScrollUp:
+      return RNSHeaderMinimizationBehaviorOnScrollUp;
+  }
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
++ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:
+    (RNSHeaderMinimizationBehavior)minimizationBehavior
+{
+  switch (minimizationBehavior) {
+    case RNSHeaderMinimizationBehaviorUndefined:
+      RCTLogError(
+          @"[RNScreens] RNSHeaderMinimizationBehaviorUndefined must be resolved before conversion to UIKit value");
+      return UIBarMinimizationBehaviorAutomatic;
+    case RNSHeaderMinimizationBehaviorAutomatic:
+      return UIBarMinimizationBehaviorAutomatic;
+    case RNSHeaderMinimizationBehaviorNever:
+      return UIBarMinimizationBehaviorNever;
+    case RNSHeaderMinimizationBehaviorOnScrollDown:
+      return UIBarMinimizationBehaviorOnScrollDown;
+    case RNSHeaderMinimizationBehaviorOnScrollUp:
+      return UIBarMinimizationBehaviorOnScrollUp;
+  }
+}
+
++ (UIBarMinimizationRestorationBehavior)UIBarMinimizationRestorationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigRestorationBehavior)restorationBehavior
+{
+  switch (restorationBehavior) {
+    using enum react::RNSScreenStackHeaderConfigRestorationBehavior;
+    case Automatic:
+      return UIBarMinimizationRestorationBehaviorAutomatic;
+    case AtScrollEdge:
+      return UIBarMinimizationRestorationBehaviorAtScrollEdge;
+  }
+}
+
++ (UIBarMinimizationSafeAreaAdjustment)UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigSafeAreaAdjustment)safeAreaAdjustment
+{
+  switch (safeAreaAdjustment) {
+    using enum react::RNSScreenStackHeaderConfigSafeAreaAdjustment;
+    case Automatic:
+      return UIBarMinimizationSafeAreaAdjustmentAutomatic;
+    case Enabled:
+      return UIBarMinimizationSafeAreaAdjustmentEnabled;
+    case Disabled:
+      return UIBarMinimizationSafeAreaAdjustmentDisabled;
+  }
+}
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {

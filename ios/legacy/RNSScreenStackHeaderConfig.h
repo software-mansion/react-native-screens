@@ -3,6 +3,7 @@
 #if defined(__cplusplus)
 #import <React/RCTConvert.h>
 #endif // __cplusplus
+#import "RNSDefines.h"
 #import "RNSReactBaseView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
@@ -48,6 +49,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
+@property (nonatomic) RNSHeaderMinimizationBehavior minimizationBehavior;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+@property (nonatomic) UIBarMinimizationRestorationBehavior restorationBehavior API_AVAILABLE(ios(27.0));
+@property (nonatomic) UIBarMinimizationSafeAreaAdjustment safeAreaAdjustment API_AVAILABLE(ios(27.0));
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
@@ -57,6 +63,27 @@ NS_ASSUME_NONNULL_END
 + (void)willShowViewController:(nonnull UIViewController *)vc
                       animated:(BOOL)animated
                     withConfig:(nonnull RNSScreenStackHeaderConfig *)config;
+
+/**
+ * Returns `YES` when screens in the legacy stack are always laid out under the navigation bar
+ * (`edgesForExtendedLayout = UIRectEdgeAll`), also when the header is opaque. In that case the content is inset below
+ * an opaque bar by the `SafeAreaView` rendered by `ScreenStackItem` (JS) and the screen's origin in the navigation
+ * controller's view is always 0. Otherwise (iOS < 26, tvOS, visionOS) a screen with a visible, opaque header is laid
+ * out below the bar (`UIRectEdgeAll - UIRectEdgeTop`).
+ *
+ * Keep in sync with `getSafeAreaEdges` in `src/legacy/components/ScreenStackItem.tsx`.
+ */
++ (BOOL)screensExtendUnderOpaqueNavigationBar;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+/**
+ * Returns the minimization behavior that should be applied to the navigation item. When `minimizationBehavior` is
+ * not specified (`RNSHeaderMinimizationBehaviorUndefined`), it resolves to `UIBarMinimizationBehaviorNever` for an
+ * opaque header and `UIBarMinimizationBehaviorAutomatic` for a translucent one. Minimization of an opaque header is not
+ * reliably supported by the legacy stack.
+ */
+- (UIBarMinimizationBehavior)resolvedMinimizationBehavior API_AVAILABLE(ios(27.0));
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 /**
  * Returns true iff subview of given `type` is present.
@@ -106,6 +133,16 @@ NS_ASSUME_NONNULL_END
  * re-applies the config only once, with all subviews already updated.
  */
 - (void)setNeedsViewControllerUpdate;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+/**
+ * Requests layout of all header subviews attached to the view hierarchy. Header subview updates its state in shadow
+ * tree when it is laid out, therefore this method should be called when `navBar` lays out its subviews - the header
+ * subviews are laid out later in the same layout pass, after UIKit has positioned the content of the navigation bar.
+ * When the content of `navBar` is moved out of the bar (bar minimization on iOS 27+) this method does nothing.
+ */
+- (void)setNeedsLayoutForHeaderSubviewsInNavigationBar:(nonnull UINavigationBar *)navBar;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 @end
 

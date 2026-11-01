@@ -1,4 +1,5 @@
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { BlurEffect } from '../../shared/types';
 
 export type EmptyEventPayload = Record<string, never>;
 
@@ -7,6 +8,54 @@ export type FormSheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
 export interface FormSheetDetentChangedEvent {
   index: number;
 }
+
+/**
+ * `UIBlurEffect.Style` a {@link FormSheetBackgroundEffectBlur} is rendered with.
+ */
+export type FormSheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
+
+/**
+ * Flat fill rendered behind the sheet's content.
+ */
+export interface FormSheetBackgroundEffectColor {
+  /**
+   * Discriminator of the effect.
+   */
+  type: 'color';
+  /**
+   * Color of the fill.
+   */
+  color: ColorValue;
+}
+
+/**
+ * Blur material rendered behind the sheet's content.
+ */
+export interface FormSheetBackgroundEffectBlur {
+  /**
+   * Discriminator of the effect.
+   */
+  type: 'blur';
+  /**
+   * `UIBlurEffect.Style` the material is rendered with.
+   */
+  style: FormSheetBackgroundEffectBlurStyle;
+}
+
+/**
+ * Material the system renders behind the sheet's content.
+ *
+ * @remarks
+ * - `'automatic'` - whatever UIKit uses for sheets on the current iOS version,
+ * - `'none'` - no material at all; the sheet is transparent and only its content is drawn,
+ * - {@link FormSheetBackgroundEffectColor} - a flat fill (`UIColorEffect`),
+ * - {@link FormSheetBackgroundEffectBlur} - a `UIBlurEffect` with the given `UIBlurEffect.Style`.
+ */
+export type FormSheetBackgroundEffect =
+  | 'automatic'
+  | 'none'
+  | FormSheetBackgroundEffectColor
+  | FormSheetBackgroundEffectBlur;
 
 export type FormSheetNativeContainerStyleProps = {
   /**
@@ -143,6 +192,22 @@ export interface FormSheetProps {
    * @platform android, ios
    */
   nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
+
+  /**
+   * Material the system renders behind the sheet's content.
+   *
+   * @remarks
+   * The material is drawn behind the native container, so an opaque
+   * `nativeContainerStyle.backgroundColor` covers it; replacing the material still matters then,
+   * because it removes the Liquid Glass highlight and edges of `'automatic'`.
+   *
+   * On iOS, this maps to `UIPresentationController.backgroundEffect`.
+   *
+   * @defaultValue `'automatic'`
+   * @see {@link FormSheetBackgroundEffect}
+   * @platform ios >= 26.1
+   */
+  backgroundEffect?: FormSheetBackgroundEffect | undefined;
 
   // Events
 

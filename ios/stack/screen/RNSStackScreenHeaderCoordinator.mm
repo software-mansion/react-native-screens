@@ -1,8 +1,8 @@
 #import "RNSStackScreenHeaderCoordinator.h"
 #import <React/RCTAssert.h>
 #import <React/RCTLog.h>
-#import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
+#import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
@@ -12,6 +12,12 @@
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority);
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
@@ -337,6 +343,12 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    navItem.navigationBarMinimization = [UIBarMinimization new];
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+
 #if !TARGET_OS_TV
   navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
@@ -372,19 +384,52 @@
 
   if (item.menu == nil) {
     barButtonItem.menu = nil;
+  } else {
+    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
+    __weak auto weakSelf = self;
+    [RNSStackHeaderMenuCoordinator applyMenu:item.menu
+                             toBarButtonItem:barButtonItem
+                    withHeaderEventsDelegate:_eventsDelegate
+                                stateTracker:tracker
+                             withImageLoader:_imageLoader
+                     menuInvalidatedCallback:^{
+                       [weakSelf reapplyMenuForItemWithId:itemId];
+                     }];
+  }
+
+  [self reapplyMenuRepresentationForItemWithId:itemId];
+}
+
+/**
+ Finds an existing barButtonItem and its corresponding config, then applies the menu
+ representation again. If the config is missing, it clears the representation.
+ */
+- (void)reapplyMenuRepresentationForItemWithId:(NSString *)itemId
+{
+  if (_configDataProvider == nil || itemId == nil) {
+    return;
+  }
+
+  UIBarButtonItem *barButtonItem = _barButtonItemsByItemId[itemId];
+  if (barButtonItem == nil) {
+    return;
+  }
+
+  id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
+  if (item == nil) {
     return;
   }
 
   RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
   __weak auto weakSelf = self;
-  [RNSStackHeaderMenuCoordinator applyMenu:item.menu
-                           toBarButtonItem:barButtonItem
-                  withHeaderEventsDelegate:_eventsDelegate
-                              stateTracker:tracker
-                           withImageLoader:_imageLoader
-                   menuInvalidatedCallback:^{
-                     [weakSelf reapplyMenuForItemWithId:itemId];
-                   }];
+  [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
+                                         toBarButtonItem:barButtonItem
+                                withHeaderEventsDelegate:_eventsDelegate
+                                            stateTracker:tracker
+                                         withImageLoader:_imageLoader
+                                 menuInvalidatedCallback:^{
+                                   [weakSelf reapplyMenuRepresentationForItemWithId:itemId];
+                                 }];
 }
 
 - (nullable id<RNSStackHeaderItemDataProviding>)findItemWithId:(NSString *)itemId
@@ -448,6 +493,16 @@
     navItem.largeSubtitle = _configDataProvider.largeSubtitle;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    UIBarMinimization *minimization = [UIBarMinimization new];
+    minimization.minimizationBehavior = _configDataProvider.minimizationBehavior;
+    minimization.restorationBehavior = _configDataProvider.restorationBehavior;
+    minimization.safeAreaAdjustment = _configDataProvider.safeAreaAdjustment;
+    navItem.navigationBarMinimization = minimization;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 #if !TARGET_OS_TV
   navItem.largeTitleDisplayMode = _configDataProvider.largeTitleEnabled ? UINavigationItemLargeTitleDisplayModeAlways
@@ -559,8 +614,7 @@
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
   if (@available(iOS 27.0, *)) {
     barButtonItem.visibilityPriority =
-        rnscreens::conversion::UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
-            item.visibilityPriority);
+        RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(item.visibilityPriority);
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -578,6 +632,20 @@
                      }];
   }
 
+  if (item.menuRepresentation != nil && item.itemId != nil) {
+    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
+    __weak auto weakSelf = self;
+    NSString *capturedItemId = item.itemId;
+    [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
+                                           toBarButtonItem:barButtonItem
+                                  withHeaderEventsDelegate:_eventsDelegate
+                                              stateTracker:tracker
+                                           withImageLoader:_imageLoader
+                                   menuInvalidatedCallback:^{
+                                     [weakSelf reapplyMenuRepresentationForItemWithId:capturedItemId];
+                                   }];
+  }
+
   if (item.itemId != nil) {
     _barButtonItemsByItemId[item.itemId] = barButtonItem;
   }
@@ -586,3 +654,22 @@
 }
 
 @end
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+API_AVAILABLE(ios(27.0))
+static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(
+    RNSHeaderItemVisibilityPriority visibilityPriority)
+{
+  switch (visibilityPriority) {
+    case RNSHeaderItemVisibilityPriorityLow:
+      return UIBarButtonItemVisibilityPriorityLow;
+    case RNSHeaderItemVisibilityPriorityStandard:
+      return UIBarButtonItemVisibilityPriorityStandard;
+    case RNSHeaderItemVisibilityPriorityHigh:
+      return UIBarButtonItemVisibilityPriorityHigh;
+    default:
+      RNSLogE(@"[RNScreens] Unsupported visibility priority");
+      return UIBarButtonItemVisibilityPriorityStandard;
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION

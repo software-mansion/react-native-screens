@@ -220,6 +220,17 @@ There are also legacy & **deprecated** options available:
 
 Defaults to `[1.0]` literal.
 
+### `sheetBackgroundEffect` (iOS only)
+
+Material rendered by the system behind the sheet's content.
+Works only when `stackPresentation` is set to `formSheet`.
+
+- `automatic` - whatever the system uses for sheets on the current iOS version; on iOS 26 this is Liquid Glass,
+  including its interactive highlight,
+- `color` - a flat fill with the screen's `backgroundColor`, which makes the sheet look opaque.
+
+Defaults to `automatic`. Has no effect on iOS versions below 26.1.
+
 ### `sheetExpandsWhenScrolledToEdge` (iOS only)
 
 Whether the sheet should expand to larger detent when scrolling.

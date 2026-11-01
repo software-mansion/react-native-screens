@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RNSStackHeaderItemComponentView.h"
+#import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderMenuData.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -41,11 +41,18 @@ typedef NS_ENUM(NSInteger, RNSMenuElementPosition) {
  */
 @property (nonatomic, copy, readonly, nullable) NSString *trackerItemId;
 
+/**
+ * Whether the element was found in the header item's menuRepresentation tree
+ * rather than its menu tree.
+ */
+@property (nonatomic, readonly) BOOL inMenuRepresentation;
+
 - (instancetype)initWithSearchResult:(RNSStackHeaderMenuElementSearchResult *)searchResult
                             position:(RNSMenuElementPosition)position
                           headerItem:(nullable id<RNSStackHeaderItemDataProviding>)headerItem
                             rootMenu:(nullable RNSStackHeaderMenuData *)rootMenu
-                       trackerItemId:(nullable NSString *)trackerItemId;
+                       trackerItemId:(nullable NSString *)trackerItemId
+                inMenuRepresentation:(BOOL)inMenuRepresentation;
 
 @end
 

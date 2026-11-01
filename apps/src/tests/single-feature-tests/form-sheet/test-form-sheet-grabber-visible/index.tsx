@@ -11,16 +11,20 @@ function TestFormSheetGrabberVisible() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>FormSheet Grabber Test</Text>
+      <Text style={styles.title} testID="formsheet-grabber-title">
+        FormSheet Grabber Test
+      </Text>
       <View style={styles.row}>
         <Text style={styles.label}>prefersGrabberVisible</Text>
         <Switch
+          testID="host-grabber-switch"
           value={prefersGrabberVisible}
           onValueChange={setPrefersGrabberVisible}
         />
       </View>
       <Button
         title="Open FormSheet"
+        testID="open-formsheet-button"
         color={Colors.primary}
         onPress={() => setIsOpen(true)}
       />
@@ -30,10 +34,13 @@ function TestFormSheetGrabberVisible() {
         detents={[0.6, 1.0]}
         prefersGrabberVisible={prefersGrabberVisible}>
         <View style={styles.sheetContent}>
-          <Text style={styles.sheetTitle}>FormSheet content</Text>
+          <Text style={styles.sheetTitle} testID="formsheet-grabber-content">
+            FormSheet content
+          </Text>
           <View style={styles.row}>
             <Text style={styles.label}>prefersGrabberVisible</Text>
             <Switch
+              testID="sheet-grabber-switch"
               value={prefersGrabberVisible}
               onValueChange={setPrefersGrabberVisible}
             />
@@ -41,6 +48,7 @@ function TestFormSheetGrabberVisible() {
           <View style={styles.spacing} />
           <Button
             title="Dismiss from JS"
+            testID="dismiss-formsheet-button"
             color={Colors.primary}
             onPress={() => setIsOpen(false)}
           />

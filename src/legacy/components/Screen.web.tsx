@@ -35,7 +35,7 @@ export class NativeScreen extends React.Component<ScreenProps> {
       );
     }
 
-    return <View {...rest} />;
+    return <View style={style} {...rest} />;
   }
 }
 

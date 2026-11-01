@@ -15,6 +15,16 @@ import { UnsafeMixed } from '../codegenUtils';
 
 type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 
+type MinimizationBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+type RestorationBehavior = 'automatic' | 'atScrollEdge';
+
+type SafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
+
 export type HeaderAppearance = {
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.Float | undefined;
@@ -59,6 +69,10 @@ export interface NativeProps extends ViewProps {
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 
   prompt?: string | undefined;
+
+  minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'automatic'>;
+  restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
+  safeAreaAdjustment?: CT.WithDefault<SafeAreaAdjustment, 'automatic'>;
 
   titleMenu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 

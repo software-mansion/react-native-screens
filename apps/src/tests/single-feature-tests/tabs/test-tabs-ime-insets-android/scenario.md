@@ -30,62 +30,62 @@ and text frame Y-positions.
 
 1. Launch the app and navigate to the **IME insets** screen.
 
-- [ ] The Config tab is active.
-- [ ] The "safeAreaViewBottomEdgeEnabled" switch is enabled (true), and the "tabBarRespectsIMEInsets" switch is disabled (false).
-- [ ] The text "TabsScreen bottom" is clearly visible at the very bottom of the screen layout, above the tab bar.
+    - [ ] The Config tab is active.
+    - [ ] The "safeAreaViewBottomEdgeEnabled" switch is enabled (true), and the "tabBarRespectsIMEInsets" switch is disabled (false).
+    - [ ] The text "TabsScreen bottom" is clearly visible at the very bottom of the screen layout, above the tab bar.
 
 ---
 
 ### tabBarRespectsIMEInsets: false and safeAreaViewBottomEdgeEnabled: true
 
-2. Tap inside the TextInput box.
+1. Tap inside the TextInput box.
 
-- [ ] The soft keyboard (IME) slides up.
-- [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard.
-- [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.
+    - [ ] The soft keyboard (IME) slides up.
+    - [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard.
+    - [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.
 
-3. Dismiss the keyboard.
+2. Dismiss the keyboard.
 
 ---
 
 ### tabBarRespectsIMEInsets: true and safeAreaViewBottomEdgeEnabled: true
 
-4. Tap the tabBarRespectsIMEInsets switch to toggle it to true.
+1. Tap the tabBarRespectsIMEInsets switch to toggle it to true.
 
-5. Tap inside the TextInput box again.
+2. Tap inside the TextInput box again.
 
-- [ ] As the keyboard slides up, the native tab bar dynamically shifts upwards
-alongside the keyboard, remaining fully visible on top of it.
-- [ ] The inner content view resizes seamlessly, pushing the "TabsScreen bottom" text
-up so it remains visible right above the elevated tab bar without any visual glitches.
+    - [ ] As the keyboard slides up, the native tab bar dynamically shifts upwards
+          alongside the keyboard, remaining fully visible on top of it.
+    - [ ] The inner content view resizes seamlessly, pushing the "TabsScreen bottom" text
+          up so it remains visible right above the elevated tab bar without any visual glitches.
 
-6. Dismiss the keyboard.
+3. Dismiss the keyboard.
 
 ---
 
 ### tabBarRespectsIMEInsets: true and safeAreaViewBottomEdgeEnabled: false
 
-7. Tap the safeAreaViewBottomEdgeEnabled switch to toggle it to false.
+1. Tap the safeAreaViewBottomEdgeEnabled switch to toggle it to false.
 
-- [ ] The bottom edge safe area configuration updates dynamically.
-- [ ] The inner view content pushes downwards under the tab bar, causing the "TabsScreen bottom" text
-to hide behind the tab bar layout layer.
+    - [ ] The bottom edge safe area configuration updates dynamically.
+    - [ ] The inner view content pushes downwards under the tab bar, causing the "TabsScreen bottom" text
+          to hide behind the tab bar layout layer.
 
-8. Tap inside the TextInput box again.
+2. Tap inside the TextInput box again.
 
-- [ ] The tab bar rises above the soft keyboard, but the inner content text "TabsScreen bottom"
-remains tucked behind the tab bar layer.
+    - [ ] The tab bar rises above the soft keyboard, but the inner content text "TabsScreen bottom"
+          remains tucked behind the tab bar layer.
 
-9. Dismiss the keyboard.
+3. Dismiss the keyboard.
 
 ---
 
 ### tabBarRespectsIMEInsets: false and safeAreaViewBottomEdgeEnabled: false
 
-10. Tap the tabBarRespectsIMEInsets switch to toggle it to false.
+1. Tap the tabBarRespectsIMEInsets switch to toggle it to false.
 
-11. Tap inside the TextInput box again.
+2. Tap inside the TextInput box again.
 
-- [ ] The soft keyboard (IME) slides up.
-- [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard.
-- [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.
+    - [ ] The soft keyboard (IME) slides up.
+    - [ ] The tab bar stays anchored at the bottom of the window frame and is hidden behind the keyboard.
+    - [ ] The layout text "TabsScreen bottom" at the end of the container is covered by the keyboard.

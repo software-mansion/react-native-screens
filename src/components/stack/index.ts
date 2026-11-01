@@ -13,8 +13,17 @@ export type {
   EmptyEventPayload, // TODO: Remove this from public types (we need one shared type for this)
   OnDismissEvent,
   StackScreenActivityMode,
+  StackScreenReplaceAnimation,
   StackScreenEventHandler,
   StackScreenProps,
+  StackScreenAnimation,
+  StackScreenAnimationPresetName,
+  StackScreenAnimationPresetRef,
+  StackScreenAnimationTimingOptions,
+  StackScreenAnimationEasing,
+  StackScreenAnimationEasingName,
+  StackScreenAnimationBezier,
+  StackScreenAnimationLength,
 } from './screen';
 
 export type {
@@ -43,9 +52,13 @@ export type {
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
   StackHeaderBackButtonDisplayModeIOS,
+  StackHeaderMinimizationBehaviorIOS,
+  StackHeaderRestorationBehaviorIOS,
+  StackHeaderSafeAreaAdjustmentIOS,
   StackHeaderItemVisibilityPriorityIOS,
   StackHeaderConfigPropsIOS,
   StackHeaderAppearanceIOS,
+  StackHeaderItemVariantIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderTitleCustomItemIOS,

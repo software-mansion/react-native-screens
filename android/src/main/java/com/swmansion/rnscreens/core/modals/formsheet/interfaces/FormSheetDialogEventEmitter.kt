@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens.core.modals.formsheet.interfaces
 
-import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 
 internal interface FormSheetDialogEventEmitter : ViewAppearanceEventEmitter {
     fun emitOnDismissEvent()

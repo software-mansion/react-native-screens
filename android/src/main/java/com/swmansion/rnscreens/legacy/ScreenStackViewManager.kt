@@ -7,7 +7,6 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerInterface
-import com.swmansion.rnscreens.NativeProxy
 import com.swmansion.rnscreens.legacy.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)

@@ -1,21 +1,20 @@
 #pragma once
 
 #import "RNSContainer.h"
+#import "RNSContainerTransactionSupporting.h"
 #include "RNSStackNavigationBarCoordinator.h"
-#include "RNSStackScreenComponentView.h"
 
+@class RNSStackScreenController;
 @protocol RNSViewFrameChangeDelegate;
 
-@interface RNSStackNavigationController : UINavigationController <RNSContainer>
+@interface RNSStackNavigationController : UINavigationController <RNSContainer, RNSContainerTransactionSupporting>
 
 @property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> navigationBarFrameChangeDelegate;
 
 @property (nonatomic, readonly, nonnull) RNSStackNavigationBarCoordinator *navigationBarCoordinator;
 
-- (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (void)enqueuePushOperation:(nonnull RNSStackScreenController *)screenController;
 
-- (void)enqueuePopOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
-
-- (void)performContainerUpdateIfNeeded;
+- (void)enqueuePopOperation:(nonnull RNSStackScreenController *)screenController;
 
 @end

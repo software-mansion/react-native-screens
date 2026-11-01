@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.legacy
 
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -11,7 +12,7 @@ import java.lang.ref.WeakReference
 
 object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener {
     private val listeners: HashSet<OnApplyWindowInsetsListener> = hashSetOf()
-    private var eventSourceView: WeakReference<View> = WeakReference(null)
+    private var eventSourceView: WeakReference<InsetsObserverView> = WeakReference(null)
 
     // Please note semantics of this property. This is not `isRegistered`, because somebody, could unregister
     // us, without our knowledge, e.g. reanimated or different 3rd party library. This holds only information
@@ -67,6 +68,7 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
         val observedView = getObservedView()
         if (hasBeenRegistered && observedView != null) {
             ViewCompat.setOnApplyWindowInsetsListener(observedView, null)
+            observedView.detach()
             hasBeenRegistered = false
             eventSourceView.clear()
         }
@@ -82,12 +84,15 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     }
 
     /**
-     * @return boolean whether the proxy registered as a listener on a view
+     * @param view the decor view to observe
+     * @return boolean whether the proxy registered as a listener under the view
      */
     fun registerOnView(view: View): Boolean {
         if (allowRegistration) {
-            ViewCompat.setOnApplyWindowInsetsListener(view, this)
-            eventSourceView = WeakReference(view)
+            val observer = InsetsObserverView(view.context)
+            ViewCompat.setOnApplyWindowInsetsListener(observer, this)
+            observer.attachTo(view as ViewGroup)
+            eventSourceView = WeakReference(observer)
             hasBeenRegistered = true
             return true
         }
@@ -97,8 +102,9 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener, LifecycleEventListener
     fun unregister() {
         getObservedView()?.takeIf { hasBeenRegistered }?.let {
             ViewCompat.setOnApplyWindowInsetsListener(it, null)
+            it.detach()
         }
     }
 
-    private fun getObservedView(): View? = eventSourceView.get()
+    private fun getObservedView(): InsetsObserverView? = eventSourceView.get()
 }

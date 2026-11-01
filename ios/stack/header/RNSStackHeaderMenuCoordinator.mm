@@ -26,6 +26,30 @@
 #endif // !TARGET_OS_TV || __TV_OS_VERSION_MAX_ALLOWED >= 170000
 }
 
++ (void)applyMenuRepresentation:(nullable RNSStackHeaderMenuData *)data
+                toBarButtonItem:(UIBarButtonItem *)item
+       withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
+                   stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+                withImageLoader:(id<RNSImageLoading>)imageLoader
+        menuInvalidatedCallback:(nullable void (^)(void))onMenuInvalidated
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
+  if (@available(iOS 16.0, *)) {
+    if (data == nil) {
+      item.menuRepresentation = nil;
+      return;
+    }
+    item.menuRepresentation = [self buildMenuFromData:data
+                             withHeaderEventsDelegate:delegate
+                                         stateTracker:tracker
+                                  singleSelectionRoot:nil
+                   initialSingleSelectionStateClaimed:NULL
+                                      withImageLoader:imageLoader
+                              menuInvalidatedCallback:onMenuInvalidated];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
+}
+
 + (UIMenu *)buildMenuFromData:(RNSStackHeaderMenuData *)data
               withHeaderEventsDelegate:(id<RNSStackHeaderEventsDelegate>)delegate
                           stateTracker:(RNSStackHeaderMenuToggleStateTracker *)tracker

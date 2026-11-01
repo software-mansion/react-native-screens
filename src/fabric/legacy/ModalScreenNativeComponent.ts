@@ -1,6 +1,6 @@
 'use client';
 
-import { codegenNativeComponent } from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 import type {
   CodegenTypes as CT,
   HostComponent,
@@ -60,6 +60,8 @@ type StackAnimation =
   | 'ios_from_right'
   | 'ios_from_left';
 
+type SheetBackgroundEffect = 'automatic' | 'color';
+
 type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
@@ -90,6 +92,7 @@ export interface NativeProps extends ViewProps {
     | undefined;
   screenId?: CT.WithDefault<string, ''>;
   sheetAllowedDetents?: number[] | undefined;
+  sheetBackgroundEffect?: CT.WithDefault<SheetBackgroundEffect, 'automatic'>;
   sheetLargestUndimmedDetent?: CT.WithDefault<CT.Int32, -1>;
   sheetGrabberVisible?: CT.WithDefault<boolean, false>;
   sheetCornerRadius?: CT.WithDefault<CT.Float, -1.0>;
@@ -129,6 +132,19 @@ export interface NativeProps extends ViewProps {
   synchronousShadowStateUpdatesEnabled?: CT.WithDefault<boolean, true>;
   iosOrientationInheritanceFixEnabled?: CT.WithDefault<boolean, true>;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+interface NativeCommands {
+  selectDetent: (
+    viewRef: React.ComponentRef<ComponentType>,
+    index: CT.Int32,
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['selectDetent'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSModalScreen', {
   interfaceOnly: true,
