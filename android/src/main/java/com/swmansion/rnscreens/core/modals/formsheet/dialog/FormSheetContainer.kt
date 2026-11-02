@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDragHandleView
 
 @SuppressLint("ViewConstructor")
@@ -23,14 +22,10 @@ class FormSheetContainer(
             visibility = GONE
         }
 
-    // The CoordinatorLayout child driven by the BottomSheetBehavior, held for the duration of a nested scroll.
-    private var sheetView: View? = null
+    internal var bottomSheetView: View? = null
 
     private val sheetCoordinator: CoordinatorLayout?
-        get() = sheetView?.parent as? CoordinatorLayout
-
-    private val View.bottomSheetBehavior: BottomSheetBehavior<*>?
-        get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<*>
+        get() = bottomSheetView?.parent as? CoordinatorLayout
 
     private var startedOnScrolledTarget = false
 
@@ -52,14 +47,6 @@ class FormSheetContainer(
         grabberView.visibility = if (visible) VISIBLE else GONE
     }
 
-    private fun findSheetView(): View? {
-        var view = parent as? View
-        while (view != null && view.bottomSheetBehavior == null) {
-            view = view.parent as? View
-        }
-        return view
-    }
-
     private fun shouldHoldBackFromSheet(
         target: View,
         dy: Int,
@@ -70,11 +57,9 @@ class FormSheetContainer(
         target: View,
         axes: Int,
     ): Boolean {
-        sheetView = findSheetView()
-        val sheet = sheetView ?: return false
-        val coordinator = sheetCoordinator
-        if (coordinator == null || !coordinator.onStartNestedScroll(sheet, target, axes)) {
-            sheetView = null
+        val sheet = bottomSheetView ?: return false
+        val coordinator = sheetCoordinator ?: return false
+        if (!coordinator.onStartNestedScroll(sheet, target, axes)) {
             return false
         }
         startedOnScrolledTarget = target.canScrollVertically(-1)
@@ -87,7 +72,7 @@ class FormSheetContainer(
         axes: Int,
     ) {
         super.onNestedScrollAccepted(child, target, axes)
-        val sheet = sheetView ?: return
+        val sheet = bottomSheetView ?: return
         val coordinator = sheetCoordinator ?: return
         coordinator.onNestedScrollAccepted(sheet, target, axes)
     }
@@ -108,9 +93,8 @@ class FormSheetContainer(
     override fun onStopNestedScroll(target: View) {
         super.onStopNestedScroll(target)
         startedOnScrolledTarget = false
-        val coordinator = sheetCoordinator
-        sheetView = null
-        coordinator?.onStopNestedScroll(target)
+        val coordinator = sheetCoordinator ?: return
+        coordinator.onStopNestedScroll(target)
     }
 
     override fun onNestedPreFling(
