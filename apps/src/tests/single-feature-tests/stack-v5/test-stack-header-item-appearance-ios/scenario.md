@@ -42,8 +42,7 @@ whole configuration as applied at attach time (no runtime changes involved).
 
 2. Scroll the content away from the top
 
-    - [ ] On iOS 18/27, "aa" turns red italic and "bb" thin (100) purple
-          (`standardAppearance`)
+    - [ ] On iOS 18/27, "aa" turns red italic and "bb" thin (100) purple italic
     
     - [ ] On iOS 26, all items keep the scroll-edge style (see Note #1)
 
@@ -60,7 +59,7 @@ whole configuration as applied at attach time (no runtime changes involved).
     
     - [ ] Disabled items do not react to touches (no toast)
 
-5. Tap "Push details screen"
+5. Place the screen in landscape. Tap "Push details screen".
 
     - [ ] The items are styled as in steps 1-2 (fresh attach)
     
@@ -69,7 +68,8 @@ whole configuration as applied at attach time (no runtime changes involved).
           title shows only after scrolling away from the top; Note #1
           applies)
 
-6. Pop to the first screen. Scroll away from the edge, toggle "Style buttons (red italic)" off
+6. Rotate back to portrait. Pop to the first screen. Scroll away from the edge,
+   toggle "Style buttons (red italic)" off
 
     - [ ] On iOS 27, "aa"/"bb" lose the custom style ("bb" keeps only the thin purple);
           iOS 26 requires rerender to catch this (double tap Use text items)
@@ -79,7 +79,9 @@ whole configuration as applied at attach time (no runtime changes involved).
 7. Disable "Use text items"
 
     - [ ] Items render circled sfSymbols "1"-"4" instead of text; the icons
-          are not affected by the text attributes
+          ignore the color, family, weight and style attributes, but follow
+          the font size: at the scroll edge (22pt) "1" and "2" render larger
+          than after scrolling away (default size).
     
     - [ ] Item "3" is displayed as a prominent item (tinted background; bold
           on iOS < 26) and item "4" as prominent disabled

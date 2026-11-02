@@ -463,6 +463,8 @@ export interface StackHeaderButtonStateAppearanceIOS {
   /**
    * @summary Specifies the font size used for the item's text.
    *
+   * @description This prop also scales SF Symbol icons of the items.
+   *
    * @platform ios
    */
   fontSize?: TextStyle['fontSize'] | undefined;
@@ -845,11 +847,10 @@ export interface StackHeaderConfigPropsIOS {
    * is not aligned with the edge of the header.
    *
    * @description
-   * Limitations:
+   * Native platform limitations:
    * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
    *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
    *   and do not update on property changes or scroll edge transitions.
-   * - On iOS 27, changing text color at runtime doesn't work reliably.
    *
    * @platform ios
    */
@@ -862,11 +863,10 @@ export interface StackHeaderConfigPropsIOS {
    * otherwise becomes a standalone definition. In both cases it keeps transparent
    * background by default (iOS <18).
    *
-   * Limitations:
+   * Native platform limitations:
    * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
    *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
    *   and do not update on property changes or scroll edge transitions.
-   * - On iOS 27, changing text color at runtime doesn't work reliably.
    *
    * @platform ios
    */
