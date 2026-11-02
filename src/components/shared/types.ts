@@ -30,7 +30,6 @@ import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
  * - `'systemChromeMaterialDark'`
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
- * @platform ios >= 13
  */
 export type BlurEffect =
   | 'none'
@@ -62,8 +61,6 @@ export type BlurEffect =
  * The following values are supported:
  * - `'light'` — the light interface style.
  * - `'dark'` — the dark interface style.
- *
- * @platform android >= 21, ios >= 13
  */
 export type ColorScheme = 'light' | 'dark';
 
@@ -74,8 +71,6 @@ export type ColorScheme = 'light' | 'dark';
  * The following values are supported:
  * - `'ltr'` — forces the left-to-right layout direction.
  * - `'rtl'` — forces the right-to-left layout direction.
- *
- * @platform android >= 21, ios >= 13
  */
 export type Direction = 'ltr' | 'rtl';
 
@@ -94,7 +89,6 @@ export type Direction = 'ltr' | 'rtl';
  * - `'landscapeRight'` — the landscape-right orientation.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
- * @platform ios >= 13
  */
 export type InterfaceOrientation =
   | 'all'
@@ -118,7 +112,6 @@ export type InterfaceOrientation =
  * - `'hidden'` — no scroll edge effect.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect/style-swift.class/ | UIScrollEdgeEffect.Style}
- * @platform ios >= 26
  */
 export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
@@ -133,7 +126,6 @@ export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
  * - `'dark'` — the dark interface style.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle | UIUserInterfaceStyle}
- * @platform ios >= 13
  */
 export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
