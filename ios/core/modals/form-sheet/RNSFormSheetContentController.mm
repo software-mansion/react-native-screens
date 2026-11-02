@@ -7,6 +7,7 @@
 #import "RNSPresentationSourceProvider.h"
 
 #import "RNSAssert.h"
+#import "RNSLog.h"
 
 @interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
                                              UIGestureRecognizerDelegate
@@ -27,12 +28,71 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.modalPresentationStyle = UIModalPresentationFormSheet;
-
     _updateCoordinator = [RNSFormSheetUpdateCoordinator new];
     _presentationManager = [RNSFormSheetPresentationManager new];
+
+    _presentationStyle = RNSFormSheetPresentationStyleFormSheet;
+    [self applyPresentationStyle];
   }
   return self;
+}
+
+#pragma mark - Presentation style
+
+- (void)setPresentationStyle:(RNSFormSheetPresentationStyle)presentationStyle
+{
+  if (_presentationStyle == presentationStyle) {
+    return;
+  }
+  _presentationStyle = presentationStyle;
+
+  if (_presentationManager.state == RNSFormSheetPresentationStateDismissed) {
+    [self applyPresentationStyle];
+  } else {
+    RNSLogW(
+        @"[RNScreens] The sheet presentation style cannot change while the sheet is presented. The new value takes effect on the next presentation.");
+  }
+}
+
+- (void)applyPresentationStyle
+{
+  // The sheet host presents sheets or nothing. A style unavailable on the platform leaves `modalPresentationStyle`
+  // untouched; `isPresentationStyleAvailable` reports it and the presentation manager aborts the presentation.
+  switch (_presentationStyle) {
+    case RNSFormSheetPresentationStylePageSheet:
+#if !TARGET_OS_TV
+      self.modalPresentationStyle = UIModalPresentationPageSheet;
+#endif // !TARGET_OS_TV
+      break;
+    case RNSFormSheetPresentationStyleFormSheet:
+    default:
+#if TARGET_OS_TV
+      if (@available(tvOS 26.0, *)) {
+        self.modalPresentationStyle = UIModalPresentationFormSheet;
+      }
+#else
+      self.modalPresentationStyle = UIModalPresentationFormSheet;
+#endif // TARGET_OS_TV
+      break;
+  }
+}
+
+- (BOOL)isPresentationStyleAvailable
+{
+#if TARGET_OS_TV
+  switch (_presentationStyle) {
+    case RNSFormSheetPresentationStylePageSheet:
+      return NO;
+    case RNSFormSheetPresentationStyleFormSheet:
+    default:
+      if (@available(tvOS 26.0, *)) {
+        return YES;
+      }
+      return NO;
+  }
+#else
+  return YES;
+#endif // TARGET_OS_TV
 }
 
 - (RNSFormSheetContentView *)contentView
@@ -123,6 +183,10 @@
 
 - (void)prepareForPresentation
 {
+  // UIKit creates the presentation controller lazily from the current `modalPresentationStyle`, so the style must be
+  // final before `presentationController` is first accessed below.
+  [self applyPresentationStyle];
+
   // The presentation controller is recreated by UIKit on every present/dismiss cycle.
   // We must assign this delegate before actual presentation
   self.presentationController.delegate = self;

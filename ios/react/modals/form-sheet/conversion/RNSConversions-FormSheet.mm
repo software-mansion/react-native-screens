@@ -6,6 +6,21 @@
 
 namespace rnscreens::conversion {
 
+RNSFormSheetPresentationStyle RNSFormSheetPresentationStyleFromHostProp(
+    react::RNSFormSheetHostPresentationStyle presentationStyle)
+{
+  switch (presentationStyle) {
+    using enum react::RNSFormSheetHostPresentationStyle;
+    case PageSheet:
+      return RNSFormSheetPresentationStylePageSheet;
+    case FormSheet:
+      return RNSFormSheetPresentationStyleFormSheet;
+    default:
+      RCTLogError(@"[RNScreens] Unsupported presentationStyle value, falling back to formSheet.");
+      return RNSFormSheetPresentationStyleFormSheet;
+  }
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
 static std::optional<UIBlurEffectStyle> RNSUIBlurEffectStyleFromBackgroundEffectBlurStyle(

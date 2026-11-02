@@ -40,7 +40,7 @@
   UISheetPresentationController *sheet = controller.sheetPresentationController;
   RNSAssert(
       sheet != nil,
-      @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is set to UIModalPresentationFormSheet.");
+      @"[RNScreens] sheetPresentationController is nil. Ensure modalPresentationStyle is a sheet style (UIModalPresentationFormSheet or UIModalPresentationPageSheet).");
 
   // Behavior data
 
