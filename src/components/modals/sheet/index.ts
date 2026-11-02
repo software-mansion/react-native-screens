@@ -15,4 +15,5 @@ export type {
   SheetProps,
 } from './Sheet.types';
 
+export type { SheetBaseProps, SheetPresentationStyle } from './SheetBase';
 export { SheetBase } from './SheetBase';

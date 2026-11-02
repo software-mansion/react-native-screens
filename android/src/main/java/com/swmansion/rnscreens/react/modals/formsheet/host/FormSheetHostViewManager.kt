@@ -67,6 +67,13 @@ class FormSheetHostViewManager :
         index: Int,
     ): View? = parent.getReactSubviewAt(index)
 
+    override fun setPresentationStyle(
+        view: FormSheetHost,
+        value: String?,
+    ) {
+        // Both `formSheet` and `pageSheet` present the same bottom sheet dialog on Android.
+    }
+
     override fun setIsOpen(
         view: FormSheetHost,
         value: Boolean,

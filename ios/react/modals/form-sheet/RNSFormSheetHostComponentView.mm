@@ -242,6 +242,12 @@ namespace react = facebook::react;
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(props);
 
+  // Applied before `isOpen`, so a first-time presentation in the same batch already uses the requested style.
+  if (oldComponentProps.presentationStyle != newComponentProps.presentationStyle) {
+    _controller.presentationStyle =
+        rnscreens::conversion::RNSFormSheetPresentationStyleFromHostProp(newComponentProps.presentationStyle);
+  }
+
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
     [_controller setNeedsPresentationUpdate];
