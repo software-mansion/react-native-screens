@@ -182,8 +182,11 @@ export interface PlatformIconAndroidDrawableResource {
   /**
    * Name of the drawable resource, without the file extension.
    *
-   * @remarks
-   * For example, `'ic_search'` for `res/drawable/ic_search.xml`.
+   * @example
+   * For `res/drawable/ic_search.xml`:
+   * ```tsx
+   * { type: 'drawableResource', name: 'ic_search' }
+   * ```
    */
   name: string;
 }
