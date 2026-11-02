@@ -4,17 +4,13 @@ import './fabric/NativeScreensModule';
 
 export * from './legacy';
 
-/**
- * Utils
- */
+// Utils
 export {
   isSearchBarAvailableForCurrentPlatform,
   executeNativeBackPress,
 } from './utils';
 
-/**
- * Flags
- */
+// Flags
 export { compatibilityFlags, featureFlags } from './flags';
 
 export * from './components/tabs';

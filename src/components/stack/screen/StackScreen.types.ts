@@ -1,11 +1,10 @@
 import { NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { EmptyEventPayload } from '../../shared/types';
 import type { StackScreenAnimation } from './animation';
 
 export type OnDismissEventPayload = {
   isNativeDismiss: boolean;
 };
-
-export type EmptyEventPayload = Record<string, never>;
 
 export type OnDismissEvent = NativeSyntheticEvent<OnDismissEventPayload>;
 
