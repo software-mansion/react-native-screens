@@ -17,6 +17,10 @@ type DetentChangedEvent = Readonly<{
 
 type BackgroundEffect = 'automatic' | 'none' | 'color' | 'blur';
 
+// Internal. Selects the UIKit `modalPresentationStyle` the host presents with.
+// `FormSheet` and `PageSheet` pin it; it is not part of their public props.
+type PresentationStyle = 'formSheet' | 'pageSheet';
+
 type BackgroundEffectBlurStyle =
   | 'extraLight'
   | 'light'
@@ -41,6 +45,7 @@ type BackgroundEffectBlurStyle =
 
 interface NativeProps extends ViewProps {
   // General
+  presentationStyle?: CT.WithDefault<PresentationStyle, 'formSheet'>;
   isOpen?: CT.WithDefault<boolean, false>;
   detents?: CT.Double[] | undefined;
   prefersGrabberVisible?: CT.WithDefault<boolean, false>;
