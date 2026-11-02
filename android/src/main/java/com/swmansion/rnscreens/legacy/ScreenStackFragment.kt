@@ -33,6 +33,7 @@ import com.swmansion.rnscreens.core.utils.recycle
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetTransitionCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.BottomSheetWindowInsetListenerChain
 import com.swmansion.rnscreens.legacy.bottomsheet.DimmingViewManager
+import com.swmansion.rnscreens.legacy.bottomsheet.ScrollStopsAtTopBottomSheetBehavior
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
@@ -399,7 +400,7 @@ class ScreenStackFragment :
         return sheetDelegate.createSheetExitAnimator(sheetAnimationContext)
     }
 
-    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = BottomSheetBehavior<Screen>()
+    private fun createBottomSheetBehaviour(): BottomSheetBehavior<Screen> = ScrollStopsAtTopBottomSheetBehavior()
 
     private fun resolveBackgroundColor(screen: Screen): Int? {
         val screenColor =

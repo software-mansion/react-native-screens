@@ -23,6 +23,8 @@ type MinimizationBehavior =
 
 type RestorationBehavior = 'automatic' | 'atScrollEdge';
 
+type SafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
+
 export type HeaderAppearance = {
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.Float | undefined;
@@ -70,6 +72,7 @@ export interface NativeProps extends ViewProps {
 
   minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'automatic'>;
   restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
+  safeAreaAdjustment?: CT.WithDefault<SafeAreaAdjustment, 'automatic'>;
 
   titleMenu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 

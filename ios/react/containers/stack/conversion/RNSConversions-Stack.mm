@@ -99,8 +99,22 @@ UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationB
   }
 }
 
-#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+UIBarMinimizationSafeAreaAdjustment
+UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjustment(
+    react::RNSStackHeaderConfigIOSSafeAreaAdjustment safeAreaAdjustment)
+{
+  switch (safeAreaAdjustment) {
+    case react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Automatic:
+      return UIBarMinimizationSafeAreaAdjustmentAutomatic;
+    case react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Enabled:
+      return UIBarMinimizationSafeAreaAdjustmentEnabled;
+    case react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Disabled:
+      return UIBarMinimizationSafeAreaAdjustmentDisabled;
+  }
+}
 
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+  
 RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
 {
@@ -113,21 +127,5 @@ RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStack
       return RNSHeaderItemVisibilityPriorityHigh;
   }
 }
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-API_AVAILABLE(ios(27.0))
-UIBarButtonItemVisibilityPriority UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
-    RNSHeaderItemVisibilityPriority visibilityPriority)
-{
-  switch (visibilityPriority) {
-    case RNSHeaderItemVisibilityPriorityLow:
-      return UIBarButtonItemVisibilityPriorityLow;
-    case RNSHeaderItemVisibilityPriorityStandard:
-      return UIBarButtonItemVisibilityPriorityStandard;
-    case RNSHeaderItemVisibilityPriorityHigh:
-      return UIBarButtonItemVisibilityPriorityHigh;
-  }
-}
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
 }; // namespace rnscreens::conversion

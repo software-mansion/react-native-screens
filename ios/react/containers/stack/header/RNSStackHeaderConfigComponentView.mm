@@ -1,7 +1,6 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSConversions-Stack.h"
 #import "RNSConversions.h"
-#import "RNSImageLoadingHelper.h"
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
@@ -11,13 +10,12 @@
 #import "RNSStackHeaderMenuFinder.h"
 #import "RNSStackHeaderMenuMapper.h"
 #import "RNSStackHeaderMenuUpdateOptions.h"
+#import "RNSStackHeaderMenuUpdateOptionsMapper.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
 
 #import <React/RCTConversions.h>
-#import <React/RCTConvert.h>
-#import <React/RCTImageLoader.h>
 #import <React/RCTLog.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -44,7 +42,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
-  RCTImageLoader *_imageLoader;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -55,6 +52,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     _children = [NSMutableArray new];
     _shadowStateProxy = [[RNSStackHeaderConfigShadowStateProxy alloc] initWithHeaderConfigView:self];
     _reactEventEmitter = [RNSStackHeaderConfigEventEmitter new];
+    _imageLoader = [RNSImageLoader new];
     [self resetProps];
   }
   return self;
@@ -73,6 +71,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (@available(iOS 27.0, *)) {
     _minimizationBehavior = UIBarMinimizationBehaviorAutomatic;
     _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+    _safeAreaAdjustment = UIBarMinimizationSafeAreaAdjustmentAutomatic;
   }
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
   _backButtonTitle = nil;
@@ -86,31 +85,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (NSArray<id> *)children
 {
   return [_children copy];
-}
-
-#pragma mark - RNSImageLoading
-
-- (void)loadImageFromJsonSource:(NSDictionary *)jsonSource
-                     asTemplate:(BOOL)isTemplate
-         withCompletionCallback:(void (^)(UIImage *_Nullable image))completionBlock
-{
-  if (_imageLoader == nil) {
-    RCTLogError(@"[RNScreens] imageLoader must not be nil when loading images");
-    completionBlock(nil);
-    return;
-  }
-
-  RCTImageSource *imageSource = [RCTConvert RCTImageSource:jsonSource];
-  if (imageSource == nil) {
-    RCTLogError(@"[RNScreens] Expected nonnil image source");
-    completionBlock(nil);
-    return;
-  }
-
-  [RNSImageLoadingHelper loadImageFromSource:imageSource
-                             withImageLoader:_imageLoader
-                                  asTemplate:isTemplate
-                             completionBlock:completionBlock];
 }
 
 #pragma mark - UIView
@@ -286,7 +260,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     return;
   }
 
-  RNSMenuItemUpdateOptions *updateOptions = [RNSMenuItemUpdateOptions fromDictionary:dict];
+  RNSMenuItemUpdateOptions *updateOptions =
+      [RNSStackHeaderMenuUpdateOptionsMapper menuItemUpdateOptionsFromDictionary:dict];
   RNSStackHeaderMenuItemData *oldItemData = (RNSStackHeaderMenuItemData *)locator.searchResult.element;
   RNSStackHeaderMenuItemData *newItemData = [RNSMenuItemUpdateOptions applyOptions:updateOptions
                                                                         toMenuItem:oldItemData];
@@ -347,7 +322,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     return;
   }
 
-  RNSMenuUpdateOptions *updateOptions = [RNSMenuUpdateOptions fromDictionary:dict];
+  RNSMenuUpdateOptions *updateOptions = [RNSStackHeaderMenuUpdateOptionsMapper menuUpdateOptionsFromDictionary:dict];
   RNSStackHeaderMenuData *oldMenuItem = (RNSStackHeaderMenuData *)locator.searchResult.element;
   RNSStackHeaderMenuData *newMenuItem = [RNSMenuUpdateOptions applyOptions:updateOptions toMenu:oldMenuItem];
 
@@ -407,7 +382,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   _state = std::static_pointer_cast<const react::RNSStackHeaderConfigShadowNode::ConcreteState>(state);
   if (auto imgLoaderPtr = _state.get()->getData().getImageLoader().lock()) {
-    _imageLoader = react::unwrapManagedObject(imgLoaderPtr);
+    _imageLoader.reactImageLoader = react::unwrapManagedObject(imgLoaderPtr);
   }
 }
 
@@ -474,6 +449,19 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
       if (newHeaderProps.restorationBehavior != react::RNSStackHeaderConfigIOSRestorationBehavior::Automatic) {
         RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (oldHeaderProps.safeAreaAdjustment != newHeaderProps.safeAreaAdjustment) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+    if (@available(iOS 27.0, *)) {
+      _safeAreaAdjustment =
+          rnscreens::conversion::UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjustment(
+              newHeaderProps.safeAreaAdjustment);
+    } else
+#endif // Check for iOS >= 27
+      if (newHeaderProps.safeAreaAdjustment != react::RNSStackHeaderConfigIOSSafeAreaAdjustment::Automatic) {
+        RCTLogWarn(@"[RNScreens] safeAreaAdjustment is supported for iOS >= 27");
       }
   }
 
