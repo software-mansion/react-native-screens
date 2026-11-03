@@ -39,8 +39,9 @@ function Home({
         allowToolbarIntegration: false,
         hideWhenScrolling: false,
         onChangeText: event => {
-          setQuery(event.nativeEvent.text);
-          setChanges(previous => [...previous, event.nativeEvent.text]);
+          const text = event.nativeEvent.text;
+          setQuery(text);
+          setChanges(previous => [...previous, text]);
         },
         onCancelButtonPress: () => setCancels(previous => previous + 1),
       },
@@ -76,15 +77,16 @@ function Home({
   );
 }
 
+function Detail() {
+  return <Text>Go back to check retained search text.</Text>;
+}
+
 export default function Test5075() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen
-          name="Detail"
-          component={() => <Text>Go back to check retained search text.</Text>}
-        />
+        <Stack.Screen name="Detail" component={Detail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
