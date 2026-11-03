@@ -15,8 +15,6 @@ export type ContainedModalPresentationStyle =
 
 interface ContainedModalHostProps extends ContainedModalProps {
   presentationStyle: ContainedModalPresentationStyle;
-  // Name of the public component, for error messages.
-  componentName: string;
 }
 
 /**
@@ -27,13 +25,13 @@ interface ContainedModalHostProps extends ContainedModalProps {
  * @internal
  */
 export function ContainedModalHost(props: ContainedModalHostProps) {
-  const { targetContainerId, componentName, ...rest } = props;
+  const { targetContainerId, ...rest } = props;
 
   // Native maps an empty string to nil, and the modal would assert (debug) or
   // silently never present (release). Fail loudly instead.
   if (targetContainerId === '') {
     throw new Error(
-      `[RNScreens] ${componentName} requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider.`,
+      '[RNScreens] A contained modal requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider.',
     );
   }
 

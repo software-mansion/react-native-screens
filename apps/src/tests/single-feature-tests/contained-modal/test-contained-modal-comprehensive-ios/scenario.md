@@ -2,30 +2,17 @@
 
 ## Details
 
-**Description:** One stack-hosted scenario exercising the core behaviors of
-`ContainedModalOverContent` / `ContainedModalReplacingContent` +
-`ContainedModalProvider`: containment, outside
-interactivity, presentation at a non-zero scroll offset, scroll tracking while
-open, provider resize, rotation, suspend/restore via stack push/pop,
-dismiss-while-suspended, counter state preservation, nested providers, and a
-provider hosted inside a native sheet. The
-inner provider is a light-blue box inside a scroll view on the root screen of a
-two-screen stack; its modal is a dark, bottom-anchored, semi-transparent
-overlay. A second, outer provider spans the whole screen content and hosts a
-full-screen dark-red modal; each modal targets its own provider by id. Modal visibility state lives above the stack, so the pushed screen
-can flip `isOpen` to `false` while the inner modal is suspended.
-
-A "Variant" button switches every modal in the scenario between the two
-components. Run the steps once per variant. With the replacing variant the
-provider's children (counter, "Open modal") are removed from the screen while
-the modal is open: only the provider's light-blue background shows through
-the translucent modal, and the content returns intact on dismissal. Steps that
-mention the provider counter "visible through the modal" apply to the
-over-content variant only. Replacing-specific checks (restore geometry after
-resize/rotation while open, repeated cycles, off-screen children) live in the
-dedicated replacing-content scenario.
-
-Out of scope here: modal stacking (only one modal can be open per provider).
+**Description:** One stack-hosted scenario covering `ContainedModalOverContent`,
+`ContainedModalReplacingContent` and `ContainedModalProvider`: containment,
+outside interactivity, scroll offset and tracking, provider resize, rotation,
+suspend/restore and dismiss-while-suspended via stack push/pop, nested
+providers and a provider inside a native sheet. The inner provider is a
+light-blue box inside a scroll view on the root screen of a two-screen stack;
+its modal is a dark, bottom-anchored, translucent overlay. An outer provider
+spans the whole screen content and hosts a full-screen dark-red modal. A
+"Variant" button switches every modal between the two components; run the
+steps once per variant. Checks marked **Over** / **Replacing** apply to that
+variant only, all other checks to both.
 
 **OS test creation version:** iOS: 26.5.
 
@@ -61,6 +48,11 @@ TBD.
 - [ ] The dark overlay fades in covering exactly the light-blue box — correct
       position despite the non-zero scroll offset; nothing outside the box is
       covered or dimmed.
+- [ ] **Over:** the provider counter and "Open modal" stay visible through the
+      translucent overlay and the counter keeps ticking.
+- [ ] **Replacing:** the provider counter and "Open modal" are gone — only the
+      light-blue background shows through the overlay, with the modal's own
+      counter, "Press & move" and "Dismiss from JS" on top.
 
 ### Outside interactivity + inside blocking
 
@@ -77,12 +69,20 @@ TBD.
 - [ ] The provider box animates/changes between heights and the overlay tracks
       it exactly both times — modal never sticks out of, nor undershoots, the
       box.
+- [ ] **Replacing:** tap "Grow provider" again, then "Dismiss from JS" while
+      the box is grown: the restored content fills the grown box (counter and
+      "Open modal" at its top, nothing clipped, offset or sized to the old
+      height) and "Open modal" is tappable. Tap "Open modal", "Shrink
+      provider", "Dismiss from JS": same for the shrunk box. Re-open the modal.
 
 ### Rotation
 
 5. Rotate the device to landscape and back to portrait (modal still open).
 
 - [ ] After each rotation the overlay still covers exactly the provider box.
+- [ ] **Replacing:** rotate to landscape again, tap "Dismiss from JS", rotate
+      back: the restored content fits the landscape box, then the portrait
+      box — no stale frame from the other orientation. Re-open the modal.
 
 ### Suspend / restore via stack
 
@@ -90,8 +90,12 @@ TBD.
    over". On the pushed screen, tap "Pop" (or use the back button).
 
 - [ ] The pushed screen fully covers the stack; after popping, the modal is
-      still open, correctly covering the provider box, and both counters kept
-      ticking (values advanced, never reset).
+      still open, correctly covering the provider box, and the modal counter
+      kept ticking (value advanced, never reset).
+- [ ] **Over:** the provider counter visible through the overlay advanced too.
+- [ ] **Replacing:** the restored modal still shows only the light-blue
+      background underneath — the provider's children must not reappear under
+      the modal on restore.
 
 ### Dismiss while suspended
 
@@ -103,6 +107,9 @@ TBD.
 - [ ] After popping, the modal is NOT visible and the provider content ("Open
       modal", counter) is fully tappable — no leftover overlay, no touch-dead
       zone.
+- [ ] **Replacing:** the provider counter is continuous (advanced through the
+      whole suspend/dismiss cycle, never reset) and "Open modal" sits at its
+      original place.
 
 8. Tap "Open modal" again.
 
@@ -116,15 +123,20 @@ TBD.
 9. Dismiss any open modal, then tap "Open full-screen modal" (near the top of
    the screen).
 
-- [ ] A dark-red overlay fades in covering the WHOLE screen content (buttons,
-      counter and scroll view all underneath; the native header stays visible).
-      All underlying controls are blocked; the full-screen counter ticks.
+- [ ] A dark-red overlay fades in covering the WHOLE screen content (the native
+      header stays visible). All underlying controls are blocked; the
+      full-screen counter ticks.
+- [ ] **Over:** the buttons, counter and scroll view stay visible underneath.
+- [ ] **Replacing:** every control under the overlay is gone — only the screen
+      background shows through.
 
 10. Tap "Dismiss full-screen modal".
 
 - [ ] The overlay fades out and every control is interactive again. The inner
       (light-blue box) modal still opens and closes independently afterwards —
       the explicit ids keep the two modals paired with their own providers.
+- [ ] **Replacing:** every control is back at its place, the outside counter
+      kept its value and the provider counter is continuous.
 - [ ] (Optional) With the inner modal open, open the full-screen modal too: both
       can be open simultaneously (different providers — the one-modal limit is
       per provider), the full-screen overlay stacks ABOVE the inner one, and
@@ -132,26 +144,23 @@ TBD.
 
 ### Dismiss + re-present stability
 
-11. Tap "Dismiss from JS", then "Open modal" again.
+11. Tap "Dismiss from JS", then "Open modal" again. Repeat the pair two more
+    times.
 
 - [ ] The overlay fades out, provider content is tappable again; re-presenting
       works identically (no leftover touch-dead zones, no misplaced overlay),
-      counters continuous throughout.
+      counters continuous throughout, no `[RNScreens]` warnings.
+- [ ] **Replacing:** after each dismissal the box content is back intact and
+      at its place; after each re-present only the background shows through.
 
 ### Second variant
 
 17. Dismiss everything, tap "Variant: over content" (it reads "Variant:
-    replacing content" afterwards) and repeat steps 2-16.
+    replacing content" afterwards) and repeat steps 2-16 with the
+    **Replacing** checks.
 
-- [ ] Every expectation holds, except that while a modal is open the targeted
-      provider's children are gone rather than visible underneath: the
-      light-blue box shows only its background through the dark overlay, and
-      the full-screen modal hides every control it covers. After each dismissal
-      the children are back at their place and size, counters continuous.
-- [ ] In particular, after the suspend/restore of step 6 the restored modal
-      still shows only the provider's background underneath (the children
-      must not reappear under the modal on restore), and they are back once
-      the modal is dismissed.
+- [ ] Every shared expectation holds; the **Replacing** checks pass and the
+      **Over** checks are skipped.
 
 ### Scroll tracking while open — run LAST
 
@@ -159,6 +168,8 @@ TBD.
 
 - [ ] The overlay moves in lockstep with the provider box — no detached or
       lagging overlay.
+- [ ] **Replacing:** scroll the box fully off screen and back: the overlay
+      still covers exactly the box and still shows only the background.
 
 13. Tap "Dismiss from JS" at its new position.
 

@@ -9,20 +9,9 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * The modal is paired with the provider whose `containerId` equals its
  * `targetContainerId`; that provider must be an ancestor of the modal in the
  * React tree. The modal fills the targeted provider's bounds. While it is
- * open, the provider's children are removed from the screen (the native
- * `UIModalPresentationCurrentContext` behavior): they are not drawn and not
- * reachable by touch or accessibility, but they stay mounted, keep their
- * React state and keep receiving updates, and come back exactly as they were
- * once the modal is dismissed. Only the provider's own background (its
- * `style`) remains visible underneath a translucent modal. Touches inside
- * the provider go to the modal; content outside stays interactive. The
- * modal's children stay mounted regardless of `isOpen`, so their React state
- * survives presentations.
- *
- * Native containers inside the provider's content (e.g. a stack) observe
- * this as a disappearance: their screens emit their disappear events when
- * the modal opens and their appear events when it closes, exactly as they
- * would when covered by a native presentation.
+ * open, the provider's children are removed from the screen, but they stay mounted,
+ * keep their React state and keep receiving updates, and come back exactly
+ * as they were once the modal is dismissed.
  *
  * Modality is scoped to the provider's position in the view hierarchy, not
  * the window: a sibling that overlaps the provider and renders later in the
@@ -40,11 +29,5 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalReplacingContent(props: ContainedModalProps) {
-  return (
-    <ContainedModalHost
-      presentationStyle="replacingContent"
-      componentName="ContainedModalReplacingContent"
-      {...props}
-    />
-  );
+  return <ContainedModalHost presentationStyle="replacingContent" {...props} />;
 }

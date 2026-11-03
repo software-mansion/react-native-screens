@@ -32,11 +32,5 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalOverContent(props: ContainedModalProps) {
-  return (
-    <ContainedModalHost
-      presentationStyle="overContent"
-      componentName="ContainedModalOverContent"
-      {...props}
-    />
-  );
+  return <ContainedModalHost presentationStyle="overContent" {...props} />;
 }
