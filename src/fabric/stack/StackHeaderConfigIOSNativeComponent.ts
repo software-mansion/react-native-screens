@@ -61,6 +61,7 @@ export type HeaderAppearance = {
 
   button?: ButtonAppearance | undefined;
   prominentButton?: ButtonAppearance | undefined;
+  backButton?: ButtonAppearance | undefined;
 };
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
