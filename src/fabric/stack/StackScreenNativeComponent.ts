@@ -6,6 +6,7 @@ import type {
   ViewProps,
 } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
+import type { UnsafeMixed } from '../codegenUtils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
@@ -15,6 +16,69 @@ type OnDismissEventPayload = Readonly<{
 }>;
 
 type ActivityMode = 'detached' | 'attached';
+
+type StackScreenReplaceAnimation = 'push' | 'pop';
+
+type StackScreenAnimationBezier = [number, number, number, number];
+
+type StackScreenAnimationEasingName =
+  | 'linear'
+  | 'easeIn'
+  | 'easeOut'
+  | 'easeInOut'
+  | 'standard'
+  | 'standardAccelerate'
+  | 'standardDecelerate'
+  | 'emphasized'
+  | 'emphasizedAccelerate'
+  | 'emphasizedDecelerate';
+
+type StackScreenAnimationEasing =
+  | StackScreenAnimationEasingName
+  | StackScreenAnimationBezier;
+
+type StackScreenAnimationLength = number | `${number}%`;
+
+type StackScreenAnimationPresetName =
+  | 'default'
+  | 'none'
+  | 'fade'
+  | 'slideFromRight'
+  | 'slideFromLeft'
+  | 'slideFromBottom'
+  | 'slideFromTop'
+  | 'fadeFromBottom'
+  | 'fadeFromTop'
+  | 'iosFromRight'
+  | 'iosFromLeft';
+
+interface StackScreenAnimationTimingOptions {
+  duration?: number;
+  easing?: StackScreenAnimationEasing;
+}
+
+type StackScreenAnimationPresetRef =
+  | ({
+      type: 'preset';
+      name: 'fadeFromBottom' | 'fadeFromTop';
+      distance?: StackScreenAnimationLength;
+    } & StackScreenAnimationTimingOptions)
+  | ({
+      type: 'preset';
+      name:
+        | 'slideFromRight'
+        | 'slideFromLeft'
+        | 'slideFromBottom'
+        | 'slideFromTop'
+        | 'fade'
+        | 'iosFromRight'
+        | 'iosFromLeft';
+    } & StackScreenAnimationTimingOptions)
+  | { type: 'preset'; name: 'default' | 'none' };
+
+type StackScreenAnimation =
+  | StackScreenAnimationPresetName
+  | StackScreenAnimationPresetRef;
 
 export interface NativeProps extends ViewProps {
   // Control
@@ -39,6 +103,8 @@ export interface NativeProps extends ViewProps {
   // Configuration
 
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
+  animation?: UnsafeMixed<StackScreenAnimation> | undefined;
+  replaceAnimation?: CT.WithDefault<StackScreenReplaceAnimation, 'pop'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackScreen', {

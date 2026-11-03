@@ -13,6 +13,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RNSContainedModalHostComponentDescriptor.h>
+#import <react/utils/FloatComparison.h>
 
 namespace react = facebook::react;
 
@@ -122,6 +123,15 @@ namespace react = facebook::react;
 }
 
 #if DEBUG
+static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale)
+{
+  const CGFloat tolerance = 1.0 / MAX(screenScale, 1.0);
+  return react::floatEquality(lhs.origin.x, rhs.origin.x, tolerance) &&
+      react::floatEquality(lhs.origin.y, rhs.origin.y, tolerance) &&
+      react::floatEquality(lhs.size.width, rhs.size.width, tolerance) &&
+      react::floatEquality(lhs.size.height, rhs.size.height, tolerance);
+}
+
 // The attach point is observed, not documented, UIKit behavior, and the
 // container's bounds are the modal's touch-blocking area - an escaped
 // container means dead touch zones, not just a misplaced view. Detection
@@ -138,7 +148,11 @@ namespace react = facebook::react;
     return;
   }
 
-  if (containerView.superview != providerView || !CGRectEqualToRect(containerView.frame, providerView.bounds)) {
+  // The wrapper's bounds come from Fabric's float layout metrics while UIKit
+  // autoresizes the container in double precision, so after a rotation the two
+  // can differ by a sub-pixel fraction. Compare on the pixel grid.
+  if (containerView.superview != providerView ||
+      !RNSRectsEqualWithinPixel(containerView.frame, providerView.bounds, providerView.window.screen.scale)) {
     RCTLogError(
         @"[RNScreens] ContainedModal presentation container escaped its provider (container: %@ in %@, provider bounds: %@). UIKit's context attach-point contract may have changed on this OS version.",
         NSStringFromCGRect(containerView.frame),

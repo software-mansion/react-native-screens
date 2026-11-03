@@ -32,7 +32,7 @@ UINavigationItemBackButtonDisplayMode
 UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
     react::RNSStackHeaderConfigIOSBackButtonDisplayMode displayMode);
 
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 
 API_AVAILABLE(ios(27.0))
 UIBarMinimizationBehavior
@@ -44,18 +44,16 @@ UIBarMinimizationRestorationBehavior
 UIBarMinimizationRestorationBehaviorFromReactRNSStackHeaderConfigIOSRestorationBehavior(
     react::RNSStackHeaderConfigIOSRestorationBehavior restorationBehavior);
 
-#endif // Check for iOS >= 27
+API_AVAILABLE(ios(27.0))
+UIBarMinimizationSafeAreaAdjustment
+UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjustment(
+    react::RNSStackHeaderConfigIOSSafeAreaAdjustment safeAreaAdjustment);
+
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 RNSHeaderItemVisibilityPriority
 RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority);
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-API_AVAILABLE(ios(27.0))
-UIBarButtonItemVisibilityPriority
-UIBarButtonItemVisibilityPriorityFromRNSHeaderItemVisibilityPriority(
-    RNSHeaderItemVisibilityPriority visibilityPriority);
-#endif // Check for iOS >= 27 && !TARGET_OS_TV && !TARGET_OS_VISION
 
 }; // namespace rnscreens::conversion
 

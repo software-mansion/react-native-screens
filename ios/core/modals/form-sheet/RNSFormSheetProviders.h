@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)preferredCornerRadius;
 - (NSInteger)largestUndimmedDetentIndex;
 - (nullable UIColor *)nativeContainerBackgroundColor;
+- (nullable UIVisualEffect *)backgroundEffect;
 
 @end
 

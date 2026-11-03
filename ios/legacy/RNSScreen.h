@@ -120,6 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) NSInteger sheetInitialDetent;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
+@property (nonatomic) RNSScreenSheetBackgroundEffect sheetBackgroundEffect;
 #endif // !TARGET_OS_TV
 
 #if defined(__cplusplus)

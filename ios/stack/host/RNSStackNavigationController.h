@@ -3,8 +3,8 @@
 #import "RNSContainer.h"
 #import "RNSContainerTransactionSupporting.h"
 #include "RNSStackNavigationBarCoordinator.h"
-#include "RNSStackScreenComponentView.h"
 
+@class RNSStackScreenController;
 @protocol RNSViewFrameChangeDelegate;
 
 @interface RNSStackNavigationController : UINavigationController <RNSContainer, RNSContainerTransactionSupporting>
@@ -13,8 +13,8 @@
 
 @property (nonatomic, readonly, nonnull) RNSStackNavigationBarCoordinator *navigationBarCoordinator;
 
-- (void)enqueuePushOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (void)enqueuePushOperation:(nonnull RNSStackScreenController *)screenController;
 
-- (void)enqueuePopOperation:(nonnull RNSStackScreenComponentView *)stackScreen;
+- (void)enqueuePopOperation:(nonnull RNSStackScreenController *)screenController;
 
 @end

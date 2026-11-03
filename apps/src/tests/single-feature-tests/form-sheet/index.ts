@@ -2,6 +2,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 // Scenario objects (default exports) — carry metadata, used to build the
 // scenario group consumed by the selection menu.
+import TestFormSheetBackgroundEffect from './test-form-sheet-background-effect-ios';
 import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
@@ -22,6 +23,7 @@ import TestFormSheetStacking from './test-form-sheet-stacking';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
+export { default as TestFormSheetBackgroundEffect } from './test-form-sheet-background-effect-ios';
 export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
@@ -41,6 +43,7 @@ export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-
 export { default as TestFormSheetStacking } from './test-form-sheet-stacking';
 
 const scenarios = {
+  TestFormSheetBackgroundEffect,
   TestFormSheetBase,
   TestFormSheetDismissEvents,
   TestFormSheetExpandScrollView,

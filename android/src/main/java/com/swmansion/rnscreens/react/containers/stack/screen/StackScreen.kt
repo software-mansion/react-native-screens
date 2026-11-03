@@ -10,6 +10,8 @@ import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
+import com.swmansion.rnscreens.core.containers.stack.animation.model.StackReplaceAnimation
 import com.swmansion.rnscreens.core.containers.stack.header.config.OnHeaderConfigurationAttachListener
 import com.swmansion.rnscreens.core.containers.stack.screen.PreventNativeDismissChangeObserver
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
@@ -57,6 +59,14 @@ internal class StackScreen(
             stackHost.get()?.stackScreenChangedActivityMode(this)
         }
     }
+
+    /**
+     * Read whenever FragmentManager asks for a transition, so a change applies to the next
+     * operation without notification.
+     */
+    override var animation: StackAnimationConfig = StackAnimationConfig.DEFAULT
+
+    override var replaceAnimation: StackReplaceAnimation = StackReplaceAnimation.POP
 
     var screenKey: String? = null
         set(value) {

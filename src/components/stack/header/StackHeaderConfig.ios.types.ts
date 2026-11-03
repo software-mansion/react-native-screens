@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { TextStyle } from 'react-native';
+import type { ColorValue, TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
@@ -223,6 +223,18 @@ export interface StackHeaderInlineItemIOS
    */
   variant?: StackHeaderItemVariantIOS | undefined;
   /**
+   * @summary Tint color of the item.
+   *
+   * @description
+   * Applied to the item's title and icon. For `prominent` items on iOS 26,
+   * the tint affects the emphasized background instead.
+   *
+   * When unset, the item uses the default system tint.
+   *
+   * @platform iOS
+   */
+  tintColor?: ColorValue | undefined;
+  /**
    * @summary Whether the item is disabled.
    *
    * @description
@@ -430,6 +442,101 @@ export type StackHeaderMinimizationBehaviorIOS =
  */
 export type StackHeaderRestorationBehaviorIOS = 'automatic' | 'atScrollEdge';
 
+/**
+ * @summary Controls whether the safe area adjusts while the navigation bar
+ * minimizes.
+ *
+ * @description
+ * - `automatic`: the system determines the safe area adjustment.
+ * - `enabled`: the safe area adjusts as the navigation bar minimizes, allowing
+ *   content to reflow.
+ * - `disabled`: the safe area remains unchanged as the navigation bar
+ *   minimizes.
+ *
+ * @platform iOS
+ */
+export type StackHeaderSafeAreaAdjustmentIOS =
+  | 'automatic'
+  | 'enabled'
+  | 'disabled';
+
+/**
+ * @summary Text attributes of header items in a single control state.
+ *
+ * @platform iOS
+ */
+export interface StackHeaderButtonStateAppearanceIOS {
+  /**
+   * @summary Specifies the font family used for the item's text.
+   *
+   * @platform ios
+   */
+  fontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * @summary Specifies the font size used for the item's text.
+   *
+   * @description This prop also scales SF Symbol icons of the items.
+   *
+   * @platform ios
+   */
+  fontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * @summary Specifies the font weight used for the item's text.
+   *
+   * @platform ios
+   */
+  fontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * @summary Specifies the font style used for the item's text.
+   *
+   * @platform ios
+   */
+  fontStyle?: TextStyle['fontStyle'] | undefined;
+  /**
+   * @summary Specifies the font color used for the item's text.
+   *
+   * @platform ios
+   */
+  fontColor?: TextStyle['color'] | undefined;
+}
+
+/**
+ * @summary Per-state appearance of header items of a single variant.
+ *
+ * @description For each state left unset, UIKit derives the appearance from
+ * the `normal` state. Explicitly set per-state attributes merge into the
+ * state's defaults, so e.g. a font-only state keeps the system text color
+ * for that state.
+ *
+ * @platform iOS
+ */
+export interface StackHeaderButtonAppearanceIOS {
+  /**
+   * @summary Text attributes of the item in the normal state.
+   *
+   * @platform ios
+   */
+  normal?: StackHeaderButtonStateAppearanceIOS | undefined;
+  /**
+   * @summary Text attributes of the item in the highlighted (pressed) state.
+   *
+   * @platform ios
+   */
+  highlighted?: StackHeaderButtonStateAppearanceIOS | undefined;
+  /**
+   * @summary Text attributes of the item in the disabled state.
+   *
+   * @platform ios
+   */
+  disabled?: StackHeaderButtonStateAppearanceIOS | undefined;
+  /**
+   * @summary Text attributes of the item in the focused state.
+   *
+   * @platform ios
+   */
+  focused?: StackHeaderButtonStateAppearanceIOS | undefined;
+}
+
 export interface StackHeaderAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of the header.
@@ -578,6 +685,39 @@ export interface StackHeaderAppearanceIOS {
    * @supported iOS 26 and higher
    */
   subtitleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
+  /**
+   * @summary Appearance of plain header items.
+   *
+   * @description Applies to the text of header items with the `plain` variant.
+   * Also applies to the back button title; the `backButton` attributes
+   * override it per attribute. Attributes can be customized per control
+   * state: `normal`, `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
+   */
+  button?: StackHeaderButtonAppearanceIOS | undefined;
+  /**
+   * @summary Appearance of prominent header items.
+   *
+   * @description Applies to the text of header items with the `prominent`
+   * variant (on iOS below 26 these fall back to the `done` style, which this
+   * prop styles as well). Attributes can be customized per control state:
+   * `normal`, `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
+   */
+  prominentButton?: StackHeaderButtonAppearanceIOS | undefined;
+  /**
+   * @summary Appearance of the back button title.
+   *
+   * @description Overrides the `button` attributes for the back button title,
+   * attribute by attribute — the unset attributes keep following the `button`
+   * appearance. Attributes can be customized per control state: `normal`,
+   * `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
+   */
+  backButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
 
 export interface StackHeaderConfigPropsIOS {
@@ -753,8 +893,25 @@ export interface StackHeaderConfigPropsIOS {
    */
   restorationBehavior?: StackHeaderRestorationBehaviorIOS | undefined;
   /**
+   * @summary Controls whether the safe area adjusts while the navigation bar
+   * minimizes.
+   *
+   * @default 'automatic'
+   *
+   * @platform iOS
+   *
+   * @supported iOS 27 and higher
+   */
+  safeAreaAdjustment?: StackHeaderSafeAreaAdjustmentIOS | undefined;
+  /**
    * @summary Appearance of the header when the edge of scrollable content
    * is not aligned with the edge of the header.
+   *
+   * @description
+   * Native platform limitations:
+   * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
+   *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
+   *   and do not update on property changes or scroll edge transitions.
    *
    * @platform ios
    */
@@ -766,6 +923,11 @@ export interface StackHeaderConfigPropsIOS {
    * @description If unset, derives the configuration from `standardAppearance`,
    * otherwise becomes a standalone definition. In both cases it keeps transparent
    * background by default (iOS <18).
+   *
+   * Native platform limitations:
+   * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
+   *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
+   *   and do not update on property changes or scroll edge transitions.
    *
    * @platform ios
    */

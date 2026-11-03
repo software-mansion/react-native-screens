@@ -10,11 +10,19 @@ export type {
 
 export type {
   OnDismissEventPayload,
-  EmptyEventPayload, // TODO: Remove this from public types (we need one shared type for this)
   OnDismissEvent,
   StackScreenActivityMode,
+  StackScreenReplaceAnimation,
   StackScreenEventHandler,
   StackScreenProps,
+  StackScreenAnimation,
+  StackScreenAnimationPresetName,
+  StackScreenAnimationPresetRef,
+  StackScreenAnimationTimingOptions,
+  StackScreenAnimationEasing,
+  StackScreenAnimationEasingName,
+  StackScreenAnimationBezier,
+  StackScreenAnimationLength,
 } from './screen';
 
 export type {
@@ -45,9 +53,12 @@ export type {
   StackHeaderBackButtonDisplayModeIOS,
   StackHeaderMinimizationBehaviorIOS,
   StackHeaderRestorationBehaviorIOS,
+  StackHeaderSafeAreaAdjustmentIOS,
   StackHeaderItemVisibilityPriorityIOS,
   StackHeaderConfigPropsIOS,
   StackHeaderAppearanceIOS,
+  StackHeaderButtonAppearanceIOS,
+  StackHeaderButtonStateAppearanceIOS,
   StackHeaderItemVariantIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,

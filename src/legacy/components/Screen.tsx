@@ -117,6 +117,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
     const {
       // formSheet presentation related props
       sheetAllowedDetents = [1.0],
+      sheetBackgroundEffect = 'automatic',
       sheetLargestUndimmedDetentIndex = SHEET_DIMMED_ALWAYS,
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
@@ -290,6 +291,7 @@ export const InnerScreen = React.forwardRef<ScreenInstance, ScreenProps>(
             activityState={activityState}
             screenId={screenId}
             sheetAllowedDetents={resolvedSheetAllowedDetents}
+            sheetBackgroundEffect={sheetBackgroundEffect}
             sheetLargestUndimmedDetent={resolvedSheetLargestUndimmedDetent}
             sheetElevation={sheetElevation}
             sheetShouldOverflowTopInset={sheetShouldOverflowTopInset}

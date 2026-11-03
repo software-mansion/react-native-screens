@@ -263,6 +263,11 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setSheetBackgroundEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
     override fun setTransitionDuration(
         view: Screen?,
         value: Int,

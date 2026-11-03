@@ -58,6 +58,15 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
           );
         }
       },
+      hide: column => {
+        if (nativeRef.current) {
+          SplitHostNativeCommands.hideColumn(nativeRef.current, column);
+        } else {
+          console.warn(
+            '[RNScreens] Reference to native SplitHost component has not been updated yet',
+          );
+        }
+      },
     }),
     [],
   );

@@ -338,39 +338,6 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
   }
 }
 
-std::optional<UITabBarSystemItem> RNSTabsScreenSystemItemToUITabBarSystemItem(RNSTabsScreenSystemItem systemItem)
-{
-  switch (systemItem) {
-    case RNSTabsScreenSystemItemNone:
-      return std::nullopt;
-    case RNSTabsScreenSystemItemBookmarks:
-      return UITabBarSystemItemBookmarks;
-    case RNSTabsScreenSystemItemContacts:
-      return UITabBarSystemItemContacts;
-    case RNSTabsScreenSystemItemDownloads:
-      return UITabBarSystemItemDownloads;
-    case RNSTabsScreenSystemItemFavorites:
-      return UITabBarSystemItemFavorites;
-    case RNSTabsScreenSystemItemFeatured:
-      return UITabBarSystemItemFeatured;
-    case RNSTabsScreenSystemItemHistory:
-      return UITabBarSystemItemHistory;
-    case RNSTabsScreenSystemItemMore:
-      return UITabBarSystemItemMore;
-    case RNSTabsScreenSystemItemMostRecent:
-      return UITabBarSystemItemMostRecent;
-    case RNSTabsScreenSystemItemMostViewed:
-      return UITabBarSystemItemMostViewed;
-    case RNSTabsScreenSystemItemRecents:
-      return UITabBarSystemItemRecents;
-    case RNSTabsScreenSystemItemSearch:
-      return UITabBarSystemItemSearch;
-    case RNSTabsScreenSystemItemTopRated:
-      return UITabBarSystemItemTopRated;
-  }
-  return std::nullopt;
-}
-
 RNSTabsScreenTabRole RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(react::RNSTabsScreenIOSTabRole tabRole)
 {
   using enum facebook::react::RNSTabsScreenIOSTabRole;
