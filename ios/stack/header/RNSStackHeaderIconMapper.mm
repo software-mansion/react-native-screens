@@ -1,8 +1,12 @@
 #import "RNSStackHeaderIconMapper.h"
 
-static CGSize RNSImageSourceSizeFromDictionary(NSDictionary *source)
+static RNSStackHeaderIconImageSource RNSStackHeaderIconImageSourceFromDictionary(NSDictionary *source)
 {
-  return CGSizeMake([source[@"width"] doubleValue], [source[@"height"] doubleValue]);
+  return RNSStackHeaderIconImageSource{
+      .source = source,
+      .size = CGSizeMake([source[@"width"] doubleValue], [source[@"height"] doubleValue]),
+      .scale = [source[@"scale"] doubleValue],
+  };
 }
 
 @implementation RNSStackHeaderIconMapper
@@ -22,17 +26,13 @@ static CGSize RNSImageSourceSizeFromDictionary(NSDictionary *source)
   if ([type isEqualToString:@"sfSymbol"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeSfSymbol
                                            resourceName:dict[@"name"]
-                                            imageSource:nil
-                                        imageSourceSize:CGSizeZero
-                                       imageSourceScale:0];
+                                            imageSource:RNSStackHeaderIconImageSource{}];
   }
 
   if ([type isEqualToString:@"xcasset"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeXcasset
                                            resourceName:dict[@"name"]
-                                            imageSource:nil
-                                        imageSourceSize:CGSizeZero
-                                       imageSourceScale:0];
+                                            imageSource:RNSStackHeaderIconImageSource{}];
   }
 
   if ([type isEqualToString:@"imageSource"]) {
@@ -42,9 +42,7 @@ static CGSize RNSImageSourceSizeFromDictionary(NSDictionary *source)
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeImageSource
                                            resourceName:nil
-                                            imageSource:source
-                                        imageSourceSize:RNSImageSourceSizeFromDictionary(source)
-                                       imageSourceScale:[source[@"scale"] doubleValue]];
+                                            imageSource:RNSStackHeaderIconImageSourceFromDictionary(source)];
   }
 
   if ([type isEqualToString:@"templateSource"]) {
@@ -54,9 +52,7 @@ static CGSize RNSImageSourceSizeFromDictionary(NSDictionary *source)
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeTemplateSource
                                            resourceName:nil
-                                            imageSource:source
-                                        imageSourceSize:RNSImageSourceSizeFromDictionary(source)
-                                       imageSourceScale:[source[@"scale"] doubleValue]];
+                                            imageSource:RNSStackHeaderIconImageSourceFromDictionary(source)];
   }
 
   return nil;

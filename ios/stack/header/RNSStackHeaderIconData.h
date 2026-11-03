@@ -12,30 +12,34 @@ typedef NS_ENUM(NSInteger, RNSStackHeaderIconType) {
   RNSStackHeaderIconTypeTemplateSource,
 };
 
+/**
+ * Image source of `RNSStackHeaderIconTypeImageSource` / `RNSStackHeaderIconTypeTemplateSource` icons.
+ */
+typedef struct {
+  /**
+   * Loaded through `RNSImageLoading`. Opaque to `core`.
+   */
+  __strong id _Nullable source;
+
+  /**
+   * Size and scale the source declares, used for a placeholder until the image loads. Zero when not declared.
+   */
+  CGSize size;
+  CGFloat scale;
+} RNSStackHeaderIconImageSource;
+
 @interface RNSStackHeaderIconData : NSObject
 
 @property (nonatomic, readonly) RNSStackHeaderIconType iconType;
 @property (nonatomic, copy, readonly, nullable) NSString *resourceName;
 
-/**
- * Image source of `RNSStackHeaderIconTypeImageSource` / `RNSStackHeaderIconTypeTemplateSource` icons, loaded through
- * `RNSImageLoading`. Opaque to `core`.
- */
-@property (nonatomic, strong, readonly, nullable) id imageSource;
-
-/**
- * Size and scale the image source declares, used for a placeholder until the image loads. Zero when not declared.
- */
-@property (nonatomic, readonly) CGSize imageSourceSize;
-@property (nonatomic, readonly) CGFloat imageSourceScale;
+@property (nonatomic, readonly) RNSStackHeaderIconImageSource imageSource;
 
 @property (nonatomic, strong, nullable) UIImage *resolvedImage;
 
 - (instancetype)initWithType:(RNSStackHeaderIconType)iconType
                 resourceName:(nullable NSString *)resourceName
-                 imageSource:(nullable id)imageSource
-             imageSourceSize:(CGSize)imageSourceSize
-            imageSourceScale:(CGFloat)imageSourceScale;
+                 imageSource:(RNSStackHeaderIconImageSource)imageSource;
 
 @end
 
