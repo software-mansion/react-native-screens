@@ -106,8 +106,8 @@ function makeButtonAppearance(
 }
 
 function buildAppearances(config: Config): {
-  standardAppearance?: StackHeaderAppearanceIOS;
-  scrollEdgeAppearance?: StackHeaderAppearanceIOS;
+  standardAppearance?: StackHeaderAppearanceIOS | undefined;
+  scrollEdgeAppearance?: StackHeaderAppearanceIOS | undefined;
 } {
   const standardButton = makeButtonAppearance(
     config.styleButtons ? BUTTON_STYLE : undefined,

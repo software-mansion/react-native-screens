@@ -675,9 +675,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @description Overrides the `button` attributes for the back button title,
    * attribute by attribute — the unset attributes keep following the `button`
-   * appearance (UIKit derives the back button appearance from the buttons
-   * appearance; verified on iOS 18 and 27). Attributes can be customized per
-   * control state: `normal`, `highlighted`, `disabled` and `focused`.
+   * appearance. Attributes can be customized per control state: `normal`,
+   * `highlighted`, `disabled` and `focused`.
    *
    * @platform ios
    */
