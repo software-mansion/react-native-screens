@@ -16,6 +16,12 @@ variant only, all other checks to both.
 
 **OS test creation version:** iOS: 26.5.
 
+## Notes
+
+Perform the steps for `ContainedModalOverContent` first - the regular steps + steps
+marked with "**Over**". Then, switch the "Variant" to "replacing content" and perform
+the regular steps + steps marked with "**Replacing**".
+
 ## E2E test
 
 TBD.
@@ -24,7 +30,7 @@ TBD.
 
 - iPhone: device or simulator.
 
-## Steps
+## Steps (see notes)
 
 ### Baseline
 
@@ -38,8 +44,6 @@ TBD.
       counter" and "Open modal" is visible near the top of the scroll view; a
       tall spacer below it keeps the content scrollable.
 
----
-
 ### Present at scroll offset + containment
 
 2. Scroll down slightly (so the scroll offset is non-zero but the provider box
@@ -48,8 +52,10 @@ TBD.
 - [ ] The dark overlay fades in covering exactly the light-blue box — correct
       position despite the non-zero scroll offset; nothing outside the box is
       covered or dimmed.
+
 - [ ] **Over:** the provider counter and "Open modal" stay visible through the
       translucent overlay and the counter keeps ticking.
+
 - [ ] **Replacing:** the provider counter and "Open modal" are gone — only the
       light-blue background shows through the overlay, with the modal's own
       counter, "Press & move" and "Dismiss from JS" on top.
@@ -69,6 +75,7 @@ TBD.
 - [ ] The provider box animates/changes between heights and the overlay tracks
       it exactly both times — modal never sticks out of, nor undershoots, the
       box.
+
 - [ ] **Replacing:** tap "Grow provider" again, then "Dismiss from JS" while
       the box is grown: the restored content fills the grown box (counter and
       "Open modal" at its top, nothing clipped, offset or sized to the old
@@ -80,6 +87,7 @@ TBD.
 5. Rotate the device to landscape and back to portrait (modal still open).
 
 - [ ] After each rotation the overlay still covers exactly the provider box.
+
 - [ ] **Replacing:** rotate to landscape again, tap "Dismiss from JS", rotate
       back: the restored content fits the landscape box, then the portrait
       box — no stale frame from the other orientation. Re-open the modal.
@@ -92,7 +100,9 @@ TBD.
 - [ ] The pushed screen fully covers the stack; after popping, the modal is
       still open, correctly covering the provider box, and the modal counter
       kept ticking (value advanced, never reset).
+
 - [ ] **Over:** the provider counter visible through the overlay advanced too.
+
 - [ ] **Replacing:** the restored modal still shows only the light-blue
       background underneath — the provider's children must not reappear under
       the modal on restore.
@@ -107,6 +117,7 @@ TBD.
 - [ ] After popping, the modal is NOT visible and the provider content ("Open
       modal", counter) is fully tappable — no leftover overlay, no touch-dead
       zone.
+
 - [ ] **Replacing:** the provider counter is continuous (advanced through the
       whole suspend/dismiss cycle, never reset) and "Open modal" sits at its
       original place.
@@ -126,7 +137,9 @@ TBD.
 - [ ] A dark-red overlay fades in covering the WHOLE screen content (the native
       header stays visible). All underlying controls are blocked; the
       full-screen counter ticks.
+
 - [ ] **Over:** the buttons, counter and scroll view stay visible underneath.
+
 - [ ] **Replacing:** every control under the overlay is gone — only the screen
       background shows through.
 
@@ -135,9 +148,11 @@ TBD.
 - [ ] The overlay fades out and every control is interactive again. The inner
       (light-blue box) modal still opens and closes independently afterwards —
       the explicit ids keep the two modals paired with their own providers.
+
 - [ ] **Replacing:** every control is back at its place, the outside counter
       kept its value and the provider counter is continuous.
-- [ ] (Optional) With the inner modal open, open the full-screen modal too: both
+
+- [ ] With the inner modal open, open the full-screen modal too: both
       can be open simultaneously (different providers — the one-modal limit is
       per provider), the full-screen overlay stacks ABOVE the inner one, and
       dismissing the outer leaves the inner intact.
@@ -150,17 +165,9 @@ TBD.
 - [ ] The overlay fades out, provider content is tappable again; re-presenting
       works identically (no leftover touch-dead zones, no misplaced overlay),
       counters continuous throughout, no `[RNScreens]` warnings.
+
 - [ ] **Replacing:** after each dismissal the box content is back intact and
       at its place; after each re-present only the background shows through.
-
-### Second variant
-
-17. Dismiss everything, tap "Variant: over content" (it reads "Variant:
-    replacing content" afterwards) and repeat steps 2-16 with the
-    **Replacing** checks.
-
-- [ ] Every shared expectation holds; the **Replacing** checks pass and the
-      **Over** checks are skipped.
 
 ### Scroll tracking while open — run LAST
 
@@ -168,6 +175,7 @@ TBD.
 
 - [ ] The overlay moves in lockstep with the provider box — no detached or
       lagging overlay.
+
 - [ ] **Replacing:** scroll the box fully off screen and back: the overlay
       still covers exactly the box and still shows only the background.
 
@@ -191,6 +199,7 @@ TBD.
       drags cancel the press via the surrounding ScrollView's pan gesture —
       standard React Native behavior, same as any Pressable inside a
       ScrollView.)
+
 - [ ] In React DevTools / the RN component tree, the modal's children report
       their real on-screen positions (inside the provider box), not
       content-local coordinates around the origin.
@@ -203,11 +212,13 @@ TBD.
 
 - [ ] The modal covers exactly the light-blue box inside the sheet, and the
       sheet content outside the box stays interactive.
+
 - [ ] The button shows its pressed-in color while the finger moves and the
       counter next to it increments on release — the sheet delivers touches
       through its own touch handler, and the modal's press rects must be
       expressed in that space (a window-space offset cancels the press on the
       first move).
+
 - [ ] In React DevTools / the RN component tree, the sheet modal's children
       report positions consistent with their on-screen place inside the sheet.
 
