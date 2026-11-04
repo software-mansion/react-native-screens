@@ -591,7 +591,7 @@ Allows for customizing font size to be used for back button title on iOS.
 
 ### `backTitleLetterSpacing` (iOS only)
 
-Customize letter spacing in points for the back button title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. The value replaces the font's default kerning rather than adding to it, so `0` disables kerning. When omitted, the default spacing is used.
+Customize letter spacing in points for the back button title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. The value is added to the spacing after each character, on top of the font's own kerning; `0` turns the font's kerning off. When omitted, the default spacing is used.
 
 ### `backTitleVisible` (iOS only)
 
@@ -641,7 +641,7 @@ An array of objects describing native bar button items to display on the left or
 
 `title: string` — Title of the button.
 
-`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; letterSpacing?: number; }` — Style for the button title. `letterSpacing` is in points and maps to the attributed-string kern; `0` disables kerning.
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; letterSpacing?: number; }` — Style for the button title. `letterSpacing` is in points and maps to the attributed-string kern; `0` turns the font's kerning off.
 
 `icon?: PlatformIconIOS` — Icon for the item.
 
@@ -808,7 +808,7 @@ Customize the weight of the font to be used for the large title.
 
 ### `largeTitleLetterSpacing` (iOS only)
 
-Customize letter spacing in points for the large title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. The value replaces the font's default kerning rather than adding to it, so `0` disables kerning. When omitted, the default spacing is used.
+Customize letter spacing in points for the large title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. The value is added to the spacing after each character, on top of the font's own kerning; `0` turns the font's kerning off. When omitted, the default spacing is used.
 
 ### `largeTitleHideShadow` (iOS only)
 
@@ -838,7 +838,7 @@ Customize the weight of the font to be used for the title.
 
 Customize letter spacing in points for the title. Negative and fractional values are supported. When omitted, the default spacing is used.
 
-- On iOS it maps to the attributed-string kern (`NSKernAttributeName`). The value replaces the font's default kerning rather than adding to it, so `0` disables kerning.
+- On iOS it maps to the attributed-string kern (`NSKernAttributeName`). The value is added to the spacing after each character, on top of the font's own kerning; `0` turns the font's kerning off.
 - On Android it is converted to ems, like `letterSpacing` on `Text`.
 
 ### `topInsetEnabled` (Android only)

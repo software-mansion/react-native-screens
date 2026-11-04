@@ -5,8 +5,8 @@
 Exercises `titleLetterSpacing`, `largeTitleLetterSpacing` (iOS),
 `backTitleLetterSpacing` (iOS) and bar button item `titleStyle.letterSpacing`
 (iOS) on the native legacy V4 stack. Spacing is in points. On iOS it maps to
-the attributed-string kern, which replaces the font's default kerning, so an
-explicit `0` (kerning disabled) differs from an omitted value. On Android only
+the attributed-string kern, added on top of the font's own kerning. An
+explicit `0` turns the font's kerning off, so it differs from an omitted value. On Android only
 the title is customizable, and the value is converted to ems like `Text`'s
 `letterSpacing`. This is a manual scenario.
 

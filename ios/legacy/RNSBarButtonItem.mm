@@ -318,8 +318,7 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
                                                style:nil
                                              variant:nil
                                      scaleMultiplier:1.0];
-  } else if (fontSize || titleStyle[@"color"]) {
-    // Letter spacing alone sets no font, so UIKit keeps the item's native font.
+  } else {
     CGFloat resolvedFontSize = fontSize ? [fontSize floatValue] : 0;
     if (resolvedFontSize == 0) {
 #if TARGET_OS_TV

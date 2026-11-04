@@ -16,11 +16,11 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.core.utils.spToPx
 import com.swmansion.rnscreens.legacy.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.legacy.events.HeaderDetachedEvent
 import kotlin.math.max
@@ -344,7 +344,7 @@ class ScreenStackHeaderConfig(
                     defaultTitleLetterSpacing = titleTextView.letterSpacing
                 }
                 // TextView letter spacing is in ems; convert from points like React Native's Text does.
-                titleTextView.letterSpacing = PixelUtil.toPixelFromSP(letterSpacing) / titleTextView.textSize
+                titleTextView.letterSpacing = titleTextView.spToPx(letterSpacing) / titleTextView.textSize
             } else {
                 defaultTitleLetterSpacing?.let { titleTextView.letterSpacing = it }
             }

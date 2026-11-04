@@ -736,7 +736,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backTitleFontSize?: number | undefined;
   /**
    * Customize letter spacing in points for the back button title, mapping to the attributed-string kern.
-   * The value replaces the font's default kerning rather than adding to it, so `0` disables kerning.
+   * The value is added on top of the font's own kerning; `0` turns the font's kerning off.
    * When undefined, the default spacing is used.
    * @platform ios
    */
@@ -845,7 +845,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   largeTitleFontWeight?: string | undefined;
   /**
    * Customize letter spacing in points for the large title, mapping to the attributed-string kern.
-   * The value replaces the font's default kerning rather than adding to it, so `0` disables kerning.
+   * The value is added on top of the font's own kerning; `0` turns the font's kerning off.
    * When undefined, the default spacing is used.
    * @platform ios
    */
@@ -939,8 +939,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   titleFontWeight?: string | undefined;
   /**
    * Customize letter spacing in points for the title.
-   * On iOS it maps to the attributed-string kern and replaces the font's default kerning
-   * rather than adding to it, so `0` disables kerning. On Android it is converted to ems like `Text`'s `letterSpacing`.
+   * On iOS it maps to the attributed-string kern, added on top of the font's own kerning;
+   * `0` turns the font's kerning off. On Android it is converted to ems like `Text`'s `letterSpacing`.
    * When undefined, the default spacing is used.
    */
   titleLetterSpacing?: number | undefined;
@@ -1287,7 +1287,7 @@ interface SharedHeaderBarButtonItem {
         color?: ColorValue | undefined;
         /**
          * Letter spacing in points, mapping to the attributed-string kern.
-         * `0` disables kerning; when undefined, the default spacing is used.
+         * `0` turns the font's kerning off; when undefined, the default spacing is used.
          */
         letterSpacing?: number | undefined;
       }
