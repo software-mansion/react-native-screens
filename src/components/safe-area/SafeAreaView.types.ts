@@ -20,7 +20,8 @@ export type Edge = 'top' | 'right' | 'bottom' | 'left';
  * @remarks
  * The following values are supported:
  * - `'all'` — both kinds below; for each edge, the larger inset is used.
- * - `'system'` — the insets of the system bars and the display cutout.
+ * - `'system'` — the insets defined by the system, such as the system bars or
+ *   the display cutout.
  * - `'interface'` — the insets of the native containers' own interface.
  */
 export type InsetType = 'all' | 'system' | 'interface';
