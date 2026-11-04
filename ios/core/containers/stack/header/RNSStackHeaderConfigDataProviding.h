@@ -26,7 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic, readonly) BOOL backButtonMenuEnabled;
 @property (nonatomic, readonly, nullable) RNSStackHeaderIconData *backButtonIcon;
-@property (nonatomic, readonly, nullable) RNSStackHeaderIconData *backButtonLargeContentSizeIcon;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *titleMenu;
 @property (nonatomic, readonly, nullable) UINavigationBarAppearance *standardAppearance;
 @property (nonatomic, readonly, nullable) UINavigationBarAppearance *scrollEdgeAppearance;

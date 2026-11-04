@@ -79,7 +79,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
   _backButtonIcon = nil;
-  _backButtonLargeContentSizeIcon = nil;
   _titleMenu = nil;
   _standardAppearance = nil;
   _scrollEdgeAppearance = nil;
@@ -485,12 +484,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   if (oldHeaderProps.backButtonIcon != newHeaderProps.backButtonIcon) {
     _backButtonIcon = [RNSStackHeaderIconMapper
         iconFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newHeaderProps.backButtonIcon)];
-  }
-
-  if (oldHeaderProps.backButtonLargeContentSizeIcon != newHeaderProps.backButtonLargeContentSizeIcon) {
-    _backButtonLargeContentSizeIcon =
-        [RNSStackHeaderIconMapper iconFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(
-                                                         newHeaderProps.backButtonLargeContentSizeIcon)];
   }
 
   if (oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance) {

@@ -5,7 +5,7 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-back-button-ios',
   details:
     'Tests back button configuration, layout with respect to changing widths of elements in header, ' +
-    'toggling the long press navigation history menu, custom back button icon, and the Large Content Viewer image. ' +
+    'toggling the long press navigation history menu, and custom back button icon. ' +
     'Back button props are configured on the screen ' +
     'that renders the back button, but the native configuration is performed on the screen below.',
   platforms: ['ios'],

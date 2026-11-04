@@ -4,7 +4,7 @@
 
 **Description:** Tests back button configuration, layout with respect to changing
 widths of elements in header, toggling the long-press navigation history menu,
-custom back button icon, and the image shown in the Large Content Viewer.
+and custom back button icon.
 Back button props are configured on the screen
 that renders the back button, but the native configuration is performed on the screen below.
 
@@ -17,8 +17,6 @@ TBD.
 ## Prerequisites
 
 - iOS simulator
-- For `largeContentSizeIcon`: an accessibility text size (Settings → Accessibility →
-  Display & Text Size → Larger Text), otherwise the Large Content Viewer doesn't appear
 
 ## Note
 
@@ -144,22 +142,3 @@ Back button menu behaves similarly on both versions.
   - Only the custom icon is displayed
 6. Tap `icon` until it shows undefined.
   - The system chevron is restored
-
----
-
-### `largeContentSizeIcon` (both versions)
-
-Requires an accessibility text size (see Prerequisites).
-
-1. Launch the test screen. Push First. Long-press the back button.
-  - The Large Content Viewer shows the system default for the back button
-2. Under Current screen, tap `largeContentSizeIcon` once to set "sfSymbol". Long-press the back button.
-  - The Large Content Viewer shows the circled backward arrow
-  - The back button in the header is unchanged (system chevron)
-3. Tap `largeContentSizeIcon` again to set "imageSource". Long-press the back button.
-  - The Large Content Viewer shows the image at the size it is provided
-4. Tap `icon` to set "sfSymbol". Long-press the back button.
-  - The header shows the custom icon, the Large Content Viewer still shows
-    the `largeContentSizeIcon` image (the two props are independent)
-5. Tap `largeContentSizeIcon` until it shows undefined. Long-press the back button.
-  - The Large Content Viewer no longer shows the custom image

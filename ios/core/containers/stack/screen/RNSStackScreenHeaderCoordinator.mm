@@ -516,9 +516,7 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
     [controller.navigationController.view setNeedsLayout];
   }
 
-  UIImage *backButtonLargeContentSizeImage =
-      [self resolveBackButtonIcon:_configDataProvider.backButtonLargeContentSizeIcon];
-  [self applyBackButtonConfigForController:controller backButtonLargeContentSizeImage:backButtonLargeContentSizeImage];
+  [self applyBackButtonConfigForController:controller];
 #endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -554,21 +552,19 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
 
   __weak auto weakSelf = self;
   __weak auto weakIcon = icon;
-  return [RNSStackHeaderIconResolver resolveIcon:icon
-                                 withImageLoader:_imageLoader
-                            asyncCompletionBlock:^(UIImage *_Nullable image) {
-                              auto strongSelf = weakSelf;
-                              if (strongSelf == nil || image == nil || weakIcon == nil ||
-                                  (strongSelf.configDataProvider.backButtonIcon != weakIcon &&
-                                   strongSelf.configDataProvider.backButtonLargeContentSizeIcon != weakIcon)) {
-                                return;
-                              }
-                              [strongSelf applyConfigProperties];
-                            }];
+  return [RNSStackHeaderIconResolver
+               resolveIcon:icon
+           withImageLoader:_imageLoader
+      asyncCompletionBlock:^(UIImage *_Nullable image) {
+        auto strongSelf = weakSelf;
+        if (strongSelf == nil || image == nil || strongSelf.configDataProvider.backButtonIcon != weakIcon) {
+          return;
+        }
+        [strongSelf applyConfigProperties];
+      }];
 }
 
 - (void)applyBackButtonConfigForController:(RNSStackScreenController *)controller
-           backButtonLargeContentSizeImage:(nullable UIImage *)backButtonLargeContentSizeImage
 {
   NSArray<UIViewController *> *viewControllers = controller.navigationController.viewControllers;
   NSUInteger index = [viewControllers indexOfObject:controller];
@@ -580,20 +576,6 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
   _backButtonConfigTargetItem = prevItem;
   prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
   prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
-
-  if (backButtonLargeContentSizeImage != nil) {
-    NSString *title = _configDataProvider.backButtonDisplayMode == UINavigationItemBackButtonDisplayModeDefault
-        ? _configDataProvider.backButtonTitle
-        : nil;
-    UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:title
-                                                                          style:UIBarButtonItemStylePlain
-                                                                         target:nil
-                                                                         action:nil];
-    backBarButtonItem.largeContentSizeImage = backButtonLargeContentSizeImage;
-    prevItem.backBarButtonItem = backBarButtonItem;
-  } else {
-    prevItem.backBarButtonItem = nil;
-  }
 }
 #endif // !TARGET_OS_TV
 
@@ -604,7 +586,6 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
   _backButtonConfigTargetItem = nil;
   targetItem.backButtonTitle = nil;
   targetItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
-  targetItem.backBarButtonItem = nil;
 }
 #endif // !TARGET_OS_TV
 

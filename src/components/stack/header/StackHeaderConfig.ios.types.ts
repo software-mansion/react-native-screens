@@ -733,20 +733,6 @@ export interface StackHeaderConfigPropsIOS {
    */
   backButtonIcon?: PlatformIconIOS | undefined;
   /**
-   * @summary Image shown for the back button in the accessibility Large Content Viewer.
-   *
-   * @description
-   * Configured on the screen whose back button it applies to (the screen that
-   * is pushed on top). Maps to `largeContentSizeImage` of the back bar button
-   * item. The image is displayed as provided, so it should be larger than
-   * the back button icon. When `undefined`, no large content size image is set.
-   *
-   * Supports SF Symbols, xcassets, and image sources.
-   *
-   * @platform iOS
-   */
-  backButtonLargeContentSizeIcon?: PlatformIconIOS | undefined;
-  /**
    * @summary Custom item to display as a subtitle.
    *
    * @description Takes precedence over subtitle text.

@@ -62,7 +62,6 @@ interface BackButtonConfig {
   backButtonMenuEnabled: boolean;
   trailingItemsCount: number;
   icon: IconOption;
-  largeContentSizeIcon: IconOption;
 }
 
 const INITIAL_CONFIG: BackButtonConfig = {
@@ -72,7 +71,6 @@ const INITIAL_CONFIG: BackButtonConfig = {
   backButtonMenuEnabled: true,
   trailingItemsCount: 0,
   icon: undefined,
-  largeContentSizeIcon: undefined,
 };
 
 interface BackButtonConfigContextPayload {
@@ -104,7 +102,6 @@ function buildHeaderConfig(
       backButtonDisplayMode: config.displayMode,
       backButtonMenuEnabled: config.backButtonMenuEnabled,
       backButtonIcon: resolveIcon(config.icon),
-      backButtonLargeContentSizeIcon: resolveIcon(config.largeContentSizeIcon),
       trailingItems: Array.from(
         { length: config.trailingItemsCount },
         (_, index) => ({
@@ -241,13 +238,6 @@ function BackButtonConfigSection(props: {
       icon: ICONS[(ICONS.indexOf(prev.icon) + 1) % ICONS.length],
     }));
 
-  const cycleLargeContentSizeIcon = () =>
-    onChange(prev => ({
-      ...prev,
-      largeContentSizeIcon:
-        ICONS[(ICONS.indexOf(prev.largeContentSizeIcon) + 1) % ICONS.length],
-    }));
-
   return (
     <View style={styles.section}>
       <Text style={styles.sectionLabel}>{label}</Text>
@@ -274,12 +264,6 @@ function BackButtonConfigSection(props: {
       <Button
         title={`icon: ${config.icon ?? 'undefined'}`}
         onPress={cycleIcon}
-      />
-      <Button
-        title={`largeContentSizeIcon: ${
-          config.largeContentSizeIcon ?? 'undefined'
-        }`}
-        onPress={cycleLargeContentSizeIcon}
       />
     </View>
   );
