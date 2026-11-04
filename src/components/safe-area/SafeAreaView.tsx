@@ -9,6 +9,17 @@ import SafeAreaViewNativeComponent, {
 } from '../../fabric/safe-area/SafeAreaViewNativeComponent';
 import { StyleSheet } from 'react-native';
 
+/**
+ * View that insets its content by the safe area.
+ *
+ * @remarks
+ * The insets are applied as margins on the edges selected with
+ * {@link SafeAreaViewProps.edges | edges}. The view fills its parent
+ * (`flex: 1`) unless its `style` says otherwise.
+ *
+ * @platform android, ios
+ * @experimental
+ */
 export function SafeAreaView(props: SafeAreaViewProps) {
   return (
     <SafeAreaViewNativeComponent
