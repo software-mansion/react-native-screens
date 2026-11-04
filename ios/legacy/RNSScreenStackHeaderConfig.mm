@@ -695,6 +695,8 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.hidesBackButton = config.hideBackButton;
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
+  // Right items currently shown, so that adding or removing an item on a visible bar can animate (see below).
+  NSArray<UIBarButtonItem *> *shownRightItems = navitem.rightBarButtonItems;
   navitem.titleView = nil;
   navitem.leftBarButtonItems = nil;
   navitem.rightBarButtonItems = nil;
@@ -787,8 +789,18 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.title = config.title;
   navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
                                                 withCurrentItems:navitem.leftBarButtonItems];
-  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
-                                                 withCurrentItems:navitem.rightBarButtonItems];
+  NSArray<UIBarButtonItem *> *rightItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                            withCurrentItems:navitem.rightBarButtonItems];
+  // When the number of right items changes on the bar currently on screen (outside of a transition), let UIKit
+  // animate the insertion / removal instead of swapping the items in a single frame.
+  BOOL animateRightItems = animated && rightItems.count != shownRightItems.count && navctr.topViewController == vc &&
+      vc.viewIfLoaded.window != nil && vc.transitionCoordinator == nil;
+  if (animateRightItems) {
+    navitem.rightBarButtonItems = shownRightItems;
+    [navitem setRightBarButtonItems:rightItems animated:YES];
+  } else {
+    navitem.rightBarButtonItems = rightItems;
+  }
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
