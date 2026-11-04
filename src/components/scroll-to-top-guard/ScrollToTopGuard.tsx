@@ -2,10 +2,14 @@ import React from 'react';
 import type { ScrollToTopGuardProps } from './ScrollToTopGuard.types';
 
 /**
- * Temporary workaround for an issue on `react-native`'s side.
+ * Prevents taps on the wrapped header content from also scrolling the screen's
+ * scroll view to the top.
  *
  * @remarks
- * The component will be removed in the future.
+ * Temporary workaround for an issue on `react-native`'s side: a tap on a
+ * `Pressable` also reaches the system, so a `Pressable` in the header both
+ * runs its action and scrolls the scroll view to the top. Wrap such header
+ * content with this component. The component will be removed in the future.
  *
  * On iPhone, the component has an effect from iOS 27.
  *
