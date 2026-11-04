@@ -1,42 +1,67 @@
 import type { ViewProps } from 'react-native';
 import type { ScrollEdgeEffect } from '../shared/types';
 
+/**
+ * Scroll edge effects of a scroll view, set for each edge separately.
+ */
+export interface ScrollViewMarkerScrollEdgeEffectsIOS {
+  /**
+   * Scroll edge effect at the bottom edge of the scroll view.
+   *
+   * @defaultValue `'automatic'`
+   */
+  bottom?: ScrollEdgeEffect | undefined;
+  /**
+   * Scroll edge effect at the left edge of the scroll view.
+   *
+   * @defaultValue `'automatic'`
+   */
+  left?: ScrollEdgeEffect | undefined;
+  /**
+   * Scroll edge effect at the right edge of the scroll view.
+   *
+   * @defaultValue `'automatic'`
+   */
+  right?: ScrollEdgeEffect | undefined;
+  /**
+   * Scroll edge effect at the top edge of the scroll view.
+   *
+   * @defaultValue `'automatic'`
+   */
+  top?: ScrollEdgeEffect | undefined;
+}
+
+/**
+ * Props for {@link ScrollViewMarker}.
+ */
 export interface ScrollViewMarkerProps {
+  /**
+   * Content of the marker, with the scroll view to mark as its child.
+   *
+   * @remarks
+   * The scroll view must be the only direct child of the marker.
+   *
+   * @note
+   * This is an implementation detail and may change. On Android, only a
+   * vertical scroll view is found.
+   *
+   * @platform android, ios
+   */
   children: NonNullable<ViewProps['children']>;
+  /**
+   * Style of the marker's own view.
+   *
+   * @platform android, ios
+   */
   style?: ViewProps['style'] | undefined;
 
   /**
-   * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView resolved in direct subtree of the ScrollViewMarker).
-   * Depending on values set, it will blur the scrolling content below certain UI elements (header items, search bar)
-   * for the specified edge of the ScrollView.
+   * Configures the scroll edge effect for the _content ScrollView_ (the
+   * ScrollView resolved in direct subtree of the ScrollViewMarker).
    *
-   * When set in nested containers, i.e. Stack inside Tabs, or the other way around,
-   * the ScrollView will use only the innermost one's config.
-   *
-   * Edge effects can be configured for each edge separately. The following values are currently supported:
-   *
-   * - `automatic` - the automatic scroll edge effect style,
-   * - `hard` - a scroll edge effect with a hard cutoff and dividing line,
-   * - `soft` - a soft-edged scroll edge effect,
-   * - `hidden` - no scroll edge effect.
-   *
-   * The supported values correspond to the `UIScrollEdgeEffect`'s `style` and `isHidden` props
-   * in the official UIKit documentation:
-   *
-   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect|UIScrollEdgeEffect}
-   *
-   * @default `automatic` for each edge
-   *
-   * @platform ios
-   *
-   * @supported iOS 26 or higher
+   * @defaultValue `'automatic'` for each edge.
+   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect | UIScrollEdgeEffect}
+   * @platform ios >= 26
    */
-  scrollEdgeEffects?:
-    | {
-        bottom?: ScrollEdgeEffect | undefined;
-        left?: ScrollEdgeEffect | undefined;
-        right?: ScrollEdgeEffect | undefined;
-        top?: ScrollEdgeEffect | undefined;
-      }
-    | undefined;
+  scrollEdgeEffects?: ScrollViewMarkerScrollEdgeEffectsIOS | undefined;
 }
