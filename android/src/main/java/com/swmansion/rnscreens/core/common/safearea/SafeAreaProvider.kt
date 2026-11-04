@@ -7,8 +7,9 @@ package com.swmansion.rnscreens.core.common.safearea
  * System insets (e.g. `systemBars`, `displayCutout`) are handled through Android inset
  * dispatch mechanism (via `onApplyWindowInsets`).
  *
- * Classes implementing this protocol are responsible for notifying the registered
+ * Classes implementing this protocol are responsible for notifying every registered
  * [OnInterfaceInsetsChangeListener] about changes to **interface** safe area insets.
+ * More than one listener can be registered at the same time.
  */
 interface SafeAreaProvider {
     /**
