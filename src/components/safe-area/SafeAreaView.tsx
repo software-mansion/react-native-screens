@@ -10,7 +10,7 @@ import SafeAreaViewNativeComponent, {
 import { StyleSheet } from 'react-native';
 
 /**
- * View that insets its content by the safe area.
+ * Component that handles the safe area.
  *
  * @remarks
  * The insets are applied as margins on the edges selected with
