@@ -7,6 +7,8 @@ import type { ScrollToTopGuardProps } from './ScrollToTopGuard.types';
  * @remarks
  * The component will be removed in the future.
  *
+ * On iPhone, the component has an effect from iOS 27.
+ *
  * Falls back to `React.Fragment` on platforms other than iOS.
  *
  * @see {@link https://github.com/react/react-native/issues/56061 | The issue report}
