@@ -518,9 +518,7 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
 
   UIImage *backButtonLargeContentSizeImage =
       [self resolveBackButtonIcon:_configDataProvider.backButtonLargeContentSizeIcon];
-  [self applyBackButtonConfigForController:controller
-                           backButtonImage:backButtonImage
-           backButtonLargeContentSizeImage:backButtonLargeContentSizeImage];
+  [self applyBackButtonConfigForController:controller backButtonLargeContentSizeImage:backButtonLargeContentSizeImage];
 #endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -570,7 +568,6 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
 }
 
 - (void)applyBackButtonConfigForController:(RNSStackScreenController *)controller
-                           backButtonImage:(nullable UIImage *)backButtonImage
            backButtonLargeContentSizeImage:(nullable UIImage *)backButtonLargeContentSizeImage
 {
   NSArray<UIViewController *> *viewControllers = controller.navigationController.viewControllers;
@@ -584,7 +581,7 @@ static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
   prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
   prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
 
-  if (backButtonImage != nil || backButtonLargeContentSizeImage != nil) {
+  if (backButtonLargeContentSizeImage != nil) {
     NSString *title = _configDataProvider.backButtonDisplayMode == UINavigationItemBackButtonDisplayModeDefault
         ? _configDataProvider.backButtonTitle
         : nil;
