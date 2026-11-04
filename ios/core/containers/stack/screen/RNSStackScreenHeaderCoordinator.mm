@@ -3,6 +3,7 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSStackHeaderContentFactory.h"
+#import "RNSStackHeaderIconResolver.h"
 #import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderItemSpacerDataProviding.h"
 #import "RNSStackHeaderMenuCoordinator.h"
@@ -17,6 +18,30 @@ API_AVAILABLE(ios(27.0))
 static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(
     RNSHeaderItemVisibilityPriority visibilityPriority);
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if !TARGET_OS_TV
+static UINavigationBarAppearance *_Nullable RNSAppearanceWithBackIndicatorImage(
+    UINavigationBarAppearance *_Nullable appearance,
+    UIImage *_Nullable backIndicatorImage,
+    BOOL createIfNil)
+{
+  if (backIndicatorImage == nil) {
+    return appearance;
+  }
+
+  UINavigationBarAppearance *result = nil;
+  if (appearance != nil) {
+    result = [appearance copy];
+  } else if (createIfNil) {
+    result = [UINavigationBarAppearance new];
+  } else {
+    return nil;
+  }
+
+  [result setBackIndicatorImage:backIndicatorImage transitionMaskImage:backIndicatorImage];
+  return result;
+}
+#endif // !TARGET_OS_TV
 
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
@@ -470,8 +495,17 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   UINavigationItem *navItem = controller.navigationItem;
 
   navItem.title = _configDataProvider.title;
+
+#if !TARGET_OS_TV
+  UIImage *backButtonImage = [self resolveBackButtonIcon:_configDataProvider.backButtonIcon];
+  navItem.standardAppearance =
+      RNSAppearanceWithBackIndicatorImage(_configDataProvider.standardAppearance, backButtonImage, YES);
+  navItem.scrollEdgeAppearance =
+      RNSAppearanceWithBackIndicatorImage(_configDataProvider.scrollEdgeAppearance, backButtonImage, NO);
+#else
   navItem.standardAppearance = _configDataProvider.standardAppearance;
   navItem.scrollEdgeAppearance = _configDataProvider.scrollEdgeAppearance;
+#endif // !TARGET_OS_TV
 
 #if !TARGET_OS_TV
   NSString *prompt = _configDataProvider.prompt;
@@ -482,7 +516,11 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     [controller.navigationController.view setNeedsLayout];
   }
 
-  [self applyBackButtonConfigForController:controller];
+  UIImage *backButtonLargeContentSizeImage =
+      [self resolveBackButtonIcon:_configDataProvider.backButtonLargeContentSizeIcon];
+  [self applyBackButtonConfigForController:controller
+                           backButtonImage:backButtonImage
+           backButtonLargeContentSizeImage:backButtonLargeContentSizeImage];
 #endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -510,7 +548,30 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 }
 
 #if !TARGET_OS_TV
+- (nullable UIImage *)resolveBackButtonIcon:(nullable RNSStackHeaderIconData *)icon
+{
+  if (icon == nil) {
+    return nil;
+  }
+
+  __weak auto weakSelf = self;
+  __weak auto weakIcon = icon;
+  return [RNSStackHeaderIconResolver resolveIcon:icon
+                                 withImageLoader:_imageLoader
+                            asyncCompletionBlock:^(UIImage *_Nullable image) {
+                              auto strongSelf = weakSelf;
+                              if (strongSelf == nil || image == nil || weakIcon == nil ||
+                                  (strongSelf.configDataProvider.backButtonIcon != weakIcon &&
+                                   strongSelf.configDataProvider.backButtonLargeContentSizeIcon != weakIcon)) {
+                                return;
+                              }
+                              [strongSelf applyConfigProperties];
+                            }];
+}
+
 - (void)applyBackButtonConfigForController:(RNSStackScreenController *)controller
+                           backButtonImage:(nullable UIImage *)backButtonImage
+           backButtonLargeContentSizeImage:(nullable UIImage *)backButtonLargeContentSizeImage
 {
   NSArray<UIViewController *> *viewControllers = controller.navigationController.viewControllers;
   NSUInteger index = [viewControllers indexOfObject:controller];
@@ -522,6 +583,20 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   _backButtonConfigTargetItem = prevItem;
   prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
   prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
+
+  if (backButtonImage != nil || backButtonLargeContentSizeImage != nil) {
+    NSString *title = _configDataProvider.backButtonDisplayMode == UINavigationItemBackButtonDisplayModeDefault
+        ? _configDataProvider.backButtonTitle
+        : nil;
+    UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:title
+                                                                          style:UIBarButtonItemStylePlain
+                                                                         target:nil
+                                                                         action:nil];
+    backBarButtonItem.largeContentSizeImage = backButtonLargeContentSizeImage;
+    prevItem.backBarButtonItem = backBarButtonItem;
+  } else {
+    prevItem.backBarButtonItem = nil;
+  }
 }
 #endif // !TARGET_OS_TV
 
@@ -532,6 +607,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   _backButtonConfigTargetItem = nil;
   targetItem.backButtonTitle = nil;
   targetItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  targetItem.backBarButtonItem = nil;
 }
 #endif // !TARGET_OS_TV
 

@@ -65,6 +65,8 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
+    backButtonIcon,
+    backButtonLargeContentSizeIcon,
     standardAppearance,
     scrollEdgeAppearance,
   } = ios ?? {};
@@ -158,6 +160,16 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     [titleMenu],
   );
 
+  const resolvedBackButtonIcon = useMemo(
+    () => resolveIconAssetSources(backButtonIcon),
+    [backButtonIcon],
+  );
+
+  const resolvedBackButtonLargeContentSizeIcon = useMemo(
+    () => resolveIconAssetSources(backButtonLargeContentSizeIcon),
+    [backButtonLargeContentSizeIcon],
+  );
+
   return (
     <StackHeaderConfigIOSNativeComponent
       ref={nativeRef}
@@ -166,6 +178,8 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       backButtonTitle={backButtonTitle}
       backButtonDisplayMode={backButtonDisplayMode}
       backButtonMenuEnabled={backButtonMenuEnabled}
+      backButtonIcon={resolvedBackButtonIcon}
+      backButtonLargeContentSizeIcon={resolvedBackButtonLargeContentSizeIcon}
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}

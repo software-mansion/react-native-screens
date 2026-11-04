@@ -82,6 +82,8 @@ export interface NativeProps extends ViewProps {
   backButtonTitle?: string | undefined;
   backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
   backButtonMenuEnabled?: CT.WithDefault<boolean, true>;
+  backButtonIcon?: UnsafeMixed<PlatformIconIOS> | undefined;
+  backButtonLargeContentSizeIcon?: UnsafeMixed<PlatformIconIOS> | undefined;
 
   largeTitle?: string | undefined;
   largeSubtitle?: string | undefined;

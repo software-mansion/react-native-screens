@@ -3,7 +3,8 @@
 ## Details
 
 **Description:** Tests back button configuration, layout with respect to changing
-widths of elements in header, and toggling the long-press navigation history menu.
+widths of elements in header, toggling the long-press navigation history menu,
+custom back button icon, and the image shown in the Large Content Viewer.
 Back button props are configured on the screen
 that renders the back button, but the native configuration is performed on the screen below.
 
@@ -16,6 +17,8 @@ TBD.
 ## Prerequisites
 
 - iOS simulator
+- For `largeContentSizeIcon`: an accessibility text size (Settings → Accessibility →
+  Display & Text Size → Larger Text), otherwise the Large Content Viewer doesn't appear
 
 ## Note
 
@@ -123,3 +126,40 @@ Back button menu behaves similarly on both versions.
   - The item menu shows, while long-pressing the back button is blocked.
 5. Under Next screen, tap `menuEnabled` to set false. Push Second. Long-press the back button.
   - The navigation history menu doesn't appear.
+
+---
+
+### `icon` (both versions)
+
+1. Launch the test screen. Push First.
+2. Under Current screen, tap `icon` once to set "sfSymbol".
+  - The chevron is replaced with a circled backward arrow, shown once
+  - VoiceOver label of the back button is still the back title ("Home")
+3. Tap `icon` again to set "imageSource", then "templateSource", then "xcasset".
+  - The back indicator changes to the respective image each time
+  - "templateSource" is tinted, "imageSource" keeps its original colors
+4. Tap `backButtonTitle` once to set "Custom title".
+  - Back button displays the custom icon followed by "Custom title"
+5. Tap `displayMode` to set "generic", then "minimal".
+  - Only the custom icon is displayed
+6. Tap `icon` until it shows undefined.
+  - The system chevron is restored
+
+---
+
+### `largeContentSizeIcon` (both versions)
+
+Requires an accessibility text size (see Prerequisites).
+
+1. Launch the test screen. Push First. Long-press the back button.
+  - The Large Content Viewer shows the system default for the back button
+2. Under Current screen, tap `largeContentSizeIcon` once to set "sfSymbol". Long-press the back button.
+  - The Large Content Viewer shows the circled backward arrow
+  - The back button in the header is unchanged (system chevron)
+3. Tap `largeContentSizeIcon` again to set "imageSource". Long-press the back button.
+  - The Large Content Viewer shows the image at the size it is provided
+4. Tap `icon` to set "sfSymbol". Long-press the back button.
+  - The header shows the custom icon, the Large Content Viewer still shows
+    the `largeContentSizeIcon` image (the two props are independent)
+5. Tap `largeContentSizeIcon` until it shows undefined. Long-press the back button.
+  - The Large Content Viewer no longer shows the custom image

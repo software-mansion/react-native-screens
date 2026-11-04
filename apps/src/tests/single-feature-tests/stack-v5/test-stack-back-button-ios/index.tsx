@@ -12,6 +12,7 @@ import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/St
 import type {
   StackHeaderBackButtonDisplayModeIOS,
   StackHeaderConfigProps,
+  StackHeaderConfigPropsIOS,
 } from 'react-native-screens';
 
 const TITLES = [undefined, 'Custom title', 'Longer custom title'];
@@ -22,6 +23,37 @@ const DISPLAY_MODES: StackHeaderBackButtonDisplayModeIOS[] = [
   'minimal',
 ];
 const MAX_TRAILING_ITEMS_COUNT = 3;
+const ICONS = [
+  undefined,
+  'sfSymbol',
+  'imageSource',
+  'templateSource',
+  'xcasset',
+] as const;
+type IconOption = (typeof ICONS)[number];
+
+function resolveIcon(
+  option: IconOption,
+): StackHeaderConfigPropsIOS['backButtonIcon'] {
+  switch (option) {
+    case 'sfSymbol':
+      return { type: 'sfSymbol', name: 'arrow.backward.circle' };
+    case 'imageSource':
+      return {
+        type: 'imageSource',
+        imageSource: require('@assets/backButton.png'),
+      };
+    case 'templateSource':
+      return {
+        type: 'templateSource',
+        templateSource: require('@assets/backButton.png'),
+      };
+    case 'xcasset':
+      return { type: 'xcasset', name: 'custom-icon' };
+    default:
+      return undefined;
+  }
+}
 
 interface BackButtonConfig {
   title: string | undefined;
@@ -29,6 +61,8 @@ interface BackButtonConfig {
   displayMode: StackHeaderBackButtonDisplayModeIOS;
   backButtonMenuEnabled: boolean;
   trailingItemsCount: number;
+  icon: IconOption;
+  largeContentSizeIcon: IconOption;
 }
 
 const INITIAL_CONFIG: BackButtonConfig = {
@@ -37,6 +71,8 @@ const INITIAL_CONFIG: BackButtonConfig = {
   displayMode: 'default',
   backButtonMenuEnabled: true,
   trailingItemsCount: 0,
+  icon: undefined,
+  largeContentSizeIcon: undefined,
 };
 
 interface BackButtonConfigContextPayload {
@@ -67,6 +103,8 @@ function buildHeaderConfig(
       backButtonTitle: config.backButtonTitle,
       backButtonDisplayMode: config.displayMode,
       backButtonMenuEnabled: config.backButtonMenuEnabled,
+      backButtonIcon: resolveIcon(config.icon),
+      backButtonLargeContentSizeIcon: resolveIcon(config.largeContentSizeIcon),
       trailingItems: Array.from(
         { length: config.trailingItemsCount },
         (_, index) => ({
@@ -197,6 +235,19 @@ function BackButtonConfigSection(props: {
         (prev.trailingItemsCount + 1) % (MAX_TRAILING_ITEMS_COUNT + 1),
     }));
 
+  const cycleIcon = () =>
+    onChange(prev => ({
+      ...prev,
+      icon: ICONS[(ICONS.indexOf(prev.icon) + 1) % ICONS.length],
+    }));
+
+  const cycleLargeContentSizeIcon = () =>
+    onChange(prev => ({
+      ...prev,
+      largeContentSizeIcon:
+        ICONS[(ICONS.indexOf(prev.largeContentSizeIcon) + 1) % ICONS.length],
+    }));
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionLabel}>{label}</Text>
@@ -219,6 +270,16 @@ function BackButtonConfigSection(props: {
       <Button
         title={`trailingItemsCount: ${config.trailingItemsCount}`}
         onPress={cycleTrailingItemsCount}
+      />
+      <Button
+        title={`icon: ${config.icon ?? 'undefined'}`}
+        onPress={cycleIcon}
+      />
+      <Button
+        title={`largeContentSizeIcon: ${
+          config.largeContentSizeIcon ?? 'undefined'
+        }`}
+        onPress={cycleLargeContentSizeIcon}
       />
     </View>
   );
