@@ -4,12 +4,12 @@
 
 - (instancetype)initWithType:(RNSStackHeaderIconType)iconType
                 resourceName:(nullable NSString *)resourceName
-                  jsonSource:(nullable NSDictionary *)jsonSource
+                 imageSource:(RNSStackHeaderIconImageSource)imageSource
 {
   if (self = [super init]) {
     _iconType = iconType;
     _resourceName = [resourceName copy];
-    _jsonSource = [jsonSource copy];
+    _imageSource = imageSource;
   }
   return self;
 }

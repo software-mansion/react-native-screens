@@ -1,5 +1,14 @@
 #import "RNSStackHeaderIconMapper.h"
 
+static RNSStackHeaderIconImageSource RNSStackHeaderIconImageSourceFromDictionary(NSDictionary *source)
+{
+  return RNSStackHeaderIconImageSource{
+      .source = source,
+      .size = CGSizeMake([source[@"width"] doubleValue], [source[@"height"] doubleValue]),
+      .scale = [source[@"scale"] doubleValue],
+  };
+}
+
 @implementation RNSStackHeaderIconMapper
 
 + (nullable RNSStackHeaderIconData *)iconFromDictionary:(nullable id)dictionary
@@ -17,13 +26,13 @@
   if ([type isEqualToString:@"sfSymbol"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeSfSymbol
                                            resourceName:dict[@"name"]
-                                             jsonSource:nil];
+                                            imageSource:RNSStackHeaderIconImageSource{}];
   }
 
   if ([type isEqualToString:@"xcasset"]) {
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeXcasset
                                            resourceName:dict[@"name"]
-                                             jsonSource:nil];
+                                            imageSource:RNSStackHeaderIconImageSource{}];
   }
 
   if ([type isEqualToString:@"imageSource"]) {
@@ -33,7 +42,7 @@
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeImageSource
                                            resourceName:nil
-                                             jsonSource:source];
+                                            imageSource:RNSStackHeaderIconImageSourceFromDictionary(source)];
   }
 
   if ([type isEqualToString:@"templateSource"]) {
@@ -43,7 +52,7 @@
     }
     return [[RNSStackHeaderIconData alloc] initWithType:RNSStackHeaderIconTypeTemplateSource
                                            resourceName:nil
-                                             jsonSource:source];
+                                            imageSource:RNSStackHeaderIconImageSourceFromDictionary(source)];
   }
 
   return nil;

@@ -35,12 +35,12 @@
     }
     case RNSStackHeaderIconTypeImageSource:
     case RNSStackHeaderIconTypeTemplateSource: {
-      if (imageLoader == nil || iconData.jsonSource == nil) {
+      if (imageLoader == nil || iconData.imageSource.source == nil) {
         return nil;
       }
       // Weak ref to iconData to avoid retaining it if the item is removed before load completes
       __weak RNSStackHeaderIconData *weakIconData = iconData;
-      [imageLoader loadImageFromSource:iconData.jsonSource
+      [imageLoader loadImageFromSource:iconData.imageSource.source
                             asTemplate:iconData.iconType == RNSStackHeaderIconTypeTemplateSource
                 withCompletionCallback:^(UIImage *_Nullable image) {
                   weakIconData.resolvedImage = image;
@@ -55,13 +55,13 @@
 
 + (nullable UIImage *)placeholderImageForIcon:(RNSStackHeaderIconData *)iconData
 {
-  if (iconData.jsonSource == nil) {
+  if (iconData.imageSource.source == nil) {
     return nil;
   }
 
-  CGFloat width = [iconData.jsonSource[@"width"] doubleValue];
-  CGFloat height = [iconData.jsonSource[@"height"] doubleValue];
-  CGFloat scale = [iconData.jsonSource[@"scale"] doubleValue] ?: 1.0;
+  CGFloat width = iconData.imageSource.size.width;
+  CGFloat height = iconData.imageSource.size.height;
+  CGFloat scale = iconData.imageSource.scale ?: 1.0;
   CGSize size = (width > 0 && height > 0) ? CGSizeMake(width, height) : CGSizeMake(1, 1);
 
   UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
