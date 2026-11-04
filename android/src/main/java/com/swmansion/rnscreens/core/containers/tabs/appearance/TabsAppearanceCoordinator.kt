@@ -17,8 +17,14 @@ internal class TabsAppearanceCoordinator(
 
     private var appliedIconBoxDp: Float? = null
 
+    /**
+     * The icon box the menu items are sized in: the one applied by the last [updateIconBox].
+     */
+    internal val iconBoxDp: Float
+        get() = appliedIconBoxDp ?: resolveIconBoxDp()
+
     // Icon box is bar-wide: the largest effective size across tabs.
-    internal fun resolveIconBoxDp(): Float {
+    private fun resolveIconBoxDp(): Float {
         if (tabsScreenFragments.isEmpty()) {
             return appearanceApplicator.defaultIconSizeDp
         }
@@ -36,23 +42,27 @@ internal class TabsAppearanceCoordinator(
     }
 
     /**
-     * Applies the bar-wide appearance (icon box, shared colours and visibility) and returns the icon
-     * box the menu items are sized in. Menu items whose icons depend on a changed icon box are
-     * invalidated.
+     * Applies the icon box shared by all menu items. Menu items whose icons depend on a changed icon
+     * box are invalidated.
      */
-    internal fun updateBarAppearance(
-        context: Context,
-        appearance: TabsAppearance?,
-        isTabBarHidden: Boolean,
-    ): Float {
+    internal fun updateIconBox() {
         val iconBoxDp = resolveIconBoxDp()
         if (iconBoxDp != appliedIconBoxDp) {
             appliedIconBoxDp = iconBoxDp
             bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ICON)
         }
         appearanceApplicator.applyIconBox(iconBoxDp)
-        appearanceApplicator.updateSharedAppearance(context, appearance, isTabBarHidden)
-        return iconBoxDp
+    }
+
+    internal fun updateTabBarVisibility(isTabBarHidden: Boolean) {
+        appearanceApplicator.applyTabBarVisibility(isTabBarHidden)
+    }
+
+    internal fun updateSharedAppearance(
+        context: Context,
+        appearance: TabsAppearance?,
+    ) {
+        appearanceApplicator.updateSharedAppearance(context, appearance)
     }
 
     internal fun updateFontStyles(
