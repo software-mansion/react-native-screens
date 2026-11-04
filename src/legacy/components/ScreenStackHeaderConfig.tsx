@@ -62,23 +62,13 @@ export const ScreenStackHeaderConfig = React.forwardRef<
     backTitleLetterSpacing,
   } = props;
 
-  // Only defined values are sent, so native code can tell an omitted spacing from 0.
-  const letterSpacing =
-    titleLetterSpacing !== undefined ||
-    largeTitleLetterSpacing !== undefined ||
-    backTitleLetterSpacing !== undefined
-      ? {
-          ...(titleLetterSpacing !== undefined && {
-            title: titleLetterSpacing,
-          }),
-          ...(largeTitleLetterSpacing !== undefined && {
-            largeTitle: largeTitleLetterSpacing,
-          }),
-          ...(backTitleLetterSpacing !== undefined && {
-            backTitle: backTitleLetterSpacing,
-          }),
-        }
-      : undefined;
+  // Undefined keys are dropped on the way to native, so an omitted spacing
+  // stays distinct from 0.
+  const letterSpacing = {
+    title: titleLetterSpacing,
+    largeTitle: largeTitleLetterSpacing,
+    backTitle: backTitleLetterSpacing,
+  };
 
   const preparedHeaderLeftBarButtonItems =
     headerLeftBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform

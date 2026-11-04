@@ -1251,7 +1251,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
-  if (newScreenProps.letterSpacing != oldScreenProps.letterSpacing || !_initialPropsSet) {
+  if (newScreenProps.letterSpacing != oldScreenProps.letterSpacing) {
     // A missing key means the default spacing; 0 is a valid explicit value.
     NSDictionary *letterSpacing = [RNSConvert idFromFollyDynamic:newScreenProps.letterSpacing];
     if (![letterSpacing isKindOfClass:[NSDictionary class]]) {
