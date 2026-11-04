@@ -1,4 +1,5 @@
 import type { ViewProps, StyleProp, ViewStyle } from 'react-native';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 /**
  * Props for {@link ContainedModalOverContent}.
@@ -57,7 +58,7 @@ export interface ContainedModalProps {
    * @platform ios
    * @since 5.0
    */
-  onPresentationRejected?: (() => void) | undefined;
+  onPresentationRejected?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view is about to appear.
@@ -72,7 +73,7 @@ export interface ContainedModalProps {
    * @platform ios
    * @since 5.0
    */
-  onWillAppear?: (() => void) | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view has appeared.
@@ -87,7 +88,7 @@ export interface ContainedModalProps {
    * @platform ios
    * @since 5.0
    */
-  onDidAppear?: (() => void) | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view is about to disappear.
@@ -104,7 +105,7 @@ export interface ContainedModalProps {
    * @platform ios
    * @since 5.0
    */
-  onWillDisappear?: (() => void) | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view has disappeared.
@@ -120,7 +121,7 @@ export interface ContainedModalProps {
    * @platform ios
    * @since 5.0
    */
-  onDidDisappear?: (() => void) | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 }
 
 /**

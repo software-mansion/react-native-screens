@@ -1,13 +1,21 @@
-import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { BlurEffect } from '../../shared/types';
-
-export type EmptyEventPayload = Record<string, never>;
-
-export type FormSheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
+import type { ColorValue, StyleProp, ViewProps, ViewStyle } from 'react-native';
+import type {
+  BlurEffect,
+  EmptyEventPayload,
+  NativeEventHandler,
+} from '../../shared/types';
 
 export interface FormSheetDetentChangedEvent {
   index: number;
 }
+
+export type FormSheetDetents = number[] | 'fitToContents';
+
+export type FormSheetPreferredCornerRadius = number | 'systemDefault';
+
+export type FormSheetLargestUndimmedDetentIndexIOS = number | 'none' | 'last';
+
+export type FormSheetInitialDetentIndex = number | 'last';
 
 /**
  * `UIBlurEffect.Style` a {@link FormSheetBackgroundEffectBlur} is rendered with.
@@ -63,7 +71,7 @@ export type FormSheetNativeContainerStyleProps = {
    *
    * @platform android, ios
    */
-  backgroundColor?: ColorValue | undefined;
+  backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
 
 export interface FormSheetProps {
@@ -98,7 +106,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  detents?: number[] | 'fitToContents' | undefined;
+  detents?: FormSheetDetents | undefined;
 
   /**
    * @summary Determines whether the sheet requests a grabber at the top.
@@ -127,7 +135,7 @@ export interface FormSheetProps {
    * @platform android, ios
    * @supported android API level 33 or higher, iOS
    */
-  preferredCornerRadius?: number | 'systemDefault' | undefined;
+  preferredCornerRadius?: FormSheetPreferredCornerRadius | undefined;
 
   /**
    * @summary The largest sheet detent for which a view underneath won't be dimmed.
@@ -142,7 +150,9 @@ export interface FormSheetProps {
    * @default 'none'
    * @platform ios
    */
-  largestUndimmedDetentIndex?: number | 'none' | 'last' | undefined;
+  largestUndimmedDetentIndex?:
+    | FormSheetLargestUndimmedDetentIndexIOS
+    | undefined;
 
   /**
    * @summary The index of the detent the sheet should snap to when first opened.
@@ -154,7 +164,7 @@ export interface FormSheetProps {
    * @default 0
    * @platform ios
    */
-  initialDetentIndex?: number | 'last' | undefined;
+  initialDetentIndex?: FormSheetInitialDetentIndex | undefined;
 
   /**
    * @summary Determines whether scrolling expands the sheet to a larger detent.
@@ -191,7 +201,9 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
+  nativeContainerStyle?:
+    | StyleProp<FormSheetNativeContainerStyleProps>
+    | undefined;
 
   /**
    * Material the system renders behind the sheet's content.
@@ -217,7 +229,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet did appear.
@@ -225,7 +237,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet will disappear.
@@ -233,7 +245,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary A callback that gets invoked when the FormSheet did disappear.
@@ -241,7 +253,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary Called when the sheet is dismissed programmatically.
@@ -250,7 +262,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onDismiss?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary Called when the sheet is dismissed natively.
@@ -260,7 +272,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onNativeDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onNativeDismiss?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * @summary Called when the sheet settles at a new detent.
@@ -269,9 +281,7 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onDetentChanged?:
-    | FormSheetEventHandler<FormSheetDetentChangedEvent>
-    | undefined;
+  onDetentChanged?: NativeEventHandler<FormSheetDetentChangedEvent> | undefined;
 
   /**
    * @summary Called when the user attempts to dismiss the sheet by swiping down or tapping the backdrop, but the dismissal is prevented.
@@ -282,7 +292,5 @@ export interface FormSheetProps {
    *
    * @platform android, ios
    */
-  onNativeDismissPrevented?:
-    | FormSheetEventHandler<EmptyEventPayload>
-    | undefined;
+  onNativeDismissPrevented?: NativeEventHandler<EmptyEventPayload> | undefined;
 }

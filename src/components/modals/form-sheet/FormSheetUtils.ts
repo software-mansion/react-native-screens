@@ -1,5 +1,7 @@
 import type {
   FormSheetBackgroundEffectBlurStyle,
+  FormSheetDetents,
+  FormSheetPreferredCornerRadius,
   FormSheetProps,
 } from './FormSheet.types';
 import type { ColorValue } from 'react-native';
@@ -13,7 +15,7 @@ const FORM_SHEET_ALWAYS_DIMMED = -1;
 const FORM_SHEET_NEVER_DIMMED = -2;
 
 export function resolveNativeDetents(
-  detents?: number[] | 'fitToContents',
+  detents?: FormSheetDetents,
 ): number[] | undefined {
   if (!detents) {
     return undefined;
@@ -58,7 +60,7 @@ export function resolveInitialDetentIndex(
 }
 
 export function resolveNativeCornerRadius(
-  radius?: number | 'systemDefault',
+  radius?: FormSheetPreferredCornerRadius,
 ): number | undefined {
   if (radius === 'systemDefault') {
     return -1.0;
