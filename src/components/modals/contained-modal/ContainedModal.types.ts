@@ -4,8 +4,6 @@ import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 /**
  * Props for {@link ContainedModalOverContent}.
  *
- * @platform ios
- * @since 5.0
  * @experimental
  */
 export interface ContainedModalProps {
@@ -24,7 +22,6 @@ export interface ContainedModalProps {
    * screen; the presentation is restored when the covering content goes away.
    *
    * @platform ios
-   * @since 5.0
    */
   isOpen: boolean;
 
@@ -40,7 +37,6 @@ export interface ContainedModalProps {
    * fires). Must not be empty.
    *
    * @platform ios
-   * @since 5.0
    */
   targetContainerId: string;
 
@@ -56,7 +52,6 @@ export interface ContainedModalProps {
    * back to `false`, or re-open after the blocking modal closes).
    *
    * @platform ios
-   * @since 5.0
    */
   onPresentationRejected?: NativeEventHandler<EmptyEventPayload> | undefined;
 
@@ -71,7 +66,6 @@ export interface ContainedModalProps {
    * `true` throughout the suspension.
    *
    * @platform ios
-   * @since 5.0
    */
   onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
@@ -86,7 +80,6 @@ export interface ContainedModalProps {
    * `true` throughout the suspension.
    *
    * @platform ios
-   * @since 5.0
    */
   onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
@@ -103,7 +96,6 @@ export interface ContainedModalProps {
    * see its remarks.
    *
    * @platform ios
-   * @since 5.0
    */
   onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
@@ -112,14 +104,16 @@ export interface ContainedModalProps {
    *
    * @remarks
    * Fires on a programmatic dismissal (`isOpen` set to `false`). On a
-   * suspension it is NOT guaranteed: a react-native-screens stack push over
-   * the provider detaches the views before the disappearance transition
-   * completes, so only `onWillDisappear` fires there. Don't rely on a
-   * balanced Will/Did disappear pair around suspensions - key suspension
-   * logic off `onWillDisappear` and `onDidAppear` (restore) instead.
+   * suspension it is NOT guaranteed: when a react-native-screens stack pushes
+   * over the provider, only `onWillDisappear` fires. Don't rely on a balanced
+   * Will/Did disappear pair around suspensions - key suspension logic off
+   * `onWillDisappear` and `onDidAppear` (restore) instead.
+   *
+   * @note
+   * This is an implementation detail and may change. The stack push detaches
+   * the views before the disappearance transition completes.
    *
    * @platform ios
-   * @since 5.0
    */
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 }
@@ -127,8 +121,6 @@ export interface ContainedModalProps {
 /**
  * Props for {@link ContainedModalProvider}.
  *
- * @platform ios
- * @since 5.0
  * @experimental
  */
 export interface ContainedModalProviderProps {
@@ -142,7 +134,6 @@ export interface ContainedModalProviderProps {
    * providers in unrelated subtrees may share an id). Must not be empty.
    *
    * @platform ios
-   * @since 5.0
    */
   containerId: string;
 
@@ -154,7 +145,6 @@ export interface ContainedModalProviderProps {
    * matched contained modal is presented in.
    *
    * @platform ios
-   * @since 5.0
    */
   style?: StyleProp<ViewStyle> | undefined;
 }
