@@ -1,8 +1,8 @@
 buildscript {
     ext {
-        rnsDefaultTargetSdkVersion = 34
-        rnsDefaultCompileSdkVersion = 34
-        rnsDefaultMinSdkVersion = 21
+        rnsDefaultTargetSdkVersion = 36
+        rnsDefaultCompileSdkVersion = 36
+        rnsDefaultMinSdkVersion = 24
         rnsDefaultKotlinVersion = '1.8.0'
     }
     ext.safeExtGet = {prop, fallback ->
