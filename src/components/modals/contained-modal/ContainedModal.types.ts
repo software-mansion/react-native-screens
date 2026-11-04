@@ -7,6 +7,11 @@ import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
  * @experimental
  */
 export interface ContainedModalProps {
+  /**
+   * Content of the modal.
+   *
+   * @platform ios
+   */
   children?: ViewProps['children'] | undefined;
 
   /**
@@ -32,9 +37,12 @@ export interface ContainedModalProps {
    * @remarks
    * The targeted provider must be an ancestor of the modal in the React tree;
    * the modal presents within that provider's bounds. Rendering a modal with
-   * no matching ancestor provider is a programming error (asserts in debug;
-   * in release the presentation is rejected and `onPresentationRejected`
-   * fires). Must not be empty.
+   * no matching ancestor provider is a programming error. Must not be empty.
+   *
+   * @note
+   * This is an implementation detail and may change. Without a matching
+   * provider, the modal asserts in debug builds; in release builds, the
+   * presentation is rejected and `onPresentationRejected` fires.
    *
    * @platform ios
    */
@@ -124,6 +132,11 @@ export interface ContainedModalProps {
  * @experimental
  */
 export interface ContainedModalProviderProps {
+  /**
+   * Content the matched contained modals are presented over.
+   *
+   * @platform ios
+   */
   children?: ViewProps['children'] | undefined;
 
   /**

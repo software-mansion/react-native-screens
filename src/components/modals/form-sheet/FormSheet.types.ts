@@ -5,22 +5,66 @@ import type {
   NativeEventHandler,
 } from '../../shared/types';
 
+/**
+ * Payload of the {@link FormSheetProps.onDetentChanged | onDetentChanged}
+ * event.
+ */
 export interface FormSheetDetentChangedEvent {
+  /**
+   * Zero-based index of the detent the sheet settled at, in
+   * {@link FormSheetProps.detents | detents}.
+   */
   index: number;
 }
 
+/**
+ * Resting positions of a sheet.
+ *
+ * @remarks
+ * The following values are supported:
+ * - an array of fractions of the sheet's maximum height, each between `0.0`
+ *   and `1.0`, in strictly ascending order — the sheet rests at each of them.
+ * - `'fitToContents'` — a single detent with the height of the sheet's
+ *   content.
+ */
 export type FormSheetDetents = number[] | 'fitToContents';
 
+/**
+ * Corner radius of a sheet.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a number — the radius in density-independent pixels.
+ * - `'systemDefault'` — the system's default corner radius.
+ */
 export type FormSheetPreferredCornerRadius = number | 'systemDefault';
 
+/**
+ * Largest detent of a sheet at which the content underneath is not dimmed.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a number — zero-based index of a detent in `detents`; the content
+ *   underneath is dimmed only at the detents above it.
+ * - `'none'` — the content underneath is dimmed at every detent.
+ * - `'last'` — the content underneath is never dimmed.
+ */
 export type FormSheetLargestUndimmedDetentIndexIOS = number | 'none' | 'last';
 
+/**
+ * Detent a sheet opens at.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a number — zero-based index of a detent in `detents`.
+ * - `'last'` — the last, largest detent.
+ */
 export type FormSheetInitialDetentIndex = number | 'last';
 
 /**
  * Blur style of a {@link FormSheetBackgroundEffectBlur}.
  *
- * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
+ * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */
 export type FormSheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
 
@@ -69,6 +113,9 @@ export type FormSheetBackgroundEffect =
   | FormSheetBackgroundEffectColor
   | FormSheetBackgroundEffectBlur;
 
+/**
+ * Style of the native container hosting a sheet's content.
+ */
 export type FormSheetNativeContainerStyleProps = {
   /**
    * Specifies the background color of the native container hosting the sheet
@@ -77,7 +124,15 @@ export type FormSheetNativeContainerStyleProps = {
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
 
+/**
+ * Props for {@link FormSheet}.
+ */
 export interface FormSheetProps {
+  /**
+   * Content of the sheet.
+   *
+   * @platform android, ios
+   */
   children?: ViewProps['children'] | undefined;
 
   /**
@@ -96,12 +151,16 @@ export interface FormSheetProps {
    * Defines the resting positions of the sheet.
    *
    * @remarks
-   * If an empty array is provided, it defaults to a single large detent.
+   * If the prop is not set or the array is empty, the sheet has a single
+   * large detent. On Android, at most three detents are supported.
+   * `'fitToContents'` is supported on iOS 16+.
    *
-   * `'fitToContents'` is supported on iOS 16+. On iOS 15, it falls back to a
-   * large detent.
+   * @note
+   * This is an implementation detail and may change. On iOS 15,
+   * `'fitToContents'` falls back to a large detent, and only the system's
+   * medium and large detents are used.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/detents|UISheetPresentationController.detents}
+   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/detents | UISheetPresentationController.detents}
    * @platform android, ios
    */
   detents?: FormSheetDetents | undefined;
@@ -163,7 +222,7 @@ export interface FormSheetProps {
    * expand the sheet regardless of this setting.
    *
    * @defaultValue `true`
-   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/prefersscrollingexpandswhenscrolledtoedge|UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge}
+   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/prefersscrollingexpandswhenscrolledtoedge | UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge}
    * @platform ios
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
@@ -196,13 +255,11 @@ export interface FormSheetProps {
    *
    * @remarks
    * The material is drawn behind the native container, so an opaque
-   * `nativeContainerStyle.backgroundColor` covers it; replacing the material
-   * still matters then, because it removes the Liquid Glass highlight and
-   * edges of `'automatic'`.
+   * `nativeContainerStyle.backgroundColor` covers it.
    *
    * @defaultValue `'automatic'`
    * @see {@link FormSheetBackgroundEffect}
-   * @see {@link https://developer.apple.com/documentation/uikit/uipresentationcontroller/backgroundeffect|UIPresentationController.backgroundEffect}
+   * @see {@link https://developer.apple.com/documentation/uikit/uipresentationcontroller/backgroundeffect | UIPresentationController.backgroundEffect}
    * @platform ios >= 26.1
    */
   backgroundEffect?: FormSheetBackgroundEffect | undefined;
