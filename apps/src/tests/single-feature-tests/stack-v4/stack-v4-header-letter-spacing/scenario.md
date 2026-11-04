@@ -28,6 +28,11 @@ needs screenshot comparison, which is not set up for this scenario yet.
   so it differs from an omitted value.
 - On Android only the title is customizable. The value is converted to ems, as
   for `Text`'s `letterSpacing`.
+- iOS (UIKit bug, seen on iOS 26.5): when only the back button appearance
+  changes, the visible system back button keeps its old title attributes and
+  size. Changing the title spacing as well refreshes it, which hid the bug.
+  The library works around it by setting the back title again whenever the
+  back title spacing changes. Step 3 of "Collapse and navigation" covers it.
 - Open Single feature tests → Stack v4 → Header Letter Spacing before each
   section.
 
@@ -78,14 +83,19 @@ needs screenshot comparison, which is not set up for this scenario yet.
     - [ ] iOS: the back button title follows the spacing, with and without
           custom typography, and with "Disable back button menu" on.
 
-3. iOS: go back, enable "Long title", push Details again and cycle the
+3. iOS: on Details, turn off "Apply to title" and cycle the spacing again.
+
+    - [ ] The back button title still follows every value, and its button
+          resizes to fit (wider at `2`, narrower at `-0.9`).
+
+4. iOS: go back, enable "Long title", push Details again and cycle the
    spacing.
 
     - [ ] Without custom typography or a disabled back button menu, the long
           back title still shortens natively (to "Back" or just the chevron)
           when there isn't enough space.
 
-4. iOS: on Details, slowly swipe back, cancel once, then complete the gesture.
+5. iOS: on Details, slowly swipe back, cancel once, then complete the gesture.
    Push again and use the native back button. Repeat after collapsing the root
    title (use the push button at the bottom of the list).
 

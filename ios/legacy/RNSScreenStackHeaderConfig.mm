@@ -52,6 +52,8 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
   BOOL _initialPropsSet;
+  /// Whether the back title letter spacing changed after the first props, so the visible back button needs a rebuild.
+  BOOL _backTitleLetterSpacingChanged;
 
   react::RNSScreenStackHeaderConfigState _lastSendState;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
@@ -718,6 +720,14 @@ RNS_IGNORE_SUPER_CALL_END
   }
   navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
+  if (config != nil && config->_backTitleLetterSpacingChanged) {
+    config->_backTitleLetterSpacingChanged = NO;
+    // UIKit bug: when only the back button appearance changes, the visible system back button keeps its old title
+    // attributes and size. Setting the back title again makes UIKit rebuild the button with the new appearance.
+    NSString *backButtonTitle = prevItem.backButtonTitle;
+    prevItem.backButtonTitle = nil;
+    prevItem.backButtonTitle = backButtonTitle;
+  }
   navitem.hidesBackButton = config.hideBackButton;
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
@@ -1161,6 +1171,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+  _backTitleLetterSpacingChanged = NO;
 
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
 }
@@ -1259,7 +1270,12 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     }
     _titleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"title"]];
     _largeTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"largeTitle"]];
-    _backTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"backTitle"]];
+    NSNumber *backTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"backTitle"]];
+    if (_initialPropsSet && backTitleLetterSpacing != _backTitleLetterSpacing &&
+        ![backTitleLetterSpacing isEqual:_backTitleLetterSpacing]) {
+      _backTitleLetterSpacingChanged = YES;
+    }
+    _backTitleLetterSpacing = backTitleLetterSpacing;
   }
 
   if (newScreenProps.minimizationBehavior != oldScreenProps.minimizationBehavior) {
