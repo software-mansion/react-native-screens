@@ -278,14 +278,21 @@ class ScreenStack(
                 .forEach { wrapper -> transaction.remove(wrapper.fragment) }
 
             // attach screens that just became visible
-            if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
+            if (visibleBottom != null) {
                 val top = newTop
                 screenWrappers
                     .asSequence()
                     .dropWhile { it !== visibleBottom } // ignore all screens beneath the visible bottom
                     // dismissed screens are already removed above & preloaded ones must stay detached
-                    .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
+                    .filter {
+                        !it.fragment.isAdded &&
+                            !dismissedWrappers.contains(it) &&
+                            it.screen.activityState !== Screen.ActivityState.INACTIVE
+                    }
                     .forEach { wrapper ->
+                        if (wrapper.screen.requiresEnterTransitionPostponing()) {
+                            wrapper.fragment.postponeEnterTransition()
+                        }
                         // TODO: It should be enough to dispatch this on commit action once.
                         transaction.add(id, wrapper.fragment).runOnCommit {
                             top?.screen?.bringToFront()
