@@ -1,7 +1,11 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../../fabric/stack/StackScreenNativeComponent';
-import { OnDismissEvent, StackScreenProps } from './StackScreen.types';
+import type { NativeEventHandler } from '../../shared/types';
+import type {
+  OnDismissEventPayload,
+  StackScreenProps,
+} from './StackScreen.types';
 import { useRenderDebugInfo } from '../../../private';
 
 /**
@@ -25,8 +29,10 @@ function StackScreen({
   animation,
   replaceAnimation,
 }: StackScreenProps) {
-  const onDismissWrapper = React.useCallback(
-    (event: OnDismissEvent) => {
+  const onDismissWrapper = React.useCallback<
+    NativeEventHandler<OnDismissEventPayload>
+  >(
+    event => {
       if (event.nativeEvent.isNativeDismiss) {
         onNativeDismiss?.(screenKey);
       } else {

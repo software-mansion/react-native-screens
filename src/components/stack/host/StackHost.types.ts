@@ -1,19 +1,16 @@
 import React from 'react';
 import type { HostInstance, ViewProps } from 'react-native';
-import { type NativeProps } from '../../../fabric/stack/StackHostNativeComponent';
 import type { ColorScheme, Direction } from '../../shared/types';
 
-export type StackHostColorScheme = ColorScheme | 'inherit';
+export type StackColorScheme = ColorScheme | 'inherit';
 
-export type StackHostDirection = Direction | 'inherit';
+export type StackDirection = Direction | 'inherit';
 
 export type StackHostProps = {
   // General
   children: NonNullable<ViewProps['children']>;
   // TODO: Work on these types
-  ref?:
-    | React.RefObject<(React.Component<NativeProps> & HostInstance) | null>
-    | undefined;
+  ref?: React.Ref<HostInstance> | undefined;
   /**
    * @summary Specifies the layout direction of the native container, its views
    * and child containers.
@@ -35,7 +32,7 @@ export type StackHostProps = {
    *
    * @platform android
    */
-  direction?: StackHostDirection | undefined;
+  direction?: StackDirection | undefined;
   /**
    * @summary Specifies the color scheme used by the container and any child
    * containers.
@@ -57,5 +54,5 @@ export type StackHostProps = {
    *
    * @platform android
    */
-  colorScheme?: StackHostColorScheme | undefined;
+  colorScheme?: StackColorScheme | undefined;
 };

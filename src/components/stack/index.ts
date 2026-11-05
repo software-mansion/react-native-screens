@@ -2,22 +2,23 @@ import { StackHost } from './host';
 import { StackScreen } from './screen';
 import { StackHeaderConfig } from './header';
 
-export type {
-  StackHostProps,
-  StackHostColorScheme,
-  StackHostDirection,
-} from './host';
+export type { StackHostProps, StackColorScheme, StackDirection } from './host';
 
 export type {
   OnDismissEventPayload,
-  OnDismissEvent,
   StackScreenActivityMode,
   StackScreenReplaceAnimation,
-  StackScreenEventHandler,
+  StackScreenDismissHandler,
   StackScreenProps,
   StackScreenAnimation,
   StackScreenAnimationPresetName,
+  StackScreenAnimationFadeFromEdgePresetName,
+  StackScreenAnimationTimedPresetName,
+  StackScreenAnimationUntimedPresetName,
   StackScreenAnimationPresetRef,
+  StackScreenAnimationFadeFromEdgePresetRef,
+  StackScreenAnimationTimedPresetRef,
+  StackScreenAnimationUntimedPresetRef,
   StackScreenAnimationTimingOptions,
   StackScreenAnimationEasing,
   StackScreenAnimationEasingName,

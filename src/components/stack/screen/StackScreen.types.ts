@@ -1,20 +1,16 @@
-import { NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { EmptyEventPayload } from '../../shared/types';
+import type { ViewProps } from 'react-native';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type { StackScreenAnimation } from './animation';
 
 export type OnDismissEventPayload = {
   isNativeDismiss: boolean;
 };
 
-export type OnDismissEvent = NativeSyntheticEvent<OnDismissEventPayload>;
-
 export type StackScreenActivityMode = 'detached' | 'attached';
 
 export type StackScreenReplaceAnimation = 'push' | 'pop';
 
-export type StackScreenEventHandler = (
-  event: NativeSyntheticEvent<EmptyEventPayload>,
-) => void;
+export type StackScreenDismissHandler = (screenKey: string) => void;
 
 export type StackScreenProps = {
   children?: ViewProps['children'] | undefined;
@@ -24,14 +20,14 @@ export type StackScreenProps = {
   screenKey: string;
 
   // Events
-  onWillAppear?: StackScreenEventHandler | undefined;
-  onDidAppear?: StackScreenEventHandler | undefined;
-  onWillDisappear?: StackScreenEventHandler | undefined;
-  onDidDisappear?: StackScreenEventHandler | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
-  onDismiss?: ((screenKey: string) => void) | undefined;
-  onNativeDismiss?: ((screenKey: string) => void) | undefined;
-  onNativeDismissPrevented?: StackScreenEventHandler | undefined;
+  onDismiss?: StackScreenDismissHandler | undefined;
+  onNativeDismiss?: StackScreenDismissHandler | undefined;
+  onNativeDismissPrevented?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   // Configuration
   preventNativeDismiss?: boolean | undefined;

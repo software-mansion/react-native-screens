@@ -42,35 +42,54 @@ export interface StackScreenAnimationTimingOptions {
    * Replaces the preset's reference duration (the longer of its push and pop) in
    * milliseconds; both are rescaled by the same factor.
    */
-  duration?: number;
+  duration?: number | undefined;
   /**
    * Replaces the curve of every animated property of the preset. A predictive
    * back gesture always scrubs linearly with the finger.
    */
-  easing?: StackScreenAnimationEasing;
+  easing?: StackScreenAnimationEasing | undefined;
+}
+
+export type StackScreenAnimationFadeFromEdgePresetName =
+  | 'fadeFromBottom'
+  | 'fadeFromTop';
+
+export type StackScreenAnimationTimedPresetName =
+  | 'slideFromRight'
+  | 'slideFromLeft'
+  | 'slideFromBottom'
+  | 'slideFromTop'
+  | 'fade'
+  | 'iosFromRight'
+  | 'iosFromLeft';
+
+export type StackScreenAnimationUntimedPresetName = 'default' | 'none';
+
+export interface StackScreenAnimationFadeFromEdgePresetRef
+  extends StackScreenAnimationTimingOptions {
+  type: 'preset';
+  name: StackScreenAnimationFadeFromEdgePresetName;
+  /**
+   * How far the moving screen rises or falls. Defaults to `'8%'`.
+   */
+  distance?: StackScreenAnimationLength | undefined;
+}
+
+export interface StackScreenAnimationTimedPresetRef
+  extends StackScreenAnimationTimingOptions {
+  type: 'preset';
+  name: StackScreenAnimationTimedPresetName;
+}
+
+export interface StackScreenAnimationUntimedPresetRef {
+  type: 'preset';
+  name: StackScreenAnimationUntimedPresetName;
 }
 
 export type StackScreenAnimationPresetRef =
-  | ({
-      type: 'preset';
-      name: 'fadeFromBottom' | 'fadeFromTop';
-      /**
-       * How far the moving screen rises or falls. Defaults to `'8%'`.
-       */
-      distance?: StackScreenAnimationLength;
-    } & StackScreenAnimationTimingOptions)
-  | ({
-      type: 'preset';
-      name:
-        | 'slideFromRight'
-        | 'slideFromLeft'
-        | 'slideFromBottom'
-        | 'slideFromTop'
-        | 'fade'
-        | 'iosFromRight'
-        | 'iosFromLeft';
-    } & StackScreenAnimationTimingOptions)
-  | { type: 'preset'; name: 'default' | 'none' };
+  | StackScreenAnimationFadeFromEdgePresetRef
+  | StackScreenAnimationTimedPresetRef
+  | StackScreenAnimationUntimedPresetRef;
 
 export type StackScreenAnimation =
   | StackScreenAnimationPresetName

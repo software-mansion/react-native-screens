@@ -20,7 +20,7 @@ import {
   type StackHeaderToolbarMenuBaseAndroid,
   type StackHeaderToolbarMenuElementOptionsAndroid,
   type StackHeaderTypeAndroid,
-  type StackHostColorScheme,
+  type StackColorScheme,
   ScrollViewMarker,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
@@ -45,7 +45,7 @@ type AllIds = (typeof ALL_IDS)[number];
 // Annotated rather than `as const`: the union comes from the library, so the
 // annotation is what checks these are real values, not a duplicate of it.
 const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'medium', 'large'];
-const HOST_COLOR_SCHEMES: StackHostColorScheme[] = ['inherit', 'light', 'dark'];
+const HOST_COLOR_SCHEMES: StackColorScheme[] = ['inherit', 'light', 'dark'];
 
 const MAX_LINES = ['1', '2'] as const;
 type MaxLinesOption = (typeof MAX_LINES)[number];
@@ -75,8 +75,8 @@ const COMMAND_ICON: PlatformIconAndroid = {
 // Set on StackContainer, so it has to travel down to the screen rendering the
 // controls.
 const HostColorSchemeContext = createContext<{
-  hostColorScheme: StackHostColorScheme;
-  setHostColorScheme: (value: StackHostColorScheme) => void;
+  hostColorScheme: StackColorScheme;
+  setHostColorScheme: (value: StackColorScheme) => void;
 }>({ hostColorScheme: 'inherit', setHostColorScheme: () => {} });
 
 function buildMenu(
@@ -160,7 +160,7 @@ function buildMenu(
 
 function TestStackToolbarMenuState() {
   const [hostColorScheme, setHostColorScheme] =
-    useState<StackHostColorScheme>('inherit');
+    useState<StackColorScheme>('inherit');
 
   return (
     <HostColorSchemeContext.Provider
@@ -312,7 +312,7 @@ function MainScreen() {
           onValueChange={setMaxLines}
           testID="max-lines-picker"
         />
-        <SettingsPicker<StackHostColorScheme>
+        <SettingsPicker<StackColorScheme>
           label="hostColorScheme"
           value={hostColorScheme}
           items={HOST_COLOR_SCHEMES}

@@ -63,6 +63,6 @@ export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
 }
 
 export interface StackHeaderConfigRef {
-  android?: StackHeaderConfigCommandsAndroid;
-  ios?: StackHeaderConfigCommandsIOS;
+  android?: StackHeaderConfigCommandsAndroid | undefined;
+  ios?: StackHeaderConfigCommandsIOS | undefined;
 }
