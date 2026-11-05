@@ -6,7 +6,7 @@ import android.graphics.Typeface
  * Provides text styling for some given part of the interface. Interface is React-agnostic. A `null`
  * value means "keep the default".
  */
-internal interface TextAppearance {
+interface TextAppearance {
     val color: Int?
 
     /** Font size in SP. */

@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor") // should never be restored
-internal class StackHost(
+class StackHost(
     private val reactContext: ThemedReactContext,
 ) : ViewGroup(reactContext),
     UIManagerListener,
