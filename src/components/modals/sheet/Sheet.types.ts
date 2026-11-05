@@ -4,7 +4,7 @@ import type { BlurEffect } from '../../shared/types';
 /**
  * Payload of a sheet event that carries no data.
  *
- * @platform android >= 21, ios >= 15, tvos >= 26
+ * @platform android, ios >= 15, tvos >= 26
  */
 export type EmptyEventPayload = Record<string, never>;
 
@@ -13,20 +13,20 @@ export type EmptyEventPayload = Record<string, never>;
  *
  * @typeParam T - Payload the native event carries.
  * @param e - The native event.
- * @platform android >= 21, ios >= 15, tvos >= 26
+ * @platform android, ios >= 15, tvos >= 26
  */
 export type SheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
 
 /**
  * Payload of the event sent when the sheet settles at a new detent.
  *
- * @platform android >= 21, ios >= 15
+ * @platform android, ios >= 15
  */
 export interface SheetDetentChangedEvent {
   /**
    * Index of the new detent in the `detents` array.
    *
-   * @platform android >= 21, ios >= 15
+   * @platform android, ios >= 15
    */
   index: number;
 }
@@ -104,13 +104,13 @@ export type SheetBackgroundEffect =
 /**
  * Style of the native container hosting the sheet content.
  *
- * @platform android >= 21, ios >= 15, tvos >= 26
+ * @platform android, ios >= 15, tvos >= 26
  */
 export type SheetNativeContainerStyleProps = {
   /**
    * Background color of the native container hosting the sheet content.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   backgroundColor?: ColorValue | undefined;
 };
@@ -119,13 +119,13 @@ export type SheetNativeContainerStyleProps = {
  * Props shared by the sheet components, {@link FormSheet} and
  * {@link PageSheet}.
  *
- * @platform android >= 21, ios >= 15, tvos >= 26
+ * @platform android, ios >= 15, tvos >= 26
  */
 export interface SheetProps {
   /**
    * Content of the sheet.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   children?: ViewProps['children'] | undefined;
 
@@ -137,7 +137,7 @@ export interface SheetProps {
    * `false` to `true` presents the sheet, and changing it from `true` to
    * `false` dismisses it programmatically.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   isOpen: boolean;
 
@@ -157,7 +157,7 @@ export interface SheetProps {
    * @note
    * On iOS 15, `'fitToContents'` falls back to a medium detent.
    *
-   * @platform android >= 21, ios >= 15
+   * @platform android, ios >= 15
    */
   detents?: number[] | 'fitToContents' | undefined;
 
@@ -170,7 +170,7 @@ export interface SheetProps {
    * in some presentation contexts.
    *
    * @defaultValue `false`
-   * @platform android >= 21, ios >= 15
+   * @platform android, ios >= 15
    */
   prefersGrabberVisible?: boolean | undefined;
 
@@ -244,7 +244,7 @@ export interface SheetProps {
    *
    * @defaultValue `false`
    * @see {@link SheetProps.onNativeDismissPrevented | onNativeDismissPrevented}
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   preventNativeDismiss?: boolean | undefined;
 
@@ -254,7 +254,7 @@ export interface SheetProps {
    * @remarks
    * These properties are forwarded directly to the underlying native view.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   nativeContainerStyle?: SheetNativeContainerStyleProps | undefined;
 
@@ -282,7 +282,7 @@ export interface SheetProps {
    * @remarks
    * Called as soon as the transition begins.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onWillAppear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -292,7 +292,7 @@ export interface SheetProps {
    * @remarks
    * Called as soon as the transition ends.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onDidAppear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -302,7 +302,7 @@ export interface SheetProps {
    * @remarks
    * Called as soon as the transition begins.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onWillDisappear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -312,7 +312,7 @@ export interface SheetProps {
    * @remarks
    * Called as soon as the transition ends.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onDidDisappear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -322,7 +322,7 @@ export interface SheetProps {
    * @remarks
    * Fired when the sheet is dismissed because `isOpen` changed to `false`.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onDismiss?: SheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -334,7 +334,7 @@ export interface SheetProps {
    * for example to set `isOpen` back to `false`. Otherwise the two can get
    * out of sync.
    *
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onNativeDismiss?: SheetEventHandler<EmptyEventPayload> | undefined;
 
@@ -344,7 +344,7 @@ export interface SheetProps {
    * @remarks
    * The event carries the `index` of the new detent in the `detents` array.
    *
-   * @platform android >= 21, ios >= 15
+   * @platform android, ios >= 15
    */
   onDetentChanged?: SheetEventHandler<SheetDetentChangedEvent> | undefined;
 
@@ -358,7 +358,7 @@ export interface SheetProps {
    * user why the sheet cannot be closed.
    *
    * @see {@link SheetProps.preventNativeDismiss | preventNativeDismiss}
-   * @platform android >= 21, ios >= 15, tvos >= 26
+   * @platform android, ios >= 15, tvos >= 26
    */
   onNativeDismissPrevented?: SheetEventHandler<EmptyEventPayload> | undefined;
 }

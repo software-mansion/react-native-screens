@@ -22,6 +22,6 @@ export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 /**
  * Props for {@link FormSheet}.
  *
- * @platform android >= 21, ios >= 15, tvos >= 26
+ * @platform android, ios >= 15, tvos >= 26
  */
 export type FormSheetProps = SheetProps;
