@@ -315,17 +315,29 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     [animator startAnimation];
   } else if (_operation == UINavigationControllerOperationPop) {
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                               curve:UIViewAnimationCurveEaseInOut
-                                                          animations:^{
-                                                            fromViewController.view.alpha = 0.0;
-                                                          }];
-    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+
+    void (^animationBlock)(void) = ^{
+      fromViewController.view.alpha = 0.0;
+    };
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       fromViewController.view.alpha = 1.0;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-    }];
-    _inFlightAnimator = animator;
-    [animator startAnimation];
+    };
+
+    if (!transitionContext.isInteractive) {
+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                                 curve:UIViewAnimationCurveEaseInOut
+                                                            animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
+      [animator startAnimation];
+    } else {
+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                                 curve:UIViewAnimationCurveLinear
+                                                            animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
+    }
   }
 }
 
@@ -428,33 +440,59 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
 
-    // Android Nougat exit animation
-    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-    auto slideAnimator = [[UIViewPropertyAnimator alloc]
-        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
-                   curve:UIViewAnimationCurveEaseIn
-              animations:^{
-                toViewController.view.transform = CGAffineTransformIdentity;
-                fromViewController.view.transform = topBottomTransform;
-              }];
-    [slideAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+    void (^slideAnimationBlock)(void) = ^{
+      toViewController.view.transform = CGAffineTransformIdentity;
+      fromViewController.view.transform = topBottomTransform;
+    };
+    void (^fadeAnimationBlock)(void) = ^{
+      fromViewController.view.alpha = 0.0;
+    };
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
       fromViewController.view.transform = CGAffineTransformIdentity;
       toViewController.view.transform = CGAffineTransformIdentity;
       fromViewController.view.alpha = 1.0;
       toViewController.view.alpha = 1.0;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-    }];
+    };
 
-    auto fadeAnimator = [[UIViewPropertyAnimator alloc]
-        initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
-                   curve:UIViewAnimationCurveLinear
-              animations:^{
-                fromViewController.view.alpha = 0.0;
-              }];
+    // Android Nougat exit animation
+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
+    if (!transitionContext.isInteractive) {
+      auto slideAnimator = [[UIViewPropertyAnimator alloc]
+          initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
+                     curve:UIViewAnimationCurveEaseIn
+                animations:slideAnimationBlock];
+      [slideAnimator addCompletion:completionBlock];
 
-    _inFlightAnimator = slideAnimator;
-    [slideAnimator startAnimation];
-    [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
+      auto fadeAnimator = [[UIViewPropertyAnimator alloc]
+          initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
+                     curve:UIViewAnimationCurveLinear
+                animations:fadeAnimationBlock];
+
+      _inFlightAnimator = slideAnimator;
+      [slideAnimator startAnimation];
+      [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
+    } else {
+      // Only `_inFlightAnimator` follows the gesture, so the delayed fade runs as a keyframe inside it.
+      const float fadeRelativeStartTime =
+          RNSFadeCloseDelayTransitionDurationProportion / RNSSlideCloseTransitionDurationProportion;
+      const float fadeRelativeDuration =
+          RNSFadeCloseTransitionDurationProportion / RNSSlideCloseTransitionDurationProportion;
+      void (^keyframesBlock)(void) = ^{
+        [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:slideAnimationBlock];
+        [UIView addKeyframeWithRelativeStartTime:fadeRelativeStartTime
+                                relativeDuration:fadeRelativeDuration
+                                      animations:fadeAnimationBlock];
+      };
+      auto animator = [[UIViewPropertyAnimator alloc]
+          initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
+                     curve:UIViewAnimationCurveLinear
+                animations:^{
+                  [UIView animateKeyframesWithDuration:0 delay:0 options:0 animations:keyframesBlock completion:nil];
+                }];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
+    }
   }
 }
 
