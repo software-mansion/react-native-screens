@@ -167,7 +167,7 @@ class TabsContainer internal constructor(
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView)
 
-    private val interfaceInsetsChangeListeners = mutableSetOf<OnInterfaceInsetsChangeListener>()
+    private val interfaceInsetsChangeListeners = mutableListOf<OnInterfaceInsetsChangeListener>()
 
     internal var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -879,7 +879,7 @@ class TabsContainer internal constructor(
 
     private fun updateInterfaceInsets(newHeight: Int? = null) {
         val insets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight(newHeight).toFloat())
-        interfaceInsetsChangeListeners.toList().forEach { it.onInterfaceInsetsChange(insets) }
+        interfaceInsetsChangeListeners.forEach { it.onInterfaceInsetsChange(insets) }
     }
 
     private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
