@@ -330,6 +330,12 @@ export interface FormSheetProps {
    * Provides the `index` of the newly selected detent from the `detents`
    * array.
    *
+   * @note
+   * This is an implementation detail and may change. On iOS 15, the sheet
+   * uses only the system's medium and large detents, and the index refers to
+   * them: `0` for medium and `1` for large. With fewer than two detents, the
+   * index is always `0`.
+   *
    * @platform android, ios
    */
   onDetentChanged?: NativeEventHandler<FormSheetDetentChangedEvent> | undefined;
