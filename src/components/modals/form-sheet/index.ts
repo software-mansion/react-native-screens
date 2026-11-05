@@ -3,7 +3,7 @@ export type {
   FormSheetDetentChangedEvent,
   FormSheetDetents,
   FormSheetPreferredCornerRadius,
-  FormSheetLargestUndimmedDetentIndexIOS,
+  FormSheetLargestUndimmedDetentIndex,
   FormSheetInitialDetentIndex,
   FormSheetNativeContainerStyleProps,
   FormSheetBackgroundEffect,

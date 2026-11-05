@@ -49,7 +49,7 @@ export type FormSheetPreferredCornerRadius = number | 'systemDefault';
  * - `'none'` — the content underneath is dimmed at every detent.
  * - `'last'` — the content underneath is never dimmed.
  */
-export type FormSheetLargestUndimmedDetentIndexIOS = number | 'none' | 'last';
+export type FormSheetLargestUndimmedDetentIndex = number | 'none' | 'last';
 
 /**
  * Detent a sheet opens at.
@@ -195,9 +195,7 @@ export interface FormSheetProps {
    * @defaultValue `'none'`
    * @platform ios
    */
-  largestUndimmedDetentIndex?:
-    | FormSheetLargestUndimmedDetentIndexIOS
-    | undefined;
+  largestUndimmedDetentIndex?: FormSheetLargestUndimmedDetentIndex | undefined;
 
   /**
    * The index of the detent the sheet should snap to when first opened.
