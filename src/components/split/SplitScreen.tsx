@@ -3,9 +3,7 @@ import { StyleSheet } from 'react-native';
 import SplitScreenNativeComponent from '../../fabric/split/SplitScreenNativeComponent';
 import { SplitScreenProps } from './SplitScreen.types';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
+// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 function Column(props: SplitScreenProps) {
   return (
     <SplitScreenNativeComponent
@@ -17,9 +15,7 @@ function Column(props: SplitScreenProps) {
   );
 }
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
+// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 function Inspector(props: SplitScreenProps) {
   return (
     <SplitScreenNativeComponent
@@ -31,9 +27,7 @@ function Inspector(props: SplitScreenProps) {
   );
 }
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
+// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 // TODO: refactor to drop `Screen` suffix as the API name is really long at the moment
 const SplitScreen = {
   Column,

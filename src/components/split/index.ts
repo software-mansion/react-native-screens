@@ -22,7 +22,19 @@ export type {
 } from './SplitScreen.types';
 
 export const Split = {
+  /**
+   * @platform ios
+   * @experimental
+   */
   Host: SplitHost,
+  /**
+   * @platform ios
+   * @experimental
+   */
   Column: SplitScreen.Column,
+  /**
+   * @platform ios >= 26
+   * @experimental
+   */
   Inspector: SplitScreen.Inspector,
 };
