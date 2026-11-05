@@ -390,7 +390,7 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight().toFloat())
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
@@ -874,10 +874,11 @@ class TabsContainer internal constructor(
             "[RNScreens] Requested fragment for key: $screenKey does not exist"
         }
 
-    private fun updateInterfaceInsets(newHeight: Int? = null) {
-        val height = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
+    // A hidden tab bar is `GONE`, so `bottomNavigationView.height` keeps the last laid out value.
+    private fun currentTabBarHeight(newHeight: Int? = null): Int = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
 
-        val insets = EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat())
+    private fun updateInterfaceInsets(newHeight: Int? = null) {
+        val insets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight(newHeight).toFloat())
         interfaceInsetsChangeListeners.toList().forEach { it.onInterfaceInsetsChange(insets) }
     }
 
