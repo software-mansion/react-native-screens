@@ -19,7 +19,7 @@ TBD
 
 ## Note
 
-- **Android:** an upward drag on the list at the lower detent moves the sheet up first, whatever the list offset; the list scrolls only once the sheet is at the large detent. On iOS the sheet expands from the list only when the drag starts at the list's top edge (`prefersScrollingExpandsWhenScrolledToEdge`); otherwise the list scrolls and the sheet stays. This is why the "Scrolled list at the lower detent" section differs between platforms.
+- At the lower detent, an upward drag on the list expands the sheet instead of scrolling the list (on Android whatever the list offset, on iOS when the list is at its top). This is why the "Scrolled list at the lower detent" section scrolls the list at the large detent first and then moves the sheet down with the header.
 - "Scroll the list a little" means 2 or 3 rows, clearly less than the length of one drag across the screen. "Scroll the list far" means 10 rows or more.
 
 ## Steps
@@ -38,11 +38,11 @@ TBD
 
     - [ ] The sheet opens up to the top of the screen. The "Drag here" header, "Top of the list", the "Close" button and the first rows are visible.
 
-2. Scroll the list a little, then drag it back down in one gesture, past its top, without lifting the finger.
+2. Scroll the list a little and lift the finger. Then start a new drag down on the list and continue it past the list's top without lifting the finger.
 
     - [ ] The list scrolls back and stops with "Top of the list" fully visible. The sheet does not move and stays open.
 
-3. Scroll the list a little again, then fling it down fast, past its top.
+3. Scroll the list a little again and lift the finger. Then fling the list down fast, past its top.
 
     - [ ] Same as above: the list stops at its top, the sheet stays open.
 
@@ -58,7 +58,7 @@ TBD
 
     - [ ] The sheet follows the finger and is dismissed.
 
-2. Tap "Open sheet (detents: [1])", scroll the list far, then drag down once.
+2. Tap "Open sheet (detents: [1])", scroll the list far and lift the finger. Then drag down on the list once.
 
     - [ ] The list scrolls back by the length of the drag and stays scrolled. The sheet stays open.
 
@@ -74,7 +74,7 @@ TBD
 
     - [ ] The sheet opens at the large detent.
 
-2. Scroll the list a little, then drag it back down in one gesture, past its top.
+2. Scroll the list a little and lift the finger. Then start a new drag down on the list and continue it past the list's top without lifting the finger.
 
     - [ ] The list stops at its top. The sheet stays at the large detent.
 
@@ -90,11 +90,11 @@ TBD
 
 ### Two detents, scrolled list at the lower detent
 
-1. Tap "Open sheet (detents: [0.5, 1])", scroll the list a little, then drag the "Drag here" header down.
+1. Tap "Open sheet (detents: [0.5, 1])", scroll the list a little and lift the finger. Then drag the "Drag here" header down.
 
     - [ ] The sheet settles at the lower detent with the list still scrolled.
 
-2. Drag the list down in one gesture, past its top.
+2. Drag down on the list and continue past the list's top without lifting the finger.
 
     - [ ] The list stops at its top. The sheet stays at the lower detent.
 

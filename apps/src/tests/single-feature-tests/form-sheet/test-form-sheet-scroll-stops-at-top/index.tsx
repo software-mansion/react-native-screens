@@ -54,10 +54,11 @@ function TestFormSheetScrollStopsAtTop() {
     <View style={styles.container}>
       <Text style={styles.title}>Scroll Stops At Top</Text>
       <Text style={styles.instruction}>
-        In the sheet, scroll the list down a little, then drag it back down in
-        one gesture, past its top, without lifting the finger. The list should
-        stop at its top and the sheet should stay in place. A drag that starts
-        with the list at its top should move the sheet.
+        In the sheet, scroll the list down a little and lift the finger. Then
+        start a new drag down on the list and continue it past the list's top
+        without lifting the finger. The list should stop at its top and the
+        sheet should stay in place. A drag that starts with the list at its top
+        should move the sheet.
       </Text>
 
       <View style={styles.buttonGroup}>
