@@ -25,6 +25,7 @@ console.table({
   'ios-device': config['ios-device'] ?? '',
   'ios-udid': config['ios-udid'] ?? '',
   'android-device': config['android-device'] ?? '',
+  'metro-port': config['metro-port'],
 });
 console.log('--------------------------------------------------');
 
