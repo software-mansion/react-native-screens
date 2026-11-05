@@ -55,7 +55,7 @@ class SafeAreaView(
             return
         }
 
-        newProvider.setOnInterfaceInsetsChangeListener(this)
+        newProvider.addOnInterfaceInsetsChangeListener(this)
         provider = WeakReference(newProvider)
 
         currentInterfaceInsets = newProvider.getInterfaceInsets()
