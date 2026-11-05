@@ -8,7 +8,7 @@ import android.view.animation.LinearInterpolator
 import androidx.transition.Transition
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.binding.TrackBinding
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.binding.bindTrack
-import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ScreenTimeline
+import com.swmansion.rnscreens.core.containers.stack.animation.timeline.MotionTimeline
 
 /**
  * One linear master animator per screen; every track is a pure function of the master time,
@@ -18,7 +18,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.timeline.ScreenTi
  */
 internal fun createTimelineAnimator(
     view: View,
-    timeline: ScreenTimeline,
+    timeline: MotionTimeline,
     metrics: LayoutMetrics,
     rootTransition: Transition,
 ): Animator {
