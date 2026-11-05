@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import "RNSFormSheetPresentationState.h"
 #import "RNSFormSheetProviders.h"
 
 @class RNSFormSheetContentController;
@@ -8,6 +9,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSFormSheetPresentationManager : NSObject
+
+/// Current step of the present / dismiss cycle.
+@property (nonatomic, readonly) RNSFormSheetPresentationState state;
 
 - (void)updatePresentationIfNeededWithProvider:(id<RNSFormSheetPresentationProvider>)provider
                                     controller:(RNSFormSheetContentController *)controller;

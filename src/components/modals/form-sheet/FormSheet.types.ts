@@ -20,6 +20,8 @@ export type FormSheetBackgroundEffect = SheetBackgroundEffect;
 export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
- * Props of the `FormSheet` component.
+ * Props for {@link FormSheet}.
+ *
+ * @platform android, ios, tvos >= 26
  */
 export type FormSheetProps = SheetProps;
