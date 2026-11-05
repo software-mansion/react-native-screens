@@ -101,6 +101,11 @@ Runs `tsc --noEmit` against the root `tsconfig.json` (covers `./src/`).
 
 Be extremely frank and focused on thoroughness.
 
+## AI tooling
+
+When adding, renaming or removing a shared skill or agent, follow
+`.agents/skills/add-shared-agent-tooling/SKILL.md`.
+
 ## Issue creation
 
 If you intend to create an issue on this repository, adhere to templates from `./.github/ISSUE_TEMPLATE/`!
