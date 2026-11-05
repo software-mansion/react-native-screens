@@ -8,7 +8,7 @@
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately. The phone part is a mirror of `test-form-sheet-base`; the iPad part can measure detent geometry because a page sheet is bottom-anchored there.
+TBD
 
 ## Prerequisites
 
