@@ -1,43 +1,82 @@
 import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
 import type { BlurEffect } from '../../shared/types';
 
+/**
+ * Payload of a sheet event that carries no data.
+ *
+ * @platform android >= 21, ios >= 15, tvos >= 26
+ */
 export type EmptyEventPayload = Record<string, never>;
 
+/**
+ * Handler of a sheet event.
+ *
+ * @typeParam T - Payload the native event carries.
+ * @param e - The native event.
+ * @platform android >= 21, ios >= 15, tvos >= 26
+ */
 export type SheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
 
+/**
+ * Payload of the event sent when the sheet settles at a new detent.
+ *
+ * @platform android >= 21, ios >= 15
+ */
 export interface SheetDetentChangedEvent {
+  /**
+   * Index of the new detent in the `detents` array.
+   *
+   * @platform android >= 21, ios >= 15
+   */
   index: number;
 }
 
 /**
  * `UIBlurEffect.Style` a {@link SheetBackgroundEffectBlur} is rendered with.
+ *
+ * @remarks
+ * Accepts any {@link BlurEffect} value except `'none'`.
+ *
+ * @platform ios >= 26.1
  */
 export type SheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
 
 /**
  * Flat fill rendered behind the sheet's content.
+ *
+ * @platform ios >= 26.1
  */
 export interface SheetBackgroundEffectColor {
   /**
    * Discriminator of the effect.
+   *
+   * @platform ios >= 26.1
    */
   type: 'color';
   /**
    * Color of the fill.
+   *
+   * @platform ios >= 26.1
    */
   color: ColorValue;
 }
 
 /**
  * Blur material rendered behind the sheet's content.
+ *
+ * @platform ios >= 26.1
  */
 export interface SheetBackgroundEffectBlur {
   /**
    * Discriminator of the effect.
+   *
+   * @platform ios >= 26.1
    */
   type: 'blur';
   /**
    * `UIBlurEffect.Style` the material is rendered with.
+   *
+   * @platform ios >= 26.1
    */
   style: SheetBackgroundEffectBlurStyle;
 }
@@ -45,11 +84,16 @@ export interface SheetBackgroundEffectBlur {
 /**
  * Material the system renders behind the sheet's content.
  *
- * @remarks
- * - `'automatic'` - whatever UIKit uses for sheets on the current iOS version,
- * - `'none'` - no material at all; the sheet is transparent and only its content is drawn,
- * - {@link SheetBackgroundEffectColor} - a flat fill (`UIColorEffect`),
- * - {@link SheetBackgroundEffectBlur} - a `UIBlurEffect` with the given `UIBlurEffect.Style`.
+ * The following values are supported:
+ * - `'automatic'` — whatever UIKit uses for sheets on the current iOS
+ *   version.
+ * - `'none'` — no material at all; the sheet is transparent and only its
+ *   content is drawn.
+ * - {@link SheetBackgroundEffectColor} — a flat fill (`UIColorEffect`).
+ * - {@link SheetBackgroundEffectBlur} — a `UIBlurEffect` with the given
+ *   `UIBlurEffect.Style`.
+ *
+ * @platform ios >= 26.1
  */
 export type SheetBackgroundEffect =
   | 'automatic'
@@ -57,139 +101,160 @@ export type SheetBackgroundEffect =
   | SheetBackgroundEffectColor
   | SheetBackgroundEffectBlur;
 
+/**
+ * Style of the native container hosting the sheet content.
+ *
+ * @platform android >= 21, ios >= 15, tvos >= 26
+ */
 export type SheetNativeContainerStyleProps = {
   /**
-   * @summary Specifies the background color of the native container hosting the sheet content.
+   * Background color of the native container hosting the sheet content.
    *
-   * @platform android, ios
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   backgroundColor?: ColorValue | undefined;
 };
 
+/**
+ * Props shared by the sheet components, {@link FormSheet} and
+ * {@link PageSheet}.
+ *
+ * @platform android >= 21, ios >= 15, tvos >= 26
+ */
 export interface SheetProps {
+  /**
+   * Content of the sheet.
+   *
+   * @platform android >= 21, ios >= 15, tvos >= 26
+   */
   children?: ViewProps['children'] | undefined;
 
   /**
-   * @summary Determines whether the sheet is currently visible.
+   * Determines whether the sheet is currently visible.
    *
-   * Presentation is driven by state transitions: updating this property
-   * from `false` to `true` triggers the sheet to present, while changing
-   * it from `true` to `false` triggers a programmatic dismissal.
+   * @remarks
+   * Presentation is driven by state transitions: changing this property from
+   * `false` to `true` presents the sheet, and changing it from `true` to
+   * `false` dismisses it programmatically.
    *
-   * @platform android, ios
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   isOpen: boolean;
 
   /**
-   * @summary Defines the resting positions of the sheet.
-   *
-   * This can be either an array of fractional screen heights (ranging from `0.0` to `1.0`)
-   * or the `fitToContents` string literal.
-   *
-   * - Fractional heights: The sheet will snap to these specific height proportions.
-   * - `fitToContents`: The sheet automatically calculates its height to wrap its content.
-   *   It will dynamically animate to adapt to any internal layout changes.
-   *
-   * On iOS, these map directly to `UISheetPresentationController` detents.
-   * If an empty array is provided, it defaults to a single large detent.
+   * Resting positions of the sheet.
    *
    * @remarks
-   * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
+   * Either an array of fractional screen heights (from `0.0` to `1.0`) or
+   * `'fitToContents'`:
+   * - Fractional heights — the sheet snaps to these height proportions.
+   * - `'fitToContents'` — the sheet calculates its height to wrap its content
+   *   and animates to follow any layout changes of the content.
    *
-   * @platform android, ios
+   * On iOS, these map directly to `UISheetPresentationController` detents.
+   * An empty array results in a single large detent.
+   *
+   * @note
+   * On iOS 15, `'fitToContents'` falls back to a medium detent.
+   *
+   * @platform android >= 21, ios >= 15
    */
   detents?: number[] | 'fitToContents' | undefined;
 
   /**
-   * @summary Determines whether the sheet requests a grabber at the top.
+   * Determines whether the sheet requests a grabber at the top.
    *
-   * When `true`, the sheet requests that a small grabber indicator be shown
-   * at the top to hint that the sheet can be resized. The system may still
-   * hide the grabber in some presentation contexts.
+   * @remarks
+   * When `true`, the sheet requests a small grabber indicator at the top to
+   * hint that the sheet can be resized. The system may still hide the grabber
+   * in some presentation contexts.
    *
-   * @default false
-   * @platform android, ios
+   * @defaultValue `false`
+   * @platform android >= 21, ios >= 15
    */
   prefersGrabberVisible?: boolean | undefined;
 
   /**
-   * @summary The corner radius that the sheet will attempt to present with.
-   *
-   * If set to `systemDefault` or a negative number, it defaults to the system's
-   * automatic dimension (`UISheetPresentationControllerAutomaticDimension`).
+   * Corner radius the sheet attempts to present with.
    *
    * @remarks
-   * On Android, non-uniform rounded-corner clipping is only applied on API level 33+.
-   * On older versions this prop is ignored, because clipping the sheet content to non-uniform
-   * rounded corners is not reliable on those versions.
+   * `'systemDefault'` or a negative number uses the system's automatic
+   * dimension (`UISheetPresentationControllerAutomaticDimension`).
    *
-   * @default systemDefault
-   * @platform android, ios
-   * @supported android API level 33 or higher, iOS
+   * @info
+   * On older Android versions the prop is ignored, because clipping the sheet
+   * content to non-uniform rounded corners is not reliable there.
+   *
+   * @defaultValue `'systemDefault'`
+   * @platform android >= 33, ios >= 15
    */
   preferredCornerRadius?: number | 'systemDefault' | undefined;
 
   /**
-   * @summary The largest sheet detent for which a view underneath won't be dimmed.
+   * Largest detent for which the view underneath the sheet is not dimmed.
    *
-   * This prop can be set to a number, which indicates the index of the detent in the
-   * `detents` array for which there won't be a dimming view beneath the sheet.
+   * @remarks
+   * A number is the index of the detent in the `detents` array. Additionally:
+   * - `'none'` — the view underneath is dimmed for every detent.
+   * - `'last'` — the view underneath is not dimmed for any detent.
    *
-   * Additionally, there are the following options available:
-   * * `none` - there will be a dimming view for all detent levels.
-   * * `last` - there won't be a dimming view for any detent level.
-   *
-   * @default 'none'
-   * @platform ios
+   * @defaultValue `'none'`
+   * @platform ios >= 15
    */
   largestUndimmedDetentIndex?: number | 'none' | 'last' | undefined;
 
   /**
-   * @summary The index of the detent the sheet should snap to when first opened.
+   * Index of the detent the sheet snaps to when first opened.
    *
-   * This prop can be set to a number, indicating the zero-based index of the detent in the
-   * `detents` array. If set to `last`, it will snap to the largest defined detent.
-   * This prop only applies when the sheet transitions from closed to open.
+   * @remarks
+   * A number is the zero-based index of the detent in the `detents` array;
+   * `'last'` selects the largest detent. The prop applies only when the sheet
+   * transitions from closed to open.
    *
-   * @default 0
-   * @platform ios
+   * @defaultValue `0`
+   * @platform ios >= 15
    */
   initialDetentIndex?: number | 'last' | undefined;
 
   /**
-   * @summary Determines whether scrolling expands the sheet to a larger detent.
+   * Determines whether scrolling expands the sheet to a larger detent.
    *
-   * When set to `true`, scrolling up within a child scroll view (starting from the top edge)
-   * will first expand the sheet to a larger detent before scrolling the content.
-   * When set to `false`, scrolling within the child scroll view will scroll the content normally
-   * without expanding the sheet.
-   * Note that manual dragging of the sheet's non-scrollable area will still expand the
+   * @remarks
+   * When `true`, scrolling up within a child scroll view (starting from the top
+   * edge) first expands the sheet to a larger detent and only then scrolls the
+   * content. When `false`, the child scroll view scrolls its content without
+   * expanding the sheet. Dragging the sheet's non-scrollable area expands the
    * sheet regardless of this setting.
    *
-   * On iOS, this maps directly to `UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge`.
+   * On iOS, this maps directly to
+   * `UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge`.
    *
-   * @default true
-   * @platform ios
+   * @defaultValue `true`
+   * @platform ios >= 15
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
   /**
-   * @summary Prevents the user from dismissing the sheet natively by swiping down or tapping the backdrop.
+   * Prevents the user from dismissing the sheet natively.
    *
-   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
-   * remaining on the resting detent. Programmatically dismissing the sheet via `isOpen={false}` will still work.
+   * @remarks
+   * When `true`, the sheet resists the swipe-down gesture and the backdrop tap
+   * and stays at its resting detent. Dismissing the sheet programmatically with
+   * `isOpen={false}` still works.
    *
-   * @default false
-   * @platform android, ios
+   * @defaultValue `false`
+   * @see {@link SheetProps.onNativeDismissPrevented | onNativeDismissPrevented}
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   preventNativeDismiss?: boolean | undefined;
 
   /**
-   * @summary Style applied to the native container hosting the sheet content.
+   * Style applied to the native container hosting the sheet content.
    *
+   * @remarks
    * These properties are forwarded directly to the underlying native view.
    *
-   * @platform android, ios
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   nativeContainerStyle?: SheetNativeContainerStyleProps | undefined;
 
@@ -198,13 +263,13 @@ export interface SheetProps {
    *
    * @remarks
    * The material is drawn behind the native container, so an opaque
-   * `nativeContainerStyle.backgroundColor` covers it; replacing the material still matters then,
-   * because it removes the Liquid Glass highlight and edges of `'automatic'`.
+   * `nativeContainerStyle.backgroundColor` covers it. Replacing the material
+   * still matters then, because it removes the Liquid Glass highlight and
+   * edges of `'automatic'`.
    *
    * On iOS, this maps to `UIPresentationController.backgroundEffect`.
    *
    * @defaultValue `'automatic'`
-   * @see {@link SheetBackgroundEffect}
    * @platform ios >= 26.1
    */
   backgroundEffect?: SheetBackgroundEffect | undefined;
@@ -212,73 +277,88 @@ export interface SheetProps {
   // Events
 
   /**
-   * @summary A callback that gets invoked when the sheet will appear.
-   * This is called as soon as the transition begins.
+   * Called when the sheet is about to appear.
    *
-   * @platform android, ios
+   * @remarks
+   * Called as soon as the transition begins.
+   *
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onWillAppear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary A callback that gets invoked when the sheet did appear.
-   * This is called as soon as the transition ends.
+   * Called when the sheet has appeared.
    *
-   * @platform android, ios
+   * @remarks
+   * Called as soon as the transition ends.
+   *
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onDidAppear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary A callback that gets invoked when the sheet will disappear.
-   * This is called as soon as the transition begins.
+   * Called when the sheet is about to disappear.
    *
-   * @platform android, ios
+   * @remarks
+   * Called as soon as the transition begins.
+   *
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onWillDisappear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary A callback that gets invoked when the sheet did disappear.
-   * This is called as soon as the transition ends.
+   * Called when the sheet has disappeared.
    *
-   * @platform android, ios
+   * @remarks
+   * Called as soon as the transition ends.
+   *
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onDidDisappear?: SheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary Called when the sheet is dismissed programmatically.
+   * Called when the sheet is dismissed programmatically.
    *
-   * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
+   * @remarks
+   * Fired when the sheet is dismissed because `isOpen` changed to `false`.
    *
-   * @platform android, ios
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onDismiss?: SheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary Called when the sheet is dismissed natively.
+   * Called when the sheet is dismissed natively.
    *
-   * It is highly recommended to use this callback to synchronize
-   * your local React state to prevent UI mismatches (e.g., updating `isOpen` back to `false`).
+   * @tip
+   * Use this callback to synchronize your React state with the native one,
+   * for example to set `isOpen` back to `false`. Otherwise the two can get
+   * out of sync.
    *
-   * @platform android, ios
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onNativeDismiss?: SheetEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary Called when the sheet settles at a new detent.
+   * Called when the sheet settles at a new detent.
    *
-   * Provides the `index` of the newly selected detent from the `detents` array.
+   * @remarks
+   * The event carries the `index` of the new detent in the `detents` array.
    *
-   * @platform android, ios
+   * @platform android >= 21, ios >= 15
    */
   onDetentChanged?: SheetEventHandler<SheetDetentChangedEvent> | undefined;
 
   /**
-   * @summary Called when the user attempts to dismiss the sheet by swiping down or tapping the backdrop, but the dismissal is prevented.
+   * Called when the user attempts to dismiss the sheet natively, but the
+   * dismissal is prevented.
    *
-   * This event is only fired if `preventNativeDismiss` is set to `true`.
-   * It is useful for triggering custom feedback, such as an alert
-   * to inform the user why the sheet cannot be closed.
+   * @remarks
+   * Fired only when `preventNativeDismiss` is `true`, after a swipe-down or
+   * a backdrop tap. Useful for custom feedback, such as an alert telling the
+   * user why the sheet cannot be closed.
    *
-   * @platform android, ios
+   * @see {@link SheetProps.preventNativeDismiss | preventNativeDismiss}
+   * @platform android >= 21, ios >= 15, tvos >= 26
    */
   onNativeDismissPrevented?: SheetEventHandler<EmptyEventPayload> | undefined;
 }

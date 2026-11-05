@@ -20,17 +20,8 @@ export type FormSheetBackgroundEffect = SheetBackgroundEffect;
 export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
- * Props of the `FormSheet` component.
+ * Props for {@link FormSheet}.
  *
- * @remarks
- * `FormSheet` presents with `UIModalPresentationFormSheet`. On iPhone it is a
- * full-width sheet anchored to the bottom of the screen. On iPad it is a
- * centered floating panel of a fixed width; the presenting screen is dimmed
- * but not scaled back. Its props are shared with `PageSheet`; the two differ
- * only in iPad layout.
- *
- * tvOS: supported since tvOS 26, where `UIModalPresentationFormSheet` became
- * available. On older tvOS nothing is presented and a warning is logged, as on
- * web.
+ * @platform android >= 21, ios >= 15, tvos >= 26
  */
 export type FormSheetProps = SheetProps;
