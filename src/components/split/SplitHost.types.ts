@@ -1,8 +1,10 @@
-import type { NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { InterfaceOrientation, ColorScheme } from '../shared/types';
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-type GenericEmptyEvent = Readonly<{}>;
+import type { ViewProps } from 'react-native';
+import type {
+  InterfaceOrientation,
+  ColorScheme,
+  EmptyEventPayload,
+  NativeEventHandler,
+} from '../shared/types';
 
 export type DisplayModeWillChangeEvent = {
   currentDisplayMode: string;
@@ -26,9 +28,9 @@ export type SplitDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
-export type SplitHostOrientation = InterfaceOrientation | 'inherit';
+export type SplitOrientation = InterfaceOrientation | 'inherit';
 
-export type SplitHostColorScheme = ColorScheme | 'inherit';
+export type SplitColorScheme = ColorScheme | 'inherit';
 
 export interface SplitColumnMetrics {
   /**
@@ -158,9 +160,7 @@ export interface SplitHostProps extends ViewProps {
   /**
    * @summary A callback that gets invoked when the Split was collapsed to a single column.
    */
-  onCollapse?:
-    | ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void)
-    | undefined;
+  onCollapse?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * @summary A callback that gets invoked when the Split displayMode has changed.
    *
@@ -168,12 +168,12 @@ export interface SplitHostProps extends ViewProps {
    * These updates might be a consequence of some native interactions, like pressing native button or performing swipe gesture.
    */
   onDisplayModeWillChange?:
-    | ((e: NativeSyntheticEvent<DisplayModeWillChangeEvent>) => void)
+    | NativeEventHandler<DisplayModeWillChangeEvent>
     | undefined;
   /**
    * @summary A callback that gets invoked when the Split was expanded to multiple columns.
    */
-  onExpand?: ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void) | undefined;
+  onExpand?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * @summary A callback that gets invoked when the Split inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
    *
@@ -181,9 +181,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @supported iOS 26 or higher
    */
-  onInspectorHide?:
-    | ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void)
-    | undefined;
+  onInspectorHide?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * @summary Specifies supported orientations for the tab screen.
    *
@@ -226,7 +224,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @platform ios
    */
-  orientation?: SplitHostOrientation | undefined;
+  orientation?: SplitOrientation | undefined;
   /**
    * @summary Specifies the color scheme used by the container and any child containers.
    *
@@ -239,7 +237,7 @@ export interface SplitHostProps extends ViewProps {
    *
    * @platform ios
    */
-  colorScheme?: SplitHostColorScheme;
+  colorScheme?: SplitColorScheme | undefined;
   /**
    * @summary Determines whether gestures are enabled to change the display mode.
    */

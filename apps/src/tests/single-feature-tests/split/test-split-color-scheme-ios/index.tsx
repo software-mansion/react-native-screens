@@ -12,8 +12,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect, useState } from 'react';
 import { SettingsPicker } from '@apps/shared';
-import { Split } from 'react-native-screens';
-import { SplitHostColorScheme } from 'react-native-screens/components/split/SplitHost.types';
+import { Split, SplitColorScheme } from 'react-native-screens';
 import { SafeAreaView } from 'react-native-screens/experimental';
 
 function ConfigColumn({
@@ -24,8 +23,8 @@ function ConfigColumn({
 }: {
   reactColorScheme: ColorSchemeName;
   setReactColorScheme: (value: ColorSchemeName) => void;
-  hostColorScheme: SplitHostColorScheme;
-  setHostColorScheme: (value: SplitHostColorScheme) => void;
+  hostColorScheme: SplitColorScheme;
+  setHostColorScheme: (value: SplitColorScheme) => void;
 }) {
   return (
     <View style={styles.wrappingView}>
@@ -62,7 +61,7 @@ function ConfigColumn({
 
           <View style={styles.section}>
             <Text style={styles.heading}>SplitHost color scheme</Text>
-            <SettingsPicker<NonNullable<SplitHostColorScheme>>
+            <SettingsPicker<NonNullable<SplitColorScheme>>
               label={'colorScheme'}
               value={hostColorScheme}
               onValueChange={setHostColorScheme}
@@ -85,7 +84,7 @@ function TestColumn() {
 
 function TestSplitColorScheme() {
   const [hostColorScheme, setHostColorScheme] =
-    useState<SplitHostColorScheme>('inherit');
+    useState<SplitColorScheme>('inherit');
   const [reactColorScheme, setReactColorScheme] =
     useState<ColorSchemeName>('unspecified');
 
