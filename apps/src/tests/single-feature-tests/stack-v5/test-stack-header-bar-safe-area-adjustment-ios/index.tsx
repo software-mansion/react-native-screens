@@ -66,7 +66,7 @@ function ScrollScreen() {
   return (
     // SafeAreaView applies the top inset as a margin, so the area above
     // the yellow background is the inset it currently applies.
-    <SafeAreaView edges={{ top: true }} style={styles.safeArea}>
+    <SafeAreaView mode="margin" edges={{ top: true }} style={styles.safeArea}>
       <ScrollView contentInsetAdjustmentBehavior="never">
         <SettingsPicker<StackHeaderSafeAreaAdjustmentIOS>
           label="safeAreaAdjustment"
