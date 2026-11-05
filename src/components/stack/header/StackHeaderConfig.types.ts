@@ -4,31 +4,35 @@ import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
+/**
+ * Cross-platform props for {@link Stack.HeaderConfig}.
+ *
+ * @experimental
+ */
 export interface StackHeaderConfigPropsBase {
   /**
-   * @summary Title displayed in the header.
+   * Title displayed in the header.
    *
    * @platform android, ios
    */
   title?: string | undefined;
   /**
-   * @summary Subtitle displayed in the header.
+   * Subtitle displayed in the header.
    *
    * @platform android, ios
    */
   subtitle?: string | undefined;
   /**
-   * @summary Specifies if the header should be hidden.
+   * Specifies if the header should be hidden.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   hidden?: boolean | undefined;
   /**
-   * @summary Specifies if the content should be rendered behind the header.
+   * Specifies if the content should be rendered behind the header.
    *
-   * @description
+   * @remarks
    * When `true`, content is rendered behind the header instead of starting
    * below it.
    *
@@ -37,25 +41,28 @@ export interface StackHeaderConfigPropsBase {
    * - Setting this prop to `true` is not supported when header scrolling is
    *   enabled.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   transparent?: boolean | undefined;
   /**
-   * @summary Specifies if the back button should be hidden.
+   * Specifies if the back button should be hidden.
    *
-   * @description
+   * @remarks
    * This prop does not apply to the root screen of the stack for which the back
    * button is always hidden.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   backButtonHidden?: boolean | undefined;
 }
 
+/**
+ * Props for {@link Stack.HeaderConfig}.
+ *
+ * @experimental
+ */
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
   android?: StackHeaderConfigPropsAndroid | undefined;
   ios?: StackHeaderConfigPropsIOS | undefined;

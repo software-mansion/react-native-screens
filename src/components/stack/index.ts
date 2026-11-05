@@ -74,7 +74,19 @@ export type {
 } from './header';
 
 export const Stack = {
+  /**
+   * @platform android, ios
+   * @experimental
+   */
   Host: StackHost,
+  /**
+   * @platform android, ios
+   * @experimental
+   */
   Screen: StackScreen,
+  /**
+   * @platform android, ios
+   * @experimental
+   */
   HeaderConfig: StackHeaderConfig,
 };

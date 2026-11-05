@@ -13,14 +13,16 @@ export type StackScreenAnimationEasingName =
   | 'emphasizedDecelerate';
 
 /**
- * A named curve or a cubic bezier `[x1, y1, x2, y2]` with `x1`, `x2` in `[0, 1]`.
+ * A named curve or a cubic bezier `[x1, y1, x2, y2]` with `x1`, `x2` in
+ * `[0, 1]`.
  */
 export type StackScreenAnimationEasing =
   | StackScreenAnimationEasingName
   | StackScreenAnimationBezier;
 
 /**
- * A number is density-independent pixels, `'N%'` is a fraction of the container.
+ * A number is density-independent pixels, `'N%'` is a fraction of the
+ * container.
  */
 export type StackScreenAnimationLength = number | `${number}%`;
 
@@ -39,8 +41,8 @@ export type StackScreenAnimationPresetName =
 
 export interface StackScreenAnimationTimingOptions {
   /**
-   * Replaces the preset's reference duration (the longer of its push and pop) in
-   * milliseconds; both are rescaled by the same factor.
+   * Replaces the preset's reference duration (the longer of its push and pop)
+   * in milliseconds; both are rescaled by the same factor.
    */
   duration?: number | undefined;
   /**
@@ -70,7 +72,9 @@ export interface StackScreenAnimationFadeFromEdgePresetRef
   type: 'preset';
   name: StackScreenAnimationFadeFromEdgePresetName;
   /**
-   * How far the moving screen rises or falls. Defaults to `'8%'`.
+   * How far the moving screen rises or falls.
+   *
+   * @defaultValue `'8%'`
    */
   distance?: StackScreenAnimationLength | undefined;
 }
