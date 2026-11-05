@@ -18,7 +18,7 @@ interface SafeAreaProvider {
      * @param listener listener that wants to receive notifications about changes
      * to **interface** safe area insets via `onInterfaceInsetsChange`.
      */
-    fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
+    fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener)
 
     /**
      * Responsible for unregistering **interface** safe area insets listener.

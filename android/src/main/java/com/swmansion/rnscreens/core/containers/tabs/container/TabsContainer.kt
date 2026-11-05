@@ -377,7 +377,7 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
+    override fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
         if (interfaceInsetsChangeListeners.isEmpty()) {
             bottomNavigationView.addOnLayoutChangeListener(this)
         }
