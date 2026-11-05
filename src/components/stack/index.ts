@@ -73,18 +73,38 @@ export type {
   StackHeaderMenuOptionsIOS,
 } from './header';
 
+/**
+ * Native stack of screens, pushed and popped with platform transitions.
+ *
+ * @remarks
+ * {@link Stack.Host} presents the screens declared with {@link Stack.Screen},
+ * and each screen configures its header with {@link Stack.HeaderConfig}.
+ *
+ * @namespace
+ */
 export const Stack = {
   /**
+   * Container that presents its {@link Stack.Screen} children as a native
+   * stack.
+   *
    * @platform android, ios
    * @experimental
    */
   Host: StackHost,
   /**
+   * A screen of {@link Stack.Host}.
+   *
    * @platform android, ios
    * @experimental
    */
   Screen: StackScreen,
   /**
+   * Configures the native header of the {@link Stack.Screen} it is rendered
+   * in.
+   *
+   * @remarks
+   * On Android, it must be the last child of the screen.
+   *
    * @platform android, ios
    * @experimental
    */

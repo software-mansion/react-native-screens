@@ -31,8 +31,18 @@ export type StackDirection = Direction | 'inherit';
  */
 export type StackHostProps = {
   // General
+  /**
+   * Screens of the stack, declared with {@link Stack.Screen}.
+   *
+   * @platform android, ios
+   */
   children: NonNullable<ViewProps['children']>;
   // TODO: Work on these types
+  /**
+   * Ref to the native view of the stack.
+   *
+   * @platform android, ios
+   */
   ref?: React.Ref<HostInstance> | undefined;
   /**
    * Specifies the layout direction of the native container, its views and

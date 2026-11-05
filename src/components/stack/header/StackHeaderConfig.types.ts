@@ -64,12 +64,36 @@ export interface StackHeaderConfigPropsBase {
  * @experimental
  */
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
+  /**
+   * Android-specific props.
+   *
+   * @platform android
+   */
   android?: StackHeaderConfigPropsAndroid | undefined;
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
   ios?: StackHeaderConfigPropsIOS | undefined;
+  /**
+   * Ref to the {@link StackHeaderConfigRef | commands} of the header.
+   *
+   * @platform android, ios
+   */
   ref?: Ref<StackHeaderConfigRef> | undefined;
 }
 
+/**
+ * Commands of {@link Stack.HeaderConfig}, available through its `ref`.
+ */
 export interface StackHeaderConfigRef {
+  /**
+   * Commands available on Android; set only on Android.
+   */
   android?: StackHeaderConfigCommandsAndroid | undefined;
+  /**
+   * Commands available on iOS; set only on iOS.
+   */
   ios?: StackHeaderConfigCommandsIOS | undefined;
 }
