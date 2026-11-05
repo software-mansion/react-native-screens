@@ -31,33 +31,33 @@ TBD
 
     - [ ] The host screen shows the "PageSheet Test" title and the "Open PageSheet" button.
 
----
-
 ### Presentation & layout
 
 1. Tap "Open PageSheet".
 
     - [ ] The sheet presents at the lower detent (0.6) and the host screen is dimmed.
+    
     - [ ] iOS: "PageSheet content" and "Dismiss from JS" are centered both vertically and horizontally within the sheet.
+    
     - [ ] Android: "PageSheet content" and "Dismiss from JS" are horizontally centered and anchored to the top of the sheet.
-
----
 
 ### Detent adaptation
 
 1. Drag the sheet up to the largest detent (1.0).
 
     - [ ] The sheet expands to the maximum available height (respecting the top inset).
+    
     - [ ] iOS: the content re-centers within the taller sheet.
+    
     - [ ] Android: the content stays anchored to the top of the sheet and moves together with it.
 
 2. Drag the sheet back down to the lower detent (0.6).
 
     - [ ] The sheet settles at 0.6. Nothing is clipped.
+    
     - [ ] iOS: the content re-centers again.
+    
     - [ ] Android: the content moves down with the sheet, still anchored to its top.
-
----
 
 ### Dismissal
 
@@ -68,8 +68,6 @@ TBD
 2. Tap "Open PageSheet", then swipe the sheet down past the lower detent.
 
     - [ ] The sheet dismisses natively. "Open PageSheet" is pressable again and opens the sheet at 0.6 (the JS state was synced by `onNativeDismiss`).
-
----
 
 ### Android only - System back
 
