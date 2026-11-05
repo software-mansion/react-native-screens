@@ -1,6 +1,15 @@
 import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../shared/types';
 
+/**
+ * Kind of a Split column.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'column'` — a column declared with {@link Split.Column}.
+ * - `'inspector'` — the inspector column declared with
+ *   {@link Split.Inspector}.
+ */
 export type SplitScreenColumnType = 'column' | 'inspector';
 
 /**
@@ -9,6 +18,11 @@ export type SplitScreenColumnType = 'column' | 'inspector';
  * @experimental
  */
 export interface SplitScreenProps extends ViewProps {
+  /**
+   * Content of the column.
+   *
+   * @platform ios
+   */
   children?: React.ReactNode | undefined;
   /**
    * A callback that gets invoked when the current SplitScreen did appear.

@@ -6,8 +6,25 @@ import type {
   NativeEventHandler,
 } from '../shared/types';
 
+/**
+ * Payload of the
+ * {@link SplitHostProps.onDisplayModeWillChange | onDisplayModeWillChange}
+ * event.
+ */
 export type DisplayModeWillChangeEvent = {
+  /**
+   * Display mode of the Split before the change.
+   *
+   * @remarks
+   * One of the {@link SplitDisplayMode} values.
+   */
   currentDisplayMode: string;
+  /**
+   * Display mode of the Split after the change.
+   *
+   * @remarks
+   * One of the {@link SplitDisplayMode} values.
+   */
   nextDisplayMode: string;
 };
 
@@ -134,6 +151,9 @@ export type SplitOrientation = InterfaceOrientation | 'inherit';
  */
 export type SplitColorScheme = ColorScheme | 'inherit';
 
+/**
+ * Widths of the columns of a Split.
+ */
 export interface SplitColumnMetrics {
   /**
    * Minimum width for the primary sidebar.
@@ -252,12 +272,22 @@ export interface SplitColumnMetrics {
  */
 export type SplitNavigableColumn = 'primary' | 'supplementary' | 'secondary';
 
+/**
+ * Commands of {@link Split.Host}, available through its `ref`.
+ */
 export type SplitHostCommands = {
+  /**
+   * Shows a column.
+   *
+   * @param column - The column to show.
+   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/show(_:) | UISplitViewController.show(_:)}
+   */
   show: (column: SplitNavigableColumn) => void;
   /**
    * Hides a sidebar column using UIKit's native transition to the closest
    * supported display mode. UIKit does not support hiding the secondary column.
    *
+   * @param column - The sidebar column to hide.
    * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/hide(_:) | UISplitViewController.hide(_:)}
    */
   hide: (column: Exclude<SplitNavigableColumn, 'secondary'>) => void;
@@ -269,7 +299,18 @@ export type SplitHostCommands = {
  * @experimental
  */
 export interface SplitHostProps extends ViewProps {
+  /**
+   * Columns of the Split, declared with {@link Split.Column} and
+   * {@link Split.Inspector}.
+   *
+   * @platform ios
+   */
   children: NonNullable<React.ReactNode>;
+  /**
+   * Ref to the {@link SplitHostCommands | commands} of the Split.
+   *
+   * @platform ios
+   */
   ref?: React.Ref<SplitHostCommands> | undefined;
 
   /**
