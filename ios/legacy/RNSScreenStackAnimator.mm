@@ -132,8 +132,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(containerWidth, 0);
   CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(-belowViewWidth, 0);
 
-  if (toViewController.navigationController.view.semanticContentAttribute ==
-      UISemanticContentAttributeForceRightToLeft) {
+  if (RNSNavigationControllerIsRTL(toViewController.navigationController)) {
     rightTransform = CGAffineTransformMakeTranslation(-containerWidth, 0);
     leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
   }
@@ -232,8 +231,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(-containerWidth, 0);
   CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
 
-  if (toViewController.navigationController.view.semanticContentAttribute ==
-      UISemanticContentAttributeForceRightToLeft) {
+  if (RNSNavigationControllerIsRTL(toViewController.navigationController)) {
     rightTransform = CGAffineTransformMakeTranslation(containerWidth, 0);
     leftTransform = CGAffineTransformMakeTranslation(-belowViewWidth, 0);
   }
