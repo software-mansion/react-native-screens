@@ -11,7 +11,7 @@ import type { FormSheetProps } from './FormSheet.types';
  * is dimmed but not scaled back. Similar to {@link PageSheet}: the two differ
  * only in iPad layout. On Android both present the same bottom sheet dialog.
  *
- * @platform android, ios >= 15, tvos >= 26
+ * @platform android, ios, tvos >= 26
  */
 export function FormSheet(props: FormSheetProps) {
   return <SheetBase {...props} presentationStyle="formSheet" />;

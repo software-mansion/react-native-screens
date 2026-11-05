@@ -12,7 +12,7 @@ import type { PageSheetProps } from './PageSheet.types';
  * {@link FormSheet} shows a small centered panel. On Android both components
  * present the same bottom sheet dialog.
  *
- * @platform android, ios >= 15
+ * @platform android, ios
  */
 export function PageSheet(props: PageSheetProps) {
   return <SheetBase {...props} presentationStyle="pageSheet" />;

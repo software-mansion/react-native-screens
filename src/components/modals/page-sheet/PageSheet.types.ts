@@ -20,6 +20,6 @@ export type PageSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 /**
  * Props for {@link PageSheet}.
  *
- * @platform android, ios >= 15
+ * @platform android, ios
  */
 export type PageSheetProps = SheetProps;
