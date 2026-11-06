@@ -35,6 +35,12 @@ class SafeAreaViewManager :
         }
     }
 
+    // Applied by the shared shadow node, nothing to do on the view.
+    override fun setMode(
+        view: SafeAreaView,
+        value: String?,
+    ) = Unit
+
     override fun setInsetType(
         view: SafeAreaView,
         value: String?,

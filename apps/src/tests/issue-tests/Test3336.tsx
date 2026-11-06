@@ -253,7 +253,7 @@ const withOptionalSafeArea =
   () => {
     if (Platform.OS === 'android' && useSafeArea) {
       return (
-        <SafeAreaView edges={safeAreaEdges} style={safeAreaStyle}>
+        <SafeAreaView mode="margin" edges={safeAreaEdges} style={safeAreaStyle}>
           <Component />
         </SafeAreaView>
       );
