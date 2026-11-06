@@ -203,9 +203,10 @@ namespace react = facebook::react;
 - (void)prepareForRecycle
 {
   [super prepareForRecycle];
-  // The delegate is not always cleared on unmount (e.g. when a form sheet registered a nested wrapper), and Fabric
-  // calls `updateLayoutMetrics:` on a reused view before mounting it in its new parent. Without this, the reused
-  // wrapper would report its first frame to the previous, possibly invalidated, screen.
+  // A reused wrapper must start like a new one. Its previous owner might not have cleared the delegate on unmount
+  // (the wrapper's parent is not always a screen view), and Fabric calls `updateLayoutMetrics:` on a reused view before
+  // mounting it in its new parent. Without this, the reused wrapper would report its first frame to the previous,
+  // possibly invalidated, screen.
   // See https://github.com/software-mansion/react-native-screens/issues/5143
   self.delegate = nil;
 }

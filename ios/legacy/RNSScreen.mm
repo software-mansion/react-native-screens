@@ -1370,8 +1370,13 @@ RNS_IGNORE_SUPER_CALL_END
     _config = nil;
   }
   if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
-    _contentWrapperBox.contentWrapper.delegate = nil;
-    _contentWrapperBox.contentWrapper = nil;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
+    // The box may hold a nested screen's wrapper that registered with this form sheet instead of this child.
+    // The unmounted wrapper must stop reporting regardless of which screen it reported to.
+    contentWrapper.delegate = nil;
+    if (_contentWrapperBox.contentWrapper == contentWrapper) {
+      _contentWrapperBox.contentWrapper = nil;
+    }
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
