@@ -316,6 +316,12 @@ class ScreenStackHeaderConfigViewManager :
         value: String?,
     ) = Unit
 
+    // Every screen renders its own header on Android.
+    override fun setHeaderMode(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) = Unit
+
     override fun setTopInsetEnabled(
         config: ScreenStackHeaderConfig,
         topInsetEnabled: Boolean,

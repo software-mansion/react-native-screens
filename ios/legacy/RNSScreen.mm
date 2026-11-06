@@ -17,6 +17,7 @@
 #import <react/renderer/components/rnscreens/legacy/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
+#import "RNSNavigationBar.h"
 #import "RNSScreenViewEvent.h"
 
 #import "RNSConversions.h"
@@ -1564,7 +1565,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - RNSScreen
 
+#if !TARGET_OS_TV
+@interface RNSScreen () <
+    UINavigationBarDelegate
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    ,
+    RNSNavigationBarLayoutDelegate
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    >
+@end
+#endif // !TARGET_OS_TV
+
 @implementation RNSScreen {
+  UINavigationBar *_screenNavigationBar;
+  UINavigationItem *_screenNavigationBarTopItem;
+  UINavigationItem *_screenNavigationBarBackItem;
+  CGFloat _lastScreenNavigationBarHeaderHeight;
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
   UIView *_fakeView;
@@ -1610,6 +1626,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 
   [self hideHeaderIfNecessary];
+  // The screens below could have changed while this screen was not visible.
+  [self updateScreenNavigationBarItems];
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
@@ -1712,6 +1730,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
   BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 
+  [self updateScreenNavigationBarLayout];
+
   // Calculate header height on modal open
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
@@ -1763,6 +1783,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
+  if (!isModal && _screenNavigationBar != nil) {
+    // The navigation bar of the navigation controller is hidden, the header is rendered by the screen itself.
+    return _screenNavigationBar.isHidden ? 0 : CGRectGetMaxY(_screenNavigationBar.frame);
+  }
+
   UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
 
   // If there's no navigation controller for the modal (or the navigation bar is hidden), we simply don't want to
@@ -1823,6 +1848,190 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   CGFloat totalHeight = [self calculateHeaderHeightIsModal:isModal];
   [self.screenView notifyHeaderHeightChange:totalHeight];
 }
+
+#pragma mark - Screen navigation bar
+
+- (BOOL)isScreenNavigationBarEnabled
+{
+  return _screenNavigationBar != nil;
+}
+
+- (void)setScreenNavigationBarEnabled:(BOOL)screenNavigationBarEnabled
+{
+#if !TARGET_OS_TV
+  if (screenNavigationBarEnabled == self.isScreenNavigationBarEnabled) {
+    return;
+  }
+
+  if (screenNavigationBarEnabled) {
+    UINavigationBar *navigationBar = nil;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (@available(iOS 26.0, *)) {
+      RNSNavigationBar *layoutReportingNavigationBar = [RNSNavigationBar new];
+      layoutReportingNavigationBar.layoutDelegate = self;
+      navigationBar = layoutReportingNavigationBar;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+    if (navigationBar == nil) {
+      navigationBar = [UINavigationBar new];
+    }
+    navigationBar.delegate = self;
+
+    _screenNavigationBar = navigationBar;
+    _lastScreenNavigationBarHeaderHeight = -1;
+    _screenNavigationBarTopItem = [UINavigationItem new];
+    _screenNavigationBarBackItem = [UINavigationItem new];
+    // Added as the last subview, so that it does not shift the indices of the subviews mounted by React.
+    [self.view addSubview:navigationBar];
+    [self updateScreenNavigationBarItems];
+  } else {
+    [_screenNavigationBar removeFromSuperview];
+    _screenNavigationBar.delegate = nil;
+    _screenNavigationBar = nil;
+    _screenNavigationBarTopItem = nil;
+    _screenNavigationBarBackItem = nil;
+
+    UIEdgeInsets additionalSafeAreaInsets = self.additionalSafeAreaInsets;
+    additionalSafeAreaInsets.top = 0;
+    self.additionalSafeAreaInsets = additionalSafeAreaInsets;
+  }
+
+  [self.view setNeedsLayout];
+#endif // !TARGET_OS_TV
+}
+
+- (nullable UINavigationBar *)screenNavigationBar
+{
+  return _screenNavigationBar;
+}
+
+- (nullable UINavigationItem *)screenNavigationBarBackItem
+{
+  return _screenNavigationBar.backItem;
+}
+
+- (UINavigationItem *)headerNavigationItem
+{
+  return _screenNavigationBarTopItem ?: self.navigationItem;
+}
+
+- (void)setScreenNavigationBarHidden:(BOOL)hidden
+{
+  if (_screenNavigationBar == nil || _screenNavigationBar.isHidden == hidden) {
+    return;
+  }
+
+  _screenNavigationBar.hidden = hidden;
+  [self.view setNeedsLayout];
+}
+
+- (void)updateScreenNavigationBarItems
+{
+  if (_screenNavigationBar == nil) {
+    return;
+  }
+
+  NSArray<UIViewController *> *viewControllers = self.navigationController.viewControllers;
+  NSUInteger index = [viewControllers indexOfObject:self];
+  NSArray<UINavigationItem *> *items = @[ _screenNavigationBarTopItem ];
+
+  if (index != NSNotFound && index > 0) {
+    UIViewController *prevVC = viewControllers[index - 1];
+    NSString *prevTitle = prevVC.navigationItem.title;
+    if (prevTitle == nil && [prevVC isKindOfClass:[RNSScreen class]]) {
+      prevTitle = static_cast<RNSScreen *>(prevVC).screenView.findHeaderConfig.title;
+    }
+    _screenNavigationBarBackItem.title = prevTitle;
+    items = @[ _screenNavigationBarBackItem, _screenNavigationBarTopItem ];
+  }
+
+  if (![_screenNavigationBar.items isEqualToArray:items]) {
+    [_screenNavigationBar setItems:items animated:NO];
+  }
+}
+
+- (void)updateScreenNavigationBarLayout
+{
+  if (_screenNavigationBar == nil) {
+    return;
+  }
+
+  UIView *view = self.view;
+  UIEdgeInsets additionalSafeAreaInsets = self.additionalSafeAreaInsets;
+  // The bar is placed below the area that is unsafe for the screen itself (e.g. the status bar), the inset added
+  // for the bar is not taken into account.
+  const CGFloat originY = view.safeAreaInsets.top - additionalSafeAreaInsets.top;
+  const CGFloat width = CGRectGetWidth(view.bounds);
+  const CGFloat height = [_screenNavigationBar sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height;
+  _screenNavigationBar.frame = CGRectMake(0, originY, width, height);
+
+  if (view.subviews.lastObject != _screenNavigationBar) {
+    [view bringSubviewToFront:_screenNavigationBar];
+  }
+
+  const CGFloat insetTop = _screenNavigationBar.isHidden ? 0 : height;
+  if (additionalSafeAreaInsets.top != insetTop) {
+    additionalSafeAreaInsets.top = insetTop;
+    self.additionalSafeAreaInsets = additionalSafeAreaInsets;
+  }
+
+  // The navigation controller notifies about the header height before its subviews (incl. this screen) are laid out,
+  // therefore the change of the bar's frame must be reported from here.
+  const CGFloat headerHeight = [self calculateHeaderHeightIsModal:NO];
+  if (headerHeight != _lastScreenNavigationBarHeaderHeight) {
+    _lastScreenNavigationBarHeaderHeight = headerHeight;
+    [self.screenView notifyHeaderHeightChange:headerHeight];
+  }
+
+  RNSScreenStackHeaderConfig *config = self.screenView.findHeaderConfig;
+  if (config != nil && config.shouldHeaderBeVisible) {
+    [config updateHeaderStateInShadowTreeInContextOfNavigationBar:_screenNavigationBar];
+  }
+}
+
+- (void)viewSafeAreaInsetsDidChange
+{
+  [super viewSafeAreaInsetsDidChange];
+  if (_screenNavigationBar != nil) {
+    [self.view setNeedsLayout];
+  }
+}
+
+#if !TARGET_OS_TV
+#pragma mark - UINavigationBarDelegate
+
+- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar
+{
+  // Extends the background of the bar under the status bar.
+  return UIBarPositionTopAttached;
+}
+
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
+{
+  // The back button of the screen's navigation bar. The bar must not pop its item on its own, the screen is popped
+  // instead, the same way as with the back button of the navigation controller's bar.
+  UINavigationController *navctr = self.navigationController;
+  if (navctr.topViewController == self && navctr.transitionCoordinator == nil) {
+    [navctr popViewControllerAnimated:YES];
+  }
+  return NO;
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+#pragma mark - RNSNavigationBarLayoutDelegate
+
+- (void)navigationBarDidLayoutSubviews:(UINavigationBar *)navigationBar
+{
+  // See `-[RNSNavigationController navigationBarDidLayoutSubviews:]`.
+  if (@available(iOS 26.0, *)) {
+    RNSScreenStackHeaderConfig *config = self.screenView.findHeaderConfig;
+    if (config != nil && config.shouldHeaderBeVisible) {
+      [config setNeedsLayoutForHeaderSubviewsInNavigationBar:navigationBar];
+    }
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+#endif // !TARGET_OS_TV
 
 - (void)notifyFinishTransitioning
 {
