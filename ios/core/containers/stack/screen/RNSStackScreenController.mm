@@ -1,6 +1,7 @@
 #import "RNSStackScreenController.h"
 #import "RNSContainer.h"
 #import "RNSContainerItemSupport.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSStackNavigationBar.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -12,6 +13,8 @@
 @implementation RNSStackScreenController {
   RNSContainerItemSupport *_Nonnull _containerItemSupport;
   UINavigationItem *_Nullable _screenNavigationBarTopItem;
+  // `UIScrollEdgeElementContainerInteraction` (iOS 26+) of `_screenNavigationBar`.
+  id _Nullable _screenNavigationBarScrollEdgeInteraction;
 }
 
 - (instancetype)init
@@ -70,6 +73,7 @@
     [_screenNavigationBar removeFromSuperview];
     _screenNavigationBar.delegate = nil;
     _screenNavigationBar = nil;
+    _screenNavigationBarScrollEdgeInteraction = nil;
     _screenNavigationBarTopItem = nil;
     _screenNavigationBarBackItem = nil;
   }
@@ -133,13 +137,13 @@
     return;
   }
 
-  // Bar is placed right below the area covered by the parent's safe area (e.g. status bar).
   // The additional inset applied by this method is excluded to avoid a feedback loop.
-  CGFloat topInset = self.view.safeAreaInsets.top - additionalInsets.top;
+  CGFloat safeAreaTop = self.view.safeAreaInsets.top - additionalInsets.top;
+  CGFloat originY = [self screenNavigationBarOriginYWithSafeAreaTop:safeAreaTop];
   CGFloat width = CGRectGetWidth(self.view.bounds);
   CGFloat height = [_screenNavigationBar sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height;
 
-  CGRect frame = CGRectMake(0, topInset, width, height);
+  CGRect frame = CGRectMake(0, originY, width, height);
   if (!CGRectEqualToRect(_screenNavigationBar.frame, frame)) {
     _screenNavigationBar.frame = frame;
   }
@@ -150,14 +154,66 @@
     [self.view bringSubviewToFront:_screenNavigationBar];
   }
 
-  // Content of the screen is expected to respect the safe area, the same as with the shared bar.
-  if (additionalInsets.top != height) {
-    additionalInsets.top = height;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    [self updateScreenNavigationBarScrollEdgeInteraction];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  // Content of the screen is expected to respect the safe area, the same as with the shared bar. The bar is not
+  // necessarily placed right at the edge of the safe area (see `screenNavigationBarOriginYWithSafeAreaTop:`), so the
+  // content is inset below the bottom edge of the bar.
+  CGFloat insetTop = MAX(0, originY + height - safeAreaTop);
+  if (additionalInsets.top != insetTop) {
+    additionalInsets.top = insetTop;
     self.additionalSafeAreaInsets = additionalInsets;
   }
 
   [self.headerCoordinator.frameChangeDelegate viewFrameDidChange:_screenNavigationBar];
 }
+
+- (CGFloat)screenNavigationBarOriginYWithSafeAreaTop:(CGFloat)safeAreaTop
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_2) && !TARGET_OS_TV
+  if (@available(iOS 27.2, *)) {
+    // The region of a bar on the top edge, which the bar of the navigation controller occupies too. It differs from
+    // the safe area e.g. on iPhone Duo, where the safe area has no top inset, but the bar is placed below the corner
+    // with the status bar. It is resolved in the navigation controller's view, as the safe area of the screen
+    // includes the inset added for the bar itself.
+    UIView *navigationView = self.navigationController.view;
+    if (navigationView != nil && [self.view isDescendantOfView:navigationView]) {
+      UIViewLayoutRegion *barRegion = [UIViewLayoutRegion layoutRegionForBarOnEdge:UIRectEdgeTop];
+      CGFloat barTop = [navigationView edgeInsetsForLayoutRegion:barRegion].top;
+      return [navigationView convertPoint:CGPointMake(0, barTop) toView:self.view].y;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_2) && !TARGET_OS_TV
+
+  // Placed right below the area covered by the parent's safe area (e.g. status bar).
+  return safeAreaTop;
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)updateScreenNavigationBarScrollEdgeInteraction API_AVAILABLE(ios(26.0))
+{
+  // UIKit applies the scroll edge effect of the content scroll view under the bar of the navigation controller on its
+  // own. The screen's own bar must be registered as an element container at the top edge of the scroll view, otherwise
+  // the content scrolled under the bar has no scroll edge effect.
+  UIScrollEdgeElementContainerInteraction *interaction = _screenNavigationBarScrollEdgeInteraction;
+  if (interaction == nil) {
+    interaction = [UIScrollEdgeElementContainerInteraction new];
+    interaction.edge = UIRectEdgeTop;
+    [_screenNavigationBar addInteraction:interaction];
+    _screenNavigationBarScrollEdgeInteraction = interaction;
+  }
+
+  // The scroll view can be mounted after the bar has been created, therefore it is looked up on each layout.
+  UIScrollView *scrollView = [self findContentScrollView];
+  if (interaction.scrollView != scrollView) {
+    interaction.scrollView = scrollView;
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #pragma mark - Layout
 
