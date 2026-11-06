@@ -270,7 +270,7 @@ namespace react = facebook::react;
   RNSPercentDrivenInteractiveTransition *_interactionController;
   // Destination of a native pop that we cancel because a popped screen prevents its native dismissal.
   // Set in `navigationController:interactionControllerForAnimationController:` and cleared when the scheduled cancel
-  // is sent. The cancelled transition itself may still be running after that.
+  // is sent. The cancelled transition itself may still be running after that. Set only on iOS 26+.
   __weak UIViewController *_destinationOfCancelledPop;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
@@ -1141,8 +1141,15 @@ RNS_IGNORE_SUPER_CALL_END
     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
     if (shouldCancelDismiss) {
       _interactionController = [RNSPercentDrivenInteractiveTransition new];
-      _destinationOfCancelledPop =
-          [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+      if (@available(iOS 26.0, *)) {
+        // Not on iOS < 26: there, keeping the navigation bar visible through this cancelled pop leaves the back
+        // button faded (its label and chevron stay at alpha 0.2; UIKit implementation detail, observed on iOS 18.6).
+        // That already happens when the destination has a header. A destination without one avoids it, because its
+        // header config hides the bar during the pop.
+        // See https://github.com/software-mansion/react-native-screens/pull/5162
+        _destinationOfCancelledPop =
+            [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+      }
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self->_interactionController cancelInteractiveTransition];
         self->_interactionController = nil;
