@@ -268,6 +268,10 @@ namespace react = facebook::react;
   BOOL _invalidated;
   BOOL _isFullWidthSwipingWithPanGesture; // used only for content swipe with RNSPanGestureRecognizer
   RNSPercentDrivenInteractiveTransition *_interactionController;
+  // Destination of a native pop that we cancel because a popped screen prevents its native dismissal.
+  // Set in `navigationController:interactionControllerForAnimationController:` and cleared when the scheduled cancel
+  // is sent. The cancelled transition itself may still be running after that. Set only on iOS 26+.
+  __weak UIViewController *_destinationOfCancelledPop;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
 }
@@ -343,6 +347,16 @@ namespace react = facebook::react;
       static_cast<RNSScreenView *>(viewController.view).isInvalidated) {
     // if the screen was already deleted by React, its config was already removed
     // so we don't trigger the method
+    return;
+  }
+  if (viewController == _destinationOfCancelledPop) {
+    // This pop is about to be cancelled (see `navigationController:interactionControllerForAnimationController:`),
+    // so its destination is never shown. Applying the destination's header config here would hide the navigation bar
+    // (if that screen has no header) inside a transition that is then cancelled.
+    // UIKit implementation details (observed on iOS 26.5, not documented behaviour): UIKit does not fully undo that
+    // hide. The bar of the screen that stays loses its Liquid Glass, and the bar can even stay hidden, depending on
+    // whether this method is called for that screen before or after UIKit rolls the hide back.
+    // See https://github.com/software-mansion/react-native-screens/issues/5158
     return;
   }
   auto *screenView = static_cast<RNSScreenView *>(viewController.view);
@@ -1127,9 +1141,19 @@ RNS_IGNORE_SUPER_CALL_END
     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
     if (shouldCancelDismiss) {
       _interactionController = [RNSPercentDrivenInteractiveTransition new];
+      if (@available(iOS 26.0, *)) {
+        // Not on iOS < 26: there, keeping the navigation bar visible through this cancelled pop leaves the back
+        // button faded (its label and chevron stay at alpha 0.2; UIKit implementation detail, observed on iOS 18.6).
+        // That already happens when the destination has a header. A destination without one avoids it, because its
+        // header config hides the bar during the pop.
+        // See https://github.com/software-mansion/react-native-screens/pull/5162
+        _destinationOfCancelledPop =
+            [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+      }
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self->_interactionController cancelInteractiveTransition];
         self->_interactionController = nil;
+        self->_destinationOfCancelledPop = nil;
         int fromIndex = (int)[self->_reactSubviews indexOfObject:fromView];
         int toIndex = (int)[self->_reactSubviews indexOfObject:toView];
         int indexDiff = fromIndex - toIndex;
