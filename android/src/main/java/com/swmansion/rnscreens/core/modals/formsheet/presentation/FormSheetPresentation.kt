@@ -73,6 +73,7 @@ internal class FormSheetPresentation(
         )
 
     init {
+        container.bottomSheetView = bottomSheetView
         nativeDismissCoordinator.setup()
         appearanceCoordinator.setup()
         dimensionsCoordinator.setup()
@@ -147,6 +148,7 @@ internal class FormSheetPresentation(
 
         // The FormSheetContainer outlives the presentation - its lifecycle is managed by FormSheetDialogManager
         // which is tied with the React's Host lifecycle.
+        container.bottomSheetView = null
         (container.parent as? ViewGroup)?.removeView(container)
     }
 
