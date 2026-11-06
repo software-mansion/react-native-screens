@@ -1685,7 +1685,7 @@ PODS:
     - Yoga
   - react-native-restart (0.0.27):
     - React-Core
-  - react-native-safe-area-context (5.9.1):
+  - react-native-safe-area-context (5.11.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1698,8 +1698,8 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.9.1)
-    - react-native-safe-area-context/fabric (= 5.9.1)
+    - react-native-safe-area-context/common (= 5.11.1)
+    - react-native-safe-area-context/fabric (= 5.11.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1709,7 +1709,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/common (5.9.1):
+  - react-native-safe-area-context/common (5.11.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1731,7 +1731,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/fabric (5.9.1):
+  - react-native-safe-area-context/fabric (5.11.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2213,7 +2213,7 @@ PODS:
     - React-perflogger (= 0.89.0-rc.0)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.89.0-rc.0)
-  - RNGestureHandler (3.3.0):
+  - RNGestureHandler (3.5.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2784,7 +2784,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 673397c9d33463f1ade6f73f54ad63dc0e4d363e
   React-mutationobservernativemodule: 34fe5e375b0cac5845035cd096619f8475d41816
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
-  react-native-safe-area-context: 4a41553709356121c806fa86a6a6bfe1bf0df5dd
+  react-native-safe-area-context: a3056d1b6085caf4d578e57e6b51a91b6913fb4a
   React-NativeModulesApple: 52389a49176aa21c7d95a52ab1619b4acd35bbfa
   React-networking: 9dbd77fb7ebfbf16322c49d462925fef3146b71e
   React-oscompat: 8dbbeb1ce3b5325512b5587732ad3f73267950a3
@@ -2822,7 +2822,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 9e23968754b6d7eb363644fa922e326341ace59e
   ReactCommon: 8993991dc1ae9b5a84bc2523225545882049b7aa
   ReactNativeDependencies: fe439fc670258c9021396f9bc87dab9f7eb30653
-  RNGestureHandler: 0b4985efab30f8c96ee4ee72f12caf2d5816c754
+  RNGestureHandler: 636f1dcab56ba96a0a2947311acf6e7299bce46a
   RNReanimated: 8f25b431b04f6c2cee740dc106ae7e5c4aefaf3d
   RNScreens: 0dc58d0933f26acc817af744420a90e7a688d83e
   RNWorklets: fd6db1dc69403965db213fbf50976a37de7addb7

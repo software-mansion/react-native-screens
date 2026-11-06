@@ -3883,10 +3883,10 @@ __metadata:
     prettier: "npm:2.8.8"
     react: "npm:19.3.0"
     react-native: "npm:0.89.0-rc.0"
-    react-native-gesture-handler: "npm:^3.3.0"
+    react-native-gesture-handler: "npm:^3.5.0"
     react-native-reanimated: "npm:4.7.1"
     react-native-restart: "npm:^0.0.27"
-    react-native-safe-area-context: "npm:5.9.1"
+    react-native-safe-area-context: "npm:5.11.1"
     react-native-screens: "link:../"
     react-native-worklets: "npm:0.13.0"
     react-test-renderer: "npm:19.3.0"
@@ -9535,16 +9535,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "react-native-gesture-handler@npm:3.3.0"
+"react-native-gesture-handler@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "react-native-gesture-handler@npm:3.5.0"
   dependencies:
     "@types/react-test-renderer": "npm:^19.1.0"
     invariant: "npm:^2.2.4"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/6a710722f59eca293e2ff30852cbaf8fb4705712068c9ebb4d1d9d737cda61f175b2b0b452c9fab322d9e14efae3b6d0ab7c884439125b7f5cfb57934f7a65f8
+  checksum: 10c0/9202071bfcbb3d7152547db471fa21f0a46692613194d3fd78c4516b0431578612edeb1bd1b6c9f92daa2a3aa51ea8d0b36d9df60f14cefb7bd48330c81e5a58
   languageName: node
   linkType: hard
 
@@ -9582,13 +9582,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-safe-area-context@npm:5.9.1":
-  version: 5.9.1
-  resolution: "react-native-safe-area-context@npm:5.9.1"
+"react-native-safe-area-context@npm:5.11.1":
+  version: 5.11.1
+  resolution: "react-native-safe-area-context@npm:5.11.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/ffe37c7d6ebd412673cb3042b370b2d2551b3ba32d73c51246fbd4f01bb6374ff3ec2511c96a55f62e895758ae645ac372e876fd93c690889cfd27a6daa4e389
+  checksum: 10c0/f44fc57567ab47ac257aa1344ffca4aa001ba91db9542209bb36447eaa9694df6da41cd2b389786272cfa90dbb2a6aa83a969c5e3175e77e4125f3cadce90ec2
   languageName: node
   linkType: hard
 
