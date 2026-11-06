@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useRef,
   useState,
 } from 'react';
 import { Button, Pressable, Text, View } from 'react-native';
@@ -117,28 +116,40 @@ function Tiles({ count, seed }: { count: number; seed: number }) {
 function AutoRepro() {
   const [running, setRunning] = useState(false);
   const [iteration, setIteration] = useState(0);
-  const runningRef = useRef(false);
 
   useEffect(() => {
-    runningRef.current = running;
     if (!running) {
       return;
     }
+    // Per run, so Stop + Start or leaving the screen ends this loop after its current wait.
+    let cancelled = false;
     (async () => {
-      for (let i = 1; runningRef.current; i++) {
+      for (let i = 1; !cancelled; i++) {
         const gap = GAPS_MS[i % GAPS_MS.length];
         setIteration(i);
         console.log(`[Test5112] iteration ${i} gap ${gap}ms`);
         navigationRef.navigate('Feature');
         await wait(2000);
+        if (cancelled) {
+          return;
+        }
         navigationRef.navigate('Feature', { screen: 'Child' });
         await wait(1500);
+        if (cancelled) {
+          return;
+        }
         navigationRef.goBack(); // pops Child, Dashboard slides back in
         await wait(gap);
+        if (cancelled) {
+          return;
+        }
         navigationRef.goBack(); // pops the whole Feature stack during that animation
         await wait(2000);
       }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [running]);
 
   return (
