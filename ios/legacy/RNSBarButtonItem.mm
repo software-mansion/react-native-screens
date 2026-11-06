@@ -334,6 +334,10 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   if (titleColor) {
     attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
   }
+  id letterSpacing = titleStyle[@"letterSpacing"];
+  if ([letterSpacing isKindOfClass:[NSNumber class]]) {
+    attrs[NSKernAttributeName] = letterSpacing;
+  }
   [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
   [self setTitleTextAttributes:attrs forState:UIControlStateDisabled];

@@ -735,9 +735,16 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number | undefined;
   /**
+   * Customize letter spacing in points for the back button title, mapping to the attributed-string kern.
+   * The value is added on top of the font's own kerning; `0` turns the font's kerning off.
+   * When undefined, the default spacing is used.
+   * @platform ios
+   */
+  backTitleLetterSpacing?: number | undefined;
+  /**
    * Whether the back button title should be visible or not. Defaults to `true`.
    *
-   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`.
+   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `backTitleLetterSpacing`, `disableBackButtonMenu`.
    * For `backTitle` it works only in back button menu.
    *
    * @platform ios
@@ -837,6 +844,13 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   largeTitleFontWeight?: string | undefined;
   /**
+   * Customize letter spacing in points for the large title, mapping to the attributed-string kern.
+   * The value is added on top of the font's own kerning; `0` turns the font's kerning off.
+   * When undefined, the default spacing is used.
+   * @platform ios
+   */
+  largeTitleLetterSpacing?: number | undefined;
+  /**
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean | undefined;
@@ -923,6 +937,13 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Customize the weight of the font to be used for the title.
    */
   titleFontWeight?: string | undefined;
+  /**
+   * Customize letter spacing in points for the title.
+   * On iOS it maps to the attributed-string kern, added on top of the font's own kerning;
+   * `0` turns the font's kerning off. On Android it is converted to ems like `Text`'s `letterSpacing`.
+   * When undefined, the default spacing is used.
+   */
+  titleLetterSpacing?: number | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
@@ -1264,6 +1285,11 @@ interface SharedHeaderBarButtonItem {
         fontSize?: number | undefined;
         fontWeight?: string | undefined;
         color?: ColorValue | undefined;
+        /**
+         * Letter spacing in points, mapping to the attributed-string kern.
+         * `0` turns the font's kerning off; when undefined, the default spacing is used.
+         */
+        letterSpacing?: number | undefined;
       }
     | undefined;
   /**

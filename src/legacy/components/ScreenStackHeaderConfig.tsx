@@ -54,7 +54,21 @@ export const ScreenStackHeaderConfig = React.forwardRef<
     props.disableBottomInsetApplication ?? false,
   );
 
-  const { headerLeftBarButtonItems, headerRightBarButtonItems } = props;
+  const {
+    headerLeftBarButtonItems,
+    headerRightBarButtonItems,
+    titleLetterSpacing,
+    largeTitleLetterSpacing,
+    backTitleLetterSpacing,
+  } = props;
+
+  // Undefined keys are dropped on the way to native, so an omitted spacing
+  // stays distinct from 0.
+  const letterSpacing = {
+    title: titleLetterSpacing,
+    largeTitle: largeTitleLetterSpacing,
+    backTitle: backTitleLetterSpacing,
+  };
 
   const preparedHeaderLeftBarButtonItems =
     headerLeftBarButtonItems && isHeaderBarButtonsAvailableForCurrentPlatform
@@ -134,6 +148,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
     <ScreenStackHeaderConfigNativeComponent
       {...props}
       userInterfaceStyle={props.experimental_userInterfaceStyle}
+      letterSpacing={letterSpacing}
       headerLeftBarButtonItems={preparedHeaderLeftBarButtonItems}
       headerRightBarButtonItems={preparedHeaderRightBarButtonItems}
       onPressHeaderBarButtonItem={onPressHeaderBarButtonItem}
