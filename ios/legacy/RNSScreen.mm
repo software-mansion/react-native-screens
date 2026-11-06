@@ -19,6 +19,7 @@
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
 
+#import "RNSContainerItemSupport.h"
 #import "RNSConversions.h"
 #import "RNSSafeAreaViewComponentView.h"
 #import "RNSSafeAreaViewNotifications.h"
@@ -27,6 +28,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
+#import "RNSScrollViewSeeking.h"
 #import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
@@ -48,6 +50,7 @@ struct ContentWrapperBox {
                              UISheetPresentationControllerDelegate,
 #endif
                              RCTRNSScreenViewProtocol,
+                             RNSScrollViewSeeking,
                              CAAnimationDelegate>
 @end
 
@@ -62,6 +65,7 @@ struct ContentWrapperBox {
   ContentWrapperBox _contentWrapperBox;
   bool _sheetHasInitialDetentSet;
   BOOL _shouldUpdateScrollEdgeEffects;
+  __weak UIScrollView *_Nullable _contentScrollView;
   UITapGestureRecognizer *_backdropTapGestureRecognizer;
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -1239,14 +1243,49 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)overrideScrollViewBehaviorInFirstDescendantChainIfNeeded
 {
   if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
-    [RNSScrollViewHelper overrideScrollViewBehaviorInFirstDescendantChainFrom:self];
+    [RNSScrollViewHelper overrideScrollViewBehavior:[_controller findContentScrollView]];
   }
 }
 
 - (void)updateContentScrollViewEdgeEffectsIfExists
 {
+  // The marker's edge effects take priority over the screen's.
+  if (_contentScrollView != nil) {
+    return;
+  }
   [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
                                       withProvider:self];
+}
+
+#pragma mark - RNSScrollViewSeeking
+
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView
+{
+  // UIKit looks for the content scroll view only in the first descendant chain, unless it is set explicitly.
+  [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
+  _contentScrollView = scrollView;
+
+  // The marker registers once it is in a window, after `willMoveToParentViewController:` has applied the screen's
+  // behavior override to the scroll view found by the heuristic. The marker applies its own edge effects after
+  // registering.
+  if ([self shouldOverrideScrollViewContentInsetAdjustmentBehavior]) {
+    [RNSScrollViewHelper overrideScrollViewBehavior:scrollView];
+  }
+}
+
+- (void)unregisterDescendantScrollView:(UIScrollView *)scrollView
+{
+  if (_contentScrollView != scrollView) {
+    return;
+  }
+  _contentScrollView = nil;
+  [_controller setContentScrollView:nil forEdge:NSDirectionalRectEdgeAll];
+  [self updateContentScrollViewEdgeEffectsIfExists];
+}
+
+- (nullable UIScrollView *)cachedContentScrollView
+{
+  return _contentScrollView;
 }
 
 #pragma mark - RNSSafeAreaProviding
@@ -1577,6 +1616,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _shouldNotify;
   BOOL _isRemovedFromParent;
   BOOL _hasNotifiedDismissed;
+  RNSContainerItemSupport *_Nonnull _containerItemSupport;
 }
 
 #pragma mark - Common
@@ -1589,6 +1629,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _shouldNotify = YES;
     _isRemovedFromParent = NO;
     _hasNotifiedDismissed = NO;
+    _containerItemSupport = [RNSContainerItemSupport new];
   }
   return self;
 }
@@ -2128,6 +2169,29 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (RNSScreenView *)screenView
 {
   return static_cast<RNSScreenView *>(self.view);
+}
+
+#pragma mark - RNSContainerItem
+
+- (void)registerNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport registerNestedContainer:container];
+}
+
+- (void)unregisterNestedContainer:(id<RNSContainer>)container
+{
+  [_containerItemSupport unregisterNestedContainer:container];
+}
+
+- (nullable id<RNSContainer>)resolveNestedContainer
+{
+  return [_containerItemSupport resolveNestedContainer];
+}
+
+- (nullable UIScrollView *)findContentScrollView
+{
+  return [_containerItemSupport findContentScrollViewWithCachedScrollView:[self.screenView cachedContentScrollView]
+                                                            heuristicRoot:self.screenView];
 }
 
 - (void)hideHeaderIfNecessary
