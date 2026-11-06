@@ -211,8 +211,6 @@ export interface SplitColumnMetrics {
    * @remarks
    * Specifies the minimum width (in points) for the secondary column in the
    * Split layout, typically for the view with the main content.
-   *
-   * Supported on iOS 26 or higher.
    */
   minimumSecondaryColumnWidth?: number | undefined;
   /**
@@ -222,8 +220,6 @@ export interface SplitColumnMetrics {
    * Specifies the preferred width (in points or as a fraction for percentage
    * width support) for the secondary column in the Split layout, typically
    * for the view with the main content.
-   *
-   * Supported on iOS 26 or higher.
    */
   preferredSecondaryColumnWidthOrFraction?: number | undefined;
   /**
@@ -233,8 +229,6 @@ export interface SplitColumnMetrics {
    * Specifies the minimum width (in points) for the inspector column in the
    * Split layout, typically the view which is providing additional data about
    * the secondary column.
-   *
-   * Supported on iOS 26 or higher.
    */
   minimumInspectorColumnWidth?: number | undefined;
   /**
@@ -244,8 +238,6 @@ export interface SplitColumnMetrics {
    * Specifies the maximum width (in points) for the inspector column in the
    * Split layout, typically the view which is providing additional data about
    * the secondary column.
-   *
-   * Supported on iOS 26 or higher.
    */
   maximumInspectorColumnWidth?: number | undefined;
   /**
@@ -255,8 +247,6 @@ export interface SplitColumnMetrics {
    * Specifies the preferred width (in points or as a fraction for percentage
    * width support) for the inspector column in the Split layout, typically
    * the view which is providing additional data about the secondary column.
-   *
-   * Supported on iOS 26 or higher.
    */
   preferredInspectorColumnWidthOrFraction?: number | undefined;
 }
