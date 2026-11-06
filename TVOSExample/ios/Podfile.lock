@@ -1245,8 +1245,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-restart (0.0.27):
-    - React-Core
   - react-native-safe-area-context (5.9.1):
     - hermes-engine
     - RCTRequired
@@ -1843,6 +1841,28 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - RNScreensApps (0.0.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNWorklets (0.12.2):
     - hermes-engine
     - RCTRequired
@@ -1968,7 +1988,6 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - React-mutationobservernativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)
-  - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
@@ -2009,6 +2028,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNScreensApps (from `../node_modules/@rnscreens/apps`)"
   - RNWorklets (from `../node_modules/react-native-worklets`)
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
   - Yoga (from `build/rncore-facades/Yoga`)
@@ -2109,8 +2129,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   React-mutationobservernativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver"
-  react-native-restart:
-    :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
@@ -2191,6 +2209,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNScreensApps:
+    :path: "../node_modules/@rnscreens/apps"
   RNWorklets:
     :path: "../node_modules/react-native-worklets"
   SocketRocket:
@@ -2246,7 +2266,6 @@ SPEC CHECKSUMS:
   React-Mapbuffer: cba62a88c856f87a98ea27df02f385fc4c24abe2
   React-microtasksnativemodule: 133f1b2ee1d295a863bf269913d384a9a9c451ea
   React-mutationobservernativemodule: 7faa5e895d35789c74a30ac15abe1d46b16148d0
-  react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 352ca3a1d913db1068dcd86669bf60d59608d6eb
   React-NativeModulesApple: 16814afc7a6b64ba0445d88b05981b120262c2b2
   React-networking: 0174c2a8faf6a6637b28f4022c8af051168d4e3a
@@ -2287,6 +2306,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 573d95b59354b39455079b337747a307efcac73d
   RNReanimated: 7dde9b7b1c4eea6dc8edade25db1942593feb0ba
   RNScreens: d9a5aa42ecf55d8075b60ebbda5e1a32ebfdf23c
+  RNScreensApps: 752eba6fedaeee9b2dc940a977c25ca7afc35d49
   RNWorklets: 384550f43408c2938237f7799c9f5bd1bdefe187
   SocketRocket: 09e4141b59ced105b5c60de78bc4ea8b35add6d2
   Yoga: 4dd81e8fac4602f65c14f4775bf1782dc315033a
