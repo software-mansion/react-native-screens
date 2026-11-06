@@ -152,8 +152,11 @@
   NSString *fontWeight = [self stringForKey:[self attributeKey:@"fontWeight" withPrefix:keyPrefix] in:appearanceDict];
   NSString *fontStyle = [self stringForKey:[self attributeKey:@"fontStyle" withPrefix:keyPrefix] in:appearanceDict];
   id fontColor = [self colorValueForKey:[self attributeKey:@"fontColor" withPrefix:keyPrefix] in:appearanceDict];
+  NSNumber *letterSpacing = [self numberForKey:[self attributeKey:@"letterSpacing" withPrefix:keyPrefix]
+                                            in:appearanceDict];
 
-  if (fontFamily == nil && fontSize == nil && fontWeight == nil && fontStyle == nil && fontColor == nil) {
+  if (fontFamily == nil && fontSize == nil && fontWeight == nil && fontStyle == nil && fontColor == nil &&
+      letterSpacing == nil) {
     return nil;
   }
 
@@ -171,6 +174,11 @@
 
   if (fontColor != nil) {
     textAttributes[NSForegroundColorAttributeName] = [RCTConvert UIColor:fontColor];
+  }
+
+  // A missing key keeps the font's default kerning; 0 is a valid explicit value that disables it.
+  if (letterSpacing != nil) {
+    textAttributes[NSKernAttributeName] = letterSpacing;
   }
 
   return textAttributes;
