@@ -1,22 +1,113 @@
-import type { NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { InterfaceOrientation, ColorScheme } from '../shared/types';
+import type { ViewProps } from 'react-native';
+import type {
+  InterfaceOrientation,
+  ColorScheme,
+  EmptyEventPayload,
+  NativeEventHandler,
+} from '../shared/types';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type GenericEmptyEvent = Readonly<{}>;
-
+/**
+ * Payload of the
+ * {@link SplitHostProps.onDisplayModeWillChange | onDisplayModeWillChange}
+ * event.
+ */
 export type DisplayModeWillChangeEvent = {
+  /**
+   * Display mode of the Split before the change.
+   *
+   * @remarks
+   * One of the {@link SplitDisplayMode} values.
+   */
   currentDisplayMode: string;
+  /**
+   * Display mode of the Split after the change.
+   *
+   * @remarks
+   * One of the {@link SplitDisplayMode} values.
+   */
   nextDisplayMode: string;
 };
 
+/**
+ * Visibility of the button for changing the Split display mode.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'automatic'` — the visibility of the display mode button is set by
+ *   system
+ * - `'always'` — the display mode button is always visible
+ * - `'never'` — the display mode button is always hidden
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymodebuttonvisibility-swift.enum | UISplitViewController.DisplayModeButtonVisibility}
+ */
 export type SplitDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 
+/**
+ * Split behavior of a Split.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'automatic'` — chosen by the OS, the appropriate split behavior is based
+ *   on the device and the current app size
+ * - `'displace'` — the main column is moved partially offscreen, making a
+ *   space for sidebars
+ * - `'overlay'` — the sidebars are partially covering main column
+ * - `'tile'` — the sidebars appear side-by-side with the main column
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/splitbehavior-swift.enum | UISplitViewController.SplitBehavior}
+ */
 export type SplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 
+/**
+ * Side on which the primary sidebar of a Split is placed.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'leading'` — primary sidebar is placed on the leading edge of the
+ *   interface
+ * - `'trailing'` — primary sidebar is placed on the trailing edge of the
+ *   interface
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/primaryedge-swift.enum | UISplitViewController.PrimaryEdge}
+ */
 export type SplitPrimaryEdge = 'leading' | 'trailing';
 
+/**
+ * Background style of the primary view controller of a Split.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'default'` — chosen by the OS, the appropriate background style is based
+ *   on the device preferences
+ * - `'none'` — a style that has no visual effect on the background appearance
+ *   of the primary view controller
+ * - `'sidebar'` — a style that applies a blurred effect to the background of
+ *   the primary view controller
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/backgroundstyle | UISplitViewController.BackgroundStyle}
+ */
 export type SplitPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 
+/**
+ * Display mode of a Split.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'automatic'` — display mode is chosen by the OS, the appropriate display
+ *   mode is based on the device and the current app size
+ * - `'secondaryOnly'` — only the secondary column is displayed
+ * - `'oneBesideSecondary'` — a sidebar is displayed side-by-side with the
+ *   secondary column
+ * - `'twoBesideSecondary'` — two sidebars are displayed side-by-side with the
+ *   secondary column
+ * - `'oneOverSecondary'` — one sidebar is displayed over the secondary column
+ * - `'twoOverSecondary'` — two sidebars are displayed over the secondary
+ *   column
+ * - `'twoDisplaceSecondary'` — two sidebars are displacing the secondary
+ *   column, moving it partially offscreen
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum | UISplitViewController.DisplayMode}
+ */
 export type SplitDisplayMode =
   | 'automatic'
   | 'secondaryOnly'
@@ -26,109 +117,196 @@ export type SplitDisplayMode =
   | 'twoOverSecondary'
   | 'twoDisplaceSecondary';
 
-export type SplitHostOrientation = InterfaceOrientation | 'inherit';
+/**
+ * Supported orientations of a Split.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'inherit'` — Split supports the same orientations as parent component,
+ * - `'all'` — Split supports all orientations,
+ * - `'allButUpsideDown'` — Split supports all but the upside-down portrait
+ *   interface orientation,
+ * - `'portrait'` — Split supports both portrait-up and portrait-down
+ *   interface orientations,
+ * - `'portraitUp'` — Split supports a portrait-up interface orientation,
+ * - `'portraitDown'` — Split supports a portrait-down interface orientation,
+ * - `'landscape'` — Split supports both landscape-left and landscape-right
+ *   interface orientations,
+ * - `'landscapeLeft'` — Split supports landscape-left interface orientation,
+ * - `'landscapeRight'` — Split supports landscape-right interface
+ *   orientation.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
+ */
+export type SplitOrientation = InterfaceOrientation | 'inherit';
 
-export type SplitHostColorScheme = ColorScheme | 'inherit';
+/**
+ * Color scheme used by a Split and any child containers.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'inherit'` — the interface style from parent,
+ * - `'light'` — the light interface style,
+ * - `'dark'` — the dark interface style.
+ */
+export type SplitColorScheme = ColorScheme | 'inherit';
 
+/**
+ * Widths of the columns of a Split.
+ */
 export interface SplitColumnMetrics {
   /**
-   * @summary Minimum width for the primary sidebar.
+   * Minimum width for the primary sidebar.
    *
-   * Specifies the minimum width for the primary column in the Split layout, typically representing the leftmost sidebar.
+   * @remarks
+   * Specifies the minimum width for the primary column in the Split layout,
+   * typically representing the leftmost sidebar.
    */
   minimumPrimaryColumnWidth?: number | undefined;
   /**
-   * @summary Maximum width for the primary sidebar.
+   * Maximum width for the primary sidebar.
    *
-   * Specifies the maximum width (in points) for the primary column in the Split layout, typically representing the leftmost sidebar.
+   * @remarks
+   * Specifies the maximum width (in points) for the primary column in the
+   * Split layout, typically representing the leftmost sidebar.
    */
   maximumPrimaryColumnWidth?: number | undefined;
   /**
-   * @summary Preferred width for the primary sidebar.
+   * Preferred width for the primary sidebar.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the primary column in the Split layout, typically representing the leftmost sidebar.
+   * @remarks
+   * Specifies the preferred width (in points or as a fraction for percentage
+   * width support) for the primary column in the Split layout, typically
+   * representing the leftmost sidebar.
    */
   preferredPrimaryColumnWidthOrFraction?: number | undefined;
   /**
-   * @summary Minimum width for the intermediate sidebar.
+   * Minimum width for the intermediate sidebar.
    *
-   * Specifies the minimum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
+   * @remarks
+   * Specifies the minimum width (in points) for the supplementary column in
+   * the Split layout, typically representing the intermediate sidebar.
    */
   minimumSupplementaryColumnWidth?: number | undefined;
   /**
-   * @summary Maximum width for the intermediate sidebar.
+   * Maximum width for the intermediate sidebar.
    *
-   * Specifies the maximum width (in points) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
+   * @remarks
+   * Specifies the maximum width (in points) for the supplementary column in
+   * the Split layout, typically representing the intermediate sidebar.
    */
   maximumSupplementaryColumnWidth?: number | undefined;
   /**
-   * @summary Preferred width for the intermediate sidebar.
+   * Preferred width for the intermediate sidebar.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the supplementary column in the Split layout, typically representing the intermediate sidebar.
+   * @remarks
+   * Specifies the preferred width (in points or as a fraction for percentage
+   * width support) for the supplementary column in the Split layout,
+   * typically representing the intermediate sidebar.
    */
   preferredSupplementaryColumnWidthOrFraction?: number | undefined;
   /**
-   * @summary Minimum width for the secondary component.
+   * Minimum width for the secondary component.
    *
-   * Specifies the minimum width (in points) for the secondary column in the Split layout, typically for the view with the main content.
-   *
-   * @supported iOS 26 or higher
+   * @remarks
+   * Specifies the minimum width (in points) for the secondary column in the
+   * Split layout, typically for the view with the main content.
    */
   minimumSecondaryColumnWidth?: number | undefined;
   /**
-   * @summary Preferred width for the secondary component.
+   * Preferred width for the secondary component.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the secondary column in the Split layout, typically for the view with the main content.
-   *
-   * @supported iOS 26 or higher
+   * @remarks
+   * Specifies the preferred width (in points or as a fraction for percentage
+   * width support) for the secondary column in the Split layout, typically
+   * for the view with the main content.
    */
   preferredSecondaryColumnWidthOrFraction?: number | undefined;
   /**
-   * @summary Minimum width for the inspector component.
+   * Minimum width for the inspector component.
    *
-   * Specifies the minimum width (in points) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
-   *
-   * @supported iOS 26 or higher
+   * @remarks
+   * Specifies the minimum width (in points) for the inspector column in the
+   * Split layout, typically the view which is providing additional data about
+   * the secondary column.
    */
   minimumInspectorColumnWidth?: number | undefined;
   /**
-   * @summary Maximum width for the inspector component.
+   * Maximum width for the inspector component.
    *
-   * Specifies the maximum width (in points) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
-   *
-   * @supported iOS 26 or higher
+   * @remarks
+   * Specifies the maximum width (in points) for the inspector column in the
+   * Split layout, typically the view which is providing additional data about
+   * the secondary column.
    */
   maximumInspectorColumnWidth?: number | undefined;
   /**
-   * @summary Preferred width for the inspector component.
+   * Preferred width for the inspector component.
    *
-   * Specifies the preferred width (in points or as a fraction for percentage width support) for the inspector column in the Split layout, typically the view which is providing additional data about the secondary column.
-   *
-   * @supported iOS 26 or higher
+   * @remarks
+   * Specifies the preferred width (in points or as a fraction for percentage
+   * width support) for the inspector column in the Split layout, typically
+   * the view which is providing additional data about the secondary column.
    */
   preferredInspectorColumnWidthOrFraction?: number | undefined;
 }
+
+/**
+ * Column of a Split.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'primary'` — the primary sidebar is shown
+ * - `'supplementary'` — the supplementary sidebar is shown
+ * - `'secondary'` — the secondary (main content) column is shown
+ */
 export type SplitNavigableColumn = 'primary' | 'supplementary' | 'secondary';
 
+/**
+ * Commands of {@link Split.Host}, available through its `ref`.
+ */
 export type SplitHostCommands = {
+  /**
+   * Shows a column.
+   *
+   * @param column - The column to show.
+   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/show(_:) | UISplitViewController.show(_:)}
+   */
   show: (column: SplitNavigableColumn) => void;
   /**
    * Hides a sidebar column using UIKit's native transition to the closest
    * supported display mode. UIKit does not support hiding the secondary column.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/hide(_:)|UISplitViewController.hide(_:)}
-   * @platform ios
+   * @param column - The sidebar column to hide.
+   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/hide(_:) | UISplitViewController.hide(_:)}
    */
   hide: (column: Exclude<SplitNavigableColumn, 'secondary'>) => void;
 };
 
+/**
+ * Props for {@link Split.Host}.
+ *
+ * @experimental
+ */
 export interface SplitHostProps extends ViewProps {
+  /**
+   * Columns of the Split, declared with {@link Split.Column} and
+   * {@link Split.Inspector}.
+   *
+   * @platform ios
+   */
   children: NonNullable<React.ReactNode>;
+  /**
+   * Ref to the {@link SplitHostCommands | commands} of the Split.
+   *
+   * @platform ios
+   */
   ref?: React.Ref<SplitHostCommands> | undefined;
 
   /**
-   * @summary An object describing bounds for column widths.
+   * An object describing bounds for column widths.
    *
+   * @remarks
    * It supports definitions for the following columns:
    *
    * - `primary` - the leftmost sidebar
@@ -137,56 +315,64 @@ export interface SplitHostProps extends ViewProps {
    * On iOS 26 or higher, it also supports definitions for:
    *
    * - `secondary` - the view with the main content
-   * - `inspector` - the view which is providing additional data about the secondary column
+   * - `inspector` - the view which is providing additional data about the
+   *   secondary column
+   *
+   * @platform ios
    */
   columnMetrics?: SplitColumnMetrics | undefined;
   /**
-   * @summary Determines whether the button for changing the Split display mode is visible on the screen.
+   * Determines whether the button for changing the Split display mode is
+   * visible on the screen.
    *
-   * The following values are currently supported:
-   *
-   * - `automatic` - the visibility of the display mode button is set by system
-   * - `always` – the display mode button is always visible
-   * - `never` – the display mode button is always hidden
-   *
-   * The supported values corresponds to the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymodebuttonvisibility-swift.enum|UISplitViewController.DisplayModeButtonVisibility}
-   *
-   * @default automatic
+   * @defaultValue `'automatic'`
+   * @platform ios
    */
   displayModeButtonVisibility?: SplitDisplayModeButtonVisibility | undefined;
   /**
-   * @summary A callback that gets invoked when the Split was collapsed to a single column.
-   */
-  onCollapse?:
-    | ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void)
-    | undefined;
-  /**
-   * @summary A callback that gets invoked when the Split displayMode has changed.
+   * A callback that gets invoked when the Split was collapsed to a single
+   * column.
    *
-   * The purpose of this callback is tracking displayMode updates on host from the JS side.
-   * These updates might be a consequence of some native interactions, like pressing native button or performing swipe gesture.
+   * @platform ios
+   */
+  onCollapse?: NativeEventHandler<EmptyEventPayload> | undefined;
+  /**
+   * A callback that gets invoked when the Split displayMode is about to
+   * change.
+   *
+   * @remarks
+   * The purpose of this callback is tracking displayMode updates on host from
+   * the JS side. These updates might be a consequence of some native
+   * interactions, like pressing native button or performing swipe gesture.
+   *
+   * @platform ios
    */
   onDisplayModeWillChange?:
-    | ((e: NativeSyntheticEvent<DisplayModeWillChangeEvent>) => void)
+    | NativeEventHandler<DisplayModeWillChangeEvent>
     | undefined;
   /**
-   * @summary A callback that gets invoked when the Split was expanded to multiple columns.
+   * A callback that gets invoked when the Split was expanded to multiple
+   * columns.
+   *
+   * @platform ios
    */
-  onExpand?: ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void) | undefined;
+  onExpand?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
-   * @summary A callback that gets invoked when the Split inspector is either programmatically hidden (in column presentation) or dismissed (in modal presentation).
+   * A callback that gets invoked when the Split inspector is either
+   * programmatically hidden (in column presentation) or dismissed (in modal
+   * presentation).
    *
-   * The purpose of this callback depends on whether the Split is collapsed or expanded.
+   * @remarks
+   * The purpose of this callback depends on whether the Split is collapsed or
+   * expanded.
    *
-   * @supported iOS 26 or higher
+   * @platform ios >= 26
    */
-  onInspectorHide?:
-    | ((e: NativeSyntheticEvent<GenericEmptyEvent>) => void)
-    | undefined;
+  onInspectorHide?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
-   * @summary Specifies supported orientations for the tab screen.
+   * Specifies supported orientations for the Split.
    *
+   * @remarks
    * Procedure for determining supported orientations:
    * 1. Traversal initiates from the root component and moves to the
    *    deepest child possible.
@@ -196,155 +382,106 @@ export interface SplitHostProps extends ViewProps {
    *    - if `orientation` is set to `inherit`, the parent component
    *      is queried.
    *
-   * The following values are currently supported:
-   *
-   * - `inherit` - tab screen supports the same orientations as parent
-   *   component,
-   * - `all` - tab screen supports all orientations,
-   * - `allButUpsideDown` - tab screen supports all but the upside-down
-   *   portrait interface orientation,
-   * - `portrait` - tab screen supports both portrait-up and portrait-down
-   *   interface orientations,
-   * - 'portraitUp' - tab screen supports a portrait-up interface
-   *   orientation,
-   * - `portraitDown` - tab screen supports a portrait-down interface
-   *   orientation,
-   *   interface orientation,
-   * - `landscape` - tab screen supports both landscape-left and
-   *   landscape-right interface orientations,
-   * - `landscapeLeft` - tab screen supports landscape-left interface
-   *   orientaion,
-   * - `landscapeRight` - tab screen supports landscape-right interface
-   *   orientaion.
-   *
-   * The supported values (apart from `inherit`) correspond to the official
-   * UIKit documentation:
-   *
-   * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask|UIInterfaceOrientationMask}
-   *
-   * @default inherit
-   *
+   * @defaultValue `'inherit'`
    * @platform ios
    */
-  orientation?: SplitHostOrientation | undefined;
+  orientation?: SplitOrientation | undefined;
   /**
-   * @summary Specifies the color scheme used by the container and any child containers.
+   * Specifies the color scheme used by the container and any child
+   * containers.
    *
-   * The following values are currently supported:
-   * - `inherit` - the interface style from parent,
-   * - `light` - the light interface style,
-   * - `dark` - the dark interface style.
-   *
-   * @default inherit
-   *
+   * @defaultValue `'inherit'`
    * @platform ios
    */
-  colorScheme?: SplitHostColorScheme;
+  colorScheme?: SplitColorScheme | undefined;
   /**
-   * @summary Determines whether gestures are enabled to change the display mode.
+   * Determines whether gestures are enabled to change the display mode.
+   *
+   * @defaultValue `true`
+   * @platform ios
    */
   presentsWithGesture?: boolean | undefined;
   /**
-   * @summary Specifies the display mode which will be preferred to use, if the layout requirements are met.
+   * Specifies the display mode which will be preferred to use, if the layout
+   * requirements are met.
    *
-   * Preferred means that we may only suggest the OS which layout we're expecting, but the final decision is dependent on the device's type and size class.
+   * @remarks
+   * Preferred means that we may only suggest the OS which layout we're
+   * expecting, but the final decision is dependent on the device's type and
+   * size class.
    *
-   * The following values are currently supported:
-   *
-   * - `automatic` - display mode is chosen by the OS, the appropriate display mode is based on the device and the current app size
-   * - `secondaryOnly` – only the secondary column is displayed
-   * - `oneBesideSecondary` – a sidebar is displayed side-by-side with the secondary column
-   * - `twoBesideSecondary` – two sidebars are displayed side-by-side with the secondary column
-   * - `oneOverSecondary` – a one sidebar is displayed over the secondary column
-   * - `twoOverSecondary` – two sidebars are displayed over the secondary column
-   * - `twoDisplaceSecondary` – two sidebars are displacind the secondary column, moving it partially offscreen
-   *
-   * The supported values corresponds to the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum|UISplitViewController.DisplayMode}
-   *
-   * @default automatic
+   * @defaultValue `'automatic'`
+   * @platform ios
    */
   preferredDisplayMode?: SplitDisplayMode | undefined;
   /**
-   * @summary Specifies the split behavior which will be preferred to use, if the layout requirements are met.
+   * Specifies the split behavior which will be preferred to use, if the layout
+   * requirements are met.
    *
-   * Preferred means that we may only suggest the OS which layout we're expecting, but the final decision is dependent on the device's type and size class.
+   * @remarks
+   * Preferred means that we may only suggest the OS which layout we're
+   * expecting, but the final decision is dependent on the device's type and
+   * size class.
    *
-   * The following values are currently supported:
-   *
-   * - `automatic` - chosen by the OS, the appropriate split behavior is based on the device and the current app size
-   * - `displace` – the main column is moved partially offscreen, making a space for sidebars
-   * - `overlay` – the sidebars are partially covering main column
-   * - `tile` – the sidebars appears side-by-side with the main column
-   *
-   * The supported values corresponds to the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/splitbehavior-swift.enum|UISplitViewController.SplitBehavior}
-   *
-   * @default automatic
+   * @defaultValue `'automatic'`
+   * @platform ios
    */
   preferredSplitBehavior?: SplitBehavior | undefined;
   /**
-   * @summary Specifies the background style of the primary view controller.
-   *
-   * On iOS 18 or lower, we always fall back to `none` which is a system default value. Since iOS 26 the system default value is `sidebar`.
-   *
-   * The following values are currently supported:
-   *
-   * - `default` - chosen by the OS, the appropriate background style is based on the device preferences
-   * - `none` - a style that has no visual effect on the background appearance of the primary view controller
-   * - `sidebar` - a style that applies a blurred effect to the background of the primary view controller
-   *
-   * The supported values correspond to the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/backgroundstyle|UISplitViewController.BackgroundStyle}
-   *
-   * @default default
-   *
-   * @supported iOS 26 or higher
+   * Specifies the background style of the primary view controller.
    *
    * @remarks
-   * According to the documentation, this property shouldn't have any effect on iOS. However, on iOS 26 the support for this prop was added.
+   * On iOS 18 or lower, we always fall back to `none` which is a system
+   * default value. Since iOS 26 the system default value is `sidebar`.
+   *
+   * According to the documentation, this property shouldn't have any effect
+   * on iOS. However, on iOS 26 the support for this prop was added.
+   *
+   * @defaultValue `'default'`
+   * @platform ios >= 26
    */
   primaryBackgroundStyle?: SplitPrimaryBackgroundStyle | undefined;
   /**
-   * @summary Indicates on which side primary sidebar is placed, affecting the split view layout.
+   * Indicates on which side primary sidebar is placed, affecting the split
+   * view layout.
    *
-   * The following values are currently supported:
-   *
-   * - `leading` - primary sidebar is placed on the leading edge of the interface
-   * - `trailing` - primary sidebar is placed on the trailing edge of the interface
-   *
-   * The supported values corresponds to the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/primaryedge-swift.enum|UISplitViewController.PrimaryEdge}
-   *
-   * @default leading
+   * @defaultValue `'leading'`
+   * @platform ios
    */
   primaryEdge?: SplitPrimaryEdge | undefined;
   /**
-   * @summary Determines whether inspector column should be displayed.
+   * Determines whether inspector column should be displayed.
    *
-   * Inspector will be displayed on the trailing edge of the main (secondary) column (for expanded Split) or as a modal (for collapsed Split).
-   * The result on the interface for this prop depends on whether the Split is collapsed or expanded.
+   * @remarks
+   * Inspector will be displayed on the trailing edge of the main (secondary)
+   * column (for expanded Split) or as a modal (for collapsed Split). The
+   * result on the interface for this prop depends on whether the Split is
+   * collapsed or expanded.
    *
-   * @supported iOS 26 or higher
+   * @defaultValue `false`
+   * @platform ios >= 26
    */
   showInspector?: boolean | undefined;
   /**
-   * @summary Determines whether a button to toggle to and from secondaryOnly display mode is visible.
+   * Determines whether a button to toggle to and from secondaryOnly display
+   * mode is visible.
+   *
+   * @defaultValue `false`
+   * @platform ios
    */
   showSecondaryToggleButton?: boolean | undefined;
   /**
-   * @summary Specifies which column should be shown when the split view collapses to a single column.
+   * Specifies which column should be shown when the split view collapses to a
+   * single column.
    *
-   * When the split view transitions from an expanded to a collapsed layout (e.g. rotating an iPad to portrait),
-   * this prop determines which column becomes the top (visible) column.
+   * @remarks
+   * When the split view transitions from an expanded to a collapsed layout
+   * (e.g. rotating an iPad to portrait), this prop determines which column
+   * becomes the top (visible) column.
    *
    * When not set, the system default behavior is used.
    *
-   * The following values are currently supported:
-   *
-   * - `primary` - the primary sidebar is shown
-   * - `supplementary` - the supplementary sidebar is shown
-   * - `secondary` - the secondary (main content) column is shown
+   * @platform ios
    */
   topColumnForCollapsing?: SplitNavigableColumn | undefined;
 }
