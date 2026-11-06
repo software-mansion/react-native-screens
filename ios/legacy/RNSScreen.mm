@@ -1961,9 +1961,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   UIView *view = self.view;
   UIEdgeInsets additionalSafeAreaInsets = self.additionalSafeAreaInsets;
-  // The bar is placed below the area that is unsafe for the screen itself (e.g. the status bar), the inset added
-  // for the bar is not taken into account.
-  const CGFloat originY = view.safeAreaInsets.top - additionalSafeAreaInsets.top;
+  const CGFloat originY = [self screenNavigationBarOriginY];
   const CGFloat width = CGRectGetWidth(view.bounds);
   const CGFloat height = [_screenNavigationBar sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height;
   _screenNavigationBar.frame = CGRectMake(0, originY, width, height);
@@ -1978,7 +1976,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-  const CGFloat insetTop = _screenNavigationBar.isHidden ? 0 : height;
+  // The content is inset below the bar, which is not necessarily placed right at the edge of the safe area (see
+  // `screenNavigationBarOriginY`).
+  const CGFloat safeAreaTop = view.safeAreaInsets.top - additionalSafeAreaInsets.top;
+  const CGFloat insetTop = _screenNavigationBar.isHidden ? 0 : MAX(0, originY + height - safeAreaTop);
   if (additionalSafeAreaInsets.top != insetTop) {
     additionalSafeAreaInsets.top = insetTop;
     self.additionalSafeAreaInsets = additionalSafeAreaInsets;
@@ -1996,6 +1997,29 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (config != nil && config.shouldHeaderBeVisible) {
     [config updateHeaderStateInShadowTreeInContextOfNavigationBar:_screenNavigationBar];
   }
+}
+
+- (CGFloat)screenNavigationBarOriginY
+{
+  UIView *view = self.view;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_2) && !TARGET_OS_TV
+  if (@available(iOS 27.2, *)) {
+    // The region of a bar on the top edge, which the bar of the navigation controller occupies too. It differs from
+    // the safe area e.g. on iPhone Duo, where the safe area has no top inset, but the bar is placed below the corner
+    // with the status bar. It is resolved in the navigation controller's view, as the safe area of the screen
+    // includes the inset added for the bar itself.
+    UIView *navigationView = self.navigationController.view;
+    if (navigationView != nil && [view isDescendantOfView:navigationView]) {
+      UIViewLayoutRegion *barRegion = [UIViewLayoutRegion layoutRegionForBarOnEdge:UIRectEdgeTop];
+      const CGFloat barTop = [navigationView edgeInsetsForLayoutRegion:barRegion].top;
+      return [navigationView convertPoint:CGPointMake(0, barTop) toView:view].y;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_2) && !TARGET_OS_TV
+
+  // The bar is placed below the area that is unsafe for the screen itself (e.g. the status bar), the inset added
+  // for the bar is not taken into account.
+  return view.safeAreaInsets.top - self.additionalSafeAreaInsets.top;
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
