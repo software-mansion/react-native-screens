@@ -1353,11 +1353,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
-    auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
     contentWrapper.delegate = self;
     _contentWrapperBox.contentWrapper = contentWrapper;
   } else if ([childComponentView isKindOfClass:RNSScreenStackHeaderConfig.class]) {
-    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config = static_cast<RNSScreenStackHeaderConfig *>(childComponentView);
     _config.screenView = self;
   }
   [_reactSubviews insertObject:childComponentView atIndex:index];
