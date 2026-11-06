@@ -184,6 +184,8 @@ RNS_IGNORE_SUPER_CALL_END
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
+  // The screen lays out its own navigation bar (`headerMode: 'screen'`).
+  [vc.view setNeedsLayout];
 }
 
 - (void)updateShadowStateWithSize:(CGSize)size
@@ -293,9 +295,28 @@ RNS_IGNORE_SUPER_CALL_END
       !(self.backButtonInCustomView == false && self.hasSubviewLeft);
 }
 
+// Returns the item the header configuration of `vc` should be applied to, see `-[RNSScreen headerNavigationItem]`.
+static UINavigationItem *RNSHeaderNavigationItemOfViewController(UIViewController *vc)
+{
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    return static_cast<RNSScreen *>(vc).headerNavigationItem;
+  }
+  return vc.navigationItem;
+}
+
+// Returns the navigation bar that displays the header of `vc`: the bar rendered by the screen itself
+// (`headerMode: 'screen'`) or the bar of its navigation controller.
+static UINavigationBar *RNSNavigationBarOfViewController(UIViewController *vc)
+{
+  if ([vc isKindOfClass:[RNSScreen class]] && static_cast<RNSScreen *>(vc).screenNavigationBar != nil) {
+    return static_cast<RNSScreen *>(vc).screenNavigationBar;
+  }
+  return ((UINavigationController *)vc.parentViewController).navigationBar;
+}
+
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
-  UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
+  UINavigationBar *navbar = RNSNavigationBarOfViewController(vc);
   [navbar setTintColor:config.color];
 
   // font customized on the navigation item level, so nothing to do here
@@ -372,7 +393,7 @@ RNS_IGNORE_SUPER_CALL_END
           // in back button props that'd make UIKit redraw the button. Otherwise the changes are
           // not reflected. Here we change back button visibility which is then immediately restored
 #if !TARGET_OS_TV
-                vc.navigationItem.hidesBackButton = YES;
+                RNSHeaderNavigationItemOfViewController(vc).hidesBackButton = YES;
 #endif
                 [self updateViewControllerIfNeeded];
               }];
@@ -592,7 +613,6 @@ RNS_IGNORE_SUPER_CALL_END
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
 {
-  UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
   // When modal is shown the underlying RNSScreen isn't attached to any navigation controller.
@@ -603,14 +623,36 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  RNSScreen *screen = [vc isKindOfClass:[RNSScreen class]] ? static_cast<RNSScreen *>(vc) : nil;
+#if !TARGET_OS_TV
+  const BOOL usesScreenNavigationBar = screen != nil && config.headerMode == RNSHeaderModeScreen;
+#else // !TARGET_OS_TV
+  const BOOL usesScreenNavigationBar = NO;
+#endif // !TARGET_OS_TV
+  screen.screenNavigationBarEnabled = usesScreenNavigationBar;
+  [screen updateScreenNavigationBarItems];
+
+  UINavigationItem *navitem = RNSHeaderNavigationItemOfViewController(vc);
+  UINavigationBar *navbar = RNSNavigationBarOfViewController(vc);
+
   NSUInteger currentIndex = [navctr.viewControllers indexOfObject:vc];
   UIViewController *prevVC = currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1] : nil;
-  UINavigationItem *prevItem = currentIndex > 0 ? prevVC.navigationItem : nil;
+  // The back button of the screen's own navigation bar is provided by its back item, not by the item of the previous
+  // view controller.
+  UINavigationItem *prevItem =
+      usesScreenNavigationBar ? screen.screenNavigationBarBackItem : (currentIndex > 0 ? prevVC.navigationItem : nil);
 
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
+  // The bar of the navigation controller is hidden while the screen displays its own one.
+  BOOL shouldHideSharedNavigationBar = shouldHide || usesScreenNavigationBar;
 
-  if (!shouldHide && !config.translucent && ![self screensExtendUnderOpaqueNavigationBar]) {
+  if (usesScreenNavigationBar) {
+    [self prepareNavigationItemForScreenNavigationBar:vc.navigationItem withConfig:config];
+    [screen setScreenNavigationBarHidden:shouldHide];
+  }
+
+  if (!shouldHideSharedNavigationBar && !config.translucent && ![self screensExtendUnderOpaqueNavigationBar]) {
     // When nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
     // the screen underneath navigation controllers.
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
@@ -629,7 +671,7 @@ RNS_IGNORE_SUPER_CALL_END
   [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
                                                 animated:animated
                                                wasHidden:wasHidden
-                                              shouldHide:shouldHide];
+                                              shouldHide:shouldHideSharedNavigationBar];
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
   if (shouldHide) {
@@ -640,7 +682,10 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
+  navbar.overrideUserInterfaceStyle = config.userInterfaceStyle;
+  if (usesScreenNavigationBar) {
+    [config applySemanticContentAttributeIfNeededToNavigationBar:navbar];
+  }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
   if (@available(iOS 27.0, *)) {
@@ -655,7 +700,8 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
   [config configureBackItem:prevItem withPrevVC:prevVC];
 
-  if (config.largeTitle) {
+  // Large title is driven by the navigation controller for its own bar only.
+  if (config.largeTitle && !usesScreenNavigationBar) {
     navctr.navigationBar.prefersLargeTitles = YES;
   }
   navitem.largeTitleDisplayMode =
@@ -736,6 +782,15 @@ RNS_IGNORE_SUPER_CALL_END
           break;
         }
 
+        if (usesScreenNavigationBar) {
+          // The config is applied on every transition and prop change, warn only once.
+          static dispatch_once_t onceToken;
+          dispatch_once(&onceToken, ^{
+            RCTLogWarn(@"[RNScreens] Search bar is not supported with `headerMode: 'screen'`.");
+          });
+          break;
+        }
+
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
 #if !TARGET_OS_TV
           RNSSearchBar *searchBar = subview.subviews[0];
@@ -793,9 +848,11 @@ RNS_IGNORE_SUPER_CALL_END
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
   RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
-  [navctr setNavigationBarHidden:NO animated:animated];
+  [navctr setNavigationBarHidden:usesScreenNavigationBar animated:animated];
 
-  if (animated && vc.transitionCoordinator != nil &&
+  // The screen's own navigation bar moves together with the screen, there is no shared bar to update along with the
+  // transition.
+  if (!usesScreenNavigationBar && animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
     // when there is an ongoing transition we may need to update navbar setting in animation block
     // using animateAlongsideTransition. However, we only do that given the transition is not a modal
@@ -897,6 +954,29 @@ RNS_IGNORE_SUPER_CALL_END
     prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
   }
 #endif
+}
+
++ (void)prepareNavigationItemForScreenNavigationBar:(UINavigationItem *)navigationItem
+                                         withConfig:(RNSScreenStackHeaderConfig *)config
+{
+  // The header is displayed by the screen's own navigation bar. The navigation item of the view controller must not
+  // hold the header subviews, as a view can have only one superview, but it keeps the title: the bar of the
+  // navigation controller uses it for the back button (and its menu) of the screens pushed on top of this one.
+  navigationItem.title = config.title;
+  navigationItem.titleView = nil;
+  navigationItem.leftBarButtonItems = nil;
+  navigationItem.rightBarButtonItems = nil;
+#if !TARGET_OS_TV
+  navigationItem.searchController = nil;
+#endif // !TARGET_OS_TV
+}
+
+- (void)applySemanticContentAttributeIfNeededToNavigationBar:(UINavigationBar *)navigationBar
+{
+  if (self.direction == UISemanticContentAttributeForceLeftToRight ||
+      self.direction == UISemanticContentAttributeForceRightToLeft) {
+    navigationBar.semanticContentAttribute = self.direction;
+  }
 }
 
 - (void)applySemanticContentAttributeIfNeededToNavCtrl:(UINavigationController *)navCtrl
@@ -1054,7 +1134,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
 {
   if (childComponentView.window != nil) {
-    UINavigationItem *navitem = _screenView.controller.navigationItem;
+    UINavigationItem *navitem = _screenView.controller.headerNavigationItem;
     UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
 
     // This code should be kept in sync with analogous switch statement in
@@ -1159,6 +1239,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 
   if (newScreenProps.translucent != _translucent) {
     _translucent = newScreenProps.translucent;
+    needsNavigationControllerLayout = YES;
+  }
+
+  if (newScreenProps.headerMode != oldScreenProps.headerMode) {
+    _headerMode = [RNSConvert RNSHeaderModeFromCppEquivalent:newScreenProps.headerMode];
     needsNavigationControllerLayout = YES;
   }
 

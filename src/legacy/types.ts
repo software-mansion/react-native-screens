@@ -50,6 +50,8 @@ export type HeaderRestorationBehavior = 'automatic' | 'atScrollEdge';
 
 export type HeaderSafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
 
+export type HeaderMode = 'float' | 'screen';
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -895,6 +897,34 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @platform ios >= 27
    */
   safeAreaAdjustment?: HeaderSafeAreaAdjustment | undefined;
+  /**
+   * Controls whether the screen uses the navigation bar shared by the stack or
+   * renders its own one.
+   *
+   * The following values are currently supported:
+   *
+   * - `float` – the screen uses the single navigation bar of the stack. The bar
+   *   stays in place during transitions and only its content changes,
+   * - `screen` – the screen renders its own native navigation bar, which is
+   *   a part of the screen and moves together with it during push, pop and
+   *   the interactive pop gesture.
+   *
+   * In `screen` mode the following features are not supported, as UIKit
+   * drives them only for the bar of the navigation controller: `largeTitle`,
+   * `searchBar`, bar minimization (`minimizationBehavior`) and the back button
+   * menu.
+   *
+   * Below iOS 26 changing the value at runtime remounts the content of the
+   * screen.
+   *
+   * Has no effect on Android, where every screen already renders its own
+   * header.
+   *
+   * @default `float`
+   *
+   * @platform ios
+   */
+  headerMode?: HeaderMode | undefined;
   /**
    * Callback which is executed when screen header is attached
    */

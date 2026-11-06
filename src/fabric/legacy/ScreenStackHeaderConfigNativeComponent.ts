@@ -58,6 +58,8 @@ type RestorationBehavior = 'automatic' | 'atScrollEdge';
 
 type SafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
 
+type HeaderMode = 'float' | 'screen';
+
 export interface NativeProps extends ViewProps {
   onAttached?: CT.DirectEventHandler<OnAttachedEvent> | undefined;
   onDetached?: CT.DirectEventHandler<OnDetachedEvent> | undefined;
@@ -91,6 +93,7 @@ export interface NativeProps extends ViewProps {
   minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'undefined'>;
   restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
   safeAreaAdjustment?: CT.WithDefault<SafeAreaAdjustment, 'automatic'>;
+  headerMode?: CT.WithDefault<HeaderMode, 'float'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean | undefined;
   headerLeftBarButtonItems?: CT.UnsafeMixed[] | undefined;

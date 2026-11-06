@@ -99,3 +99,8 @@ typedef NS_ENUM(NSInteger, RNSHeaderMinimizationBehavior) {
   RNSHeaderMinimizationBehaviorOnScrollDown,
   RNSHeaderMinimizationBehaviorOnScrollUp,
 };
+
+typedef NS_ENUM(NSInteger, RNSHeaderMode) {
+  RNSHeaderModeFloat,
+  RNSHeaderModeScreen,
+};

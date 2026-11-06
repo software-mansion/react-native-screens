@@ -69,6 +69,8 @@ namespace react = facebook::react;
 + (RNSHeaderMinimizationBehavior)RNSHeaderMinimizationBehaviorFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior;
 
++ (RNSHeaderMode)RNSHeaderModeFromCppEquivalent:(react::RNSScreenStackHeaderConfigHeaderMode)headerMode;
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 /// Converts a resolved (non-`Undefined`) `RNSHeaderMinimizationBehavior` to its UIKit counterpart.
 + (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:
