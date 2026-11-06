@@ -4,6 +4,19 @@ import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
+/**
+ * @summary Where the header of a screen is rendered.
+ *
+ * @description
+ * - `float`: the screen uses the navigation bar shared by the whole stack.
+ *   Only the content of the bar changes between screens.
+ * - `screen`: the screen renders its own navigation bar, which is part of
+ *   the screen and moves together with it during transitions.
+ *
+ * @platform android, ios
+ */
+export type StackHeaderMode = 'float' | 'screen';
+
 export interface StackHeaderConfigPropsBase {
   /**
    * @summary Title displayed in the header.
@@ -54,6 +67,34 @@ export interface StackHeaderConfigPropsBase {
    * @platform android, ios
    */
   backButtonHidden?: boolean | undefined;
+  /**
+   * @summary Specifies if the screen uses the navigation bar shared by the
+   * stack or renders a navigation bar of its own.
+   *
+   * @description
+   * With `float`, every screen of the stack shares one navigation bar and only
+   * its content (title, items, back button) is swapped during transitions.
+   *
+   * With `screen`, the screen gets its own navigation bar placed at the top of
+   * the screen. The bar is a part of the screen, so it slides together with the
+   * screen when it is pushed or popped. The shared navigation bar is hidden
+   * while such a screen is on top.
+   *
+   * On iOS, in `screen` mode the following are not supported, because UIKit
+   * drives them only for the shared navigation bar:
+   * - collapsing large title (`ios.largeTitleEnabled` is ignored),
+   * - navigation bar minimization (`ios.minimizationBehavior`),
+   * - scroll edge appearance tracking.
+   *
+   * On Android, every screen always renders its own header, so the header
+   * always moves together with the screen. The value is accepted, but it does
+   * not change the behavior.
+   *
+   * @default 'float'
+   *
+   * @platform android, ios
+   */
+  headerMode?: StackHeaderMode | undefined;
 }
 
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
