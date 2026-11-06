@@ -10,9 +10,13 @@ internal class PreventNativeDismissCallback(
     lifecycleOwner: LifecycleOwner,
     private val item: StackContainerItem,
     canBeEnabled: Boolean,
+    private val interceptor: BackPressInterceptor? = null,
 ) : OnBackPressedCallback(false),
     LifecycleEventObserver,
     PreventNativeDismissChangeObserver {
+    private var started = false
+    private val interceptionChanged = Runnable { determineEnabledStatus() }
+
     /**
      * A kill-switch whether this callback can even be enabled or not. If set to false,
      * no matter other conditions this callback won't be enabled.
@@ -24,13 +28,17 @@ internal class PreventNativeDismissCallback(
         }
 
     private val shouldBeEnabled
-        get() = canBeEnabled && item.isPreventNativeDismissEnabled
+        get() = started && canBeEnabled && (item.isPreventNativeDismissEnabled || interceptor?.isEnabled == true)
 
     init {
         lifecycleOwner.lifecycle.addObserver(this)
     }
 
     override fun handleOnBackPressed() {
+        if (interceptor?.isEnabled == true) {
+            interceptor.dispatch()
+            return
+        }
         RNSLog.i("RNScreens", "PreventNativeDismissCallback called for screen ${item.itemKey}")
         item.onNativeDismissPrevented()
     }
@@ -42,19 +50,23 @@ internal class PreventNativeDismissCallback(
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
                 item.preventNativeDismissChangeObserver = this
+                interceptor?.addListener(interceptionChanged)
             }
 
             Lifecycle.Event.ON_START -> {
+                started = true
                 determineEnabledStatus()
             }
 
             Lifecycle.Event.ON_STOP -> {
+                started = false
                 this.isEnabled = false
             }
 
             Lifecycle.Event.ON_DESTROY -> {
                 source.lifecycle.removeObserver(this)
                 item.preventNativeDismissChangeObserver = null
+                interceptor?.removeListener(interceptionChanged)
             }
 
             else -> {

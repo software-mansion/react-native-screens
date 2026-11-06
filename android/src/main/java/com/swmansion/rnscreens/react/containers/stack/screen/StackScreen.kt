@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.react.containers.stack.screen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -38,6 +39,8 @@ internal class StackScreen(
     }
 
     private val containerItemSupport = ContainerItemSupport()
+
+    override fun createBackPressInterceptor(activity: Activity) = createJavaScriptBackInterceptor(activity)
 
     override var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
