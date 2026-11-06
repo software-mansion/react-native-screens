@@ -67,7 +67,12 @@ class ScreenAnimationDelegate(
                 isExitAnimation,
             )
 
-            wrapper.screen.endRemovalTransition()
+            // The removal transition belongs to the exit animation only: a sheet dismissed while it is
+            // still entering has its removal transition started before the enter animation ends, and
+            // ending it here would drop the sheet's content before the exit animation runs.
+            if (isExitAnimation) {
+                wrapper.screen.endRemovalTransition()
+            }
         }
     }
 
