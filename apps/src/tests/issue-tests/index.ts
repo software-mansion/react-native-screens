@@ -233,6 +233,7 @@ export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated ta
 export { default as Test5092 } from './Test5092';
 export { default as Test5127 } from './Test5127';
 export { default as Test5143 } from './Test5143';
+export { default as Test5158 } from './Test5158';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

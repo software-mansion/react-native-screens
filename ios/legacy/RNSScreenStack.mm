@@ -268,6 +268,9 @@ namespace react = facebook::react;
   BOOL _invalidated;
   BOOL _isFullWidthSwipingWithPanGesture; // used only for content swipe with RNSPanGestureRecognizer
   RNSPercentDrivenInteractiveTransition *_interactionController;
+  // Destination of a native pop that we cancel because a popped screen prevents its native dismissal.
+  // Set only while that pop is in flight.
+  __weak UIViewController *_destinationOfCancelledPop;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
 }
@@ -343,6 +346,15 @@ namespace react = facebook::react;
       static_cast<RNSScreenView *>(viewController.view).isInvalidated) {
     // if the screen was already deleted by React, its config was already removed
     // so we don't trigger the method
+    return;
+  }
+  if (viewController == _destinationOfCancelledPop) {
+    // This pop is about to be cancelled (see `navigationController:interactionControllerForAnimationController:`),
+    // so its destination is never shown. Applying the destination's header config here would hide the navigation bar
+    // (if that screen has no header) inside a transition that is then cancelled. UIKit does not fully undo that hide:
+    // on iOS 26 the bar of the screen that stays loses its Liquid Glass, and the bar can even stay hidden, depending
+    // on whether this method is called for that screen before or after UIKit rolls the hide back.
+    // See https://github.com/software-mansion/react-native-screens/issues/5158
     return;
   }
   auto *screenView = static_cast<RNSScreenView *>(viewController.view);
@@ -1127,9 +1139,12 @@ RNS_IGNORE_SUPER_CALL_END
     BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
     if (shouldCancelDismiss) {
       _interactionController = [RNSPercentDrivenInteractiveTransition new];
+      _destinationOfCancelledPop =
+          [_controller.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self->_interactionController cancelInteractiveTransition];
         self->_interactionController = nil;
+        self->_destinationOfCancelledPop = nil;
         int fromIndex = (int)[self->_reactSubviews indexOfObject:fromView];
         int toIndex = (int)[self->_reactSubviews indexOfObject:toView];
         int indexDiff = fromIndex - toIndex;
