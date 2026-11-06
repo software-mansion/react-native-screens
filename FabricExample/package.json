@@ -5,7 +5,7 @@
   "scripts": {
     "android": "npx react-native run-android",
     "ios": "npx react-native run-ios",
-    "ios:clear-prebuild-caches": "rm -rf $HOME/Library/Caches/ReactNative",
+    "ios:clear-prebuild-caches": "test -n \"$HOME\" && rm -rf \"$HOME/Library/Caches/ReactNative\"",
     "lint": "eslint .",
     "start": "npx react-native start",
     "test": "jest",
