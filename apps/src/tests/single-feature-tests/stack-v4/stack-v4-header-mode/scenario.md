@@ -76,6 +76,20 @@ TBD.
 - [ ] First's bar leaves together with First, Home's shared navigation bar is
       revealed underneath.
 
+9. Turn on `translucent` for First, push it and scroll its content up (iOS 26+).
+
+- [ ] The content scrolls under First's own navigation bar with the scroll
+      edge effect (blurred / faded below the bar), the same as with the
+      shared navigation bar of Home.
+
+10. On iPhone Duo (iOS 27.2+), repeat steps 2 and 3 in the closed and open
+    poses.
+
+- [ ] First's own navigation bar is placed at the same position as Home's
+      shared bar (below the status bar corner) and "onHeaderHeightChange"
+      shows the same value. The back button stays in the bar, while the shared
+      bar moves it into a floating button below the status bar corner.
+
 ### Android
 
 1. Launch the test screen and push First, then Second.
