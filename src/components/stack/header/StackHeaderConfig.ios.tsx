@@ -65,6 +65,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
+    backButtonIcon,
     standardAppearance,
     scrollEdgeAppearance,
   } = ios ?? {};
@@ -158,6 +159,11 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
     [titleMenu],
   );
 
+  const resolvedBackButtonIcon = useMemo(
+    () => resolveIconAssetSources(backButtonIcon),
+    [backButtonIcon],
+  );
+
   return (
     <StackHeaderConfigIOSNativeComponent
       ref={nativeRef}
@@ -166,6 +172,7 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       backButtonTitle={backButtonTitle}
       backButtonDisplayMode={backButtonDisplayMode}
       backButtonMenuEnabled={backButtonMenuEnabled}
+      backButtonIcon={resolvedBackButtonIcon}
       largeTitle={largeTitle}
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
