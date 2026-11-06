@@ -49,11 +49,13 @@ TBD.
   - The navigation bar is hidden and content moves up under the status bar
 8. Under Home, switch `headerMode` to `screen` and pop back to Home.
   - Home displays its own navigation bar without the back button
-9. Push First and scroll its content up (iOS 26+).
+9. Under First, switch `hidden` off. Push First and scroll its content up
+   (iOS 26+).
   - The content scrolls under First's own navigation bar with the scroll
     edge effect (blurred / faded below the bar), the same as with the shared
     navigation bar
-10. On iPhone Duo (iOS 27.2+), repeat step 2 in the closed and open poses.
+10. On iPhone Duo (iOS 27.2+), pop back to Home, switch its `headerMode` back
+    to `float` and repeat step 2 in the closed and open poses.
   - First's own navigation bar is placed at the same position as Home's
     shared bar (below the status bar corner) and the content starts at the
     same offset. The back button stays in the bar, while the shared bar
