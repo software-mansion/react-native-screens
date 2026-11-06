@@ -1,10 +1,13 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import SplitScreenNativeComponent from '../../fabric/split/SplitScreenNativeComponent';
-import { SplitScreenProps } from './SplitScreen.types';
+import type {
+  SplitColumnProps,
+  SplitInspectorProps,
+} from './SplitScreen.types';
 
 // EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
-function Column(props: SplitScreenProps) {
+function Column(props: SplitColumnProps) {
   return (
     <SplitScreenNativeComponent
       columnType="column"
@@ -16,7 +19,7 @@ function Column(props: SplitScreenProps) {
 }
 
 // EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
-function Inspector(props: SplitScreenProps) {
+function Inspector(props: SplitInspectorProps) {
   return (
     <SplitScreenNativeComponent
       columnType="inspector"

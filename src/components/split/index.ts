@@ -18,7 +18,8 @@ export type {
 
 export type {
   SplitScreenColumnType,
-  SplitScreenProps,
+  SplitColumnProps,
+  SplitInspectorProps,
 } from './SplitScreen.types';
 
 /**
