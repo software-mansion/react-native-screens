@@ -16,7 +16,10 @@ import { Colors } from '@apps/shared/styling';
 // `usePreventRemove`. Tap Guarded's native back button, then "Stay" in the
 // alert. Expected: Guarded's navigation bar (back button, title, "Save") is
 // still there, with its Liquid Glass platters intact (iOS 26+).
-// Bug: the bar items lose their glass, or the whole bar is gone.
+// Bug: the bar items lose their glass. The issue also reports the whole bar
+// gone; that variant needs the cancel delayed (e.g. an LLDB breakpoint on
+// `-[UIPercentDrivenInteractiveTransition cancelInteractiveTransition]`) and
+// does not reproduce with this screen alone.
 
 type StackParamList = {
   Home: undefined;
