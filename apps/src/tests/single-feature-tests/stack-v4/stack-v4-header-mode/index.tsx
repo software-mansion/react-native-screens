@@ -26,14 +26,15 @@ const ROUTE_COLORS: Record<RouteName, string> = {
 interface RouteConfig {
   headerMode: HeaderMode;
   hidden: boolean;
+  translucent: boolean;
 }
 
 type Config = Record<RouteName, RouteConfig>;
 
 const INITIAL_CONFIG: Config = {
-  Home: { headerMode: 'float', hidden: false },
-  First: { headerMode: 'screen', hidden: false },
-  Second: { headerMode: 'screen', hidden: false },
+  Home: { headerMode: 'float', hidden: false, translucent: false },
+  First: { headerMode: 'screen', hidden: false, translucent: false },
+  Second: { headerMode: 'screen', hidden: false, translucent: false },
 };
 
 function TestStackV4HeaderMode() {
@@ -59,6 +60,10 @@ function TestStackV4HeaderMode() {
     title: `${routeName} (${config[routeName].headerMode})`,
     headerMode: config[routeName].headerMode,
     hidden: config[routeName].hidden,
+    translucent: config[routeName].translucent,
+    // Transparent background, so that the scroll edge effect is visible when
+    // the content scrolls under the navigation bar.
+    backgroundColor: config[routeName].translucent ? 'transparent' : undefined,
     children: (
       <ScreenStackHeaderRightView>
         <Pressable
@@ -97,6 +102,7 @@ function TestStackV4HeaderMode() {
             }}>
             <ScrollView
               style={{ backgroundColor: ROUTE_COLORS[routeName] }}
+              contentInsetAdjustmentBehavior="automatic"
               contentContainerStyle={styles.content}>
               <Text testID={`${routeName}-content-top`} style={styles.marker}>
                 Top of {routeName} content
@@ -139,6 +145,13 @@ function TestStackV4HeaderMode() {
                     label="hidden"
                     value={config[name].hidden}
                     onValueChange={hidden => updateRoute(name, { hidden })}
+                  />
+                  <SettingsSwitch
+                    label="translucent"
+                    value={config[name].translucent}
+                    onValueChange={translucent =>
+                      updateRoute(name, { translucent })
+                    }
                   />
                 </React.Fragment>
               ))}

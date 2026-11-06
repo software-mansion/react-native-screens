@@ -1581,6 +1581,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UINavigationItem *_screenNavigationBarTopItem;
   UINavigationItem *_screenNavigationBarBackItem;
   CGFloat _lastScreenNavigationBarHeaderHeight;
+  // `UIScrollEdgeElementContainerInteraction` (iOS 26+) of `_screenNavigationBar`.
+  id _screenNavigationBarScrollEdgeInteraction;
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
   UIView *_fakeView;
@@ -1888,6 +1890,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [_screenNavigationBar removeFromSuperview];
     _screenNavigationBar.delegate = nil;
     _screenNavigationBar = nil;
+    _screenNavigationBarScrollEdgeInteraction = nil;
     _screenNavigationBarTopItem = nil;
     _screenNavigationBarBackItem = nil;
 
@@ -1969,6 +1972,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [view bringSubviewToFront:_screenNavigationBar];
   }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    [self updateScreenNavigationBarScrollEdgeInteraction];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
   const CGFloat insetTop = _screenNavigationBar.isHidden ? 0 : height;
   if (additionalSafeAreaInsets.top != insetTop) {
     additionalSafeAreaInsets.top = insetTop;
@@ -1988,6 +1997,28 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [config updateHeaderStateInShadowTreeInContextOfNavigationBar:_screenNavigationBar];
   }
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)updateScreenNavigationBarScrollEdgeInteraction API_AVAILABLE(ios(26.0))
+{
+  // UIKit applies the scroll edge effect of the content scroll view under the bar of the navigation controller on its
+  // own. The screen's own bar must be registered as an element container at the top edge of the scroll view, otherwise
+  // the content scrolled under the bar has no scroll edge effect.
+  UIScrollEdgeElementContainerInteraction *interaction = _screenNavigationBarScrollEdgeInteraction;
+  if (interaction == nil) {
+    interaction = [UIScrollEdgeElementContainerInteraction new];
+    interaction.edge = UIRectEdgeTop;
+    [_screenNavigationBar addInteraction:interaction];
+    _screenNavigationBarScrollEdgeInteraction = interaction;
+  }
+
+  // The scroll view can be mounted after the bar has been created, therefore it is looked up on each layout.
+  UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self.screenView];
+  if (interaction.scrollView != scrollView) {
+    interaction.scrollView = scrollView;
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 - (void)viewSafeAreaInsetsDidChange
 {
