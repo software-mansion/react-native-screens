@@ -200,6 +200,17 @@ namespace react = facebook::react;
   [self notifyDelegateWithFrame:RCTCGRectFromRect(layoutMetrics.frame)];
 }
 
+- (void)prepareForRecycle
+{
+  [super prepareForRecycle];
+  // A reused wrapper must start like a new one. Its previous owner might not have cleared the delegate on unmount
+  // (the wrapper's parent is not always a screen view), and Fabric calls `updateLayoutMetrics:` on a reused view before
+  // mounting it in its new parent. Without this, the reused wrapper would report its first frame to the previous,
+  // possibly invalidated, screen.
+  // See https://github.com/software-mansion/react-native-screens/issues/5143
+  self.delegate = nil;
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenContentWrapperComponentDescriptor>();

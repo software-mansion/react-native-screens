@@ -1,6 +1,6 @@
 #pragma once
 
-#import "RNSImageLoading.h"
+#import "RNSImageLoader.h"
 #import "RNSReactBaseView.h"
 #import "RNSStackHeaderConfigDataProviding.h"
 #import "RNSStackHeaderEventsDelegate.h"
@@ -13,8 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackHeaderConfigComponentView : RNSReactBaseView <RNSViewFrameChangeDelegate,
                                                                  RNSStackHeaderConfigDataProviding,
                                                                  RNSStackHeaderItemInvalidationDelegate,
-                                                                 RNSStackHeaderEventsDelegate,
-                                                                 RNSImageLoading>
+                                                                 RNSStackHeaderEventsDelegate>
+
+/**
+ * Loads the header's image icons. Owned by this view; the header coordinator holds it weakly.
+ */
+@property (nonatomic, strong, readonly, nonnull) RNSImageLoader *imageLoader;
 
 @property (nonatomic, readonly, nullable) NSString *title;
 @property (nonatomic, readonly, nullable) NSString *subtitle;

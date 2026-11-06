@@ -9,11 +9,11 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @remarks
  * The modal is paired with the provider whose `containerId` equals its
  * `targetContainerId`; that provider must be an ancestor of the modal in the
- * React tree. The modal fills the targeted provider's bounds. The provider's children
- * stay in place underneath and keep updating; touches inside the provider are
- * captured by the open modal, content outside stays interactive. The modal's
- * children stay mounted regardless of `isOpen`, so their React state survives
- * presentations.
+ * React tree. The modal fills the targeted provider's bounds. The provider's
+ * children stay in place underneath and keep updating; touches inside the
+ * provider are captured by the open modal, content outside stays interactive.
+ * The modal's children stay mounted regardless of `isOpen`, so their React
+ * state survives presentations.
  *
  * Modality is scoped to the provider's position in the view hierarchy, not
  * the window: a sibling that overlaps the provider and renders later in the
@@ -28,7 +28,6 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * `View` is also an option.
  *
  * @platform ios
- * @since 5.0
  * @experimental
  */
 export function ContainedModalOverContent(props: ContainedModalProps) {

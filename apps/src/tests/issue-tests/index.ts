@@ -230,6 +230,9 @@ export { default as Test4863 } from './Test4863';
 export { default as Test4872 } from './Test4872';
 export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
 export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
+export { default as Test5092 } from './Test5092';
+export { default as Test5127 } from './Test5127';
+export { default as Test5143 } from './Test5143';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
@@ -242,6 +245,7 @@ export { default as TestHeaderHeight } from './TestHeaderHeight';
 export { default as TestModalNavigation } from './TestModalNavigation';
 export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
+export { default as TestLabs2052 } from './TestLabs2052';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
 export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
