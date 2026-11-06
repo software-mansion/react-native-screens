@@ -11,6 +11,7 @@
 #import "RNSStackHeaderMenuMapper.h"
 #import "RNSStackHeaderMenuUpdateOptions.h"
 #import "RNSStackHeaderMenuUpdateOptionsMapper.h"
+#import "RNSStackNavigationBar.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenComponentView.h"
 #import "RNSStackScreenController.h"
@@ -63,6 +64,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _title = nil;
   _subtitle = nil;
   _hidden = NO;
+  _headerMode = RNSStackHeaderModeFloat;
   _largeTitle = nil;
   _largeSubtitle = nil;
   _largeTitleEnabled = NO;
@@ -109,7 +111,9 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)didMoveToWindow
 {
   if (self.window != nil) {
-    [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
+    if (_headerMode == RNSStackHeaderModeFloat) {
+      [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
+    }
     [self.headerCoordinator rebuild];
   }
   [super didMoveToWindow];
@@ -220,6 +224,14 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 - (void)viewFrameDidChange:(nonnull UIView *)view
 {
   if (_state == nullptr || self.superview == nil) {
+    return;
+  }
+
+  // In screen mode the header lives in the screen's own navigation bar. Frames reported for
+  // the (hidden) navigation bar shared by the stack must not override its frame.
+  UIView *screenNavigationBar =
+      static_cast<RNSStackScreenComponentView *>(self.superview).controller.screenNavigationBar;
+  if (_headerMode == RNSStackHeaderModeScreen && view != screenNavigationBar) {
     return;
   }
 
@@ -408,6 +420,15 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   if (oldHeaderProps.hidden != newHeaderProps.hidden) {
     _hidden = newHeaderProps.hidden;
+  }
+
+  if (oldHeaderProps.headerMode != newHeaderProps.headerMode) {
+    _headerMode =
+        rnscreens::conversion::RNSStackHeaderModeFromReactRNSStackHeaderConfigIOSHeaderMode(newHeaderProps.headerMode);
+    if (_headerMode == RNSStackHeaderModeFloat && self.window != nil) {
+      // Registered in didMoveToWindow only in float mode - catch up when switching from screen mode.
+      [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
+    }
   }
 
   if (oldHeaderProps.largeTitle != newHeaderProps.largeTitle) {

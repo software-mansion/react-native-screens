@@ -15,6 +15,8 @@ import { UnsafeMixed } from '../codegenUtils';
 
 type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 
+type HeaderMode = 'float' | 'screen';
+
 type MinimizationBehavior =
   | 'automatic'
   | 'never'
@@ -77,6 +79,7 @@ export interface NativeProps extends ViewProps {
   hidden?: CT.WithDefault<boolean, false>;
   transparent?: CT.WithDefault<boolean, false>;
   backButtonHidden?: CT.WithDefault<boolean, false>;
+  headerMode?: CT.WithDefault<HeaderMode, 'float'>;
 
   // iOS-specific props
   backButtonTitle?: string | undefined;

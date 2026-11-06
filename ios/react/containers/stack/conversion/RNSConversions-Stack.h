@@ -7,6 +7,7 @@
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
 #import "RNSHeaderItemVisibilityPriority.h"
+#import "RNSStackHeaderMode.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace rnscreens::conversion {
@@ -27,6 +28,9 @@ RNSHeaderItemSpacerPlacementFromReactRNSStackHeaderItemSpacerIOSPlacement(
 
 UIBarButtonItemStyle UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(
     react::RNSStackHeaderItemIOSVariant variant);
+
+RNSStackHeaderMode RNSStackHeaderModeFromReactRNSStackHeaderConfigIOSHeaderMode(
+    react::RNSStackHeaderConfigIOSHeaderMode headerMode);
 
 UINavigationItemBackButtonDisplayMode
 UINavigationItemBackButtonDisplayModeFromReactRNSStackHeaderConfigIOSBackButtonDisplayMode(
