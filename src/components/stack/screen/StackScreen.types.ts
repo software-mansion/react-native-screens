@@ -29,8 +29,15 @@ export type OnDismissEventPayload = {
 export type StackScreenActivityMode = 'detached' | 'attached';
 
 /**
- * Animation a replace plays, see
- * {@link StackScreenProps.replaceAnimation | replaceAnimation}.
+ * Animation a replace plays.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'pop'` — plays the outgoing screen's pop animation: the outgoing screen
+ *   leaves on top, as if it had been popped and this screen had been
+ *   underneath.
+ * - `'push'` — plays this screen's push animation: this screen covers the
+ *   outgoing one, as if it had been pushed.
  */
 export type StackScreenReplaceAnimation = 'push' | 'pop';
 
@@ -177,12 +184,6 @@ export type StackScreenProps = {
   /**
    * Which animation a replace plays when this screen is the one replacing the
    * top of the stack.
-   *
-   * @remarks
-   * `'pop'` plays the outgoing screen's pop animation: the outgoing screen
-   * leaves on top, as if it had been popped and this screen had been
-   * underneath. `'push'` plays this screen's push animation: this screen
-   * covers the outgoing one, as if it had been pushed.
    *
    * @defaultValue `'pop'`
    * @platform android
