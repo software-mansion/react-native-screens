@@ -9,6 +9,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
+#import <React/RCTStatusBarAppearance.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -2067,7 +2068,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)prefersStatusBarHidden
 {
-  return self.screenView.statusBarHidden;
+  // A screen without the prop defers to the status bar set from JS.
+  return self.screenView.hasStatusBarHiddenSet ? self.screenView.statusBarHidden : RCTStatusBarAppearance.hidden;
 }
 
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -2078,7 +2080,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:self.screenView.statusBarStyle];
+  // A screen without the prop defers to the status bar set from JS.
+  return self.screenView.hasStatusBarStyleSet
+      ? [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:self.screenView.statusBarStyle]
+      : RCTStatusBarAppearance.style;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -2088,7 +2093,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreen *)vc).screenView.statusBarAnimation;
   }
-  return UIStatusBarAnimationFade;
+  // No screen sets the animation, so use the one set from JS.
+  return RCTStatusBarAppearance.updateAnimation;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
