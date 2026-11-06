@@ -9,6 +9,12 @@
  * @platform ios
  */
 import type { PlatformIconIOS } from '../../../shared/types';
+import type {
+  StackHeaderMenuSelectionHandler,
+  StackHeaderPressHandler,
+} from '../StackHeaderConfig.types';
+
+export type StackHeaderMenuItemTypeIOS = 'action' | 'toggle' | 'automatic';
 
 export interface StackHeaderMenuItemIOS {
   /**
@@ -51,7 +57,7 @@ export interface StackHeaderMenuItemIOS {
    *
    * @platform ios
    */
-  itemType?: 'action' | 'toggle' | 'automatic' | undefined;
+  itemType?: StackHeaderMenuItemTypeIOS | undefined;
   /**
    * @summary Initial on/off state of a toggle item.
    *
@@ -86,7 +92,7 @@ export interface StackHeaderMenuItemIOS {
    *
    * @platform ios
    */
-  onPress?: () => void | undefined;
+  onPress?: StackHeaderPressHandler | undefined;
   /**
    * @summary Keeps the menu presented after this item is tapped.
    *
@@ -220,7 +226,7 @@ export interface StackHeaderMenuIOS {
    *
    * @platform ios
    */
-  onSelectionChange?: (selectedMenuElementIds: string[]) => void;
+  onSelectionChange?: StackHeaderMenuSelectionHandler | undefined;
 }
 
 /**

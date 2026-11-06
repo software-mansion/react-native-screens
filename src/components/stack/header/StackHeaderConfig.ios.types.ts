@@ -1,6 +1,9 @@
-import type { ReactElement } from 'react';
 import type { ColorValue, TextStyle } from 'react-native';
 import type { PlatformIconIOS } from '../../shared/types';
+import type {
+  StackHeaderElementFactory,
+  StackHeaderPressHandler,
+} from './StackHeaderConfig.types';
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 /**
@@ -257,7 +260,7 @@ export interface StackHeaderInlineItemIOS
    *
    * @platform iOS
    */
-  onPress?: (() => void) | undefined;
+  onPress?: StackHeaderPressHandler | undefined;
 }
 
 /**
@@ -292,7 +295,7 @@ export interface StackHeaderInlineCustomItemIOS
    *
    * @platform iOS
    */
-  render: () => ReactElement;
+  render: StackHeaderElementFactory;
 }
 
 /**
@@ -304,7 +307,7 @@ export interface StackHeaderInlineCustomItemIOS
  *
  * @platform iOS
  */
-interface StackHeaderFixedSpacerItemIOS {
+export interface StackHeaderFixedSpacerItemIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
@@ -340,7 +343,7 @@ interface StackHeaderFixedSpacerItemIOS {
  *
  * @platform iOS
  */
-interface StackHeaderFlexibleSpacerItemIOS {
+export interface StackHeaderFlexibleSpacerItemIOS {
   /**
    * @summary A unique identifier within the screen header.
    *
@@ -368,6 +371,11 @@ export type StackHeaderSpacerItemIOS =
   | StackHeaderFixedSpacerItemIOS
   | StackHeaderFlexibleSpacerItemIOS;
 
+export type StackHeaderItemIOS =
+  | StackHeaderInlineItemIOS
+  | StackHeaderInlineCustomItemIOS
+  | StackHeaderSpacerItemIOS;
+
 export interface StackHeaderTitleCustomItemIOS {
   /**
    * @summary A unique identifier within the screen header.
@@ -390,7 +398,7 @@ export interface StackHeaderTitleCustomItemIOS {
    *
    * @platform iOS
    */
-  render: () => ReactElement;
+  render: StackHeaderElementFactory;
 }
 
 /**
@@ -739,13 +747,7 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @platform iOS
    */
-  leadingItems?:
-    | (
-        | StackHeaderInlineItemIOS
-        | StackHeaderInlineCustomItemIOS
-        | StackHeaderSpacerItemIOS
-      )[]
-    | undefined;
+  leadingItems?: StackHeaderItemIOS[] | undefined;
   /**
    * @summary Custom item to display as a title.
    *
@@ -775,13 +777,7 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @platform iOS
    */
-  trailingItems?:
-    | (
-        | StackHeaderInlineItemIOS
-        | StackHeaderInlineCustomItemIOS
-        | StackHeaderSpacerItemIOS
-      )[]
-    | undefined;
+  trailingItems?: StackHeaderItemIOS[] | undefined;
   /**
    * @summary Large title text, displayed when `largeTitleEnabled = true`.
    *

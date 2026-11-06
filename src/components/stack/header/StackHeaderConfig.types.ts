@@ -1,8 +1,16 @@
-import type { Ref } from 'react';
+import type { ReactElement, Ref } from 'react';
 import type { StackHeaderConfigCommandsAndroid } from './StackHeaderConfig.android.types';
 import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
+
+export type StackHeaderElementFactory = () => ReactElement;
+
+export type StackHeaderPressHandler = () => void;
+
+export type StackHeaderMenuSelectionHandler = (
+  selectedMenuElementIds: string[],
+) => void;
 
 /**
  * Cross-platform props for {@link Stack.HeaderConfig}.
