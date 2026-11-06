@@ -11,6 +11,7 @@
 - (instancetype)init
 {
   if (self = [super init]) {
+    _presentationStyle = RNSContainedModalPresentationStyleOverContent;
     self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
@@ -22,6 +23,21 @@
 - (RNSContainedModalContentView *)contentView
 {
   return static_cast<RNSContainedModalContentView *>(self.view);
+}
+
+- (void)setPresentationStyle:(RNSContainedModalPresentationStyle)presentationStyle
+{
+  _presentationStyle = presentationStyle;
+
+  switch (presentationStyle) {
+    case RNSContainedModalPresentationStyleReplacingContent:
+      self.modalPresentationStyle = UIModalPresentationCurrentContext;
+      break;
+    case RNSContainedModalPresentationStyleOverContent:
+    default:
+      self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+      break;
+  }
 }
 
 #pragma mark - UIKit callbacks

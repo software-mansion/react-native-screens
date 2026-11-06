@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSContainedModalPresentationStyle.h"
 #import "RNSContainedModalProviders.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,6 +38,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<RNSContainedModalPresentationProvider> presentationProvider;
 
 @property (nonatomic, readonly, nonnull) RNSContainedModalContentView *contentView;
+
+/**
+ * Over vs. replacing the provider's content. UIKit reads the resulting
+ * `modalPresentationStyle` when the presentation starts, so a value set while
+ * presented applies to the next presentation only. Defaults to over-content.
+ */
+@property (nonatomic) RNSContainedModalPresentationStyle presentationStyle;
 
 #pragma mark - Signals
 
