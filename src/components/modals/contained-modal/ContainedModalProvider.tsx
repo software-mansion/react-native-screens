@@ -14,7 +14,6 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * for when it is the right tool.
  *
  * @platform ios
- * @since 5.0
  * @experimental
  */
 export function ContainedModalProvider(props: ContainedModalProviderProps) {
