@@ -27,7 +27,7 @@ import {
   type StackHeaderTitleHorizontalGravityAndroid,
   type StackHeaderToolbarMenuBaseAndroid,
   type StackHeaderTypeAndroid,
-  type StackHostDirection,
+  type StackDirection,
   ScrollViewMarker,
 } from 'react-native-screens';
 
@@ -43,7 +43,7 @@ const PUSH_LABEL = 'Push screen (adds a back button)';
 // derived from the array so the two can never drift apart.
 const options = <const T extends string>(...values: T[]): T[] => values;
 
-const DIRECTIONS: StackHostDirection[] = ['inherit', 'ltr', 'rtl'];
+const DIRECTIONS: StackDirection[] = ['inherit', 'ltr', 'rtl'];
 const MENU_OPTIONS = options('none', 'action + overflow');
 // medium is the same Collapsing branch as large, differing only in type scale.
 const HEADER_TYPES: StackHeaderTypeAndroid[] = ['small', 'large'];
@@ -56,7 +56,7 @@ const HORIZONTAL_GRAVITY_OPTIONS: StackHeaderTitleHorizontalGravityAndroid[] = [
 export type MenuOption = (typeof MENU_OPTIONS)[number];
 
 interface Config {
-  direction: StackHostDirection;
+  direction: StackDirection;
   type: StackHeaderTypeAndroid;
   centerSubview: boolean;
   titleCentered: boolean;
@@ -188,7 +188,7 @@ function ConfigControls() {
       />
 
       <Text style={styles.heading}>StackHost</Text>
-      <SettingsPicker<StackHostDirection>
+      <SettingsPicker<StackDirection>
         testID="direction-picker"
         label="direction"
         value={config.direction}

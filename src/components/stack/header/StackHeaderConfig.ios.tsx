@@ -40,9 +40,6 @@ import type {
 import { findMenuElementByIdInMenus, validateMenuCallbacks } from './utils';
 import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function StackHeaderConfig(props: StackHeaderConfigProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
