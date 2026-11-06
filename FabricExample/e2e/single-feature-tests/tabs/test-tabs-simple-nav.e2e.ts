@@ -4,7 +4,6 @@ import { forceTapByLabelIOS } from '@e2e/framework/gestures';
 
 describe('@smoke Tabs: simple navigation', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-simple-nav');
   });
 

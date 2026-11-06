@@ -1,13 +1,9 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 // issue fixed only on iOS at the moment
 describeIfIOS('Test2877', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test2877 should exist', async () => {
     await selectIssueTestScreen('Test2877');
   });

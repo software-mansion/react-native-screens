@@ -3,10 +3,6 @@ import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_UI_REFRESH_CONTROL } from '@e2e/framework/native-classes-ios';
 
 describe('Test640', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test640 should exist', async () => {
     await selectIssueTestScreen('Test640');
   });

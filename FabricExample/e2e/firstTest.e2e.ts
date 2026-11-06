@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 
 const SCREENS: Record<
   string,
@@ -46,10 +46,6 @@ const SCREENS: Record<
 };
 
 describe('Example', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('should have root screen', async () => {
     await expect(element(by.id('root-screen-examples-header'))).toBeVisible();
   });

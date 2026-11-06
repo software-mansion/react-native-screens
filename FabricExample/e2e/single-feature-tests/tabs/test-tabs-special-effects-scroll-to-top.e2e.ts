@@ -6,7 +6,6 @@ import { forceSelectTabByLabel } from '@e2e/framework/tab-bar';
 
 describe('Tabs specialEffects — scrollToTop', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-special-effects-scroll-to-top',

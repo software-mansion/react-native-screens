@@ -1,10 +1,9 @@
-import { by, device, element, expect, waitFor } from 'detox';
+import { by, element, expect, waitFor } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { describeIfAndroid } from '@e2e/framework/platform';
 
 describeIfAndroid('Test4551', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectIssueTestScreen('Test4551');
   });
 

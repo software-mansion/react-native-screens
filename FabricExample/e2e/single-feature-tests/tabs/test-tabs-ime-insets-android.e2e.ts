@@ -17,7 +17,6 @@ const getTextY = async () =>
 
 describeIfAndroid('Tabs: tabBarRespectsIMEInsets', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-ime-insets-android',

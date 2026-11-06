@@ -39,7 +39,6 @@ import { describeIfAndroid, describeIfIOS } from '@e2e/framework/platform';
 
 describeIfIOS('@smoke Stack v5: lifecycle events', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-lifecycle-events',
