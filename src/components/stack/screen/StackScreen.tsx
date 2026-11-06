@@ -8,7 +8,6 @@ import type {
 } from './StackScreen.types';
 import { useRenderDebugInfo } from '../../../private';
 
-// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 function StackScreen({
   children,
   // Control

@@ -43,8 +43,6 @@ export type StackScreenDismissHandler = (screenKey: string) => void;
 
 /**
  * Props for {@link Stack.Screen}.
- *
- * @experimental
  */
 export type StackScreenProps = {
   /**

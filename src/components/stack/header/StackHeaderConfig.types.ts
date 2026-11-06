@@ -6,8 +6,6 @@ import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
 /**
  * Cross-platform props for {@link Stack.HeaderConfig}.
- *
- * @experimental
  */
 export interface StackHeaderConfigPropsBase {
   /**
@@ -60,8 +58,6 @@ export interface StackHeaderConfigPropsBase {
 
 /**
  * Props for {@link Stack.HeaderConfig}.
- *
- * @experimental
  */
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
   /**

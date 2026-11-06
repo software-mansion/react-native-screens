@@ -26,8 +26,6 @@ export type StackDirection = Direction | 'inherit';
 
 /**
  * Props for {@link Stack.Host}.
- *
- * @experimental
  */
 export type StackHostProps = {
   // General

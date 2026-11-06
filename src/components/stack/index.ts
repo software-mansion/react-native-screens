@@ -88,14 +88,12 @@ export const Stack = {
    * stack.
    *
    * @platform android, ios
-   * @experimental
    */
   Host: StackHost,
   /**
    * A screen of {@link Stack.Host}.
    *
    * @platform android, ios
-   * @experimental
    */
   Screen: StackScreen,
   /**
@@ -106,7 +104,6 @@ export const Stack = {
    * On Android, it must be the last child of the screen.
    *
    * @platform android, ios
-   * @experimental
    */
   HeaderConfig: StackHeaderConfig,
 };
