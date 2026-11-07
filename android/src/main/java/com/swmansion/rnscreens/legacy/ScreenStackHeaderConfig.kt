@@ -145,6 +145,8 @@ class ScreenStackHeaderConfig(
         actionBar = null
     }
 
+    internal fun ownsActionBar(activity: AppCompatActivity?): Boolean = actionBar != null && activity?.supportActionBar === actionBar
+
     /**
      * Native toolbar should notify the header config component that it has completed its layout.
      */

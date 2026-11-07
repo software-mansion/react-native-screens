@@ -448,11 +448,14 @@ class ScreenStackFragment :
         super.onStop()
     }
 
+    // The menu belongs to the activity's support action bar, the toolbar of the header that called
+    // setSupportActionBar last, yet every ScreenStackFragment is asked to fill it, a nested stack's
+    // screens after their parent's. updateToolbarMenu clears the menu first, so only the screen whose
+    // header owns the action bar may update it. Otherwise a transparent modal with a hidden header
+    // (https://github.com/software-mansion/react-native-screens/issues/2271), or a screen of a stack
+    // nested in a screen whose header has a search bar, erases that header's search bar.
     override fun onPrepareOptionsMenu(menu: Menu) {
-        // If the screen is a transparent modal with hidden header we don't want to update the toolbar
-        // menu because it may erase the menu of the previous screen (which is still visible in these
-        // circumstances). See here: https://github.com/software-mansion/react-native-screens/issues/2271
-        if (!screen.isTranslucent() || screen.headerConfig?.isHeaderHidden == false) {
+        if (ownsActionBar()) {
             updateToolbarMenu(menu)
         }
         return super.onPrepareOptionsMenu(menu)
@@ -462,9 +465,13 @@ class ScreenStackFragment :
         menu: Menu,
         inflater: MenuInflater,
     ) {
-        updateToolbarMenu(menu)
+        if (ownsActionBar()) {
+            updateToolbarMenu(menu)
+        }
         return super.onCreateOptionsMenu(menu, inflater)
     }
+
+    private fun ownsActionBar(): Boolean = screen.headerConfig?.ownsActionBar(activity as? AppCompatActivity) == true
 
     private fun shouldShowSearchBar(): Boolean {
         val config = screen.headerConfig
