@@ -89,13 +89,6 @@ open class ScreenFragment :
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (isRemoving) {
-            shouldDispatchAppearOnResume = false
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
