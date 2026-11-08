@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { AppState, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -7,9 +7,12 @@ import {
 } from '@react-navigation/native-stack';
 import { Button } from '@apps/shared';
 
-// Android: tap "Push details in 1s" and press Home while the push animation
-// is still running, then reopen the app. Details should show
-// "transitionEnd: received (1)".
+// Android: tap "Push details" and press Home while Details slides in, then
+// reopen the app. "Push details in 1s" starts the push 1 s after the tap:
+// press Home only after Details starts to slide in. JS timers stop in the
+// background, so an earlier Home press delays the push until the app is
+// reopened. The run counts only if Details shows "Home pressed during the
+// push: yes". Details should then show "transitionEnd: received (1)".
 
 type ParamList = {
   Home: undefined;
@@ -37,17 +40,29 @@ function DetailsScreen({
   navigation,
 }: NativeStackScreenProps<ParamList, 'Details'>) {
   const [transitionEndCount, setTransitionEndCount] = useState(0);
+  const [backgroundedDuringPush, setBackgroundedDuringPush] = useState(false);
+  const transitionEndedRef = useRef(false);
 
   useEffect(
     () =>
       navigation.addListener('transitionEnd', event => {
         if (!event.data.closing) {
           console.log('[Test4941] Details transitionEnd (closing: false)');
+          transitionEndedRef.current = true;
           setTransitionEndCount(count => count + 1);
         }
       }),
     [navigation],
   );
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'background' && !transitionEndedRef.current) {
+        setBackgroundedDuringPush(true);
+      }
+    });
+    return () => subscription.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -56,6 +71,9 @@ function DetailsScreen({
         {transitionEndCount > 0
           ? `received (${transitionEndCount})`
           : 'waiting'}
+      </Text>
+      <Text style={styles.text}>
+        Home pressed during the push: {backgroundedDuringPush ? 'yes' : 'no'}
       </Text>
     </View>
   );
