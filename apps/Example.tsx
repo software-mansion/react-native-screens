@@ -9,9 +9,9 @@ import {
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RNRestart from 'react-native-restart';
 
 import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
+import NativeAppRestart from './src/specs/NativeAppRestart';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
@@ -172,7 +172,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           value={I18nManager.isRTL}
           onValueChange={() => {
             I18nManager.forceRTL(!I18nManager.isRTL);
-            RNRestart.Restart();
+            NativeAppRestart.restart();
           }}
           testID="root-screen-switch-rtl"
         />
