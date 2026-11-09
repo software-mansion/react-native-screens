@@ -89,23 +89,6 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - UIView
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-  for (UIView *child in [_children reverseObjectEnumerator]) {
-    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class] && child.window != nil) {
-      for (UIView *hitableView in [child.subviews reverseObjectEnumerator]) {
-        CGPoint convertedPoint = [self convertPoint:point toView:hitableView];
-        UIView *hitTestResult = [hitableView hitTest:convertedPoint withEvent:event];
-
-        if (hitTestResult != nil) {
-          return hitTestResult;
-        }
-      }
-    }
-  }
-  return nil;
-}
-
 - (void)didMoveToWindow
 {
   if (self.window != nil) {
