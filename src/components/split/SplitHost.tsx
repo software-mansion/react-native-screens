@@ -39,7 +39,6 @@ const isValidDisplayModeForSplitBehavior = (
   );
 };
 
-// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 function SplitHost({ ref, ...props }: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
   const nativeRef = React.useRef<NativeRef>(null);

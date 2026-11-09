@@ -6,7 +6,6 @@ import type {
   SplitInspectorProps,
 } from './SplitScreen.types';
 
-// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 function Column(props: SplitColumnProps) {
   return (
     <SplitScreenNativeComponent
@@ -18,7 +17,6 @@ function Column(props: SplitColumnProps) {
   );
 }
 
-// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 function Inspector(props: SplitInspectorProps) {
   return (
     <SplitScreenNativeComponent
@@ -30,7 +28,6 @@ function Inspector(props: SplitInspectorProps) {
   );
 }
 
-// EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
 // TODO: refactor to drop `Screen` suffix as the API name is really long at the moment
 const SplitScreen = {
   Column,
