@@ -31,9 +31,6 @@ import type {
 } from './StackHeaderConfig.android.types';
 import { parseAndroidIconToNativeProps } from '../../shared';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function StackHeaderConfig(props: StackHeaderConfigProps) {
   // ios props are safely dropped; `headerMode` is dropped as well, because
   // every screen on Android always renders its own header

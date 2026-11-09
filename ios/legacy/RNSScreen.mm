@@ -232,7 +232,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
   }
@@ -262,7 +262,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
   }
@@ -499,6 +499,18 @@ RNS_IGNORE_SUPER_CALL_END
   contentWrapper.delegate = self;
   [contentWrapper triggerDelegateUpdate];
   return YES;
+}
+
+/// Returns the content wrapper registered with this screen, or nil if it is no longer registered.
+///
+/// `_contentWrapperBox` holds a weak pointer, but an unmounted wrapper stays alive in Fabric's recycle pool and can be
+/// reused by another screen. This happens when a nested screen's wrapper registered with this form sheet and the nested
+/// screen is removed while the sheet stays presented. A wrapper that is still registered has this screen as its
+/// delegate. Unmounting, recycling and mounting in another screen all change the delegate.
+- (nullable RNSScreenContentWrapper *)registeredContentWrapper
+{
+  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  return contentWrapper.delegate == self ? contentWrapper : nil;
 }
 
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
@@ -753,7 +765,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {
   // Step 1: Query registered content wrapper for the scrollview.
-  RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *contentWrapper = [self registeredContentWrapper];
 
   if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
@@ -1160,7 +1172,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   // We trigger update from content wrapper, because on Fabric we update props after the children are mounted & laid
   // out.
-  [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
+  [[self registeredContentWrapper] triggerDelegateUpdate];
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -1341,11 +1353,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
-    auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
     contentWrapper.delegate = self;
     _contentWrapperBox.contentWrapper = contentWrapper;
   } else if ([childComponentView isKindOfClass:RNSScreenStackHeaderConfig.class]) {
-    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config = static_cast<RNSScreenStackHeaderConfig *>(childComponentView);
     _config.screenView = self;
   }
   [_reactSubviews insertObject:childComponentView atIndex:index];
@@ -1358,8 +1370,13 @@ RNS_IGNORE_SUPER_CALL_END
     _config = nil;
   }
   if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
-    _contentWrapperBox.contentWrapper.delegate = nil;
-    _contentWrapperBox.contentWrapper = nil;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
+    // The box may hold a nested screen's wrapper that registered with this form sheet instead of this child.
+    // The unmounted wrapper must stop reporting regardless of which screen it reported to.
+    contentWrapper.delegate = nil;
+    if (_contentWrapperBox.contentWrapper == contentWrapper) {
+      _contentWrapperBox.contentWrapper = nil;
+    }
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];

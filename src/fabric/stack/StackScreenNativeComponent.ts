@@ -53,15 +53,15 @@ type StackScreenAnimationPresetName =
   | 'iosFromLeft';
 
 interface StackScreenAnimationTimingOptions {
-  duration?: number;
-  easing?: StackScreenAnimationEasing;
+  duration?: number | undefined;
+  easing?: StackScreenAnimationEasing | undefined;
 }
 
 type StackScreenAnimationPresetRef =
   | ({
       type: 'preset';
       name: 'fadeFromBottom' | 'fadeFromTop';
-      distance?: StackScreenAnimationLength;
+      distance?: StackScreenAnimationLength | undefined;
     } & StackScreenAnimationTimingOptions)
   | ({
       type: 'preset';
