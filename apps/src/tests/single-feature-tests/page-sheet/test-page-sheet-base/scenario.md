@@ -21,7 +21,7 @@ TBD
 - Content sizing differs between platforms and both behaviors are expected:
   - **iOS:** the content box is laid out to the _current_ detent, so the centered content re-centers every time the sheet settles at a different detent.
   - **Android:** the content box is laid out once to the _largest_ detent (minus system bars). At lower detents the sheet reveals only the top part of that box, which is why the content is anchored to the top – it stays visible at every detent and moves together with the sheet.
-- **iPad:** the sheet is presented as a wide, bottom-anchored card (nearly edge-to-edge in portrait, centered and narrower in landscape) and the host screen is dimmed and scaled back behind it. This is what distinguishes `PageSheet` from `FormSheet`, which is a centered floating panel on iPad; on iPhone the two are identical.
+- **iPad:** the sheet is presented as a wide, bottom-anchored card (nearly edge-to-edge in portrait, centered and narrower in landscape) and the host screen is dimmed behind it, keeping its size and position. This is what distinguishes `PageSheet` from `FormSheet`, which is a centered floating panel on iPad; on iPhone the two are identical.
 
 ## Steps
 
