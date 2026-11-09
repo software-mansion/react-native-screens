@@ -23,8 +23,10 @@ class JSI_EXPORT RNSStackHostShadowNode final : public ConcreteViewShadowNode<
       const ShadowNode &sourceShadowNode,
       const ShadowNodeFragment &fragment);
 
+#if !defined(ANDROID)
  private:
   void unsetForceFlattenViewForContents();
+#endif // !defined(ANDROID)
 };
 
 } // namespace facebook::react
