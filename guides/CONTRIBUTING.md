@@ -163,6 +163,31 @@ To find the native source code of `react-native-screens` navigate to `Pods > Dev
 
 Codegen introduced by the [new architecture](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md) is fired automatically for iOS while runing `pod install` or when runing `FabricExample` in Android Studio. Developer can also run it manually by going into `./FabricExample/android` and running `./gradlew generateCodegenArtifactsFromSchema`.
 
+### AI tooling
+
+We share some skills and agents for AI coding agents in the repository: skills in `.agents/skills/`, agents in `.claude/agents/`. Anything else you keep in `.agents/` or `.claude/` is gitignored and stays local.
+
+Claude Code reads skills only from `.claude/skills/`, so after cloning, and whenever shared skills change, run:
+
+```bash
+yarn sync-agent-skills
+```
+
+It links every shared skill into `.claude/skills/`. It never overwrites or removes anything there, so after a shared skill is renamed or removed, delete its old link by hand.
+
+#### Adding a skill or an agent
+
+**With an agent** &ndash; ask it to follow the [`add-shared-agent-tooling`](../.agents/skills/add-shared-agent-tooling/SKILL.md) skill.
+
+**Manually:**
+
+1. Create the file: `.agents/skills/<name>/SKILL.md` for a skill, `.claude/agents/<name>.md` for an agent.
+2. Add `name` and `description` to its frontmatter. A skill's `name` must match its directory name.
+3. Make sure it does not depend on your machine: no absolute home paths (`/Users/<you>/...`), local tools or credentials. For agent memory, use `memory: project` rather than a hardcoded directory.
+4. Opt it into git at the end of the AI section in `.gitignore`: `!/.agents/skills/<name>/` or `!/.claude/agents/<name>.md`.
+5. Stage the files (`git add`) and run `yarn check-agent-config`. It checks only staged and committed files.
+6. For a skill, run `yarn sync-agent-skills` so Claude Code can see it.
+
 ### Preparing Pull Request
 
 When your code changes are ready, it is time to open your Pull Request. GitHub already has a template that helps you properly post your changes. The most crucial are:
