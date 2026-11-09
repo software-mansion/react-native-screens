@@ -108,15 +108,15 @@ function HomeScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.banner}>
-        <Text style={styles.bannerTitle}>Issue #5169 Reproduction</Text>
+        <Text style={styles.bannerTitle}>Issue #5169 Verification</Text>
         <Text style={styles.bannerSubtitle}>
-          Custom headerTitle with flex: 1 / width: '100%' ignores boundaries and
-          overlaps headerRight on iOS.
+          Custom headerTitle with flex: 1 / width: '100%' should respect
+          boundaries and not overlap headerRight on iOS.
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Bug Observation:</Text>
+        <Text style={styles.sectionHeader}>Expected Behavior:</Text>
         <Text style={styles.bodyText}>Look at the navigation bar above:</Text>
         <Text style={styles.bulletText}>
           {'\u2022'} The cyan/blue box is the{' '}
@@ -126,10 +126,10 @@ function HomeScreen({
           {'\u2022'} The orange box is the{' '}
           <Text style={styles.codeText}>headerRight</Text> button.
         </Text>
-        <Text style={[styles.bodyText, styles.warningText]}>
-          When mode is "flex: 1" or "width: 100%", the cyan title view extends
-          all the way across and renders directly underneath / overlapping the
-          orange RightBtn!
+        <Text style={[styles.bodyText, styles.highlightText]}>
+          When mode is "flex: 1" or "width: 100%", the cyan title view is
+          constrained within available space and stops before the orange
+          RightBtn without overlapping it.
         </Text>
       </View>
 
@@ -137,17 +137,17 @@ function HomeScreen({
         <Text style={styles.sectionHeader}>Switch Title Mode:</Text>
         <View style={styles.buttonRow}>
           <Button
-            title="flex: 1 (Buggy)"
+            title="flex: 1"
             color={mode === 'flex' ? '#007AFF' : '#666'}
             onPress={() => setMode('flex')}
           />
           <Button
-            title="width: '100%' (Buggy)"
+            title="width: '100%'"
             color={mode === 'width100' ? '#007AFF' : '#666'}
             onPress={() => setMode('width100')}
           />
           <Button
-            title="auto (Constrained)"
+            title="auto"
             color={mode === 'auto' ? '#007AFF' : '#666'}
             onPress={() => setMode('auto')}
           />
@@ -182,14 +182,14 @@ function PushedScreen({
           Back Button + flex: 1 Title + headerRight
         </Text>
         <Text style={styles.bannerSubtitle}>
-          With the back button on the left, the custom title with flex: 1 still
-          spans and overflows into the headerRight element on iOS.
+          With the back button on the left, the custom title with flex: 1 should
+          remain constrained and stop before the headerRight element on iOS.
         </Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.bodyText}>
-          Observe that the cyan title box collides with the orange headerRight
-          button on the right edge.
+          Observe that the cyan title box does not collide with the orange
+          headerRight button on the right edge.
         </Text>
         <Button title="Go Back" onPress={() => navigation.goBack()} />
       </View>
@@ -207,14 +207,13 @@ function Width100Screen({
       <View style={styles.banner}>
         <Text style={styles.bannerTitle}>width: '100%' Header Title</Text>
         <Text style={styles.bannerSubtitle}>
-          The title component explicitly specifies width: '100%', causing Yoga
-          to give it the full screen width.
+          The title component explicitly specifies width: '100%'.
         </Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.bodyText}>
-          UIKit places this unconstrained width centered in the navigation bar,
-          overlapping headerRight.
+          The title view is constrained within available space and stops before
+          headerRight without overlapping it.
         </Text>
         <Button title="Go Back" onPress={() => navigation.goBack()} />
       </View>
@@ -360,8 +359,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Courier',
     fontWeight: 'bold',
   },
-  warningText: {
-    color: '#b32400',
+  highlightText: {
+    color: '#0055bb',
     fontWeight: '600',
     marginTop: 4,
   },
