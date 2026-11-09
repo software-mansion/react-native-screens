@@ -254,9 +254,14 @@ namespace react = facebook::react;
 
 - (void)didDismissSearchController:(UISearchController *)searchController
 {
-  NSString *text = searchController.searchBar.text ?: @"";
-  if (![_lastKnownText isEqualToString:text]) {
-    [self emitOnChangeTextEventWithText:text];
+  // On iOS 27, the integrated close button empties the field and dismisses search without calling
+  // any search bar delegate method. Earlier versions report it as a cancel themselves, and a tab
+  // switch there also dismisses search with an empty field, which must not clear JS's query.
+  if (@available(iOS 27.0, *)) {
+    NSString *text = searchController.searchBar.text ?: @"";
+    if (![_lastKnownText isEqualToString:text]) {
+      [self emitOnChangeTextEventWithText:text];
+    }
   }
 }
 
