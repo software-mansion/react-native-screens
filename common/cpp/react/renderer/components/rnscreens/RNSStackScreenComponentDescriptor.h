@@ -16,7 +16,6 @@ class RNSStackScreenComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-#ifdef ANDROID
     react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode =
         static_cast<RNSStackScreenShadowNode &>(shadowNode);
@@ -34,7 +33,6 @@ class RNSStackScreenComponentDescriptor final
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
-#endif // ANDROID
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

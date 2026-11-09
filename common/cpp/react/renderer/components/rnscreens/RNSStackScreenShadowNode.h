@@ -22,9 +22,7 @@ class JSI_EXPORT RNSStackScreenShadowNode final
 
 #pragma mark - ShadowNode overrides
 
-#ifdef ANDROID
   Point getContentOriginOffset(bool includeTransform) const override;
-#endif // ANDROID
 };
 
 } // namespace facebook::react

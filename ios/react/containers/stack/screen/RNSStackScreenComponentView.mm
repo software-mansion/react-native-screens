@@ -38,6 +38,9 @@ namespace react = facebook::react;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
+
+  react::RNSStackScreenShadowNode::ConcreteState::Shared _state;
+  CGRect _lastScheduledShadowFrame;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -58,6 +61,40 @@ namespace react = facebook::react;
 
   _hasUpdatedActivityMode = NO;
   _isNativelyDismissed = NO;
+  _lastScheduledShadowFrame = CGRectNull;
+}
+
+#pragma mark - Shadow state
+
+/**
+ * In a Split column the screen is sized by UIKit, not by Yoga. The Split column and the Stack host are out of layout
+ * and the screen's shadow node spans the split host. When UIKit's size differs from the one Yoga applied, the screen
+ * reports its size and its origin in the split host through the shadow state. In a standalone stack nothing is
+ * reported.
+ */
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+
+  CGSize yogaSize = RCTCGSizeFromSize(_layoutMetrics.frame.size);
+  if (CGSizeEqualToSize(self.bounds.size, yogaSize)) {
+    return;
+  }
+
+  UIView *splitView = _controller.splitViewController.view;
+  CGPoint origin = splitView != nil ? [self convertPoint:CGPointZero toView:splitView] : CGPointZero;
+  [self updateShadowStateWithFrame:(CGRect){origin, self.bounds.size}];
+}
+
+- (void)updateShadowStateWithFrame:(CGRect)frame
+{
+  if (_state == nullptr || CGRectEqualToRect(frame, _lastScheduledShadowFrame)) {
+    return;
+  }
+
+  auto newState = react::RNSStackScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
+  _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+  _lastScheduledShadowFrame = frame;
 }
 
 - (void)resetProps
@@ -188,6 +225,12 @@ namespace react = facebook::react;
   }
 
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
+{
+  [super updateState:state oldState:oldState];
+  _state = std::static_pointer_cast<const react::RNSStackScreenShadowNode::ConcreteState>(state);
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
