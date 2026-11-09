@@ -1,30 +1,22 @@
-import type {
-  SheetBackgroundEffect,
-  SheetBackgroundEffectBlur,
-  SheetBackgroundEffectBlurStyle,
-  SheetBackgroundEffectColor,
-  SheetDetentChangedEvent,
-  SheetDetents,
-  SheetInitialDetentIndex,
-  SheetLargestUndimmedDetentIndex,
-  SheetNativeContainerStyleProps,
-  SheetPreferredCornerRadius,
-  SheetProps,
-} from '../sheet/Sheet.types';
+import type { SheetProps } from '../sheet';
 
-export type FormSheetDetentChangedEvent = SheetDetentChangedEvent;
-export type FormSheetDetents = SheetDetents;
-export type FormSheetPreferredCornerRadius = SheetPreferredCornerRadius;
-export type FormSheetLargestUndimmedDetentIndex =
-  SheetLargestUndimmedDetentIndex;
-export type FormSheetInitialDetentIndex = SheetInitialDetentIndex;
-export type FormSheetBackgroundEffectBlurStyle = SheetBackgroundEffectBlurStyle;
-export type FormSheetBackgroundEffectColor = SheetBackgroundEffectColor;
-export type FormSheetBackgroundEffectBlur = SheetBackgroundEffectBlur;
-export type FormSheetBackgroundEffect = SheetBackgroundEffect;
-export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
+// Renamed re-exports keep the shared declarations' typedocs visible on the
+// consumer side.
+export type {
+  SheetDetentChangedEvent as FormSheetDetentChangedEvent,
+  SheetDetents as FormSheetDetents,
+  SheetPreferredCornerRadius as FormSheetPreferredCornerRadius,
+  SheetLargestUndimmedDetentIndex as FormSheetLargestUndimmedDetentIndex,
+  SheetInitialDetentIndex as FormSheetInitialDetentIndex,
+  SheetBackgroundEffectBlurStyle as FormSheetBackgroundEffectBlurStyle,
+  SheetBackgroundEffectColor as FormSheetBackgroundEffectColor,
+  SheetBackgroundEffectBlur as FormSheetBackgroundEffectBlur,
+  SheetBackgroundEffect as FormSheetBackgroundEffect,
+  SheetNativeContainerStyleProps as FormSheetNativeContainerStyleProps,
+} from '../sheet';
 
 /**
  * Props for {@link FormSheet}.
  */
-export type FormSheetProps = SheetProps;
+// An interface so that TS errors name `FormSheetProps`.
+export interface FormSheetProps extends SheetProps {}

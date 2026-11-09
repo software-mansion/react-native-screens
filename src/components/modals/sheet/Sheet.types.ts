@@ -310,12 +310,8 @@ export interface SheetProps {
    *
    * @remarks
    * It is highly recommended to use this callback to synchronize your local
-   * React state to prevent UI mismatches.
-   *
-   * @example
-   * ```tsx
-   * <FormSheet isOpen={isOpen} onNativeDismiss={() => setIsOpen(false)} />
-   * ```
+   * React state to prevent UI mismatches, e.g. by setting `isOpen` back to
+   * `false`.
    *
    * @platform android, ios
    */

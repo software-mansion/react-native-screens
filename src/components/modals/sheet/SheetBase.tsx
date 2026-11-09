@@ -12,7 +12,8 @@ import {
 } from './SheetUtils';
 
 /**
- * Shared implementation of the `UISheetPresentationController`-backed modals.
+ * Shared implementation of the sheet modals, backed by
+ * `UISheetPresentationController` on iOS and `BottomSheetDialog` on Android.
  * Resolves the public props to their native representation and mounts the
  * shared native host.
  */
