@@ -38,8 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * UIKit presentation style the controller presents with. Defaults to `RNSFormSheetPresentationStyleFormSheet`.
  *
- * UIKit does not support changing `modalPresentationStyle` of a presented controller, so a value set while the
- * controller is not dismissed is stored and takes effect on the next presentation.
+ * Must be set only while the controller is dismissed: UIKit does not support changing `modalPresentationStyle` of
+ * a presented controller.
  */
 @property (nonatomic) RNSFormSheetPresentationStyle presentationStyle;
 

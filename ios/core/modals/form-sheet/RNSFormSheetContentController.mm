@@ -7,7 +7,6 @@
 #import "RNSPresentationSourceProvider.h"
 
 #import "RNSAssert.h"
-#import "RNSLog.h"
 
 @interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
                                              UIGestureRecognizerDelegate
@@ -44,14 +43,12 @@
   if (_presentationStyle == presentationStyle) {
     return;
   }
-  _presentationStyle = presentationStyle;
+  // Each sheet component passes a fixed style, so the style changes only on mount, before the first presentation.
+  RNSAssert(_presentationManager.state == RNSFormSheetPresentationStateDismissed,
+            @"[RNScreens] The sheet presentation style cannot change while the sheet is presented.");
 
-  if (_presentationManager.state == RNSFormSheetPresentationStateDismissed) {
-    [self applyPresentationStyle];
-  } else {
-    RNSLogW(
-        @"[RNScreens] The sheet presentation style cannot change while the sheet is presented. The new value takes effect on the next presentation.");
-  }
+  _presentationStyle = presentationStyle;
+  [self applyPresentationStyle];
 }
 
 - (void)applyPresentationStyle
