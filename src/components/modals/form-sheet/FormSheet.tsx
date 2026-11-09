@@ -12,7 +12,7 @@ import type { FormSheetProps } from './FormSheet.types';
  * them, and dismiss it natively unless
  * {@link FormSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
  *
- * @platform android, ios
+ * @platform android, ios, tvos >= 26
  */
 export function FormSheet(props: FormSheetProps) {
   return <SheetBase {...props} />;
