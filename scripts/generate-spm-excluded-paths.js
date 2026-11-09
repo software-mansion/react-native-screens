@@ -6,34 +6,49 @@
  * filters the result afterwards. In a `link:`-ed checkout that walk covers
  * `node_modules`, the example apps and the symlinks leading back to this
  * directory, which turns package resolution from seconds into tens of
- * minutes. The list names every top-level entry that is not a source root.
+ * minutes. The list names every tracked top-level directory that is not a
+ * source root, plus the git-ignored directories that tooling creates in the
+ * repository root. It is derived from git rather than from the filesystem so
+ * that local build artifacts do not change the committed list.
  *
  * Usage: `node scripts/generate-spm-excluded-paths.js [--check]`. With
  * `--check`, nothing is written; the script exits 1 if `Package.swift` is out
  * of date.
  */
 
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const PACKAGE_SWIFT = path.join(ROOT, 'Package.swift');
 const SOURCE_ROOTS = ['ios', 'common', 'cpp'];
-// Git-ignored, so they may be absent when the list is generated.
-const ALWAYS_EXCLUDED_DIRS = ['lib', 'node_modules'];
+// Git-ignored directories created in the repository root by Yarn, Xcode and
+// the release playground (`scripts/release_tests`); excluded whether or not
+// they exist on the machine generating the list.
+const ALWAYS_EXCLUDED_DIRS = [
+  'DerivedData',
+  'build',
+  'lib',
+  'node_modules',
+  'release_tests',
+];
 const FIXED_EXCLUDED_PATHS = ['ios/RNScreens.xcodeproj'];
 const LIST_PATTERN = /(let excludedPaths: \[String\] = \[\n)([\s\S]*?)(\n\])/;
 
+function listTrackedTopLevelDirs() {
+  return execFileSync('git', ['ls-tree', '-d', '--name-only', 'HEAD'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  })
+    .split('\n')
+    .filter(Boolean);
+}
+
 function computeExcludedPaths() {
-  const topLevelDirs = fs
-    .readdirSync(ROOT, { withFileTypes: true })
-    .filter(
-      entry =>
-        entry.isDirectory() &&
-        !entry.name.startsWith('.') &&
-        !SOURCE_ROOTS.includes(entry.name),
-    )
-    .map(entry => entry.name);
+  const topLevelDirs = listTrackedTopLevelDirs().filter(
+    name => !name.startsWith('.') && !SOURCE_ROOTS.includes(name),
+  );
   return [
     ...new Set([
       ...topLevelDirs,
