@@ -85,11 +85,15 @@ export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
  */
 export interface StackHeaderConfigRef {
   /**
-   * Commands available on Android; set only on Android.
+   * Android-specific commands.
+   *
+   * @platform android
    */
   android?: StackHeaderConfigCommandsAndroid | undefined;
   /**
-   * Commands available on iOS; set only on iOS.
+   * iOS-specific commands.
+   *
+   * @platform ios
    */
   ios?: StackHeaderConfigCommandsIOS | undefined;
 }
