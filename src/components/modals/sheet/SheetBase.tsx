@@ -22,9 +22,10 @@ export interface SheetBaseProps extends SheetProps {
 }
 
 /**
- * Shared implementation of the `UISheetPresentationController`-backed modals
- * (`FormSheet`, `PageSheet`). Resolves the public props to their native
- * representation and mounts the shared native host.
+ * Shared implementation of the sheet modals (`FormSheet`, `PageSheet`), backed
+ * by `UISheetPresentationController` on iOS and `BottomSheetDialog` on Android.
+ * Resolves the public props to their native representation and mounts the
+ * shared native host.
  */
 export function SheetBase(props: SheetBaseProps) {
   const {

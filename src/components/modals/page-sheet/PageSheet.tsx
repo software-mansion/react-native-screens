@@ -1,5 +1,5 @@
 import React from 'react';
-import { SheetBase } from '../sheet/SheetBase';
+import { SheetBase } from '../sheet';
 import type { PageSheetProps } from './PageSheet.types';
 
 /**
