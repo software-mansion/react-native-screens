@@ -17,8 +17,8 @@ export const CLASS_NAME_RNS_SCREEN_VIEW = 'RNSScreenView';
 export const CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY =
   'RNSTabsBottomAccessoryComponentView';
 
-// The library's `FormSheet` content view.
-export const CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW = 'RNSFormSheetContentView';
+// The library's sheet content view (`FormSheet`, `PageSheet`).
+export const CLASS_NAME_RNS_SHEET_CONTENT_VIEW = 'RNSSheetContentView';
 
 // --- React Native host views ---
 
