@@ -8,8 +8,9 @@
  * directory, which turns package resolution from seconds into tens of
  * minutes. The list names every tracked top-level directory that is not a
  * source root, plus the git-ignored directories that tooling creates in the
- * repository root. It is derived from git rather than from the filesystem so
- * that local build artifacts do not change the committed list.
+ * repository root. It is derived from the git index rather than from the
+ * filesystem, so local build artifacts do not change the committed list and a
+ * staged directory shows up before it is committed.
  *
  * Usage: `node scripts/generate-spm-excluded-paths.js [--check]`. With
  * `--check`, nothing is written; the script exits 1 if `Package.swift` is out
@@ -36,13 +37,26 @@ const ALWAYS_EXCLUDED_DIRS = [
 const FIXED_EXCLUDED_PATHS = ['ios/RNScreens.xcodeproj'];
 const LIST_PATTERN = /(let excludedPaths: \[String\] = \[\n)([\s\S]*?)(\n\])/;
 
-function listTrackedTopLevelDirs() {
-  return execFileSync('git', ['ls-tree', '-d', '--name-only', 'HEAD'], {
-    cwd: ROOT,
-    encoding: 'utf8',
-  })
+function gitLines(args) {
+  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' })
     .split('\n')
     .filter(Boolean);
+}
+
+/** Top-level directories of the index, i.e. of the commit being prepared. */
+function listTrackedTopLevelDirs() {
+  const dirs = gitLines(['ls-files'])
+    .filter(file => file.includes('/'))
+    .map(file => file.split('/')[0]);
+  // A submodule is a single index entry without a slash; `.gitmodules` names them.
+  const submodules = gitLines([
+    'config',
+    '-f',
+    '.gitmodules',
+    '--get-regexp',
+    '^submodule\\..*\\.path$',
+  ]).map(line => line.split(' ')[1]);
+  return [...new Set([...dirs, ...submodules])];
 }
 
 function computeExcludedPaths() {
