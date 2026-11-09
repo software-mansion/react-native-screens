@@ -37,6 +37,8 @@
 	<string></string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
+	<key>RCTUseAssetCatalog</key>
+	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
