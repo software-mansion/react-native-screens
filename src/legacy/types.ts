@@ -1308,15 +1308,22 @@ interface SharedHeaderBarButtonItem {
    */
   sharesBackground?: boolean | undefined;
   /**
-   * Controls whether this item can move into the vertical bar that iOS 27.1 shows on iPhone Duo.
-   * `automatic` lets the system decide from the item's content. `horizontalOnly` keeps the item in
-   * the horizontal bar and hides it when no horizontal bar is present. `verticalPreferred` prefers
-   * the vertical bar when both bars are present.
-   * Only available from iOS 27.1 and later.
+   * Controls whether the item can move into the vertical bar on iPhone Duo.
    *
-   * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/axisbehavior-swift.property
+   * @remarks
+   * When the open iPhone Duo display shows both a horizontal and a vertical
+   * bar, the system can move an item with an icon into the vertical bar.
    *
-   * @default 'automatic'
+   * The following values are supported:
+   * - `'automatic'` - the system decides from the item's content.
+   * - `'horizontalOnly'` - the item stays in the horizontal bar and is hidden
+   *   when no horizontal bar is present.
+   * - `'verticalPreferred'` - the item prefers the vertical bar when both bars
+   *   are present.
+   *
+   * @defaultValue `'automatic'`
+   * @see {@link https://developer.apple.com/documentation/uikit/uibarbuttonitem/axisbehavior-swift.property | UIBarButtonItem.axisBehavior}
+   * @platform ios >= 27.1
    */
   axisBehavior?:
     | 'automatic'
