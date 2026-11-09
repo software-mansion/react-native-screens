@@ -106,7 +106,6 @@ export type StackScreenProps = {
    * @platform android, ios
    */
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
-
   /**
    * Called when the screen was popped because its `activityMode` became
    * `'detached'`.
@@ -142,7 +141,6 @@ export type StackScreenProps = {
    * @platform android
    */
   preventNativeDismiss?: boolean | undefined;
-
   /**
    * Transition played when this screen is pushed onto the stack and when it is
    * popped.
