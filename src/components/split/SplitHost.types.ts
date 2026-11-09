@@ -271,6 +271,7 @@ export type SplitHostCommands = {
    *
    * @param column - The column to show.
    * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/show(_:) | UISplitViewController.show(_:)}
+   * @platform ios
    */
   show: (column: SplitNavigableColumn) => void;
   /**
@@ -279,6 +280,7 @@ export type SplitHostCommands = {
    *
    * @param column - The sidebar column to hide.
    * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/hide(_:) | UISplitViewController.hide(_:)}
+   * @platform ios
    */
   hide: (column: Exclude<SplitNavigableColumn, 'secondary'>) => void;
 };
