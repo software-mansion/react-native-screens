@@ -405,7 +405,7 @@ async function publish(context: Context): Promise<void> {
       'MIRROR_FILE is missing, so there is no issue to report under',
     );
   }
-  const url = await publishReportComment({
+  const url = publishReportComment({
     mirror: context.mirror,
     streams: context.stream
       ? [{ name: 'Agent stream', content: context.stream }]
