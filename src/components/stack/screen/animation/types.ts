@@ -2,8 +2,7 @@
  * Cubic bezier curve `[x1, y1, x2, y2]`.
  *
  * @remarks
- * `x1` and `x2` must be in `[0, 1]`. `y1` and `y2` may be outside it, which
- * makes the curve overshoot.
+ * `x1` and `x2` must be in `[0, 1]`.
  */
 export type StackScreenAnimationBezier = [number, number, number, number];
 
@@ -35,8 +34,7 @@ export type StackScreenAnimationEasingName =
   | 'emphasizedDecelerate';
 
 /**
- * A named curve or a cubic bezier `[x1, y1, x2, y2]` with `x1`, `x2` in
- * `[0, 1]`.
+ * A named curve or a cubic bezier.
  */
 export type StackScreenAnimationEasing =
   | StackScreenAnimationEasingName
@@ -53,7 +51,8 @@ export type StackScreenAnimationLength = number | `${number}%`;
  *
  * @remarks
  * The following values are supported:
- * - `'default'` — the activity transition of the device's Android version.
+ * - `'default'` — a cross-zoom below API 33 and, from API 33 on, the
+ *   horizontal slide of Android 13, which follows the layout direction.
  * - `'none'` — no visible animation.
  * - `'fade'` — the screens cross-fade.
  * - `'slideFromRight'` — the new screen slides in from the right and pushes
@@ -73,7 +72,8 @@ export type StackScreenAnimationLength = number | `${number}%`;
  * - `'iosFromLeft'` — the new screen slides in from the left while the
  *   previous one moves partly to the right and dims; a pop reverses it.
  *
- * Directions are physical: they are not mirrored in right-to-left layouts.
+ * The edges in the names are physical: they are not mirrored in right-to-left
+ * layouts.
  */
 export type StackScreenAnimationPresetName =
   | 'default'
