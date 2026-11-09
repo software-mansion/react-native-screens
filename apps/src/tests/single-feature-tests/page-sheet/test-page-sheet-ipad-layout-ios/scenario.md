@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify what distinguishes `PageSheet` from `FormSheet`: the layout UIKit picks in a regular-width environment (iPad). The host screen owns one `PageSheet` and one `FormSheet` configured identically (detents `[0.5, 1.0]`, grabber visible). On iPad the page sheet must present as a wide, bottom-anchored card with the host screen dimmed and scaled back behind it, while the form sheet presents as a centered floating panel of a fixed size with the host screen dimmed only. On iPhone (compact width) both sheets must be indistinguishable.
+**Description:** Verify what distinguishes `PageSheet` from `FormSheet`: the layout UIKit picks in a regular-width environment (iPad). The host screen owns one `PageSheet` and one `FormSheet` configured identically (detents `[0.5, 1.0]`, grabber visible). On iPad the page sheet must present as a wide, bottom-anchored card, while the form sheet presents as a centered floating panel of a fixed size; behind both, the host screen is only dimmed and keeps its size and position. On iPhone (compact width) both sheets must be indistinguishable.
 
 **OS test creation version:** iOS: 26.1, iPadOS: 26.1.
 
@@ -35,7 +35,7 @@ TBD: Planned, but will be implemented separately.
 1. Tap "Open PageSheet".
 
     - [ ] A wide card anchored to the bottom edge presents; it spans (almost) the full width of the screen with a top inset below the status bar.
-    - [ ] The host screen is dimmed **and** visibly scaled back (shrunk, pushed behind the card).
+    - [ ] The host screen is dimmed and keeps its size and position (it is not shrunk or pushed back).
     - [ ] The grabber is visible at the top of the card. "PageSheet content" and "Dismiss PageSheet" are centered within the card.
 
 2. Drag the card up to the largest detent and back down.
@@ -45,7 +45,7 @@ TBD: Planned, but will be implemented separately.
 3. Tap "Dismiss PageSheet", then tap "Open FormSheet".
 
     - [ ] A centered floating panel of a fixed size presents (not bottom-anchored, not full width).
-    - [ ] The host screen is dimmed but **not** scaled back.
+    - [ ] The host screen is dimmed and keeps its size and position.
     - [ ] "FormSheet content" and "Dismiss FormSheet" are centered within the panel.
 
 4. Tap "Dismiss FormSheet".
@@ -58,7 +58,7 @@ TBD: Planned, but will be implemented separately.
 
 1. Rotate the iPad to landscape and repeat the portrait steps.
 
-    - [ ] The page sheet is a centered card roughly as wide as the iPad is in portrait, still anchored to the bottom, with the host screen scaled back behind it.
+    - [ ] The page sheet is a centered card roughly as wide as the iPad is in portrait, still anchored to the bottom, with the host screen dimmed behind it.
     - [ ] The form sheet is still a centered floating panel.
 
 ---
