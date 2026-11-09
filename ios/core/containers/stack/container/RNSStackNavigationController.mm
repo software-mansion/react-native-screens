@@ -5,7 +5,9 @@
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
 #import "RNSStackNavigationBar.h"
+#import "RNSStackNavigationControllerDelegate.h"
 #import "RNSStackOperation.h"
+#import "RNSStackPopGestureRecognizerDelegate.h"
 #import "RNSStackScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
 
@@ -17,6 +19,11 @@
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
+  // UIKit holds both delegates weakly.
+  RNSStackNavigationControllerDelegate *_Nonnull _navigationControllerDelegate;
+#if !TARGET_OS_TV
+  RNSStackPopGestureRecognizerDelegate *_Nonnull _popGestureRecognizerDelegate;
+#endif // !TARGET_OS_TV
 }
 
 - (instancetype)init
@@ -40,6 +47,22 @@
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
+  _navigationControllerDelegate = [RNSStackNavigationControllerDelegate new];
+  self.delegate = _navigationControllerDelegate;
+#if !TARGET_OS_TV
+  _popGestureRecognizerDelegate = [[RNSStackPopGestureRecognizerDelegate alloc] initWithNavigationController:self];
+#endif // !TARGET_OS_TV
+}
+
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+#if !TARGET_OS_TV
+  // UIKit creates the system pop recognizers with the view.
+  for (UIGestureRecognizer *recognizer in [self systemPopGestureRecognizers]) {
+    recognizer.delegate = _popGestureRecognizerDelegate;
+  }
+#endif // !TARGET_OS_TV
 }
 
 #pragma mark-- Layout
@@ -195,17 +218,26 @@
 - (BOOL)isSystemPopGestureBeginning
 {
 #if !TARGET_OS_TV
-  if (self.interactivePopGestureRecognizer.state == UIGestureRecognizerStateBegan) {
-    return YES;
+  for (UIGestureRecognizer *recognizer in [self systemPopGestureRecognizers]) {
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+      return YES;
+    }
   }
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (@available(iOS 26.0, *)) {
-    return self.interactiveContentPopGestureRecognizer.state == UIGestureRecognizerStateBegan;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 #endif // !TARGET_OS_TV
   return NO;
 }
+
+#if !TARGET_OS_TV
+- (nonnull NSArray<UIGestureRecognizer *> *)systemPopGestureRecognizers
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    return @[ self.interactivePopGestureRecognizer, self.interactiveContentPopGestureRecognizer ];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  return @[ self.interactivePopGestureRecognizer ];
+}
+#endif // !TARGET_OS_TV
 
 #pragma mark - Debug
 
