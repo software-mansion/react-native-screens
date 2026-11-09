@@ -1,4 +1,6 @@
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 const GITHUB_BODY_LIMIT = 60_000;
@@ -107,16 +109,17 @@ export async function ensureMirrorIssue({
   return { number: issue.number, url: issue.html_url };
 }
 
-// Posts the report of a run, and the agent stream in chunks, as comments on the mirror issue.
-export async function publishReportComment({
+// Posts the report of a run, and the agent stream in chunks, as comments on the mirror issue. The
+// comments are posted by the ArgentCloud GitHub App through the argent-cloud CLI; the reports
+// token is only the proof of write access that the backend checks.
+export function publishReportComment({
   mirror,
   streams,
 }: {
   mirror: Mirror;
   streams: Stream[];
-}): Promise<string> {
-  const repo = requireEnv('REPORTS_REPO');
-  const headers = githubHeaders(requireEnv('REPORTS_TOKEN'));
+}): string {
+  const target = `${requireEnv('REPORTS_REPO')}#${mirror.number}`;
   const report = readFile(
     process.env.REPORT_FILE ??
       (process.env.WORK_DIR
@@ -126,32 +129,59 @@ export async function publishReportComment({
   if (!report) {
     throw new Error('the report file is missing or empty');
   }
-  const comment = await githubPost<GithubIssue>(
-    `${apiUrl()}/repos/${repo}/issues/${mirror.number}/comments`,
-    headers,
-    {
-      body: clampBody(
-        report,
-        'The report was truncated. The full file is in the workflow artifacts.',
-      ),
-    },
+  const url = postArgentCloudComment(
+    target,
+    clampBody(
+      report,
+      'The report was truncated. The full file is in the workflow artifacts.',
+    ),
   );
-  console.log(`posted the report at ${comment.html_url}`);
+  console.log(`posted the report at ${url || target}`);
 
   for (const stream of streams) {
     const chunks = splitIntoChunks(stream.content, GITHUB_BODY_LIMIT - 200);
     for (const [index, chunk] of chunks.entries()) {
       const part =
         chunks.length > 1 ? ` (part ${index + 1}/${chunks.length})` : '';
-      await githubPost(
-        `${apiUrl()}/repos/${repo}/issues/${mirror.number}/comments`,
-        headers,
-        { body: detailsBlock(`${stream.name}${part}`, chunk).join('\n') },
+      postArgentCloudComment(
+        target,
+        detailsBlock(`${stream.name}${part}`, chunk).join('\n'),
       );
     }
     console.log(`posted '${stream.name}' in ${chunks.length} comment(s)`);
   }
-  return comment.html_url;
+  return url;
+}
+
+// Runs `argent-cloud comment`, which needs SIM_ROUTER_API_KEY and ARGENT_BACKEND_IP in the
+// environment, and returns the URL of the comment that it prints, or '' when it prints none.
+function postArgentCloudComment(target: string, body: string): string {
+  const directory = fs.mkdtempSync(
+    path.join(process.env.RUNNER_TEMP ?? os.tmpdir(), 'argent-cloud-comment-'),
+  );
+  const commentFile = path.join(directory, 'comment.md');
+  fs.writeFileSync(commentFile, body);
+  const output = execFileSync(
+    'argent-cloud',
+    ['comment', '--comment-file', commentFile, target],
+    {
+      encoding: 'utf8',
+      env: { ...process.env, ARGENT_GITHUB_TOKEN: requireEnv('REPORTS_TOKEN') },
+      stdio: ['ignore', 'pipe', 'inherit'],
+    },
+  );
+  fs.rmSync(directory, { recursive: true, force: true });
+  process.stdout.write(output);
+  const url =
+    /^https:\/\/github\.com\/\S+\/(issues|pull)\/\d+#issuecomment-\d+$/im.exec(
+      output,
+    )?.[0] ?? '';
+  if (!url) {
+    console.log(
+      `::warning::argent-cloud posted on ${target} but printed no comment URL`,
+    );
+  }
+  return url;
 }
 
 // One search call finds the mirror by its marker. The search index lags a few seconds behind a
@@ -173,7 +203,9 @@ async function findMirrorIssue(
       return hit;
     }
   } catch (err) {
-    console.log(`search for the mirror failed, scanning the issues: ${String(err)}`);
+    console.log(
+      `search for the mirror failed, scanning the issues: ${String(err)}`,
+    );
   }
   for (let page = 1; page <= MIRROR_PAGE_LIMIT; page++) {
     const issues = await githubGet<GithubIssue[]>(
@@ -276,7 +308,9 @@ export function neutralizeForPublic(text: string): string {
   return text
     .replace(/<[^>]+>/g, match => match.replace(/</g, '&lt;'))
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt: string, url: string) =>
-      /^https:\/\/(github\.com|user-images\.githubusercontent\.com|private-user-images\.githubusercontent\.com)\//.test(url)
+      /^https:\/\/(github\.com|user-images\.githubusercontent\.com|private-user-images\.githubusercontent\.com)\//.test(
+        url,
+      )
         ? match
         : `[image: ${alt || 'removed'}]`,
     )
@@ -341,7 +375,10 @@ export function writeCommentFile(lines: string[]): void {
   console.log(`wrote ${commentFile}`);
 }
 
-export function reportForComment(output: string, publicComment = false): string {
+export function reportForComment(
+  output: string,
+  publicComment = false,
+): string {
   let report = output
     .replace(/^#\s+[^\n]*\n/, '')
     .trim()

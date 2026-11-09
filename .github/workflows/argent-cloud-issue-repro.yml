@@ -17,10 +17,12 @@ name: Argent Cloud issue repro
 # inside an app whose native code is the official template plus allowlisted npm releases.
 #
 # Everything is reported in the private reports repository (REPORTS_REPO below): the original issue
-# is mirrored there once, verbatim, and every run posts under that mirror the workflow report (plan,
-# analysis, costs, brief), then the agent's report with its screenshots, posted by the ArgentCloud
-# GitHub App. Nothing is posted on the public issue unless the repository variable
-# ARGENT_CLOUD_PUBLIC_COMMENTS is `true`, which also needs the ArgentCloud App installed here.
+# is mirrored there once, verbatim, by the reports App below, and every run posts under that mirror
+# the workflow report (plan, analysis, costs, brief), then the agent's report with its screenshots.
+# Every comment is posted by the ArgentCloud GitHub App through `argent-cloud comment`; the reports
+# App token is only the proof of write access that the backend checks. Nothing is posted on the
+# public issue unless the repository variable ARGENT_CLOUD_PUBLIC_COMMENTS is `true`, which also
+# needs the ArgentCloud App installed here.
 #
 # Workflow artifacts of a public repository can be downloaded by anyone who is logged in to GitHub.
 # They hold the plan, the agent-written app source and the reports; the agent stream is only posted
@@ -29,9 +31,10 @@ name: Argent Cloud issue repro
 # Secrets: ANTHROPIC_API_KEY (the tester) and, optionally, ANTHROPIC_API_KEY_PLANNER (the planning
 # agent; falls back to ANTHROPIC_API_KEY, but a separate key with its own spend cap limits what a
 # leak from the planning job can cost), SIM_ROUTER_API_KEY and ARGENT_BACKEND_IP (Argent Cloud),
-# ARGENT_CLOUD_REPORTS_APP_ID and ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY (a GitHub App installed on the
-# reports repository with `issues: write` and `contents: write`; the latter is the push proof that
-# argent-cloud asks for). Optional: SLACK_ARGENT_URL (a webhook).
+# ARGENT_CLOUD_REPORTS_APP_ID and ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY (the reports App, which opens
+# the mirror issues and whose token proves write access to argent-cloud: installed on the reports
+# repository with `issues: write`). The ArgentCloud App must be installed on the reports repository
+# too. Optional: SLACK_ARGENT_URL (a webhook).
 #
 # On the first run, check in the logs of the planning step that the allowed tools are exactly the
 # ones passed below and that claude-code-action posted no comment on the public issue.
@@ -358,6 +361,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             /.nvmrc
+            /.github/actions/install-argent-cloud
             /.github/workflows/helper
           sparse-checkout-cone-mode: false
 
@@ -399,11 +403,17 @@ jobs:
         if: steps.mirror.outcome == 'success' && env.STAGE != ''
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts report
 
+      - name: Install the argent-cloud CLI
+        if: steps.mirror.outcome == 'success' && env.STAGE != ''
+        uses: ./.github/actions/install-argent-cloud
+
       - name: Publish the report under the mirror issue
         id: publish
         if: steps.mirror.outcome == 'success' && env.STAGE != ''
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
+          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
 
       - name: Report to Slack
@@ -535,6 +545,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             /.nvmrc
+            /.github/actions/install-argent-cloud
             /.github/workflows/helper
           sparse-checkout-cone-mode: false
 
@@ -573,10 +584,15 @@ jobs:
           repositories: ${{ env.REPORTS_NAME }}
           permission-issues: write
 
+      - name: Install the argent-cloud CLI
+        uses: ./.github/actions/install-argent-cloud
+
       - name: Publish the report under the mirror issue
         id: publish
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
+          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
 
       - name: Report to Slack
@@ -750,6 +766,8 @@ jobs:
         if: always()
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
+          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
           STATUS: ${{ job.status }}
           REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
           SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
@@ -872,7 +890,6 @@ jobs:
           owner: ${{ env.REPORTS_OWNER }}
           repositories: ${{ env.REPORTS_NAME }}
           permission-issues: write
-          permission-contents: write
 
       - name: Post the agent's report under the mirror issue
         id: post
