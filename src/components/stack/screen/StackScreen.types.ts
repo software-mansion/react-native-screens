@@ -7,12 +7,14 @@ import type { StackScreenAnimation } from './animation';
  *
  * @note
  * This is an implementation detail and may change. {@link Stack.Screen} turns
- * this event into a call of `onDismiss` or `onNativeDismiss`.
+ * this event into a call of {@link StackScreenProps.onDismiss | onDismiss} or
+ * {@link StackScreenProps.onNativeDismiss | onNativeDismiss}.
  */
 export type OnDismissEventPayload = {
   /**
    * Whether the user dismissed the screen natively (`true`) or the screen was
-   * popped because its `activityMode` became `'detached'` (`false`).
+   * popped because its {@link StackScreenProps.activityMode | activityMode}
+   * became `'detached'` (`false`).
    */
   isNativeDismiss: boolean;
 };
@@ -44,7 +46,8 @@ export type StackScreenReplaceAnimation = 'push' | 'pop';
 /**
  * Function called when a {@link Stack.Screen} is dismissed.
  *
- * @param screenKey - The `screenKey` of the dismissed screen.
+ * @param screenKey - The {@link StackScreenProps.screenKey | screenKey} of the
+ *   dismissed screen.
  */
 export type StackScreenDismissHandler = (screenKey: string) => void;
 
@@ -107,8 +110,8 @@ export type StackScreenProps = {
    */
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
-   * Called when the screen was popped because its `activityMode` became
-   * `'detached'`.
+   * Called when the screen was popped because its
+   * {@link StackScreenProps.activityMode | activityMode} became `'detached'`.
    *
    * @platform android, ios
    */
@@ -119,14 +122,16 @@ export type StackScreenProps = {
    *
    * @remarks
    * The screen is no longer on the native stack: remove it from your state
-   * instead of changing its `activityMode` to `'detached'`.
+   * instead of changing its
+   * {@link StackScreenProps.activityMode | activityMode} to `'detached'`.
    *
    * @platform android, ios
    */
   onNativeDismiss?: StackScreenDismissHandler | undefined;
   /**
    * Called when the user tries to dismiss the screen natively, but
-   * `preventNativeDismiss` stops it.
+   * {@link StackScreenProps.preventNativeDismiss | preventNativeDismiss} stops
+   * it.
    *
    * @platform android
    */
@@ -149,8 +154,9 @@ export type StackScreenProps = {
    * The value on the incoming screen drives a push; the value on the outgoing
    * screen drives a pop, including the predictive back gesture. A replace
    * plays the pop animation of the outgoing screen or the push animation of
-   * the incoming one, see `replaceAnimation`. Changing it on the top screen
-   * takes effect for the next pop.
+   * the incoming one, see
+   * {@link StackScreenProps.replaceAnimation | replaceAnimation}. Changing it
+   * on the top screen takes effect for the next pop.
    *
    * @note
    * This is an implementation detail and may change. A value the native side

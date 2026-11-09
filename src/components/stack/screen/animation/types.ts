@@ -106,7 +106,8 @@ export interface StackScreenAnimationTimingOptions {
 
 /**
  * Names of the {@link StackScreenAnimationPresetName | presets} that accept
- * `distance` and the timing options.
+ * {@link StackScreenAnimationFadeFromEdgePresetRef.distance | distance} and the
+ * timing options.
  */
 export type StackScreenAnimationFadeFromEdgePresetName =
   | 'fadeFromBottom'
