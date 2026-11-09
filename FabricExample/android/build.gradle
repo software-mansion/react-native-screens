@@ -6,6 +6,7 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "28.2.13676358"
         kotlinVersion = "2.3.21"
+        detoxKotlinVersion = kotlinVersion // Detox built from source
     }
     repositories {
         google()
@@ -30,19 +31,6 @@ buildscript {
         // version pinned by RN's gradle-plugin.
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath rnrepoClasspath()
-    }
-}
-
-// Detox repository for `com.wix:detox` dependency specified
-// in app build.gradle. This most likely does not have to be
-// specified for each project but AFAIK it does not create any conflicts.
-// See: https://github.com/wix/Detox/issues/3973#issuecomment-1459895555
-// TODO: Find out which project should have it added.
-allprojects {
-    repositories {
-        maven {
-            url("$rootDir/../node_modules/detox/Detox-android")
-        }
     }
 }
 
