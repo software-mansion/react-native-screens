@@ -4,6 +4,7 @@
 #import "RNSStackHeaderAppearanceMapper.h"
 #import "RNSStackHeaderConfigEventEmitter.h"
 #import "RNSStackHeaderConfigShadowStateProxy.h"
+#import "RNSStackHeaderIconMapper.h"
 #import "RNSStackHeaderItemComponentView.h"
 #import "RNSStackHeaderItemSpacerComponentView.h"
 #import "RNSStackHeaderMenuCoordinator.h"
@@ -77,6 +78,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   _backButtonTitle = nil;
   _backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
   _backButtonMenuEnabled = YES;
+  _backButtonIcon = nil;
   _titleMenu = nil;
   _standardAppearance = nil;
   _scrollEdgeAppearance = nil;
@@ -477,6 +479,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
   if (oldHeaderProps.backButtonMenuEnabled != newHeaderProps.backButtonMenuEnabled) {
     _backButtonMenuEnabled = newHeaderProps.backButtonMenuEnabled;
+  }
+
+  if (oldHeaderProps.backButtonIcon != newHeaderProps.backButtonIcon) {
+    _backButtonIcon = [RNSStackHeaderIconMapper
+        iconFromDictionary:rnscreens::conversion::RNSConvertFollyDynamicToId(newHeaderProps.backButtonIcon)];
   }
 
   if (oldHeaderProps.standardAppearance != newHeaderProps.standardAppearance) {

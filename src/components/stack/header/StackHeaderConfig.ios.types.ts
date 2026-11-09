@@ -719,6 +719,20 @@ export interface StackHeaderConfigPropsIOS {
    */
   backButtonMenuEnabled?: boolean | undefined;
   /**
+   * @summary Custom icon for the back button.
+   *
+   * @description
+   * Configured on the screen whose back button it applies to (the screen that
+   * is pushed on top). Replaces the back indicator (chevron). When `undefined`,
+   * the system chevron is used.
+   *
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the system chevron is displayed until the image is loaded.
+   *
+   * @platform iOS
+   */
+  backButtonIcon?: PlatformIconIOS | undefined;
+  /**
    * @summary Custom item to display as a subtitle.
    *
    * @description Takes precedence over subtitle text.
