@@ -725,6 +725,12 @@ RNS_IGNORE_SUPER_CALL_END
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+        if (@available(iOS 26.0, *)) {
+          subview.clipsToBounds = YES;
+          subview.translatesAutoresizingMaskIntoConstraints = NO;
+        }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
         navitem.titleView = subview;
         break;
       }
