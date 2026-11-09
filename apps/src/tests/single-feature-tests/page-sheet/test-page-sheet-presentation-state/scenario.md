@@ -18,7 +18,7 @@ TBD: Planned, but will be implemented separately.
 
 ## Note
 
-- **iPad:** the sheet is presented as a wide, bottom-anchored card; the host screen is dimmed and scaled back behind it.
+- **iPad:** the sheet is presented as a wide, bottom-anchored card; the host screen is dimmed behind it, keeping its size and position.
 - **Android:** the content box is laid out to the largest detent and anchored to the top of the sheet.
 
 ## Steps
