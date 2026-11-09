@@ -2,6 +2,7 @@
 
 #import "RNSAssert.h"
 #import "RNSDefines.h"
+#import "RNSNavigationControllerProviding.h"
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
 #import "RNSSplitNavigationController.h"
@@ -108,11 +109,10 @@
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
 
-  NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
+  NSMutableArray<UINavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
   for (RNSSplitScreenController *columnController in currentColumns) {
-    [currentViewControllers addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:columnController
-                                                                             frameOriginChangeDelegate:self]];
+    [currentViewControllers addObject:[self navigationControllerForColumnController:columnController]];
   }
 
   self.viewControllers = currentViewControllers;
@@ -124,6 +124,22 @@
 #endif
 
   _needsChildViewControllersUpdate = NO;
+}
+
+/**
+ * @brief The navigation controller installed for a column - the one its content provides (`Stack.Host`),
+ * or the one rooted at the column controller.
+ */
+- (UINavigationController *)navigationControllerForColumnController:(RNSSplitScreenController *)columnController
+{
+  UIView<RNSNavigationControllerProviding> *provider = columnController.navigationControllerProvider;
+  if (provider != nil) {
+    // Controller's pending updates must be populated before the SplitView attaches it.
+    [provider flushPendingUpdates];
+    return provider.navigationController;
+  }
+  return [[RNSSplitNavigationController alloc] initWithRootViewController:columnController
+                                                frameOriginChangeDelegate:self];
 }
 
 - (void)updateSplitAppearanceIfNeeded

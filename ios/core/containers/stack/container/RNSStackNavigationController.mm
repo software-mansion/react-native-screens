@@ -36,6 +36,32 @@
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 }
 
+#pragma mark - Appearance
+
+- (void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];
+  [_appearanceDelegate viewControllerWillAppear:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+  [_appearanceDelegate viewControllerDidAppear:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+  [_appearanceDelegate viewControllerWillDisappear:self];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  [_appearanceDelegate viewControllerDidDisappear:self];
+}
+
 #pragma mark-- Layout
 
 - (void)viewDidLayoutSubviews

@@ -1,11 +1,12 @@
 #pragma once
 
+#import "RNSNavigationControllerProviding.h"
 #import "RNSReactBaseView.h"
 #import "RNSStackScreenComponentView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNSStackHostComponentView : RNSReactBaseView
+@interface RNSStackHostComponentView : RNSReactBaseView <RNSNavigationControllerProviding>
 
 @end
 

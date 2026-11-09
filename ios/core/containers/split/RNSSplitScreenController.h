@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSNavigationControllerProviding.h"
 
 @class RNSSplitScreenController;
 
@@ -49,6 +50,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isInSplitHostSubtree;
 
 - (void)setNeedsLifecycleStateUpdate;
+
+#pragma mark - Nested container
+
+/**
+ * @brief The provider whose navigation controller backs the column instead of this controller.
+ *
+ * Set by the column view when its **only** child conforms to `RNSNavigationControllerProviding`. The Split host
+ * installs the provided navigation controller in place of one rooted at this controller, so neither the column view
+ * nor the provider's view enter the UIKit hierarchy. The column's appearance events come from the provided
+ * controller then, which must conform to `RNSViewControllerAppearanceNotifying`.
+ */
+@property (nonatomic, weak, nullable) UIView<RNSNavigationControllerProviding> *navigationControllerProvider;
 
 #pragma mark - Layout
 

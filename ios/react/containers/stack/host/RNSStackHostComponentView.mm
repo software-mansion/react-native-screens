@@ -25,6 +25,7 @@ namespace react = facebook::react;
   RNSStackNavigationController *_Nonnull _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
+  BOOL _isNavigationControllerPlacedByParent;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -43,6 +44,34 @@ namespace react = facebook::react;
   _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
+  _isNavigationControllerPlacedByParent = NO;
+}
+
+#pragma mark - RNSNavigationControllerProviding
+
+- (UINavigationController *)navigationController
+{
+  return _stackNavigationController;
+}
+
+- (BOOL)isNavigationControllerPlacedByParent
+{
+  return _isNavigationControllerPlacedByParent;
+}
+
+- (void)setNavigationControllerPlacedByParent:(BOOL)placedByParent
+{
+  RCTAssert(!placedByParent || _stackNavigationController.parentViewController == nil,
+            @"[RNScreens] Placement of the navigation controller can be handed over to the parent only before the host "
+            @"places it itself");
+  _isNavigationControllerPlacedByParent = placedByParent;
+}
+
+- (void)flushPendingUpdates
+{
+  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
+                                           withRenderedScreens:_renderedScreens];
+  [_stackNavigationController commitTransaction];
 }
 
 #pragma mark - UIKit Callbacks
@@ -50,6 +79,9 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
+  if (_isNavigationControllerPlacedByParent) {
+    return;
+  }
   if (self.window != nil && _stackNavigationController.parentViewController == nil) {
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
                                           toViewControllerManaging:self.reactSuperview
@@ -185,9 +217,7 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
-                                           withRenderedScreens:_renderedScreens];
-  [_stackNavigationController commitTransaction];
+  [self flushPendingUpdates];
 }
 
 #pragma mark - Dynamic frameworks support

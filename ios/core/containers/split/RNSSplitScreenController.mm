@@ -2,6 +2,10 @@
 
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
+#import "RNSViewControllerAppearanceNotifying.h"
+
+@interface RNSSplitScreenController () <RNSViewControllerAppearanceDelegate>
+@end
 
 @implementation RNSSplitScreenController
 
@@ -35,6 +39,55 @@
 - (BOOL)isInSplitHostSubtree
 {
   return [self.splitViewController isKindOfClass:RNSSplitHostController.class];
+}
+
+#pragma mark - Nested container
+
+- (void)setNavigationControllerProvider:(nullable UIView<RNSNavigationControllerProviding> *)provider
+{
+  [self resignAppearanceDelegateOfNavigationController:_navigationControllerProvider.navigationController];
+  _navigationControllerProvider = provider;
+  [self becomeAppearanceDelegateOfNavigationController:provider.navigationController];
+}
+
+- (void)becomeAppearanceDelegateOfNavigationController:(nullable UINavigationController *)navigationController
+{
+  if ([navigationController respondsToSelector:@selector(setAppearanceDelegate:)]) {
+    ((id<RNSViewControllerAppearanceNotifying>)navigationController).appearanceDelegate = self;
+  }
+}
+
+- (void)resignAppearanceDelegateOfNavigationController:(nullable UINavigationController *)navigationController
+{
+  if (![navigationController respondsToSelector:@selector(setAppearanceDelegate:)]) {
+    return;
+  }
+  id<RNSViewControllerAppearanceNotifying> notifying = (id<RNSViewControllerAppearanceNotifying>)navigationController;
+  if (notifying.appearanceDelegate == self) {
+    notifying.appearanceDelegate = nil;
+  }
+}
+
+#pragma mark - RNSViewControllerAppearanceDelegate
+
+- (void)viewControllerWillAppear:(UIViewController *)viewController
+{
+  [_delegate splitScreenControllerWillAppear:self];
+}
+
+- (void)viewControllerDidAppear:(UIViewController *)viewController
+{
+  [_delegate splitScreenControllerDidAppear:self];
+}
+
+- (void)viewControllerWillDisappear:(UIViewController *)viewController
+{
+  [_delegate splitScreenControllerWillDisappear:self];
+}
+
+- (void)viewControllerDidDisappear:(UIViewController *)viewController
+{
+  [_delegate splitScreenControllerDidDisappear:self];
 }
 
 #pragma mark - Signals
