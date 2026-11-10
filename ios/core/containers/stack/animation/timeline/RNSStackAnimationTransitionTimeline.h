@@ -7,14 +7,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * What both screens of one transition do.
  */
-@interface RNSStackTransitionTimeline : NSObject
+@interface RNSStackAnimationTransitionTimeline : NSObject
 
 /**
  * Whether neither screen moves: the transition swaps them at once.
  */
 @property (nonatomic, readonly) BOOL isStatic;
 
-@property (class, nonatomic, readonly) RNSStackTransitionTimeline *staticTimeline;
+@property (class, nonatomic, readonly) RNSStackAnimationTransitionTimeline *staticTimeline;
 
 @end
 
