@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Header Letter Spacing',
   key: 'stack-v4-header-letter-spacing',
   details:
-    'Tests legacy V4 title, large title, back title and bar button item letter spacing, explicit 0 vs omitted, runtime reset, scroll collapse, search bar integration and swipe-back handoff.',
+    'Tests Stack v4 title, large title, back title and bar button item letter spacing: runtime changes, explicit 0 vs omitted, custom fonts, collapse and navigation.',
   platforms: ['ios', 'android'],
   e2eCoverage: 'tbd',
   smokeTest: false,

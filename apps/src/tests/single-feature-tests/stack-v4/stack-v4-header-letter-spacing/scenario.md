@@ -1,117 +1,175 @@
-# Test Scenario: Header Letter Spacing (Stack V4)
+# Test Scenario: Header Letter Spacing
 
 ## Details
 
-**Description:** Checks `titleLetterSpacing`, `largeTitleLetterSpacing` (iOS),
-`backTitleLetterSpacing` (iOS) and bar button item `titleStyle.letterSpacing`
-(iOS) on the native legacy V4 stack. The spacing must apply to the matching
-text, reset cleanly when omitted, and survive native collapse, swipe back,
-search and Dynamic Type without replacing the system font.
+**Description:** Verify letter spacing in the Stack v4 native header:
+`titleLetterSpacing`, `largeTitleLetterSpacing` (iOS), `backTitleLetterSpacing`
+(iOS) and bar button item `titleStyle.letterSpacing` (iOS). Pass: each value
+changes only its own text at runtime, the text returns to its default spacing
+when the value is omitted, and the spacing stays with custom fonts, the
+collapsed title (iOS) and after navigation.
 
-**OS test creation version:** iOS 26.5 and iOS 27.0 (simulators), Android 16
-(API 36, Pixel 9 emulator).
+**OS test creation version:** iOS 18.6, iOS 26.5 and iOS 27.2, Android API 36
 
 ## E2E test
 
-TBD: the spacing differences are only a few points wide, so automating this
-needs screenshot comparison, which is not set up for this scenario yet.
+TBD: the spacing changes are a few points wide and need screenshot comparison,
+which is not set up for this scenario yet.
 
 ## Prerequisites
 
-- iOS simulator or device
-- Android emulator or device
+- iOS simulator or device.
+- Android emulator or device.
 
 ## Note
 
-- Spacing is in points. On iOS it maps to the attributed-string kern, added on
-  top of the font's own kerning. An explicit `0` turns the font's kerning off,
-  so it differs from an omitted value.
-- On Android only the title is customizable. The value is converted to ems, as
-  for `Text`'s `letterSpacing`.
-- iOS (UIKit bug, seen on iOS 26.5): when only the back button appearance
-  changes, the visible system back button keeps its old title attributes and
-  size. Changing the title spacing as well refreshes it, which hid the bug.
-  The library works around it by setting the back title again whenever the
-  back title spacing changes. Step 3 of "Collapse and navigation" covers it.
-- Open Single feature tests → Stack v4 → Header Letter Spacing before each
-  section.
+- Open Single feature tests → Stack v4 → **Header Letter Spacing** once per
+  platform; each group continues where the previous one ended.
+- iOS: `0` turns off the font's kerning, so "WAVY Today" is wider at `0` than
+  at "Spacing: omitted".
+- **Known issue:** Android: after "Custom typography" is set back to `false`,
+  the title keeps the custom font.
 
-## Steps
+## Steps - iOS
 
 ### Spacing values
 
-1. With custom typography and search disabled, note the initial (omitted)
-   spacing, then cycle to `0`.
+1. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 0" is shown.
 
-    - [ ] iOS: the large title gets slightly wider at `0`, because kerning is
-          turned off.
-    - [ ] Android: `0` matches the omitted spacing of the default toolbar
-          theme.
+   - [ ] The large title "WAVY Today" is wider than at "Spacing: omitted"; gaps
+         open up between "W", "A", "V" and "Y" (see Note).
 
-2. Cycle to `-0.9`, then `2`.
+2. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: -0.9" is shown.
 
-    - [ ] Negative fractional spacing tightens the title (and, on iOS, the
-          large title and the "Edit" bar button); positive spacing widens
-          them, with no other font props set.
+   - [ ] The large title and "Edit" are narrower than at "Spacing: omitted".
 
-3. Cycle from `2` back to omitted.
+3. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 2" is shown.
 
-    - [ ] The default spacing returns immediately; no previous spacing
-          remains.
+   - [ ] The large title and "Edit" are wider than at "Spacing: omitted".
 
-4. Turn off each "Apply to" switch in turn.
+4. Set "Apply to large title (iOS)" to `false`.
 
-    - [ ] Only the matching text returns to its default spacing.
+   - [ ] The large title looks as at "Spacing: omitted"; "Edit" stays wide.
 
-5. Enable custom typography and repeat the spacing cycle.
+5. Set "Apply to bar button item (iOS)" to `false`.
 
-    - [ ] The custom font is kept, and the spacing still applies and resets.
+   - [ ] "Edit" looks as at "Spacing: omitted".
 
----
+6. Set "Apply to large title (iOS)" and "Apply to bar button item (iOS)" to
+   `true`, then tap "Cycle spacing: omitted / 0 / -0.9 / 2" until
+   "Spacing: omitted" is shown.
 
-### Collapse and navigation
+   - [ ] The header looks as it did when the screen opened.
 
-1. iOS: for each spacing value, scroll until the large title collapses, then
-   return to the top.
+7. Set "Custom typography" to `true`, then tap
+   "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 2" is shown.
 
-    - [ ] Native collapse works, and the compact and large titles each keep
-          their own spacing.
-
-2. Push Details and cycle the spacing there.
-
-    - [ ] The title spacing applies on Android and iOS.
-    - [ ] iOS: the back button title follows the spacing, with and without
-          custom typography, and with "Disable back button menu" on.
-
-3. iOS: on Details, turn off "Apply to title" and cycle the spacing again.
-
-    - [ ] The back button title still follows every value, and its button
-          resizes to fit (wider at `2`, narrower at `-0.9`).
-
-4. iOS: go back, enable "Long title", push Details again and cycle the
-   spacing.
-
-    - [ ] Without custom typography or a disabled back button menu, the long
-          back title still shortens natively (to "Back" or just the chevron)
-          when there isn't enough space.
-
-5. iOS: on Details, slowly swipe back, cancel once, then complete the gesture.
-   Push again and use the native back button. Repeat after collapsing the root
-   title (use the push button at the bottom of the list).
-
-    - [ ] Both return paths keep the root title's spacing and scroll state.
+   - [ ] The large title uses a smaller font than in step 6, with its letters
+         spread wide.
 
 ---
 
-### Search and Dynamic Type (iOS)
+### Collapse
 
-1. Enable the search bar and repeat the spacing cycle and collapse. Focus
-   search, type a query, cancel, then disable the search bar.
+1. Make sure "Spacing: 2" is shown, then scroll down until the large title
+   collapses into the bar.
 
-    - [ ] Search remains usable, and the large title keeps its spacing.
+   - [ ] The title "WAVY Today" in the bar has its letters spread wide.
 
-2. Disable custom typography and search. Compare omitted with `-0.9` at the
-   default text size and at a large Dynamic Type size.
+2. Set "Custom typography" to `false`.
 
-    - [ ] The title scales the same way in both; only its spacing differs.
-          Letter spacing alone doesn't replace the system font.
+   - [ ] The title in the bar gets smaller, with its letters still spread wide.
+
+3. Scroll back to the top.
+
+   - [ ] The large title is shown again with its letters spread wide.
+
+---
+
+### Back button
+
+1. Make sure "Spacing: 2" is shown, then tap "Push details".
+
+   - [ ] The title "Details" and the back button title "WAVY Today" have their
+         letters spread wide.
+
+2. Set "Apply to back title (iOS)" to `false`.
+
+   - [ ] The back button title is narrower than in step 1; "Details" keeps its
+         letters spread wide.
+
+3. Set "Apply to back title (iOS)" to `true` and "Apply to title" to `false`,
+   then tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: -0.9" is
+   shown.
+
+   - [ ] "Details" is narrower than in step 1.
+   - [ ] The back button title is tight, and the back button is narrower than
+         in step 1.
+
+4. Set "Custom typography" to `true`, then tap
+   "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 2" is shown.
+
+   - [ ] "Details" uses a bigger font than in step 3.
+   - [ ] The back button title is bold with its letters spread wide.
+
+5. Set "Custom typography" to `false`.
+
+   - [ ] The back button title is regular weight again, with its letters still
+         spread wide.
+
+6. Tap the back button, set "Disable back button menu (iOS)" to `true`, then
+   tap "Push details".
+
+   - [ ] The back button title "WAVY Today" has its letters spread wide.
+
+## Steps - Android
+
+### Spacing values
+
+1. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 0" is shown.
+
+   - [ ] The title "WAVY Today" looks as at "Spacing: omitted".
+
+2. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: -0.9" is shown.
+
+   - [ ] The title is narrower than at "Spacing: omitted".
+
+3. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 2" is shown.
+
+   - [ ] The title is wider than at "Spacing: omitted".
+
+4. Set "Apply to title" to `false`.
+
+   - [ ] The title looks as at "Spacing: omitted".
+
+5. Set "Apply to title" to `true`, then tap
+   "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: omitted" is shown.
+
+   - [ ] The title looks as it did when the screen opened.
+
+---
+
+### Navigation
+
+1. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 2" is shown,
+   then tap "Push details".
+
+   - [ ] The title "Details" has its letters spread wide.
+
+2. Tap "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: -0.9" is shown.
+
+   - [ ] "Details" is narrower than in step 1.
+
+3. Tap the back arrow in the header.
+
+   - [ ] "WAVY Today" is shown, narrower than at "Spacing: omitted".
+
+---
+
+### Custom font
+
+1. Set "Custom typography" to `true`, then tap
+   "Cycle spacing: omitted / 0 / -0.9 / 2" until "Spacing: 2" is shown.
+
+   - [ ] The title is bigger and bolder than in step 3 of **Navigation**, with
+         its letters spread wide.

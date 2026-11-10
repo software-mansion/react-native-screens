@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
-import {
-  ScreenStack,
-  ScreenStackHeaderSearchBarView,
-  ScreenStackItem,
-  SearchBar,
-} from 'react-native-screens';
+import { ScreenStack, ScreenStackItem } from 'react-native-screens';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { Colors } from '@apps/shared/styling';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -26,7 +21,6 @@ function TestStackV4HeaderLetterSpacing() {
   const [applyToBarButton, setApplyToBarButton] = useState(true);
   const [largeTitle, setLargeTitle] = useState(true);
   const [customTypography, setCustomTypography] = useState(false);
-  const [searchBar, setSearchBar] = useState(false);
   const [longBackTitle, setLongBackTitle] = useState(false);
   const [disableBackButtonMenu, setDisableBackButtonMenu] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -72,14 +66,12 @@ function TestStackV4HeaderLetterSpacing() {
     <ScreenStack style={styles.container}>
       <ScreenStackItem
         screenId="letter-spacing-home"
-        style={StyleSheet.absoluteFill}
-        unstable_safeAreaEdges={{ top: !isIOS }}
+        style={[StyleSheet.absoluteFill, styles.container]}
         headerConfig={{
           title: longBackTitle
-            ? 'Letter Spacing With A Much Longer Title'
-            : 'Letter Spacing',
+            ? 'WAVY Today With A Much Longer Title'
+            : 'WAVY Today',
           largeTitle,
-          // On iOS 26+, an opaque bar covers the large title hosted in the scroll view.
           translucent: isIOS,
           backgroundColor: isIOS ? 'transparent' : undefined,
           headerRightBarButtonItems: [
@@ -93,16 +85,11 @@ function TestStackV4HeaderLetterSpacing() {
             },
           ],
           titleLetterSpacing,
-          titleFontSize: customTypography ? 20 : undefined,
+          titleFontSize: customTypography ? 24 : undefined,
           titleFontWeight: customTypography ? '600' : undefined,
           largeTitleLetterSpacing: applyToLargeTitle ? spacing : undefined,
           largeTitleFontSize: customTypography ? 30 : undefined,
           largeTitleFontWeight: customTypography ? '700' : undefined,
-          children: searchBar ? (
-            <ScreenStackHeaderSearchBarView>
-              <SearchBar hideWhenScrolling />
-            </ScreenStackHeaderSearchBarView>
-          ) : undefined,
         }}>
         <ScrollView
           style={styles.container}
@@ -113,11 +100,6 @@ function TestStackV4HeaderLetterSpacing() {
             label="Large title (iOS)"
             value={largeTitle}
             onValueChange={setLargeTitle}
-          />
-          <SettingsSwitch
-            label="Search bar (iOS)"
-            value={searchBar}
-            onValueChange={setSearchBar}
           />
           <SettingsSwitch
             label="Long title (iOS back title shortening)"
@@ -135,23 +117,19 @@ function TestStackV4HeaderLetterSpacing() {
               Row {index + 1} — scroll to collapse the large title
             </Text>
           ))}
-          <Button
-            title="Push details with collapsed title"
-            onPress={() => setShowDetails(true)}
-          />
         </ScrollView>
       </ScreenStackItem>
       {showDetails && (
         <ScreenStackItem
           screenId="letter-spacing-details"
-          style={StyleSheet.absoluteFill}
+          style={[StyleSheet.absoluteFill, styles.container]}
           nativeBackButtonDismissalEnabled
           onDismissed={() => setShowDetails(false)}
           headerConfig={{
             title: 'Details',
             largeTitle: false,
             titleLetterSpacing,
-            titleFontSize: customTypography ? 20 : undefined,
+            titleFontSize: customTypography ? 24 : undefined,
             titleFontWeight: customTypography ? '600' : undefined,
             backTitleLetterSpacing: applyToBackTitle ? spacing : undefined,
             backTitleFontSize: customTypography ? 17 : undefined,
@@ -159,10 +137,6 @@ function TestStackV4HeaderLetterSpacing() {
           }}>
           <ScrollView contentContainerStyle={styles.content}>
             {controls}
-            <Text>
-              Swipe back slowly, cancel once, then complete. The previous title
-              should keep its spacing. Also try the native back button.
-            </Text>
           </ScrollView>
         </ScreenStackItem>
       )}

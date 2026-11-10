@@ -52,8 +52,6 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
   BOOL _initialPropsSet;
-  /// Whether the back title letter spacing changed after the first props, so the visible back button needs a rebuild.
-  BOOL _backTitleLetterSpacingChanged;
 
   react::RNSScreenStackHeaderConfigState _lastSendState;
   react::RNSScreenStackHeaderConfigShadowNode::ConcreteState::Shared _state;
@@ -690,6 +688,9 @@ RNS_IGNORE_SUPER_CALL_END
       config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif
 
+#if !TARGET_OS_TV
+  UINavigationBarAppearance *previousAppearance = navitem.standardAppearance;
+#endif
   UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
   navitem.standardAppearance = appearance;
   navitem.compactAppearance = appearance;
@@ -720,13 +721,17 @@ RNS_IGNORE_SUPER_CALL_END
   }
   navitem.scrollEdgeAppearance = scrollEdgeAppearance;
 #if !TARGET_OS_TV
-  if (config != nil && config->_backTitleLetterSpacingChanged) {
-    config->_backTitleLetterSpacingChanged = NO;
-    // UIKit bug: when only the back button appearance changes, the visible system back button keeps its old title
-    // attributes and size. Setting the back title again makes UIKit rebuild the button with the new appearance.
-    NSString *backButtonTitle = prevItem.backButtonTitle;
-    prevItem.backButtonTitle = nil;
-    prevItem.backButtonTitle = backButtonTitle;
+  // On iOS 26+, UIKit doesn't restyle a visible system back button when only the back button appearance changes: it
+  // keeps the old title attributes and width. Setting the back title again rebuilds it.
+  if (@available(iOS 26.0, *)) {
+    NSNumber *previousBackTitleLetterSpacing =
+        previousAppearance.backButtonAppearance.normal.titleTextAttributes[NSKernAttributeName];
+    if (previousAppearance != nil && previousBackTitleLetterSpacing != config.backTitleLetterSpacing &&
+        ![previousBackTitleLetterSpacing isEqual:config.backTitleLetterSpacing]) {
+      NSString *backButtonTitle = prevItem.backButtonTitle;
+      prevItem.backButtonTitle = nil;
+      prevItem.backButtonTitle = backButtonTitle;
+    }
   }
   navitem.hidesBackButton = config.hideBackButton;
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
@@ -1171,7 +1176,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
-  _backTitleLetterSpacingChanged = NO;
 
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
 }
@@ -1270,12 +1274,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     }
     _titleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"title"]];
     _largeTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"largeTitle"]];
-    NSNumber *backTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"backTitle"]];
-    if (_initialPropsSet && backTitleLetterSpacing != _backTitleLetterSpacing &&
-        ![backTitleLetterSpacing isEqual:_backTitleLetterSpacing]) {
-      _backTitleLetterSpacingChanged = YES;
-    }
-    _backTitleLetterSpacing = backTitleLetterSpacing;
+    _backTitleLetterSpacing = [RNSScreenStackHeaderConfig numberOrNil:letterSpacing[@"backTitle"]];
   }
 
   if (newScreenProps.minimizationBehavior != oldScreenProps.minimizationBehavior) {
