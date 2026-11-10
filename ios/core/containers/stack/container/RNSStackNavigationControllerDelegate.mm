@@ -3,6 +3,7 @@
 #import "RNSStackAnimationTransitionTimeline.h"
 #import "RNSStackNoneAnimator.h"
 #import "RNSStackScreenController.h"
+#import "RNSStackTimelineAnimator.h"
 
 static RNSStackScreenController *_Nullable RNSStackScreenControllerOrNil(UIViewController *controller)
 {
@@ -25,9 +26,15 @@ static RNSStackScreenController *_Nullable RNSStackScreenControllerOrNil(UIViewC
       [RNSStackAnimationResolver transitionTimelineForKind:kind
                                                   outgoing:RNSStackScreenControllerOrNil(fromVC)
                                                   incoming:RNSStackScreenControllerOrNil(toVC)];
+  if (timeline == nil) {
+    return nil;
+  }
   // A static timeline gets here with pops UIKit starts itself (back button, back menu, tvOS Menu). The container
   // applies its own static changes without animation, see `applyStackModel:`.
-  return timeline.isStatic ? [RNSStackNoneAnimator new] : nil;
+  if (timeline.isStatic) {
+    return [RNSStackNoneAnimator new];
+  }
+  return [[RNSStackTimelineAnimator alloc] initWithTimeline:timeline];
 }
 
 @end
