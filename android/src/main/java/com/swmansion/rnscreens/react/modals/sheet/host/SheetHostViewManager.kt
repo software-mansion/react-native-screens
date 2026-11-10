@@ -126,6 +126,13 @@ class SheetHostViewManager :
         // TODO: @t0maboro - implement later
     }
 
+    override fun setPrefersEdgeAttachedInCompactHeight(
+        view: SheetHost,
+        value: Boolean,
+    ) {
+        // iOS only
+    }
+
     override fun setPreventNativeDismiss(
         view: SheetHost,
         value: Boolean,
