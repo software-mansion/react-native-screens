@@ -125,6 +125,43 @@ export type FormSheetNativeContainerStyleProps = {
 };
 
 /**
+ * Detent to move a presented sheet to with
+ * {@link FormSheetCommands.selectDetent | selectDetent}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a number — zero-based index of a detent in `detents`.
+ * - `'last'` — the last, largest detent.
+ */
+export type FormSheetSelectDetentIndex = number | 'last';
+
+/**
+ * Imperative commands of a {@link FormSheet}, exposed through its
+ * {@link FormSheetProps.ref | ref}.
+ */
+export interface FormSheetCommands {
+  /**
+   * Animates the presented sheet to the detent at the given index.
+   *
+   * @remarks
+   * The user can still drag the sheet between all detents afterwards. If the
+   * detent differs from the current one,
+   * {@link FormSheetProps.onDetentChanged | onDetentChanged} is called with its
+   * index, the same as after a user-driven change.
+   *
+   * The call takes effect once the sheet starts presenting (from
+   * {@link FormSheetProps.onWillAppear | onWillAppear} on) and until it starts
+   * dismissing. Calls made outside of that window are ignored. To choose the
+   * detent the sheet opens at, use
+   * {@link FormSheetProps.initialDetentIndex | initialDetentIndex} instead.
+   *
+   * @param index - Detent to move the sheet to.
+   * @platform android, ios
+   */
+  selectDetent: (index: FormSheetSelectDetentIndex) => void;
+}
+
+/**
  * Props for {@link FormSheet}.
  */
 export interface FormSheetProps {
@@ -134,6 +171,14 @@ export interface FormSheetProps {
    * @platform android, ios
    */
   children?: ViewProps['children'] | undefined;
+
+  /**
+   * Ref exposing the imperative commands of the sheet.
+   *
+   * @see {@link FormSheetCommands}
+   * @platform android, ios
+   */
+  ref?: React.Ref<FormSheetCommands> | undefined;
 
   /**
    * Determines whether the form sheet is currently visible.
