@@ -13,10 +13,10 @@
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewSeeking.h"
 #import "RNSStackAnimationMapper.h"
+#import "RNSStackAnimationPresetConfig.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
-#import "RNSStackPresetConfig.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -104,7 +104,7 @@ namespace react = facebook::react;
   // container state
   _screenKey = nil;
   _activityMode = RNSStackScreenActivityModeDetached;
-  _animation = RNSStackPresetConfig.defaultConfig;
+  _animation = RNSStackAnimationPresetConfig.defaultConfig;
 }
 
 - (void)setupController
