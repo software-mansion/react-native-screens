@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItemDelega
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragment
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragmentDelegate
+import com.swmansion.rnscreens.core.utils.FragmentTransactionScope
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
@@ -671,27 +672,31 @@ class TabsContainer internal constructor(
     }
 
     private fun applyInitialStateToFragmentManagerSync(nextSelectedFragment: TabsScreenFragment) {
-        requireFragmentManager
-            .createTransactionWithReordering()
-            .let {
-                tabsModel.forEach { fragment ->
-                    it.add(contentView.id, fragment)
-                    it.detach(fragment)
-                }
-                it.attach(nextSelectedFragment)
-            }.commitNowAllowingStateLoss()
+        FragmentTransactionScope.execute {
+            requireFragmentManager
+                .createTransactionWithReordering()
+                .let {
+                    tabsModel.forEach { fragment ->
+                        it.add(contentView.id, fragment)
+                        it.detach(fragment)
+                    }
+                    it.attach(nextSelectedFragment)
+                }.commitNowAllowingStateLoss()
+        }
     }
 
     private fun applyNextSelectedFragmentToFragmentManagerSync(
         currSelectedFragment: TabsScreenFragment,
         nextSelectedFragment: TabsScreenFragment,
     ) {
-        requireFragmentManager
-            .createTransactionWithReordering()
-            .let {
-                it.detach(currSelectedFragment)
-                it.attach(nextSelectedFragment)
-            }.commitNowAllowingStateLoss()
+        FragmentTransactionScope.execute {
+            requireFragmentManager
+                .createTransactionWithReordering()
+                .let {
+                    it.detach(currSelectedFragment)
+                    it.attach(nextSelectedFragment)
+                }.commitNowAllowingStateLoss()
+        }
     }
 
     private fun initNavigationState(selectedScreenKey: String) {

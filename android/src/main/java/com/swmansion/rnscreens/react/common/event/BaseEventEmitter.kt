@@ -9,7 +9,7 @@ internal abstract class BaseEventEmitter(
     val viewTag: Int,
 ) {
     protected val reactEventDispatcher: EventDispatcher =
-        checkNotNull(UIManagerHelper.getEventDispatcherForReactTag(reactContext, viewTag)) {
+        checkNotNull(TransactionSafeEventDispatcher.forReactTag(reactContext, viewTag)) {
             "[RNScreens] Nullish event dispatcher for view with tag: $viewTag"
         }
 

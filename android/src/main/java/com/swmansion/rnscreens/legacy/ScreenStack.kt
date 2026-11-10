@@ -7,6 +7,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.utils.FragmentTransactionScope
 import com.swmansion.rnscreens.legacy.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.legacy.bottomsheet.sheetShouldUseDimmingView
 import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
@@ -16,6 +17,7 @@ import com.swmansion.rnscreens.legacy.stack.views.ReverseFromIndex
 import com.swmansion.rnscreens.legacy.stack.views.ReverseOrder
 import com.swmansion.rnscreens.legacy.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.legacy.utils.setTweenAnimations
+import com.swmansion.rnscreens.react.common.event.TransactionSafeEventDispatcher
 import kotlin.collections.ArrayList
 import kotlin.math.max
 
@@ -116,8 +118,8 @@ class ScreenStack(
 
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
-        UIManagerHelper
-            .getEventDispatcherForReactTag((context as ReactContext), id)
+        TransactionSafeEventDispatcher
+            .forReactTag((context as ReactContext), id)
             ?.dispatchEvent(StackFinishTransitioningEvent(surfaceId, id))
     }
 
@@ -316,7 +318,7 @@ class ScreenStack(
 
             updateA11yForVisibleScreens()
 
-            transaction.commitNowAllowingStateLoss()
+            FragmentTransactionScope.execute { transaction.commitNowAllowingStateLoss() }
         }
     }
 

@@ -43,6 +43,7 @@ import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.legacy.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.legacy.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.legacy.ext.asScreenStackFragment
+import com.swmansion.rnscreens.react.common.event.TransactionSafeEventDispatcher
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -63,7 +64,7 @@ class Screen(
     internal val sheetAnimationCoordinator: SheetAnimationCoordinator by lazy { SheetAnimationCoordinator(this) }
 
     val reactEventDispatcher: EventDispatcher?
-        get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+        get() = TransactionSafeEventDispatcher.forReactTag(reactContext, id)
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -537,8 +538,8 @@ class Screen(
     internal fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-        UIManagerHelper
-            .getEventDispatcherForReactTag(screenContext, id)
+        TransactionSafeEventDispatcher
+            .forReactTag(screenContext, id)
             ?.dispatchEvent(
                 HeaderHeightChangeEvent(
                     surfaceId,

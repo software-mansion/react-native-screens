@@ -20,7 +20,9 @@ import com.swmansion.rnscreens.core.common.FragmentProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.utils.FragmentTransactionScope
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.react.common.event.TransactionSafeEventDispatcher
 
 open class ScreenContainer(
     context: Context?,
@@ -238,7 +240,7 @@ open class ScreenContainer(
         detachScreen(transaction, top.fragment as Fragment)
         attachScreen(transaction, screenWrappers[screenWrappers.size - 2].fragment)
         attachScreen(transaction, top.fragment as Fragment)
-        transaction.commitNowAllowingStateLoss()
+        FragmentTransactionScope.execute { transaction.commitNowAllowingStateLoss() }
     }
 
     fun detachBelowTop() {
@@ -247,14 +249,14 @@ open class ScreenContainer(
         }
         val transaction = createTransaction()
         detachScreen(transaction, screenWrappers[screenWrappers.size - 2].fragment)
-        transaction.commitNowAllowingStateLoss()
+        FragmentTransactionScope.execute { transaction.commitNowAllowingStateLoss() }
     }
 
     fun notifyScreenDetached(screen: Screen) {
         if (context is ReactContext) {
             val surfaceId = UIManagerHelper.getSurfaceId(context)
-            UIManagerHelper
-                .getEventDispatcherForReactTag(context as ReactContext, screen.id)
+            TransactionSafeEventDispatcher
+                .forReactTag(context as ReactContext, screen.id)
                 ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
         }
     }
@@ -263,8 +265,8 @@ open class ScreenContainer(
         val top = topScreen as Screen
         if (context is ReactContext) {
             val surfaceId = UIManagerHelper.getSurfaceId(context)
-            UIManagerHelper
-                .getEventDispatcherForReactTag(context as ReactContext, top.id)
+            TransactionSafeEventDispatcher
+                .forReactTag(context as ReactContext, top.id)
                 ?.dispatchEvent(ScreenDismissedEvent(surfaceId, top.id))
         }
     }
@@ -322,8 +324,10 @@ open class ScreenContainer(
         // attempt to reattach previously registered fragments that are not removed
         fragmentManager?.let {
             if (!it.isDestroyed) {
-                removeMyFragments(it)
-                it.executePendingTransactions()
+                FragmentTransactionScope.execute {
+                    removeMyFragments(it)
+                    it.executePendingTransactions()
+                }
             }
         }
 
@@ -457,7 +461,7 @@ open class ScreenContainer(
                 attachScreen(it, screenFragment.fragment)
             }
 
-            it.commitNowAllowingStateLoss()
+            FragmentTransactionScope.execute { it.commitNowAllowingStateLoss() }
         }
     }
 

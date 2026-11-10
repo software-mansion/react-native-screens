@@ -14,6 +14,7 @@ import com.swmansion.rnscreens.legacy.events.SearchBarCloseEvent
 import com.swmansion.rnscreens.legacy.events.SearchBarFocusEvent
 import com.swmansion.rnscreens.legacy.events.SearchBarSearchButtonPressEvent
 import com.swmansion.rnscreens.legacy.stack.SearchBarOpenEvent
+import com.swmansion.rnscreens.react.common.event.TransactionSafeEventDispatcher
 
 @SuppressLint("ViewConstructor")
 class SearchBarView(
@@ -134,7 +135,7 @@ class SearchBarView(
 
     private fun sendEvent(event: Event<*>) {
         val eventDispatcher: EventDispatcher? =
-            UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+            TransactionSafeEventDispatcher.forReactTag(context as ReactContext, id)
         eventDispatcher?.dispatchEvent(event)
     }
 

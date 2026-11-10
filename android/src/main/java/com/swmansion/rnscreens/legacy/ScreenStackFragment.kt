@@ -40,6 +40,7 @@ import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.legacy.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.legacy.utils.DeviceUtils
 import com.swmansion.rnscreens.legacy.utils.resolveBackgroundColor
+import com.swmansion.rnscreens.react.common.event.TransactionSafeEventDispatcher
 import kotlin.math.max
 
 sealed class KeyboardState
@@ -179,8 +180,8 @@ class ScreenStackFragment :
         if (!this.isRemoving || !this.isDetached) {
             val reactContext = screen.reactContext
             val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-            UIManagerHelper
-                .getEventDispatcherForReactTag(reactContext, screen.id)
+            TransactionSafeEventDispatcher
+                .forReactTag(reactContext, screen.id)
                 ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
         }
     }

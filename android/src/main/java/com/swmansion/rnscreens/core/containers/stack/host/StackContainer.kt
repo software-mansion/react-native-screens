@@ -27,6 +27,7 @@ import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPress
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragmentDelegate
+import com.swmansion.rnscreens.core.utils.FragmentTransactionScope
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.isMeasured
@@ -519,12 +520,14 @@ internal class StackContainer(
         // popBackStackImmediate. The synchronous pop makes the top-screen guard above
         // reliable against double taps: onBackStackChangeCommitted -> onNativeFragmentPop
         // updates stackModel before this call returns.
-        fragmentManager.popBackStackImmediate(
-            // key MUST BE present, otherwise the navigation action will be delegated to child primary navigation
-            // fragment.
-            checkNotNull(pressedItem.itemKey) { "[RNScreens] Screen key is required" },
-            FragmentManager.POP_BACK_STACK_INCLUSIVE,
-        )
+        FragmentTransactionScope.execute {
+            fragmentManager.popBackStackImmediate(
+                // key MUST BE present, otherwise the navigation action will be delegated to child primary navigation
+                // fragment.
+                checkNotNull(pressedItem.itemKey) { "[RNScreens] Screen key is required" },
+                FragmentManager.POP_BACK_STACK_INCLUSIVE,
+            )
+        }
     }
 
     // endregion
