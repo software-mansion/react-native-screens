@@ -7,8 +7,8 @@ import {
   detailsBlock,
   escapeSlack,
   extractVerdict,
-  neutralizeForPublic,
   formatUsd,
+  neutralizeAgentText,
   parseCost,
   ensureMirrorIssue,
   publishReportComment,
@@ -16,11 +16,9 @@ import {
   readJsonObject,
   readScreenshots,
   requireEnv,
-  screenshotsSection,
-  commentFooter,
-  reportForComment,
+  SCREENSHOTS_PLACEHOLDER,
+  stripSessionId,
   summaryOfOutput,
-  writeCommentFile,
 } from './argent-cloud-report.ts';
 import type { Mirror, Screenshots, Verdict } from './argent-cloud-report.ts';
 import { postToSlack } from './slack.ts';
@@ -37,7 +35,7 @@ type Context = {
   issueUrl: string;
   runUrl: string;
   failedStep: string | undefined;
-  reportUrl: string | undefined;
+  reportUrl: string | null;
   plan: Plan | null;
   source: Source | null;
   mirror: Mirror | null;
@@ -103,12 +101,9 @@ async function main(): Promise<void> {
     case 'notify':
       await notify(readContext());
       break;
-    case 'comment':
-      writeComment(readContext());
-      break;
     default:
       throw new Error(
-        `usage: argent-cloud-issue-repro-report.ts <report|publish|notify|comment>, got '${
+        `usage: argent-cloud-issue-repro-report.ts <mirror|report|publish|notify>, got '${
           command ?? ''
         }'`,
       );
@@ -127,10 +122,17 @@ function readContext(): Context {
   const stage = (process.env.STAGE ?? 'reproduce') as Stage;
   const plan = readJsonObject<Plan>(workFile('plan.json', 'PLAN_FILE'));
   const source = readJsonObject<Source>(workFile('source.json', 'SOURCE_FILE'));
-  const output = readFile(workFile('output/output.md', 'OUTPUT_FILE'));
+  // The output, the stream and the brief are agent text, so they are neutralized here, once; the
+  // plan is neutralized where the report renders it. The summary and the verdict are read from the
+  // output before that.
+  const rawOutput = readFile(workFile('output/output.md', 'OUTPUT_FILE'));
+  const stripped = rawOutput ? stripSessionId(rawOutput).trim() || null : null;
+  const output = stripped ? neutralizeAgentText(stripped) : null;
+  const stream = readFile(workFile('output/stream.md', 'STREAM_FILE'));
+  const brief = readFile(workFile('brief.md', 'BRIEF_FILE'));
   const planCost = parseCost(process.env.PLAN_COST_USD);
   const reproductionCost = parseCost(process.env.REPRO_COST_USD);
-  const verdict = output ? extractVerdict(output) : null;
+  const verdict = stripped ? extractVerdict(stripped) : null;
   return {
     stage,
     status: process.env.STATUS ?? 'unknown',
@@ -139,24 +141,21 @@ function readContext(): Context {
     issueUrl: requireEnv('ISSUE_URL'),
     runUrl: requireEnv('RUN_URL'),
     failedStep: process.env.FAILED_STEP || undefined,
-    reportUrl: process.env.REPORT_URL || undefined,
+    reportUrl: readFile(workFile('report-url.txt', 'REPORT_URL_FILE')),
     plan,
     source,
     mirror: readJsonObject<Mirror>(workFile('mirror.json', 'MIRROR_FILE')),
-    brief: readFile(workFile('brief.md', 'BRIEF_FILE')),
+    brief: brief ? neutralizeAgentText(brief) : null,
     output,
-    stream: readFile(workFile('output/stream.md', 'STREAM_FILE')),
+    stream: stream ? neutralizeAgentText(stripSessionId(stream)) : null,
     verdict,
-    summary: summaryText(stage, plan, output),
+    summary: summaryText(stage, plan, stripped),
     costs: {
       plan: planCost,
       reproduction: reproductionCost,
       total: planCost + reproductionCost,
     },
-    screenshots: readScreenshots(
-      process.env.SCREENSHOTS_DIR,
-      process.env.SCREENSHOTS_URL,
-    ),
+    screenshots: readScreenshots(process.env.SCREENSHOTS_DIR),
   };
 }
 
@@ -204,8 +203,30 @@ function sourceLabel(context: Context): string {
   return parts.join(', ');
 }
 
-function writeReport(context: Context): void {
+function neutralizeStrings<T>(value: T): T {
+  if (typeof value === 'string') {
+    return neutralizeAgentText(value) as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map(item => neutralizeStrings(item)) as T;
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, neutralizeStrings(item)]),
+    ) as T;
+  }
+  return value;
+}
+
+function writeReport(original: Context): void {
   const reportFile = workFile('report.md', 'REPORT_FILE') ?? requireEnv('REPORT_FILE');
+  // The plan's strings and the summary are agent text; the plan JSON below is shown raw, inside a
+  // code fence that a JSON string cannot close, because JSON escapes line breaks.
+  const context: Context = {
+    ...original,
+    summary: neutralizeAgentText(original.summary),
+    plan: original.plan ? neutralizeStrings(original.plan) : null,
+  };
   const lines: string[] = [];
   lines.push(`## Argent Cloud run: ${outcomeLabel(context)}`, '');
   lines.push('| | |', '|---|---|');
@@ -250,9 +271,8 @@ function writeReport(context: Context): void {
     lines.push('## Reproduction result', '', context.output, '');
   }
 
-  if (context.screenshots) {
-    lines.push(...screenshotsSection('## Screenshots', context.screenshots));
-  }
+  // The screenshots go right after the agent's report, which refers to them by number.
+  lines.push(SCREENSHOTS_PLACEHOLDER, '');
 
   if (context.plan) {
     lines.push('## Reproduction plan', '');
@@ -304,7 +324,7 @@ function writeReport(context: Context): void {
       '',
       ...detailsBlock(
         'plan.json',
-        ['```json', JSON.stringify(context.plan, null, 2), '```'].join('\n'),
+        ['```json', JSON.stringify(original.plan, null, 2), '```'].join('\n'),
       ),
       '',
     );
@@ -315,69 +335,26 @@ function writeReport(context: Context): void {
   console.log(`wrote ${reportFile}`);
 }
 
-function writeComment(context: Context): void {
-  const publicComment = process.env.PUBLIC_COMMENT === 'true';
-  // Agent text (the summary, the plan's fields, the report) is neutralized for the public issue
-  // one piece at a time; the headings, the table, the details wrapper and the footer are this
-  // script's own HTML and Markdown and must stay intact, so they are never passed through it.
-  const untrusted = (text: string): string =>
-    publicComment ? neutralizeForPublic(text) : text;
-  const lines = [
-    '## Argent Cloud reproduction',
-    '',
-    `An AI agent tried to reproduce ${
-      context.issueUrl
-    } in a small app on an iOS simulator. Verdict: **${outcomeLabel(
-      context,
-    )}**.`,
-    '',
-    untrusted(context.summary),
-    '',
-  ];
-  if (context.plan) {
-    lines.push(
-      '| | |',
-      '|---|---|',
-      `| React Native | ${untrusted(context.plan.reactNativeVersion ?? 'unknown')} |`,
-      `| Screens | ${untrusted(context.plan.screensVersion ?? 'unknown')} |`,
-      `| App | ${untrusted(
-        context.plan.appKind ?? 'unknown',
-      )} scaffold, ${configurationLabel(context.plan.configuration)} |`,
-      '',
-    );
-  }
-  if (context.output) {
-    lines.push(
-      ...detailsBlock(
-        'Report of the agent',
-        reportForComment(context.output, publicComment),
-      ),
-      '',
-    );
-  }
-  lines.push(...commentFooter(context.runUrl), '');
-  if (context.screenshots) {
-    lines.push(
-      `The agent took ${context.screenshots.files.length} screenshot(s). They follow below in the order it took them.`,
-      '',
-    );
-  }
-  writeCommentFile(lines);
-}
-
 // Creates the mirror of the original issue in the reports repository when it does not exist yet,
-// and writes its number and URL to MIRROR_FILE for the later jobs.
+// and writes its number to MIRROR_FILE and to the step outputs for the later jobs. Its URL names
+// the reports repository, so it is never an output. The issue is read from the event payload of the
+// run, never from the plan artifact, so a planning agent that escaped its sandbox cannot point the
+// reports at another issue's mirror.
 async function mirror(): Promise<void> {
-  const issue = readJsonObject<{
+  type Issue = {
     number?: number;
     title?: string;
     html_url?: string;
     body?: string | null;
     user?: { login?: string } | null;
     created_at?: string;
-  }>(workFile('issue.json', 'ISSUE_FILE') ?? requireEnv('ISSUE_FILE'));
+  };
+  const event = readJsonObject<{ issue?: Issue }>(
+    process.env.GITHUB_EVENT_PATH ?? requireEnv('ISSUE_EVENT_FILE'),
+  );
+  const issue = event?.issue;
   if (!issue || !issue.number || !issue.html_url) {
-    throw new Error('ISSUE_FILE does not hold an issue payload');
+    throw new Error('the event payload holds no issue');
   }
   const result = await ensureMirrorIssue({
     origin: requireEnv('ORIGIN_REPOSITORY'),
@@ -394,7 +371,7 @@ async function mirror(): Promise<void> {
   if (process.env.GITHUB_OUTPUT) {
     fs.appendFileSync(
       process.env.GITHUB_OUTPUT,
-      `number=${result.number}\nurl=${result.url}\n`,
+      `number=${result.number}\n`,
     );
   }
 }
@@ -405,14 +382,24 @@ async function publish(context: Context): Promise<void> {
       'MIRROR_FILE is missing, so there is no issue to report under',
     );
   }
-  const url = publishReportComment({
+  const url = await publishReportComment({
     mirror: context.mirror,
     streams: context.stream
       ? [{ name: 'Agent stream', content: context.stream }]
       : [],
+    screenshots: context.screenshots,
+    screenshotsPrefix: `issue-${context.issueNumber}/run-${requireEnv(
+      'GITHUB_RUN_ID',
+    )}-${process.env.GITHUB_RUN_ATTEMPT ?? '1'}`,
   });
-  if (process.env.GITHUB_OUTPUT) {
-    fs.appendFileSync(process.env.GITHUB_OUTPUT, `url=${url}\n`);
+  // The URL names the reports repository, so it goes to the Slack step through a file: a step
+  // output passed in `env` would be printed in the public log of that step.
+  if (url) {
+    fs.writeFileSync(
+      workFile('report-url.txt', 'REPORT_URL_FILE') ??
+        requireEnv('REPORT_URL_FILE'),
+      `${url}\n`,
+    );
   }
 }
 
@@ -429,9 +416,6 @@ async function notify(context: Context): Promise<void> {
   lines.push(`Cost: ${costLine(context.costs)}`);
   if (context.reportUrl) {
     lines.push(`Report: ${context.reportUrl}`);
-  }
-  if (context.screenshots?.artifactUrl) {
-    lines.push(`Screenshots: ${context.screenshots.artifactUrl}`);
   }
   lines.push(`Issue: ${context.issueUrl}`, `Run: ${context.runUrl}`);
   await postToSlack({ text: lines.join('\n') });

@@ -7,8 +7,10 @@
 # Usage: prepare-app.sh <plan.json> <overlay-dir> <app-dir>
 #
 # The templates are installed at their current versions on purpose: pinning them would freeze
-# security fixes, and this job holds no secrets, so a compromised template could only taint the
-# app that goes to Argent Cloud.
+# security fixes. This job holds no secrets, but code that runs here can still reach the runtime
+# token of the artifact and cache actions of this run, so a compromised template could taint the
+# app that goes to Argent Cloud and write caches of the default branch. No workflow that publishes
+# restores a dependency cache for that reason.
 set -euo pipefail
 
 # The name of the app and the last part of its bundle identifier (com.swmansion.reproapp).

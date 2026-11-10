@@ -39,11 +39,8 @@ outputs:
   cost-usd:
     description: The cost of the session in USD, as logged by --log-usage
     value: ${{ steps.run.outputs.cost-usd }}
-  screenshots-archive:
-    description: The downloaded screenshots archive, empty when there is none
-    value: ${{ steps.run.outputs.screenshots-archive }}
   screenshots-dir:
-    description: The extracted screenshots, empty when there are none
+    description: The extracted screenshots (regular files only), empty when there are none
     value: ${{ steps.run.outputs.screenshots-dir }}
 
 runs:
@@ -63,6 +60,9 @@ runs:
         ARGENT_BACKEND_IP: ${{ inputs.backend-ip }}
       run: |
         set -uo pipefail
+        # Every output is written to the file first: a file value wins over a `::set-output` command,
+        # so a line in the agent's text cannot set one.
+        printf '%s=\n' exit-code session-id cost-usd screenshots-dir >> "$GITHUB_OUTPUT"
         mkdir -p "$OUTPUT_DIR"
         OUTPUT_DIR="$(cd "$OUTPUT_DIR" && pwd)"
         output="$OUTPUT_DIR/output.md"
@@ -73,11 +73,11 @@ runs:
         [ -n "$EFFORT" ] && args+=(--effort "$EFFORT")
 
         # No -e: the run must always reach the parsing below. stdout (the agent's final report) goes to
-        # output.md, stderr (usage and session lines) to the log, and the exit code of argent-cloud
-        # itself, not of tee, is kept via PIPESTATUS.
+        # output.md and stderr (usage and session lines) to the log. Neither is streamed to the job
+        # log, which is public: both hold the session ID, which is masked below before they are
+        # printed, and both are agent text, which is printed with workflow commands turned off.
         exit_code=0
-        argent-cloud "${args[@]}" 2> >(tee "$log" >&2) | tee "$output" || exit_code=${PIPESTATUS[0]}
-        wait
+        argent-cloud "${args[@]}" > "$output" 2> "$log" || exit_code=$?
         echo "argent-cloud exited with $exit_code"
         echo "exit-code=$exit_code" >> "$GITHUB_OUTPUT"
 
@@ -86,13 +86,25 @@ runs:
         session_id=""
         if [ -f "$output" ]; then
           session_id=$(tail -n 1 "$output" | tr -d '\r' | sed -n 's/^session-id=\([A-Za-z0-9_.-]\{1,128\}\)$/\1/p')
-          sed -i '/^session-id=[A-Za-z0-9_.-]*$/d' "$output"
+          sed -i '/^session-id=[A-Za-z0-9_.-]*\r\?$/d' "$output"
         fi
         if [ -z "$session_id" ] && [ -f "$log" ]; then
           session_id=$(sed 's/\x1b\[[0-9;]*m//g' "$log" | grep -oE 'session created session_id=[A-Za-z0-9_.-]+' | head -n 1 | cut -d= -f2 || true)
         fi
-        echo "session ID: ${session_id:-none}"
+        if [ -n "$session_id" ]; then
+          echo "::add-mask::$session_id"
+          echo "session ID: found"
+        else
+          echo "session ID: none"
+        fi
         echo "session-id=$session_id" >> "$GITHUB_OUTPUT"
+        stop=$(openssl rand -hex 16)
+        echo "::group::argent-cloud stderr and report"
+        echo "::stop-commands::$stop"
+        cat "$log" 2>/dev/null || true
+        cat "$output" 2>/dev/null || true
+        echo "::$stop::"
+        echo "::endgroup::"
 
         # --log-usage prints one cost_usd=<n> line per turn; the sum is the cost of the session.
         cost=0
@@ -107,25 +119,32 @@ runs:
         [ -n "$session_id" ] || exit 0
         archive="$OUTPUT_DIR/screenshots.tar.gz"
         if ! argent-cloud archives download "$session_id" --kind screenshots --out "$archive"; then
-          echo "::warning::could not download the screenshots of session $session_id"
+          echo "::warning::could not download the screenshots of the session"
+          rm -f "$archive"
+          exit 0
+        fi
+        # The archive comes from the session, so its size is checked before it is extracted: at most
+        # 100 MB packed, 300 MB unpacked and 500 members.
+        packed=$(stat -c %s "$archive")
+        listing=$(tar -tvzf "$archive" 2>/dev/null) || listing=""
+        members=$(printf '%s\n' "$listing" | grep -c . || true)
+        unpacked=$(printf '%s\n' "$listing" | awk '{ sum += $3 } END { printf "%d", sum }')
+        if [ -z "$listing" ] || [ "$packed" -gt 104857600 ] || [ "$unpacked" -gt 314572800 ] || [ "$members" -gt 500 ]; then
+          echo "::warning::the screenshots archive is unreadable or too large ($packed bytes, $unpacked unpacked, $members members); it is not extracted"
           rm -f "$archive"
           exit 0
         fi
         extracted="$OUTPUT_DIR/screenshots"
         mkdir -p "$extracted"
-        if ! tar -xzf "$archive" -C "$extracted"; then
-          echo "::warning::could not extract $archive"
-          rm -f "$archive"
+        if ! tar -xzf "$archive" -C "$extracted" --no-same-owner --no-same-permissions; then
+          echo "::warning::could not extract the screenshots archive"
+          rm -rf "$archive" "$extracted"
           exit 0
         fi
-        echo "screenshots-archive=$archive" >> "$GITHUB_OUTPUT"
-        # The directory names inside the archive come from the session, so a name with a newline
-        # must not reach GITHUB_OUTPUT, where it would inject further outputs.
-        nested=""
-        while IFS= read -r -d '' dir; do nested="$dir"; break; done < <(find "$extracted" -mindepth 1 -type d -name screenshots -print0)
-        if [[ "$nested" == *$'\n'* ]] || [[ "$nested" == *$'\r'* ]]; then
-          echo "::warning::a screenshots directory name holds a line break; the archive root is used instead"
-          nested=""
-        fi
-        echo "screenshots-dir=${nested:-$extracted}" >> "$GITHUB_OUTPUT"
+        rm -f "$archive"
+        # Only regular files and directories are kept, so a symlink, hard link target or device cannot
+        # make a later step read or publish a file of the runner. Hard links are cut by copying.
+        find "$extracted" -mindepth 1 ! -type f ! -type d -delete
+        find "$extracted" -type f -links +1 -exec sh -c 'cp -- "$1" "$1.copy" && mv -f -- "$1.copy" "$1"' _ {} \;
+        echo "screenshots-dir=$extracted" >> "$GITHUB_OUTPUT"
         echo "screenshots: $(find "$extracted" -type f | wc -l | tr -d ' ') file(s)"
