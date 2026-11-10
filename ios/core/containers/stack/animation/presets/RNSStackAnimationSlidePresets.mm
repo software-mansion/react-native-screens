@@ -1,5 +1,6 @@
 #import "RNSStackAnimationSlidePresets.h"
 #import "RNSStackAnimationEasing.h"
+#import "RNSStackAnimationLength.h"
 #import "RNSStackAnimationPresetTracks.h"
 #import "RNSStackAnimationTrack.h"
 
@@ -15,7 +16,7 @@ static const CGFloat kRNSSlideDistanceFraction = 1;
 {
   return @[ [RNSStackAnimationPresetTracks
       translationTrackFromEdge:edge
-                      distance:RNSStackAnimationLengthMakeFraction(kRNSSlideDistanceFraction)
+                      distance:[RNSStackAnimationLength fraction:kRNSSlideDistanceFraction]
                      appearing:isAppearing
                     durationMs:kRNSSlideDurationMs
                         easing:[RNSStackAnimationEasing named:RNSStackAnimationEasingNameAccelerateDecelerate]] ];

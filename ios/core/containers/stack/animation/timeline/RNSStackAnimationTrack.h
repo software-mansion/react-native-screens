@@ -3,11 +3,11 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import "RNSStackAnimationAxis.h"
-#import "RNSStackAnimationLength.h"
 #import "RNSStackAnimationViewProperty.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackAnimationLength;
 @class RNSStackAnimationTiming;
 
 /**
@@ -24,12 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackAnimationTranslateTrack : RNSStackAnimationTrack
 
 @property (nonatomic, readonly) RNSStackAnimationAxis axis;
-@property (nonatomic, readonly) RNSStackAnimationLength from;
-@property (nonatomic, readonly) RNSStackAnimationLength to;
+@property (nonatomic, readonly) RNSStackAnimationLength *from;
+@property (nonatomic, readonly) RNSStackAnimationLength *to;
 
 - (instancetype)initWithAxis:(RNSStackAnimationAxis)axis
-                        from:(RNSStackAnimationLength)from
-                          to:(RNSStackAnimationLength)to
+                        from:(RNSStackAnimationLength *)from
+                          to:(RNSStackAnimationLength *)to
                       timing:(RNSStackAnimationTiming *)timing;
 
 @end

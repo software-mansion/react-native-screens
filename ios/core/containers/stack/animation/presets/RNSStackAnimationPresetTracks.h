@@ -3,11 +3,11 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import "RNSStackAnimationEdge.h"
-#import "RNSStackAnimationLength.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackAnimationEasing;
+@class RNSStackAnimationLength;
 @class RNSStackAnimationPropertyTrack;
 @class RNSStackAnimationTranslateTrack;
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  * disappearing view departs from rest along it (exiting through the opposite edge).
  */
 + (RNSStackAnimationTranslateTrack *)translationTrackFromEdge:(RNSStackAnimationEdge)edge
-                                                     distance:(RNSStackAnimationLength)distance
+                                                     distance:(RNSStackAnimationLength *)distance
                                                     appearing:(BOOL)isAppearing
                                                    durationMs:(NSInteger)durationMs
                                                        easing:(RNSStackAnimationEasing *)easing;

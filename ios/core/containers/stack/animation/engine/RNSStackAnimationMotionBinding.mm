@@ -1,5 +1,6 @@
 #import "RNSStackAnimationMotionBinding.h"
 #import "RNSAssert.h"
+#import "RNSStackAnimationLength.h"
 #import "RNSStackAnimationMotionTimeline.h"
 #import "RNSStackAnimationTiming.h"
 #import "RNSStackAnimationTrack.h"
@@ -130,7 +131,7 @@ static const double kRNSStackKeyframeStepMs = 8;
   }
 }
 
-- (CGFloat)pointsForLength:(RNSStackAnimationLength)length axis:(RNSStackAnimationAxis)axis
+- (CGFloat)pointsForLength:(RNSStackAnimationLength *)length axis:(RNSStackAnimationAxis)axis
 {
   if (length.unit == RNSStackAnimationLengthUnitPoints) {
     return length.value;
