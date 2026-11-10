@@ -10,8 +10,9 @@
 #import "RNSViewFrameChangeDelegate.h"
 
 @implementation RNSStackNavigationController {
-  // The screens in the stack, bottom to top. Kept here because `viewControllers` lags behind
-  // calls UIKit queues during its transition and drops the screen being swiped before the swipe commits.
+  // The screens in the stack, bottom to top. `viewControllers` cannot serve as the model (undocumented):
+  // it ignores a `setViewControllers:` UIKit queues behind its running transition, and it drops the
+  // swiped screen when the swipe begins, before it commits or cancels.
   NSMutableArray<RNSStackScreenController *> *_Nonnull _stackModel;
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
@@ -146,6 +147,8 @@
 
 - (nullable UIViewController *)popViewControllerAnimated:(BOOL)animated
 {
+  // The system pop recognizers call this when they begin (undocumented). The swipe can still cancel,
+  // so the screen leaves the model only when it commits, through the coordinator `super` creates.
   if ([self isSystemPopGestureBeginning]) {
     RNSStackScreenController *top = _stackModel.lastObject;
     UIViewController *popped = [super popViewControllerAnimated:animated];
@@ -156,6 +159,7 @@
   return [super popViewControllerAnimated:animated];
 }
 
+// The back button menu pops through here.
 - (nullable NSArray<UIViewController *> *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
   NSUInteger index = [_stackModel indexOfObject:static_cast<RNSStackScreenController *>(viewController)];
