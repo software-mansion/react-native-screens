@@ -45,6 +45,7 @@ let headerSearchPaths: [String] = [
     "ios/react/helpers/image",
     "ios/react/modals/contained-modal",
     "ios/react/modals/full-screen-modal",
+    "ios/react/modals/full-screen-modal/conversion",
     "ios/react/modals/sheet",
     "ios/react/modals/sheet/conversion",
     "ios/react/utils",

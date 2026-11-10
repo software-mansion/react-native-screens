@@ -4,6 +4,7 @@ import FullScreenModalHostNativeComponent from '../../../fabric/modals/full-scre
 import type {
   FullScreenModalProps,
   FullScreenModalNativeContainerStyleProps,
+  FullScreenModalTransition,
 } from './FullScreenModal.types';
 
 /**
@@ -16,6 +17,7 @@ export type FullScreenModalPresentationStyle =
 
 export interface FullScreenModalBaseProps extends FullScreenModalProps {
   presentationStyle: FullScreenModalPresentationStyle;
+  transition?: FullScreenModalTransition | undefined;
   nativeContainerStyle?:
     | StyleProp<FullScreenModalNativeContainerStyleProps>
     | undefined;

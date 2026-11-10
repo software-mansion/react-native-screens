@@ -16,9 +16,24 @@ type GenericEmptyEvent = Readonly<{}>;
 // it is not part of their public props.
 type PresentationStyle = 'replacingContent' | 'overContent';
 
+type Transition = 'automatic' | 'fade' | 'flip' | 'none';
+
+type Orientation =
+  | 'inherit'
+  | 'all'
+  | 'allButUpsideDown'
+  | 'portrait'
+  | 'portraitUp'
+  | 'portraitDown'
+  | 'landscape'
+  | 'landscapeLeft'
+  | 'landscapeRight';
+
 interface NativeProps extends ViewProps {
   presentationStyle?: CT.WithDefault<PresentationStyle, 'replacingContent'>;
   isOpen?: CT.WithDefault<boolean, false>;
+  transition?: CT.WithDefault<Transition, 'automatic'>;
+  orientation?: CT.WithDefault<Orientation, 'inherit'>;
   nativeContainerBackgroundColor?: ColorValue | undefined;
   // Events
   onPresentationRejected?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
