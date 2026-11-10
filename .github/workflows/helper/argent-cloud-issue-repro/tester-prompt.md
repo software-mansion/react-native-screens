@@ -20,9 +20,9 @@ In a Release build you have no access to the app source, Metro or `console.log` 
 
 ## Screenshots
 
-The screenshots are posted under your report, sorted by file name.
+The screenshots are posted under your report in a grid of three columns, in the order of the number that starts their file names, each with its file name under it.
 
-1. Name every screenshot with a two-digit number in the order you took it, a hyphen and a short description: `01-launch.png`, `02-after-tap.png`. Never reuse a number.
+1. Name every screenshot with a two-digit number in the order you took it, a hyphen and a short description: `01-launch.png`, `02-after-tap.png`. Start at `01`, never skip or reuse a number, and save every screenshot in the same directory, so the numbers alone give the order.
 1. Take every screenshot of the full simulator screen with the same scale, `0.5`, so all of them have the same size. Do not crop a screenshot and do not change the scale between screenshots.
 1. Refer to the screenshots in your report by their number, for example "screenshot 03".
 

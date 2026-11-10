@@ -16,25 +16,26 @@ name: Argent Cloud issue repro
 # only agent-written code that reaches the Argent Cloud host is the JavaScript of the overlay,
 # inside an app whose native code is the official template plus allowlisted npm releases.
 #
-# Everything is reported in the private reports repository (REPORTS_REPO below): the original issue
-# is mirrored there once, verbatim, by the reports App below, and every run posts under that mirror
-# the workflow report (plan, analysis, costs, brief), then the agent's report with its screenshots.
-# Every comment is posted by the ArgentCloud GitHub App through `argent-cloud comment`; the reports
-# App token is only the proof of write access that the backend checks. Nothing is posted on the
-# public issue unless the repository variable ARGENT_CLOUD_PUBLIC_COMMENTS is `true`, which also
-# needs the ArgentCloud App installed here.
+# Everything is reported in the private reports repository, which is named only by a secret and
+# masked in the logs: the original issue is mirrored there once, verbatim, and every run posts under
+# that mirror one comment with the workflow report (plan, analysis, costs, brief, the agent's report)
+# and the screenshots of the session in a grid, then the agent stream. The screenshots are committed
+# to a branch of the reports repository, which the comment embeds them from. All of it is done by
+# the reports App. Nothing is posted on the public issue.
 #
 # Workflow artifacts of a public repository can be downloaded by anyone who is logged in to GitHub.
-# They hold the plan, the agent-written app source and the reports; the agent stream is only posted
-# under the mirror issue.
+# They hold the plan, the agent-written app source and the build failure report. Nothing that the
+# tester sends back (its report, stream and screenshots) is uploaded or printed with workflow
+# commands on: it is posted under the mirror issue only.
 #
 # Secrets: ANTHROPIC_API_KEY (the tester) and, optionally, ANTHROPIC_API_KEY_PLANNER (the planning
 # agent; falls back to ANTHROPIC_API_KEY, but a separate key with its own spend cap limits what a
 # leak from the planning job can cost), SIM_ROUTER_API_KEY and ARGENT_BACKEND_IP (Argent Cloud),
-# ARGENT_CLOUD_REPORTS_APP_ID and ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY (the reports App, which opens
-# the mirror issues and whose token proves write access to argent-cloud: installed on the reports
-# repository with `issues: write`). The ArgentCloud App must be installed on the reports repository
-# too. Optional: SLACK_ARGENT_URL (a webhook).
+# ARGENT_CLOUD_REPORTS_REPO (the reports repository as `owner/name`; it needs at least one commit),
+# ARGENT_CLOUD_REPORTS_APP_ID and ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY (the reports App, installed on
+# the reports repository with `issues: write` for the mirror and the comments and `contents: write`
+# for the screenshots; without the latter the comment lists them). Optional: SLACK_ARGENT_URL (a
+# webhook).
 #
 # On the first run, check in the logs of the planning step that the allowed tools are exactly the
 # ones passed below and that claude-code-action posted no comment on the public issue.
@@ -54,9 +55,6 @@ env:
   TRIGGER_LABEL: argent-cloud
   HELPER_DIR: .github/workflows/helper/argent-cloud-issue-repro
   WORK_DIR: argent-cloud-work
-  REPORTS_REPO: software-mansion-labs/react-native-screens-argent-cloud
-  REPORTS_OWNER: software-mansion-labs
-  REPORTS_NAME: react-native-screens-argent-cloud
 
 jobs:
   # Only this job can write to the public issue, and it runs no code from the checkout: it removes
@@ -71,20 +69,35 @@ jobs:
       contents: read
       issues: write
     steps:
+      # A re-run keeps the original event, so the actor who started this attempt is checked too:
+      # otherwise anyone with write access could re-run a maintainer's run against a linked branch
+      # that changed since.
       - name: Check that a maintainer applied the label
         env:
           GH_TOKEN: ${{ github.token }}
           SENDER: ${{ github.event.sender.login }}
+          ACTOR: ${{ github.triggering_actor }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           # Fails closed: an API error counts as no role.
-          role=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$SENDER/permission" --jq .role_name 2>/dev/null || echo none)
+          role_of() {
+            gh api "repos/$GITHUB_REPOSITORY/collaborators/$1/permission" --jq .role_name 2>/dev/null || echo none
+          }
+          role=$(role_of "$SENDER")
           if [ "$role" != "admin" ] && [ "$role" != "maintain" ]; then
             echo "::error::$SENDER ($role) is not a maintainer; removing the $TRIGGER_LABEL label."
             gh issue edit "$ISSUE_NUMBER" -R "$GITHUB_REPOSITORY" --remove-label "$TRIGGER_LABEL"
             exit 1
           fi
           echo "$SENDER is a maintainer ($role)"
+          if [ "$ACTOR" != "$SENDER" ]; then
+            actor_role=$(role_of "$ACTOR")
+            if [ "$actor_role" != "admin" ] && [ "$actor_role" != "maintain" ]; then
+              echo "::error::$ACTOR ($actor_role) started this attempt and is not a maintainer"
+              exit 1
+            fi
+            echo "$ACTOR is a maintainer ($actor_role)"
+          fi
 
   # The planning agent runs here. The job holds the planner's API key and a read-only token, nothing
   # else; every output it produces goes through the plan artifact to jobs on fresh machines.
@@ -129,7 +142,10 @@ jobs:
         run: |
           mkdir -p "$WORK_DIR/source"
           "$HELPER_DIR/fetch-source.sh" "$WORK_DIR/source.json" "$WORK_DIR/source"
+          stop=$(openssl rand -hex 16)
+          echo "::stop-commands::$stop"
           jq . "$WORK_DIR/source.json"
+          echo "::$stop::"
 
       # The agent has no shell, so the published versions of every package it may pick are
       # resolved here, once, and handed to it as files.
@@ -192,7 +208,7 @@ jobs:
           claude_args: |
             --max-turns 80
             --allowedTools "Read,Glob,Grep,Edit(argent-cloud-work/repro/**),Write(argent-cloud-work/repro/**)"
-            --disallowedTools "Bash,WebFetch,WebSearch,Task,Agent,NotebookEdit,Skill,Read(//proc/**),Read(//sys/**),Read(//dev/**),Read(//etc/**),Read(//var/**),Read(//opt/**),Read(~/.*),Read(~/.*/**),Read(//home/runner/runners/**),Read(//home/runner/work/_actions/**),Read(//home/runner/work/_temp/**),Read(//tmp/**)"
+            --disallowedTools "Bash,WebFetch,WebSearch,Task,Agent,NotebookEdit,Skill,Read(//proc/**),Read(//sys/**),Read(//dev/**),Read(//etc/**),Read(//var/**),Read(//opt/**),Read(~/.*),Read(~/.*/**),Read(//home/runner/runners/**),Read(//home/runner/work/_actions/**),Read(//home/runner/work/_temp/**),Read(//tmp/**),Read(./.git/**)"
             --json-schema '${{ steps.agent-input.outputs.schema }}'
 
       # Keeps the agent's overlay and restores the checkout. Every git command runs against the
@@ -268,7 +284,11 @@ jobs:
           fi
           plan="$WORK_DIR/plan.json"
           printf '%s\n' "$PLAN" | jq . > "$plan"
+          # The plan is agent text: it is printed with workflow commands turned off.
+          stop=$(openssl rand -hex 16)
+          echo "::stop-commands::$stop"
           jq . "$plan"
+          echo "::$stop::"
           version_re='^[0-9]+\.[0-9]+\.[0-9]+([-.+][0-9A-Za-z.-]+)?$'
           feasible=$(jq -r .feasible "$plan")
           configuration=$(jq -r '.configuration // "release"' "$plan")
@@ -346,7 +366,6 @@ jobs:
     timeout-minutes: 15
     outputs:
       mirror-number: ${{ steps.mirror.outputs.number }}
-      mirror-url: ${{ steps.mirror.outputs.url }}
     env:
       STAGE: ${{ needs.plan.result != 'success' && 'plan-failed' || needs.plan.outputs.feasible != 'true' && 'plan-infeasible' || '' }}
       ISSUE_TITLE: ${{ github.event.issue.title }}
@@ -361,7 +380,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             /.nvmrc
-            /.github/actions/install-argent-cloud
+            /.github/actions/resolve-reports-repo
             /.github/workflows/helper
           sparse-checkout-cone-mode: false
 
@@ -378,9 +397,16 @@ jobs:
           name: argent-cloud-plan-issue-${{ github.event.issue.number }}
           path: ${{ env.WORK_DIR }}
 
+      - name: Resolve the reports repository
+        id: reports-repo
+        if: steps.download.outcome == 'success'
+        uses: ./.github/actions/resolve-reports-repo
+        with:
+          repo: ${{ secrets.ARGENT_CLOUD_REPORTS_REPO }}
+
       - name: Mint a token for the reports repository
         id: reports-token
-        if: steps.download.outcome == 'success'
+        if: steps.reports-repo.outcome == 'success'
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
         with:
           app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
@@ -391,36 +417,27 @@ jobs:
 
       - name: Mirror the issue in the reports repository
         id: mirror
-        if: steps.download.outcome == 'success'
+        if: steps.reports-token.outcome == 'success'
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
           ORIGIN_REPOSITORY: ${{ github.repository }}
-        run: |
-          node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts mirror
-          echo "[The mirror issue]($(jq -r .url "$WORK_DIR/mirror.json"))" >> "$GITHUB_STEP_SUMMARY"
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts mirror
 
       - name: Write the report
         if: steps.mirror.outcome == 'success' && env.STAGE != ''
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts report
-
-      - name: Install the argent-cloud CLI
-        if: steps.mirror.outcome == 'success' && env.STAGE != ''
-        uses: ./.github/actions/install-argent-cloud
 
       - name: Publish the report under the mirror issue
         id: publish
         if: steps.mirror.outcome == 'success' && env.STAGE != ''
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
-          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
-          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
 
       - name: Report to Slack
         if: always() && env.STAGE != ''
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ARGENT_URL }}
-          REPORT_URL: ${{ steps.publish.outputs.url }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts notify
 
   # Builds the app that the plan describes: an official template, allowlisted packages and the
@@ -528,7 +545,7 @@ jobs:
   # The build job holds no secrets, so its failure report is published from here.
   report-build-failure:
     needs: [plan, report-plan, build]
-    if: always() && needs.build.result == 'failure' && needs.report-plan.result == 'success'
+    if: always() && needs.build.result == 'failure' && needs.report-plan.outputs.mirror-number != ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -545,7 +562,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             /.nvmrc
-            /.github/actions/install-argent-cloud
+            /.github/actions/resolve-reports-repo
             /.github/workflows/helper
           sparse-checkout-cone-mode: false
 
@@ -569,10 +586,15 @@ jobs:
       - name: Read the failed step and the mirror
         env:
           MIRROR_NUMBER: ${{ needs.report-plan.outputs.mirror-number }}
-          MIRROR_URL: ${{ needs.report-plan.outputs.mirror-url }}
         run: |
           echo "FAILED_STEP=$(head -n 1 "$WORK_DIR/failed-step.txt")" >> "$GITHUB_ENV"
-          jq -n --argjson number "$MIRROR_NUMBER" --arg url "$MIRROR_URL" '{number: $number, url: $url}' > "$WORK_DIR/mirror.json"
+          jq -n --argjson number "$MIRROR_NUMBER" '{number: $number}' > "$WORK_DIR/mirror.json"
+
+      - name: Resolve the reports repository
+        id: reports-repo
+        uses: ./.github/actions/resolve-reports-repo
+        with:
+          repo: ${{ secrets.ARGENT_CLOUD_REPORTS_REPO }}
 
       - name: Mint a token for the reports repository
         id: reports-token
@@ -584,29 +606,23 @@ jobs:
           repositories: ${{ env.REPORTS_NAME }}
           permission-issues: write
 
-      - name: Install the argent-cloud CLI
-        uses: ./.github/actions/install-argent-cloud
-
       - name: Publish the report under the mirror issue
         id: publish
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
-          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
-          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
 
       - name: Report to Slack
         if: always()
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ARGENT_URL }}
-          REPORT_URL: ${{ steps.publish.outputs.url }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts notify
 
   # Runs the tester on Argent Cloud. The brief is the plan alone, never the issue text: the tester
   # has a shell on the cloud Mac, so it gets only what the planner distilled.
   reproduce:
     needs: [plan, report-plan, build]
-    if: ${{ !cancelled() && needs.build.result == 'success' && needs.report-plan.result == 'success' }}
+    if: ${{ !cancelled() && needs.build.result == 'success' && needs.report-plan.outputs.mirror-number != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
@@ -623,6 +639,7 @@ jobs:
           sparse-checkout: |
             /.nvmrc
             /.github/actions/install-argent-cloud
+            /.github/actions/resolve-reports-repo
             /.github/actions/run-argent-cloud
             /.github/workflows/helper
           sparse-checkout-cone-mode: false
@@ -647,9 +664,8 @@ jobs:
       - name: Write the mirror descriptor
         env:
           MIRROR_NUMBER: ${{ needs.report-plan.outputs.mirror-number }}
-          MIRROR_URL: ${{ needs.report-plan.outputs.mirror-url }}
         run: |
-          jq -n --argjson number "$MIRROR_NUMBER" --arg url "$MIRROR_URL" '{number: $number, url: $url}' > "$WORK_DIR/mirror.json"
+          jq -n --argjson number "$MIRROR_NUMBER" '{number: $number}' > "$WORK_DIR/mirror.json"
 
       - name: Install the argent-cloud CLI
         id: install
@@ -707,7 +723,10 @@ jobs:
               echo
             fi
           } > "$WORK_DIR/brief.md"
+          stop=$(openssl rand -hex 16)
+          echo "::stop-commands::$stop"
           cat "$WORK_DIR/brief.md"
+          echo "::$stop::"
 
       - name: Run argent-cloud
         id: repro
@@ -730,29 +749,26 @@ jobs:
             exit 1
           fi
 
-      - name: Upload the screenshots
-        id: screenshots
-        if: always() && steps.repro.outputs.screenshots-dir != ''
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: argent-cloud-screenshots-issue-${{ github.event.issue.number }}
-          path: ${{ steps.repro.outputs.screenshots-dir }}
-          if-no-files-found: warn
-          retention-days: 30
-
       - name: Write the report
         if: always()
         env:
           STATUS: ${{ job.status }}
           REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
           SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
-          SCREENSHOTS_URL: ${{ steps.screenshots.outputs.artifact-url }}
+          SESSION_ID: ${{ steps.repro.outputs.session-id }}
           FAILED_STEP: ${{ steps.install.outcome == 'failure' && 'Install the argent-cloud CLI' || steps.brief.outcome == 'failure' && 'Write the reproduction brief' || steps.repro-status.outcome == 'failure' && 'Run argent-cloud' || '' }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts report
 
+      - name: Resolve the reports repository
+        id: reports-repo
+        if: always()
+        uses: ./.github/actions/resolve-reports-repo
+        with:
+          repo: ${{ secrets.ARGENT_CLOUD_REPORTS_REPO }}
+
       - name: Mint a token for the reports repository
         id: reports-token
-        if: always()
+        if: always() && steps.reports-repo.outcome == 'success'
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
         with:
           app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
@@ -761,17 +777,30 @@ jobs:
           repositories: ${{ env.REPORTS_NAME }}
           permission-issues: write
 
+      # A token of its own commits the screenshots to their branch of the reports repository, so a
+      # missing contents permission only turns the screenshot grid into a list.
+      - name: Mint a token for the screenshots
+        id: screenshots-token
+        if: always() && steps.reports-repo.outcome == 'success' && steps.repro.outputs.screenshots-dir != ''
+        continue-on-error: true
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
+          private-key: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY }}
+          owner: ${{ env.REPORTS_OWNER }}
+          repositories: ${{ env.REPORTS_NAME }}
+          permission-contents: write
+
       - name: Publish the report under the mirror issue
         id: publish
-        if: always()
+        if: always() && steps.reports-token.outcome == 'success'
         env:
           REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
-          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
-          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
+          SCREENSHOTS_TOKEN: ${{ steps.screenshots-token.outputs.token }}
           STATUS: ${{ job.status }}
           REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
           SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
-          SCREENSHOTS_URL: ${{ steps.screenshots.outputs.artifact-url }}
+          SESSION_ID: ${{ steps.repro.outputs.session-id }}
           FAILED_STEP: ${{ steps.install.outcome == 'failure' && 'Install the argent-cloud CLI' || steps.brief.outcome == 'failure' && 'Write the reproduction brief' || steps.repro-status.outcome == 'failure' && 'Run argent-cloud' || '' }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
 
@@ -782,146 +811,6 @@ jobs:
           STATUS: ${{ job.status }}
           REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
           SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
-          SCREENSHOTS_URL: ${{ steps.screenshots.outputs.artifact-url }}
+          SESSION_ID: ${{ steps.repro.outputs.session-id }}
           FAILED_STEP: ${{ steps.install.outcome == 'failure' && 'Install the argent-cloud CLI' || steps.brief.outcome == 'failure' && 'Write the reproduction brief' || steps.repro-status.outcome == 'failure' && 'Run argent-cloud' || '' }}
-          REPORT_URL: ${{ steps.publish.outputs.url }}
         run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts notify
-
-      # The stream is posted under the mirror issue only; it is not part of the public artifact.
-      - name: Upload the reproduction output
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: argent-cloud-output-issue-${{ github.event.issue.number }}
-          path: |
-            ${{ env.WORK_DIR }}/output
-            !${{ env.WORK_DIR }}/output/screenshots
-            !${{ env.WORK_DIR }}/output/stream.md
-            ${{ env.WORK_DIR }}/report.md
-          if-no-files-found: warn
-          retention-days: 30
-
-  # Posts the agent's report with its screenshots under the mirror issue, as the ArgentCloud GitHub
-  # App. Runs no code from the issue or from the app, so it can hold the reports token. With the
-  # repository variable ARGENT_CLOUD_PUBLIC_COMMENTS set to `true` it also posts on the public issue,
-  # which needs the ArgentCloud App installed on this repository; that comment has mentions, HTML
-  # and foreign images neutralized.
-  comment:
-    needs: [plan, report-plan, build, reproduce]
-    if: ${{ !cancelled() && needs.reproduce.result != 'skipped' && needs.report-plan.result == 'success' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-      id-token: write
-    env:
-      ISSUE_TITLE: ${{ github.event.issue.title }}
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
-      ISSUE_URL: ${{ github.event.issue.html_url }}
-      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      STATUS: ${{ needs.reproduce.result }}
-      STAGE: reproduce
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-        with:
-          persist-credentials: false
-          sparse-checkout: |
-            /.nvmrc
-            /.github/actions/install-argent-cloud
-            /.github/actions/post-argent-cloud-comment
-            /.github/workflows/helper
-          sparse-checkout-cone-mode: false
-
-      - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version-file: '.nvmrc'
-
-      - name: Download the plan
-        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
-        with:
-          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
-          path: ${{ env.WORK_DIR }}
-
-      - name: Download the reproduction output
-        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
-        with:
-          name: argent-cloud-output-issue-${{ github.event.issue.number }}
-          path: ${{ env.WORK_DIR }}
-
-      - name: Check that the agent wrote a report
-        id: check
-        run: |
-          if [ ! -s "$WORK_DIR/output/output.md" ]; then
-            echo "::warning::the agent wrote no report, so nothing is posted"
-            echo "post=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "post=true" >> "$GITHUB_OUTPUT"
-          archive="$WORK_DIR/output/screenshots.tar.gz"
-          if [ -s "$archive" ]; then
-            mkdir -p "$WORK_DIR/screenshots"
-            tar -xzf "$archive" -C "$WORK_DIR/screenshots"
-            echo "screenshots-archive=$archive" >> "$GITHUB_OUTPUT"
-            echo "screenshots-dir=$WORK_DIR/screenshots" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Write the comments
-        if: steps.check.outputs.post == 'true'
-        env:
-          SCREENSHOTS_DIR: ${{ steps.check.outputs.screenshots-dir }}
-        run: |
-          COMMENT_FILE="$WORK_DIR/comment.md" PUBLIC_COMMENT=false \
-            node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts comment
-          COMMENT_FILE="$WORK_DIR/comment-public.md" PUBLIC_COMMENT=true \
-            node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts comment
-
-      - name: Install the argent-cloud CLI
-        if: steps.check.outputs.post == 'true'
-        uses: ./.github/actions/install-argent-cloud
-
-      - name: Mint a token for the reports repository
-        id: reports-token
-        if: steps.check.outputs.post == 'true'
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
-        with:
-          app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
-          private-key: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY }}
-          owner: ${{ env.REPORTS_OWNER }}
-          repositories: ${{ env.REPORTS_NAME }}
-          permission-issues: write
-
-      - name: Post the agent's report under the mirror issue
-        id: post
-        if: steps.check.outputs.post == 'true'
-        uses: ./.github/actions/post-argent-cloud-comment
-        with:
-          target: ${{ env.REPORTS_REPO }}#${{ needs.report-plan.outputs.mirror-number }}
-          comment-file: ${{ env.WORK_DIR }}/comment.md
-          screenshots: ${{ steps.check.outputs.screenshots-archive }}
-          github-token: ${{ steps.reports-token.outputs.token }}
-          sim-router-api-key: ${{ secrets.SIM_ROUTER_API_KEY }}
-          backend-ip: ${{ secrets.ARGENT_BACKEND_IP }}
-
-      - name: Link the comment
-        if: steps.post.outputs.url != ''
-        env:
-          URL: ${{ steps.post.outputs.url }}
-        run: echo "[The agent's report under the mirror issue]($URL)" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Post the agent's report on the public issue
-        id: post-public
-        if: steps.check.outputs.post == 'true' && vars.ARGENT_CLOUD_PUBLIC_COMMENTS == 'true'
-        uses: ./.github/actions/post-argent-cloud-comment
-        with:
-          target: ${{ github.repository }}#${{ github.event.issue.number }}
-          comment-file: ${{ env.WORK_DIR }}/comment-public.md
-          screenshots: ${{ steps.check.outputs.screenshots-archive }}
-          sim-router-api-key: ${{ secrets.SIM_ROUTER_API_KEY }}
-          backend-ip: ${{ secrets.ARGENT_BACKEND_IP }}
-
-      - name: Link the public comment
-        if: steps.post-public.outputs.url != ''
-        env:
-          URL: ${{ steps.post-public.outputs.url }}
-        run: echo "[The comment on the public issue]($URL)" >> "$GITHUB_STEP_SUMMARY"
