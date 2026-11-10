@@ -37,6 +37,7 @@ export function SheetBase(props: SheetBaseProps) {
     preferredCornerRadius,
     nativeContainerStyle,
     backgroundEffect,
+    preferredContentSize,
     presentationStyle,
     ...rest
   } = props;
@@ -66,6 +67,8 @@ export function SheetBase(props: SheetBaseProps) {
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
+      preferredContentWidth={preferredContentSize?.width}
+      preferredContentHeight={preferredContentSize?.height}
       nativeContainerBackgroundColor={
         StyleSheet.flatten(nativeContainerStyle)?.backgroundColor
       }

@@ -125,6 +125,20 @@ export type SheetBackgroundEffect =
   | SheetBackgroundEffectBlur;
 
 /**
+ * Preferred size of a sheet, in density-independent pixels.
+ */
+export interface SheetPreferredContentSize {
+  /**
+   * Preferred width of the sheet.
+   */
+  width: number;
+  /**
+   * Preferred height of the sheet.
+   */
+  height: number;
+}
+
+/**
  * Style of the native container hosting a sheet's content.
  */
 export type SheetNativeContainerStyleProps = {
@@ -149,6 +163,8 @@ export interface SheetProps {
   initialDetentIndex?: SheetInitialDetentIndex | undefined;
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
   prefersEdgeAttachedInCompactHeight?: boolean | undefined;
+  preferredContentSize?: SheetPreferredContentSize | undefined;
+  widthFollowsPreferredContentSizeWhenEdgeAttached?: boolean | undefined;
   preventNativeDismiss?: boolean | undefined;
   nativeContainerStyle?: StyleProp<SheetNativeContainerStyleProps> | undefined;
   backgroundEffect?: SheetBackgroundEffect | undefined;

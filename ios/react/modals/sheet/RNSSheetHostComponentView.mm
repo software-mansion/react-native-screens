@@ -44,6 +44,8 @@ namespace react = facebook::react;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _prefersEdgeAttachedInCompactHeight;
+  CGSize _preferredContentSize;
+  BOOL _widthFollowsPreferredContentSizeWhenEdgeAttached;
   BOOL _preventNativeDismiss;
   UIColor *_Nullable _nativeContainerBackgroundColor;
   UIVisualEffect *_Nullable _backgroundEffect;
@@ -81,6 +83,8 @@ namespace react = facebook::react;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _prefersEdgeAttachedInCompactHeight = NO;
+  _preferredContentSize = CGSizeZero;
+  _widthFollowsPreferredContentSizeWhenEdgeAttached = NO;
   _preventNativeDismiss = NO;
   _nativeContainerBackgroundColor = nil;
   _backgroundEffect = nil;
@@ -282,6 +286,20 @@ namespace react = facebook::react;
 
   if (oldComponentProps.prefersEdgeAttachedInCompactHeight != newComponentProps.prefersEdgeAttachedInCompactHeight) {
     _prefersEdgeAttachedInCompactHeight = static_cast<BOOL>(newComponentProps.prefersEdgeAttachedInCompactHeight);
+    [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.preferredContentWidth != newComponentProps.preferredContentWidth ||
+      oldComponentProps.preferredContentHeight != newComponentProps.preferredContentHeight) {
+    _preferredContentSize =
+        CGSizeMake(newComponentProps.preferredContentWidth, newComponentProps.preferredContentHeight);
+    [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.widthFollowsPreferredContentSizeWhenEdgeAttached !=
+      newComponentProps.widthFollowsPreferredContentSizeWhenEdgeAttached) {
+    _widthFollowsPreferredContentSizeWhenEdgeAttached =
+        static_cast<BOOL>(newComponentProps.widthFollowsPreferredContentSizeWhenEdgeAttached);
     [_controller setNeedsBehaviorUpdate];
   }
 
