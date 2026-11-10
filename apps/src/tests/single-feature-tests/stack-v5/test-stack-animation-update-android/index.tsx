@@ -24,7 +24,13 @@ type AnimationOption = (typeof ANIMATION_OPTIONS)[number];
 // An unset `animation` resolves to `default` natively, which is not one of the picker's
 // values, so every route starts with `slideFromRight` set explicitly.
 const DEFAULT_ANIMATION: AnimationOption = 'slideFromRight';
-const DEFAULT_OPTIONS = { animation: DEFAULT_ANIMATION };
+
+function optionsFor(name: string) {
+  return {
+    animation: DEFAULT_ANIMATION,
+    headerConfig: { title: name, hidden: true },
+  };
+}
 
 // The picker only offers the slide subset of the library's union.
 function asOption(
@@ -42,17 +48,17 @@ function TestStackAnimationUpdateAndroid() {
         {
           name: 'Home',
           element: <HomeScreen />,
-          options: DEFAULT_OPTIONS,
+          options: optionsFor('Home'),
         },
         {
           name: 'Blue',
           element: <BlueScreen />,
-          options: DEFAULT_OPTIONS,
+          options: optionsFor('Blue'),
         },
         {
           name: 'Red',
           element: <RedScreen />,
-          options: DEFAULT_OPTIONS,
+          options: optionsFor('Red'),
         },
       ]}
     />
