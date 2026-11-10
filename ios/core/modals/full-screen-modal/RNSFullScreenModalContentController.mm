@@ -3,11 +3,14 @@
 #import "RNSFullScreenModalPresentationManager.h"
 
 #import "RNSAssert.h"
+#import "RNSDefines.h"
+#import "UIViewController+RNScreens.h"
 
 @implementation RNSFullScreenModalContentController {
   RNSFullScreenModalPresentationManager *_Nonnull _presentationManager;
 
   BOOL _needsPresentationUpdate;
+  BOOL _needsOrientationUpdate;
 }
 
 - (instancetype)init
@@ -17,6 +20,10 @@
 
     _presentationStyle = RNSFullScreenModalPresentationStyleReplacingContent;
     [self applyPresentationStyle];
+
+    _transition = RNSFullScreenModalTransitionAutomatic;
+    _orientation = RNSOrientationInherit;
+    [self applyTransition];
   }
   return self;
 }
@@ -58,6 +65,28 @@
       break;
   }
   [self applyBackgroundColor];
+}
+
+- (void)applyTransition
+{
+  _isTransitionAnimated = _transition != RNSFullScreenModalTransitionNone;
+
+  switch (_transition) {
+    case RNSFullScreenModalTransitionFade:
+      self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+      break;
+    case RNSFullScreenModalTransitionFlip:
+#if TARGET_OS_TV
+      self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+#else
+      self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+#endif // TARGET_OS_TV
+      break;
+    case RNSFullScreenModalTransitionAutomatic:
+    case RNSFullScreenModalTransitionNone:
+      self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+      break;
+  }
 }
 
 - (void)applyBackgroundColor
@@ -135,6 +164,49 @@
   }
 }
 
+#pragma mark - Orientation
+
+#if !TARGET_OS_TV
+
+- (RNSOrientation)evaluateOrientation
+{
+  UIViewController *child = self.childViewControllers.lastObject;
+  if ([child respondsToSelector:@selector(evaluateOrientation)]) {
+    RNSOrientation childOrientation = [static_cast<id<RNSOrientationProviding>>(child) evaluateOrientation];
+    if (childOrientation != RNSOrientationInherit) {
+      return childOrientation;
+    }
+  }
+
+  return _orientation;
+}
+
+// While the modal is presented, UIKit asks it, not its presenter.
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  return [self reactNativeScreensInterfaceOrientationMaskForOrientation:[self evaluateOrientation]];
+}
+
+- (void)updateOrientation
+{
+  // A modal that is not presented, or is on its way out, is asked again when it is presented.
+  if (self.presentingViewController == nil || self.isBeingDismissed || !self.presentationProvider.isOpen) {
+    return;
+  }
+
+  // UIKit asks the presented modal, not the root controller.
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    [self setNeedsUpdateOfSupportedInterfaceOrientations];
+    return;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+
+  [UIViewController attemptRotationToDeviceOrientation];
+}
+
+#endif // !TARGET_OS_TV
+
 #pragma mark - Presentation
 
 - (void)updatePresentationState
@@ -155,15 +227,26 @@
   _needsPresentationUpdate = YES;
 }
 
+- (void)setNeedsOrientationUpdate
+{
+  _needsOrientationUpdate = YES;
+}
+
 #pragma mark - Updates
 
 - (void)flushPendingUpdates
 {
-  if (!_needsPresentationUpdate) {
-    return;
+  if (_needsOrientationUpdate) {
+    _needsOrientationUpdate = NO;
+#if !TARGET_OS_TV
+    [self updateOrientation];
+#endif // !TARGET_OS_TV
   }
-  _needsPresentationUpdate = NO;
-  [self updatePresentationState];
+
+  if (_needsPresentationUpdate) {
+    _needsPresentationUpdate = NO;
+    [self updatePresentationState];
+  }
 }
 
 @end

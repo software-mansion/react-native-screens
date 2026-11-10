@@ -3,6 +3,9 @@ export type {
   FullScreenModalReplacingContentProps,
   FullScreenModalOverContentProps,
   FullScreenModalNativeContainerStyleProps,
+  FullScreenModalTransition,
+  FullScreenModalOverContentTransition,
+  FullScreenModalOrientation,
 } from './FullScreenModal.types';
 
 export { FullScreenModalReplacingContent } from './FullScreenModalReplacingContent';

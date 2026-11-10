@@ -1,5 +1,48 @@
 import type { StyleProp, ViewProps, ViewStyle } from 'react-native';
-import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
+import type {
+  EmptyEventPayload,
+  InterfaceOrientation,
+  NativeEventHandler,
+} from '../../shared/types';
+
+/**
+ * Transition a full-screen modal opens and closes with.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'automatic'` — the content slides up from the bottom of the screen.
+ * - `'fade'` — the content cross-dissolves.
+ * - `'flip'` — the window flips horizontally to reveal the content. Supported
+ *   only by {@link FullScreenModalReplacingContent}; on tvOS it falls back
+ *   to `'automatic'`.
+ * - `'none'` — the modal opens and closes without an animation.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uimodaltransitionstyle | UIModalTransitionStyle}
+ * @platform ios
+ */
+export type FullScreenModalTransition = 'automatic' | 'fade' | 'flip' | 'none';
+
+/**
+ * Transition a {@link FullScreenModalOverContent} opens and closes with: a
+ * {@link FullScreenModalTransition} other than `'flip'`.
+ *
+ * @platform ios
+ */
+export type FullScreenModalOverContentTransition = Exclude<
+  FullScreenModalTransition,
+  'flip'
+>;
+
+/**
+ * Interface orientations a full-screen modal supports.
+ *
+ * @remarks
+ * Takes the {@link InterfaceOrientation} values, plus `'inherit'` — the
+ * orientations the app supports for the window.
+ *
+ * @platform ios
+ */
+export type FullScreenModalOrientation = InterfaceOrientation | 'inherit';
 
 /**
  * Style of the native container hosting the content of a full-screen modal.
@@ -53,6 +96,23 @@ export interface FullScreenModalProps {
    * @platform ios
    */
   isOpen: boolean;
+
+  /**
+   * Interface orientations the modal supports while it is open.
+   *
+   * @remarks
+   * When a container nested in the modal, e.g. `Tabs` or `Split`, specifies
+   * an orientation other than `'inherit'`, that orientation is used instead.
+   * It is applied when the modal is presented and when this prop changes;
+   * a change of the nested container's orientation alone may not rotate the
+   * screen while the modal is open. On iOS 15, a change while the modal is
+   * open takes effect on the next device rotation. After the modal closes, the
+   * orientations of the content underneath apply again.
+   *
+   * @defaultValue `'inherit'`
+   * @platform ios
+   */
+  orientation?: FullScreenModalOrientation | undefined;
 
   /**
    * Called when `isOpen` flipped to `true` but the presentation was dropped,
@@ -147,6 +207,18 @@ export interface FullScreenModalProps {
 export interface FullScreenModalReplacingContentProps
   extends FullScreenModalProps {
   /**
+   * Transition the modal opens and closes with.
+   *
+   * @remarks
+   * Like the presentation itself, the transition is fixed when the modal
+   * opens: a change while the modal is open applies from the next opening.
+   *
+   * @defaultValue `'automatic'`
+   * @platform ios
+   */
+  transition?: FullScreenModalTransition | undefined;
+
+  /**
    * Style of the native container hosting the modal content.
    *
    * @defaultValue The system background color.
@@ -164,6 +236,21 @@ export interface FullScreenModalReplacingContentProps
  * @experimental
  */
 export interface FullScreenModalOverContentProps extends FullScreenModalProps {
+  /**
+   * Transition the modal opens and closes with.
+   *
+   * @remarks
+   * Like the presentation itself, the transition is fixed when the modal
+   * opens: a change while the modal is open applies from the next opening.
+   *
+   * `'flip'` is not supported: it would flip the content visible through the
+   * modal.
+   *
+   * @defaultValue `'automatic'`
+   * @platform ios
+   */
+  transition?: FullScreenModalOverContentTransition | undefined;
+
   /**
    * Style of the native container hosting the modal content.
    *
