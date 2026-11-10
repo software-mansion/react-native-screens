@@ -1,8 +1,7 @@
 #import "RNSStackNoneAnimator.h"
+#import "RNSStackTransitionAnimatorSubclass.h"
 
-@implementation RNSStackNoneAnimator {
-  UIViewPropertyAnimator *_Nullable _animator;
-}
+@implementation RNSStackNoneAnimator
 
 - (NSTimeInterval)transitionDuration:(nullable id<UIViewControllerContextTransitioning>)transitionContext
 {
@@ -11,18 +10,8 @@
   return 0.001;
 }
 
-- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+- (UIViewPropertyAnimator *)propertyAnimatorForTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
-  [[self interruptibleAnimatorForTransition:transitionContext] startAnimation];
-}
-
-- (id<UIViewImplicitlyAnimating>)interruptibleAnimatorForTransition:
-    (id<UIViewControllerContextTransitioning>)transitionContext
-{
-  if (_animator != nil) {
-    return _animator;
-  }
-
   UIViewController *toController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
   UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
   toView.frame = [transitionContext finalFrameForViewController:toController];
@@ -34,21 +23,17 @@
   UIView *hiddenView = [UIView new];
   hiddenView.hidden = YES;
   [transitionContext.containerView addSubview:hiddenView];
-  _animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                         curve:UIViewAnimationCurveLinear
-                                                    animations:^{
-                                                      hiddenView.alpha = 0;
-                                                    }];
-  [_animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+  UIViewPropertyAnimator *animator =
+      [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                 curve:UIViewAnimationCurveLinear
+                                            animations:^{
+                                              hiddenView.alpha = 0;
+                                            }];
+  [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
     [hiddenView removeFromSuperview];
     [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
   }];
-  return _animator;
-}
-
-- (void)animationEnded:(BOOL)transitionCompleted
-{
-  _animator = nil;
+  return animator;
 }
 
 @end
