@@ -10,6 +10,7 @@ export type {
   FormSheetBackgroundEffectBlur,
   FormSheetBackgroundEffectBlurStyle,
   FormSheetBackgroundEffectColor,
+  FormSheetPreferredContentSize,
 } from './FormSheet.types';
 
 export { FormSheet } from './FormSheet';

@@ -133,6 +133,27 @@ class SheetHostViewManager :
         // iOS only
     }
 
+    override fun setPreferredContentWidth(
+        view: SheetHost,
+        value: Float,
+    ) {
+        // iOS only
+    }
+
+    override fun setPreferredContentHeight(
+        view: SheetHost,
+        value: Float,
+    ) {
+        // iOS only
+    }
+
+    override fun setWidthFollowsPreferredContentSizeWhenEdgeAttached(
+        view: SheetHost,
+        value: Boolean,
+    ) {
+        // iOS only
+    }
+
     override fun setPreventNativeDismiss(
         view: SheetHost,
         value: Boolean,

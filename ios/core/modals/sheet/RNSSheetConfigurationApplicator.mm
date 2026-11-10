@@ -36,6 +36,8 @@
                                       controller:(RNSSheetContentController *)controller
                              selectInitialDetent:(BOOL)selectInitialDetent
 {
+  CGSize preferredContentSize = behaviorProvider.preferredContentSize;
+
 #if !TARGET_OS_TV
   UISheetPresentationController *sheet = controller.sheetPresentationController;
   RNSAssert(
@@ -56,6 +58,7 @@
 
   BOOL prefersScrollingExpands = behaviorProvider.prefersScrollingExpandsWhenScrolledToEdge;
   BOOL prefersEdgeAttachedInCompactHeight = behaviorProvider.prefersEdgeAttachedInCompactHeight;
+  BOOL widthFollowsPreferredContentSize = behaviorProvider.widthFollowsPreferredContentSizeWhenEdgeAttached;
 
   // Appearance data
 
@@ -72,6 +75,8 @@
     sheet.detents = nativeDetents;
     sheet.prefersScrollingExpandsWhenScrolledToEdge = prefersScrollingExpands;
     sheet.prefersEdgeAttachedInCompactHeight = prefersEdgeAttachedInCompactHeight;
+    sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = widthFollowsPreferredContentSize;
+    controller.preferredContentSize = preferredContentSize;
     if (initialDetentIdentifier != nil) {
       sheet.selectedDetentIdentifier = initialDetentIdentifier;
     }
@@ -86,6 +91,8 @@
     }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
   }];
+#else
+  controller.preferredContentSize = preferredContentSize;
 #endif // !TARGET_OS_TV
 
   controller.view.backgroundColor = appearanceProvider.nativeContainerBackgroundColor ?: UIColor.clearColor;

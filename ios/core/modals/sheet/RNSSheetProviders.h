@@ -32,6 +32,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)initialDetentIndex;
 - (BOOL)prefersScrollingExpandsWhenScrolledToEdge;
 - (BOOL)prefersEdgeAttachedInCompactHeight;
+/**
+ * Size assigned to the sheet controller's `preferredContentSize`. `CGSizeZero` leaves the size to the system.
+ */
+- (CGSize)preferredContentSize;
+- (BOOL)widthFollowsPreferredContentSizeWhenEdgeAttached;
 - (BOOL)preventNativeDismiss;
 /**
  * Height of the sheet's content, used by the `kRNSSheetFitToContents` detent. A value of 0 or less means the
