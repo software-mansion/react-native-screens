@@ -8,11 +8,14 @@
 #import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewSeeking.h"
+#import "RNSStackAnimationMapper.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
+#import "RNSStackPresetConfig.h"
 #import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -68,6 +71,7 @@ namespace react = facebook::react;
   // container state
   _screenKey = nil;
   _activityMode = RNSStackScreenActivityModeDetached;
+  _animation = RNSStackPresetConfig.defaultConfig;
 }
 
 - (void)setupController
@@ -185,6 +189,11 @@ namespace react = facebook::react;
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
     RCTAssert(_screenKey == nil, @"[RNScreens] ScreenController cannot change its screenKey");
     _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
+  }
+
+  if (oldComponentProps.animation != newComponentProps.animation) {
+    _animation = [RNSStackAnimationMapper
+        animationConfigFromProp:rnscreens::conversion::RNSConvertFollyDynamicToId(newComponentProps.animation)];
   }
 
   [super updateProps:props oldProps:oldProps];

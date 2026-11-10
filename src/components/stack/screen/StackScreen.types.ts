@@ -159,6 +159,10 @@ export type StackScreenProps = {
    * {@link StackScreenProps.replaceAnimation | replaceAnimation}. Changing the
    * value on the top screen takes effect for the next pop.
    *
+   * On iOS, `'default'` plays UIKit's own transition and `'none'` is the only
+   * other preset that plays; any other value logs a warning and plays
+   * `'default'`. A pop by the back swipe always plays UIKit's transition.
+   *
    * @note
    * This is an implementation detail and may change. A value the native side
    * cannot use (an unknown name, an option a preset does not accept where it is
@@ -168,7 +172,7 @@ export type StackScreenProps = {
    * `'default'` for the whole prop.
    *
    * @defaultValue `'default'`
-   * @platform android
+   * @platform android, ios
    */
   animation?: StackScreenAnimation | undefined;
   /**

@@ -4,22 +4,20 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { AnimationPresetPlayground } from '@apps/tests/shared/components/stack-v5/AnimationPresetPlayground';
 
-// `slideFromRight` is offered so a screen pushed without an animation can be popped with one.
+// `default` is offered so a screen pushed without an animation can be popped with one.
 const ANIMATION_OPTIONS = [
   'none',
-  'slideFromRight',
+  'default',
 ] as const satisfies readonly StackScreenAnimation[];
 
-function TestStackAnimationNoneAndroid() {
+function TestStackAnimationNone() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="none"
+      withHeaderPicker
     />
   );
 }
 
-export default createScenario(
-  TestStackAnimationNoneAndroid,
-  scenarioDescription,
-);
+export default createScenario(TestStackAnimationNone, scenarioDescription);
