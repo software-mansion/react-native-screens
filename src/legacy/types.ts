@@ -1315,6 +1315,12 @@ interface SharedHeaderBarButtonItem {
    */
   identifier?: string | undefined;
   /**
+   * A unique identifier for locating the item in tests.
+   *
+   * Maps to `UIBarButtonItem.accessibilityIdentifier` on iOS.
+   */
+  testID?: string | undefined;
+  /**
    * Priority used when the header runs out of room: items with the lowest
    * priority are moved into the overflow menu first. Defaults to 'standard'.
    * Only available from iOS 27.0 and later.

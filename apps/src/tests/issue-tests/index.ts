@@ -234,6 +234,7 @@ export { default as Test5092 } from './Test5092';
 export { default as Test5112 } from './Test5112';
 export { default as Test5127 } from './Test5127';
 export { default as Test5143 } from './Test5143';
+export { default as Test5188 } from './Test5188'; // [E2E created](iOS): header item testID and accessibilityLabel
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold

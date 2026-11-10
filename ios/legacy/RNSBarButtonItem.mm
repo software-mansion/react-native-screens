@@ -119,6 +119,9 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
     }
   }
 
+  if (dict[@"testID"]) {
+    self.accessibilityIdentifier = dict[@"testID"];
+  }
   if (dict[@"accessibilityLabel"]) {
     self.accessibilityLabel = dict[@"accessibilityLabel"];
   }
