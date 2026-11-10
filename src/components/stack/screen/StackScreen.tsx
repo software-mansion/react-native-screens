@@ -7,6 +7,7 @@ import type {
   StackScreenProps,
 } from './StackScreen.types';
 import { useRenderDebugInfo } from '../../../private';
+import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 
 function StackScreen({
   children,
@@ -62,7 +63,9 @@ function StackScreen({
       preventNativeDismiss={preventNativeDismiss}
       animation={animation}
       replaceAnimation={replaceAnimation}>
-      {children}
+      <SplitColumnMarkerContext.Provider value={false}>
+        {children}
+      </SplitColumnMarkerContext.Provider>
     </StackScreenNativeComponent>
   );
 }

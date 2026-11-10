@@ -1,10 +1,14 @@
 #import "RNSSplitScreenComponentView.h"
 #import <React/RCTAssert.h>
+#import <React/RCTLog.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions-SplitView.h"
+#import "RNSNavigationControllerProviding.h"
 #import "RNSNavigationItemCustomizing.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitHostComponentView.h"
+#import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
 #import "RNSSplitScreenShadowStateProxy.h"
@@ -20,6 +24,7 @@ namespace react = facebook::react;
   RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
+  BOOL _disableStackIntegration;
 }
 
 - (RNSSplitScreenController *)controller
@@ -101,6 +106,36 @@ namespace react = facebook::react;
   [_viewsForFrameCorrection removeObject:view];
 }
 
+#pragma mark - Column stack
+
+- (void)takeOverNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)provider
+{
+  // If there's more than 1 child, the column stays a plain one and the provider reports the misuse itself.
+  if (_controller.navigationControllerProvider != nil || self.subviews.count > 0) {
+    return;
+  }
+  _controller.navigationControllerProvider = provider;
+  provider.navigationControllerPlacedByParent = YES;
+  [self requestSplitHostUpdateOfColumns];
+}
+
+- (void)releaseNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)provider
+{
+  RCTAssert(provider == _controller.navigationControllerProvider,
+            @"[RNScreens] Attempt to release a provider which is not the column's one");
+  provider.navigationControllerPlacedByParent = NO;
+  _controller.navigationControllerProvider = nil;
+  [self requestSplitHostUpdateOfColumns];
+}
+
+- (void)requestSplitHostUpdateOfColumns
+{
+  if (self.splitHost == nil) {
+    return;
+  }
+  [self.splitHost.splitHostController setNeedsUpdateOfChildViewControllers];
+}
+
 #pragma mark - Layout
 
 /**
@@ -180,11 +215,27 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  if (!_disableStackIntegration &&
+      [childComponentView respondsToSelector:@selector(setNavigationControllerPlacedByParent:)]) {
+    [self takeOverNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)childComponentView];
+  } else if (_controller.navigationControllerProvider != nil) {
+    RCTLogError(@"[RNScreens] Split.Column with a Stack.Host cannot have other children, %@ is not shown",
+                childComponentView.class);
+  }
+
   [super mountChildComponentView:childComponentView index:index];
 
   if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizing)]) {
     [(id<RNSNavigationItemCustomizing>)childComponentView configureNavigationItem:_controller.navigationItem];
   }
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if (childComponentView == (UIView *)_controller.navigationControllerProvider) {
+    [self releaseNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)childComponentView];
+  }
+  [super unmountChildComponentView:childComponentView index:index];
 }
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
@@ -202,6 +253,13 @@ namespace react = facebook::react;
 
   if (oldComponentProps.columnType != newComponentProps.columnType) {
     _columnType = rnscreens::conversion::RNSSplitScreenColumnTypeFromScreenProp(newComponentProps.columnType);
+  }
+
+  if (oldComponentProps.disableStackIntegration != newComponentProps.disableStackIntegration) {
+    _disableStackIntegration = newComponentProps.disableStackIntegration;
+    if (_disableStackIntegration && _controller.navigationControllerProvider != nil) {
+      [self releaseNavigationControllerOfProvider:_controller.navigationControllerProvider];
+    }
   }
 
   [super updateProps:props oldProps:oldProps];

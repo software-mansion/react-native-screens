@@ -1,6 +1,7 @@
 #import "RNSStackHostComponentView.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -82,6 +83,12 @@ namespace react = facebook::react;
     return;
   }
   if (self.window != nil && _stackNavigationController.parentViewController == nil) {
+    if ([self isOutOfLayout]) {
+      RCTLogError(
+          @"[RNScreens] Stack.Host inside Split.Column must be the column's only direct child. Remove the view in "
+          @"between or set `disableStackIntegration` on the column. The stack is not shown.");
+      return;
+    }
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
                                           toViewControllerManaging:self.reactSuperview
                                                  withContainerView:self];
@@ -161,6 +168,12 @@ namespace react = facebook::react;
 }
 
 #pragma mark - Utils
+
+- (BOOL)isOutOfLayout
+{
+  const auto &props = *std::static_pointer_cast<const react::RNSStackHostProps>(_props);
+  return props.yogaStyle.display() == facebook::yoga::Display::Contents;
+}
 
 - (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
 {
