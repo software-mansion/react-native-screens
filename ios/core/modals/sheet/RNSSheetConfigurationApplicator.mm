@@ -55,6 +55,7 @@
   }
 
   BOOL prefersScrollingExpands = behaviorProvider.prefersScrollingExpandsWhenScrolledToEdge;
+  BOOL prefersEdgeAttachedInCompactHeight = behaviorProvider.prefersEdgeAttachedInCompactHeight;
 
   // Appearance data
 
@@ -70,6 +71,7 @@
     // Behavior updates
     sheet.detents = nativeDetents;
     sheet.prefersScrollingExpandsWhenScrolledToEdge = prefersScrollingExpands;
+    sheet.prefersEdgeAttachedInCompactHeight = prefersEdgeAttachedInCompactHeight;
     if (initialDetentIdentifier != nil) {
       sheet.selectedDetentIdentifier = initialDetentIdentifier;
     }

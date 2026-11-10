@@ -12,9 +12,10 @@ import type { FormSheetProps } from './FormSheet.types';
  * them, and dismiss it natively unless
  * {@link FormSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
  *
- * On iPhone, the sheet spans the full width of the screen and is anchored to
- * its bottom. On iPad, it is a centered floating panel of a fixed width, and
- * the screen behind it is dimmed. On Android, it is a bottom sheet dialog.
+ * On iPhone in portrait, the sheet spans the full width of the screen and is
+ * anchored to its bottom. On iPad, it is a centered floating panel of a fixed
+ * width, and the screen behind it is dimmed. On Android, it is a bottom sheet
+ * dialog.
  *
  * @see {@link PageSheet} for a sheet that differs only in its iPad layout.
  * @platform android, ios, tvos >= 26
