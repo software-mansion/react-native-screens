@@ -21,6 +21,7 @@ import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogScreen
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 
 class ScreenModalFragment :
     BottomSheetDialogFragment,
@@ -176,8 +177,8 @@ class ScreenModalFragment :
             val screenContext = screen.context
             if (screenContext is ReactContext) {
                 val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-                UIManagerHelper
-                    .getEventDispatcherForReactTag(screenContext, screen.id)
+                TransactionSafeEventDispatcher
+                    .forReactTag(screenContext, screen.id)
                     ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }

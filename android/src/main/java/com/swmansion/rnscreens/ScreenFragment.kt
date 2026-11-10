@@ -23,6 +23,7 @@ import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 import kotlin.math.max
 import kotlin.math.min
 
@@ -222,7 +223,7 @@ open class ScreenFragment :
                     }
                 val screenContext = screen.context as ReactContext
                 val eventDispatcher: EventDispatcher? =
-                    UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+                    TransactionSafeEventDispatcher.forReactTag(screenContext, screen.id)
                 eventDispatcher?.dispatchEvent(lifecycleEvent)
                 fragmentWrapper.dispatchLifecycleEventInChildContainers(event)
             }
@@ -238,8 +239,8 @@ open class ScreenFragment :
     override fun dispatchHeaderBackButtonClickedEvent() {
         val screenContext = screen.context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-        UIManagerHelper
-            .getEventDispatcherForReactTag(screenContext, screen.id)
+        TransactionSafeEventDispatcher
+            .forReactTag(screenContext, screen.id)
             ?.dispatchEvent(HeaderBackButtonClickedEvent(surfaceId, screen.id))
     }
 
@@ -254,8 +255,8 @@ open class ScreenFragment :
                 val container: ScreenContainer? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
                 val screenContext = screen.context as ReactContext
-                UIManagerHelper
-                    .getEventDispatcherForReactTag(screenContext, screen.id)
+                TransactionSafeEventDispatcher
+                    .forReactTag(screenContext, screen.id)
                     ?.dispatchEvent(
                         ScreenTransitionProgressEvent(
                             UIManagerHelper.getSurfaceId(screenContext),
@@ -323,8 +324,8 @@ open class ScreenFragment :
             val screenContext = screen.context
             if (screenContext is ReactContext) {
                 val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-                UIManagerHelper
-                    .getEventDispatcherForReactTag(screenContext, screen.id)
+                TransactionSafeEventDispatcher
+                    .forReactTag(screenContext, screen.id)
                     ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }

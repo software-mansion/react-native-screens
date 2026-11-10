@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.gamma.stack.host
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.swmansion.rnscreens.gamma.helpers.createTransactionWithReordering
+import com.swmansion.rnscreens.utils.FragmentTransactionScope
 
 internal class FragmentOperationExecutor {
     internal fun executeOperations(
@@ -10,10 +11,12 @@ internal class FragmentOperationExecutor {
         ops: List<FragmentOperation>,
         flushSync: Boolean = false,
     ) {
-        ops.forEach { it.execute(fragmentManager, this) }
+        FragmentTransactionScope.execute {
+            ops.forEach { it.execute(fragmentManager, this) }
 
-        if (flushSync) {
-            fragmentManager.executePendingTransactions()
+            if (flushSync) {
+                fragmentManager.executePendingTransactions()
+            }
         }
     }
 

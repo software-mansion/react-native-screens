@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.gamma.tabs.screen.TabsScreenFragment
 import com.swmansion.rnscreens.safearea.EdgeInsets
 import com.swmansion.rnscreens.safearea.SafeAreaProvider
 import com.swmansion.rnscreens.safearea.SafeAreaView
+import com.swmansion.rnscreens.utils.FragmentTransactionScope
 import com.swmansion.rnscreens.utils.RNSLog
 import kotlin.properties.Delegates
 
@@ -578,27 +579,31 @@ class TabsContainer internal constructor(
     }
 
     private fun applyInitialStateToFragmentManagerSync(nextSelectedFragment: TabsScreenFragment) {
-        requireFragmentManager
-            .createTransactionWithReordering()
-            .let {
-                tabsModel.forEach { fragment ->
-                    it.add(contentView.id, fragment)
-                    it.detach(fragment)
-                }
-                it.attach(nextSelectedFragment)
-            }.commitNowAllowingStateLoss()
+        FragmentTransactionScope.execute {
+            requireFragmentManager
+                .createTransactionWithReordering()
+                .let {
+                    tabsModel.forEach { fragment ->
+                        it.add(contentView.id, fragment)
+                        it.detach(fragment)
+                    }
+                    it.attach(nextSelectedFragment)
+                }.commitNowAllowingStateLoss()
+        }
     }
 
     private fun applyNextSelectedFragmentToFragmentManagerSync(
         currSelectedFragment: TabsScreenFragment,
         nextSelectedFragment: TabsScreenFragment,
     ) {
-        requireFragmentManager
-            .createTransactionWithReordering()
-            .let {
-                it.detach(currSelectedFragment)
-                it.attach(nextSelectedFragment)
-            }.commitNowAllowingStateLoss()
+        FragmentTransactionScope.execute {
+            requireFragmentManager
+                .createTransactionWithReordering()
+                .let {
+                    it.detach(currSelectedFragment)
+                    it.attach(nextSelectedFragment)
+                }.commitNowAllowingStateLoss()
+        }
     }
 
     private fun initNavigationState(selectedScreenKey: String) {

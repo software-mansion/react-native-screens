@@ -35,6 +35,7 @@ import com.swmansion.rnscreens.bottomsheet.SheetDelegate
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.swmansion.rnscreens.utils.RNSLog
@@ -175,8 +176,8 @@ class ScreenStackFragment :
         if (!this.isRemoving || !this.isDetached) {
             val reactContext = screen.reactContext
             val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-            UIManagerHelper
-                .getEventDispatcherForReactTag(reactContext, screen.id)
+            TransactionSafeEventDispatcher
+                .forReactTag(reactContext, screen.id)
                 ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
         }
     }

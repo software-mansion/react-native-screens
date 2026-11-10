@@ -10,6 +10,7 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 import java.util.concurrent.atomic.AtomicBoolean
 
 @ReactModule(name = ScreensModule.NAME)
@@ -96,8 +97,8 @@ class ScreensModule(
         }
         val progressFloat = progress.toFloat()
         val coalescingKey = ScreenFragment.getCoalescingKey(progressFloat)
-        UIManagerHelper
-            .getEventDispatcherForReactTag(reactContext, topScreenId)
+        TransactionSafeEventDispatcher
+            .forReactTag(reactContext, topScreenId)
             ?.dispatchEvent(
                 ScreenTransitionProgressEvent(
                     UIManagerHelper.getSurfaceId(reactContext),

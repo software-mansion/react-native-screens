@@ -21,6 +21,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 import kotlin.math.max
 import kotlin.properties.Delegates
 
@@ -195,8 +196,8 @@ class ScreenStackHeaderConfig(
         super.onAttachedToWindow()
         isAttachedToWindow = true
         val surfaceId = UIManagerHelper.getSurfaceId(this)
-        UIManagerHelper
-            .getEventDispatcherForReactTag(context as ReactContext, id)
+        TransactionSafeEventDispatcher
+            .forReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
         onUpdate()
     }
@@ -205,8 +206,8 @@ class ScreenStackHeaderConfig(
         super.onDetachedFromWindow()
         isAttachedToWindow = false
         val surfaceId = UIManagerHelper.getSurfaceId(this)
-        UIManagerHelper
-            .getEventDispatcherForReactTag(context as ReactContext, id)
+        TransactionSafeEventDispatcher
+            .forReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderDetachedEvent(surfaceId, id))
     }
 

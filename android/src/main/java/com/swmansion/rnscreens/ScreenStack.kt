@@ -11,10 +11,12 @@ import com.swmansion.rnscreens.bottomsheet.requiresEnterTransitionPostponing
 import com.swmansion.rnscreens.bottomsheet.sheetShouldUseDimmingView
 import com.swmansion.rnscreens.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 import com.swmansion.rnscreens.stack.views.ChildrenDrawingOrderStrategy
 import com.swmansion.rnscreens.stack.views.ReverseFromIndex
 import com.swmansion.rnscreens.stack.views.ReverseOrder
 import com.swmansion.rnscreens.stack.views.ScreensCoordinatorLayout
+import com.swmansion.rnscreens.utils.FragmentTransactionScope
 import com.swmansion.rnscreens.utils.setTweenAnimations
 import kotlin.collections.ArrayList
 import kotlin.math.max
@@ -116,8 +118,8 @@ class ScreenStack(
 
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
-        UIManagerHelper
-            .getEventDispatcherForReactTag((context as ReactContext), id)
+        TransactionSafeEventDispatcher
+            .forReactTag((context as ReactContext), id)
             ?.dispatchEvent(StackFinishTransitioningEvent(surfaceId, id))
     }
 
@@ -314,7 +316,7 @@ class ScreenStack(
 
             updateA11yForVisibleScreens()
 
-            transaction.commitNowAllowingStateLoss()
+            FragmentTransactionScope.execute { transaction.commitNowAllowingStateLoss() }
         }
     }
 

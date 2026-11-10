@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.asScreenStackFragment
 import com.swmansion.rnscreens.gamma.common.FragmentProviding
+import com.swmansion.rnscreens.gamma.common.event.TransactionSafeEventDispatcher
 import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 
@@ -56,7 +57,7 @@ class Screen(
     internal val sheetAnimationCoordinator: SheetAnimationCoordinator by lazy { SheetAnimationCoordinator(this) }
 
     val reactEventDispatcher: EventDispatcher?
-        get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
+        get() = TransactionSafeEventDispatcher.forReactTag(reactContext, id)
 
     var fragmentWrapper: ScreenFragmentWrapper? = null
     var container: ScreenContainer? = null
@@ -528,8 +529,8 @@ class Screen(
     internal fun notifyHeaderHeightChange(headerHeight: Int) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-        UIManagerHelper
-            .getEventDispatcherForReactTag(screenContext, id)
+        TransactionSafeEventDispatcher
+            .forReactTag(screenContext, id)
             ?.dispatchEvent(
                 HeaderHeightChangeEvent(
                     surfaceId,
