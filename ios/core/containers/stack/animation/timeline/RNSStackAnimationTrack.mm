@@ -15,8 +15,8 @@
 @implementation RNSStackAnimationTranslateTrack
 
 - (instancetype)initWithAxis:(RNSStackAnimationAxis)axis
-                        from:(RNSStackAnimationLength)from
-                          to:(RNSStackAnimationLength)to
+                        from:(RNSStackAnimationLength *)from
+                          to:(RNSStackAnimationLength *)to
                       timing:(RNSStackAnimationTiming *)timing
 {
   if (self = [super initWithTiming:timing]) {

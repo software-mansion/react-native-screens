@@ -3,6 +3,8 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, RNSStackAnimationLengthUnit) {
   RNSStackAnimationLengthUnitPoints,
   /**
@@ -14,17 +16,18 @@ typedef NS_ENUM(NSInteger, RNSStackAnimationLengthUnit) {
 /**
  * A distance on the screen, resolved to points by the engine.
  */
-typedef struct {
-  RNSStackAnimationLengthUnit unit;
-  CGFloat value;
-} RNSStackAnimationLength;
+@interface RNSStackAnimationLength : NSObject
 
-static inline RNSStackAnimationLength RNSStackAnimationLengthMakeFraction(CGFloat fraction)
-{
-  return (RNSStackAnimationLength){RNSStackAnimationLengthUnitFraction, fraction};
-}
+@property (nonatomic, readonly) RNSStackAnimationLengthUnit unit;
+@property (nonatomic, readonly) CGFloat value;
 
-static inline RNSStackAnimationLength RNSStackAnimationLengthNegated(RNSStackAnimationLength length)
-{
-  return (RNSStackAnimationLength){length.unit, -length.value};
-}
+@property (class, nonatomic, readonly) RNSStackAnimationLength *zero;
+
++ (instancetype)points:(CGFloat)points;
++ (instancetype)fraction:(CGFloat)fraction;
+
+- (instancetype)negated;
+
+@end
+
+NS_ASSUME_NONNULL_END
