@@ -50,10 +50,11 @@
   }
 
   _state = RNSFullScreenModalPresentationStatePresenting;
+  [controller applyTransition];
 
   __weak auto weakSelf = self;
   [presentationSourceViewController presentViewController:controller
-                                                 animated:YES
+                                                 animated:controller.isTransitionAnimated
                                                completion:^{
                                                  auto strongSelf = weakSelf;
                                                  if (!strongSelf) {
@@ -91,7 +92,7 @@
   __weak auto weakSelf = self;
   __weak auto weakController = controller;
   __weak auto weakProvider = provider;
-  [presentingViewController dismissViewControllerAnimated:YES
+  [presentingViewController dismissViewControllerAnimated:controller.isTransitionAnimated
                                                completion:^{
                                                  auto strongSelf = weakSelf;
                                                  auto strongController = weakController;
