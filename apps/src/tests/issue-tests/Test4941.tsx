@@ -12,7 +12,13 @@ import { Button } from '@apps/shared';
 // press Home only after Details starts to slide in. JS timers stop in the
 // background, so an earlier Home press delays the push until the app is
 // reopened. The run counts only if Details shows "Home pressed during the
-// push: yes". Details should then show "transitionEnd: received (1)".
+// push: yes". Details should then show "transitionStart: received (1)" and
+// "transitionEnd: received (1)".
+//
+// A Home press before the first animation frame is too fast by hand. Send the
+// tap on "Push details" and Home in one command:
+//   adb shell "input tap <x> <y>; sleep 0.03; input keyevent KEYCODE_HOME"
+// Without the fix, such a run can show "transitionStart: waiting".
 
 type ParamList = {
   Home: undefined;
@@ -39,9 +45,21 @@ function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
 function DetailsScreen({
   navigation,
 }: NativeStackScreenProps<ParamList, 'Details'>) {
+  const [transitionStartCount, setTransitionStartCount] = useState(0);
   const [transitionEndCount, setTransitionEndCount] = useState(0);
   const [backgroundedDuringPush, setBackgroundedDuringPush] = useState(false);
   const transitionEndedRef = useRef(false);
+
+  useEffect(
+    () =>
+      navigation.addListener('transitionStart', event => {
+        if (!event.data.closing) {
+          console.log('[Test4941] Details transitionStart (closing: false)');
+          setTransitionStartCount(count => count + 1);
+        }
+      }),
+    [navigation],
+  );
 
   useEffect(
     () =>
@@ -66,6 +84,12 @@ function DetailsScreen({
 
   return (
     <View style={styles.container}>
+      <Text style={styles.text}>
+        transitionStart:{' '}
+        {transitionStartCount > 0
+          ? `received (${transitionStartCount})`
+          : 'waiting'}
+      </Text>
       <Text style={styles.text}>
         transitionEnd:{' '}
         {transitionEndCount > 0

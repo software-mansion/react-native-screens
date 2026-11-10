@@ -317,8 +317,12 @@ open class ScreenFragment :
                 UiThreadUtil.runOnUiThread {
                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
                 }
-            } else if (animationEnd && screen.container?.topScreen === screen) {
-                shouldDispatchAppearOnResume = true
+            } else if (screen.container?.topScreen === screen) {
+                if (animationEnd) {
+                    shouldDispatchAppearOnResume = true
+                } else {
+                    UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
+                }
             } else {
                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
             }
