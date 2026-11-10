@@ -10,6 +10,7 @@ type Props<T = string> = {
   onValueChange: (value: T) => void;
   items: T[];
   style?: ViewStyle;
+  closeOnSelect?: boolean;
 };
 
 export function SettingsPicker<T extends string>({
@@ -19,6 +20,7 @@ export function SettingsPicker<T extends string>({
   onValueChange,
   items,
   style = {},
+  closeOnSelect = false,
 }: Props<T>): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -29,7 +31,14 @@ export function SettingsPicker<T extends string>({
           style={styles.label}>{`${label}: ${value}`}</ThemedText>
         {isOpen
           ? items.map(item => (
-              <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
+              <TouchableOpacity
+                key={item}
+                onPress={() => {
+                  onValueChange(item);
+                  if (closeOnSelect) {
+                    setIsOpen(false);
+                  }
+                }}>
                 <ThemedText
                   testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
                   style={[
