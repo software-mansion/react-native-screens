@@ -127,6 +127,21 @@ export interface FormSheetProps {
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
   /**
+   * Determines whether the sheet stays attached to the bottom edge of the
+   * screen in a compact-height environment, such as iPhone in landscape.
+   *
+   * @remarks
+   * When `false`, the sheet fills the screen in a compact-height environment.
+   * When `true`, it stays attached to the bottom edge and is as wide as the
+   * safe area. It has no effect in a regular-height environment.
+   *
+   * @defaultValue `false`
+   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/prefersedgeattachedincompactheight | UISheetPresentationController.prefersEdgeAttachedInCompactHeight}
+   * @platform ios
+   */
+  prefersEdgeAttachedInCompactHeight?: boolean | undefined;
+
+  /**
    * Prevents the user from dismissing the sheet natively by swiping down or
    * tapping the backdrop.
    *
