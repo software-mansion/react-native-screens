@@ -4,13 +4,13 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
+#import "RNSStackAnimationResolver.h"
+#import "RNSStackAnimationTransitionTimeline.h"
 #import "RNSStackNavigationBar.h"
 #import "RNSStackNavigationControllerDelegate.h"
 #import "RNSStackOperation.h"
 #import "RNSStackPopGestureRecognizerDelegate.h"
 #import "RNSStackScreenController.h"
-#import "RNSStackTransitionResolver.h"
-#import "RNSStackTransitionTimeline.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 @implementation RNSStackNavigationController {
@@ -167,9 +167,10 @@
   BOOL animated = outgoing != nil;
   // A change below an unchanged top is neither a push nor a pop, so no screen's animation applies to it.
   if (animated && incoming != outgoing) {
-    RNSStackTransitionTimeline *timeline = [RNSStackTransitionResolver timelineForKind:[self transitionKindTo:target]
-                                                                              outgoing:outgoing
-                                                                              incoming:incoming];
+    RNSStackAnimationTransitionTimeline *timeline =
+        [RNSStackAnimationResolver transitionTimelineForKind:[self transitionKindTo:target]
+                                                    outgoing:outgoing
+                                                    incoming:incoming];
     animated = !timeline.isStatic;
   }
   [_stackModel setArray:target];
@@ -177,10 +178,11 @@
   [self dumpStackModel];
 }
 
-- (RNSStackTransitionKind)transitionKindTo:(nonnull NSArray<RNSStackScreenController *> *)target
+- (RNSStackAnimationTransitionKind)transitionKindTo:(nonnull NSArray<RNSStackScreenController *> *)target
 {
   // UIKit plays `setViewControllers:` as a pop when the new top was already in the stack.
-  return [_stackModel containsObject:target.lastObject] ? RNSStackTransitionKindPop : RNSStackTransitionKindPush;
+  return [_stackModel containsObject:target.lastObject] ? RNSStackAnimationTransitionKindPop
+                                                        : RNSStackAnimationTransitionKindPush;
 }
 
 #pragma mark - Native pops
