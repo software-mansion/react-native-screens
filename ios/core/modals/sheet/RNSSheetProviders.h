@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSNumber *> *)detents;
 - (NSInteger)initialDetentIndex;
 - (BOOL)prefersScrollingExpandsWhenScrolledToEdge;
+- (BOOL)prefersEdgeAttachedInCompactHeight;
 - (BOOL)preventNativeDismiss;
 /**
  * Height of the sheet's content, used by the `kRNSSheetFitToContents` detent. A value of 0 or less means the
