@@ -101,6 +101,25 @@ export function resolveSheetInitialDetentIndex(
   return index;
 }
 
+/**
+ * Resolves the index passed to the `selectDetent` sheet command.
+ *
+ * @returns index of the detent to select, or `undefined` if the index is invalid and the command should be skipped.
+ */
+export function resolveSheetSelectedDetentIndex(
+  index: number | 'last',
+  lastDetentIndex: number,
+): number | undefined {
+  const resolvedIndex = index === 'last' ? lastDetentIndex : index;
+  if (!isIndexInClosedRange(resolvedIndex, 0, lastDetentIndex)) {
+    console.error(
+      `[RNScreens] Invalid index provided to 'selectDetent' (${index}). Expected an integer between 0 and ${lastDetentIndex} or 'last'. Ignoring the call.`,
+    );
+    return undefined;
+  }
+  return resolvedIndex;
+}
+
 function isIndexInClosedRange(
   value: number,
   lowerBound: number,

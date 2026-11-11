@@ -1,6 +1,5 @@
 #import <UIKit/UIKit.h>
 
-#import "RNSDeferredTransitionStart.h"
 #import "RNSModalScreen.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
@@ -67,6 +66,10 @@ struct ContentWrapperBox {
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   NSMutableArray<UIView *> *_reactSubviews;
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  UIVisualEffect *_appliedSheetBackgroundEffect;
+  UIColor *_appliedSheetBackgroundEffectColor;
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -101,6 +104,7 @@ struct ContentWrapperBox {
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
+  _sheetBackgroundEffect = RNSScreenSheetBackgroundEffectAutomatic;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _sheetsScrollViewTag = 0;
@@ -139,16 +143,24 @@ RNS_IGNORE_SUPER_CALL_END
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
 
-    // * in large title, ScrollView handles the offset of content so we cannot set it here also
-    // * TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
+    // The content offset sent to the shadow tree must match the screen's native origin in the navigation controller's
+    // view. It is used by measurements & hit testing only, the size is delivered separately (`frameSize`).
+    // * On iOS 26+ (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`) the screen is always
+    // laid out under the navigation bar, so the origin is 0 and the `SafeAreaView` rendered by `ScreenStackItem`
+    // insets the content below an opaque bar. All branches below evaluate to 0 in that case.
+    // * Below iOS 26, when config.translucent == true, we use `edgesForExtendedLayout` and the screen is laid out
+    // under the navigation bar, therefore there is no need to set content offset in shadow tree.
+    // * Below iOS 26, in large title, ScrollView handles the offset of content so we cannot set it here also.
+    // TODO: Why is it assumed in comment above, that large title uses scrollview here? What if only SafeAreaView is
     // used?
-    // * When config.translucent == true, we currently use `edgesForExtendedLayout` and the screen is laid out under the
-    // navigation bar, therefore there is no need to set content offset in shadow tree.
     // * When this view is the modal root controller (presented in separate view hierarchy) it does not have navigation
     // bar! We send non-zero size to JS, for some reason. TODO: this needs to be investigated.
-    const CGFloat effectiveContentOffsetY = config.largeTitle || config.translucent || self.isPresentedAsNativeModal
-        ? 0
-        : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+    // * Otherwise the offset must match the actual native origin of the screen. We can not derive it from the
+    // navigation bar geometry, because UIKit does not always lay out the screen right below the navigation bar
+    // (e.g. on iOS 26 `edgesForExtendedLayout` ignores the navigation bar's origin offset).
+    // See https://github.com/software-mansion/react-native-screens-labs/issues/1841
+    const CGFloat effectiveContentOffsetY =
+        config.largeTitle || config.translucent || self.isPresentedAsNativeModal ? 0 : [self originInNavigationView].y;
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
 
@@ -181,6 +193,17 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+// Returns origin of the screen in the coordinate space of its navigation controller's view, which matches
+// the coordinate space of the screen stack in the shadow tree.
+- (CGPoint)originInNavigationView
+{
+  UIView *navigationView = _controller.navigationController.view;
+  if (navigationView == nil || ![self isDescendantOfView:navigationView]) {
+    return CGPointZero;
+  }
+  return [self convertPoint:CGPointZero toView:navigationView];
+}
+
 - (void)applyFrameCorrectionForDescendantScrollView
 {
   // A dismissed sheet can still receive a layout pass after React has deleted it. By then Fabric
@@ -209,7 +232,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
   }
@@ -239,7 +262,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
   }
@@ -476,6 +499,18 @@ RNS_IGNORE_SUPER_CALL_END
   contentWrapper.delegate = self;
   [contentWrapper triggerDelegateUpdate];
   return YES;
+}
+
+/// Returns the content wrapper registered with this screen, or nil if it is no longer registered.
+///
+/// `_contentWrapperBox` holds a weak pointer, but an unmounted wrapper stays alive in Fabric's recycle pool and can be
+/// reused by another screen. This happens when a nested screen's wrapper registered with this form sheet and the nested
+/// screen is removed while the sheet stays presented. A wrapper that is still registered has this screen as its
+/// delegate. Unmounting, recycling and mounting in another screen all change the delegate.
+- (nullable RNSScreenContentWrapper *)registeredContentWrapper
+{
+  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  return contentWrapper.delegate == self ? contentWrapper : nil;
 }
 
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
@@ -730,7 +765,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {
   // Step 1: Query registered content wrapper for the scrollview.
-  RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *contentWrapper = [self registeredContentWrapper];
 
   if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
@@ -795,7 +830,6 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)invalidateImpl
 {
   _invalidated = YES;
-  [self.deferredTransitionStart releaseTransition];
 
   // Since the scroll view might get immediately recycled we remove ourselves
   // immediately.
@@ -891,27 +925,85 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // We first check if we are running on iOS 16+ as the API is different
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (_sheetAllowedDetents.count > 0) {
-    // We should be running on custom detents in this case, thus identifier should be a stringified number.
-    return identifier.integerValue;
-  } else
+  if (@available(iOS 16.0, *)) {
+    if (_sheetAllowedDetents.count > 0) {
+      // We should be running on custom detents in this case, thus identifier should be a stringified number.
+      return identifier.integerValue;
+    }
+  }
 #endif // iOS 16 check
-  {
-    // We're using system defined identifiers.
-    if (_sheetAllowedDetents.count >= 2 || _sheetAllowedDetents.count == 0) {
-      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
-        return 0;
-      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
-        return 1;
-      } else {
-        RCTLogError(@"[RNScreens] Unexpected detent identifier %@", identifier);
-      }
-    } else {
-      // There is only single option.
+  // We're using system defined identifiers.
+  if (_sheetAllowedDetents.count >= 2 || _sheetAllowedDetents.count == 0) {
+    if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
       return 0;
+    } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
+      return 1;
+    } else {
+      RCTLogError(@"[RNScreens] Unexpected detent identifier %@", identifier);
     }
   }
   return 0;
+}
+
+- (UISheetPresentationControllerDetentIdentifier)detentIdentifierAtIndex:(NSInteger)index
+                                                                forSheet:(UISheetPresentationController *)sheet
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return sheet.detents[index].identifier;
+  }
+#endif // iOS 16 check
+  // We're using system defined detents.
+  return index == 0 ? UISheetPresentationControllerDetentIdentifierMedium
+                    : UISheetPresentationControllerDetentIdentifierLarge;
+}
+
+/**
+ * Maps an index of `sheetAllowedDetents` array to an index of the detents set on the sheet. Below iOS 16 these are
+ * system defined detents (medium & large, or just one of them, see `updateFormSheetPresentationStyle`), so any index
+ * past the last of them selects the largest one.
+ */
+- (NSInteger)effectiveDetentIndexForIndex:(NSInteger)index forSheet:(UISheetPresentationController *)sheet
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return index;
+  }
+#endif // iOS 16 check
+  return MIN(index, (NSInteger)sheet.detents.count - 1);
+}
+
+- (void)selectSheetDetentAtIndex:(NSInteger)index
+{
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    RCTLogWarn(@"[RNScreens] selectDetent called on a screen that isn't presented as a form sheet. Command ignored.");
+    return;
+  }
+
+  UISheetPresentationController *sheet = _controller.sheetPresentationController;
+  if (sheet == nil || _controller.presentingViewController == nil || _controller.isBeingDismissed) {
+    RCTLogWarn(@"[RNScreens] selectDetent called while the form sheet is not presented. Command ignored.");
+    return;
+  }
+
+  NSInteger detentIndex = [self effectiveDetentIndexForIndex:index forSheet:sheet];
+  if (detentIndex < 0 || detentIndex >= (NSInteger)sheet.detents.count) {
+    RCTLogError(@"[RNScreens] selectDetent index (%ld) exceeds effective detents count (%lu). Command ignored.",
+                (long)index,
+                (unsigned long)sheet.detents.count);
+    return;
+  }
+
+  // Sheet with no selected detent identifier rests at its smallest detent.
+  NSInteger currentIndex =
+      sheet.selectedDetentIdentifier != nil ? [self detentIndexFromDetentIdentifier:sheet.selectedDetentIdentifier] : 0;
+  if (currentIndex == detentIndex) {
+    return;
+  }
+
+  [self setSelectedDetentForSheet:sheet to:[self detentIdentifierAtIndex:detentIndex forSheet:sheet] animate:YES];
+  // UIKit notifies UISheetPresentationControllerDelegate only about the detent changes made by the user.
+  [self notifySheetDetentChangeToIndex:detentIndex isStable:YES];
 }
 
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
@@ -920,6 +1012,30 @@ RNS_IGNORE_SUPER_CALL_END
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
+
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+- (void)setBackgroundEffectForSheet:(UISheetPresentationController *)sheet
+                            animate:(BOOL)animate API_AVAILABLE(ios(26.1))
+{
+  UIColor *color = _sheetBackgroundEffect == RNSScreenSheetBackgroundEffectColor ? self.backgroundColor : nil;
+
+  BOOL alreadyApplied = color == nil
+      ? sheet.backgroundEffect == nil
+      : sheet.backgroundEffect == _appliedSheetBackgroundEffect && [_appliedSheetBackgroundEffectColor isEqual:color];
+  if (alreadyApplied) {
+    return;
+  }
+
+  UIVisualEffect *effect = color != nil ? [UIColorEffect effectWithColor:color] : nil;
+  _appliedSheetBackgroundEffect = effect;
+  _appliedSheetBackgroundEffectColor = color;
+  [self setPropertyForSheet:sheet
+                  withBlock:^{
+                    sheet.backgroundEffect = effect;
+                  }
+                    animate:animate];
+}
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
 /**
  * Updates settings for sheet presentation controller.
@@ -1022,6 +1138,11 @@ RNS_IGNORE_SUPER_CALL_END
   sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
   [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
   [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
+    [self setBackgroundEffectForSheet:sheet animate:YES];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   // lud - largest undimmed detent
   // First we try to take value from the prop or default.
@@ -1051,7 +1172,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   // We trigger update from content wrapper, because on Fabric we update props after the children are mounted & laid
   // out.
-  [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
+  [[self registeredContentWrapper] triggerDelegateUpdate];
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -1232,11 +1353,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
-    auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
     contentWrapper.delegate = self;
     _contentWrapperBox.contentWrapper = contentWrapper;
   } else if ([childComponentView isKindOfClass:RNSScreenStackHeaderConfig.class]) {
-    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config = static_cast<RNSScreenStackHeaderConfig *>(childComponentView);
     _config.screenView = self;
   }
   [_reactSubviews insertObject:childComponentView atIndex:index];
@@ -1249,8 +1370,13 @@ RNS_IGNORE_SUPER_CALL_END
     _config = nil;
   }
   if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
-    _contentWrapperBox.contentWrapper.delegate = nil;
-    _contentWrapperBox.contentWrapper = nil;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
+    // The box may hold a nested screen's wrapper that registered with this form sheet instead of this child.
+    // The unmounted wrapper must stop reporting regardless of which screen it reported to.
+    contentWrapper.delegate = nil;
+    if (_contentWrapperBox.contentWrapper == contentWrapper) {
+      _contentWrapperBox.contentWrapper = nil;
+    }
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
@@ -1271,7 +1397,6 @@ RNS_IGNORE_SUPER_CALL_END
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
-  self.transitionStartDeferred = newScreenProps.transitionStartDeferred;
 
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
@@ -1318,6 +1443,12 @@ RNS_IGNORE_SUPER_CALL_END
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
+
+  if (newScreenProps.sheetBackgroundEffect != oldScreenProps.sheetBackgroundEffect) {
+    [self setSheetBackgroundEffect:[RNSConvert
+                                       RNSScreenSheetBackgroundEffectFromCppEquivalent:newScreenProps
+                                                                                           .sheetBackgroundEffect]];
+  }
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
@@ -1414,6 +1545,20 @@ RNS_IGNORE_SUPER_CALL_END
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
   }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSScreenHandleCommand(self, commandName, args);
+}
+
+- (void)selectDetent:(NSInteger)index
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  [self selectSheetDetentAtIndex:index];
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 
@@ -1575,10 +1720,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [super viewDidLayoutSubviews];
 
   // The below code makes the screen view adapt dimensions provided by the system. We take these
-  // into account only when the view is mounted under RNSNavigationController in which case system
-  // provides additional padding to account for possible header, and in the case when screen is
-  // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
-  // screen size
+  // into account only when the view is mounted under RNSNavigationController, in which case the
+  // navigation controller sizes the screen (below iOS 26 an opaque navigation bar is excluded from
+  // the screen's frame, on iOS 26+ the screen always spans under the bar, see
+  // `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), and in the case when
+  // screen is shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter
+  // than the screen size.
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
   BOOL isTabScreen = [self.parentViewController isKindOfClass:RNSTabBarController.class];
 
@@ -1642,6 +1789,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     return 0;
   }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    return [self calculateMinimizationAwareHeaderHeightInNavigationController:navctr];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
 #if !TARGET_OS_TV
   CGFloat navbarInset = navctr.navigationBar.frame.origin.y;
@@ -1652,6 +1805,35 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   return navbarHeight + navbarInset;
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
+// On iOS 27 the navigation bar can minimize in response to scrolling (`UIBarMinimization`). The frame of
+// `UINavigationBar` does not follow the minimization, only its subviews (background, content view, large title,
+// search bar) do - they are shifted up within the bar. Therefore we measure the bottom edge of the subviews
+// instead, in the coordinate space of the navigation controller's view. The value is clamped to the bar's frame,
+// which is the maximum extent of the bar in the expanded state.
+- (CGFloat)calculateMinimizationAwareHeaderHeightInNavigationController:(UINavigationController *)navctr
+    API_AVAILABLE(ios(27.0))
+{
+  UINavigationBar *navbar = navctr.navigationBar;
+  CGFloat navbarMaxY = CGRectGetMaxY([navbar convertRect:navbar.bounds toView:navctr.view]);
+  CGFloat maxY = -CGFLOAT_MAX;
+
+  for (UIView *subview in navbar.subviews) {
+    if (subview.isHidden || CGRectIsEmpty(subview.frame)) {
+      continue;
+    }
+    maxY = MAX(maxY, CGRectGetMaxY([navbar convertRect:subview.frame toView:navctr.view]));
+  }
+
+  if (maxY == -CGFLOAT_MAX) {
+    // No measurable subviews, same as the pre-iOS 27 formula.
+    return navbarMaxY;
+  }
+
+  return MIN(maxY, navbarMaxY);
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV
 
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
 {

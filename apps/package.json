@@ -17,9 +17,21 @@
     "react-native": "*",
     "react-native-gesture-handler": "*",
     "react-native-reanimated": "*",
-    "react-native-restart": "*",
     "react-native-safe-area-context": "*",
     "react-native-screens": "*",
     "react-native-worklets": "*"
+  },
+  "codegenConfig": {
+    "name": "rnscreensapps",
+    "type": "modules",
+    "jsSrcsDir": "./src/specs",
+    "android": {
+      "javaPackageName": "com.swmansion.rnscreens.apps"
+    },
+    "ios": {
+      "modulesProvider": {
+        "RNSAppRestart": "RNSAppRestartModule"
+      }
+    }
   }
 }

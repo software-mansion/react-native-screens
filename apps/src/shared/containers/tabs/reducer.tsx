@@ -8,6 +8,7 @@ import type {
   TabsNavigationActionNativeSelectTab,
   TabsNavigationActionSetOptions,
 } from './TabsContainer.types';
+import { screenKeyFromRouteName } from './screenKeyFromRouteName';
 
 const NOT_FOUND_INDEX = -1;
 
@@ -142,9 +143,8 @@ function createTabRouteFromConfig(config: TabRouteConfig): TabRoute {
   const { element, ...rest } = config;
   return {
     ...rest,
-    // Tab names are required to be unique (enforced by useSanitizeRouteConfigs),
-    // so the name itself serves as a stable unique key.
-    routeKey: config.name,
+    // The route key is passed to `Tabs.Screen` as its `screenKey`.
+    routeKey: screenKeyFromRouteName(config.name),
   };
 }
 

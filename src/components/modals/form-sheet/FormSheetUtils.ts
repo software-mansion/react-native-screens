@@ -1,4 +1,10 @@
-import type { FormSheetProps } from './FormSheet.types';
+import type {
+  FormSheetBackgroundEffectBlurStyle,
+  FormSheetDetents,
+  FormSheetPreferredCornerRadius,
+  FormSheetProps,
+} from './FormSheet.types';
+import type { ColorValue } from 'react-native';
 
 // Predefined value for `fitToContents`. Keep in sync with native counterpart.
 const FORM_SHEET_NATIVE_FIT_TO_CONTENTS = -1.0;
@@ -9,7 +15,7 @@ const FORM_SHEET_ALWAYS_DIMMED = -1;
 const FORM_SHEET_NEVER_DIMMED = -2;
 
 export function resolveNativeDetents(
-  detents?: number[] | 'fitToContents',
+  detents?: FormSheetDetents,
 ): number[] | undefined {
   if (!detents) {
     return undefined;
@@ -54,7 +60,7 @@ export function resolveInitialDetentIndex(
 }
 
 export function resolveNativeCornerRadius(
-  radius?: number | 'systemDefault',
+  radius?: FormSheetPreferredCornerRadius,
 ): number | undefined {
   if (radius === 'systemDefault') {
     return -1.0;
@@ -113,4 +119,37 @@ function isIndexInClosedRange(
   upperBound: number,
 ): boolean {
   return Number.isInteger(value) && value >= lowerBound && value <= upperBound;
+}
+
+export type NativeBackgroundEffectProps = {
+  backgroundEffect: 'automatic' | 'none' | 'color' | 'blur';
+  backgroundEffectColor?: ColorValue;
+  backgroundEffectBlurStyle?: FormSheetBackgroundEffectBlurStyle;
+};
+
+export function resolveNativeBackgroundEffect(
+  effect: FormSheetProps['backgroundEffect'],
+): NativeBackgroundEffectProps | undefined {
+  if (effect === undefined) {
+    return undefined;
+  }
+
+  if (typeof effect === 'string') {
+    return { backgroundEffect: effect };
+  }
+
+  switch (effect.type) {
+    case 'color':
+      return { backgroundEffect: 'color', backgroundEffectColor: effect.color };
+    case 'blur':
+      return {
+        backgroundEffect: 'blur',
+        backgroundEffectBlurStyle: effect.style,
+      };
+    default:
+      console.error(
+        "[RNScreens] Invalid value provided for 'backgroundEffect'. Falling back to 'automatic'.",
+      );
+      return { backgroundEffect: 'automatic' };
+  }
 }

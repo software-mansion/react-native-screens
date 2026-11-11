@@ -157,12 +157,14 @@ const TAB_CONFIGS: TabRouteConfig[] = [
           },
         },
         icon: {
-          type: 'templateSource',
-          templateSource: require('@assets/variableIcons/icon.png'),
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon.png'),
+          renderingMode: 'template',
         },
         selectedIcon: {
-          type: 'templateSource',
-          templateSource: require('@assets/variableIcons/icon_fill.png'),
+          type: 'imageSource',
+          imageSource: require('@assets/variableIcons/icon_fill.png'),
+          renderingMode: 'template',
         },
       },
       title: 'Tab2',

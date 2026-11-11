@@ -37,7 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @class RNSScreenView;
-@class RNSDeferredTransitionStart;
 
 @interface RNSScreen : UIViewController <RNSViewControllerDelegate
 #if !TARGET_OS_TV
@@ -91,8 +90,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) BOOL iosOrientationInheritanceFixEnabled;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
-@property (nonatomic) BOOL transitionStartDeferred;
-@property (nonatomic, weak, nullable) RNSDeferredTransitionStart *deferredTransitionStart;
 @property (nonatomic, readonly) BOOL dismissed;
 
 /**
@@ -123,6 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) NSInteger sheetInitialDetent;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
+@property (nonatomic) RNSScreenSheetBackgroundEffect sheetBackgroundEffect;
 #endif // !TARGET_OS_TV
 
 #if defined(__cplusplus)

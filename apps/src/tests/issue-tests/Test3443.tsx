@@ -27,8 +27,9 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       title: 'Tab 1',
       ios: {
         icon: {
-          type: 'xcasset',
-          name: 'custom-icon',
+          type: 'imageSource',
+          imageSource: { uri: 'custom-icon' },
+          renderingMode: 'template',
         },
       },
     },
@@ -43,12 +44,14 @@ const TAB_CONFIGS: TabRouteConfig[] = [
       title: 'Tab 2',
       ios: {
         icon: {
-          type: 'xcasset',
-          name: 'custom-icon',
+          type: 'imageSource',
+          imageSource: { uri: 'custom-icon' },
+          renderingMode: 'template',
         },
         selectedIcon: {
-          type: 'xcasset',
-          name: 'custom-icon-fill',
+          type: 'imageSource',
+          imageSource: { uri: 'custom-icon-fill' },
+          renderingMode: 'template',
         },
       },
     },

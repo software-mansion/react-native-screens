@@ -1,0 +1,927 @@
+name: Argent Cloud issue repro
+
+# A maintainer adds the `argent-cloud` label to an issue. The `plan` job lets an agent read the issue
+# and a read-only, sanitized copy of the linked reproduction (never installed, never executed) and
+# write a plan and a small app source. The `build` job scaffolds a fresh app from the official
+# template, copies only that source and allowlisted dependencies over it, and builds it for the iOS
+# simulator. The `reproduce` job hands the app to an agent on Argent Cloud that follows the plan on
+# a remote simulator.
+#
+# Trust boundaries. The issue and the linked repository are untrusted and may try to steer the
+# planning agent. So the agent has no shell and no network tool, can only write under its overlay
+# directory, and runs in a job that holds no token besides its own API key and a read-only
+# GITHUB_TOKEN. Everything that needs the reports token runs in later jobs, on fresh virtual
+# machines, and reads only the plan artifact. The build job holds no secrets. The library sources
+# are read-only for the agent: the app always installs the npm release that the plan names, so the
+# only agent-written code that reaches the Argent Cloud host is the JavaScript of the overlay,
+# inside an app whose native code is the official template plus allowlisted npm releases.
+#
+# Everything is reported in the private reports repository (REPORTS_REPO below): the original issue
+# is mirrored there once, verbatim, by the reports App below, and every run posts under that mirror
+# the workflow report (plan, analysis, costs, brief), then the agent's report with its screenshots.
+# Every comment is posted by the ArgentCloud GitHub App through `argent-cloud comment`; the reports
+# App token is only the proof of write access that the backend checks. Nothing is posted on the
+# public issue unless the repository variable ARGENT_CLOUD_PUBLIC_COMMENTS is `true`, which also
+# needs the ArgentCloud App installed here.
+#
+# Workflow artifacts of a public repository can be downloaded by anyone who is logged in to GitHub.
+# They hold the plan, the agent-written app source and the reports; the agent stream is only posted
+# under the mirror issue.
+#
+# Secrets: ANTHROPIC_API_KEY (the tester) and, optionally, ANTHROPIC_API_KEY_PLANNER (the planning
+# agent; falls back to ANTHROPIC_API_KEY, but a separate key with its own spend cap limits what a
+# leak from the planning job can cost), SIM_ROUTER_API_KEY and ARGENT_BACKEND_IP (Argent Cloud),
+# ARGENT_CLOUD_REPORTS_APP_ID and ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY (the reports App, which opens
+# the mirror issues and whose token proves write access to argent-cloud: installed on the reports
+# repository with `issues: write`). The ArgentCloud App must be installed on the reports repository
+# too. Optional: SLACK_ARGENT_URL (a webhook).
+#
+# On the first run, check in the logs of the planning step that the allowed tools are exactly the
+# ones passed below and that claude-code-action posted no comment on the public issue.
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: argent-cloud-issue-${{ github.event.issue.number }}-${{ github.event.label.name }}
+  cancel-in-progress: true
+
+env:
+  TRIGGER_LABEL: argent-cloud
+  HELPER_DIR: .github/workflows/helper/argent-cloud-issue-repro
+  WORK_DIR: argent-cloud-work
+  REPORTS_REPO: software-mansion-labs/react-native-screens-argent-cloud
+  REPORTS_OWNER: software-mansion-labs
+  REPORTS_NAME: react-native-screens-argent-cloud
+
+jobs:
+  # Only this job can write to the public issue, and it runs no code from the checkout: it removes
+  # the label when someone without the maintainer role applied it.
+  authorize:
+    # A job-level `if` cannot read `env`, so the label is spelled out here; keep it in sync with
+    # TRIGGER_LABEL above.
+    if: github.event.label.name == 'argent-cloud'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Check that a maintainer applied the label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SENDER: ${{ github.event.sender.login }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Fails closed: an API error counts as no role.
+          role=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$SENDER/permission" --jq .role_name 2>/dev/null || echo none)
+          if [ "$role" != "admin" ] && [ "$role" != "maintain" ]; then
+            echo "::error::$SENDER ($role) is not a maintainer; removing the $TRIGGER_LABEL label."
+            gh issue edit "$ISSUE_NUMBER" -R "$GITHUB_REPOSITORY" --remove-label "$TRIGGER_LABEL"
+            exit 1
+          fi
+          echo "$SENDER is a maintainer ($role)"
+
+  # The planning agent runs here. The job holds the planner's API key and a read-only token, nothing
+  # else; every output it produces goes through the plan artifact to jobs on fresh machines.
+  plan:
+    needs: authorize
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      feasible: ${{ steps.plan.outputs.feasible }}
+      cost-usd: ${{ steps.plan-cost.outputs.cost-usd }}
+      screens-version: ${{ steps.plan.outputs.screens-version }}
+      react-native-version: ${{ steps.plan.outputs.react-native-version }}
+      configuration: ${{ steps.plan.outputs.configuration }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Write the issue to disk
+        env:
+          TITLE: ${{ github.event.issue.title }}
+          BODY: ${{ github.event.issue.body }}
+          EVENT: ${{ toJSON(github.event.issue) }}
+        run: |
+          mkdir -p "$WORK_DIR/repro"
+          printf '# %s\n\n%s\n' "$TITLE" "$BODY" > "$WORK_DIR/issue.md"
+          printf '%s\n' "$EVENT" > "$WORK_DIR/issue.json"
+
+      - name: Find the linked reproduction
+        env:
+          OWN_REPOSITORY: ${{ github.repository }}
+        run: node --experimental-strip-types "$HELPER_DIR/resolve-source.ts" "$WORK_DIR/issue.json" "$WORK_DIR/source.json"
+
+      - name: Fetch the linked reproduction read-only
+        run: |
+          mkdir -p "$WORK_DIR/source"
+          "$HELPER_DIR/fetch-source.sh" "$WORK_DIR/source.json" "$WORK_DIR/source"
+          jq . "$WORK_DIR/source.json"
+
+      # The agent has no shell, so the published versions of every package it may pick are
+      # resolved here, once, and handed to it as files.
+      - name: Resolve the published versions of the packages the plan may use
+        run: |
+          mkdir -p "$WORK_DIR/versions"
+          for pkg in react-native react-native-screens expo $(jq -r '.[]' "$HELPER_DIR/allowed-dependencies.json"); do
+            out="$WORK_DIR/versions/${pkg//\//__}.json"
+            npm view "$pkg" versions --json > "$out" 2>/dev/null || echo '[]' > "$out"
+            echo "$pkg: $(jq 'length' "$out") versions"
+          done
+
+      # Pristine copies of the inputs: the agent can overwrite its copies under WORK_DIR, and later
+      # steps must only ever read these.
+      - name: Keep pristine copies of the inputs
+        run: |
+          mkdir -p "$RUNNER_TEMP/argent-cloud-inputs"
+          cp "$WORK_DIR/issue.md" "$WORK_DIR/issue.json" "$WORK_DIR/source.json" "$RUNNER_TEMP/argent-cloud-inputs/"
+
+      - name: Load the agent prompt and the plan schema
+        id: agent-input
+        run: |
+          {
+            echo 'prompt<<PROMPT_EOF'
+            cat "$HELPER_DIR/prompt.md"
+            echo 'PROMPT_EOF'
+            echo "schema=$(jq -c . "$HELPER_DIR/plan.schema.json")"
+          } >> "$GITHUB_OUTPUT"
+
+      # The collect step below runs git against this copy, never against the .git of the checkout:
+      # a repo-local config key such as core.fsmonitor runs a program on `git status`, and -c
+      # overrides and GIT_CONFIG_GLOBAL do not cover the repo-local file. The copy lives in the
+      # runner's temp directory, which the agent cannot read or write.
+      - name: Keep a pristine copy of the git directory
+        run: cp -a "$GITHUB_WORKSPACE/.git" "$RUNNER_TEMP/argent-cloud-git"
+
+      # No Bash, no web tools and no skills (a skill can run shell through `!` preprocessing without
+      # the Bash tool): with them, an injected agent could send the key or the token in its
+      # environment to any host. Reads of /proc, the dotfiles and dot directories of the home
+      # directory and the runner's temp directory are denied, because /proc/self/environ and the
+      # action's temp files hold the key, and everything the agent writes ends up in a public
+      # artifact. The checkout itself lives under the home directory (/home/runner/work/...), so
+      # the rule must name the dot entries and not `~/**`, which would deny the checkout too. The
+      # runner's own directory (its credentials and diagnostics) and the action sources are denied
+      # as well. The scan step below is the backstop for that: it fails the job when any output
+      # holds a key-shaped string. Writes are limited to the overlay; the collect step fails the
+      # job if anything else changed, which also catches a rule that the CLI did not enforce.
+      - name: Analyse the issue and prepare a reproduction plan
+        id: agent
+        uses: anthropics/claude-code-action@c0949c50a78c1ec8ce2647db36629b870e715d0c # v1.0.268
+        with:
+          # TODO (optional): replace the static key with workload identity federation
+          # (anthropic_federation_rule_id, anthropic_organization_id,
+          # anthropic_service_account_id, anthropic_workspace_id plus `id-token: write`)
+          # so a leaked credential expires with the run. See
+          # https://github.com/anthropics/claude-code-action/blob/main/docs/setup.md
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY_PLANNER || secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ github.token }}
+          prompt: ${{ steps.agent-input.outputs.prompt }}
+          claude_args: |
+            --max-turns 80
+            --allowedTools "Read,Glob,Grep,Edit(argent-cloud-work/repro/**),Write(argent-cloud-work/repro/**)"
+            --disallowedTools "Bash,WebFetch,WebSearch,Task,Agent,NotebookEdit,Skill,Read(//proc/**),Read(//sys/**),Read(//dev/**),Read(//etc/**),Read(//var/**),Read(//opt/**),Read(~/.*),Read(~/.*/**),Read(//home/runner/runners/**),Read(//home/runner/work/_actions/**),Read(//home/runner/work/_temp/**),Read(//tmp/**)"
+            --json-schema '${{ steps.agent-input.outputs.schema }}'
+
+      # Keeps the agent's overlay and restores the checkout. Every git command runs against the
+      # pristine copy of the git directory, so nothing the agent could have planted in .git (config,
+      # hooks, index) is ever read; the .git of the checkout is then replaced by that copy. WORK_DIR
+      # is rebuilt from the pristine inputs, so nothing the agent left behind reaches a later step.
+      # Any change to the library sources is a violation: the agent may only write under its overlay.
+      - name: Collect the agent's output and restore the trusted checkout
+        id: collect
+        if: always()
+        run: |
+          set -euo pipefail
+          export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
+          pristine_git="$RUNNER_TEMP/argent-cloud-git"
+          [ -d "$pristine_git" ] || { echo "::error::the pristine git directory is missing"; exit 1; }
+          g() {
+            git --git-dir="$pristine_git" --work-tree="$GITHUB_WORKSPACE" \
+              -c core.hooksPath=/dev/null -c core.fsmonitor=false \
+              -c filter.lfs.smudge= -c filter.lfs.process= -c filter.lfs.required=false "$@"
+          }
+          inputs="$RUNNER_TEMP/argent-cloud-inputs"
+
+          # --ignored -uall: a write under an ignored path (lib/, *.log, ...) must raise the alarm
+          # too, and every untracked file is listed on its own.
+          if g status --porcelain --ignored -uall | grep -vE "^.. $WORK_DIR/" | grep .; then
+            echo "::error::the agent changed files outside its overlay (listed above); the permission rules were not enforced"
+            exit 1
+          fi
+          rm -rf "$inputs/repro"
+          [ -d "$WORK_DIR/repro" ] && mv "$WORK_DIR/repro" "$inputs/repro"
+
+          g reset -q --hard HEAD
+          g clean -fdxq
+          rm -rf "$GITHUB_WORKSPACE/.git"
+          cp -a "$pristine_git" "$GITHUB_WORKSPACE/.git"
+          rm -rf "$HOME/.npmrc" "$HOME/.gitconfig" "$HOME/.config/git" "$HOME/.claude" "$HOME/.claude.json"
+          if [ -n "$(g status --porcelain --ignored -uall)" ]; then
+            g status --porcelain --ignored -uall
+            echo "::error::the checkout could not be restored"
+            exit 1
+          fi
+
+          mkdir -p "$WORK_DIR"
+          cp "$inputs/issue.md" "$inputs/issue.json" "$inputs/source.json" "$WORK_DIR/"
+          if [ -d "$inputs/repro" ]; then
+            cp -R "$inputs/repro" "$WORK_DIR/repro"
+          fi
+
+      - name: Read the planning cost
+        id: plan-cost
+        if: always()
+        env:
+          EXECUTION_FILE: ${{ steps.agent.outputs.execution_file }}
+        run: |
+          cost=0
+          if [ -n "$EXECUTION_FILE" ] && [ -f "$EXECUTION_FILE" ]; then
+            cost=$(jq '[.. | objects | select(has("total_cost_usd")) | .total_cost_usd] | max // 0' "$EXECUTION_FILE")
+          fi
+          echo "planning cost: $cost USD"
+          echo "cost-usd=$cost" >> "$GITHUB_OUTPUT"
+
+      # The schema fixes the shape of the plan, not the content of its strings; the versions and
+      # enums that later shell steps interpolate are checked here, before any job uses them.
+      - name: Save the plan
+        id: plan
+        env:
+          PLAN: ${{ steps.agent.outputs.structured_output }}
+        run: |
+          set -euo pipefail
+          if [ -z "$PLAN" ]; then
+            echo "::error::the agent produced no structured output"
+            exit 1
+          fi
+          plan="$WORK_DIR/plan.json"
+          printf '%s\n' "$PLAN" | jq . > "$plan"
+          jq . "$plan"
+          version_re='^[0-9]+\.[0-9]+\.[0-9]+([-.+][0-9A-Za-z.-]+)?$'
+          feasible=$(jq -r .feasible "$plan")
+          configuration=$(jq -r '.configuration // "release"' "$plan")
+          [[ "$feasible" =~ ^(true|false)$ ]] || { echo "::error::feasible must be a boolean"; exit 1; }
+          [[ "$configuration" =~ ^(release|debug)$ ]] || { echo "::error::configuration must be release or debug, got '$configuration'"; exit 1; }
+          # The versions are written only after they passed the check, and only when a later job
+          # uses them: an unchecked string with a line break would add outputs of its own.
+          rn_version="" screens_version=""
+          if [ "$feasible" = "true" ]; then
+            rn_version=$(jq -r .reactNativeVersion "$plan")
+            screens_version=$(jq -r .screensVersion "$plan")
+            [[ "$rn_version" =~ $version_re ]] || { echo "::error::reactNativeVersion must be exact"; exit 1; }
+            [[ "$screens_version" =~ $version_re ]] || { echo "::error::screensVersion must be exact"; exit 1; }
+            [[ "$(jq -r .appKind "$plan")" =~ ^(rn-cli|expo)$ ]] || { echo "::error::appKind must be rn-cli or expo"; exit 1; }
+          fi
+          {
+            echo "feasible=$feasible"
+            echo "screens-version=$screens_version"
+            echo "react-native-version=$rn_version"
+            echo "configuration=$configuration"
+          } >> "$GITHUB_OUTPUT"
+
+      # The plan artifact is public. The Read deny rules above are enforced by the CLI, which is
+      # not pinned, so every file that goes into the artifact is checked for the planner key, the
+      # job token and anything shaped like one, before the upload. A hit fails the job and the
+      # upload. The check catches the raw forms only; it is a backstop, not a control.
+      - name: Check the outputs for leaked credentials
+        id: scan
+        if: always() && steps.collect.outcome == 'success'
+        env:
+          PLANNER_KEY: ${{ secrets.ANTHROPIC_API_KEY_PLANNER || secrets.ANTHROPIC_API_KEY }}
+          JOB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          hit=0
+          # Key-shaped strings are looked for in what the agent wrote only, so a reporter cannot
+          # fail the run by pasting one into the issue; the exact secrets are looked for everywhere.
+          # Every file is scanned as text (-a): skipping files with a NUL byte would let the agent
+          # hide a key behind one.
+          for output in "$WORK_DIR/repro" "$WORK_DIR/plan.json"; do
+            [ -e "$output" ] || continue
+            if grep -ralE 'sk-ant-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}' "$output"; then
+              hit=1
+            fi
+          done
+          for secret in "$PLANNER_KEY" "$JOB_TOKEN"; do
+            if [ -n "$secret" ] && grep -ralF -- "$secret" "$WORK_DIR"; then
+              hit=1
+            fi
+          done
+          if [ "$hit" -ne 0 ]; then
+            echo "::error::the files listed above hold a credential; nothing is uploaded"
+            exit 1
+          fi
+          echo "no credential found in $WORK_DIR"
+
+      - name: Upload the plan
+        if: always() && steps.collect.outcome == 'success' && steps.scan.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
+          path: |
+            ${{ env.WORK_DIR }}
+            !${{ env.WORK_DIR }}/source
+            !${{ env.WORK_DIR }}/versions
+          if-no-files-found: error
+          retention-days: 7
+
+  # Mirrors the issue in the reports repository and reports a plan that failed or was declared
+  # infeasible. Runs on a fresh machine, so the reports token never meets the agent.
+  report-plan:
+    needs: [authorize, plan]
+    if: always() && needs.authorize.result == 'success' && needs.plan.result != 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      mirror-number: ${{ steps.mirror.outputs.number }}
+      mirror-url: ${{ steps.mirror.outputs.url }}
+    env:
+      STAGE: ${{ needs.plan.result != 'success' && 'plan-failed' || needs.plan.outputs.feasible != 'true' && 'plan-infeasible' || '' }}
+      ISSUE_TITLE: ${{ github.event.issue.title }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_URL: ${{ github.event.issue.html_url }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      STATUS: ${{ needs.plan.result }}
+      PLAN_COST_USD: ${{ needs.plan.outputs.cost-usd }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /.nvmrc
+            /.github/actions/install-argent-cloud
+            /.github/workflows/helper
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Download the plan
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Mint a token for the reports repository
+        id: reports-token
+        if: steps.download.outcome == 'success'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
+          private-key: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY }}
+          owner: ${{ env.REPORTS_OWNER }}
+          repositories: ${{ env.REPORTS_NAME }}
+          permission-issues: write
+
+      - name: Mirror the issue in the reports repository
+        id: mirror
+        if: steps.download.outcome == 'success'
+        env:
+          REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          ORIGIN_REPOSITORY: ${{ github.repository }}
+        run: |
+          node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts mirror
+          echo "[The mirror issue]($(jq -r .url "$WORK_DIR/mirror.json"))" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write the report
+        if: steps.mirror.outcome == 'success' && env.STAGE != ''
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts report
+
+      - name: Install the argent-cloud CLI
+        if: steps.mirror.outcome == 'success' && env.STAGE != ''
+        uses: ./.github/actions/install-argent-cloud
+
+      - name: Publish the report under the mirror issue
+        id: publish
+        if: steps.mirror.outcome == 'success' && env.STAGE != ''
+        env:
+          REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
+          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
+
+      - name: Report to Slack
+        if: always() && env.STAGE != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ARGENT_URL }}
+          REPORT_URL: ${{ steps.publish.outputs.url }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts notify
+
+  # Builds the app that the plan describes: an official template, allowlisted packages and the
+  # source that the planning agent wrote. The library is the npm release that the plan names, never
+  # this checkout. The job has a read-only token and no secrets.
+  build:
+    needs: [authorize, plan]
+    if: needs.plan.outputs.feasible == 'true'
+    runs-on: macos-26
+    timeout-minutes: 150
+    env:
+      APP_DIR: ${{ github.workspace }}/argent-cloud-app
+      STAGING: ${{ github.workspace }}/argent-cloud-staging
+      CONFIGURATION: ${{ needs.plan.outputs.configuration == 'debug' && 'Debug' || 'Release' }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Download the plan
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@6aaa311d81eba98ae12eaffbcb63296ace0efcde
+        with:
+          ruby-version: '3.3'
+
+      # React Native before 0.83 does not build with the Xcode 27 toolchain of the macos-26 image.
+      - name: Select Xcode for older React Native
+        env:
+          RN_VERSION: ${{ needs.plan.outputs.react-native-version }}
+        run: |
+          RN_MINOR="$(echo "$RN_VERSION" | cut -d. -f2)"
+          if [ "$RN_MINOR" -lt 83 ]; then
+            developer_dir=/Applications/Xcode_26.3.app/Contents/Developer
+            [ -d "$developer_dir" ] || { echo "::error::React Native $RN_VERSION needs Xcode 26.3, which is not on this runner"; exit 1; }
+            echo "React Native $RN_VERSION < 0.83, pinning Xcode 26.3"
+            echo "DEVELOPER_DIR=$developer_dir" >> "$GITHUB_ENV"
+          fi
+
+      - name: Prepare the app
+        id: prepare
+        run: '"$HELPER_DIR/prepare-app.sh" "$WORK_DIR/plan.json" "$WORK_DIR/repro" "$APP_DIR"'
+
+      - name: Build the app for the iOS simulator
+        id: build
+        run: '"$HELPER_DIR/build-app.sh" "$APP_DIR" "$STAGING" "$CONFIGURATION" "$WORK_DIR/logs/xcodebuild.log"'
+
+      - name: Package the app
+        id: package
+        run: '"$HELPER_DIR/package-app.sh" "$STAGING" "$WORK_DIR/app/repro-app.tar.gz"'
+
+      - name: Upload the app
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: argent-cloud-app-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}/app/repro-app.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload the build logs
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: argent-cloud-build-logs-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}/logs
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Write the report
+        id: build-report
+        if: failure()
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          STATUS: ${{ job.status }}
+          STAGE: build-failed
+          PLAN_COST_USD: ${{ needs.plan.outputs.cost-usd }}
+          FAILED_STEP: ${{ steps.prepare.outcome == 'failure' && 'Prepare the app' || steps.build.outcome == 'failure' && 'Build the app for the iOS simulator' || steps.package.outcome == 'failure' && 'Package the app' || '' }}
+        run: |
+          node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts report
+          printf '%s\n' "$FAILED_STEP" > "$WORK_DIR/failed-step.txt"
+
+      - name: Upload the report
+        if: always() && steps.build-report.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: argent-cloud-report-issue-${{ github.event.issue.number }}
+          path: |
+            ${{ env.WORK_DIR }}/report.md
+            ${{ env.WORK_DIR }}/failed-step.txt
+          if-no-files-found: error
+          retention-days: 30
+
+  # The build job holds no secrets, so its failure report is published from here.
+  report-build-failure:
+    needs: [plan, report-plan, build]
+    if: always() && needs.build.result == 'failure' && needs.report-plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ISSUE_TITLE: ${{ github.event.issue.title }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_URL: ${{ github.event.issue.html_url }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      STATUS: failure
+      STAGE: build-failed
+      PLAN_COST_USD: ${{ needs.plan.outputs.cost-usd }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /.nvmrc
+            /.github/actions/install-argent-cloud
+            /.github/workflows/helper
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Download the plan
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Download the report
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-report-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Read the failed step and the mirror
+        env:
+          MIRROR_NUMBER: ${{ needs.report-plan.outputs.mirror-number }}
+          MIRROR_URL: ${{ needs.report-plan.outputs.mirror-url }}
+        run: |
+          echo "FAILED_STEP=$(head -n 1 "$WORK_DIR/failed-step.txt")" >> "$GITHUB_ENV"
+          jq -n --argjson number "$MIRROR_NUMBER" --arg url "$MIRROR_URL" '{number: $number, url: $url}' > "$WORK_DIR/mirror.json"
+
+      - name: Mint a token for the reports repository
+        id: reports-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
+          private-key: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY }}
+          owner: ${{ env.REPORTS_OWNER }}
+          repositories: ${{ env.REPORTS_NAME }}
+          permission-issues: write
+
+      - name: Install the argent-cloud CLI
+        uses: ./.github/actions/install-argent-cloud
+
+      - name: Publish the report under the mirror issue
+        id: publish
+        env:
+          REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
+          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
+
+      - name: Report to Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ARGENT_URL }}
+          REPORT_URL: ${{ steps.publish.outputs.url }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts notify
+
+  # Runs the tester on Argent Cloud. The brief is the plan alone, never the issue text: the tester
+  # has a shell on the cloud Mac, so it gets only what the planner distilled.
+  reproduce:
+    needs: [plan, report-plan, build]
+    if: ${{ !cancelled() && needs.build.result == 'success' && needs.report-plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      ISSUE_TITLE: ${{ github.event.issue.title }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_URL: ${{ github.event.issue.html_url }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      STAGE: reproduce
+      PLAN_COST_USD: ${{ needs.plan.outputs.cost-usd }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /.nvmrc
+            /.github/actions/install-argent-cloud
+            /.github/actions/run-argent-cloud
+            /.github/workflows/helper
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Download the plan
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Download the app
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-app-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}/app
+
+      - name: Write the mirror descriptor
+        env:
+          MIRROR_NUMBER: ${{ needs.report-plan.outputs.mirror-number }}
+          MIRROR_URL: ${{ needs.report-plan.outputs.mirror-url }}
+        run: |
+          jq -n --argjson number "$MIRROR_NUMBER" --arg url "$MIRROR_URL" '{number: $number, url: $url}' > "$WORK_DIR/mirror.json"
+
+      - name: Install the argent-cloud CLI
+        id: install
+        uses: ./.github/actions/install-argent-cloud
+
+      # The brief is assembled from the plan's fields with jq -r, so each field lands as text under
+      # a fixed heading.
+      - name: Write the reproduction brief
+        id: brief
+        run: |
+          plan="$WORK_DIR/plan.json"
+          {
+            cat "$HELPER_DIR/tester-prompt.md"
+            echo
+            echo "## Reproduction plan"
+            echo
+            jq -r .summary "$plan"
+            echo
+            echo "- react-native: $(jq -r .reactNativeVersion "$plan")"
+            echo "- react-native-screens: $(jq -r .screensVersion "$plan")"
+            echo "- Other packages: $(jq -r '[.extraDependencies[] | "\(.name)@\(.version)"] | if length == 0 then "none" else join(", ") end' "$plan")"
+            if [ "$(jq -r '.configuration // "release"' "$plan")" = "debug" ]; then
+              echo "- App: $(jq -r .appKind "$plan") scaffold, code from $(jq -r .reproductionSource.kind "$plan"), iOS simulator, New Architecture, Debug configuration that loads its JavaScript from Metro"
+            else
+              echo "- App: $(jq -r .appKind "$plan") scaffold, code from $(jq -r .reproductionSource.kind "$plan"), iOS simulator, New Architecture, Release configuration with an embedded bundle"
+            fi
+            echo
+            echo "### Steps"
+            echo
+            jq -r '.reproductionSteps | to_entries[] | "\(.key + 1). \(.value)"' "$plan"
+            echo
+            echo "### Expected"
+            echo
+            jq -r .expectedBehavior "$plan"
+            echo
+            echo "### Actual"
+            echo
+            jq -r .actualBehavior "$plan"
+            echo
+            echo "### Verification"
+            echo
+            echo "- Kind: $(jq -r .verification.kind "$plan")"
+            echo "- How: $(jq -r .verification.how "$plan")"
+            echo "- Pass: $(jq -r .verification.passSignal "$plan")"
+            echo "- Fail: $(jq -r .verification.failSignal "$plan")"
+            echo
+            if [ "$(jq -r '.limitations // ""' "$plan")" != "" ]; then
+              echo "### Limitations"
+              echo
+              jq -r .limitations "$plan"
+              echo
+            fi
+            if [ "$(jq -r '.configuration // "release"' "$plan")" = "debug" ]; then
+              cat "$HELPER_DIR/tester-debug.md"
+              echo
+            fi
+          } > "$WORK_DIR/brief.md"
+          cat "$WORK_DIR/brief.md"
+
+      - name: Run argent-cloud
+        id: repro
+        uses: ./.github/actions/run-argent-cloud
+        with:
+          prompt-file: ${{ env.WORK_DIR }}/brief.md
+          app-bundle: ${{ env.WORK_DIR }}/app/repro-app.tar.gz
+          output-dir: ${{ env.WORK_DIR }}/output
+          agent-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          sim-router-api-key: ${{ secrets.SIM_ROUTER_API_KEY }}
+          backend-ip: ${{ secrets.ARGENT_BACKEND_IP }}
+
+      - name: Check the exit code of argent-cloud
+        id: repro-status
+        env:
+          EXIT_CODE: ${{ steps.repro.outputs.exit-code }}
+        run: |
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo "::error::argent-cloud exited with ${EXIT_CODE:-no exit code}"
+            exit 1
+          fi
+
+      - name: Upload the screenshots
+        id: screenshots
+        if: always() && steps.repro.outputs.screenshots-dir != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: argent-cloud-screenshots-issue-${{ github.event.issue.number }}
+          path: ${{ steps.repro.outputs.screenshots-dir }}
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Write the report
+        if: always()
+        env:
+          STATUS: ${{ job.status }}
+          REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
+          SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
+          SCREENSHOTS_URL: ${{ steps.screenshots.outputs.artifact-url }}
+          FAILED_STEP: ${{ steps.install.outcome == 'failure' && 'Install the argent-cloud CLI' || steps.brief.outcome == 'failure' && 'Write the reproduction brief' || steps.repro-status.outcome == 'failure' && 'Run argent-cloud' || '' }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts report
+
+      - name: Mint a token for the reports repository
+        id: reports-token
+        if: always()
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
+          private-key: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY }}
+          owner: ${{ env.REPORTS_OWNER }}
+          repositories: ${{ env.REPORTS_NAME }}
+          permission-issues: write
+
+      - name: Publish the report under the mirror issue
+        id: publish
+        if: always()
+        env:
+          REPORTS_TOKEN: ${{ steps.reports-token.outputs.token }}
+          SIM_ROUTER_API_KEY: ${{ secrets.SIM_ROUTER_API_KEY }}
+          ARGENT_BACKEND_IP: ${{ secrets.ARGENT_BACKEND_IP }}
+          STATUS: ${{ job.status }}
+          REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
+          SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
+          SCREENSHOTS_URL: ${{ steps.screenshots.outputs.artifact-url }}
+          FAILED_STEP: ${{ steps.install.outcome == 'failure' && 'Install the argent-cloud CLI' || steps.brief.outcome == 'failure' && 'Write the reproduction brief' || steps.repro-status.outcome == 'failure' && 'Run argent-cloud' || '' }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts publish
+
+      - name: Report to Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_ARGENT_URL }}
+          STATUS: ${{ job.status }}
+          REPRO_COST_USD: ${{ steps.repro.outputs.cost-usd }}
+          SCREENSHOTS_DIR: ${{ steps.repro.outputs.screenshots-dir }}
+          SCREENSHOTS_URL: ${{ steps.screenshots.outputs.artifact-url }}
+          FAILED_STEP: ${{ steps.install.outcome == 'failure' && 'Install the argent-cloud CLI' || steps.brief.outcome == 'failure' && 'Write the reproduction brief' || steps.repro-status.outcome == 'failure' && 'Run argent-cloud' || '' }}
+          REPORT_URL: ${{ steps.publish.outputs.url }}
+        run: node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts notify
+
+      # The stream is posted under the mirror issue only; it is not part of the public artifact.
+      - name: Upload the reproduction output
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: argent-cloud-output-issue-${{ github.event.issue.number }}
+          path: |
+            ${{ env.WORK_DIR }}/output
+            !${{ env.WORK_DIR }}/output/screenshots
+            !${{ env.WORK_DIR }}/output/stream.md
+            ${{ env.WORK_DIR }}/report.md
+          if-no-files-found: warn
+          retention-days: 30
+
+  # Posts the agent's report with its screenshots under the mirror issue, as the ArgentCloud GitHub
+  # App. Runs no code from the issue or from the app, so it can hold the reports token. With the
+  # repository variable ARGENT_CLOUD_PUBLIC_COMMENTS set to `true` it also posts on the public issue,
+  # which needs the ArgentCloud App installed on this repository; that comment has mentions, HTML
+  # and foreign images neutralized.
+  comment:
+    needs: [plan, report-plan, build, reproduce]
+    if: ${{ !cancelled() && needs.reproduce.result != 'skipped' && needs.report-plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      ISSUE_TITLE: ${{ github.event.issue.title }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_URL: ${{ github.event.issue.html_url }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      STATUS: ${{ needs.reproduce.result }}
+      STAGE: reproduce
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /.nvmrc
+            /.github/actions/install-argent-cloud
+            /.github/actions/post-argent-cloud-comment
+            /.github/workflows/helper
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Download the plan
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-plan-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Download the reproduction output
+        uses: actions/download-artifact@448e3f862ab3ef47aa50ff917776823c9946035b
+        with:
+          name: argent-cloud-output-issue-${{ github.event.issue.number }}
+          path: ${{ env.WORK_DIR }}
+
+      - name: Check that the agent wrote a report
+        id: check
+        run: |
+          if [ ! -s "$WORK_DIR/output/output.md" ]; then
+            echo "::warning::the agent wrote no report, so nothing is posted"
+            echo "post=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "post=true" >> "$GITHUB_OUTPUT"
+          archive="$WORK_DIR/output/screenshots.tar.gz"
+          if [ -s "$archive" ]; then
+            mkdir -p "$WORK_DIR/screenshots"
+            tar -xzf "$archive" -C "$WORK_DIR/screenshots"
+            echo "screenshots-archive=$archive" >> "$GITHUB_OUTPUT"
+            echo "screenshots-dir=$WORK_DIR/screenshots" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Write the comments
+        if: steps.check.outputs.post == 'true'
+        env:
+          SCREENSHOTS_DIR: ${{ steps.check.outputs.screenshots-dir }}
+        run: |
+          COMMENT_FILE="$WORK_DIR/comment.md" PUBLIC_COMMENT=false \
+            node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts comment
+          COMMENT_FILE="$WORK_DIR/comment-public.md" PUBLIC_COMMENT=true \
+            node --experimental-strip-types .github/workflows/helper/argent-cloud-issue-repro-report.ts comment
+
+      - name: Install the argent-cloud CLI
+        if: steps.check.outputs.post == 'true'
+        uses: ./.github/actions/install-argent-cloud
+
+      - name: Mint a token for the reports repository
+        id: reports-token
+        if: steps.check.outputs.post == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          app-id: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_ID }}
+          private-key: ${{ secrets.ARGENT_CLOUD_REPORTS_APP_PRIVATE_KEY }}
+          owner: ${{ env.REPORTS_OWNER }}
+          repositories: ${{ env.REPORTS_NAME }}
+          permission-issues: write
+
+      - name: Post the agent's report under the mirror issue
+        id: post
+        if: steps.check.outputs.post == 'true'
+        uses: ./.github/actions/post-argent-cloud-comment
+        with:
+          target: ${{ env.REPORTS_REPO }}#${{ needs.report-plan.outputs.mirror-number }}
+          comment-file: ${{ env.WORK_DIR }}/comment.md
+          screenshots: ${{ steps.check.outputs.screenshots-archive }}
+          github-token: ${{ steps.reports-token.outputs.token }}
+          sim-router-api-key: ${{ secrets.SIM_ROUTER_API_KEY }}
+          backend-ip: ${{ secrets.ARGENT_BACKEND_IP }}
+
+      - name: Link the comment
+        if: steps.post.outputs.url != ''
+        env:
+          URL: ${{ steps.post.outputs.url }}
+        run: echo "[The agent's report under the mirror issue]($URL)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post the agent's report on the public issue
+        id: post-public
+        if: steps.check.outputs.post == 'true' && vars.ARGENT_CLOUD_PUBLIC_COMMENTS == 'true'
+        uses: ./.github/actions/post-argent-cloud-comment
+        with:
+          target: ${{ github.repository }}#${{ github.event.issue.number }}
+          comment-file: ${{ env.WORK_DIR }}/comment-public.md
+          screenshots: ${{ steps.check.outputs.screenshots-archive }}
+          sim-router-api-key: ${{ secrets.SIM_ROUTER_API_KEY }}
+          backend-ip: ${{ secrets.ARGENT_BACKEND_IP }}
+
+      - name: Link the public comment
+        if: steps.post-public.outputs.url != ''
+        env:
+          URL: ${{ steps.post-public.outputs.url }}
+        run: echo "[The comment on the public issue]($URL)" >> "$GITHUB_STEP_SUMMARY"

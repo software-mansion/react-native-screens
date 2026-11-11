@@ -1,33 +1,36 @@
+import type { Ref } from 'react';
 import type { StackHeaderConfigCommandsAndroid } from './StackHeaderConfig.android.types';
 import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
+/**
+ * Cross-platform props for {@link Stack.HeaderConfig}.
+ */
 export interface StackHeaderConfigPropsBase {
   /**
-   * @summary Title displayed in the header.
+   * Title displayed in the header.
    *
    * @platform android, ios
    */
   title?: string | undefined;
   /**
-   * @summary Subtitle displayed in the header.
+   * Subtitle displayed in the header.
    *
    * @platform android, ios
    */
   subtitle?: string | undefined;
   /**
-   * @summary Specifies if the header should be hidden.
+   * Specifies if the header should be hidden.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   hidden?: boolean | undefined;
   /**
-   * @summary Specifies if the content should be rendered behind the header.
+   * Specifies if the content should be rendered behind the header.
    *
-   * @description
+   * @remarks
    * When `true`, content is rendered behind the header instead of starting
    * below it.
    *
@@ -36,31 +39,61 @@ export interface StackHeaderConfigPropsBase {
    * - Setting this prop to `true` is not supported when header scrolling is
    *   enabled.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   transparent?: boolean | undefined;
   /**
-   * @summary Specifies if the back button should be hidden.
+   * Specifies if the back button should be hidden.
    *
-   * @description
+   * @remarks
    * This prop does not apply to the root screen of the stack for which the back
    * button is always hidden.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   backButtonHidden?: boolean | undefined;
 }
 
+/**
+ * Props for {@link Stack.HeaderConfig}.
+ */
 export interface StackHeaderConfigProps extends StackHeaderConfigPropsBase {
+  /**
+   * Android-specific props.
+   *
+   * @platform android
+   */
   android?: StackHeaderConfigPropsAndroid | undefined;
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
   ios?: StackHeaderConfigPropsIOS | undefined;
+  /**
+   * Ref to the {@link StackHeaderConfigRef | commands} of the header.
+   *
+   * @platform android, ios
+   */
+  ref?: Ref<StackHeaderConfigRef> | undefined;
 }
 
+/**
+ * Commands of {@link Stack.HeaderConfig}, available through its `ref`.
+ */
 export interface StackHeaderConfigRef {
-  android?: StackHeaderConfigCommandsAndroid;
-  ios?: StackHeaderConfigCommandsIOS;
+  /**
+   * Android-specific commands.
+   *
+   * @platform android
+   */
+  android?: StackHeaderConfigCommandsAndroid | undefined;
+  /**
+   * iOS-specific commands.
+   *
+   * @platform ios
+   */
+  ios?: StackHeaderConfigCommandsIOS | undefined;
 }

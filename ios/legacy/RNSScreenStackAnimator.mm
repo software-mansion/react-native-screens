@@ -1,5 +1,4 @@
 #import "RNSScreenStackAnimator.h"
-#import "RNSDeferredTransitionStart.h"
 #import "RNSScreenStack.h"
 
 #import "RNSScreen.h"
@@ -88,9 +87,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     if ([screen.reactSuperview isKindOfClass:[RNSScreenStackView class]] &&
         ((RNSScreenStackView *)(screen.reactSuperview)).customAnimation) {
       [self animateWithNoAnimation:transitionContext toVC:toViewController fromVC:fromViewController];
-    } else if (
-        self.deferredTransitionStart == nil && screen.isFullScreenSwipeEffectivelyEnabled &&
-        transitionContext.isInteractive) {
+    } else if (screen.isFullScreenSwipeEffectivelyEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
@@ -119,8 +116,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 - (void)animationEnded:(BOOL)transitionCompleted
 {
-  [self.deferredTransitionStart invalidate];
-  self.deferredTransitionStart = nil;
   _inFlightAnimator = nil;
 }
 
@@ -318,13 +313,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     }];
     _inFlightAnimator = animator;
     [animator startAnimation];
-    if (self.deferredTransitionStart != nil) {
-      // UIKit pauses its accompanying animations through the interaction controller;
-      // UIViewPropertyAnimator must be paused separately (see RNSPercentDrivenInteractiveTransition).
-      [animator pauseAnimation];
-      animator.fractionComplete = 0;
-      [self.deferredTransitionStart animationPrepared];
-    }
   } else if (_operation == UINavigationControllerOperationPop) {
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
     auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
@@ -530,10 +518,6 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 - (nullable id<UITimingCurveProvider>)timingParamsForAnimationCompletion
 {
-  // A deferred push resumes its original curve; it is not settling a gesture.
-  if (self.deferredTransitionStart != nil) {
-    return nil;
-  }
   return [RNSScreenStackAnimator defaultSpringTimingParametersApprox];
 }
 

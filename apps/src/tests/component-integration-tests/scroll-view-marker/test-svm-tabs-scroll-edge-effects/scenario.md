@@ -30,14 +30,14 @@ Also this allows us to test that different ScrollViewMarkers from different tab 
 
 1. Launch the app and navigate to the **SVM in Tabs - scroll edge effects** screen.
 
-- [ ] There should be two tabs: `Home` and `Second`.
-- [ ] `Home` tab should be selected.
-- [ ] `Hard` scroll-edge-effect should be applied (opqaue background of tab bar).
+    - [ ] There should be two tabs: `Home` and `Second`.
+    - [ ] `Home` tab should be selected.
+    - [ ] `Hard` scroll-edge-effect should be applied (opqaue background of tab bar).
 
 2. Change tab to `Second`.
 
-- [ ] The scroll-edge-effect should be now changed to `soft` after/during the transition.
+    - [ ] The scroll-edge-effect should be now changed to `soft` after/during the transition.
 
 3. Change tab back to the `Home`.
 
-- [ ] The scroll-edge-effect should be back at `hard`.
+    - [ ] The scroll-edge-effect should be back at `hard`.

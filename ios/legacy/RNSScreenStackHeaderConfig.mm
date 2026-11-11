@@ -8,6 +8,7 @@
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <ReactCommon/TurboModuleUtils.h>
+#import <objc/runtime.h>
 #import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -85,6 +86,13 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
   _blurEffect = RNSBlurEffectStyleNone;
+  _minimizationBehavior = RNSHeaderMinimizationBehaviorUndefined;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    _restorationBehavior = UIBarMinimizationRestorationBehaviorAutomatic;
+    _safeAreaAdjustment = UIBarMinimizationSafeAreaAdjustmentAutomatic;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
   _synchronousShadowStateUpdatesEnabled = YES;
 }
 
@@ -168,9 +176,11 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)layoutNavigationControllerView
 {
-  // We need to layout navigation controller view after translucent prop changes, because otherwise
-  // frame of RNSScreen will not be changed and screen content will remain the same size.
-  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
+  // We need to layout navigation controller view after `translucent` / `hidden` prop changes. Below iOS 26 the frame
+  // of RNSScreen depends on them (`edgesForExtendedLayout`), so without the layout pass the screen content would
+  // remain the same size (https://github.com/software-mansion/react-native-screens/issues/1158). On iOS 26+ the frame
+  // does not change, but the layout pass still refreshes the header layout info in the shadow tree and the safe area
+  // insets consumed by the `SafeAreaView` rendered by `ScreenStackItem`.
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
@@ -203,24 +213,38 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
+  // Screen's content offset in shadow tree matches its actual native origin (see `-[RNSScreenView updateBounds]`),
+  // therefore navigation bar's frame in screen's coordinate space can be used directly.
   CGRect navBarFrameInScreenView = [navigationBar convertRect:navigationBar.bounds toView:_screenView];
-
-  // On iOS 26+ in landscape mode there is a bug with `edgesForExtendedLayout` for non-transparent
-  // header. We're applying SAV to fix it but we need to take it into account for HeaderConfig's
-  // origin as well.
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (!_translucent && self.shouldHeaderBeVisible) {
-    navBarFrameInScreenView.origin.y -= _screenView.safeAreaInsets.top;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
   [self updateShadowStateWithSize:navigationBar.frame.size
                        edgeInsets:[self computeEdgeInsetsOfNavigationBar:navigationBar]
                       frameOrigin:navBarFrameInScreenView.origin];
-  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+  // Iterate over a copy. Updating a subview's shadow state can trigger a synchronous commit that mounts or
+  // unmounts header subviews, which mutates `reactSubviews` while we're still enumerating it.
+  // See: https://github.com/software-mansion/react-native-screens/issues/4811
+  for (RNSScreenStackHeaderSubview *subview in [self.reactSubviews copy]) {
     [subview updateShadowStateInContextOfAncestorView:navigationBar];
   }
 }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+- (void)setNeedsLayoutForHeaderSubviewsInNavigationBar:(nonnull UINavigationBar *)navigationBar
+{
+  // During the bar minimization (iOS 27+) UIKit moves the content view of the navigation bar above the bar, on each
+  // frame of the scroll. The header subviews are not visible then, therefore we do not follow their position, to
+  // avoid state update on each frame. When the bar is restored, its content view is back at the origin of the bar.
+  if (CGRectGetMinY(navigationBar.rnscreens_findContentView.frame) < 0) {
+    return;
+  }
+
+  for (RNSScreenStackHeaderSubview *subview in self.reactSubviews) {
+    if (subview.window != nil) {
+      [subview setNeedsLayout];
+    }
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 - (NSDirectionalEdgeInsets)computeEdgeInsetsOfNavigationBar:(nonnull UINavigationBar *)navigationBar
 {
@@ -362,6 +386,18 @@ RNS_IGNORE_SUPER_CALL_END
   return nil;
 }
 
++ (BOOL)screensExtendUnderOpaqueNavigationBar
+{
+#if TARGET_OS_TV || TARGET_OS_VISION
+  return NO;
+#else // TARGET_OS_TV || TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    return YES;
+  }
+  return NO;
+#endif // TARGET_OS_TV || TARGET_OS_VISION
+}
+
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config
@@ -481,6 +517,77 @@ RNS_IGNORE_SUPER_CALL_END
   return appearance;
 }
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+// Workaround for a UIKit bug: https://github.com/software-mansion/react-native-screens/issues/5054
+// Seen on iOS 26.5 and 27.0, not reproduced on 18.6. A zoom transition (iOS 18+) hides the navigation bar by animating
+// its alpha. When the transition is cancelled, UIKit restores `navigationBarHidden`, but not the alpha. The
+// `setNavigationBarHidden:` call made by the staying screen's update afterwards is then a no-op, so its visible bar
+// stays at alpha 0. We restore the alpha the bar had before the transition, animated along with the rest of the cancel
+// animation. Remove once Apple fixes it.
++ (void)restoreNavigationBarAlphaIfTransitionIsCancelled:(UINavigationController *)navctr
+                                                animated:(BOOL)animated
+                                               wasHidden:(BOOL)wasHidden
+                                              shouldHide:(BOOL)shouldHide
+{
+  if (@available(iOS 18.0, *)) {
+    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
+    // Only a transition that hides a visible bar needs this: when one that shows the bar is cancelled, the bar ends up
+    // hidden again.
+    if (!animated || wasHidden || !shouldHide || coordinator == nil ||
+        coordinator.presentationStyle != UIModalPresentationNone) {
+      return;
+    }
+
+    // Scoped to zoom transitions, the only ones known to leave the bar faded. The zoom is set with
+    // `preferredTransition` on the screen being pushed or popped; the from screen stays on the stack during a push,
+    // but not during a pop.
+    UIViewController *fromVC = [coordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIViewController *toVC = [coordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIViewController *transitioningVC = [navctr.viewControllers containsObject:fromVC] ? toVC : fromVC;
+    if (transitioningVC.preferredTransition == nil) {
+      return;
+    }
+
+    // Header config updates call this method repeatedly while the transition is in progress. Register the handler only
+    // once per transition, so that a later call cannot capture an alpha the transition has already lowered.
+    static char handlerRegisteredKey;
+    if (objc_getAssociatedObject(coordinator, &handlerRegisteredKey) != nil) {
+      return;
+    }
+    objc_setAssociatedObject(coordinator, &handlerRegisteredKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    UINavigationBar *navigationBar = navctr.navigationBar;
+    CGFloat alphaBeforeTransition = navigationBar.alpha;
+
+    // Only interactive transitions can be cancelled, and this block is called when one is.
+    [coordinator
+        notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          if (!context.isCancelled) {
+            return;
+          }
+          // The cancel animation takes the transition back from `percentComplete` to 0.
+          [UIView animateWithDuration:context.transitionDuration * context.percentComplete
+                                delay:0
+                              options:UIViewAnimationOptionBeginFromCurrentState
+                           animations:^{
+                             navigationBar.alpha = alphaBeforeTransition;
+                           }
+                           completion:nil];
+        }];
+  }
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+- (UIBarMinimizationBehavior)resolvedMinimizationBehavior
+{
+  if (_minimizationBehavior == RNSHeaderMinimizationBehaviorUndefined) {
+    return _translucent ? UIBarMinimizationBehaviorAutomatic : UIBarMinimizationBehaviorNever;
+  }
+  return [RNSConvert UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:_minimizationBehavior];
+}
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -503,16 +610,27 @@ RNS_IGNORE_SUPER_CALL_END
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || !config.shouldHeaderBeVisible;
 
-  if (!shouldHide && !config.translucent) {
-    // when nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
-    // the screen underneath navigation controllers
+  if (!shouldHide && !config.translucent && ![self screensExtendUnderOpaqueNavigationBar]) {
+    // When nav bar is not translucent we change edgesForExtendedLayout to avoid system laying out
+    // the screen underneath navigation controllers.
     vc.edgesForExtendedLayout = UIRectEdgeAll - UIRectEdgeTop;
   } else {
-    // system default is UIRectEdgeAll
+    // System default is UIRectEdgeAll - the screen is laid out under the navigation bar.
+    // On iOS 26+ this is also the case for an opaque header: UIKit does not reliably lay out the screen right below
+    // the bar when the top edge is excluded (it ignores the bar's origin offset, e.g. in landscape or on iPhone Duo),
+    // so we let the screen extend under the bar and inset the content with the `SafeAreaView` rendered by
+    // `ScreenStackItem`. See https://github.com/software-mansion/react-native-screens-labs/issues/1841
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
   [config applySemanticContentAttributeIfNeededToNavCtrl:navctr];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  [self restoreNavigationBarAlphaIfTransitionIsCancelled:navctr
+                                                animated:animated
+                                               wasHidden:wasHidden
+                                              shouldHide:shouldHide];
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
   if (shouldHide) {
     navitem.title = config.title;
@@ -523,6 +641,16 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+  if (@available(iOS 27.0, *)) {
+    UIBarMinimization *minimization = [UIBarMinimization new];
+    minimization.minimizationBehavior = [config resolvedMinimizationBehavior];
+    minimization.restorationBehavior = config.restorationBehavior;
+    minimization.safeAreaAdjustment = config.safeAreaAdjustment;
+    navitem.navigationBarMinimization = minimization;
+  }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 #if !TARGET_OS_TV
   [config configureBackItem:prevItem withPrevVC:prevVC];
@@ -1084,6 +1212,46 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
     _blurEffect = [RNSConvert RNSBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
+  }
+
+  if (newScreenProps.minimizationBehavior != oldScreenProps.minimizationBehavior) {
+    _minimizationBehavior =
+        [RNSConvert RNSHeaderMinimizationBehaviorFromCppEquivalent:newScreenProps.minimizationBehavior];
+
+    BOOL isBarMinimizationSupported = NO;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      isBarMinimizationSupported = YES;
+    }
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (!isBarMinimizationSupported && _minimizationBehavior != RNSHeaderMinimizationBehaviorUndefined &&
+        _minimizationBehavior != RNSHeaderMinimizationBehaviorAutomatic) {
+      RCTLogWarn(@"[RNScreens] minimizationBehavior is supported for iOS >= 27");
+    }
+  }
+
+  if (newScreenProps.restorationBehavior != oldScreenProps.restorationBehavior) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _restorationBehavior =
+          [RNSConvert UIBarMinimizationRestorationBehaviorFromCppEquivalent:newScreenProps.restorationBehavior];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.restorationBehavior != react::RNSScreenStackHeaderConfigRestorationBehavior::Automatic) {
+        RCTLogWarn(@"[RNScreens] restorationBehavior is supported for iOS >= 27");
+      }
+  }
+
+  if (newScreenProps.safeAreaAdjustment != oldScreenProps.safeAreaAdjustment) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+    if (@available(iOS 27.0, *)) {
+      _safeAreaAdjustment =
+          [RNSConvert UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:newScreenProps.safeAreaAdjustment];
+    } else
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
+      if (newScreenProps.safeAreaAdjustment != react::RNSScreenStackHeaderConfigSafeAreaAdjustment::Automatic) {
+        RCTLogWarn(@"[RNScreens] safeAreaAdjustment is supported for iOS >= 27");
+      }
   }
 
   if (newScreenProps.headerLeftBarButtonItems != oldScreenProps.headerLeftBarButtonItems) {

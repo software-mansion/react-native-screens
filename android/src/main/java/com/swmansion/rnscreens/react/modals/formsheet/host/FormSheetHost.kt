@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.ThemedReactContext
-import com.swmansion.rnscreens.common.ShadowStateProxy
 import com.swmansion.rnscreens.core.modals.formsheet.dialog.FormSheetDialogManager
 import com.swmansion.rnscreens.core.modals.formsheet.model.FormSheetConfig
+import com.swmansion.rnscreens.react.common.ShadowStateProxy
 
 class FormSheetHost(
     val reactContext: ThemedReactContext,

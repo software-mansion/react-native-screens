@@ -2,6 +2,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 
 // Scenario objects (default exports) — carry metadata, used to build the
 // scenario group consumed by the selection menu.
+import TestFormSheetBackgroundEffect from './test-form-sheet-background-effect-ios';
 import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
@@ -18,10 +19,12 @@ import TestFormSheetOrientationChange from './test-form-sheet-orientation-change
 import TestFormSheetPreferredCornerRadius from './test-form-sheet-preferred-corner-radius';
 import TestFormSheetPresentationState from './test-form-sheet-presentation-state';
 import TestFormSheetPreventNativeDismiss from './test-form-sheet-prevent-native-dismiss';
+import TestFormSheetScrollStopsAtTop from './test-form-sheet-scroll-stops-at-top';
 import TestFormSheetStacking from './test-form-sheet-stacking';
 
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
+export { default as TestFormSheetBackgroundEffect } from './test-form-sheet-background-effect-ios';
 export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
@@ -38,9 +41,11 @@ export { default as TestFormSheetOrientationChange } from './test-form-sheet-ori
 export { default as TestFormSheetPreferredCornerRadius } from './test-form-sheet-preferred-corner-radius';
 export { default as TestFormSheetPresentationState } from './test-form-sheet-presentation-state';
 export { default as TestFormSheetPreventNativeDismiss } from './test-form-sheet-prevent-native-dismiss';
+export { default as TestFormSheetScrollStopsAtTop } from './test-form-sheet-scroll-stops-at-top';
 export { default as TestFormSheetStacking } from './test-form-sheet-stacking';
 
 const scenarios = {
+  TestFormSheetBackgroundEffect,
   TestFormSheetBase,
   TestFormSheetDismissEvents,
   TestFormSheetExpandScrollView,
@@ -57,6 +62,7 @@ const scenarios = {
   TestFormSheetPreferredCornerRadius,
   TestFormSheetPresentationState,
   TestFormSheetPreventNativeDismiss,
+  TestFormSheetScrollStopsAtTop,
   TestFormSheetStacking,
 };
 

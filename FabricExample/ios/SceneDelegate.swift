@@ -1,5 +1,6 @@
 #if RNS_USE_SCENE_DELEGATE
 
+  import React
   import ReactAppDependencyProvider
   import React_RCTAppDelegate
   import UIKit
@@ -24,10 +25,28 @@
 
       window = UIWindow(windowScene: scene)
 
+      #if DEBUG
+        let devMenuConfiguration = RCTDevMenuConfiguration(
+          devMenuEnabled: true,
+          shakeGestureEnabled: true,
+          keyboardShortcutsEnabled: true
+        )
+        factory.devMenuConfiguration = devMenuConfiguration
+      #endif
+
       factory.startReactNative(
         withModuleName: "FabricExample",
-        in: window
+        in: window,
+        connectionOptions: connectionOptions
       )
+    }
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+      RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
+    }
+
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+      RCTLinkingManager.scene(scene, continue: userActivity)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

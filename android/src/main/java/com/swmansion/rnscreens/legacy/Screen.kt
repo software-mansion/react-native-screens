@@ -26,7 +26,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import com.swmansion.rnscreens.common.FragmentProviding
+import com.swmansion.rnscreens.core.common.FragmentProviding
+import com.swmansion.rnscreens.core.containers.common.Container
+import com.swmansion.rnscreens.core.containers.common.ContainerItem
+import com.swmansion.rnscreens.core.containers.common.ContainerItemSupport
+import com.swmansion.rnscreens.core.utils.RNSLog
+import com.swmansion.rnscreens.core.utils.pxToDp
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetAnimationCoordinator
 import com.swmansion.rnscreens.legacy.bottomsheet.SheetDetents
 import com.swmansion.rnscreens.legacy.bottomsheet.fitToContentsSheetHeight
@@ -38,7 +43,6 @@ import com.swmansion.rnscreens.legacy.bottomsheet.usesFormSheetPresentation
 import com.swmansion.rnscreens.legacy.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.legacy.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.legacy.ext.asScreenStackFragment
-import com.swmansion.rnscreens.utils.pxToDp
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
@@ -46,7 +50,10 @@ class Screen(
     val reactContext: ThemedReactContext,
 ) : FabricEnabledViewGroup(reactContext),
     ScreenContentWrapper.OnLayoutCallback,
-    FragmentProviding {
+    FragmentProviding,
+    ContainerItem {
+    private val containerItemSupport = ContainerItemSupport()
+
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -167,7 +174,7 @@ class Screen(
                 if (isInitial) {
                     setupInitialSheetContentHeight(sheetBehavior, height)
                 } else if (sheetDefaultResizeAnimationEnabled) {
-                    sheetAnimationCoordinator.updateSheetContentHeightWithAnimation(sheetBehavior, oldHeight, height)
+                    sheetAnimationCoordinator.updateSheetContentHeightWithAnimation(sheetBehavior, height)
                 } else {
                     updateSheetContentHeightWithoutAnimation(sheetBehavior, height)
                 }
@@ -236,7 +243,7 @@ class Screen(
     ) {
         // In case of form sheet we get layout notification a bit later, in `onBottomSheetBehaviorDidLayout`
         // after the attached behaviour laid out this view.
-        if (changed && isNativeStackScreen && !usesFormSheetPresentation()) {
+        if ((changed || isStateInvalidated) && isNativeStackScreen && !usesFormSheetPresentation()) {
             val width = r - l
             val height = b - t
 
@@ -541,6 +548,16 @@ class Screen(
             )
     }
 
+    internal fun selectSheetDetent(index: Int) {
+        val sheetDelegate = fragment?.asScreenStackFragment()?.sheetDelegate
+        if (!usesFormSheetPresentation() || sheetDelegate == null) {
+            RNSLog.w(TAG, "[RNScreens] selectDetent called on a screen that isn't presented as a form sheet. Command ignored.")
+            return
+        }
+
+        sheetDelegate.selectDetent(index)
+    }
+
     internal fun onSheetDetentChanged(
         detentIndex: Int,
         isStable: Boolean,
@@ -563,6 +580,13 @@ class Screen(
     internal fun onSheetYTranslationChanged() {
         // Translation is relative to the bottom edge, therefore it returns negative values.
         updateShadowNodeScreenSize(width, height, top + translationY.toInt())
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        // Rotation may reset the shadow state while this screen is covered. Republish it on the
+        // next layout, even if the native frame is identical to the one before detaching.
+        invalidateState()
     }
 
     override fun onAttachedToWindow() {
@@ -618,6 +642,20 @@ class Screen(
                     }.build()
         }
     }
+
+    // region ContainerItem
+
+    override fun registerNestedContainer(container: Container) = containerItemSupport.registerNestedContainer(container)
+
+    override fun unregisterNestedContainer(container: Container) = containerItemSupport.unregisterNestedContainer(container)
+
+    override fun resolveNestedContainer(): Container? = containerItemSupport.resolveNestedContainer()
+
+    override fun findContentScrollView(): ViewGroup? = containerItemSupport.findContentScrollView(this)
+
+    override fun wantsToPreventStackNativeDismiss(): ContainerItem? = resolveNestedContainer()?.wantsToPreventStackNativeDismiss()
+
+    // endregion
 
     enum class StackPresentation {
         PUSH,

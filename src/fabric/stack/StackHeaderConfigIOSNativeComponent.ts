@@ -15,6 +15,31 @@ import { UnsafeMixed } from '../codegenUtils';
 
 type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 
+type MinimizationBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+type RestorationBehavior = 'automatic' | 'atScrollEdge';
+
+type SafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
+
+export type ButtonStateAppearance = {
+  fontFamily?: string | undefined;
+  fontSize?: CT.Float | undefined;
+  fontWeight?: string | undefined;
+  fontStyle?: string | undefined;
+  fontColor?: ProcessedColorValue | null | undefined;
+};
+
+export type ButtonAppearance = {
+  normal?: ButtonStateAppearance | undefined;
+  highlighted?: ButtonStateAppearance | undefined;
+  disabled?: ButtonStateAppearance | undefined;
+  focused?: ButtonStateAppearance | undefined;
+};
+
 export type HeaderAppearance = {
   titleFontFamily?: string | undefined;
   titleFontSize?: CT.Float | undefined;
@@ -33,6 +58,10 @@ export type HeaderAppearance = {
   subtitleFontWeight?: string | undefined;
   subtitleFontStyle?: string | undefined;
   subtitleFontColor?: ProcessedColorValue | null | undefined;
+
+  button?: ButtonAppearance | undefined;
+  prominentButton?: ButtonAppearance | undefined;
+  backButton?: ButtonAppearance | undefined;
 };
 
 export type MenuItemPressEvent = Readonly<{ menuItemId: string }>;
@@ -59,6 +88,10 @@ export interface NativeProps extends ViewProps {
   largeTitleEnabled?: CT.WithDefault<boolean, false>;
 
   prompt?: string | undefined;
+
+  minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'automatic'>;
+  restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
+  safeAreaAdjustment?: CT.WithDefault<SafeAreaAdjustment, 'automatic'>;
 
   titleMenu?: UnsafeMixed<StackHeaderMenuIOS> | undefined;
 

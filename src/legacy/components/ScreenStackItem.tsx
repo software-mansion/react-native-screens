@@ -18,7 +18,10 @@ import Screen, { type ScreenInstance } from './Screen';
 import ScreenStack from './ScreenStack';
 import { RNSScreensRefContext } from '../contexts';
 import { FooterComponent } from './ScreenFooter';
-import { SafeAreaViewProps } from '../../components/safe-area/SafeAreaView.types';
+import type {
+  Edge,
+  SafeAreaViewProps,
+} from '../../components/safe-area/SafeAreaView.types';
 import { SafeAreaView } from '../../components/safe-area/SafeAreaView';
 import { featureFlags } from '../../flags';
 import { isIOS26OrHigher } from '../../components/helpers/PlatformUtils';
@@ -34,6 +37,30 @@ type Props = Omit<
   screenId: string;
   headerConfig?: ScreenStackHeaderConfigProps | undefined;
   contentStyle?: StyleProp<ViewStyle> | undefined;
+  /**
+   * Per-edge override of the safe area insets applied to the screen's content.
+   *
+   * On iOS 26+ the screen is laid out under the navigation bar and its content
+   * is wrapped in a `SafeAreaView`. By default, the top edge is applied for
+   * non-transparent header. Edges explicitly set to `true` or `false` override
+   * the default.
+   *
+   * When `ScrollView` with `contentInsetAdjustmentBehavior="automatic"` is used
+   * as Screen's content, setting `top: false` might mitigate some problems like
+   * "jumping" behavior with non-transparent header and large title.
+   *
+   * Limitation: with `top: false`, a `formSheet` using `fitToContents` with a
+   * visible header is sized to the content alone, without room for the header,
+   * which overlaps the top of the content.
+   *
+   * Has no effect below iOS 26 and on other platforms.
+   *
+   * Please note that this prop is marked as unstable and might be subject of
+   * breaking changes, including removal.
+   *
+   * @platform ios
+   */
+  unstable_safeAreaEdges?: SafeAreaViewProps['edges'] | undefined;
 };
 
 function ScreenStackItem(
@@ -51,6 +78,8 @@ function ScreenStackItem(
     scrollEdgeEffects,
     // eslint-disable-next-line camelcase
     unstable_sheetFooter,
+    // eslint-disable-next-line camelcase
+    unstable_safeAreaEdges,
     ...rest
   }: Props,
   ref: React.ForwardedRef<ScreenInstance>,
@@ -123,6 +152,11 @@ function ScreenStackItem(
     contentStyle = contentWrapperStyles;
   }
 
+  // On iOS 26+ the screen is laid out under the navigation bar also when the header is opaque
+  // (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), so the content
+  // is inset by our `SafeAreaView`. See `getSafeAreaEdges` for the applied edges. The
+  // `SafeAreaView` is rendered regardless of `unstable_safeAreaEdges` so that changing it does not
+  // remount the content.
   const shouldUseSafeAreaView = isIOS26OrHigher;
 
   const content = (
@@ -133,7 +167,8 @@ function ScreenStackItem(
           style={debugContainerStyle}
           stackPresentation={stackPresentationWithDefault}>
           {shouldUseSafeAreaView ? (
-            <SafeAreaView edges={getSafeAreaEdges(headerConfig)}>
+            <SafeAreaView
+              edges={getSafeAreaEdges(headerConfig, unstable_safeAreaEdges)}>
               {children}
             </SafeAreaView>
           ) : (
@@ -282,23 +317,35 @@ function extractScreenStyles(style: StyleProp<ViewStyle>): SplitStyleResult {
 }
 
 function getSafeAreaEdges(
-  headerConfig?: ScreenStackHeaderConfigProps,
+  headerConfig: ScreenStackHeaderConfigProps | undefined,
+  edgesOverride: SafeAreaViewProps['edges'],
 ): SafeAreaViewProps['edges'] {
-  if (Platform.OS !== 'ios' || parseInt(Platform.Version, 10) < 26) {
+  if (!isIOS26OrHigher) {
     return {};
   }
 
-  let defaultEdges: SafeAreaViewProps['edges'];
-  if (headerConfig?.translucent || headerConfig?.hidden) {
-    defaultEdges = {};
-  } else {
-    defaultEdges = {
-      top: true,
-    };
+  // On iOS 26+ the screen extends under the navigation bar regardless of the header configuration
+  // (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), so by default the
+  // content is inset from the top whenever the header is visible and opaque. Translucent and hidden
+  // headers keep the content under the bar / status bar, as on other iOS versions.
+  const edges: Partial<Record<Edge, boolean>> =
+    headerConfig?.translucent || headerConfig?.hidden ? {} : { top: true };
+
+  // Only edges explicitly set by the user override the defaults. `undefined` must not be copied,
+  // as `SafeAreaView` treats a present-but-undefined edge as disabled.
+  if (edgesOverride) {
+    for (const edge of SAFE_AREA_EDGES) {
+      const value = edgesOverride[edge];
+      if (value !== undefined) {
+        edges[edge] = value;
+      }
+    }
   }
 
-  return defaultEdges;
+  return edges;
 }
+
+const SAFE_AREA_EDGES: readonly Edge[] = ['top', 'right', 'bottom', 'left'];
 
 const styles = StyleSheet.create({
   container: {

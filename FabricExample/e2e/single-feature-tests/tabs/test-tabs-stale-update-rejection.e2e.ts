@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { dismissToast } from '@e2e/app/toast';
+import { dismissNextToast } from '@e2e/app/toast';
 
 // These scenarios are split into two separate suites using `device.reloadReactNative()`.
 // Running these scenarios sequentially within a single app lifecycle caused deterministic
@@ -75,7 +75,7 @@ describe('@smoke Stale update rejection - rejectStaleNavStateUpdates:true', () =
       .toBeVisible()
       .withTimeout(20000);
 
-    await dismissToast('1. onTabSelectionRejected: Third');
+    await dismissNextToast('onTabSelectionRejected: Third');
 
     await expect(element(by.id('Second-route-key-label'))).toBeVisible();
   });

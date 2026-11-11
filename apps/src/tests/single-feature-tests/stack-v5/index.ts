@@ -6,6 +6,17 @@ import TestStackPreventNativeDismissSingleStack from './test-stack-prevent-nativ
 import TestStackPreventNativeDismissNestedStack from './test-stack-prevent-native-dismiss-nested-stack';
 import TestStackLifecycleEvents from './test-stack-lifecycle-events';
 import TestStackAnimationAndroid from './test-stack-animation-android';
+import TestStackAnimationOperationsAndroid from './test-stack-animation-operations-android';
+import TestStackAnimationUpdate from './test-stack-animation-update';
+import TestStackAnimationSlide from './test-stack-animation-slide';
+import TestStackAnimationFade from './test-stack-animation-fade';
+import TestStackDeferredPush from './test-stack-deferred-push';
+import TestStackAnimationIOSAndroid from './test-stack-animation-ios-android';
+import TestStackAnimationNone from './test-stack-animation-none';
+import TestStackAnimationOptionsAndroid from './test-stack-animation-options-android';
+import TestStackAnimationReplaceAndroid from './test-stack-animation-replace-android';
+import TestStackAnimationPresetCompositionAndroid from './test-stack-animation-preset-composition-android';
+import TestStackAnimationCustomMotionsAndroid from './test-stack-animation-custom-motions-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
@@ -13,6 +24,8 @@ import TestStackSubviewsIOS from './test-stack-subviews-ios';
 import TestStackHeaderMenuIOS from './test-stack-header-menu-ios';
 import TestStackHeaderIconIOS from './test-stack-header-icon-ios';
 import TestStackBackButtonIOS from './test-stack-back-button-ios';
+import TestStackHeaderBarMinimizationIOS from './test-stack-header-bar-minimization-ios';
+import TestStackHeaderBarSafeAreaAdjustmentIOS from './test-stack-header-bar-safe-area-adjustment-ios';
 import TestStackBackButtonAndroid from './test-stack-back-button-android';
 import TestStackOverflowIcon from './test-stack-overflow-icon-android';
 import TestStackToolbarMenuCommands from './test-stack-toolbar-menu-commands-android';
@@ -29,6 +42,7 @@ import TestStackHeaderSelectiveUpdates from './test-stack-header-selective-updat
 import TestStackHeaderMenuOptionsIOS from './test-stack-header-menu-options-ios';
 import TestStackHeaderItemIdentifierIOS from './test-stack-header-item-identifier-ios';
 import TestStackHeaderItemVisibilityPriorityIOS from './test-stack-header-item-visibility-priority-ios';
+import TestStackHeaderItemAppearanceIOS from './test-stack-header-item-appearance-ios';
 import TestStackHeaderTitleAppearanceAndroid from './test-stack-header-title-appearance-android';
 import TestStackHeaderTitleAppearanceIOS from './test-stack-header-title-appearance-ios';
 import TestStackHeaderContentInsets from './test-stack-header-content-insets-android';
@@ -38,13 +52,23 @@ import TestStackColorScheme from './test-stack-color-scheme';
 import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
 import TestStackLayoutDirection from './test-stack-layout-direction-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
-
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestStackPreventNativeDismissSingleStack } from './test-stack-prevent-native-dismiss-single-stack';
 export { default as TestStackPreventNativeDismissNestedStack } from './test-stack-prevent-native-dismiss-nested-stack';
 export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-events';
 export { default as TestStackAnimationAndroid } from './test-stack-animation-android';
+export { default as TestStackAnimationOperationsAndroid } from './test-stack-animation-operations-android';
+export { default as TestStackAnimationUpdate } from './test-stack-animation-update';
+export { default as TestStackAnimationSlide } from './test-stack-animation-slide';
+export { default as TestStackAnimationFade } from './test-stack-animation-fade';
+export { default as TestStackDeferredPush } from './test-stack-deferred-push';
+export { default as TestStackAnimationIOSAndroid } from './test-stack-animation-ios-android';
+export { default as TestStackAnimationNone } from './test-stack-animation-none';
+export { default as TestStackAnimationOptionsAndroid } from './test-stack-animation-options-android';
+export { default as TestStackAnimationReplaceAndroid } from './test-stack-animation-replace-android';
+export { default as TestStackAnimationPresetCompositionAndroid } from './test-stack-animation-preset-composition-android';
+export { default as TestStackAnimationCustomMotionsAndroid } from './test-stack-animation-custom-motions-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
@@ -52,11 +76,14 @@ export { default as TestStackSubviewsIOS } from './test-stack-subviews-ios';
 export { default as TestStackHeaderIconIOS } from './test-stack-header-icon-ios';
 export { default as TestStackHeaderItemIdentifierIOS } from './test-stack-header-item-identifier-ios';
 export { default as TestStackHeaderItemVisibilityPriorityIOS } from './test-stack-header-item-visibility-priority-ios';
+export { default as TestStackHeaderItemAppearanceIOS } from './test-stack-header-item-appearance-ios';
 export { default as TestStackHeaderMenuIOS } from './test-stack-header-menu-ios';
 export { default as TestStackHeaderMenuOptionsIOS } from './test-stack-header-menu-options-ios';
 export { default as TestStackHeaderSelectiveUpdatesIOS } from './test-stack-header-selective-updates-ios';
 export { default as TestStackHeaderSubviewOnPressIOS } from './test-stack-header-subview-onpress-ios';
 export { default as TestStackBackButtonIOS } from './test-stack-back-button-ios';
+export { default as TestStackHeaderBarMinimizationIOS } from './test-stack-header-bar-minimization-ios';
+export { default as TestStackHeaderBarSafeAreaAdjustmentIOS } from './test-stack-header-bar-safe-area-adjustment-ios';
 export { default as TestStackBackButtonAndroid } from './test-stack-back-button-android';
 export { default as TestStackOverflowIcon } from './test-stack-overflow-icon-android';
 export { default as TestStackToolbarMenuCommands } from './test-stack-toolbar-menu-commands-android';
@@ -77,12 +104,22 @@ export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
 export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
-
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
   TestStackLifecycleEvents,
   TestStackAnimationAndroid,
+  TestStackAnimationOperationsAndroid,
+  TestStackAnimationUpdate,
+  TestStackAnimationSlide,
+  TestStackAnimationFade,
+  TestStackDeferredPush,
+  TestStackAnimationIOSAndroid,
+  TestStackAnimationNone,
+  TestStackAnimationOptionsAndroid,
+  TestStackAnimationReplaceAndroid,
+  TestStackAnimationPresetCompositionAndroid,
+  TestStackAnimationCustomMotionsAndroid,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
   TestStackLiftOnScrollAndroid,
@@ -91,10 +128,13 @@ const scenarios = {
   TestStackHeaderIconIOS,
   TestStackHeaderItemIdentifierIOS,
   TestStackHeaderItemVisibilityPriorityIOS,
+  TestStackHeaderItemAppearanceIOS,
   TestStackHeaderSubviewOnPress,
   TestStackHeaderSelectiveUpdates,
   TestStackHeaderMenuOptionsIOS,
   TestStackBackButtonIOS,
+  TestStackHeaderBarMinimizationIOS,
+  TestStackHeaderBarSafeAreaAdjustmentIOS,
   TestStackBackButtonAndroid,
   TestStackOverflowIcon,
   TestStackToolbarMenuCommands,

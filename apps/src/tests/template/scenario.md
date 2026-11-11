@@ -40,11 +40,32 @@ to differentiate between OS/app versions.
 You can use subheadings to group steps logically (e.g., ### Baseline) or define separate step
 sections for different device or OS types if their execution paths differ significantly (## Steps - iOS or ## Steps - iPad).
 
+**Numbering Convention:** When steps are grouped into subsections (`###`),
+numbering restarts from 1 in each subsection. Separate subsections with a
+horizontal rule (`---`).
+
+**Indentation Convention:** Expected-result checkboxes are indented with
+4 spaces (`    - [ ] Expected result`). When a checkbox wraps onto more lines,
+align the continuation lines with the checkbox text (10 spaces).
+
+### Baseline
+
 1. Navigate to ...
 
-- [ ] Description of expected behavior after the navigation action.
+    - [ ] Description of expected behavior after the navigation action.
+
+---
+
+### Subsection name
+
+1. Tap ...
+
+    - [ ] iOS18: expected behavior on this OS version.
+    - [ ] iOS26: expected behavior on this OS version.
 
 2. Tap ...
 
-- [ ] iOS18: expected behavior on this OS version.
-- [ ] iOS26: expected behavior on this OS version.
+    - [ ] Description of expected behavior after the action, wrapped onto
+          a second line.
+
+---

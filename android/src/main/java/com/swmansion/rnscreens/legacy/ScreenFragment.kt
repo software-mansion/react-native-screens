@@ -15,7 +15,7 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.core.utils.recycle
 import com.swmansion.rnscreens.legacy.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.legacy.events.ScreenAppearEvent
 import com.swmansion.rnscreens.legacy.events.ScreenDisappearEvent

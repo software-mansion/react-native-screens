@@ -263,14 +263,14 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setSheetBackgroundEffect(
+        view: Screen?,
+        value: String?,
+    ) = Unit
+
     override fun setTransitionDuration(
         view: Screen?,
         value: Int,
-    ) = Unit
-
-    override fun setTransitionStartDeferred(
-        view: Screen?,
-        value: Boolean,
     ) = Unit
 
     override fun setHideKeyboardOnSwipe(
@@ -388,6 +388,13 @@ open class ScreenViewManager :
         value: Int,
     ) {
         view.sheetInitialDetentIndex = value
+    }
+
+    override fun selectDetent(
+        view: Screen,
+        index: Int,
+    ) {
+        view.selectSheetDetent(index)
     }
 
     override fun setScreenId(

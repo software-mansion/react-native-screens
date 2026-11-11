@@ -2,19 +2,45 @@ import { StackHost } from './host';
 import { StackScreen } from './screen';
 import { StackHeaderConfig } from './header';
 
-export type {
-  StackHostProps,
-  StackHostColorScheme,
-  StackHostDirection,
-} from './host';
+export type { StackHostProps, StackColorScheme, StackDirection } from './host';
 
 export type {
   OnDismissEventPayload,
-  EmptyEventPayload, // TODO: Remove this from public types (we need one shared type for this)
-  OnDismissEvent,
   StackScreenActivityMode,
-  StackScreenEventHandler,
+  StackScreenReplaceAnimation,
+  StackScreenDismissHandler,
   StackScreenProps,
+  StackScreenAnimation,
+  StackScreenAnimationPresetName,
+  StackScreenAnimationPresetConfig,
+  StackScreenAnimationCustom,
+  StackScreenAnimationTransition,
+  StackScreenAnimationTransitionPresetName,
+  StackScreenAnimationTransitionPresetConfig,
+  StackScreenAnimationCustomTransition,
+  StackScreenAnimationMotion,
+  StackScreenAnimationMotionPresetName,
+  StackScreenAnimationMotionPresetConfig,
+  StackScreenAnimationCustomMotion,
+  StackScreenAnimationTrackTiming,
+  StackScreenAnimationTrack,
+  StackScreenAnimationTranslateTrack,
+  StackScreenAnimationDimTrack,
+  StackScreenAnimationSlideFromPresetName,
+  StackScreenAnimationSlideFromPresetConfig,
+  StackScreenAnimationSlideFromMotionPresetConfig,
+  StackScreenAnimationFadeFromPresetName,
+  StackScreenAnimationFadeFromPresetConfig,
+  StackScreenAnimationFadePresetConfig,
+  StackScreenAnimationIosFromPresetName,
+  StackScreenAnimationIosFromPresetConfig,
+  StackScreenAnimationNonePresetConfig,
+  StackScreenAnimationDefaultPresetConfig,
+  StackScreenAnimationTimingOptions,
+  StackScreenAnimationEasing,
+  StackScreenAnimationEasingName,
+  StackScreenAnimationBezier,
+  StackScreenAnimationLength,
 } from './screen';
 
 export type {
@@ -43,9 +69,15 @@ export type {
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
   StackHeaderBackButtonDisplayModeIOS,
+  StackHeaderMinimizationBehaviorIOS,
+  StackHeaderRestorationBehaviorIOS,
+  StackHeaderSafeAreaAdjustmentIOS,
   StackHeaderItemVisibilityPriorityIOS,
   StackHeaderConfigPropsIOS,
   StackHeaderAppearanceIOS,
+  StackHeaderButtonAppearanceIOS,
+  StackHeaderButtonStateAppearanceIOS,
+  StackHeaderItemVariantIOS,
   StackHeaderInlineItemIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderTitleCustomItemIOS,
@@ -58,8 +90,37 @@ export type {
   StackHeaderMenuOptionsIOS,
 } from './header';
 
+/**
+ * Native stack of screens, pushed and popped with platform transitions.
+ *
+ * @remarks
+ * {@link Stack.Host} presents the screens declared with {@link Stack.Screen},
+ * and each screen configures its header with {@link Stack.HeaderConfig}.
+ *
+ * @namespace
+ */
 export const Stack = {
+  /**
+   * Container that presents its {@link Stack.Screen} children as a native
+   * stack.
+   *
+   * @platform android, ios
+   */
   Host: StackHost,
+  /**
+   * A screen of {@link Stack.Host}.
+   *
+   * @platform android, ios
+   */
   Screen: StackScreen,
+  /**
+   * Configures the native header of the {@link Stack.Screen} it is rendered
+   * in.
+   *
+   * @remarks
+   * On Android, it must be the last child of the screen.
+   *
+   * @platform android, ios
+   */
   HeaderConfig: StackHeaderConfig,
 };

@@ -6,10 +6,23 @@ import type { FormSheetProps } from './FormSheet.types';
 import {
   resolveInitialDetentIndex,
   resolveLargestUndimmedDetentIndex,
+  resolveNativeBackgroundEffect,
   resolveNativeCornerRadius,
   resolveNativeDetents,
 } from './FormSheetUtils';
 
+/**
+ * Presents its children in a native sheet.
+ *
+ * @remarks
+ * The sheet is presented when {@link FormSheetProps.isOpen | isOpen} becomes
+ * `true` and dismissed when it becomes `false`. It rests at the heights given
+ * by {@link FormSheetProps.detents | detents}; the user can drag it between
+ * them, and dismiss it natively unless
+ * {@link FormSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
+ *
+ * @platform android, ios
+ */
 export function FormSheet(props: FormSheetProps) {
   const {
     children,
@@ -18,6 +31,7 @@ export function FormSheet(props: FormSheetProps) {
     largestUndimmedDetentIndex,
     preferredCornerRadius,
     nativeContainerStyle,
+    backgroundEffect,
     ...rest
   } = props;
 
@@ -45,7 +59,10 @@ export function FormSheet(props: FormSheetProps) {
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
       preferredCornerRadius={nativeCornerRadius}
-      nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
+      nativeContainerBackgroundColor={
+        StyleSheet.flatten(nativeContainerStyle)?.backgroundColor
+      }
+      {...resolveNativeBackgroundEffect(backgroundEffect)}
       {...rest}>
       {isFitToContents ? (
         <FormSheetContentWrapperNativeComponent
