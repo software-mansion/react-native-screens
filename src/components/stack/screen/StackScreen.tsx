@@ -19,6 +19,7 @@ function StackScreen({
   children,
   // Control
   activityMode,
+  transitionStartDeferred,
   screenKey,
   // Events
   onWillAppear,
@@ -62,6 +63,7 @@ function StackScreen({
       style={StyleSheet.absoluteFill}
       // Control
       activityMode={activityMode}
+      transitionStartDeferred={transitionStartDeferred}
       screenKey={screenKey}
       // Events
       onWillAppear={onWillAppear}

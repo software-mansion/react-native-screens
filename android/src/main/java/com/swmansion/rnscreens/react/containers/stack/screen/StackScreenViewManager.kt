@@ -150,6 +150,13 @@ internal class StackScreenViewManager :
         view.isPreventNativeDismissEnabled = value
     }
 
+    override fun setTransitionStartDeferred(
+        view: StackScreen,
+        value: Boolean,
+    ) {
+        view.transitionStartDeferred = value
+    }
+
     override fun setAnimation(
         view: StackScreen,
         value: Dynamic,

@@ -85,6 +85,11 @@ internal class StackScreenFragment(
         screenLifecycleEventEmitter = StackScreenAppearanceEventsEmitter(viewLifecycleOwner.lifecycle, item.appearanceEventEmitter)
     }
 
+    override fun onResume() {
+        super.onResume()
+        delegate.get()?.onFragmentResumed(this)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         screenLifecycleEventEmitter = null

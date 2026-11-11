@@ -9,4 +9,6 @@ internal interface StackScreenFragmentDelegate {
      * the only place where such updates are delivered reliably.
      */
     fun onFragmentConfigurationChanged(config: Configuration)
+
+    fun onFragmentResumed(fragment: StackScreenFragment)
 }
