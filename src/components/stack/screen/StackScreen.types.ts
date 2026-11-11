@@ -76,6 +76,15 @@ export type StackScreenProps = {
    */
   activityMode: StackScreenActivityMode;
   /**
+   * Hold an animated push at its first frame while the destination lays out.
+   * Set on attachment and clear when ready. The push starts after one second
+   * if still held. Applies to iOS stack-managed animation presets.
+   *
+   * @defaultValue false
+   * @platform ios
+   */
+  transitionStartDeferred?: boolean | undefined;
+  /**
    * Key that identifies the screen.
    *
    * @remarks

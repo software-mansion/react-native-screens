@@ -34,7 +34,21 @@ static RNSStackScreenController *_Nullable RNSStackScreenControllerOrNil(UIViewC
   if (timeline.isStatic) {
     return [RNSStackNoneAnimator new];
   }
-  return [[RNSStackTimelineAnimator alloc] initWithTimeline:timeline];
+  RNSStackTimelineAnimator *animator = [[RNSStackTimelineAnimator alloc] initWithTimeline:timeline];
+  if (operation == UINavigationControllerOperationPush) {
+    animator.pushInteraction = [RNSStackScreenControllerOrNil(toVC).configProvider interactionForPush];
+  }
+  return animator;
+}
+
+- (nullable id<UIViewControllerInteractiveTransitioning>)
+                           navigationController:(UINavigationController *)navigationController
+    interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animator
+{
+  if ([animator isKindOfClass:RNSStackTimelineAnimator.class]) {
+    return ((RNSStackTimelineAnimator *)animator).pushInteraction;
+  }
+  return nil;
 }
 
 @end

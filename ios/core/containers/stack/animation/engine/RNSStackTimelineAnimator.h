@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSStackTimelineAnimator : RNSStackTransitionAnimator
 
+@property (nonatomic, strong, nullable) id<UIViewControllerInteractiveTransitioning> pushInteraction;
+
 - (instancetype)initWithTimeline:(RNSStackAnimationTransitionTimeline *)timeline;
 
 @end

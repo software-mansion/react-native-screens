@@ -48,6 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, nonnull) id<RNSStackAnimationConfig> animation;
 
+- (nullable id<UIViewControllerInteractiveTransitioning>)interactionForPush;
+
 /**
  * Content scroll view registered within the screen, or nil if none has been registered.
  */

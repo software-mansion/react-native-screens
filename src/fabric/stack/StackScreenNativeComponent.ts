@@ -197,6 +197,7 @@ export interface NativeProps extends ViewProps {
 
   // Codegen does not currently support non-optional enum.
   activityMode?: CT.WithDefault<ActivityMode, 'detached'>;
+  transitionStartDeferred?: CT.WithDefault<boolean, false>;
   screenKey: string;
 
   // Events

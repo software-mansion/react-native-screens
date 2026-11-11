@@ -13,6 +13,7 @@
 #import "RNSScrollViewSeeking.h"
 #import "RNSStackAnimationMapper.h"
 #import "RNSStackAnimationPresetConfig.h"
+#import "RNSStackDeferredPush.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
@@ -38,6 +39,7 @@ namespace react = facebook::react;
   // the owning `RNSStackScreenController` through `RNSStackContainerItemConfigProviding` when
   // resolving the content scroll view for special effects.
   __weak UIScrollView *_Nullable _contentScrollView;
+  __weak RNSStackDeferredPush *_Nullable _deferredPush;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
@@ -84,6 +86,7 @@ namespace react = facebook::react;
 
 - (void)invalidateImpl
 {
+  [_deferredPush releasePush];
   // We want to run after container updates are performed (transitions etc.)
   __weak auto weakSelf = self;
   dispatch_async(dispatch_get_main_queue(), ^{
@@ -92,6 +95,19 @@ namespace react = facebook::react;
       strongSelf->_controller = nil;
     }
   });
+}
+
+#pragma mark - RNSStackContainerItemConfigProviding
+
+- (nullable id<UIViewControllerInteractiveTransitioning>)interactionForPush
+{
+  const auto &props = *std::static_pointer_cast<const react::RNSStackScreenProps>(_props);
+  if (!props.transitionStartDeferred || _activityMode != RNSStackScreenActivityModeAttached) {
+    return nil;
+  }
+  RNSStackDeferredPush *interaction = [RNSStackDeferredPush new];
+  _deferredPush = interaction;
+  return interaction;
 }
 
 #pragma mark - RNSScrollViewSeeking
@@ -184,6 +200,10 @@ namespace react = facebook::react;
     _activityMode = rnscreens::conversion::RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
         newComponentProps.activityMode);
     _hasUpdatedActivityMode = YES;
+  }
+
+  if (!newComponentProps.transitionStartDeferred || _activityMode == RNSStackScreenActivityModeDetached) {
+    [_deferredPush releasePush];
   }
 
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
