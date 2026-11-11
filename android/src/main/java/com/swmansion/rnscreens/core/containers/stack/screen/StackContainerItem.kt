@@ -25,6 +25,8 @@ internal interface StackContainerItem : ContainerItem {
      */
     val animation: StackAnimationConfig
 
+    val transitionStartDeferred: Boolean
+
     val replaceAnimation: StackTransitionKind
 
     /**

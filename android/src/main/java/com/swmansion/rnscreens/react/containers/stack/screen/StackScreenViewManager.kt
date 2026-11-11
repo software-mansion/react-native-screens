@@ -153,7 +153,9 @@ internal class StackScreenViewManager :
     override fun setTransitionStartDeferred(
         view: StackScreen,
         value: Boolean,
-    ) = Unit // iOS only
+    ) {
+        view.transitionStartDeferred = value
+    }
 
     override fun setAnimation(
         view: StackScreen,

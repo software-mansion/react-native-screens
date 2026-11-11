@@ -66,6 +66,15 @@ internal class StackScreen(
      */
     override var animation: StackAnimationConfig = StackAnimationConfig.DEFAULT
 
+    override var transitionStartDeferred: Boolean = false
+        set(value) {
+            val release = field && !value
+            field = value
+            if (release) {
+                getAssociatedFragment()?.startPostponedEnterTransition()
+            }
+        }
+
     override var replaceAnimation: StackTransitionKind = StackTransitionKind.POP
 
     var screenKey: String? = null

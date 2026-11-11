@@ -23,6 +23,7 @@ import com.swmansion.rnscreens.core.containers.stack.animation.StackOperationKin
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackFragmentTransitionSlot
 import com.swmansion.rnscreens.core.containers.stack.animation.engine.StackUnderlayProviding
 import com.swmansion.rnscreens.core.containers.stack.animation.resolveFragmentTransition
+import com.swmansion.rnscreens.core.containers.stack.animation.timelineOf
 import com.swmansion.rnscreens.core.containers.stack.header.StackHeaderBackPressHandler
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.containers.stack.screen.StackScreenFragment
@@ -31,6 +32,7 @@ import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.isMeasured
 import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 internal class StackContainer(
@@ -128,6 +130,7 @@ internal class StackContainer(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         requireFragmentManager().removeOnBackStackChangedListener(this)
+        releasePostponedPush()
         operationContext = null
         fragmentManager = null
         parentContainerRegistry.detach(this)
@@ -281,11 +284,27 @@ internal class StackContainer(
      * batch, by [onBackStackChangeStarted] for a pop FragmentManager starts itself (predictive back
      * included).
      *
-     * Cleared in [onBackStackChanged], which follows the getter calls in every path
+     * Cleared in [onBackStackChanged], which follows the getter calls for immediate transitions
      * (`onBackStackChangeCommitted` comes before them). So a predictive back gesture start clears it
      * too: neither the commit nor the cancel (the record re-executed forward) resolves a transition.
      */
     private var operationContext: StackOperationContext? = null
+
+    // AndroidX looks up both transitions after release, when onBackStackChanged has already
+    // cleared operationContext. Keep the push available until the destination resumes.
+    private var postponedPush: StackOperationContext? = null
+    private var awaitingPostponedTransitions = false
+
+    private fun releasePostponedPush() {
+        postponedPush?.incoming?.startPostponedEnterTransition()
+        postponedPush = null
+    }
+
+    override fun onFragmentResumed(fragment: StackScreenFragment) {
+        if (postponedPush?.incoming === fragment) {
+            postponedPush = null
+        }
+    }
 
     /**
      * A batch computed while an earlier one is still pending in FragmentManager executes together
@@ -295,7 +314,10 @@ internal class StackContainer(
      */
     private fun writeOperationContext(modelBeforeBatch: List<StackScreenFragment>) {
         val incoming = stackModel.last()
-        val outgoing = operationContext?.outgoing ?: modelBeforeBatch.lastOrNull()
+        // A second push can cover a destination whose postponed effects have never played.
+        // In that case AndroidX is still displaying the first push's outgoing fragment.
+        val visibleSource = if (awaitingPostponedTransitions) postponedPush?.outgoing else null
+        val outgoing = operationContext?.outgoing ?: visibleSource ?: modelBeforeBatch.lastOrNull()
         val kind =
             when {
                 // The first screen is not a back stack record; nothing animates.
@@ -314,7 +336,10 @@ internal class StackContainer(
     override fun fragmentTransitionFor(
         fragment: StackScreenFragment,
         slot: StackFragmentTransitionSlot,
-    ): Transition? = resolveFragmentTransition(fragment, slot, operationContext)
+    ): Transition? {
+        awaitingPostponedTransitions = false
+        return resolveFragmentTransition(fragment, slot, postponedPush ?: operationContext)
+    }
 
     // endregion
 
@@ -404,6 +429,10 @@ internal class StackContainer(
             return
         }
 
+        // Release inside the superseding transaction so AndroidX can merge the pending effects.
+        // Releasing when JS enqueues a pop would briefly play the abandoned push.
+        releasePostponedPush()
+
         // A pop FragmentManager starts itself (header back, system back, predictive back) has no
         // context yet. The model changes only in `onBackStackChangeCommitted`, so its top is still
         // the popped fragment.
@@ -429,6 +458,16 @@ internal class StackContainer(
         if (fragment !is StackScreenFragment) {
             Log.w(TAG, "[RNScreens] Unexpected type of fragment: ${fragment.javaClass.simpleName}")
             return
+        }
+
+        val context = operationContext
+        if (context?.kind == StackOperationKind.PUSH && context.incoming === fragment && fragment.item.transitionStartDeferred) {
+            val timeline = timelineOf(context)
+            if (timeline.enter.tracks.isNotEmpty() || timeline.exit.tracks.isNotEmpty()) {
+                postponedPush = context
+                awaitingPostponedTransitions = true
+                fragment.postponeEnterTransition(1, TimeUnit.SECONDS)
+            }
         }
 
         // This callback is called for every fragment involved in the back stack change, even

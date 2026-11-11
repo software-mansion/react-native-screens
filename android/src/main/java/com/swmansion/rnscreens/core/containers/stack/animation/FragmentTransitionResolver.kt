@@ -37,7 +37,7 @@ internal fun resolveFragmentTransition(
 /**
  * Which screen's config governs the operation, and which of its two transitions plays.
  */
-private fun timelineOf(context: StackOperationContext): TransitionTimeline =
+internal fun timelineOf(context: StackOperationContext): TransitionTimeline =
     when (context.kind) {
         // The incoming screen's config governs a push.
         StackOperationKind.PUSH -> transitionTimelineOf(context.incoming.item.animation, StackTransitionKind.PUSH)

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { Stack } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-screens/experimental';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { scenarioDescription } from './scenario-description';
 
@@ -18,7 +19,7 @@ function DeferredPush() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={{ bottom: true }}>
       <Stack.Host>
         <Stack.Screen activityMode="attached" screenKey="list">
           <View style={styles.list}>
@@ -57,12 +58,11 @@ function DeferredPush() {
           <Button title="Hold slide" onPress={() => push('slideFromRight')} />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
   list: { flex: 1, backgroundColor: '#9dcafa', justifyContent: 'center' },
   detail: { flex: 1, backgroundColor: '#ffcf78', justifyContent: 'center' },
 });
