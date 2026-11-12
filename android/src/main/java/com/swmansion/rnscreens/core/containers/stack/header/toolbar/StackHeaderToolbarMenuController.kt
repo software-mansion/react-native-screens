@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference
  * scratch at every [attach]. Checked-state semantics run on the state, so
  * updates behave identically whether a toolbar is attached or not.
  */
-internal class StackHeaderToolbarMenuController(
+class StackHeaderToolbarMenuController internal constructor(
     private val iconResolver: StackHeaderToolbarMenuIconResolver,
 ) {
     internal var delegate: WeakReference<StackHeaderToolbarMenuDelegate>? = null
