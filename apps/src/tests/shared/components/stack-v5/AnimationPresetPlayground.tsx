@@ -10,7 +10,7 @@ import {
   useStackRouteConfigContext,
 } from '@apps/shared/containers/stack';
 import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
-import { SettingsPicker } from '@apps/shared';
+import { SettingsPicker, SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import { StackNavigationButtons } from './StackNavigationButtons';
 
@@ -50,6 +50,7 @@ type PlaygroundConfig = {
   hasDirectionPicker: boolean;
   direction: DirectionOption;
   setDirection: (direction: DirectionOption) => void;
+  hasHeaderPicker: boolean;
 };
 
 const PlaygroundContext = React.createContext<PlaygroundConfig>({
@@ -58,24 +59,30 @@ const PlaygroundContext = React.createContext<PlaygroundConfig>({
   hasDirectionPicker: false,
   direction: 'ltr',
   setDirection: () => {},
+  hasHeaderPicker: false,
 });
 
 /**
  * A three-screen stack whose `animation` can be switched from any screen, shared by the
  * per-family animation preset tests. `animationOptions` is the subset of the library's union
  * the pickers offer, so a scenario never exercises a value it does not check;
- * `initialAnimation` is the label of the option every screen starts with.
+ * `initialAnimation` is the label of the option every screen starts with. Every screen has a
+ * hidden header with its name as the title, so the iOS back button menu lists it by name. With
+ * `withHeaderPicker`, "next push header hidden" picks whether pushed screens show their header;
+ * Home never does.
  */
 export function AnimationPresetPlayground({
   animationOptions,
   initialAnimation,
   withDirectionPicker = false,
   withColorReference = false,
+  withHeaderPicker = false,
 }: {
   animationOptions: readonly AnimationPresetOption[];
   initialAnimation: string;
   withDirectionPicker?: boolean;
   withColorReference?: boolean;
+  withHeaderPicker?: boolean;
 }) {
   const [direction, setDirection] = React.useState<DirectionOption>('ltr');
 
@@ -99,14 +106,15 @@ export function AnimationPresetPlayground({
       hasDirectionPicker: withDirectionPicker,
       direction,
       setDirection,
+      hasHeaderPicker: withHeaderPicker,
     }),
-    [labeledOptions, initial, withDirectionPicker, direction],
+    [labeledOptions, initial, withDirectionPicker, direction, withHeaderPicker],
   );
 
-  const options = React.useMemo(
-    () => ({ animation: initial.animation }),
-    [initial],
-  );
+  const optionsFor = (name: string) => ({
+    animation: initial.animation,
+    headerConfig: { title: name, hidden: true },
+  });
 
   return (
     <PlaygroundContext value={config}>
@@ -124,7 +132,7 @@ export function AnimationPresetPlayground({
                 hasColorReference={withColorReference}
               />
             ),
-            options,
+            options: optionsFor('Home'),
           },
           {
             name: 'Blue',
@@ -137,7 +145,7 @@ export function AnimationPresetPlayground({
                 hasColorReference={withColorReference}
               />
             ),
-            options,
+            options: optionsFor('Blue'),
           },
           {
             name: 'Red',
@@ -150,7 +158,7 @@ export function AnimationPresetPlayground({
                 hasColorReference={withColorReference}
               />
             ),
-            options,
+            options: optionsFor('Red'),
           },
         ]}
       />
@@ -159,9 +167,10 @@ export function AnimationPresetPlayground({
 }
 
 /**
- * "next push" is written into every route config, so it applies to screens pushed from now
- * on. "this screen" updates the current route's options, which drives its own pop (button and
- * predictive back gesture). "direction" is the host's layout direction.
+ * "next push" and "next push header hidden" are written into the route configs, so they apply to
+ * screens pushed from now on; the header switch skips Home, which is never pushed, and reads its
+ * value from the pushed routes. "this screen" updates the current route's options, which drives
+ * its own pop (button and predictive back gesture). "direction" is the host's layout direction.
  */
 function AnimationControls() {
   const { routeKey, routeOptions, setRouteOptions } =
@@ -174,6 +183,7 @@ function AnimationControls() {
     hasDirectionPicker,
     direction,
     setDirection,
+    hasHeaderPicker,
   } = React.useContext(PlaygroundContext);
 
   // Every value comes from `animationOptions`, the initial one included, so identity is enough
@@ -185,6 +195,9 @@ function AnimationControls() {
     animationOptions.find(option => option.label === label)?.animation ??
     initialAnimation.animation;
   const labels = animationOptions.map(option => option.label);
+  const pushedRouteConfigs = routeConfigs.filter(
+    config => config.name !== 'Home',
+  );
 
   return (
     <View style={styles.controls}>
@@ -208,6 +221,19 @@ function AnimationControls() {
         }
         items={labels}
       />
+      {hasHeaderPicker ? (
+        <SettingsSwitch
+          label="next push header hidden"
+          value={pushedRouteConfigs[0]?.options?.headerConfig?.hidden ?? true}
+          onValueChange={hidden =>
+            pushedRouteConfigs.forEach(config =>
+              updateRouteConfigWithOptions(config.name, {
+                headerConfig: { title: config.name, hidden },
+              }),
+            )
+          }
+        />
+      ) : null}
       {hasDirectionPicker ? (
         <>
           <SettingsPicker<DirectionOption>

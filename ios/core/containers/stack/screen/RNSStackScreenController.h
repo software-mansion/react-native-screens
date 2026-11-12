@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSStackController;
 @class RNSStackScreenHeaderCoordinator;
+@protocol RNSStackAnimationConfig;
 @protocol RNSStackContainerItemConfigProviding;
 @protocol RNSStackScreenControllerDelegate;
 
@@ -44,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSStackContainerItemConfigProviding <NSObject>
 
 @property (nonatomic, readonly, nullable) NSString *screenKey;
+
+@property (nonatomic, readonly, nonnull) id<RNSStackAnimationConfig> animation;
 
 /**
  * Content scroll view registered within the screen, or nil if none has been registered.

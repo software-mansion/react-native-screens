@@ -35,13 +35,15 @@ function TestStackAnimationAndroid() {
               onDirectionChange={setDirection}
             />
           ),
+          options: { headerConfig: { title: 'Home', hidden: true } },
         },
         {
           name: 'Blue',
           element: <BlueScreen />,
+          options: { headerConfig: { title: 'Blue', hidden: true } },
         },
         {
-          // The only route with a header, so its back arrow pops through the native header.
+          // Its header is the only visible one, so its back arrow pops through the native header.
           name: 'Red',
           element: <RedScreen />,
           options: { headerConfig: { title: 'Red' } },
@@ -53,7 +55,10 @@ function TestStackAnimationAndroid() {
           // not the host's own transition.
           name: 'NestedHost',
           element: <NestedHostScreen />,
-          options: { animation: 'slideFromBottom' },
+          options: {
+            animation: 'slideFromBottom',
+            headerConfig: { title: 'NestedHost', hidden: true },
+          },
         },
       ]}
     />
@@ -126,14 +131,17 @@ function NestedHostScreen() {
         {
           name: 'NestedHome',
           element: <NestedHomeScreen />,
+          options: { headerConfig: { title: 'NestedHome', hidden: true } },
         },
         {
           name: 'NestedBlue',
           element: <NestedBlueScreen />,
+          options: { headerConfig: { title: 'NestedBlue', hidden: true } },
         },
         {
           name: 'NestedRed',
           element: <NestedRedScreen />,
+          options: { headerConfig: { title: 'NestedRed', hidden: true } },
         },
       ]}
     />
