@@ -16,25 +16,26 @@ class RNSStackScreenComponentDescriptor final
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
   void adopt(ShadowNode &shadowNode) const override {
-#ifdef ANDROID
     react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode =
         static_cast<RNSStackScreenShadowNode &>(shadowNode);
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-    auto &layoutableShadowNode =
-        static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
-    auto state =
-        std::static_pointer_cast<const RNSStackScreenShadowNode::ConcreteState>(
-            shadowNode.getState());
-    auto stateData = state->getData();
+    if (screenShadowNode.shouldApplyReportedFrame()) {
+      react_native_assert(
+          dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
+      auto &layoutableShadowNode =
+          static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
-          Size{stateData.frameSize.width, stateData.frameSize.height});
+      auto state = std::static_pointer_cast<
+          const RNSStackScreenShadowNode::ConcreteState>(shadowNode.getState());
+      auto stateData = state->getData();
+
+      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+        layoutableShadowNode.setSize(
+            Size{stateData.frameSize.width, stateData.frameSize.height});
+      }
     }
-#endif // ANDROID
+
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 };

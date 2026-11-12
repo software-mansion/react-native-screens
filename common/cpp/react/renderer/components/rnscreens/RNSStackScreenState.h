@@ -1,6 +1,8 @@
 #pragma once
 
 #include <jsi/jsi.h>
+#include <react/renderer/graphics/Point.h>
+#include <react/renderer/graphics/Size.h>
 
 #ifdef ANDROID
 #include <folly/dynamic.h>
@@ -17,6 +19,11 @@ class JSI_EXPORT RNSStackScreenState final {
   using Shared = std::shared_ptr<const RNSStackScreenState>;
 
   RNSStackScreenState() {};
+  RNSStackScreenState(Size frameSize_, Point contentOffset_)
+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
+
+  Size frameSize{};
+  Point contentOffset{};
 
 #ifdef ANDROID
   RNSStackScreenState(
@@ -30,9 +37,6 @@ class JSI_EXPORT RNSStackScreenState final {
             Point{
                 (Float)data["contentOffsetX"].getDouble(),
                 (Float)data["contentOffsetY"].getDouble()}) {};
-
-  Size frameSize{};
-  Point contentOffset{};
 
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {

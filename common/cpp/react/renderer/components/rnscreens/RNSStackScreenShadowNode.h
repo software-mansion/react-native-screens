@@ -20,11 +20,18 @@ class JSI_EXPORT RNSStackScreenShadowNode final
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
+  /**
+   * Whether the frame the native side sends via shadow state should be applied
+   * to this node (setSize + contentOffset). On Android this is currently
+   * required. On iOS this is enabled in JS only in case a Stack is nested
+   * inside a Split - as it is `StackScreen` role then to convey platform column
+   * dimensions to the React screen contents.
+   */
+  bool shouldApplyReportedFrame() const;
+
 #pragma mark - ShadowNode overrides
 
-#ifdef ANDROID
   Point getContentOriginOffset(bool includeTransform) const override;
-#endif // ANDROID
 };
 
 } // namespace facebook::react

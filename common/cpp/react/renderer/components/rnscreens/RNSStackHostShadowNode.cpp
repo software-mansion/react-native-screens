@@ -28,7 +28,7 @@ RNSStackHostShadowNode::RNSStackHostShadowNode(
  * React Native marks every node rendered with `display: contents` for
  * flattening (`ForceFlattenView`) when it applies the style. Inside a Split
  * column `Stack.Host` renders that way and still needs its view , which
- * owns the navigation controller the Split installs in the column so the mark 
+ * owns the navigation controller the Split installs in the column so the mark
  * is cleared after every construction.
  */
 void RNSStackHostShadowNode::unsetForceFlattenViewForContents() {
