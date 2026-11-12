@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.react.containers.stack.animation
 
+import android.content.Context
 import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -14,10 +15,11 @@ import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetOptio
 import com.swmansion.rnscreens.core.containers.stack.animation.model.PresetOptions
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
 import com.swmansion.rnscreens.core.containers.stack.animation.model.TransitionConfig
+import com.swmansion.rnscreens.react.utils.isAbsent
 import com.swmansion.rnscreens.react.utils.requireNotNullString
 import kotlin.math.roundToLong
 
-private const val KEY_TYPE = "type"
+internal const val KEY_TYPE = "type"
 private const val KEY_NAME = "name"
 private const val KEY_PUSH = "push"
 private const val KEY_POP = "pop"
@@ -31,15 +33,19 @@ private const val PERCENT_SUFFIX = "%"
  * Converts the `animation` prop into [StackAnimationConfig]. The shape is checked here and the
  * level validity of a preset by the config it is wrapped in; every rejected value is an
  * [IllegalArgumentException] the view manager turns into a warning and the default animation.
+ * [context] resolves platform colors.
  */
-internal fun parseStackAnimationConfig(value: Dynamic): StackAnimationConfig =
+internal fun parseStackAnimationConfig(
+    value: Dynamic,
+    context: Context,
+): StackAnimationConfig =
     when (val shape = shapeOf(value)) {
         is Shape.Preset -> StackAnimationConfig.Preset(shape.preset)
         is Shape.Custom -> {
             shape.map.requireOnlyKeys(KEY_TYPE, KEY_PUSH, KEY_POP)
             StackAnimationConfig.Custom(
-                push = parseTransition(shape.map, KEY_PUSH),
-                pop = parseTransition(shape.map, KEY_POP),
+                push = parseTransition(shape.map, KEY_PUSH, context),
+                pop = parseTransition(shape.map, KEY_POP, context),
             )
         }
     }
@@ -47,6 +53,7 @@ internal fun parseStackAnimationConfig(value: Dynamic): StackAnimationConfig =
 private fun parseTransition(
     map: ReadableMap,
     key: String,
+    context: Context,
 ): TransitionConfig =
     if (map.isAbsent(key)) {
         TransitionConfig.Preset(PresetConfig(PresetName.NONE))
@@ -56,8 +63,8 @@ private fun parseTransition(
             is Shape.Custom -> {
                 shape.map.requireOnlyKeys(KEY_TYPE, KEY_ENTER, KEY_EXIT)
                 TransitionConfig.Custom(
-                    enter = parseMotion(shape.map, KEY_ENTER),
-                    exit = parseMotion(shape.map, KEY_EXIT),
+                    enter = parseMotion(shape.map, KEY_ENTER, context),
+                    exit = parseMotion(shape.map, KEY_EXIT, context),
                 )
             }
         }
@@ -66,13 +73,14 @@ private fun parseTransition(
 private fun parseMotion(
     map: ReadableMap,
     key: String,
+    context: Context,
 ): MotionConfig =
     if (map.isAbsent(key)) {
         MotionConfig.Preset(PresetConfig(PresetName.NONE))
     } else {
         when (val shape = shapeOf(map.getDynamic(key))) {
             is Shape.Preset -> MotionConfig.Preset(shape.preset)
-            is Shape.Custom -> throw IllegalArgumentException("[RNScreens] Custom screen motions are not supported yet.")
+            is Shape.Custom -> parseCustomMotion(shape.map, context)
         }
     }
 
@@ -105,9 +113,6 @@ private fun shapeOf(value: Dynamic): Shape =
         else -> throw IllegalArgumentException("[RNScreens] An animation must be a preset name or an object.")
     }
 
-// `isNull` alone throws for a missing key.
-private fun ReadableMap.isAbsent(key: String): Boolean = !hasKey(key) || isNull(key)
-
 // A `null` value means no value, as if the key were omitted (`undefined` never arrives, the
 // bridge drops it before conversion).
 private fun ReadableMap.presentKeys(): List<String> =
@@ -120,7 +125,7 @@ private fun ReadableMap.presentKeys(): List<String> =
     }
 
 // A misplaced or misspelled key would otherwise read as omitted, which is `none`.
-private fun ReadableMap.requireOnlyKeys(vararg allowed: String) {
+internal fun ReadableMap.requireOnlyKeys(vararg allowed: String) {
     presentKeys().forEach { key ->
         require(key in allowed) { "[RNScreens] Unknown animation key: $key." }
     }
@@ -147,13 +152,13 @@ private fun parsePresetConfig(map: ReadableMap): PresetConfig {
     return PresetConfig(name, PresetOptions(durationMs, easing, distance))
 }
 
-private fun parseDuration(value: Dynamic): Long {
+internal fun parseDuration(value: Dynamic): Long {
     val ms = if (value.type == ReadableType.Number) value.asDouble() else Double.NaN
-    require(ms.isFinite() && ms > 0.0) { "[RNScreens] duration must be a positive number of milliseconds." }
-    return ms.roundToLong().coerceAtLeast(1L)
+    require(ms.isFinite()) { "[RNScreens] duration must be a finite number of milliseconds." }
+    return ms.roundToLong()
 }
 
-private fun parseEasing(value: Dynamic): Easing =
+internal fun parseEasing(value: Dynamic): Easing =
     when (value.type) {
         ReadableType.String -> Easing.Named(EasingName.fromString(checkNotNull(value.asString())))
         ReadableType.Array -> parseBezier(checkNotNull(value.asArray()))
@@ -172,22 +177,23 @@ private fun parseBezier(array: ReadableArray): Easing.Bezier {
     )
 }
 
-private fun parseDistance(value: Dynamic): Length {
-    val length =
-        when (value.type) {
-            ReadableType.Number -> value.asDouble().takeIf { it.isFinite() && it > 0.0 }?.let { Length.Dp(it.toFloat()) }
-            ReadableType.String -> {
-                val text = checkNotNull(value.asString())
-                text
-                    .takeIf { it.endsWith(PERCENT_SUFFIX) }
-                    ?.removeSuffix(PERCENT_SUFFIX)
-                    ?.toDoubleOrNull()
-                    ?.takeIf { it.isFinite() && it > 0.0 }
-                    ?.let { Length.Percent((it / 100.0).toFloat()) }
-            }
-            else -> null
-        }
-    return requireNotNull(length) {
-        "[RNScreens] distance must be a positive number of dp or a positive percentage string like '30%'."
+private fun parseDistance(value: Dynamic): Length =
+    requireNotNull(parseLengthOrNull(value)) { "[RNScreens] distance must be a number of dp or a percentage string like '30%'." }
+
+/**
+ * A signed length: a number of dp or a percentage string like `'-30%'`.
+ */
+internal fun parseLength(value: Dynamic): Length =
+    requireNotNull(parseLengthOrNull(value)) { "[RNScreens] A length must be a number of dp or a percentage string like '30%'." }
+
+private fun parseLengthOrNull(value: Dynamic): Length? =
+    when (value.type) {
+        ReadableType.Number -> Length.Dp(value.asDouble().toFloat())
+        ReadableType.String ->
+            checkNotNull(value.asString())
+                .takeIf { it.endsWith(PERCENT_SUFFIX) }
+                ?.removeSuffix(PERCENT_SUFFIX)
+                ?.toDoubleOrNull()
+                ?.let { Length.Percent((it / 100.0).toFloat()) }
+        else -> null
     }
-}
