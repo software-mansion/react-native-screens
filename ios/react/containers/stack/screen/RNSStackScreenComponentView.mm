@@ -16,6 +16,7 @@
 #import "RNSStackScreenComponentEventEmitter.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
+#import "RNSStackScreenShadowStateProxy.h"
 
 namespace react = facebook::react;
 
@@ -30,6 +31,7 @@ namespace react = facebook::react;
 @implementation RNSStackScreenComponentView {
   RNSStackScreenController *_Nonnull _controller;
   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
+  RNSStackScreenShadowStateProxy *_Nonnull _shadowStateProxy;
 
   // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
   // the owning `RNSStackScreenController` through `RNSStackContainerItemConfigProviding` when
@@ -39,9 +41,6 @@ namespace react = facebook::react;
   // Flags
   BOOL _hasUpdatedActivityMode;
   BOOL _reportsFrameToShadowTree;
-
-  react::RNSStackScreenShadowNode::ConcreteState::Shared _state;
-  CGRect _lastScheduledShadowFrame;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -59,11 +58,11 @@ namespace react = facebook::react;
   [self setupController];
 
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
+  _shadowStateProxy = [RNSStackScreenShadowStateProxy new];
 
   _hasUpdatedActivityMode = NO;
   _reportsFrameToShadowTree = NO;
   _isNativelyDismissed = NO;
-  _lastScheduledShadowFrame = CGRectNull;
 }
 
 #pragma mark - Shadow state
@@ -75,18 +74,18 @@ namespace react = facebook::react;
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-  [self reportFrameIfNeeded];
+  [self updateShadowStateIfNeeded];
 }
 
 /**
- * `reportsFrameToShadowTree` is set when the screen is placed by UIKit in a container that Yoga does not lay out
- * (e.g. Split column). The column and the stack host are out of layout and the screen's shadow node spans the split
- * host. The screen then reports the size UIKit gave it and its origin in the split host through the shadow state.
- * Without the prop nothing is reported; Yoga sizes the screen through the host as for regular Stack.
+ * Integration with Split. `reportsFrameToShadowTree` is set when the stack is nested in a Split column. The column
+ * and the stack host are out of layout then and the screen's shadow node spans the split host, so the screen sends
+ * the size UIKit gave it and its origin in the split host through the shadow state. Without the prop nothing is
+ * sent; Yoga sizes the screen through the host, as in a regular stack.
  */
-- (void)reportFrameIfNeeded
+- (void)updateShadowStateIfNeeded
 {
-  if (!_reportsFrameToShadowTree || _state == nullptr || CGRectIsEmpty(self.bounds)) {
+  if (!_reportsFrameToShadowTree || CGRectIsEmpty(self.bounds)) {
     return;
   }
 
@@ -96,13 +95,7 @@ namespace react = facebook::react;
   }
 
   CGRect frame = {[self convertPoint:CGPointZero toView:splitView], self.bounds.size};
-  if (CGRectEqualToRect(frame, _lastScheduledShadowFrame)) {
-    return;
-  }
-
-  auto newState = react::RNSStackScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-  _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
-  _lastScheduledShadowFrame = frame;
+  [_shadowStateProxy updateShadowStateWithFrame:frame];
 }
 
 - (void)resetProps
@@ -242,7 +235,7 @@ namespace react = facebook::react;
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
 {
   [super updateState:state oldState:oldState];
-  _state = std::static_pointer_cast<const react::RNSStackScreenShadowNode::ConcreteState>(state);
+  [_shadowStateProxy updateState:state oldState:oldState];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
