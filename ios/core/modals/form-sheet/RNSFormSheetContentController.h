@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSFormSheetPresentationStyle.h"
 #import "RNSFormSheetProviders.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -33,6 +34,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<RNSFormSheetBehaviorProvider> behaviorProvider;
 
 @property (nonatomic, readonly, nonnull) RNSFormSheetContentView *contentView;
+
+/**
+ * UIKit presentation style the controller presents with. Defaults to `RNSFormSheetPresentationStyleFormSheet`.
+ *
+ * Must be set only while the controller is dismissed: UIKit does not support changing `modalPresentationStyle` of
+ * a presented controller.
+ */
+@property (nonatomic) RNSFormSheetPresentationStyle presentationStyle;
+
+/**
+ * Whether UIKit on the current platform can present with `presentationStyle`.
+ */
+- (BOOL)isPresentationStyleAvailable;
 
 #pragma mark - Presentation
 
