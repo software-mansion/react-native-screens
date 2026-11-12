@@ -32,9 +32,17 @@ import type {
 import { parseAndroidIconToNativeProps } from '../../shared';
 
 function StackHeaderConfig(props: StackHeaderConfigProps) {
-  // ios props are safely dropped
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { ref: forwardedRef, android, ios, ...baseProps } = props;
+  // ios props are safely dropped; `headerMode` is dropped as well, because
+  // every screen on Android always renders its own header
+  const {
+    ref: forwardedRef,
+    android,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ios,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    headerMode,
+    ...baseProps
+  } = props;
 
   const ref = useHeaderConfigRef(forwardedRef);
 

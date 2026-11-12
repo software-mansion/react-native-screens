@@ -64,7 +64,8 @@ namespace react = facebook::react;
 // cannot be clicked, so we check it by ourselves
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-  if (CGRectContainsPoint(_stackNavigationController.navigationBar.frame, point)) {
+  if (!_stackNavigationController.navigationBarHidden &&
+      CGRectContainsPoint(_stackNavigationController.navigationBar.frame, point)) {
     RNSStackHeaderConfigComponentView *headerConfig = [self requireTopScreenHeaderConfig];
     CGPoint convertedPoint = [self convertPoint:point toView:headerConfig];
     UIView *headerHitTestResult = [headerConfig hitTest:convertedPoint withEvent:event];

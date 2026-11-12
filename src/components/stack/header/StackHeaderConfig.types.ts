@@ -5,6 +5,18 @@ import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
 /**
+ * Where the header of a screen is rendered.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'float'` — the screen uses the navigation bar shared by the whole stack.
+ *   Only the content of the bar changes between screens.
+ * - `'screen'` — the screen renders its own navigation bar, which is a part of
+ *   the screen and moves together with it during transitions.
+ */
+export type StackHeaderMode = 'float' | 'screen';
+
+/**
  * Cross-platform props for {@link Stack.HeaderConfig}.
  */
 export interface StackHeaderConfigPropsBase {
@@ -54,6 +66,30 @@ export interface StackHeaderConfigPropsBase {
    * @platform android, ios
    */
   backButtonHidden?: boolean | undefined;
+  /**
+   * Whether the screen uses the navigation bar shared by the stack or renders
+   * a navigation bar of its own.
+   *
+   * @remarks
+   * With `'screen'`, the bar is a part of the screen, so it slides together
+   * with the screen when it is pushed or popped. The shared navigation bar is
+   * hidden while such a screen is on top.
+   *
+   * On iOS, `'screen'` does not support the following, because UIKit drives
+   * them only for the shared navigation bar:
+   * - collapsing large title (`ios.largeTitleEnabled` is ignored),
+   * - navigation bar minimization (`ios.minimizationBehavior`),
+   * - scroll edge appearance tracking,
+   * - on iPhone Duo, moving the back button out of the bar, below the corner
+   *   with the status bar.
+   *
+   * On Android, every screen always renders its own header, so the value does
+   * not change the behavior.
+   *
+   * @defaultValue `'float'`
+   * @platform android, ios
+   */
+  headerMode?: StackHeaderMode | undefined;
 }
 
 /**
