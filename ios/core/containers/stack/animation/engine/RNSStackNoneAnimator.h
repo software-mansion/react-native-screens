@@ -1,6 +1,6 @@
 #pragma once
 
-#import <UIKit/UIKit.h>
+#import "RNSStackTransitionAnimator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Plays a static transition that UIKit animates itself, such as a back button pop: the incoming screen replaces the
  * outgoing one at once.
  */
-@interface RNSStackNoneAnimator : NSObject <UIViewControllerAnimatedTransitioning>
+@interface RNSStackNoneAnimator : RNSStackTransitionAnimator
 
 @end
 
