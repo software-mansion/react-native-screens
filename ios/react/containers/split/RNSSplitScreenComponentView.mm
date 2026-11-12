@@ -7,8 +7,6 @@
 #import "RNSNavigationControllerProviding.h"
 #import "RNSNavigationItemCustomizing.h"
 #import "RNSSafeAreaViewNotifications.h"
-#import "RNSSplitHostComponentView.h"
-#import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
 #import "RNSSplitScreenShadowStateProxy.h"
@@ -116,7 +114,6 @@ namespace react = facebook::react;
   }
   _controller.navigationControllerProvider = provider;
   provider.navigationControllerPlacedByParent = YES;
-  [self requestSplitHostUpdateOfColumns];
 }
 
 - (void)releaseNavigationControllerOfProvider:(UIView<RNSNavigationControllerProviding> *)provider
@@ -125,15 +122,6 @@ namespace react = facebook::react;
             @"[RNScreens] Attempt to release a provider which is not the column's one");
   provider.navigationControllerPlacedByParent = NO;
   _controller.navigationControllerProvider = nil;
-  [self requestSplitHostUpdateOfColumns];
-}
-
-- (void)requestSplitHostUpdateOfColumns
-{
-  if (self.splitHost == nil) {
-    return;
-  }
-  [self.splitHost.splitHostController setNeedsUpdateOfChildViewControllers];
 }
 
 #pragma mark - Layout

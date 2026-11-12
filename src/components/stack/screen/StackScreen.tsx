@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../../fabric/stack/StackScreenNativeComponent';
 import type { NativeEventHandler } from '../../shared/types';
 import type {
@@ -44,6 +44,12 @@ function StackScreen({
     React.useMemo(() => `StackScreen (${screenKey})`, [screenKey]),
   );
 
+  // In a Split column the screen reports the frame of the native column to
+  // the shadow tree, so that its content is laid out in that frame. The host
+  // of this screen reads the same context.
+  const isSplitColumnContent =
+    React.useContext(SplitColumnMarkerContext) && Platform.OS === 'ios';
+
   return (
     <StackScreenNativeComponent
       // @ts-ignore - debug only
@@ -62,7 +68,8 @@ function StackScreen({
       // Configuration
       preventNativeDismiss={preventNativeDismiss}
       animation={animation}
-      replaceAnimation={replaceAnimation}>
+      replaceAnimation={replaceAnimation}
+      reportsFrameToShadowTree={isSplitColumnContent}>
       <SplitColumnMarkerContext.Provider value={false}>
         {children}
       </SplitColumnMarkerContext.Provider>
