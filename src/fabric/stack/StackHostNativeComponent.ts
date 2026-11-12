@@ -14,7 +14,6 @@ export interface NativeProps extends ViewProps {
   colorScheme?: CT.WithDefault<StackHostColorScheme, 'inherit'>;
 }
 
-export default codegenNativeComponent<NativeProps>(
-  'RNSStackHost',
-  {},
-) as HostComponent<NativeProps>;
+export default codegenNativeComponent<NativeProps>('RNSStackHost', {
+  interfaceOnly: true,
+}) as HostComponent<NativeProps>;
