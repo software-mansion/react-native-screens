@@ -106,10 +106,10 @@ const ScreenGestureDetector = ({
       progress = (-1 * event.translationX) / startingPosition.absoluteX;
     } else if (goBackGesture === 'swipeDown') {
       progress =
-        (-1 * event.translationY) /
+        event.translationY /
         (screenDimensions.height - startingPosition.absoluteY);
     } else if (goBackGesture === 'swipeUp') {
-      progress = event.translationY / startingPosition.absoluteY;
+      progress = (-1 * event.translationY) / startingPosition.absoluteY;
     } else if (goBackGesture === 'horizontalSwipe') {
       progress = Math.abs(event.translationX / screenDimensions.width / 2);
     } else if (goBackGesture === 'verticalSwipe') {
