@@ -37,7 +37,7 @@ export interface FormSheetProps {
   children?: ViewProps['children'] | undefined;
 
   /**
-   * Determines whether the sheet is currently visible.
+   * Determines whether the form sheet is currently visible.
    *
    * @remarks
    * Presentation is driven by state transitions: updating this property from
@@ -166,7 +166,7 @@ export interface FormSheetProps {
   // Events
 
   /**
-   * A callback that gets invoked when the sheet will appear. This is
+   * A callback that gets invoked when the FormSheet will appear. This is
    * called as soon as the transition begins.
    *
    * @platform android, ios, tvos >= 26
