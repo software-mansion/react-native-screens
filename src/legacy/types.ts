@@ -497,7 +497,7 @@ export interface ScreenProps extends ViewProps {
    * * `none` - there will be dimming view for all detents levels,
    * * `last` - there won't be a dimming view for any detent level.
    *
-   * There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `largest`), `all`, which work in tandem with
+   * There also legacy & **deprecated** prop values available: `medium`, `large` (don't confuse with `last`), `all`, which work in tandem with
    * corresponding legacy prop values for `sheetAllowedDetents` prop.
    *
    * These are provided solely for **temporary** backward compatibility and are destined for removal in future versions.
