@@ -44,7 +44,13 @@
   UIViewController *presentationSourceViewController =
       [RNSPresentationSourceProvider findViewControllerForPresentationInWindow:window];
   if (presentationSourceViewController == nil) {
-    RNSLogE(@"[RNScreens] Failed to present form sheet: The source view controller cannot be found for target window.");
+    RNSLogE(@"[RNScreens] Failed to present sheet: The source view controller cannot be found for target window.");
+    return;
+  }
+
+  if (![controller isPresentationStyleAvailable]) {
+    RNSLogW(@"[RNScreens] Presentation style '%@' is not available on this platform; the sheet will not be presented.",
+            RNSFormSheetPresentationStyleName(controller.presentationStyle));
     return;
   }
 

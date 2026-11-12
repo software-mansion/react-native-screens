@@ -18,6 +18,7 @@ export * from './components/stack';
 export * from './components/split';
 export * from './components/scroll-view-marker';
 export * from './components/modals/form-sheet';
+export * from './components/modals/page-sheet';
 // Compound types shared by the sheet components; `SheetBase` and its props
 // stay internal.
 export type {

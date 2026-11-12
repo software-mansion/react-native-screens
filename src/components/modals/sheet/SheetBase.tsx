@@ -12,12 +12,22 @@ import {
 } from './SheetUtils';
 
 /**
- * Shared implementation of the sheet modals, backed by
- * `UISheetPresentationController` on iOS and `BottomSheetDialog` on Android.
+ * UIKit `modalPresentationStyle` the sheet host presents with. Pinned by each
+ * public sheet component; never exposed on their props.
+ */
+export type SheetPresentationStyle = 'formSheet' | 'pageSheet';
+
+export interface SheetBaseProps extends SheetProps {
+  presentationStyle: SheetPresentationStyle;
+}
+
+/**
+ * Shared implementation of the sheet modals (`FormSheet`, `PageSheet`), backed
+ * by `UISheetPresentationController` on iOS and `BottomSheetDialog` on Android.
  * Resolves the public props to their native representation and mounts the
  * shared native host.
  */
-export function SheetBase(props: SheetProps) {
+export function SheetBase(props: SheetBaseProps) {
   const {
     children,
     detents,
@@ -26,6 +36,7 @@ export function SheetBase(props: SheetProps) {
     preferredCornerRadius,
     nativeContainerStyle,
     backgroundEffect,
+    presentationStyle,
     ...rest
   } = props;
 
@@ -49,6 +60,7 @@ export function SheetBase(props: SheetProps) {
   return (
     <FormSheetHostNativeComponent
       style={styles.host}
+      presentationStyle={presentationStyle}
       detents={nativeDetents}
       initialDetentIndex={resolvedInitialDetentIndex}
       largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
