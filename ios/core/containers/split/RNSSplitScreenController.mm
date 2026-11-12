@@ -24,13 +24,21 @@
 /**
  * @brief Returns the SplitHost controller the column is installed in.
  *
- * @return `splitViewController` if it is a RNSSplitHostController, otherwise nil (e.g. for the inspector presented as
- * a modal, outside the split hierarchy).
+ * A column backed by a provided navigation controller is not in the hierarchy itself, so the lookup goes through
+ * that navigation controller then.
+ *
+ * @return The split view controller if it is a RNSSplitHostController, otherwise nil (e.g. for the inspector
+ * presented as a modal, outside the split hierarchy).
  */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
-  if ([self.splitViewController isKindOfClass:RNSSplitHostController.class]) {
-    return (RNSSplitHostController *)self.splitViewController;
+  UISplitViewController *splitViewController = self.splitViewController;
+  if (splitViewController == nil) {
+    splitViewController = _navigationControllerProvider.navigationController.splitViewController;
+  }
+
+  if ([splitViewController isKindOfClass:RNSSplitHostController.class]) {
+    return (RNSSplitHostController *)splitViewController;
   }
 
   return nil;
@@ -45,9 +53,22 @@
 
 - (void)setNavigationControllerProvider:(nullable UIView<RNSNavigationControllerProviding> *)provider
 {
+  if (provider == _navigationControllerProvider) {
+    return;
+  }
+
+  // With a provider the column reaches the split only through the provider's navigation controller, so the split is
+  // looked up before the provider changes.
+  RNSSplitHostController *_Nullable splitHostController = [self findSplitHostController];
+
   [self resignLifecycleEventsDelegateOfNavigationController:_navigationControllerProvider.navigationController];
   _navigationControllerProvider = provider;
   [self becomeLifecycleEventsDelegateOfNavigationController:provider.navigationController];
+
+  if (splitHostController != nil) {
+    // The split has to install the navigation controller that backs the column now.
+    [splitHostController setNeedsUpdateOfChildViewControllers];
+  }
 }
 
 - (void)becomeLifecycleEventsDelegateOfNavigationController:
