@@ -1,128 +1,29 @@
-import type { ColorValue, StyleProp, ViewProps, ViewStyle } from 'react-native';
+import type { StyleProp, ViewProps } from 'react-native';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type {
-  BlurEffect,
-  EmptyEventPayload,
-  NativeEventHandler,
-} from '../../shared/types';
+  SheetBackgroundEffect as FormSheetBackgroundEffect,
+  SheetDetentChangedEvent as FormSheetDetentChangedEvent,
+  SheetDetents as FormSheetDetents,
+  SheetInitialDetentIndex as FormSheetInitialDetentIndex,
+  SheetLargestUndimmedDetentIndex as FormSheetLargestUndimmedDetentIndex,
+  SheetNativeContainerStyleProps as FormSheetNativeContainerStyleProps,
+  SheetPreferredCornerRadius as FormSheetPreferredCornerRadius,
+} from '../sheet';
 
-/**
- * Payload of the {@link FormSheetProps.onDetentChanged | onDetentChanged}
- * event.
- */
-export interface FormSheetDetentChangedEvent {
-  /**
-   * Zero-based index of the detent the sheet settled at, in
-   * {@link FormSheetProps.detents | detents}.
-   */
-  index: number;
-}
-
-/**
- * Resting positions of a sheet.
- *
- * @remarks
- * The following values are supported:
- * - an array of fractions of the sheet's maximum height, each between `0.0`
- *   and `1.0`, in strictly ascending order — the sheet rests at each of them.
- * - `'fitToContents'` — a single detent with the height of the sheet's
- *   content.
- */
-export type FormSheetDetents = number[] | 'fitToContents';
-
-/**
- * Corner radius of a sheet.
- *
- * @remarks
- * The following values are supported:
- * - a number — the radius in density-independent pixels.
- * - `'systemDefault'` — the system's default corner radius.
- */
-export type FormSheetPreferredCornerRadius = number | 'systemDefault';
-
-/**
- * Largest detent of a sheet at which the content underneath is not dimmed.
- *
- * @remarks
- * The following values are supported:
- * - a number — zero-based index of a detent in `detents`; the content
- *   underneath is dimmed only at the detents above it.
- * - `'none'` — the content underneath is dimmed at every detent.
- * - `'last'` — the content underneath is never dimmed.
- */
-export type FormSheetLargestUndimmedDetentIndex = number | 'none' | 'last';
-
-/**
- * Detent a sheet opens at.
- *
- * @remarks
- * The following values are supported:
- * - a number — zero-based index of a detent in `detents`.
- * - `'last'` — the last, largest detent.
- */
-export type FormSheetInitialDetentIndex = number | 'last';
-
-/**
- * Blur style of a {@link FormSheetBackgroundEffectBlur}.
- *
- * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
- */
-export type FormSheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
-
-/**
- * Flat fill rendered behind the sheet's content.
- */
-export interface FormSheetBackgroundEffectColor {
-  /**
-   * Discriminator of the effect.
-   */
-  type: 'color';
-  /**
-   * Color of the fill.
-   */
-  color: ColorValue;
-}
-
-/**
- * Blur material rendered behind the sheet's content.
- */
-export interface FormSheetBackgroundEffectBlur {
-  /**
-   * Discriminator of the effect.
-   */
-  type: 'blur';
-  /**
-   * Blur style of the material.
-   */
-  style: FormSheetBackgroundEffectBlurStyle;
-}
-
-/**
- * Material the system renders behind the sheet's content.
- *
- * @remarks
- * The following values are supported:
- * - `'automatic'` — the system's default material for sheets.
- * - `'none'` — no material at all; the sheet is transparent and only its
- *   content is drawn.
- * - {@link FormSheetBackgroundEffectColor} — a flat fill of the given color.
- * - {@link FormSheetBackgroundEffectBlur} — a blur of the given style.
- */
-export type FormSheetBackgroundEffect =
-  | 'automatic'
-  | 'none'
-  | FormSheetBackgroundEffectColor
-  | FormSheetBackgroundEffectBlur;
-
-/**
- * Style of the native container hosting a sheet's content.
- */
-export type FormSheetNativeContainerStyleProps = {
-  /**
-   * Specifies the background color of the native container hosting the sheet
-   * content.
-   */
-  backgroundColor?: ViewStyle['backgroundColor'] | undefined;
-};
+// Renamed re-exports keep the shared declarations' typedocs visible on the
+// consumer side.
+export type {
+  SheetDetentChangedEvent as FormSheetDetentChangedEvent,
+  SheetDetents as FormSheetDetents,
+  SheetPreferredCornerRadius as FormSheetPreferredCornerRadius,
+  SheetLargestUndimmedDetentIndex as FormSheetLargestUndimmedDetentIndex,
+  SheetInitialDetentIndex as FormSheetInitialDetentIndex,
+  SheetBackgroundEffectBlurStyle as FormSheetBackgroundEffectBlurStyle,
+  SheetBackgroundEffectColor as FormSheetBackgroundEffectColor,
+  SheetBackgroundEffectBlur as FormSheetBackgroundEffectBlur,
+  SheetBackgroundEffect as FormSheetBackgroundEffect,
+  SheetNativeContainerStyleProps as FormSheetNativeContainerStyleProps,
+} from '../sheet';
 
 /**
  * Props for {@link FormSheet}.
@@ -131,7 +32,7 @@ export interface FormSheetProps {
   /**
    * Content of the sheet.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   children?: ViewProps['children'] | undefined;
 
@@ -143,7 +44,7 @@ export interface FormSheetProps {
    * `false` to `true` triggers the sheet to present, while changing it from
    * `true` to `false` triggers a programmatic dismissal.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   isOpen: boolean;
 
@@ -242,7 +143,7 @@ export interface FormSheetProps {
   /**
    * Style applied to the native container hosting the sheet content.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   nativeContainerStyle?:
     | StyleProp<FormSheetNativeContainerStyleProps>
@@ -268,31 +169,31 @@ export interface FormSheetProps {
    * A callback that gets invoked when the FormSheet will appear. This is
    * called as soon as the transition begins.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * A callback that gets invoked when the FormSheet did appear. This is called
+   * A callback that gets invoked when the sheet did appear. This is called
    * as soon as the transition ends.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * A callback that gets invoked when the FormSheet will disappear. This is
+   * A callback that gets invoked when the sheet will disappear. This is
    * called as soon as the transition begins.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * A callback that gets invoked when the FormSheet did disappear. This is
+   * A callback that gets invoked when the sheet did disappear. This is
    * called as soon as the transition ends.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
@@ -303,7 +204,7 @@ export interface FormSheetProps {
    * This event is fired when the sheet was dismissed via the `isOpen` prop
    * changing to `false`.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   onDismiss?: NativeEventHandler<EmptyEventPayload> | undefined;
 
@@ -312,14 +213,10 @@ export interface FormSheetProps {
    *
    * @remarks
    * It is highly recommended to use this callback to synchronize your local
-   * React state to prevent UI mismatches.
+   * React state to prevent UI mismatches, e.g. by setting `isOpen` back to
+   * `false`.
    *
-   * @example
-   * ```tsx
-   * <FormSheet isOpen={isOpen} onNativeDismiss={() => setIsOpen(false)} />
-   * ```
-   *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   onNativeDismiss?: NativeEventHandler<EmptyEventPayload> | undefined;
 
