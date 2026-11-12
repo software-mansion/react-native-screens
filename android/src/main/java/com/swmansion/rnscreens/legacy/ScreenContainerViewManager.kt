@@ -37,7 +37,9 @@ class ScreenContainerViewManager :
         parent: ScreenContainer,
         index: Int,
     ) {
+        val screen = parent.getScreenAt(index)
         parent.removeScreenAt(index)
+        parent.detachRemovedScreen(screen)
     }
 
     override fun removeAllViews(parent: ScreenContainer) {
