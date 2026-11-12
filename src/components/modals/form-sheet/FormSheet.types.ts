@@ -136,7 +136,7 @@ export interface FormSheetProps {
    * the sheet via `isOpen={false}` will still work.
    *
    * @defaultValue `false`
-   * @platform android, ios, tvos >= 26
+   * @platform android, ios
    */
   preventNativeDismiss?: boolean | undefined;
 
@@ -246,7 +246,7 @@ export interface FormSheetProps {
    * useful for triggering custom feedback, such as an alert to inform the user
    * why the sheet cannot be closed.
    *
-   * @platform android, ios, tvos >= 26
+   * @platform android, ios
    */
   onNativeDismissPrevented?: NativeEventHandler<EmptyEventPayload> | undefined;
 }
