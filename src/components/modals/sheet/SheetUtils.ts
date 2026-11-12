@@ -1,35 +1,35 @@
 import type {
-  FormSheetBackgroundEffectBlurStyle,
-  FormSheetDetents,
-  FormSheetPreferredCornerRadius,
-  FormSheetProps,
-} from './FormSheet.types';
+  SheetBackgroundEffectBlurStyle,
+  SheetDetents,
+  SheetPreferredCornerRadius,
+  SheetProps,
+} from './Sheet.types';
 import type { ColorValue } from 'react-native';
 
 // Predefined value for `fitToContents`. Keep in sync with native counterpart.
-const FORM_SHEET_NATIVE_FIT_TO_CONTENTS = -1.0;
+const SHEET_NATIVE_FIT_TO_CONTENTS = -1.0;
 // Predefined values for `initialDetentIndex`. Keep in sync with native counterpart.
-const FORM_SHEET_LAST_DETENT = -1;
+const SHEET_LAST_DETENT = -1;
 // Predefined values for `largestUndimmedDetentIndex`. Keep in sync with native counterpart.
-const FORM_SHEET_ALWAYS_DIMMED = -1;
-const FORM_SHEET_NEVER_DIMMED = -2;
+const SHEET_ALWAYS_DIMMED = -1;
+const SHEET_NEVER_DIMMED = -2;
 
 export function resolveNativeDetents(
-  detents?: FormSheetDetents,
+  detents?: SheetDetents,
 ): number[] | undefined {
   if (!detents) {
     return undefined;
   }
 
   if (detents === 'fitToContents') {
-    return [FORM_SHEET_NATIVE_FIT_TO_CONTENTS];
+    return [SHEET_NATIVE_FIT_TO_CONTENTS];
   }
 
   return detents;
 }
 
 export function resolveInitialDetentIndex(
-  initialDetentIndex: FormSheetProps['initialDetentIndex'],
+  initialDetentIndex: SheetProps['initialDetentIndex'],
   detentsCount: number = 0,
 ): number {
   if (initialDetentIndex === undefined) {
@@ -37,7 +37,7 @@ export function resolveInitialDetentIndex(
   }
 
   if (initialDetentIndex === 'last') {
-    return FORM_SHEET_LAST_DETENT;
+    return SHEET_LAST_DETENT;
   }
 
   if (typeof initialDetentIndex === 'number') {
@@ -60,7 +60,7 @@ export function resolveInitialDetentIndex(
 }
 
 export function resolveNativeCornerRadius(
-  radius?: FormSheetPreferredCornerRadius,
+  radius?: SheetPreferredCornerRadius,
 ): number | undefined {
   if (radius === 'systemDefault') {
     return -1.0;
@@ -75,23 +75,23 @@ export function resolveNativeCornerRadius(
 /**
  * Resolves the JS `largestUndimmedDetentIndex` prop to a native numeric value.
  *
- * @param largestUndimmedDetent The prop value passed from the FormSheet.
+ * @param largestUndimmedDetent The prop value passed from the sheet component.
  * @param detentsCount Length of the `detents` array as seen from JS.
  * @returns A value to pass to the native component:
- * - `-1` (`FORM_SHEET_ALWAYS_DIMMED`),
- * - `-2` (`FORM_SHEET_NEVER_DIMMED`),
+ * - `-1` (`SHEET_ALWAYS_DIMMED`),
+ * - `-2` (`SHEET_NEVER_DIMMED`),
  * - a non-negative index.
  */
 export function resolveLargestUndimmedDetentIndex(
-  largestUndimmedDetent: FormSheetProps['largestUndimmedDetentIndex'],
+  largestUndimmedDetent: SheetProps['largestUndimmedDetentIndex'],
   detentsCount: number = 0,
 ): number {
   if (largestUndimmedDetent === 'none' || largestUndimmedDetent === undefined) {
-    return FORM_SHEET_ALWAYS_DIMMED;
+    return SHEET_ALWAYS_DIMMED;
   }
 
   if (largestUndimmedDetent === 'last') {
-    return FORM_SHEET_NEVER_DIMMED;
+    return SHEET_NEVER_DIMMED;
   }
 
   if (typeof largestUndimmedDetent === 'number') {
@@ -101,7 +101,7 @@ export function resolveLargestUndimmedDetentIndex(
       console.error(
         `[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex' (${largestUndimmedDetent}). Expected an integer between 0 and ${lastDetentIndex}. Falling back to the default behavior (always dimmed).`,
       );
-      return FORM_SHEET_ALWAYS_DIMMED;
+      return SHEET_ALWAYS_DIMMED;
     }
 
     return largestUndimmedDetent;
@@ -110,7 +110,7 @@ export function resolveLargestUndimmedDetentIndex(
   console.error(
     "[RNScreens] Invalid value provided for 'largestUndimmedDetentIndex'. Expected a number, 'none', or 'last'. Falling back to the default behavior (always dimmed).",
   );
-  return FORM_SHEET_ALWAYS_DIMMED;
+  return SHEET_ALWAYS_DIMMED;
 }
 
 function isIndexInClosedRange(
@@ -124,11 +124,11 @@ function isIndexInClosedRange(
 export type NativeBackgroundEffectProps = {
   backgroundEffect: 'automatic' | 'none' | 'color' | 'blur';
   backgroundEffectColor?: ColorValue;
-  backgroundEffectBlurStyle?: FormSheetBackgroundEffectBlurStyle;
+  backgroundEffectBlurStyle?: SheetBackgroundEffectBlurStyle;
 };
 
 export function resolveNativeBackgroundEffect(
-  effect: FormSheetProps['backgroundEffect'],
+  effect: SheetProps['backgroundEffect'],
 ): NativeBackgroundEffectProps | undefined {
   if (effect === undefined) {
     return undefined;
