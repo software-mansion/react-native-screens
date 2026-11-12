@@ -1,0 +1,35 @@
+name: Issue triage comments
+
+on:
+  issues:
+    types: [labeled, unlabeled]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  comment:
+    if: >-
+      ${{ github.repository == 'software-mansion/react-native-screens'
+      && contains(fromJSON('["missing-repro", "missing-info"]'), github.event.label.name) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: triage-comment-${{ github.event.issue.number }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout triage script
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          sparse-checkout: .github/workflows/helper/issue-triage-comments.cjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Post or retract triage response
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const triage = require(`${process.env.GITHUB_WORKSPACE}/.github/workflows/helper/issue-triage-comments.cjs`);
+            await triage({ github, context, core });
