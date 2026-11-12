@@ -11,6 +11,7 @@ export type {
   SheetBackgroundEffectBlurStyle,
   SheetBackgroundEffectColor,
   SheetNativeContainerStyleProps,
+  SheetPreferredContentSize,
   SheetProps,
 } from './Sheet.types';
 
