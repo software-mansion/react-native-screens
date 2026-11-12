@@ -5,11 +5,11 @@ import { getMatches, getTopmostMatch } from './matchers';
 import { isIOSVersionAtLeast, isIPadTarget } from './platform';
 import {
   CLASS_NAME_ANDROID_COORDINATOR_LAYOUT,
-  CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER,
+  CLASS_NAME_ANDROID_RNS_SHEET_CONTAINER,
 } from './native-classes-android';
 import {
   CLASS_NAME_RCT_ROOT_COMPONENT_VIEW,
-  CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW,
+  CLASS_NAME_RNS_SHEET_CONTENT_VIEW,
   CLASS_NAME_UI_DIMMING_VIEW,
   CLASS_NAME_UI_DROP_SHADOW_VIEW,
 } from './native-classes-ios';
@@ -72,7 +72,7 @@ export type IOSFormSheetFrames = {
  */
 export async function getIOSFormSheetFrames(): Promise<IOSFormSheetFrames> {
   const sheet = await getTopmostMatch(
-    by.type(CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW),
+    by.type(CLASS_NAME_RNS_SHEET_CONTENT_VIEW),
   );
   const [root] = await getMatches(by.type(CLASS_NAME_RCT_ROOT_COMPONENT_VIEW));
   return { sheet: sheet.frame, window: root.frame };
@@ -80,7 +80,7 @@ export async function getIOSFormSheetFrames(): Promise<IOSFormSheetFrames> {
 
 async function getIOSGeometry(): Promise<FormSheetGeometry> {
   const sheet = (await getTopmostMatch(
-    by.type(CLASS_NAME_RNS_FORM_SHEET_CONTENT_VIEW),
+    by.type(CLASS_NAME_RNS_SHEET_CONTENT_VIEW),
   )) as IosElementAttributes;
   const [rootMatch] = await getMatches(
     by.type(CLASS_NAME_RCT_ROOT_COMPONENT_VIEW),
@@ -112,12 +112,12 @@ async function getIOSGeometry(): Promise<FormSheetGeometry> {
 
 async function getAndroidGeometry(): Promise<FormSheetGeometry> {
   const [sheet] = await getMatches(
-    by.type(CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER),
+    by.type(CLASS_NAME_ANDROID_RNS_SHEET_CONTAINER),
   );
   const [window] = await getMatches(
     by
       .type(CLASS_NAME_ANDROID_COORDINATOR_LAYOUT)
-      .withDescendant(by.type(CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER)),
+      .withDescendant(by.type(CLASS_NAME_ANDROID_RNS_SHEET_CONTAINER)),
   );
 
   const windowHeight = window.frame.height;

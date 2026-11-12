@@ -235,11 +235,11 @@
         "RNSScrollViewMarker": {
           "className": "RNSScrollViewMarkerComponentView"
         },
-        "RNSFormSheetHost": {
-          "className": "RNSFormSheetHostComponentView"
+        "RNSSheetHost": {
+          "className": "RNSSheetHostComponentView"
         },
-        "RNSFormSheetContentWrapper": {
-          "className": "RNSFormSheetContentWrapperComponentView"
+        "RNSSheetContentWrapper": {
+          "className": "RNSSheetContentWrapperComponentView"
         },
         "RNSContainedModalHost": {
           "className": "RNSContainedModalHostComponentView"

@@ -24,8 +24,8 @@ import com.swmansion.rnscreens.react.containers.stack.host.StackHostViewManager
 import com.swmansion.rnscreens.react.containers.stack.screen.StackScreenViewManager
 import com.swmansion.rnscreens.react.containers.tabs.host.TabsHostViewManager
 import com.swmansion.rnscreens.react.containers.tabs.screen.TabsScreenViewManager
-import com.swmansion.rnscreens.react.modals.formsheet.contentwrapper.FormSheetContentWrapperViewManager
-import com.swmansion.rnscreens.react.modals.formsheet.host.FormSheetHostViewManager
+import com.swmansion.rnscreens.react.modals.sheet.contentwrapper.SheetContentWrapperViewManager
+import com.swmansion.rnscreens.react.modals.sheet.host.SheetHostViewManager
 import com.swmansion.rnscreens.react.module.ScreensModule
 import com.swmansion.rnscreens.react.views.safearea.SafeAreaViewManager
 import com.swmansion.rnscreens.react.views.scrollviewmarker.ScrollViewMarkerViewManager
@@ -72,8 +72,8 @@ class RNScreensPackage : BaseReactPackage() {
             ScrollViewMarkerViewManager(),
             StackHeaderConfigViewManager(),
             StackHeaderSubviewViewManager(),
-            FormSheetHostViewManager(),
-            FormSheetContentWrapperViewManager(),
+            SheetHostViewManager(),
+            SheetContentWrapperViewManager(),
         )
     }
 
