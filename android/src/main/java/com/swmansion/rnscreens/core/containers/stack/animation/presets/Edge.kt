@@ -7,15 +7,4 @@ internal enum class Edge {
     BOTTOM,
     START,
     END,
-    ;
-
-    internal fun opposite(): Edge =
-        when (this) {
-            LEFT -> RIGHT
-            RIGHT -> LEFT
-            TOP -> BOTTOM
-            BOTTOM -> TOP
-            START -> END
-            END -> START
-        }
 }
