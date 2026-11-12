@@ -50,6 +50,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
 @property (nonatomic) RNSHeaderMinimizationBehavior minimizationBehavior;
+/**
+ * `RNSHeaderModeFloat` - the screen uses the navigation bar of its navigation controller, shared by all screens
+ * of the stack. `RNSHeaderModeScreen` - the screen renders its own navigation bar (see `-[RNSScreen
+ * screenNavigationBar]`), which moves together with the screen during transitions.
+ */
+@property (nonatomic) RNSHeaderMode headerMode;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic) UIBarMinimizationRestorationBehavior restorationBehavior API_AVAILABLE(ios(27.0));
 @property (nonatomic) UIBarMinimizationSafeAreaAdjustment safeAreaAdjustment API_AVAILABLE(ios(27.0));

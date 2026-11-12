@@ -145,6 +145,11 @@ namespace react = facebook::react;
 
 - (void)maybeUpdateHeaderLayoutInfoInShadowTree:(RNSScreen *)screenController
 {
+  // The screen renders its own navigation bar and updates the header layout info itself.
+  if (screenController.screenNavigationBar != nil) {
+    return;
+  }
+
   // This might happen e.g. if there is only native title present in navigation bar.
   if (self.navigationBar.subviews.count < 2) {
     return;
@@ -201,8 +206,10 @@ namespace react = facebook::react;
     }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
-    auto headerConfig = static_cast<RNSScreen *>(self.topViewController).screenView.findHeaderConfig;
-    if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible) {
+    auto screenController = static_cast<RNSScreen *>(self.topViewController);
+    auto headerConfig = screenController.screenView.findHeaderConfig;
+    // With `headerMode: 'screen'` the header subviews are not displayed by this bar.
+    if (headerConfig == nil || !headerConfig.shouldHeaderBeVisible || screenController.screenNavigationBar != nil) {
       return;
     }
 
@@ -1217,8 +1224,15 @@ RNS_IGNORE_SUPER_CALL_END
 // cannot be clicked, so we check it by ourselves
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    RNSScreenView *topMostScreen = (RNSScreenView *)_reactSubviews.lastObject;
+  RNSScreenView *topMostScreen = (RNSScreenView *)_reactSubviews.lastObject;
+  // With `headerMode: 'screen'` the header is displayed by the navigation bar of the screen itself, and the bar of
+  // the navigation controller is hidden.
+  UINavigationBar *screenNavigationBar =
+      [topMostScreen isKindOfClass:[RNSScreenView class]] ? topMostScreen.controller.screenNavigationBar : nil;
+  UINavigationBar *navigationBar = screenNavigationBar ?: _controller.navigationBar;
+  CGRect navigationBarFrame = [navigationBar convertRect:navigationBar.bounds toView:self];
+
+  if (!navigationBar.isHidden && CGRectContainsPoint(navigationBarFrame, point)) {
     UIView *headerConfig = topMostScreen.findHeaderConfig;
     if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       CGPoint convertedPoint = [self convertPoint:point toView:headerConfig];
