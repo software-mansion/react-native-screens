@@ -103,6 +103,33 @@ namespace react = facebook::react;
 - (void)layoutSubviews
 {
   [super layoutSubviews];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (_type == RNSScreenStackHeaderSubviewTypeCenter || _type == RNSScreenStackHeaderSubviewTypeTitle) {
+      CGFloat maxWidth = self.bounds.size.width;
+      if (maxWidth > 0) {
+        CGFloat targetWidth = RCTCGSizeFromSize(_layoutMetrics.frame.size).width;
+        for (UIView *child in self.subviews) {
+          CGFloat originX = child.frame.origin.x;
+          BOOL originNeedsReset = NO;
+          if (originX < 0) {
+            originX = 0;
+            originNeedsReset = YES;
+          }
+          CGFloat availableWidth = maxWidth - originX;
+          CGFloat ceiling = targetWidth > 0 ? targetWidth : child.frame.size.width;
+          CGFloat clampedWidth = MAX(0.0, MIN(ceiling, availableWidth));
+          if (originNeedsReset || child.frame.size.width != clampedWidth) {
+            CGRect childFrame = child.frame;
+            childFrame.origin.x = originX;
+            childFrame.size.width = clampedWidth;
+            child.frame = childFrame;
+          }
+        }
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   [self updateShadowStateInContextOfAncestorView:[self findNavigationBar]];
 }
 
@@ -187,16 +214,39 @@ RNS_IGNORE_SUPER_CALL_END
   [self invalidateUIBarButtonItem];
 }
 
+- (void)setType:(RNSScreenStackHeaderSubviewType)type
+{
+  if (_type == type) {
+    return;
+  }
+  _type = type;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (_type == RNSScreenStackHeaderSubviewTypeCenter || _type == RNSScreenStackHeaderSubviewTypeTitle) {
+      self.clipsToBounds = YES;
+      self.translatesAutoresizingMaskIntoConstraints = NO;
+      [self setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
+      [self setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+      [self setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
+      [self setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
-// Starting from iOS 26, to center left and right subviews inside liquid glass backdrop,
+// Starting from iOS 26, to center left, right, and center/title subviews inside liquid glass backdrop,
 // we need to use auto layout. To make Yoga's layout work with auto layout, we pass information
 // from Yoga via `intrinsicContentSize`.
 - (BOOL)needsAutoLayout
 {
   BOOL needsAutoLayout = NO;
   if (@available(iOS 26.0, *)) {
-    needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft || _type == RNSScreenStackHeaderSubviewTypeRight;
+    needsAutoLayout = _type == RNSScreenStackHeaderSubviewTypeLeft ||
+        _type == RNSScreenStackHeaderSubviewTypeRight ||
+        _type == RNSScreenStackHeaderSubviewTypeCenter ||
+        _type == RNSScreenStackHeaderSubviewTypeTitle;
   }
   return needsAutoLayout;
 }
