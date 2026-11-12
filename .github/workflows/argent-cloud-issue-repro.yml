@@ -113,6 +113,7 @@ jobs:
       screens-version: ${{ steps.plan.outputs.screens-version }}
       react-native-version: ${{ steps.plan.outputs.react-native-version }}
       configuration: ${{ steps.plan.outputs.configuration }}
+      build-runner: ${{ steps.plan.outputs.build-runner }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
@@ -296,19 +297,26 @@ jobs:
           [[ "$configuration" =~ ^(release|debug)$ ]] || { echo "::error::configuration must be release or debug, got '$configuration'"; exit 1; }
           # The versions are written only after they passed the check, and only when a later job
           # uses them: an unchecked string with a line break would add outputs of its own.
-          rn_version="" screens_version=""
+          rn_version="" screens_version="" build_runner=""
           if [ "$feasible" = "true" ]; then
             rn_version=$(jq -r .reactNativeVersion "$plan")
             screens_version=$(jq -r .screensVersion "$plan")
             [[ "$rn_version" =~ $version_re ]] || { echo "::error::reactNativeVersion must be exact"; exit 1; }
             [[ "$screens_version" =~ $version_re ]] || { echo "::error::screensVersion must be exact"; exit 1; }
             [[ "$(jq -r .appKind "$plan")" =~ ^(rn-cli|expo)$ ]] || { echo "::error::appKind must be rn-cli or expo"; exit 1; }
+            # React Native before 0.83 does not build with Xcode 27, which only the xcode-27 image
+            # has; those apps are built on macos-26 with Xcode 26.3 and the iOS 26 SDK.
+            build_runner=xcode-27
+            if [ "$(echo "$rn_version" | cut -d. -f1)" = "0" ] && [ "$(echo "$rn_version" | cut -d. -f2)" -lt 83 ]; then
+              build_runner=macos-26
+            fi
           fi
           {
             echo "feasible=$feasible"
             echo "screens-version=$screens_version"
             echo "react-native-version=$rn_version"
             echo "configuration=$configuration"
+            echo "build-runner=$build_runner"
           } >> "$GITHUB_OUTPUT"
 
       # The plan artifact is public. The Read deny rules above are enforced by the CLI, which is
@@ -446,7 +454,7 @@ jobs:
   build:
     needs: [authorize, plan]
     if: needs.plan.outputs.feasible == 'true'
-    runs-on: macos-26
+    runs-on: ${{ needs.plan.outputs.build-runner }}
     timeout-minutes: 150
     env:
       APP_DIR: ${{ github.workspace }}/argent-cloud-app
@@ -473,18 +481,16 @@ jobs:
         with:
           ruby-version: '3.3'
 
-      # React Native before 0.83 does not build with the Xcode 27 toolchain of the macos-26 image.
+      # The plan sends React Native before 0.83 to macos-26, whose default is a later Xcode 26.
       - name: Select Xcode for older React Native
+        if: needs.plan.outputs.build-runner == 'macos-26'
         env:
           RN_VERSION: ${{ needs.plan.outputs.react-native-version }}
         run: |
-          RN_MINOR="$(echo "$RN_VERSION" | cut -d. -f2)"
-          if [ "$RN_MINOR" -lt 83 ]; then
-            developer_dir=/Applications/Xcode_26.3.app/Contents/Developer
-            [ -d "$developer_dir" ] || { echo "::error::React Native $RN_VERSION needs Xcode 26.3, which is not on this runner"; exit 1; }
-            echo "React Native $RN_VERSION < 0.83, pinning Xcode 26.3"
-            echo "DEVELOPER_DIR=$developer_dir" >> "$GITHUB_ENV"
-          fi
+          developer_dir=/Applications/Xcode_26.3.app/Contents/Developer
+          [ -d "$developer_dir" ] || { echo "::error::React Native $RN_VERSION needs Xcode 26.3, which is not on this runner"; exit 1; }
+          echo "React Native $RN_VERSION < 0.83, pinning Xcode 26.3"
+          echo "DEVELOPER_DIR=$developer_dir" >> "$GITHUB_ENV"
 
       - name: Prepare the app
         id: prepare
