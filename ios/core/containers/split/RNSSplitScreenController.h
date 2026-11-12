@@ -58,8 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Set by the column view when its **only** child conforms to `RNSNavigationControllerProviding`. The Split host
  * installs the provided navigation controller in place of one rooted at this controller, so neither the column view
- * nor the provider's view enter the UIKit hierarchy. The column's appearance events come from the provided
- * controller then, which must conform to `RNSViewControllerAppearanceNotifying`.
+ * nor the provider's view enter the UIKit hierarchy. The column's lifecycle events come from the provided
+ * controller then, which must conform to `RNSViewControllerLifecycleEventsNotifying`.
  */
 @property (nonatomic, weak, nullable) UIView<RNSNavigationControllerProviding> *navigationControllerProvider;
 

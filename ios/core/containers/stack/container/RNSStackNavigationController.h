@@ -3,17 +3,18 @@
 #import "RNSContainer.h"
 #import "RNSContainerTransactionSupporting.h"
 #include "RNSStackNavigationBarCoordinator.h"
-#import "RNSViewControllerAppearanceNotifying.h"
+#import "RNSViewControllerLifecycleEventsNotifying.h"
 
 @class RNSStackScreenController;
 @protocol RNSViewFrameChangeDelegate;
 
-@interface RNSStackNavigationController
-    : UINavigationController <RNSContainer, RNSContainerTransactionSupporting, RNSViewControllerAppearanceNotifying>
+@interface RNSStackNavigationController : UINavigationController <RNSContainer,
+                                                                  RNSContainerTransactionSupporting,
+                                                                  RNSViewControllerLifecycleEventsNotifying>
 
 @property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> navigationBarFrameChangeDelegate;
 
-@property (nonatomic, weak, nullable) id<RNSViewControllerAppearanceDelegate> appearanceDelegate;
+@property (nonatomic, weak, nullable) id<RNSViewControllerLifecycleEventsDelegate> lifecycleEventsDelegate;
 
 @property (nonatomic, readonly, nonnull) RNSStackNavigationBarCoordinator *navigationBarCoordinator;
 

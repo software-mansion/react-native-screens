@@ -1,7 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
-#import "RNSViewControllerAppearanceNotifying.h"
+#import "RNSViewControllerLifecycleEventsNotifying.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,10 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol RNSNavigationControllerProviding <NSObject>
 
 /**
- * The controller reports its appearance to a delegate, so that the parent that installs it can follow its lifecycle.
+ * The controller reports its lifecycle events to a delegate, so that the parent that installs it can follow them.
  */
 @property (nonatomic, strong, readonly, nonnull)
-    UINavigationController<RNSViewControllerAppearanceNotifying> *navigationController;
+    UINavigationController<RNSViewControllerLifecycleEventsNotifying> *navigationController;
 
 /**
  * Set by the parent that installs `navigationController` itself; while YES the component must not

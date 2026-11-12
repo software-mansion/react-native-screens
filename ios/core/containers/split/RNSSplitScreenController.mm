@@ -2,9 +2,9 @@
 
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
-#import "RNSViewControllerAppearanceNotifying.h"
+#import "RNSViewControllerLifecycleEventsNotifying.h"
 
-@interface RNSSplitScreenController () <RNSViewControllerAppearanceDelegate>
+@interface RNSSplitScreenController () <RNSViewControllerLifecycleEventsDelegate>
 @end
 
 @implementation RNSSplitScreenController
@@ -45,26 +45,26 @@
 
 - (void)setNavigationControllerProvider:(nullable UIView<RNSNavigationControllerProviding> *)provider
 {
-  [self resignAppearanceDelegateOfNavigationController:_navigationControllerProvider.navigationController];
+  [self resignLifecycleEventsDelegateOfNavigationController:_navigationControllerProvider.navigationController];
   _navigationControllerProvider = provider;
-  [self becomeAppearanceDelegateOfNavigationController:provider.navigationController];
+  [self becomeLifecycleEventsDelegateOfNavigationController:provider.navigationController];
 }
 
-- (void)becomeAppearanceDelegateOfNavigationController:
-    (nullable UINavigationController<RNSViewControllerAppearanceNotifying> *)navigationController
+- (void)becomeLifecycleEventsDelegateOfNavigationController:
+    (nullable UINavigationController<RNSViewControllerLifecycleEventsNotifying> *)navigationController
 {
-  navigationController.appearanceDelegate = self;
+  navigationController.lifecycleEventsDelegate = self;
 }
 
-- (void)resignAppearanceDelegateOfNavigationController:
-    (nullable UINavigationController<RNSViewControllerAppearanceNotifying> *)navigationController
+- (void)resignLifecycleEventsDelegateOfNavigationController:
+    (nullable UINavigationController<RNSViewControllerLifecycleEventsNotifying> *)navigationController
 {
-  if (navigationController.appearanceDelegate == self) {
-    navigationController.appearanceDelegate = nil;
+  if (navigationController.lifecycleEventsDelegate == self) {
+    navigationController.lifecycleEventsDelegate = nil;
   }
 }
 
-#pragma mark - RNSViewControllerAppearanceDelegate
+#pragma mark - RNSViewControllerLifecycleEventsDelegate
 
 - (void)viewControllerWillAppear:(UIViewController *)viewController
 {
