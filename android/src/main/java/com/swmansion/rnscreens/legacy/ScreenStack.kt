@@ -83,6 +83,8 @@ class ScreenStack(
             return
         }
 
+        // Finish descendants before Android detaches the fragment's root view.
+        view.fragment.screen.endRemovalTransition()
         super.endViewTransition(view)
 
         disappearingTransitioningChildren.remove(view)
