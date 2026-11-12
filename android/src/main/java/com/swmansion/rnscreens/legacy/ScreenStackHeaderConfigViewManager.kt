@@ -1,8 +1,10 @@
 package com.swmansion.rnscreens.legacy
 
 import android.view.View
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
@@ -13,6 +15,7 @@ import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerInterface
 import com.swmansion.rnscreens.legacy.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.legacy.events.HeaderDetachedEvent
+import com.swmansion.rnscreens.react.utils.readOptionalFloat
 import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
@@ -136,6 +139,16 @@ class ScreenStackHeaderConfigViewManager :
         titleFontSize: Int,
     ) {
         config.setTitleFontSize(titleFontSize.toFloat())
+    }
+
+    override fun setLetterSpacing(
+        config: ScreenStackHeaderConfig,
+        letterSpacing: Dynamic,
+    ) {
+        // Only the title is customizable on Android. A missing key means the default spacing;
+        // 0 is a valid explicit value.
+        val spacings = if (!letterSpacing.isNull && letterSpacing.type == ReadableType.Map) letterSpacing.asMap() else null
+        config.setTitleLetterSpacing(spacings?.readOptionalFloat("title"))
     }
 
     override fun setTitleFontWeight(
