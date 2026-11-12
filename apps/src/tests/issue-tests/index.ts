@@ -228,6 +228,7 @@ export { default as Test4811 } from './Test4811';
 export { default as Test4857 } from './Test4857';
 export { default as Test4863 } from './Test4863';
 export { default as Test4872 } from './Test4872';
+export { default as Test4941 } from './Test4941';
 export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
 export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
 export { default as Test5092 } from './Test5092';
