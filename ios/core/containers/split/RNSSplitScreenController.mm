@@ -50,21 +50,17 @@
   [self becomeAppearanceDelegateOfNavigationController:provider.navigationController];
 }
 
-- (void)becomeAppearanceDelegateOfNavigationController:(nullable UINavigationController *)navigationController
+- (void)becomeAppearanceDelegateOfNavigationController:
+    (nullable UINavigationController<RNSViewControllerAppearanceNotifying> *)navigationController
 {
-  if ([navigationController respondsToSelector:@selector(setAppearanceDelegate:)]) {
-    ((id<RNSViewControllerAppearanceNotifying>)navigationController).appearanceDelegate = self;
-  }
+  navigationController.appearanceDelegate = self;
 }
 
-- (void)resignAppearanceDelegateOfNavigationController:(nullable UINavigationController *)navigationController
+- (void)resignAppearanceDelegateOfNavigationController:
+    (nullable UINavigationController<RNSViewControllerAppearanceNotifying> *)navigationController
 {
-  if (![navigationController respondsToSelector:@selector(setAppearanceDelegate:)]) {
-    return;
-  }
-  id<RNSViewControllerAppearanceNotifying> notifying = (id<RNSViewControllerAppearanceNotifying>)navigationController;
-  if (notifying.appearanceDelegate == self) {
-    notifying.appearanceDelegate = nil;
+  if (navigationController.appearanceDelegate == self) {
+    navigationController.appearanceDelegate = nil;
   }
 }
 

@@ -49,7 +49,7 @@ namespace react = facebook::react;
 
 #pragma mark - RNSNavigationControllerProviding
 
-- (UINavigationController *)navigationController
+- (UINavigationController<RNSViewControllerAppearanceNotifying> *)navigationController
 {
   return _stackNavigationController;
 }
