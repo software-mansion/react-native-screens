@@ -1,5 +1,6 @@
-// Internal module shared by the sheet-style modals. Not re-exported from the
-// package entry point; consumers use `FormSheet`.
+// Module shared by the sheet-style modals. Only the compound types are
+// re-exported from the package entry point; `SheetBase` and `SheetProps` stay
+// internal.
 export type {
   SheetDetentChangedEvent,
   SheetDetents,
