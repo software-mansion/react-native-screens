@@ -28,7 +28,11 @@ namespace react = facebook::react;
 
   if (!CGRectEqualToRect(frame, _lastScheduledFrame)) {
     auto newState = react::RNSSplitScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
-    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::unstable_Immediate);
+    // Asynchronous, like `RNSScreen` by default. A synchronous update commits and lays out the shadow
+    // tree on the main thread from `viewDidLayoutSubviews`. If the JS thread is measuring text at that
+    // moment, it holds the text measurement cache lock while `NSTextStorage` waits for the main queue,
+    // and the two threads deadlock.
+    _state->updateState(std::move(newState), facebook::react::EventQueue::UpdateMode::Asynchronous);
 
     _lastScheduledFrame = frame;
   }
