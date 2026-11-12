@@ -4,6 +4,7 @@ import {
   CLASS_NAME_ANDROID_ACTION_MENU_ITEM_VIEW,
   CLASS_NAME_ANDROID_APP_BAR_LAYOUT,
   CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON,
+  CLASS_NAME_ANDROID_COLLAPSING_TOOLBAR_LAYOUT,
   CLASS_NAME_ANDROID_MATERIAL_TOOLBAR,
 } from './native-classes-android';
 import { DEFAULT_TIMEOUT_MS } from './wait';
@@ -36,9 +37,18 @@ export const stackV5BackButton = (): NativeMatcher =>
     .type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)
     .withAncestor(stackV5Toolbar());
 
-/** A native header title, which renders as a `MaterialToolbar` child. */
+/** A small header's title, which renders as a `MaterialToolbar` child. */
 export const stackV5HeaderTitle = (title: string): NativeMatcher =>
   by.text(title).withAncestor(stackV5Toolbar());
+
+/** A medium / large header's title host; a small header has none. */
+export const stackV5CollapsingToolbar = (): NativeMatcher =>
+  by.type(CLASS_NAME_ANDROID_COLLAPSING_TOOLBAR_LAYOUT);
+
+/** A medium / large header's title, via the content description Material
+ * mirrors it into (the title is drawn, so `by.text` cannot see it). */
+export const stackV5CollapsingHeaderTitle = (title: string): NativeMatcher =>
+  by.label(title).and(stackV5CollapsingToolbar());
 
 /**
  * A toolbar action button, matched by label in both forms; icon-only buttons

@@ -14,7 +14,11 @@ Pass: nothing about the header resets on a tab switch.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+Incomplete. Check manually:
+
+- step 1: the subtitle "Tab persistence" is shown,
+- step 3: the subtitle "Tab persistence" is still shown,
+- step 3: no flash of a re-built header when "Stack" comes back.
 
 ## Prerequisites
 
