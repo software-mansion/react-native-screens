@@ -11,6 +11,7 @@ import type {
 import SplitScreen from './SplitScreen';
 
 type NativeRef = React.ComponentRef<typeof SplitHostNativeComponent>;
+type NativeProps = React.ComponentProps<typeof SplitHostNativeComponent>;
 
 // According to the UIKit documentation: https://developer.apple.com/documentation/uikit/uisplitviewcontroller/displaymode-swift.enum
 // Only specific pairs for displayMode - splitBehavior are valid and others may lead to unexpected results.
@@ -39,7 +40,7 @@ const isValidDisplayModeForSplitBehavior = (
   );
 };
 
-function SplitHost({ ref, ...props }: SplitHostProps) {
+function SplitHost({ ref, onDisplayModeWillChange, ...props }: SplitHostProps) {
   const { preferredDisplayMode, preferredSplitBehavior } = props;
   const nativeRef = React.useRef<NativeRef>(null);
 
@@ -107,6 +108,10 @@ function SplitHost({ ref, ...props }: SplitHostProps) {
       // This enables us to fully recreate the Split when necessary, ensuring the correct column configuration is always applied.
       key={`columns-${columns.length}-inspectors-${inspectors.length}`}
       {...props}
+      // The native spec types the display modes as strings, see the TODO there.
+      onDisplayModeWillChange={
+        onDisplayModeWillChange as NativeProps['onDisplayModeWillChange']
+      }
       style={styles.container}>
       {props.children}
     </SplitHostNativeComponent>

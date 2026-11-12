@@ -14,18 +14,12 @@ import type {
 export type DisplayModeWillChangeEvent = {
   /**
    * Display mode of the Split before the change.
-   *
-   * @remarks
-   * One of the {@link SplitDisplayMode} values.
    */
-  currentDisplayMode: string;
+  currentDisplayMode: SplitDisplayMode;
   /**
    * Display mode of the Split after the change.
-   *
-   * @remarks
-   * One of the {@link SplitDisplayMode} values.
    */
-  nextDisplayMode: string;
+  nextDisplayMode: SplitDisplayMode;
 };
 
 /**
@@ -433,13 +427,12 @@ export interface SplitHostProps extends ViewProps {
    * Specifies the background style of the primary view controller.
    *
    * @remarks
-   * On iOS 18 or lower, we always fall back to `none` which is a system
-   * default value. Since iOS 26 the system default value is `sidebar`.
-   *
-   * According to the documentation, this property shouldn't have any effect
-   * on iOS. However, on iOS 26 the support for this prop was added.
+   * According to Apple's documentation, `'sidebar'` is meant for iPad apps
+   * running on macOS (Mac Catalyst) and has no effect on iOS. At runtime, it
+   * does have an effect since iOS 26.
    *
    * @defaultValue `'default'`
+   * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/primarybackgroundstyle | UISplitViewController.primaryBackgroundStyle}
    * @platform ios >= 26
    */
   primaryBackgroundStyle?: SplitPrimaryBackgroundStyle | undefined;
