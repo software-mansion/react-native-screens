@@ -153,7 +153,7 @@ internal class StackScreenFragment(
 
     private fun setupPreventNativeDismissCallback() {
         preventNativeDismissBackPressedCallback =
-            PreventNativeDismissCallback(this, item, canBeEnabled = false)
+            PreventNativeDismissCallback(this, item, canBeEnabled = false, interceptor = item.createBackPressInterceptor(requireActivity()))
         requireActivity().onBackPressedDispatcher.addCallback(
             requireNativeDismissBackPressedCallback,
         )
