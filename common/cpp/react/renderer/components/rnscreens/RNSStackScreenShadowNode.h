@@ -21,11 +21,11 @@ class JSI_EXPORT RNSStackScreenShadowNode final
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
   /**
-   * Whether the frame the screen view reported through the state applies to
-   * this node, as its size and its content offset. On Android always. On iOS
-   * only with `reportsFrameToShadowTree`, that is when the screen is placed by
-   * a native container that Yoga does not lay out; otherwise Yoga sizes the
-   * screen through its parent and the state is ignored.
+   * Whether the frame the native side sends via shadow state should be applied
+   * to this node (setSize + contentOffset). On Android this is currently
+   * required. On iOS this is enabled in JS only in case a Stack is nested
+   * inside a Split - as it is `StackScreen` role then to convey platform column
+   * dimensions to the React screen contents.
    */
   bool shouldApplyReportedFrame() const;
 
