@@ -38,6 +38,7 @@ namespace react = facebook::react;
 
   // Flags
   BOOL _hasUpdatedActivityMode;
+  BOOL _reportsFrameToShadowTree;
 
   react::RNSStackScreenShadowNode::ConcreteState::Shared _state;
   CGRect _lastScheduledShadowFrame;
@@ -60,6 +61,7 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
 
   _hasUpdatedActivityMode = NO;
+  _reportsFrameToShadowTree = NO;
   _isNativelyDismissed = NO;
   _lastScheduledShadowFrame = CGRectNull;
 }
@@ -67,28 +69,34 @@ namespace react = facebook::react;
 #pragma mark - Shadow state
 
 /**
- * In a Split column the screen is sized by UIKit, not by Yoga. The Split column and the Stack host are out of layout
- * and the screen's shadow node spans the split host. When UIKit's size differs from the one Yoga applied, the screen
- * reports its size and its origin in the split host through the shadow state. In a standalone stack nothing is
- * reported.
+ * UIKit calls this when the screen has to lay out its subviews, which happens whenever its size changes.
+ * We assume a size change is the only frame change that needs no other trigger.
  */
 - (void)layoutSubviews
 {
   [super layoutSubviews];
+  [self reportFrameIfNeeded];
+}
 
-  CGSize yogaSize = RCTCGSizeFromSize(_layoutMetrics.frame.size);
-  if (CGSizeEqualToSize(self.bounds.size, yogaSize)) {
+/**
+ * `reportsFrameToShadowTree` is set when the screen is placed by UIKit in a container that Yoga does not lay out
+ * (e.g. Split column). The column and the stack host are out of layout and the screen's shadow node spans the split
+ * host. The screen then reports the size UIKit gave it and its origin in the split host through the shadow state.
+ * Without the prop nothing is reported; Yoga sizes the screen through the host as for regular Stack.
+ */
+- (void)reportFrameIfNeeded
+{
+  if (!_reportsFrameToShadowTree || _state == nullptr || CGRectIsEmpty(self.bounds)) {
     return;
   }
 
   UIView *splitView = _controller.splitViewController.view;
-  CGPoint origin = splitView != nil ? [self convertPoint:CGPointZero toView:splitView] : CGPointZero;
-  [self updateShadowStateWithFrame:(CGRect){origin, self.bounds.size}];
-}
+  if (splitView == nil) {
+    return;
+  }
 
-- (void)updateShadowStateWithFrame:(CGRect)frame
-{
-  if (_state == nullptr || CGRectEqualToRect(frame, _lastScheduledShadowFrame)) {
+  CGRect frame = {[self convertPoint:CGPointZero toView:splitView], self.bounds.size};
+  if (CGRectEqualToRect(frame, _lastScheduledShadowFrame)) {
     return;
   }
 
@@ -222,6 +230,10 @@ namespace react = facebook::react;
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
     RCTAssert(_screenKey == nil, @"[RNScreens] ScreenController cannot change its screenKey");
     _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
+  }
+
+  if (oldComponentProps.reportsFrameToShadowTree != newComponentProps.reportsFrameToShadowTree) {
+    _reportsFrameToShadowTree = newComponentProps.reportsFrameToShadowTree;
   }
 
   [super updateProps:props oldProps:oldProps];
