@@ -27,6 +27,18 @@ export type Edge = 'top' | 'right' | 'bottom' | 'left';
 export type InsetType = 'all' | 'system' | 'interface';
 
 /**
+ * How a {@link SafeAreaView} applies the insets.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'padding'` — the insets are added to the view's own padding, so the view
+ *   keeps its frame and paints its background under the bars.
+ * - `'margin'` — the insets are added to the view's own margin, so the view
+ *   is displaced and shrinks instead.
+ */
+export type SafeAreaViewMode = 'padding' | 'margin';
+
+/**
  * Props for {@link SafeAreaView}.
  *
  * @experimental
@@ -37,12 +49,20 @@ export interface SafeAreaViewProps extends ViewProps {
    *
    * @remarks
    * For each edge set to `true`, the inset of that edge is added to the
-   * view's own margin. The other edges are not inset.
+   * view's own padding or margin, see {@link SafeAreaViewProps.mode | mode}.
+   * The other edges are not inset.
    *
    * @defaultValue No edge is inset.
    * @platform android, ios
    */
   edges?: Readonly<Partial<Record<Edge, boolean>>> | undefined;
+  /**
+   * How the insets are applied, as padding or as margin.
+   *
+   * @defaultValue `'padding'`
+   * @platform android, ios
+   */
+  mode?: SafeAreaViewMode | undefined;
   /**
    * Kind of insets the view takes into account.
    *
