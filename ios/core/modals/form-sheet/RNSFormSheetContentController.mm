@@ -8,6 +8,8 @@
 
 #import "RNSAssert.h"
 
+#include <optional>
+
 @interface RNSFormSheetContentController () <UIAdaptivePresentationControllerDelegate,
                                              UIGestureRecognizerDelegate
 #if !TARGET_OS_TV
@@ -55,41 +57,37 @@
 {
   // The sheet host presents sheets or nothing. A style unavailable on the platform leaves `modalPresentationStyle`
   // untouched; `isPresentationStyleAvailable` reports it and the presentation manager aborts the presentation.
-  switch (_presentationStyle) {
-    case RNSFormSheetPresentationStylePageSheet:
-#if !TARGET_OS_TV
-      self.modalPresentationStyle = UIModalPresentationPageSheet;
-#endif // !TARGET_OS_TV
-      break;
-    case RNSFormSheetPresentationStyleFormSheet:
-    default:
-#if TARGET_OS_TV
-      if (@available(tvOS 26.0, *)) {
-        self.modalPresentationStyle = UIModalPresentationFormSheet;
-      }
-#else
-      self.modalPresentationStyle = UIModalPresentationFormSheet;
-#endif // TARGET_OS_TV
-      break;
+  if (std::optional<UIModalPresentationStyle> modalPresentationStyle = [self resolvedModalPresentationStyle]) {
+    self.modalPresentationStyle = *modalPresentationStyle;
   }
 }
 
 - (BOOL)isPresentationStyleAvailable
 {
-#if TARGET_OS_TV
+  return [self resolvedModalPresentationStyle].has_value();
+}
+
+// UIKit presentation style backing `presentationStyle`, or `std::nullopt` if the platform does not support it.
+- (std::optional<UIModalPresentationStyle>)resolvedModalPresentationStyle
+{
   switch (_presentationStyle) {
     case RNSFormSheetPresentationStylePageSheet:
-      return NO;
+#if TARGET_OS_TV
+      return std::nullopt;
+#else
+      return UIModalPresentationPageSheet;
+#endif // TARGET_OS_TV
     case RNSFormSheetPresentationStyleFormSheet:
     default:
+#if TARGET_OS_TV
       if (@available(tvOS 26.0, *)) {
-        return YES;
+        return UIModalPresentationFormSheet;
       }
-      return NO;
-  }
+      return std::nullopt;
 #else
-  return YES;
+      return UIModalPresentationFormSheet;
 #endif // TARGET_OS_TV
+  }
 }
 
 - (RNSFormSheetContentView *)contentView
