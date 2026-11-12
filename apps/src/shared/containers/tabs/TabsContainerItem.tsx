@@ -62,7 +62,13 @@ function getContent(
   );
 
   if (anySAVEdgeSet) {
-    return <SafeAreaView {...safeAreaConfiguration}>{element}</SafeAreaView>;
+    return (
+      <SafeAreaView
+        {...safeAreaConfiguration}
+        edges={safeAreaConfigurationWithDefault}>
+        {element}
+      </SafeAreaView>
+    );
   }
 
   return element;
