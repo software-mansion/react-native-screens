@@ -43,15 +43,20 @@ static UIInterfaceOrientationMask RNSInterfaceOrientationMaskFromOrientation(RNS
   id<RNSOrientationProviding> childOrientationProvidingVC = [self findChildRNSOrientationProvidingViewController];
 
   if (childOrientationProvidingVC != nil) {
-    RNSOrientation orientation = [childOrientationProvidingVC evaluateOrientation];
-    if (orientation == RNSOrientationInherit) {
-      return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:self.view.window];
-    }
-
-    return RNSInterfaceOrientationMaskFromOrientation(orientation);
+    return [self
+        reactNativeScreensInterfaceOrientationMaskForOrientation:[childOrientationProvidingVC evaluateOrientation]];
   }
 
   return [self reactNativeScreensSupportedInterfaceOrientations];
+}
+
+- (UIInterfaceOrientationMask)reactNativeScreensInterfaceOrientationMaskForOrientation:(RNSOrientation)orientation
+{
+  if (orientation == RNSOrientationInherit) {
+    return [[UIApplication sharedApplication] supportedInterfaceOrientationsForWindow:self.view.window];
+  }
+
+  return RNSInterfaceOrientationMaskFromOrientation(orientation);
 }
 
 - (id<RNSOrientationProviding>)findChildRNSOrientationProvidingViewController

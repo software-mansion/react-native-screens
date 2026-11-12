@@ -87,8 +87,11 @@ static const NSTimeInterval kRNSFullScreenModalRetryDelay = 0.05;
   }
 
   _hasPendingPresentation = YES;
+  [controller applyTransition];
   // The completion is not called when UIKit defers the request, so it carries no signal; `handleDidPresent` does.
-  [presentationSourceViewController presentViewController:controller animated:YES completion:nil];
+  [presentationSourceViewController presentViewController:controller
+                                                 animated:controller.isTransitionAnimated
+                                               completion:nil];
 }
 
 - (void)schedulePresentationAfterTransitionOf:(nullable UIViewController *)viewController
@@ -163,7 +166,7 @@ static const NSTimeInterval kRNSFullScreenModalRetryDelay = 0.05;
   __weak auto weakSelf = self;
   __weak auto weakController = controller;
   __weak auto weakProvider = provider;
-  [presentingViewController dismissViewControllerAnimated:YES
+  [presentingViewController dismissViewControllerAnimated:controller.isTransitionAnimated
                                                completion:^{
                                                  auto strongSelf = weakSelf;
                                                  auto strongController = weakController;

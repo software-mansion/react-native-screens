@@ -1,8 +1,11 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSEnums.h"
 #import "RNSFullScreenModalPresentationStyle.h"
 #import "RNSFullScreenModalProviders.h"
+#import "RNSFullScreenModalTransition.h"
+#import "RNSOrientationProviding.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,6 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface RNSFullScreenModalContentController : UIViewController
+#if !TARGET_OS_TV
+                                                 <RNSOrientationProviding>
+#endif // !TARGET_OS_TV
 
 @property (nonatomic, weak, nullable) id<RNSFullScreenModalContentControllerDelegate> delegate;
 
@@ -53,9 +59,33 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, nullable) UIColor *nativeContainerBackgroundColor;
 
+/**
+ * Used for the next presentation and the dismissal that follows it. UIKit reads
+ * `modalTransitionStyle` again at dismissal, so a value set while presented is
+ * held back until `applyTransition`, keeping the dismissal matched to the
+ * presentation.
+ */
+@property (nonatomic) RNSFullScreenModalTransition transition;
+
+/**
+ * Orientation the modal supports while presented. A nested orientation
+ * provider other than `RNSOrientationInherit` takes precedence.
+ */
+@property (nonatomic) RNSOrientation orientation;
+
+/// Whether the transition the modal was last presented with is animated.
+@property (nonatomic, readonly) BOOL isTransitionAnimated;
+
 #pragma mark - Signals
 
 - (void)setNeedsPresentationUpdate;
+
+- (void)setNeedsOrientationUpdate;
+
+#pragma mark - Presentation
+
+/// Fixes `transition` for the presentation that is about to be requested.
+- (void)applyTransition;
 
 #pragma mark - Updates
 

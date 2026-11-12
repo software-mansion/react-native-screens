@@ -1,4 +1,5 @@
 #import "RNSFullScreenModalHostComponentView.h"
+#import "RNSConversions-FullScreenModal.h"
 #import "RNSFullScreenModalContentController.h"
 #import "RNSFullScreenModalContentView.h"
 #import "RNSFullScreenModalHostEventEmitter.h"
@@ -13,21 +14,6 @@
 #import <react/renderer/components/rnscreens/RNSFullScreenModalHostComponentDescriptor.h>
 
 namespace react = facebook::react;
-
-static RNSFullScreenModalPresentationStyle RNSFullScreenModalPresentationStyleFromHostProp(
-    react::RNSFullScreenModalHostPresentationStyle presentationStyle)
-{
-  switch (presentationStyle) {
-    using enum react::RNSFullScreenModalHostPresentationStyle;
-    case OverContent:
-      return RNSFullScreenModalPresentationStyleOverContent;
-    case ReplacingContent:
-      return RNSFullScreenModalPresentationStyleReplacingContent;
-    default:
-      RCTLogError(@"[RNScreens] Unsupported presentationStyle value, falling back to replacingContent.");
-      return RNSFullScreenModalPresentationStyleReplacingContent;
-  }
-}
 
 @interface RNSFullScreenModalHostComponentView () <RCTMountingTransactionObserving,
                                                    RNSFullScreenModalContentControllerDelegate,
@@ -187,12 +173,23 @@ static RNSFullScreenModalPresentationStyle RNSFullScreenModalPresentationStyleFr
   // Applied before `isOpen`, so a first-time presentation in the same batch already uses the requested style.
   if (oldComponentProps.presentationStyle != newComponentProps.presentationStyle) {
     _controller.presentationStyle =
-        RNSFullScreenModalPresentationStyleFromHostProp(newComponentProps.presentationStyle);
+        rnscreens::conversion::RNSFullScreenModalPresentationStyleFromHostProp(newComponentProps.presentationStyle);
   }
 
   if (oldComponentProps.nativeContainerBackgroundColor != newComponentProps.nativeContainerBackgroundColor) {
     _controller.nativeContainerBackgroundColor =
         RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
+  }
+
+  if (oldComponentProps.transition != newComponentProps.transition) {
+    _controller.transition =
+        rnscreens::conversion::RNSFullScreenModalTransitionFromHostProp(newComponentProps.transition);
+  }
+
+  if (oldComponentProps.orientation != newComponentProps.orientation) {
+    _controller.orientation =
+        rnscreens::conversion::RNSOrientationFromFullScreenModalHostOrientation(newComponentProps.orientation);
+    [_controller setNeedsOrientationUpdate];
   }
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
