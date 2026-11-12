@@ -71,9 +71,19 @@
     return _nativeContainerBackgroundColor;
   }
 
+  if (_presentationStyle == RNSFullScreenModalPresentationStyleOverContent) {
+    return [UIColor clearColor];
+  }
+
   // Replacing: content without its own background would otherwise show black.
-  return _presentationStyle == RNSFullScreenModalPresentationStyleOverContent ? [UIColor clearColor]
-                                                                              : [UIColor systemBackgroundColor];
+#if TARGET_OS_TV
+  // `systemBackgroundColor` is unavailable on tvOS; resolve its light/dark counterpart manually.
+  return [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
+    return traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? [UIColor blackColor] : [UIColor whiteColor];
+  }];
+#else
+  return [UIColor systemBackgroundColor];
+#endif // TARGET_OS_TV
 }
 
 #pragma mark - UIKit callbacks
