@@ -4,10 +4,6 @@ import { tapBarBackButton } from '@e2e/framework/back-button';
 import { expectHeaderViewShown } from '@e2e/framework/header-items-ios';
 
 describe('Test432', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test432 should exist', async () => {
     await selectIssueTestScreen('Test432');
   });

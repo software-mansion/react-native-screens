@@ -114,7 +114,6 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
 describeIfIOSAtLeast('26.0')('Stack Header Item Identifier (iOS)', () => {
   describe('sfSymbols with identifiers (default)', () => {
     beforeAll(async () => {
-      await device.reloadReactNative();
       await selectSingleFeatureTestsScreen(
         'Stackv5',
         'test-stack-header-item-identifier-ios',

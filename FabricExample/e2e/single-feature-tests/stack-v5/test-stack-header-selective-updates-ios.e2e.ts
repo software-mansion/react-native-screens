@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectPickerOption } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { dismissNextToast } from '@e2e/app/toast';
@@ -42,7 +42,6 @@ async function setMenuMode(
 
 describeIfIOS('Stack Header Selective Updates (iOS)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-header-selective-updates-ios',

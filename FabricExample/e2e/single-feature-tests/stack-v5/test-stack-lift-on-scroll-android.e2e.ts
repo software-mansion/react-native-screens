@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by, waitFor } from 'detox';
+import { expect, element, by, waitFor } from 'detox';
 import type { AndroidElementAttributes } from 'detox/detox';
 import {
   selectPickerOption,
@@ -266,7 +266,6 @@ async function expectLiftUnaffectedByScroll() {
 
 describeIfAndroid('Stack v5: header lift on scroll (Android)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-lift-on-scroll-android',

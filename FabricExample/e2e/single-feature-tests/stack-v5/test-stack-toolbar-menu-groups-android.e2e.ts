@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import {
   selectPickerOption,
   toggleSettingsSwitch,
@@ -181,7 +181,6 @@ async function withSubmenu(assertions: () => Promise<void>) {
 
 describeIfAndroid('@smoke Stack Toolbar Menu Groups', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-menu-groups-android',

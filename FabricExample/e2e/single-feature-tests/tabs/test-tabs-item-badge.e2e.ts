@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { getSingleMatch } from '@e2e/framework/matchers';
 import {
@@ -47,7 +47,6 @@ async function expectItemBadgeValue(testID: string, badgeValue: string) {
 
 describeIfIOS('Tab Bar Item Badge', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-item-badge');
   });
 

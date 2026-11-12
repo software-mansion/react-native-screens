@@ -1,13 +1,9 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 // Detox currently supports orientation only on iOS
 describeIfIOS('Test577', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test577 should exist', async () => {
     await selectIssueTestScreen('Test577');
   });

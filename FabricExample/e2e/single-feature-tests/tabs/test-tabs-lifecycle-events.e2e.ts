@@ -4,7 +4,6 @@ import { dismissToast, expectNoToast } from '@e2e/app/toast';
 
 describe('Tabs lifecycle events', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-lifecycle-events');
   });
 

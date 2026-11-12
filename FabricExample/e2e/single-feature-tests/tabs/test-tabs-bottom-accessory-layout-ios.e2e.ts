@@ -142,7 +142,6 @@ async function verifyConfigTabInitialContent() {
 
 describeIfIOSAtLeast('26.0')('Tabs bottomAccessory (iOS 26+)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-bottom-accessory-layout-ios',

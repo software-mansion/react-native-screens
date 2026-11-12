@@ -42,7 +42,6 @@ async function tapFormSheetBackdrop() {
 
 describe('FormSheet: dismiss events', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'FormSheet',
       'test-form-sheet-dismiss-events',

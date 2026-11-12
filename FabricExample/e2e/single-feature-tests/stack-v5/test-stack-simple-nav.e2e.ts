@@ -80,7 +80,6 @@ describeIfIOS('@smoke Stack v5: simple navigation', () => {
     .withAncestor(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON));
 
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Stackv5', 'test-stack-simple-nav');
   });
 

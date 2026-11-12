@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by, waitFor } from 'detox';
+import { expect, element, by, waitFor } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   rewindAndScrollUntilVisible,
@@ -113,7 +113,6 @@ async function expectSecondNewestEntry(groupId: string, ids: string[]) {
 
 describeIfAndroid('Stack Toolbar Menu Batch Commands', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-toolbar-menu-batch-commands-android',
