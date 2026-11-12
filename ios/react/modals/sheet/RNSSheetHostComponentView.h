@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSInteger largestUndimmedDetentIndex;
 @property (nonatomic, readonly) NSInteger initialDetentIndex;
 @property (nonatomic, readonly) BOOL prefersScrollingExpandsWhenScrolledToEdge;
+@property (nonatomic, readonly) BOOL prefersEdgeAttachedInCompactHeight;
 @property (nonatomic, readonly) BOOL preventNativeDismiss;
 @property (nonatomic, readonly, nullable) UIColor *nativeContainerBackgroundColor;
 @property (nonatomic, readonly, nullable) UIVisualEffect *backgroundEffect;
