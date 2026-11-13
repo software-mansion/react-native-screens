@@ -5,7 +5,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackNavigationController;
+
 @interface RNSStackHostComponentView : RNSReactBaseView
+
+@end
+
+#pragma mark - External navigation controller
+
+@interface RNSStackHostComponentView ()
+
+/**
+ * The navigation controller the host operates on, for a host with `usesExternalNavigationController`, which does not
+ * create one itself. Setting it applies the operations collected so far to the controller.
+ */
+@property (nonatomic, strong, nullable) RNSStackNavigationController *externalNavigationController;
 
 @end
 
