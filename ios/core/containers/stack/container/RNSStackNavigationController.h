@@ -3,7 +3,7 @@
 #import "RNSContainer.h"
 #import "RNSContainerTransactionSupporting.h"
 #include "RNSStackNavigationBarCoordinator.h"
-#import "RNSViewControllerLifecycleEventsDelegate.h"
+#import "RNSViewControllerViewLifecycleEventsObserver.h"
 
 @class RNSStackScreenController;
 @protocol RNSViewFrameChangeDelegate;
@@ -12,7 +12,7 @@
 
 @property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> navigationBarFrameChangeDelegate;
 
-@property (nonatomic, weak, nullable) id<RNSViewControllerLifecycleEventsDelegate> lifecycleEventsDelegate;
+@property (nonatomic, weak, nullable) id<RNSViewControllerViewLifecycleEventsObserver> viewLifecycleEventsObserver;
 
 @property (nonatomic, readonly, nonnull) RNSStackNavigationBarCoordinator *navigationBarCoordinator;
 
