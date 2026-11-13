@@ -3,6 +3,10 @@
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
 #import "RNSSplitNavigationController.h"
+#import "RNSViewControllerViewLifecycleEventsObserver.h"
+
+@interface RNSSplitScreenController () <RNSViewControllerViewLifecycleEventsObserver>
+@end
 
 @implementation RNSSplitScreenController {
   RNSSplitNavigationController *_Nullable _columnNavigationController;
@@ -61,12 +65,14 @@
     // bar. The controller is created with `init` and gets its root afterwards.
     _columnNavigationController = [RNSSplitNavigationController new];
     _columnNavigationController.viewControllers = @[ self ];
+    _columnNavigationController.viewLifecycleEventsObserver = self;
   }
   return _columnNavigationController;
 }
 
 - (void)releaseColumnNavigationController
 {
+  _columnNavigationController.viewLifecycleEventsObserver = nil;
   _columnNavigationController = nil;
 }
 
@@ -108,29 +114,25 @@
   [_delegate splitScreenController:self didChangeColumnFrame:frame];
 }
 
-#pragma mark - Events
+#pragma mark - RNSViewControllerViewLifecycleEventsObserver
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewControllerViewWillAppear:(UIViewController *)viewController
 {
-  [super viewWillAppear:animated];
   [_delegate splitScreenControllerWillAppear:self];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewControllerViewDidAppear:(UIViewController *)viewController
 {
-  [super viewDidAppear:animated];
   [_delegate splitScreenControllerDidAppear:self];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
+- (void)viewControllerViewWillDisappear:(UIViewController *)viewController
 {
-  [super viewWillDisappear:animated];
   [_delegate splitScreenControllerWillDisappear:self];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewControllerViewDidDisappear:(UIViewController *)viewController
 {
-  [super viewDidDisappear:animated];
   [_delegate splitScreenControllerDidDisappear:self];
 }
 
