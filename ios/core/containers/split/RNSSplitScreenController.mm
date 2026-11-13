@@ -27,13 +27,17 @@
 /**
  * @brief Returns the SplitHost controller the column is installed in.
  *
- * @return `splitViewController` if it is a RNSSplitHostController, otherwise nil (e.g. for the inspector presented as
- * a modal, outside the split hierarchy).
+ * The navigation controller of the column is asked, as this controller is not in the view controller hierarchy when
+ * the column hosts a stack.
+ *
+ * @return `splitViewController` of the navigation controller if it is a RNSSplitHostController, otherwise nil (e.g.
+ * for the inspector presented as a modal, outside the split hierarchy).
  */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
-  if ([self.splitViewController isKindOfClass:RNSSplitHostController.class]) {
-    return (RNSSplitHostController *)self.splitViewController;
+  UISplitViewController *splitViewController = _columnNavigationController.splitViewController;
+  if ([splitViewController isKindOfClass:RNSSplitHostController.class]) {
+    return (RNSSplitHostController *)splitViewController;
   }
 
   return nil;
@@ -41,7 +45,7 @@
 
 - (BOOL)isInSplitHostSubtree
 {
-  return [self.splitViewController isKindOfClass:RNSSplitHostController.class];
+  return [self findSplitHostController] != nil;
 }
 
 #pragma mark - Navigation controller
@@ -64,10 +68,28 @@
     // `initWithRootViewController:` would skip the `init` of RNSStackNavigationController, which sets up its navigation
     // bar. The controller is created with `init` and gets its root afterwards.
     _columnNavigationController = [RNSSplitNavigationController new];
-    _columnNavigationController.viewControllers = @[ self ];
     _columnNavigationController.viewLifecycleEventsObserver = self;
+    if (_hostsStack) {
+      [_delegate splitScreenController:self didCreateNavigationControllerForStack:_columnNavigationController];
+    } else {
+      _columnNavigationController.viewControllers = @[ self ];
+    }
   }
   return _columnNavigationController;
+}
+
+- (void)setHostsStack:(BOOL)hostsStack
+{
+  if (_hostsStack == hostsStack) {
+    return;
+  }
+  _hostsStack = hostsStack;
+
+  // The column gets a new navigation controller. The current one is released and the Split is asked to install the
+  // one created in its place. The Split is asked first, because it is looked up through the current navigation
+  // controller.
+  [self setNeedsLifecycleStateUpdate];
+  [self releaseColumnNavigationController];
 }
 
 - (void)releaseColumnNavigationController

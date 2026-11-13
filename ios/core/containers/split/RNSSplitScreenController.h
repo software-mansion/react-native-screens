@@ -26,6 +26,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)splitScreenControllerWillDisappear:(RNSSplitScreenController *)controller;
 - (void)splitScreenControllerDidDisappear:(RNSSplitScreenController *)controller;
 
+/**
+ * @brief Called when the navigation controller of a column that hosts a stack is created.
+ */
+- (void)splitScreenController:(RNSSplitScreenController *)controller
+    didCreateNavigationControllerForStack:(RNSSplitNavigationController *)navigationController;
+
 @end
 
 /**
@@ -41,7 +47,18 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Navigation controller
 
 /**
- * @brief The navigation controller the Split installs for this column, rooted at this controller.
+ * @brief Whether the column hosts a stack.
+ *
+ * A navigation controller serves one kind of column only, so changing the value releases
+ * `columnNavigationController`.
+ */
+@property (nonatomic) BOOL hostsStack;
+
+/**
+ * @brief The navigation controller the Split installs for this column.
+ *
+ * In a column that hosts a stack it has no view controllers at first. In a plain column it
+ * is rooted at this controller.
  *
  * Created on first access and kept until `releaseColumnNavigationController`.
  */
