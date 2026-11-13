@@ -219,6 +219,7 @@ namespace react = facebook::react;
   // Controller keeps the strong reference to the component via the `.view` property.
   // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
   // when we want to destroy the component.
+  [_controller releaseColumnNavigationController];
   _controller = nil;
 }
 

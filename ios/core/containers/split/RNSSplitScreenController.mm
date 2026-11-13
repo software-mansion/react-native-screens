@@ -2,8 +2,11 @@
 
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
+#import "RNSSplitNavigationController.h"
 
-@implementation RNSSplitScreenController
+@implementation RNSSplitScreenController {
+  RNSSplitNavigationController *_Nullable _columnNavigationController;
+}
 
 - (instancetype)init
 {
@@ -35,6 +38,21 @@
 - (BOOL)isInSplitHostSubtree
 {
   return [self.splitViewController isKindOfClass:RNSSplitHostController.class];
+}
+
+#pragma mark - Navigation controller
+
+- (RNSSplitNavigationController *)columnNavigationController
+{
+  if (_columnNavigationController == nil) {
+    _columnNavigationController = [[RNSSplitNavigationController alloc] initWithRootViewController:self];
+  }
+  return _columnNavigationController;
+}
+
+- (void)releaseColumnNavigationController
+{
+  _columnNavigationController = nil;
 }
 
 #pragma mark - Signals

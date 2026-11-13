@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class RNSSplitNavigationController;
 @class RNSSplitScreenController;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -36,6 +37,22 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitScreenController : UIViewController
 
 @property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
+
+#pragma mark - Navigation controller
+
+/**
+ * @brief The navigation controller the Split installs for this column, rooted at this controller.
+ *
+ * Created on first access and kept until `releaseColumnNavigationController`.
+ */
+@property (nonatomic, strong, readonly) RNSSplitNavigationController *columnNavigationController;
+
+/**
+ * @brief Releases `columnNavigationController`.
+ *
+ * The navigation controller retains this controller as its root, so the column has to call it before it is destroyed.
+ */
+- (void)releaseColumnNavigationController;
 
 #pragma mark - Signals
 

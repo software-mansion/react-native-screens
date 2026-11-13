@@ -110,9 +110,10 @@
 
   NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
-  for (RNSSplitScreenController *columnController in currentColumns) {
-    [currentViewControllers addObject:[[RNSSplitNavigationController alloc] initWithRootViewController:columnController
-                                                                             frameOriginChangeDelegate:self]];
+  for (RNSSplitScreenController *splitScreenController in currentColumns) {
+    RNSSplitNavigationController *navigationController = splitScreenController.columnNavigationController;
+    navigationController.frameOriginChangeDelegate = self;
+    [currentViewControllers addObject:navigationController];
   }
 
   self.viewControllers = currentViewControllers;
@@ -359,9 +360,7 @@
   if (@available(iOS 26.0, *)) {
     RNSSplitScreenController *inspector = inspectors.firstObject;
     if (inspector != nil) {
-      RNSSplitNavigationController *inspectorViewController =
-          [[RNSSplitNavigationController alloc] initWithRootViewController:inspector];
-      [self setViewController:inspectorViewController forColumn:UISplitViewControllerColumnInspector];
+      [self setViewController:inspector.columnNavigationController forColumn:UISplitViewControllerColumnInspector];
     }
   }
 #endif
