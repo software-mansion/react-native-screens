@@ -25,6 +25,23 @@ export interface SplitColumnProps extends ViewProps {
    */
   children?: React.ReactNode | undefined;
   /**
+   * Keeps the column a plain one even when its content is a `Stack.Host`.
+   *
+   * @remarks
+   * By default a `Stack.Host` rendered as the only direct child of the column
+   * navigates the column, and the header of the stack is the navigation bar of
+   * the column. With this prop the stack is nested in the column like any other
+   * content.
+   *
+   * The value is read when the column is mounted. Changing it later has no
+   * effect.
+   *
+   * @defaultValue `false`
+   *
+   * @platform ios
+   */
+  disableStackIntegration?: boolean | undefined;
+  /**
    * A callback that gets invoked when the current `Split.Column` did appear.
    *
    * @remarks
