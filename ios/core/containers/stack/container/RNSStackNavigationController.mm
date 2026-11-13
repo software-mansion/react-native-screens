@@ -36,30 +36,30 @@
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
 }
 
-#pragma mark - Lifecycle events
+#pragma mark - View lifecycle events
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [_lifecycleEventsDelegate viewControllerWillAppear:self];
+  [_viewLifecycleEventsObserver viewControllerViewWillAppear:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [_lifecycleEventsDelegate viewControllerDidAppear:self];
+  [_viewLifecycleEventsObserver viewControllerViewDidAppear:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  [_lifecycleEventsDelegate viewControllerWillDisappear:self];
+  [_viewLifecycleEventsObserver viewControllerViewWillDisappear:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [_lifecycleEventsDelegate viewControllerDidDisappear:self];
+  [_viewLifecycleEventsObserver viewControllerViewDidDisappear:self];
 }
 
 #pragma mark-- Layout
