@@ -26,7 +26,6 @@ namespace react = facebook::react;
   RNSStackNavigationController *_Nullable _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
-  BOOL _usesExternalNavigationController;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
