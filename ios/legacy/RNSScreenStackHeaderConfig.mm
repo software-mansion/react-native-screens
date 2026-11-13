@@ -27,6 +27,74 @@
 
 namespace react = facebook::react;
 
+// On iOS 26+ UIKit moves the screens of a push / pop with an animation that keeps running when the main thread is
+// busy, but it advances the animation of a navigation bar shown or hidden alongside from the main thread. The bar
+// trails the screen it should travel with, and a bar being shown jumps into place when the transition ends.
+// See https://github.com/software-mansion/react-native-screens/issues/5000
+//
+// When the bar belongs to the screen that is pushed or popped, we put it, for the duration of the transition, into
+// the view UIKit animates together with that screen, and take it back when the transition ends.
+// `frameWhenShown` is the frame of the visible bar, needed when it is being hidden.
+static void RNSCarryNavigationBarWithItsScreen(UINavigationController *navctr, BOOL showing, CGRect frameWhenShown)
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 26.0, *)) {
+    id<UIViewControllerTransitionCoordinator> coordinator = navctr.transitionCoordinator;
+    UIViewController *fromVC = [coordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+    UIViewController *toVC = [coordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+    // The screen we are leaving stays on the stack during a push, but not during a pop.
+    const BOOL isPush = [navctr.viewControllers containsObject:fromVC];
+    // A bar being shown belongs to the screen we are going to, a bar being hidden to the one we are leaving.
+    UIViewController *owner = showing ? toVC : fromVC;
+    UINavigationBar *bar = navctr.navigationBar;
+    UIView *home = bar.superview;
+    // Left to UIKit:
+    // * a bar that belongs to the screen underneath (`showing != isPush`): UIKit moves it across the whole width,
+    //   while that screen moves only a part of it,
+    // * a large title: UIKit takes it out of the bar for the transition and it does not come back to a moved bar,
+    // * a search bar: not tested.
+    UINavigationItem *item = owner.navigationItem;
+    if (coordinator == nil || home == nil || coordinator.presentationStyle != UIModalPresentationNone ||
+        showing != isPush || item.largeTitleDisplayMode == UINavigationItemLargeTitleDisplayModeAlways ||
+        item.searchController != nil) {
+      return;
+    }
+    __block NSUInteger homeIndex = NSNotFound;
+    __block CGRect settledFrame = CGRectNull;
+    [coordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          UIView *container = context.containerView;
+          // the outermost view UIKit wraps the screen in for the transition; this is the one it animates
+          UIView *carrier = owner.view;
+          while (carrier.superview != nil && carrier.superview != container) {
+            carrier = carrier.superview;
+          }
+          // A screen that is not wrapped is moved by a custom animation, the bar is in step with it already.
+          // The carrier has to cover, when it is not being moved, the same area as the container, in coordinates of
+          // the bar's superview: a frame of the bar then means the same place in both.
+          if (carrier == owner.view || carrier.superview != container || bar.superview != home ||
+              !CGRectEqualToRect([container convertRect:container.bounds toView:home], carrier.bounds)) {
+            return;
+          }
+          [UIView performWithoutAnimation:^{
+            homeIndex = [home.subviews indexOfObjectIdenticalTo:bar];
+            // where UIKit leaves the bar when the transition has finished
+            settledFrame = bar.frame;
+            [bar.layer removeAllAnimations];
+            [carrier addSubview:bar];
+            bar.frame = showing ? settledFrame : frameWhenShown;
+          }];
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          if (homeIndex != NSNotFound) {
+            [home insertSubview:bar atIndex:MIN(homeIndex, home.subviews.count)];
+            bar.frame = !showing && context.isCancelled ? frameWhenShown : settledFrame;
+          }
+        }];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
 static const NSNumber *const DEFAULT_TITLE_FONT_SIZE = @17;
 static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
@@ -662,7 +730,11 @@ RNS_IGNORE_SUPER_CALL_END
     navitem.title = config.title;
 
     // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items.
+    const CGRect navigationBarFrame = navctr.navigationBar.frame;
     [navctr setNavigationBarHidden:YES animated:animated];
+    if (animated && !wasHidden) {
+      RNSCarryNavigationBarWithItsScreen(navctr, NO, navigationBarFrame);
+    }
     return;
   }
 
@@ -835,6 +907,9 @@ RNS_IGNORE_SUPER_CALL_END
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
   RCTAssert(shouldHide == NO, @"[RNScreens] RNSScreenStackHeaderConfig: expected shouldHide to be NO.");
   [navctr setNavigationBarHidden:NO animated:animated];
+  if (animated && wasHidden) {
+    RNSCarryNavigationBarWithItsScreen(navctr, YES, CGRectNull);
+  }
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
