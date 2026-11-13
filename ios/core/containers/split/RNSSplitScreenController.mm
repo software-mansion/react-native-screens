@@ -42,10 +42,25 @@
 
 #pragma mark - Navigation controller
 
+/**
+ * TODO: Make the content of a column that does not host a stack a stack screen as well: an RNSStackScreenController
+ * with a plain view, under which the React content of the column is mounted. This controller leaves the view
+ * controller hierarchy then.
+ *
+ * RNSSplitNavigationController is a stack navigation controller, which is meant to hold RNSStackScreenController
+ * instances only. For a column that does not host a stack, this controller is still the root, as it was before the
+ * navigation controller of a column became a stack one.
+ *
+ * A navigation controller that holds this controller is never used by a stack: nothing is pushed onto it or popped
+ * from it.
+ */
 - (RNSSplitNavigationController *)columnNavigationController
 {
   if (_columnNavigationController == nil) {
-    _columnNavigationController = [[RNSSplitNavigationController alloc] initWithRootViewController:self];
+    // `initWithRootViewController:` would skip the `init` of RNSStackNavigationController, which sets up its navigation
+    // bar. The controller is created with `init` and gets its root afterwards.
+    _columnNavigationController = [RNSSplitNavigationController new];
+    _columnNavigationController.viewControllers = @[ self ];
   }
   return _columnNavigationController;
 }
