@@ -5,16 +5,13 @@ static void *RNSSplitNavigationViewFrameContext = &RNSSplitNavigationViewFrameCo
 
 @implementation RNSSplitNavigationControllerFrameObserver {
   RNSSplitNavigationController *__weak _navigationController;
-  id<RNSViewFrameChangeDelegate> __weak _frameOriginChangeDelegate;
   UIView *__weak _observedView;
 }
 
 - (instancetype)initWithSplitNavigationController:(RNSSplitNavigationController *)navigationController
-                                         delegate:(id<RNSViewFrameChangeDelegate>)frameOriginChangeDelegate
 {
   if (self = [super init]) {
     _navigationController = navigationController;
-    _frameOriginChangeDelegate = frameOriginChangeDelegate;
   }
 
   return self;
@@ -66,7 +63,7 @@ static void *RNSSplitNavigationViewFrameContext = &RNSSplitNavigationViewFrameCo
   if (!CGPointEqualToPoint(oldFrame.origin, newFrame.origin)) {
     RNSSplitNavigationController *navigationController = _navigationController;
     if (navigationController != nil) {
-      [_frameOriginChangeDelegate viewFrameDidChange:navigationController.view];
+      [navigationController.frameOriginChangeDelegate viewFrameDidChange:navigationController.view];
     }
   }
 }
