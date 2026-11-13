@@ -84,6 +84,13 @@ internal class StackHostViewManager :
         }
     }
 
+    override fun setUsesExternalNavigationController(
+        view: StackHost,
+        value: Boolean,
+    ) {
+        // iOS only.
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackHost"
     }

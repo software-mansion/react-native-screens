@@ -1,6 +1,7 @@
 #import "RNSStackHostComponentView.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -22,9 +23,10 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSStackHostComponentView {
-  RNSStackNavigationController *_Nonnull _stackNavigationController;
+  RNSStackNavigationController *_Nullable _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
+  BOOL _usesExternalNavigationController;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -40,7 +42,6 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSStackHostProps>();
   _props = defaultProps;
 
-  _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
 }
@@ -50,6 +51,14 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
+  if (_usesExternalNavigationController) {
+    if (self.window != nil && _stackNavigationController == nil) {
+      RCTLogError(
+          @"[RNScreens] Stack.Host expects a navigation controller from its parent, but it has not got one. "
+          @"The stack is not shown.");
+    }
+    return;
+  }
   if (self.window != nil && _stackNavigationController.parentViewController == nil) {
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
                                           toViewControllerManaging:self.reactSuperview
@@ -73,6 +82,47 @@ namespace react = facebook::react;
     }
   }
   return [super hitTest:point withEvent:event];
+}
+
+#pragma mark - External navigation controller
+
+- (nullable RNSStackNavigationController *)externalNavigationController
+{
+  return _usesExternalNavigationController ? _stackNavigationController : nil;
+}
+
+- (void)setExternalNavigationController:(nullable RNSStackNavigationController *)navigationController
+{
+  RCTAssert(_usesExternalNavigationController,
+            @"[RNScreens] Only a Stack.Host with `usesExternalNavigationController` takes a navigation controller");
+  if (navigationController == _stackNavigationController) {
+    return;
+  }
+  RCTAssert(navigationController == nil || navigationController.viewControllers.count == 0,
+            @"[RNScreens] Stack.Host expects an empty navigation controller");
+  _stackNavigationController = navigationController;
+  [self flushPendingOperations];
+}
+
+- (void)updateUsesExternalNavigationController:(BOOL)usesExternalNavigationController
+{
+  if (_stackNavigationController != nil) {
+    RCTLogError(@"[RNScreens] Stack.Host cannot switch between its own and an external navigation controller");
+    return;
+  }
+  _usesExternalNavigationController = usesExternalNavigationController;
+}
+
+/**
+ * The host learns from its props whether it uses an external navigation controller, so it creates its own one only
+ * when the first props are applied.
+ */
+- (void)createOwnNavigationControllerIfNeeded
+{
+  if (_usesExternalNavigationController || _stackNavigationController != nil) {
+    return;
+  }
+  _stackNavigationController = [RNSStackNavigationController new];
 }
 
 #pragma mark - Communication with StackScreen
@@ -132,6 +182,20 @@ namespace react = facebook::react;
   }
 }
 
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(props);
+
+  if (oldComponentProps.usesExternalNavigationController != newComponentProps.usesExternalNavigationController) {
+    [self updateUsesExternalNavigationController:newComponentProps.usesExternalNavigationController];
+  }
+  [self createOwnNavigationControllerIfNeeded];
+
+  [super updateProps:props oldProps:oldProps];
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSStackHostComponentDescriptor>();
@@ -145,6 +209,16 @@ namespace react = facebook::react;
 }
 
 #pragma mark - Utils
+
+- (void)flushPendingOperations
+{
+  if (_stackNavigationController == nil) {
+    return;
+  }
+  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
+                                           withRenderedScreens:_renderedScreens];
+  [_stackNavigationController commitTransaction];
+}
 
 - (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
 {
@@ -185,9 +259,7 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
-                                           withRenderedScreens:_renderedScreens];
-  [_stackNavigationController commitTransaction];
+  [self flushPendingOperations];
 }
 
 #pragma mark - Dynamic frameworks support
