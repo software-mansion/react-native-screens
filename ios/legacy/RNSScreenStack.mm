@@ -1556,14 +1556,11 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
-- (void)prepareForRecycle
+- (void)invalidate
 {
-  [super prepareForRecycle];
 #if TARGET_OS_TV
   [self unregisterForTVMenuKeyNotificationsIfNeeded];
 #endif // TARGET_OS_TV
-  _reactSubviews = [NSMutableArray new];
-
   for (UIViewController *controller in _presentedModals) {
     [controller dismissViewControllerAnimated:NO completion:nil];
   }
@@ -1572,12 +1569,17 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller willMoveToParentViewController:nil];
   [_controller.view removeFromSuperview];
   [_controller removeFromParentViewController];
-  [_controller setViewControllers:@[ [UIViewController new] ]];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackComponentDescriptor>();
+}
+
++ (BOOL)shouldBeRecycled
+{
+  // A reused stack keeps the navigation controller of the removed stack, with its pending transitions.
+  return NO;
 }
 
 #pragma mark - Dynamic frameworks support
