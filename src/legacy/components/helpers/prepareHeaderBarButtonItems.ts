@@ -58,14 +58,17 @@ export const prepareIOSIcon = (icon: PlatformIconIOS | undefined) => {
       return { sfSymbolName: icon.name };
     case 'xcasset':
       return { xcassetName: icon.name };
-    case 'imageSource':
-      return {
-        imageSource: resolveIconImageSource(icon.imageSource),
-      };
-    case 'templateSource':
-      return {
-        templateSource: resolveIconImageSource(icon.templateSource),
-      };
+    case 'imageSource': {
+      // An unresolvable source (e.g. an empty array) must clear the icon
+      // entirely, otherwise native receives an empty config and keeps the
+      // previously displayed image.
+      const imageSource = resolveIconImageSource(icon.imageSource);
+      return imageSource ? { imageSource } : undefined;
+    }
+    case 'templateSource': {
+      const templateSource = resolveIconImageSource(icon.templateSource);
+      return templateSource ? { templateSource } : undefined;
+    }
     default:
       return undefined;
   }
