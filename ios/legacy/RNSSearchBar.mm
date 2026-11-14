@@ -183,10 +183,12 @@ namespace react = facebook::react;
     return;
   }
 
-  NSDictionary *imageSource = config[@"imageSource"];
-  NSDictionary *templateSource = config[@"templateSource"];
-  NSDictionary *source = imageSource != nil ? imageSource : templateSource;
-  if (source != nil) {
+  id imageSource = config[@"imageSource"];
+  id templateSource = config[@"templateSource"];
+  id source = imageSource != nil ? imageSource : templateSource;
+  // JS normalizes sources to a single dictionary; ignore anything else instead of
+  // tripping the non-nil assertion in RNSImageLoadingHelper.
+  if ([source isKindOfClass:[NSDictionary class]]) {
     RCTImageLoader *imageLoader = _imageLoader;
     if (imageLoader == nil) {
       // Resolved once the hosting header config injects the image loader.

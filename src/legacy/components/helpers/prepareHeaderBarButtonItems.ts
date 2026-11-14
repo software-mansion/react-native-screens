@@ -1,5 +1,9 @@
-import { Image, processColor } from 'react-native';
-import type { ImageResolvedAssetSource } from 'react-native';
+import { Image, PixelRatio, processColor } from 'react-native';
+import type {
+  ImageResolvedAssetSource,
+  ImageSourcePropType,
+  ImageURISource,
+} from 'react-native';
 import type {
   HeaderBarButtonItem,
   HeaderBarButtonItemWithMenu,
@@ -9,6 +13,35 @@ import type { PlatformIconIOS } from '../../../components/shared/types';
 // Local nominal type so declaration emit doesn't resolve the RN alias down to
 // the non-public `types_generated/.../AssetSourceResolver#ResolvedAssetSource`.
 export interface ResolvedImageAsset extends ImageResolvedAssetSource {}
+
+/**
+ * Resolves an image source to the single-object shape expected by the native
+ * `RCTImageSource` converter. `ImageSourcePropType` also allows an array of
+ * URI sources (e.g. one per scale), which the native converter cannot handle,
+ * so we pick the entry whose scale best matches the device's pixel ratio.
+ */
+export const resolveIconImageSource = (
+  source: ImageSourcePropType,
+): ResolvedImageAsset | undefined => {
+  if (Array.isArray(source)) {
+    const sources = source as ImageURISource[];
+    if (sources.length === 0) {
+      return undefined;
+    }
+
+    const pixelRatio = PixelRatio.get();
+    const best = sources.reduce((prev, curr) =>
+      Math.abs((curr.scale ?? 1) - pixelRatio) <
+      Math.abs((prev.scale ?? 1) - pixelRatio)
+        ? curr
+        : prev,
+    );
+
+    return Image.resolveAssetSource(best) as ResolvedImageAsset;
+  }
+
+  return Image.resolveAssetSource(source) as ResolvedImageAsset;
+};
 
 /**
  * Converts a `PlatformIconIOS` into the flat dictionary shape understood by
@@ -27,15 +60,11 @@ export const prepareIOSIcon = (icon: PlatformIconIOS | undefined) => {
       return { xcassetName: icon.name };
     case 'imageSource':
       return {
-        imageSource: Image.resolveAssetSource(
-          icon.imageSource,
-        ) as ResolvedImageAsset,
+        imageSource: resolveIconImageSource(icon.imageSource),
       };
     case 'templateSource':
       return {
-        templateSource: Image.resolveAssetSource(
-          icon.templateSource,
-        ) as ResolvedImageAsset,
+        templateSource: resolveIconImageSource(icon.templateSource),
       };
     default:
       return undefined;
@@ -60,9 +89,9 @@ const prepareMenu = (
 
       let imageSource, templateSource;
       if (menuItem.icon?.type === 'imageSource') {
-        imageSource = Image.resolveAssetSource(menuItem.icon.imageSource);
+        imageSource = resolveIconImageSource(menuItem.icon.imageSource);
       } else if (menuItem.icon?.type === 'templateSource') {
-        templateSource = Image.resolveAssetSource(menuItem.icon.templateSource);
+        templateSource = resolveIconImageSource(menuItem.icon.templateSource);
       }
 
       if (menuItem.type === 'submenu') {
@@ -98,9 +127,9 @@ export const prepareHeaderBarButtonItems = (
     let imageSource: ResolvedImageAsset | undefined,
       templateSource: ResolvedImageAsset | undefined;
     if (item.icon?.type === 'imageSource') {
-      imageSource = Image.resolveAssetSource(item.icon.imageSource);
+      imageSource = resolveIconImageSource(item.icon.imageSource);
     } else if (item.icon?.type === 'templateSource') {
-      templateSource = Image.resolveAssetSource(item.icon.templateSource);
+      templateSource = resolveIconImageSource(item.icon.templateSource);
     }
 
     const titleStyle = item.titleStyle
