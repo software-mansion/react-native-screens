@@ -144,6 +144,19 @@ namespace react = facebook::react;
   return NO;
 }
 
+- (void)invalidate
+{
+  // The parent view controller (e.g. the root one) keeps a strong reference to its children, therefore we need
+  // to detach the controller explicitly, otherwise it outlives this view with all its screens.
+  //
+  // We want to run after container updates are performed (transitions etc.). The block captures the controller
+  // rather than self, because nothing keeps this view alive until the block is run.
+  RNSStackNavigationController *controller = _stackNavigationController;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [RNSContainerHelpers removeChildViewController:controller];
+  });
+}
+
 #pragma mark - Utils
 
 - (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
