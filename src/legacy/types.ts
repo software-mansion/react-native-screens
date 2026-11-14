@@ -1237,6 +1237,40 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean | undefined;
+  /**
+   * Custom accessory button displayed at the trailing edge of the search text field.
+   *
+   * Uses UIKit's built-in accessory slots of `UISearchBar`:
+   *
+   * * `bookmark` - shown only while the search field is empty
+   *   (the clear button takes its place once text is entered)
+   * * `resultsList` - always shown
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchbar/showsbookmarkbutton|UISearchBar.showsBookmarkButton}
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchbar/showssearchresultsbutton|UISearchBar.showsSearchResultsButton}
+   *
+   * @platform ios
+   */
+  rightAccessory?: SearchBarRightAccessory | undefined;
+}
+
+export type SearchBarRightAccessoryType = 'bookmark' | 'resultsList';
+
+export interface SearchBarRightAccessory {
+  /**
+   * Icon displayed in the accessory button.
+   */
+  icon: PlatformIconIOS;
+  /**
+   * Which `UISearchBar` accessory slot to use.
+   *
+   * @default 'bookmark'
+   */
+  type?: SearchBarRightAccessoryType | undefined;
+  /**
+   * A callback that gets called when the accessory button is pressed.
+   */
+  onPress?: (() => void) | undefined;
 }
 
 /**

@@ -34,7 +34,9 @@ type AutoCapitalizeType =
   | 'sentences'
   | 'characters';
 
-type OptionalBoolean = 'undefined' | 'false' | 'true';
+type RightAccessoryType = 'bookmark' | 'resultsList';
+
+type OptionalBoolean ='undefined' | 'false' | 'true';
 
 export interface NativeProps extends ViewProps {
   onSearchFocus?: CT.DirectEventHandler<SearchBarEvent> | null | undefined;
@@ -60,6 +62,14 @@ export interface NativeProps extends ViewProps {
   barTintColor?: ColorValue | undefined;
   tintColor?: ColorValue | undefined;
   textColor?: ColorValue | undefined;
+
+  // iOS only
+  rightAccessoryIcon?: CT.UnsafeMixed | undefined;
+  rightAccessoryType?: CT.WithDefault<RightAccessoryType, 'bookmark'>;
+  onRightAccessoryPress?:
+    | CT.DirectEventHandler<SearchBarEvent>
+    | null
+    | undefined;
 
   // Android only
   autoFocus?: CT.WithDefault<boolean, false>;

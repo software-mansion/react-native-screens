@@ -4,10 +4,43 @@ import type {
   HeaderBarButtonItem,
   HeaderBarButtonItemWithMenu,
 } from '../../types';
+import type { PlatformIconIOS } from '../../../components/shared/types';
 
 // Local nominal type so declaration emit doesn't resolve the RN alias down to
 // the non-public `types_generated/.../AssetSourceResolver#ResolvedAssetSource`.
 export interface ResolvedImageAsset extends ImageResolvedAssetSource {}
+
+/**
+ * Converts a `PlatformIconIOS` into the flat dictionary shape understood by
+ * the native icon resolver (`sfSymbolName` / `xcassetName` / `imageSource` /
+ * `templateSource`).
+ */
+export const prepareIOSIcon = (icon: PlatformIconIOS | undefined) => {
+  if (icon == null) {
+    return undefined;
+  }
+
+  switch (icon.type) {
+    case 'sfSymbol':
+      return { sfSymbolName: icon.name };
+    case 'xcasset':
+      return { xcassetName: icon.name };
+    case 'imageSource':
+      return {
+        imageSource: Image.resolveAssetSource(
+          icon.imageSource,
+        ) as ResolvedImageAsset,
+      };
+    case 'templateSource':
+      return {
+        templateSource: Image.resolveAssetSource(
+          icon.templateSource,
+        ) as ResolvedImageAsset,
+      };
+    default:
+      return undefined;
+  }
+};
 
 const prepareMenu = (
   menu: HeaderBarButtonItemWithMenu['menu'],
