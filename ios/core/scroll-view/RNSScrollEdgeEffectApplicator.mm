@@ -13,6 +13,10 @@
 - (id<RNSScrollDelegateSplitting>)delegateSplitter;
 @end
 
+@protocol RNSInvertibleScrollView
+- (BOOL)inverted;
+@end
+
 @interface RNSHardTopEdgeAtRestHider : NSObject <UIScrollViewDelegate>
 @property (nonatomic) BOOL active;
 - (void)updateForScrollView:(UIScrollView *)scrollView;
@@ -27,15 +31,24 @@
     if (!_active) {
       return;
     }
+    // React Native hides the edges of an inverted scroll view, where UIKit draws them in the wrong place.
+    BOOL inverted = [scrollView respondsToSelector:@selector(inverted)] &&
+        [(id<RNSInvertibleScrollView>)scrollView inverted];
     BOOL atRest = scrollView.contentOffset.y <= -scrollView.adjustedContentInset.top + 0.5;
-    if (scrollView.topEdgeEffect.hidden != atRest) {
-      scrollView.topEdgeEffect.hidden = atRest;
+    BOOL hidden = inverted || atRest;
+    if (scrollView.topEdgeEffect.hidden != hidden) {
+      scrollView.topEdgeEffect.hidden = hidden;
     }
   }
 #endif
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+  [self updateForScrollView:scrollView];
+}
+
+- (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView
 {
   [self updateForScrollView:scrollView];
 }
