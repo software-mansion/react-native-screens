@@ -54,7 +54,6 @@ class RNScreensPackage :
     @Synchronized
     private fun setUpOnce(reactContext: ReactApplicationContext) {
         if (setUpContext.get() === reactContext) return
-        setUpContext = WeakReference(reactContext)
 
         // This is called before FabricUIManger has finished initializing, not to mention
         // installing its C++ bindings - so we are safe in terms of creating this helper
@@ -65,6 +64,9 @@ class RNScreensPackage :
         // Proxy needs to register for lifecycle events in order to unregister itself
         // on activity restarts.
         InsetsObserverProxy.registerWithContext(reactContext)
+
+        // Recorded last, so a setup that throws is retried on the next call.
+        setUpContext = WeakReference(reactContext)
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
