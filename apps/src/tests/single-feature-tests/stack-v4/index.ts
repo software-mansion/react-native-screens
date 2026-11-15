@@ -4,12 +4,14 @@ import TestStackV4HeaderLetterSpacing from './stack-v4-header-letter-spacing';
 import TestStackV4HeaderBarMinimization from './stack-v4-header-bar-minimization';
 import TestStackV4SheetSelectDetent from './test-stack-v4-sheet-select-detent';
 import TestStackV4HeaderBarSafeAreaAdjustment from './stack-v4-header-bar-safe-area-adjustment';
+import TestStackV4HeaderSubviewsKeepFocus from './stack-v4-header-subviews-keep-focus';
 
 export { default as TestStackV4Orientation } from './stack-v4-orientation';
 export { default as TestStackV4HeaderLetterSpacing } from './stack-v4-header-letter-spacing';
 export { default as TestStackV4HeaderBarMinimization } from './stack-v4-header-bar-minimization';
 export { default as TestStackV4SheetSelectDetent } from './test-stack-v4-sheet-select-detent';
 export { default as TestStackV4HeaderBarSafeAreaAdjustment } from './stack-v4-header-bar-safe-area-adjustment';
+export { default as TestStackV4HeaderSubviewsKeepFocus } from './stack-v4-header-subviews-keep-focus';
 
 const scenarios = {
   TestStackV4HeaderLetterSpacing,
@@ -17,6 +19,7 @@ const scenarios = {
   TestStackV4SheetSelectDetent,
   TestStackV4HeaderBarMinimization,
   TestStackV4HeaderBarSafeAreaAdjustment,
+  TestStackV4HeaderSubviewsKeepFocus,
 };
 
 const StackV4ScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

@@ -134,6 +134,8 @@ NS_ASSUME_NONNULL_END
  * mounting transaction finishes. Use this instead of calling `updateViewControllerIfNeeded`
  * directly from subviews, so that a single transaction updating several subviews
  * re-applies the config only once, with all subviews already updated.
+ * The re-apply also hands the bar button items to the navigation item again,
+ * even if they didn't change, so that the bar re-evaluates them.
  */
 - (void)setNeedsViewControllerUpdate;
 
