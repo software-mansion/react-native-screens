@@ -75,9 +75,11 @@ typedef NS_ENUM(NSInteger, RNSBarButtonItemsSide) {
   NSArray<id> *_cachedLeftBarButtonItems;
   NSArray<NSDictionary<NSString *, id> *> *_cachedRightBarButtonItemConfigs;
   NSArray<id> *_cachedRightBarButtonItems;
-  /// Whether the next config re-apply must hand the bar button items to the navigation item again, even if they
-  /// didn't change. Set by `setNeedsViewControllerUpdate`, consumed in `updateViewController:withConfig:animated:`.
-  BOOL _needsBarButtonItemsReassignment;
+  /// Whether the next config re-apply must hand the left / right bar button items to the navigation item again,
+  /// even if they didn't change. Set by `setNeedsBarButtonItemsReassignmentForSubviewType:`, consumed in
+  /// `updateViewController:withConfig:animated:`.
+  BOOL _needsLeftBarButtonItemsReassignment;
+  BOOL _needsRightBarButtonItemsReassignment;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -187,9 +189,18 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setNeedsViewControllerUpdate
 {
   _needsViewControllerUpdateInCurrentTransaction = true;
-  // Subviews request this when the bar must re-evaluate its items (e.g. a `visibilityPriority` change),
-  // which UIKit only does when it is handed the items again.
-  _needsBarButtonItemsReassignment = YES;
+}
+
+- (void)setNeedsBarButtonItemsReassignmentForSubviewType:(RNSScreenStackHeaderSubviewType)type
+{
+  // Only the side of the requesting subview is re-assigned: re-assigning a side detaches its items' custom
+  // views from the window, so a focused input on the other side would lose focus.
+  if (type == RNSScreenStackHeaderSubviewTypeLeft) {
+    _needsLeftBarButtonItemsReassignment = YES;
+  } else if (type == RNSScreenStackHeaderSubviewTypeRight) {
+    _needsRightBarButtonItemsReassignment = YES;
+  }
+  [self setNeedsViewControllerUpdate];
 }
 
 - (void)layoutNavigationControllerView
@@ -845,20 +856,22 @@ RNS_IGNORE_SUPER_CALL_END
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
-  BOOL forceBarButtonItemsReassignment = config->_needsBarButtonItemsReassignment;
-  config->_needsBarButtonItemsReassignment = NO;
+  BOOL forceLeftBarButtonItemsReassignment = config->_needsLeftBarButtonItemsReassignment;
+  BOOL forceRightBarButtonItemsReassignment = config->_needsRightBarButtonItemsReassignment;
+  config->_needsLeftBarButtonItemsReassignment = NO;
+  config->_needsRightBarButtonItemsReassignment = NO;
   [RNSScreenStackHeaderConfig setBarButtonItems:[config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
                                                                  withCurrentItems:leftItems
                                                                              side:RNSBarButtonItemsSideLeft]
                                onNavigationItem:navitem
                                            side:RNSBarButtonItemsSideLeft
-                                          force:forceBarButtonItemsReassignment];
+                                          force:forceLeftBarButtonItemsReassignment];
   [RNSScreenStackHeaderConfig setBarButtonItems:[config barButtonItemsFromConfigs:config.headerRightBarButtonItems
                                                                  withCurrentItems:rightItems
                                                                              side:RNSBarButtonItemsSideRight]
                                onNavigationItem:navitem
                                            side:RNSBarButtonItemsSideRight
-                                          force:forceBarButtonItemsReassignment];
+                                          force:forceRightBarButtonItemsReassignment];
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
@@ -1280,6 +1293,8 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
   [self setCachedBarButtonItemConfigs:nil items:nil side:RNSBarButtonItemsSideLeft];
   [self setCachedBarButtonItemConfigs:nil items:nil side:RNSBarButtonItemsSideRight];
+  _needsLeftBarButtonItemsReassignment = NO;
+  _needsRightBarButtonItemsReassignment = NO;
 
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
 }

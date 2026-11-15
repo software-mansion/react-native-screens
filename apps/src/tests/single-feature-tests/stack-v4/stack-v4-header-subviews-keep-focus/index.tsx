@@ -16,6 +16,7 @@ import {
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
   type HeaderBarButtonItem,
+  type HeaderBarButtonItemVisibilityPriority,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -26,6 +27,10 @@ type InputPlacement = 'title' | 'left' | 'right';
 const PLACEMENTS: InputPlacement[] = ['title', 'left', 'right'];
 const TITLES = ['Focus', 'Focus updated'];
 const TINT_COLORS = [Colors.BlueLight100, Colors.RedLight100];
+const VISIBILITY_PRIORITIES: HeaderBarButtonItemVisibilityPriority[] = [
+  'standard',
+  'high',
+];
 
 type TextInputRef = React.ComponentRef<typeof TextInput>;
 
@@ -68,6 +73,7 @@ function TestStackV4HeaderSubviewsKeepFocus() {
   const [barButtonVersion, setBarButtonVersion] = useState(1);
   const [extraViewVersion, setExtraViewVersion] = useState(1);
   const [showExtraView, setShowExtraView] = useState(false);
+  const [extraViewPriorityIndex, setExtraViewPriorityIndex] = useState(0);
   const [itemsOnInputSide, setItemsOnInputSide] = useState(false);
 
   // The extra view is always mounted on a side that doesn't hold the input,
@@ -185,6 +191,15 @@ function TestStackV4HeaderSubviewsKeepFocus() {
               title="Change extra view"
               onPress={() => setExtraViewVersion(version => version + 1)}
             />
+            <Button
+              testID="change-extra-view-priority"
+              title="Extra priority (iOS 27)"
+              onPress={() =>
+                setExtraViewPriorityIndex(
+                  index => (index + 1) % VISIBILITY_PRIORITIES.length,
+                )
+              }
+            />
           </View>
         </ScrollView>
         <ScreenStackHeaderConfig
@@ -204,13 +219,23 @@ function TestStackV4HeaderSubviewsKeepFocus() {
             <ScreenStackHeaderLeftView>{header}</ScreenStackHeaderLeftView>
           ) : null}
           {extraViewSide === 'left' && extraView ? (
-            <ScreenStackHeaderLeftView>{extraView}</ScreenStackHeaderLeftView>
+            <ScreenStackHeaderLeftView
+              visibilityPriority={
+                VISIBILITY_PRIORITIES[extraViewPriorityIndex]
+              }>
+              {extraView}
+            </ScreenStackHeaderLeftView>
           ) : null}
           {placement === 'title' ? (
             <ScreenStackHeaderCenterView>{header}</ScreenStackHeaderCenterView>
           ) : null}
           {extraViewSide === 'right' && extraView ? (
-            <ScreenStackHeaderRightView>{extraView}</ScreenStackHeaderRightView>
+            <ScreenStackHeaderRightView
+              visibilityPriority={
+                VISIBILITY_PRIORITIES[extraViewPriorityIndex]
+              }>
+              {extraView}
+            </ScreenStackHeaderRightView>
           ) : null}
           {placement === 'right' ? (
             <ScreenStackHeaderRightView>{header}</ScreenStackHeaderRightView>

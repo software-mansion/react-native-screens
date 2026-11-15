@@ -317,7 +317,7 @@ RNS_IGNORE_SUPER_CALL_END
   // the end of the mounting transaction, so that sibling subviews updated in the
   // same transaction are taken into account & the config is re-applied only once.
   if (_barButtonItem != nil) {
-    [[self getHeaderConfig] setNeedsViewControllerUpdate];
+    [[self getHeaderConfig] setNeedsBarButtonItemsReassignmentForSubviewType:self.type];
   }
 }
 

@@ -79,6 +79,16 @@ describe('Stack v4 header subviews keep focus', () => {
         await expectInputFocused(true, blurCount);
       });
 
+      // On iOS 27 this re-assigns the bar button items on the extra view's side,
+      // which must leave the input's side alone.
+      it('should keep focus when the visibility priority of another header subview changes', async () => {
+        await tapButton('change-extra-view-priority');
+        await expectInputFocused(true, blurCount);
+
+        await tapButton('change-extra-view-priority');
+        await expectInputFocused(true, blurCount);
+      });
+
       it('should keep focus when a header subview is unmounted', async () => {
         await tapButton('toggle-extra-view');
         await expect(element(by.id('header-extra-view'))).not.toExist();
