@@ -52,13 +52,30 @@ static void RNSCarryNavigationBarWithItsScreen(UINavigationController *navctr, B
     // * a bar that belongs to the screen underneath (`showing != isPush`): UIKit moves it across the whole width,
     //   while that screen moves only a part of it,
     // * a large title: UIKit takes it out of the bar for the transition and it does not come back to a moved bar,
-    // * a search bar: not tested.
+    // * a search bar: not tested,
+    // * a zoom transition: UIKit hides the bar by animating its alpha, which we would remove (see
+    //   `restoreNavigationBarAlphaIfTransitionIsCancelled`),
+    // * a transition of another stack: a nested navigation controller with no transition of its own returns the
+    //   coordinator of an outer one, whose screens are not on this stack.
     UINavigationItem *item = owner.navigationItem;
     if (coordinator == nil || home == nil || coordinator.presentationStyle != UIModalPresentationNone ||
-        showing != isPush || item.largeTitleDisplayMode == UINavigationItemLargeTitleDisplayModeAlways ||
-        item.searchController != nil) {
+        ![navctr.viewControllers containsObject:toVC] || showing != isPush ||
+        item.largeTitleDisplayMode == UINavigationItemLargeTitleDisplayModeAlways || item.searchController != nil) {
       return;
     }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    if (owner.preferredTransition != nil) {
+      return;
+    }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(18_0)
+    // Header config updates can show the bar more than once in a transition (show, hide, show). Carry it only once:
+    // a later call, made after the bar has been moved, would take the carrier for the bar's home and put the bar back
+    // into it when the transition ends.
+    static char carryRegisteredKey;
+    if (objc_getAssociatedObject(coordinator, &carryRegisteredKey) != nil) {
+      return;
+    }
+    objc_setAssociatedObject(coordinator, &carryRegisteredKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     __block NSUInteger homeIndex = NSNotFound;
     __block CGRect settledFrame = CGRectNull;
     [coordinator
@@ -88,7 +105,11 @@ static void RNSCarryNavigationBarWithItsScreen(UINavigationController *navctr, B
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           if (homeIndex != NSNotFound) {
             [home insertSubview:bar atIndex:MIN(homeIndex, home.subviews.count)];
-            bar.frame = !showing && context.isCancelled ? frameWhenShown : settledFrame;
+            // A bar being shown keeps the frame UIKit has laid it out with; a bar being hidden was given the visible
+            // frame while carried.
+            if (!showing) {
+              bar.frame = context.isCancelled ? frameWhenShown : settledFrame;
+            }
           }
         }];
   }
