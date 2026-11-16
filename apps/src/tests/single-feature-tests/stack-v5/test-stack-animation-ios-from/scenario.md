@@ -23,12 +23,6 @@ transition and the interactive back gestures are not assertable with Detox.
 - iPhone: simulator or device.
 - Android emulator or device with gesture navigation enabled. The interactive
   predictive back gesture needs API 34 or newer.
-- Groups whose heading says "Android: 10x animation scale, iOS: normal": on
-  Android, in Developer options set "Animator duration scale" and "Transition
-  animation scale" to 10x before the first of them and back to 1x after the
-  last. At 1x these transitions last 200 ms and the tint cannot be compared
-  against a swatch by eye. On iOS they run at normal speed (350 ms
-  transitions), like every other group.
 - Android: run the screen directly. In `apps/App.tsx` import and render
   `TestStackAnimationIOSFrom` as the root component instead of `Example`. Opened
   through the in-app menu, system back leaves the screen instead of popping the
@@ -68,30 +62,27 @@ transition and the interactive back gestures are not assertable with Detox.
 
 ---
 
-### `iosFromRight` (Android: 10x animation scale, iOS: normal)
+### `iosFromRight`
 
 1. Tap "Push Blue".
 
    - [ ] "Blue" enters from the right edge, drawn above "Home".
    - [ ] "Home" moves left by about a third of the width.
-   - [ ] "Home" is tinted while it moves (see Note).
 
 2. On "Blue", tap "Pop".
 
    - [ ] "Blue" leaves to the right, drawn above "Home".
    - [ ] "Home" returns from the left.
-   - [ ] "Home"'s tint lifts while it returns.
-   - [ ] "Home" is untinted once the pop ends.
+   - [ ] "Home" is untinted once the pop ends (see Note).
 
 ---
 
-### `iosFromLeft` (Android: 10x animation scale, iOS: normal)
+### `iosFromLeft`
 
 1. On "Home", set "next push" to `iosFromLeft`, then tap "Push Blue".
 
    - [ ] "Blue" enters from the left edge, drawn above "Home".
    - [ ] "Home" moves right by about a third of the width.
-   - [ ] "Home" is tinted while it moves.
 
 2. On "Blue", tap "Pop".
 
@@ -101,13 +92,12 @@ transition and the interactive back gestures are not assertable with Detox.
 
 ---
 
-### `iosFromTrailing` and `iosFromLeading` (Android: 10x animation scale, iOS: normal)
+### `iosFromTrailing` and `iosFromLeading`
 
 1. On "Home", set "next push" to `iosFromTrailing`, then tap "Push Blue".
 
    - [ ] "Blue" enters from the right edge, drawn above "Home".
    - [ ] "Home" moves left by about a third of the width.
-   - [ ] "Home" is tinted while it moves.
 
 2. On "Blue", tap "Pop".
 
@@ -119,7 +109,6 @@ transition and the interactive back gestures are not assertable with Detox.
 
    - [ ] "Blue" enters from the left edge, drawn above "Home".
    - [ ] "Home" moves right by about a third of the width.
-   - [ ] "Home" is tinted while it moves.
 
 4. On "Blue", tap "Pop".
 
@@ -129,16 +118,33 @@ transition and the interactive back gestures are not assertable with Detox.
 
 ---
 
-### A preset changed before the pop (Android: 10x animation scale, iOS: normal)
+### Tint and parallax at 2000 ms
+
+1. On "Home", set "next push" to `iosFromRight 2000 ms`, then tap "Push Blue".
+
+   - [ ] "Blue" enters from the right over about 2 seconds.
+   - [ ] "Home" moves left by about a third of the width.
+   - [ ] "Home" is tinted while it moves (see Note).
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right over about 2 seconds.
+   - [ ] "Home" returns from the left.
+   - [ ] "Home"'s tint lifts while it returns.
+   - [ ] "Home" is untinted once the pop ends.
+
+---
+
+### A preset changed before the pop
 
 1. On "Home", set "next push" to `slideFromRight`, then tap "Push Blue".
 
    - [ ] "Blue" and "Home" travel the full width as one band (see Note).
    - [ ] "Home" is not tinted.
 
-2. On "Blue", set "this screen" to `iosFromRight`, then tap "Pop".
+2. On "Blue", set "this screen" to `iosFromRight 2000 ms`, then tap "Pop".
 
-   - [ ] "Blue" leaves to the right, drawn above "Home".
+   - [ ] "Blue" leaves to the right over about 2 seconds, drawn above "Home".
    - [ ] "Home" returns from a third of the width to the left.
    - [ ] "Home" starts tinted.
    - [ ] "Home" is untinted once the pop ends.
@@ -169,7 +175,6 @@ transition and the interactive back gestures are not assertable with Detox.
 
    - [ ] "Blue" enters from the left edge, drawn above "Home".
    - [ ] "Home" moves right by about a third of the width.
-   - [ ] "Home" is tinted while it moves.
 
 5. On "Blue", tap "Pop".
 
@@ -230,22 +235,6 @@ transition and the interactive back gestures are not assertable with Detox.
    - [ ] "START" returns to the left of the row.
 
 ## Steps - iOS
-
-### Tint at 2000 ms
-
-1. On "Home", set "next push" to `iosFromRight 2000 ms`, then tap "Push Blue".
-
-   - [ ] "Blue" enters from the right over about 2 seconds.
-   - [ ] "Home" moves left by about a third of the width.
-   - [ ] "Home" is tinted while it moves (see Note).
-
-2. On "Blue", tap "Pop".
-
-   - [ ] "Blue" leaves to the right over about 2 seconds.
-   - [ ] "Home"'s tint lifts while it returns.
-   - [ ] "Home" is untinted once the pop ends.
-
----
 
 ### Header back button
 

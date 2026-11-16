@@ -100,6 +100,13 @@ interactive back gestures are not assertable with Detox.
          the screen and a strip of the background shows at the right edge.
    - [ ] "Blue" then slowly settles back to rest.
 
+3. On "Blue", tap "Pop". On "Home", set "next push" to
+   `slideFromRight 2000 ms decelerateQuint`, then tap "Push Blue".
+
+   - [ ] "Blue" covers about three quarters of the width in the first half
+         second.
+   - [ ] "Blue" then creeps to rest over the remaining time.
+
 ---
 
 ### Distance
