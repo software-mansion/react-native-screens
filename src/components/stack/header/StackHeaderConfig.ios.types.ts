@@ -7,152 +7,123 @@ import type {
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 /**
- * @summary Options for updating a menu action (leaf item) at runtime.
+ * Options for updating a menu action (leaf item) at runtime.
  *
- * @description
+ * @remarks
  * Omitted keys preserve current values. Explicit `undefined` resets to default.
- *
- * @platform ios
  */
 export interface StackHeaderMenuItemOptionsIOS {
   /**
-   * @summary New title for the menu action.
-   *
-   * @platform ios
+   * New title for the menu action.
    */
   title?: string | undefined;
   /**
-   * @summary New icon for the menu action.
-   *
-   * @platform ios
+   * New icon for the menu action.
    */
   icon?: PlatformIconIOS | undefined;
   /**
-   * @summary Sets the toggle state of the menu item.
+   * Sets the toggle state of the menu item.
    *
-   * @description
+   * @remarks
    * When inside a single selection hierarchy, setting `true` deselects the
    * previously selected item and selects this one. Setting `false` is a noop
    * in this case - only has effect for regular toggles.
-   *
-   * @platform ios
    */
   toggleState?: boolean | undefined;
 }
 
 /**
- * @summary Options for updating a submenu at runtime.
+ * Options for updating a submenu at runtime.
  *
- * @description
+ * @remarks
  * Omitted keys preserve current values. Explicit `undefined` resets to default.
- *
- * @platform ios
  */
 export interface StackHeaderMenuOptionsIOS {
   /**
-   * @summary New title for the submenu.
-   *
-   * @platform ios
+   * New title for the submenu.
    */
   title?: string | undefined;
   /**
-   * @summary New icon for the submenu.
-   *
-   * @platform ios
+   * New icon for the submenu.
    */
   icon?: PlatformIconIOS | undefined;
 }
 
 export interface StackHeaderBaseItemIOS {
   /**
-   * @summary A unique identifier within the screen header.
-   *
-   * @platform iOS
+   * A unique identifier within the screen header.
    */
   id: string;
   /**
-   * @summary A title for the item that is displayed in the header.
-   *
-   * @platform iOS
+   * A title for the item that is displayed in the header.
    */
   title?: string | undefined;
   /**
-   * @summary Icon displayed for the header item.
+   * Icon displayed for the header item.
    *
-   * @description
+   * @remarks
    * Supports SF Symbols, xcassets, and image sources. For async image sources,
-   * the item renders without an icon first and updates when loaded.
-   * Ignored when custom view ({@link StackHeaderInlineCustomItemIOS.render | render}) is set.
-   *
-   * @platform iOS
+   * the item renders without an icon first and updates when loaded. Ignored
+   * when custom view ({@link StackHeaderInlineCustomItemIOS.render | render})
+   * is set.
    */
   icon?: PlatformIconIOS | undefined;
 }
 
 export interface SupportsMenuIOS {
   /**
-   * @summary Menu definition for the context menu that appears when item is tapped.
-   *
-   * @platform iOS
+   * Menu definition for the context menu that appears when item is tapped.
    */
   menu?: StackHeaderMenuIOS | undefined;
   /**
-   * @summary Menu definition substituting the item when it is displayed in a menu.
+   * Menu definition substituting the item when it is displayed in a menu.
    *
-   * @description
+   * @remarks
    * When the system moves the item into a menu (e.g. the navigation bar
-   * overflow menu), this menu is displayed in its place. Useful for custom items
-   * ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS doesn't display in the overflow menu otherwise.
-   * The `id`s used in the menu are expected to be unique across every `menu` and `menuRepresentation`.
-   *
-   * @platform iOS
-   *
-   * @supported iOS 16 and higher
+   * overflow menu), this menu is displayed in its place. Useful for custom
+   * items ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS
+   * doesn't display in the overflow menu otherwise. The `id`s used in the menu
+   * are expected to be unique across every `menu` and `menuRepresentation`.
    */
   menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
 
 export interface SupportsSharedBackgroundIOS {
   /**
-   * @summary Whether the liquid glass background for this item should be hidden.
+   * Whether the liquid glass background for this item should be hidden.
    *
-   * @description
+   * @remarks
    * On iOS 26, adjacent bar button items are grouped inside a shared liquid
    * glass background. Setting this to `true` removes the shared background
    * from this item.
    *
-   * @default false
-   *
-   * @platform iOS
-   *
-   * @supported iOS 26 and higher
+   * @defaultValue `false`
    */
   hidesSharedBackground?: boolean | undefined;
 }
 
 /**
- * @summary Priority used when the header has to decide which items to keep.
+ * Priority used when the header has to decide which items to keep.
  *
- * @description
- * Each value maps to the matching `UIBarButtonItemVisibilityPriority` constant.
+ * @remarks
+ * The following values are supported:
+ * - `'low'`
+ * - `'standard'`
+ * - `'high'`
  *
- * @platform iOS
- *
- * @supported iOS 27 and higher
+ * @see {@link https://developer.apple.com/documentation/uikit/uibarbuttonitemvisibilitypriority | UIBarButtonItemVisibilityPriority}
  */
 export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';
 
 export interface SupportsVisibilityPriorityIOS {
   /**
-   * @summary Decides which items give way first when the header runs out of room.
+   * Decides which items give way first when the header runs out of room.
    *
-   * @description
+   * @remarks
    * When the items do not fit, the header moves the ones with the lowest
    * priority into the overflow ("...") menu, and keeps the higher ones.
    *
-   * Accepts `'low'`, `'standard'` (the default) and `'high'`, which map to the
-   * `UIBarButtonItemVisibilityPriority` constants. Only the relative order of
-   * the items matters.
+   * Only the relative order of the priorities matters.
    *
    * When the item is placed in an implicit group of items, the group
    * inherits this priority.
@@ -160,50 +131,40 @@ export interface SupportsVisibilityPriorityIOS {
    * A custom item ({@link StackHeaderInlineCustomItemIOS.render | render})
    * moved into the overflow menu has no content to show there.
    *
-   * @default 'standard'
-   *
-   * @platform iOS
-   *
-   * @supported iOS 27 and higher
+   * @defaultValue `'standard'`
    */
   visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
 }
 
 export interface SupportsIdentifierIOS {
   /**
-   * @summary Stable identifier used to match the item across different screens
+   * Stable identifier used to match the item across different screens
    * for more intelligent animation on transition.
    *
-   * @description
-   * When navigating between screens, iOS tries to match similarly looking items (i.e. same sfSymbol)
-   * and animate between them. If the heuristic fails, a simpler crossfade is applied.
-   * In a situation where visually different items should be logically considered the same across screens,
-   * you may use this prop to tell this fact to the system. The identifier shouldn't be updated at runtime;
-   * doing so will result in item rebuild and visual flash.
-   *
-   * @platform iOS
-   *
-   * @supported iOS 26 and higher
+   * @remarks
+   * When navigating between screens, iOS tries to match similarly looking items
+   * (i.e. same sfSymbol) and animate between them. If the heuristic fails, a
+   * simpler crossfade is applied. In a situation where visually different items
+   * should be logically considered the same across screens, you may use this
+   * prop to tell this fact to the system. The identifier shouldn't be updated
+   * at runtime; doing so will result in item rebuild and visual flash.
    */
   identifier?: string | undefined;
 }
 
 /**
- * @summary Visual variant (style) of a header item.
+ * Visual variant (style) of a header item.
  *
- * @description
- * - `plain`: the default look of a bar button item.
- * - `prominent`: the item is emphasized with a tinted background.
+ * @remarks
+ * The following values are supported:
+ * - `'plain'` — the default look of a bar button item.
+ * - `'prominent'` — the item is emphasized with a tinted background.
  *   On iOS below 26 it falls back to bold text (the `done` style).
- *
- * @platform iOS
  */
 export type StackHeaderItemVariantIOS = 'plain' | 'prominent';
 
 /**
- * @summary Native header item with text label.
- *
- * @platform iOS
+ * Native header item with text label.
  */
 export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
@@ -212,61 +173,49 @@ export interface StackHeaderInlineItemIOS
     SupportsSharedBackgroundIOS,
     SupportsVisibilityPriorityIOS {
   /**
-   * @summary Marks this object as a header item definition.
-   *
-   * @platform iOS
+   * Marks this object as a header item definition.
    */
   type: 'item';
   /**
-   * @summary Visual variant (style) of the item.
+   * Visual variant (style) of the item.
    *
-   * @default 'plain'
-   *
-   * @platform iOS
+   * @defaultValue `'plain'`
    */
   variant?: StackHeaderItemVariantIOS | undefined;
   /**
-   * @summary Tint color of the item.
+   * Tint color of the item.
    *
-   * @description
-   * Applied to the item's title and icon. For `prominent` items on iOS 26,
+   * @remarks
+   * Applied to the item's title and icon. For `'prominent'` items on iOS 26,
    * the tint affects the emphasized background instead.
    *
    * When unset, the item uses the default system tint.
-   *
-   * @platform iOS
    */
   tintColor?: ColorValue | undefined;
   /**
-   * @summary Whether the item is disabled.
+   * Whether the item is disabled.
    *
-   * @description
+   * @remarks
    * A disabled item is grayed out and does not respond to user interaction:
    * neither {@link StackHeaderInlineItemIOS.onPress | onPress} nor
    * {@link SupportsMenuIOS.menu | menu} is triggered.
    *
-   * @default false
-   *
-   * @platform iOS
+   * @defaultValue `false`
    */
   disabled?: boolean | undefined;
   /**
-   * @summary Callback invoked when the header item is pressed.
+   * Callback invoked when the header item is pressed.
    *
-   * @description
+   * @remarks
    * Fires when the user taps the header item. When combined with
    * {@link SupportsMenuIOS.menu | menu}, tapping fires `onPress` and
    * long-pressing shows the menu.
-   *
-   * @platform iOS
    */
   onPress?: StackHeaderPressHandler | undefined;
 }
 
 /**
- * @summary Header item with custom view.
- *
- * @platform iOS
+ * Header item with custom view.
  */
 export interface StackHeaderInlineCustomItemIOS
   extends SupportsMenuIOS,
@@ -274,98 +223,79 @@ export interface StackHeaderInlineCustomItemIOS
     SupportsSharedBackgroundIOS,
     SupportsVisibilityPriorityIOS {
   /**
-   * @summary A unique identifier within the screen header.
-   *
-   * @platform iOS
+   * A unique identifier within the screen header.
    */
   id: string;
   /**
-   * @summary Marks this object as a header item definition.
-   *
-   * @platform iOS
+   * Marks this object as a header item definition.
    */
   type: 'item';
   /**
-   * @summary A function that renders the custom view.
+   * A function that renders the custom view.
    *
-   * @description
+   * @remarks
    * The subview is sized by React Native's layout engine but positioned by the
-   * platform native layout. Each item's size is calculated independently and will
-   * not respect flex layout. Use static width and height for best results.
-   *
-   * @platform iOS
+   * platform native layout. Each item's size is calculated independently and
+   * will not respect flex layout. Use static width and height for best results.
    */
   render: StackHeaderElementFactory;
 }
 
 /**
- * @summary A spacer item for visual separation of items.
+ * A spacer item for visual separation of items.
  *
- * @description Separates items defined in {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems}
- * and {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}. The fixed size spacing works
- * for iOS 18 and below, for iOS 26 it only splits liquid glass bubble for two adjacent items.
- *
- * @platform iOS
+ * @remarks
+ * Separates items defined in
+ * {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
+ * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}. The fixed
+ * size spacing works for iOS 18 and below, for iOS 26 it only splits liquid
+ * glass bubble for two adjacent items.
  */
 export interface StackHeaderFixedSpacerItemIOS {
   /**
-   * @summary A unique identifier within the screen header.
-   *
-   * @platform iOS
+   * A unique identifier within the screen header.
    */
   id: string;
   /**
-   * @summary Marks this object as a spacer definition.
-   *
-   * @platform iOS
+   * Marks this object as a spacer definition.
    */
   type: 'spacer';
   /**
-   * @summary Marks this object as a fixed-size spacer definition.
-   *
-   * @platform iOS
+   * Marks this object as a fixed-size spacer definition.
    */
   sizing: 'fixed';
   /**
-   * @summary Specifies space width between adjacent header items.
-   *
-   * @platform iOS
+   * Specifies space width between adjacent header items.
    */
   width: number;
 }
 
 /**
- * @summary A spacer item for visual separation of items.
+ * A spacer item for visual separation of items.
  *
- * @description Separates items defined in {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems}
- * and {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}.
- * For iOS 26 it splits liquid glass bubble for two adjacent items.
- *
- * @platform iOS
+ * @remarks
+ * Separates items defined in
+ * {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
+ * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}. For iOS 26
+ * it splits liquid glass bubble for two adjacent items.
  */
 export interface StackHeaderFlexibleSpacerItemIOS {
   /**
-   * @summary A unique identifier within the screen header.
-   *
-   * @platform iOS
+   * A unique identifier within the screen header.
    */
   id: string;
   /**
-   * @summary Marks this object as a spacer definition.
-   *
-   * @platform iOS
+   * Marks this object as a spacer definition.
    */
   type: 'spacer';
   /**
-   * @summary Marks this object as a flexible-size spacer definition.
-   *
-   * @platform iOS
+   * Marks this object as a flexible-size spacer definition.
    */
   sizing: 'flexible';
 }
 
 /**
- * @summary A header spacer item type
+ * A header spacer item type.
  */
 export type StackHeaderSpacerItemIOS =
   | StackHeaderFixedSpacerItemIOS
@@ -378,41 +308,37 @@ export type StackHeaderItemIOS =
 
 export interface StackHeaderTitleCustomItemIOS {
   /**
-   * @summary A unique identifier within the screen header.
-   *
-   * @platform iOS
+   * A unique identifier within the screen header.
    */
   id: string;
   /**
-   * @summary A function that renders the custom view.
+   * A function that renders the custom view.
    *
-   * @description
+   * @remarks
    * The subview is sized by React Native's layout engine but positioned by the
-   * platform native layout. Each item's size is calculated independently and will
-   * not respect flex layout. Use static width and height for best results.
+   * platform native layout. Each item's size is calculated independently and
+   * will not respect flex layout. Use static width and height for best results.
    *
    * Note: Due to layout process limitations, text view will not resize and
    * ellipsize to fit available space without manually setting desired view
    * width. For text-only elements that should ellipsize it is recommended to
    * use regular `title` instead.
-   *
-   * @platform iOS
    */
   render: StackHeaderElementFactory;
 }
 
 /**
- * @summary Controls how the back button title is displayed.
+ * Controls how the back button title is displayed.
  *
- * @description
- * - `default`: the system chooses the title depending on available space.
- *   On iOS < 26 options include: custom title (defaults to previous screen title),
- *   generic "Back", no title; on iOS >= 26 it's either custom title (if set) or no title.
- * - `generic`: on iOS < 26, the system uses a generic "Back" title or no title;
- *   on iOS >= 26 it's the same as `minimal`.
- * - `minimal`: no title is displayed next to the back button chevron.
- *
- * @platform iOS
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the system chooses the title depending on available space. On
+ *   `iOS < 26` options include: custom title (defaults to previous screen
+ *   title), generic "Back", no title; on `iOS >= 26` it's either custom title
+ *   (if set) or no title.
+ * - `'generic'` — on `iOS < 26`, the system uses a generic "Back" title or no
+ *   title; on `iOS >= 26` it's the same as `'minimal'`.
+ * - `'minimal'` — no title is displayed next to the back button chevron.
  */
 export type StackHeaderBackButtonDisplayModeIOS =
   | 'default'
@@ -420,15 +346,14 @@ export type StackHeaderBackButtonDisplayModeIOS =
   | 'minimal';
 
 /**
- * @summary Controls when the navigation bar minimizes in response to scrolling.
+ * Controls when the navigation bar minimizes in response to scrolling.
  *
- * @description
- * - `automatic`: the system determines the minimization behavior.
- * - `never`: the navigation bar does not minimize.
- * - `onScrollDown`: the navigation bar minimizes when the user scrolls down.
- * - `onScrollUp`: the navigation bar minimizes when the user scrolls up.
- *
- * @platform iOS
+ * @remarks
+ * The following values are supported:
+ * - `'automatic'` — the system determines the minimization behavior.
+ * - `'never'` — the navigation bar does not minimize.
+ * - `'onScrollDown'` — the navigation bar minimizes when the user scrolls down.
+ * - `'onScrollUp'` — the navigation bar minimizes when the user scrolls up.
  */
 export type StackHeaderMinimizationBehaviorIOS =
   | 'automatic'
@@ -437,31 +362,29 @@ export type StackHeaderMinimizationBehaviorIOS =
   | 'onScrollUp';
 
 /**
- * @summary Controls when a minimized navigation bar restores.
+ * Controls when a minimized navigation bar restores.
  *
- * @description
- * - `automatic`: the system determines the restoration behavior. By default
+ * @remarks
+ * The following values are supported:
+ * - `'automatic'` — the system determines the restoration behavior. By default
  *   the navigation bar restores when the user reverses scroll direction.
- * - `atScrollEdge`: the navigation bar restores only when the scroll view's
+ * - `'atScrollEdge'` — the navigation bar restores only when the scroll view's
  *   content reaches the scroll edge. Honored only together with
  *   `minimizationBehavior: 'onScrollDown'`.
- *
- * @platform iOS
  */
 export type StackHeaderRestorationBehaviorIOS = 'automatic' | 'atScrollEdge';
 
 /**
- * @summary Controls whether the safe area adjusts while the navigation bar
+ * Controls whether the safe area adjusts while the navigation bar
  * minimizes.
  *
- * @description
- * - `automatic`: the system determines the safe area adjustment.
- * - `enabled`: the safe area adjusts as the navigation bar minimizes, allowing
- *   content to reflow.
- * - `disabled`: the safe area remains unchanged as the navigation bar
+ * @remarks
+ * The following values are supported:
+ * - `'automatic'` — the system determines the safe area adjustment.
+ * - `'enabled'` — the safe area adjusts as the navigation bar minimizes,
+ *   allowing content to reflow.
+ * - `'disabled'` — the safe area remains unchanged as the navigation bar
  *   minimizes.
- *
- * @platform iOS
  */
 export type StackHeaderSafeAreaAdjustmentIOS =
   | 'automatic'
@@ -469,424 +392,390 @@ export type StackHeaderSafeAreaAdjustmentIOS =
   | 'disabled';
 
 /**
- * @summary Text attributes of header items in a single control state.
- *
- * @platform iOS
+ * Text attributes of header items in a single control state.
  */
 export interface StackHeaderButtonStateAppearanceIOS {
   /**
-   * @summary Specifies the font family used for the item's text.
-   *
-   * @platform ios
+   * Specifies the font family used for the item's text.
    */
   fontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * @summary Specifies the font size used for the item's text.
+   * Specifies the font size used for the item's text.
    *
-   * @description This prop also scales SF Symbol icons of the items.
-   *
-   * @platform ios
+   * @remarks
+   * This prop also scales SF Symbol icons of the items.
    */
   fontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * @summary Specifies the font weight used for the item's text.
-   *
-   * @platform ios
+   * Specifies the font weight used for the item's text.
    */
   fontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * @summary Specifies the font style used for the item's text.
-   *
-   * @platform ios
+   * Specifies the font style used for the item's text.
    */
   fontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * @summary Specifies the font color used for the item's text.
-   *
-   * @platform ios
+   * Specifies the font color used for the item's text.
    */
   fontColor?: TextStyle['color'] | undefined;
 }
 
 /**
- * @summary Per-state appearance of header items of a single variant.
+ * Per-state appearance of header items of a single variant.
  *
- * @description For each state left unset, UIKit derives the appearance from
+ * @remarks
+ * For each state left unset, UIKit derives the appearance from
  * the `normal` state. Explicitly set per-state attributes merge into the
  * state's defaults, so e.g. a font-only state keeps the system text color
  * for that state.
- *
- * @platform iOS
  */
 export interface StackHeaderButtonAppearanceIOS {
   /**
-   * @summary Text attributes of the item in the normal state.
-   *
-   * @platform ios
+   * Text attributes of the item in the normal state.
    */
   normal?: StackHeaderButtonStateAppearanceIOS | undefined;
   /**
-   * @summary Text attributes of the item in the highlighted (pressed) state.
-   *
-   * @platform ios
+   * Text attributes of the item in the highlighted (pressed) state.
    */
   highlighted?: StackHeaderButtonStateAppearanceIOS | undefined;
   /**
-   * @summary Text attributes of the item in the disabled state.
-   *
-   * @platform ios
+   * Text attributes of the item in the disabled state.
    */
   disabled?: StackHeaderButtonStateAppearanceIOS | undefined;
   /**
-   * @summary Text attributes of the item in the focused state.
-   *
-   * @platform ios
+   * Text attributes of the item in the focused state.
    */
   focused?: StackHeaderButtonStateAppearanceIOS | undefined;
 }
 
 export interface StackHeaderAppearanceIOS {
   /**
-   * @summary Specifies the font family used for the title of the header.
-   *
-   * @platform ios
+   * Specifies the font family used for the title of the header.
    */
   titleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * @summary Specifies the font size used for the title of the header.
-   *
-   * @platform ios
+   * Specifies the font size used for the title of the header.
    */
   titleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * @summary Specifies the font weight used for the title of the header.
-   *
-   * @platform ios
+   * Specifies the font weight used for the title of the header.
    */
   titleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * @summary Specifies the font style used for the title of the header.
-   *
-   * @platform ios
+   * Specifies the font style used for the title of the header.
    */
   titleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * @summary Specifies the font color used for the title of the header.
-   *
-   * @platform ios
+   * Specifies the font color used for the title of the header.
    */
   titleFontColor?: TextStyle['color'] | undefined;
   /**
-   * @summary Specifies the font family used for the large title of the header.
-   *
-   * @platform ios
+   * Specifies the font family used for the large title of the header.
    */
   largeTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * @summary Specifies the font size used for the large title of the header.
-   *
-   * @platform ios
+   * Specifies the font size used for the large title of the header.
    */
   largeTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * @summary Specifies the font weight used for the large title of the header.
-   *
-   * @platform ios
+   * Specifies the font weight used for the large title of the header.
    */
   largeTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * @summary Specifies the font style used for the large title of the header.
-   *
-   * @platform ios
+   * Specifies the font style used for the large title of the header.
    */
   largeTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * @summary Specifies the font color used for the large title of the header.
-   *
-   * @platform ios
+   * Specifies the font color used for the large title of the header.
    */
   largeTitleFontColor?: TextStyle['color'] | undefined;
   /**
-   * @summary Specifies the font family used for the subtitle of the header.
+   * Specifies the font family used for the subtitle of the header.
    *
-   * @description Applies to both the regular and the large subtitle.
-   *
-   * @platform ios
-   *
-   * @supported iOS 26 and higher
+   * @remarks
+   * Applies to both the regular and the large subtitle.
    */
   subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * @summary Specifies the font size used for the subtitle of the header.
+   * Specifies the font size used for the subtitle of the header.
    *
-   * @description Applies to both the regular and the large subtitle.
-   *
-   * @platform ios
-   *
-   * @supported iOS 26 and higher
+   * @remarks
+   * Applies to both the regular and the large subtitle.
    */
   subtitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * @summary Specifies the font weight used for the subtitle of the header.
+   * Specifies the font weight used for the subtitle of the header.
    *
-   * @description Applies to both the regular and the large subtitle.
-   *
-   * @platform ios
-   *
-   * @supported iOS 26 and higher
+   * @remarks
+   * Applies to both the regular and the large subtitle.
    */
   subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * @summary Specifies the font style used for the subtitle of the header.
+   * Specifies the font style used for the subtitle of the header.
    *
-   * @description Applies to both the regular and the large subtitle.
-   *
-   * @platform ios
-   *
-   * @supported iOS 26 and higher
+   * @remarks
+   * Applies to both the regular and the large subtitle.
    */
   subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * @summary Specifies the font color used for the subtitle of the header.
+   * Specifies the font color used for the subtitle of the header.
    *
-   * @description Applies to both the regular and the large subtitle.
-   *
-   * @platform ios
-   *
-   * @supported iOS 26 and higher
+   * @remarks
+   * Applies to both the regular and the large subtitle.
    */
   subtitleFontColor?: TextStyle['color'] | undefined;
   /**
-   * @summary Appearance of plain header items.
+   * Appearance of plain header items.
    *
-   * @description Applies to the text of header items with the `plain` variant.
+   * @remarks
+   * Applies to the text of header items with the `'plain'` variant.
    * Also applies to the back button title; the `backButton` attributes
    * override it per attribute. Attributes can be customized per control
    * state: `normal`, `highlighted`, `disabled` and `focused`.
-   *
-   * @platform ios
    */
   button?: StackHeaderButtonAppearanceIOS | undefined;
   /**
-   * @summary Appearance of prominent header items.
+   * Appearance of prominent header items.
    *
-   * @description Applies to the text of header items with the `prominent`
+   * @remarks
+   * Applies to the text of header items with the `'prominent'`
    * variant (on iOS below 26 these fall back to the `done` style, which this
    * prop styles as well). Attributes can be customized per control state:
    * `normal`, `highlighted`, `disabled` and `focused`.
-   *
-   * @platform ios
    */
   prominentButton?: StackHeaderButtonAppearanceIOS | undefined;
   /**
-   * @summary Appearance of the back button title.
+   * Appearance of the back button title.
    *
-   * @description Overrides the `button` attributes for the back button title,
+   * @remarks
+   * Overrides the `button` attributes for the back button title,
    * attribute by attribute — the unset attributes keep following the `button`
    * appearance. Attributes can be customized per control state: `normal`,
    * `highlighted`, `disabled` and `focused`.
-   *
-   * @platform ios
    */
   backButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
 
 export interface StackHeaderConfigPropsIOS {
   /**
-   * @summary Title displayed next to the back button on this screen.
+   * Title displayed next to the back button on this screen.
    *
-   * @description
+   * @remarks
    * Configured on the screen whose back button it applies to (the screen that
    * is pushed on top). When unset, the system derives the back title from the
    * previous screen's `title`.
    *
-   * @platform iOS
+   * @platform ios
    */
   backButtonTitle?: string | undefined;
   /**
-   * @summary Controls how the back button title is displayed.
+   * Controls how the back button title is displayed.
    *
-   * @default 'default'
-   *
-   * @platform iOS
+   * @defaultValue `'default'`
+   * @platform ios
    */
   backButtonDisplayMode?: StackHeaderBackButtonDisplayModeIOS | undefined;
   /**
-   * @summary Whether the back button shows the navigation history menu.
+   * Whether the back button shows the navigation history menu.
    *
-   * @description
+   * @remarks
    * Configured on the screen whose back button it applies to (the screen that
    * is pushed on top). When `false`, the navigation history menu is not shown
    * on either of the gestures that normally open it: long-pressing the back
    * button and secondary-clicking it (trackpad / mouse right click); tapping
    * it still pops the screen.
    *
-   * @default true
-   *
-   * @platform iOS
+   * @defaultValue `true`
+   * @platform ios
    */
   backButtonMenuEnabled?: boolean | undefined;
   /**
-   * @summary Custom item to display as a subtitle.
+   * Custom item to display as a subtitle.
    *
-   * @description Takes precedence over subtitle text.
+   * @remarks
+   * Takes precedence over subtitle text.
    *
-   * @platform iOS
-   *
-   * @supported iOS 26 and higher
+   * @platform ios >= 26
    */
   subtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
   /**
-   * @summary A list of items placed starting from the leading edge.
+   * A list of items placed starting from the leading edge.
    *
-   * @description Items are placed next to the back button, if present. If there
-   * is not enough space to fit all leading items at once, they are all moved to
-   * overflow menu. This differs from trailing items, which are moved one by one.
+   * @remarks
+   * Items are placed next to the back button, if present. If there is not
+   * enough space to fit all leading items at once, they are all moved to
+   * overflow menu. This differs from trailing items, which are moved one by
+   * one.
    *
-   * Note: Custom items are not put into the overflow menu, but are removed entirely.
+   * Note: Custom items are not put into the overflow menu, but are removed
+   * entirely.
    *
-   * @platform iOS
+   * Some fields of the items are supported only on newer iOS versions:
+   * - `menuRepresentation` ({@link SupportsMenuIOS}) — iOS 16 or higher.
+   * - `hidesSharedBackground` ({@link SupportsSharedBackgroundIOS}) and
+   *   `identifier` ({@link SupportsIdentifierIOS}) — iOS 26 or higher.
+   * - `visibilityPriority` ({@link SupportsVisibilityPriorityIOS}) — iOS 27 or
+   *   higher.
+   *
+   * @platform ios
    */
   leadingItems?: StackHeaderItemIOS[] | undefined;
   /**
-   * @summary Custom item to display as a title.
+   * Custom item to display as a title.
    *
-   * @description Takes precedence over title text.
+   * @remarks
+   * Takes precedence over title text.
    *
-   * @platform iOS
+   * @platform ios
    */
   titleItem?: StackHeaderTitleCustomItemIOS | undefined;
   /**
-   * @summary Menu definition for the title context menu.
+   * Menu definition for the title context menu.
    *
-   * @description
+   * @remarks
    * Configures a dropdown menu attached to the navigation bar title area.
-   * Works independently of {@link titleItem}; the menu appears for both
-   * plain text and custom view title.
+   * Works independently of
+   * {@link StackHeaderConfigPropsIOS.titleItem | titleItem}; the menu appears
+   * for both plain text and custom view title.
    *
-   * @platform iOS
-   *
-   * @supported iOS 16 and higher
+   * @platform ios >= 16
    */
   titleMenu?: StackHeaderMenuIOS | undefined;
   /**
-   * @summary A list of items placed starting from the trailing edge.
-   * If there is not enough space to fit some items, they are moved to the overflow menu, one by one.
+   * A list of items placed starting from the trailing edge. If there is not
+   * enough space to fit some items, they are moved to the overflow menu, one by
+   * one.
    *
-   * Note: Custom items are not put into the overflow menu, but are removed entirely.
+   * @remarks
+   * Note: Custom items are not put into the overflow menu, but are removed
+   * entirely.
    *
-   * @platform iOS
+   * Some fields of the items are supported only on newer iOS versions:
+   * - `menuRepresentation` ({@link SupportsMenuIOS}) — iOS 16 or higher.
+   * - `hidesSharedBackground` ({@link SupportsSharedBackgroundIOS}) and
+   *   `identifier` ({@link SupportsIdentifierIOS}) — iOS 26 or higher.
+   * - `visibilityPriority` ({@link SupportsVisibilityPriorityIOS}) — iOS 27 or
+   *   higher.
+   *
+   * @platform ios
    */
   trailingItems?: StackHeaderItemIOS[] | undefined;
   /**
-   * @summary Large title text, displayed when `largeTitleEnabled = true`.
+   * Large title text, displayed when `largeTitleEnabled = true`.
    *
-   * @description When ScrollView is present on the screen, large header is displayed only when
-   * fully scrolled to top, otherwise it collapses to regular header. If `largeTitle` is not defined,
-   * it falls back to regular title.
+   * @remarks
+   * When ScrollView is present on the screen, large header is displayed only
+   * when fully scrolled to top, otherwise it collapses to regular header. If
+   * `largeTitle` is not defined, it falls back to regular title.
    *
-   * @platform iOS
+   * @platform ios >= 26
    */
   largeTitle?: string | undefined;
   /**
-   * @summary Specifies if the header should display the large title. It collapses to a regular header when scrolling.
+   * Specifies if the header should display the large title. It collapses to a
+   * regular header when scrolling.
    *
-   * @platform iOS
+   * @defaultValue `false`
+   * @platform ios
    */
   largeTitleEnabled?: boolean | undefined;
   /**
-   * @summary Large subtitle text, displayed when `largeTitleEnabled = true`.
+   * Large subtitle text, displayed when `largeTitleEnabled = true`.
    *
-   * @description When ScrollView is present on the screen, large header is displayed only when
-   * fully scrolled to top, otherwise it collapses to regular header. If `largeSubititle` is not defined,
-   * it falls back to regular subtitle.
+   * @remarks
+   * When ScrollView is present on the screen, large header is displayed only
+   * when fully scrolled to top, otherwise it collapses to regular header. If
+   * `largeSubtitle` is not defined, it falls back to regular subtitle.
    *
-   * @platform iOS
-   *
-   * @supported iOS 26 and higher
+   * @platform ios >= 26
    */
   largeSubtitle?: string | undefined;
   /**
-   * @summary Custom item to display as a subtitle for large header. Takes precedence over largeSubtitle text.
+   * Custom item to display as a subtitle for large header. Takes precedence
+   * over `largeSubtitle` text.
    *
-   * @platform iOS
-   *
-   * @supported iOS 26 and higher
+   * @platform ios >= 26
    */
   largeSubtitleItem?: StackHeaderTitleCustomItemIOS | undefined;
   /**
-   * @summary A single line of text displayed at the top of the navigation bar,
+   * A single line of text displayed at the top of the navigation bar,
    * above the title.
    *
-   * @description
+   * @remarks
    * Setting this prop increases the height of the navigation bar.
    *
-   * @platform iOS
+   * @platform ios
    */
   prompt?: string | undefined;
   /**
-   * @summary Controls when the navigation bar minimizes in response to scrolling.
+   * Controls when the navigation bar minimizes in response to scrolling.
    *
-   * @description
-   * When the navigation bar minimizes, an integrated top tab bar minimizes as well.
+   * @remarks
+   * When the navigation bar minimizes, an integrated top tab bar minimizes as
+   * well.
    *
-   * @default 'automatic'
-   *
-   * @platform iOS
-   *
-   * @supported iOS 27 and higher
+   * @defaultValue `'automatic'`
+   * @platform ios >= 27
    */
   minimizationBehavior?: StackHeaderMinimizationBehaviorIOS | undefined;
   /**
-   * @summary Controls when a minimized navigation bar restores.
+   * Controls when a minimized navigation bar restores.
    *
-   * @description
-   * Currently honored only together with `minimizationBehavior: 'onScrollDown'`.
-   * With other minimization behaviors, the system falls back to `automatic`.
+   * @remarks
+   * Currently honored only together with
+   * `minimizationBehavior: 'onScrollDown'`. With other minimization behaviors,
+   * the system falls back to `'automatic'`.
    *
-   * @default 'automatic'
-   *
-   * @platform iOS
-   *
-   * @supported iOS 27 and higher
+   * @defaultValue `'automatic'`
+   * @platform ios >= 27
    */
   restorationBehavior?: StackHeaderRestorationBehaviorIOS | undefined;
   /**
-   * @summary Controls whether the safe area adjusts while the navigation bar
+   * Controls whether the safe area adjusts while the navigation bar
    * minimizes.
    *
-   * @default 'automatic'
-   *
-   * @platform iOS
-   *
-   * @supported iOS 27 and higher
+   * @defaultValue `'automatic'`
+   * @platform ios >= 27
    */
   safeAreaAdjustment?: StackHeaderSafeAreaAdjustmentIOS | undefined;
   /**
-   * @summary Appearance of the header when the edge of scrollable content
+   * Appearance of the header when the edge of scrollable content
    * is not aligned with the edge of the header.
    *
-   * @description
+   * @remarks
    * Native platform limitations:
-   * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
-   *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
-   *   and do not update on property changes or scroll edge transitions.
+   * - On iOS 26, header items resolve the `button` / `prominentButton`
+   *   attributes once, from whichever appearance is in effect at the moment the
+   *   items are attached to the navigation bar, and do not update on property
+   *   changes or scroll edge transitions.
+   *
+   * The subtitle fields of {@link StackHeaderAppearanceIOS}
+   * (`subtitleFontFamily`, `subtitleFontSize`, `subtitleFontWeight`,
+   * `subtitleFontStyle` and `subtitleFontColor`) are supported on iOS 26 or
+   * higher.
    *
    * @platform ios
    */
   standardAppearance?: StackHeaderAppearanceIOS | undefined;
   /**
-   * @summary Appearance of the header when the edge of scrollable content
+   * Appearance of the header when the edge of scrollable content
    * is aligned with the edge of the header.
    *
-   * @description If unset, derives the configuration from `standardAppearance`,
-   * otherwise becomes a standalone definition. In both cases it keeps transparent
-   * background by default (iOS <18).
+   * @remarks
+   * If unset, derives the configuration from `standardAppearance`, otherwise
+   * becomes a standalone definition. In both cases it keeps transparent
+   * background by default (`iOS < 18`).
    *
    * Native platform limitations:
-   * - On iOS 26, header items resolve the `button` / `prominentButton` attributes once,
-   *   from whichever appearance is in effect at the moment the items are attached to the navigation bar,
-   *   and do not update on property changes or scroll edge transitions.
+   * - On iOS 26, header items resolve the `button` / `prominentButton`
+   *   attributes once, from whichever appearance is in effect at the moment the
+   *   items are attached to the navigation bar, and do not update on property
+   *   changes or scroll edge transitions.
+   *
+   * The subtitle fields of {@link StackHeaderAppearanceIOS}
+   * (`subtitleFontFamily`, `subtitleFontSize`, `subtitleFontWeight`,
+   * `subtitleFontStyle` and `subtitleFontColor`) are supported on iOS 26 or
+   * higher.
    *
    * @platform ios
    */
@@ -895,12 +784,11 @@ export interface StackHeaderConfigPropsIOS {
 
 export interface StackHeaderConfigCommandsIOS {
   /**
-   * @summary Updates properties of a menu action (leaf item) at runtime.
+   * Updates properties of a menu action (leaf item) at runtime.
    *
-   * @param menuElementId The ID of the menu action to update.
-   * @param options Object with properties to change. Omitted keys preserve current
-   *        values. Explicit `undefined` resets to default.
-   *
+   * @param menuElementId - The ID of the menu action to update.
+   * @param options - Object with properties to change. Omitted keys preserve
+   *   current values. Explicit `undefined` resets to default.
    * @platform ios
    */
   setMenuItemOptions: (
@@ -908,12 +796,11 @@ export interface StackHeaderConfigCommandsIOS {
     options: StackHeaderMenuItemOptionsIOS,
   ) => void;
   /**
-   * @summary Updates properties of a submenu at runtime.
+   * Updates properties of a submenu at runtime.
    *
-   * @param menuElementId The ID of the submenu to update.
-   * @param options Object with properties to change. Omitted keys preserve current
-   *        values. Explicit `undefined` resets to default.
-   *
+   * @param menuElementId - The ID of the submenu to update.
+   * @param options - Object with properties to change. Omitted keys preserve
+   *   current values. Explicit `undefined` resets to default.
    * @platform ios
    */
   setMenuOptions: (
