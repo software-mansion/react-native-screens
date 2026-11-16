@@ -22,6 +22,12 @@ export type MoreTabSelectedEvent = {
   provenance: number;
 };
 
+/**
+ * Function that renders the content of the bottom accessory.
+ *
+ * @param environment - Environment the content is rendered for.
+ * @returns The element to render as the bottom accessory.
+ */
 export type TabsBottomAccessoryComponentFactory = (
   environment: TabsBottomAccessoryEnvironment,
 ) => ReactNode;
@@ -74,12 +80,17 @@ export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
  *   on iOS)
  * - `'sidebar'` — the sidebar is displayed when it is available
  * - `'tabBar'` — the tab bar is displayed
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/sidebar-swift.class/placement | UITabBarController.Sidebar.Placement}
  */
 export type TabBarSidebarPreferredPlacement =
   | 'automatic'
   | 'sidebar'
   | 'tabBar';
 
+/**
+ * iOS-specific props for {@link Tabs.Host}.
+ */
 export interface TabsHostPropsIOS {
   /**
    * Whether changes of {@link TabsHostPropsBase.tabBarHidden | tabBarHidden}
@@ -133,6 +144,7 @@ export interface TabsHostPropsIOS {
    * moment. This might require implementing a solution to share state between
    * both rendered components (e.g. usage of context).
    *
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/bottomaccessory | UITabBarController.bottomAccessory}
    * @platform ios >= 26
    */
   bottomAccessory?: TabsBottomAccessoryComponentFactory | undefined;

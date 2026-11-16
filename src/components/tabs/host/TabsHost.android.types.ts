@@ -1,3 +1,6 @@
+/**
+ * Android-specific props for {@link Tabs.Host}.
+ */
 export interface TabsHostPropsAndroid {
   /**
    * Determines whether `BottomNavigationView` applies the inset for IME (i.e.
