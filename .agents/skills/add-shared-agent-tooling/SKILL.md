@@ -20,29 +20,15 @@ prompt, use your tool's general guidance.
 `<name>` is kebab-case. Make sure it is not taken yet in `.agents/skills/`,
 `.claude/skills/` or `.claude/agents/`.
 
-## 2. Add the frontmatter
-
-Both kinds need `name` and `description`. A skill's `name` must match its
-directory name. The description is the only part an agent always sees, so
-state what it does and when to use it.
-
-```markdown
----
-name: <name>
-description: Use when ...
----
-```
-
-## 3. Keep it independent of your machine
+## 2. Keep it independent of your machine
 
 - No absolute paths into a home directory (under `/Users`, `/home` or
   `C:\Users`). Use paths relative to the repository root.
-- No dependency on locally installed tools, credentials or personal
-  configuration. If a tool is required, say so and how to install it.
-- An agent that needs memory uses `memory: project`, never a hardcoded
-  directory. `.claude/agent-memory/` stays local.
+- No dependency on credentials or personal configuration. If a tool is
+  required, say so and how to install it, and ask the user for permission
+  before installing it.
 
-## 4. Opt it into git
+## 3. Opt it into git
 
 Add an entry to `.gitignore`, below the comment that ends with
 "go below.":
@@ -52,10 +38,10 @@ Add an entry to `.gitignore`, below the comment that ends with
 !/.claude/agents/<name>.md
 ```
 
-Then `git status` must list the new files, and `git check-ignore -v <path>`
+Then `git status` must list the new files, and `git check-ignore <path>`
 must print nothing.
 
-## 5. Validate
+## 4. Validate
 
 `yarn check-agent-config` reads only files in the git index, so stage them
 first:
@@ -67,7 +53,7 @@ yarn check-agent-config
 
 Fix every reported error.
 
-## 6. Link a skill for Claude Code
+## 5. Link a skill for Claude Code
 
 Claude Code reads skills only from `.claude/skills/`. For a skill, run:
 

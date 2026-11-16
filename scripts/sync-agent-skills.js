@@ -18,11 +18,12 @@
  * With `--check`, the script instead validates the skills and agents tracked
  * in git:
  *
- * 1. Every tracked skill has a `SKILL.md` whose frontmatter `name` matches its
- *    directory and which has a `description`.
- * 2. Every tracked agent in `.claude/agents/` has a `name` and a `description`.
- * 3. No tracked file contains an absolute home directory path, which would
+ * 1. Every tracked skill directory has a `SKILL.md`.
+ * 2. No tracked file contains an absolute home directory path, which would
  *    only work on its author's machine.
+ *
+ * Frontmatter is not validated: each tool defines its own format, and models
+ * follow it when they write skills and agents.
  */
 
 const fs = require('fs');
@@ -103,22 +104,6 @@ function sync() {
   );
 }
 
-function parseFrontmatter(content) {
-  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/);
-  if (!match) {
-    return null;
-  }
-  const fields = {};
-  for (const line of match[1].split(/\r?\n/)) {
-    const field = line.match(/^([\w-]+):\s*(.*)$/);
-    if (field) {
-      // Unquote `"foo"` / `'foo'`; full YAML parsing is not needed here.
-      fields[field[1]] = field[2].trim().replace(/^(["'])(.*)\1$/, '$2');
-    }
-  }
-  return fields;
-}
-
 function listTrackedFiles(dir, { includeUntracked = false } = {}) {
   const untrackedArgs = includeUntracked
     ? ['--cached', '--others', '--exclude-standard']
@@ -152,28 +137,6 @@ function check() {
     const skillFile = path.join(AGENTS_SKILLS_DIR, name, 'SKILL.md');
     if (!skillFiles.includes(skillFile)) {
       report(skillFile, 'missing (every skill needs a SKILL.md)');
-      continue;
-    }
-    const fields = parseFrontmatter(fs.readFileSync(skillFile, 'utf8'));
-    if (!fields) {
-      report(skillFile, 'missing frontmatter');
-    } else {
-      if (fields.name !== name) {
-        report(skillFile, `frontmatter name must be "${name}"`);
-      }
-      if (!fields.description) {
-        report(skillFile, 'frontmatter description is missing');
-      }
-    }
-  }
-
-  for (const agentFile of agentFiles) {
-    if (path.extname(agentFile) !== '.md') {
-      continue;
-    }
-    const fields = parseFrontmatter(fs.readFileSync(agentFile, 'utf8'));
-    if (!fields || !fields.name || !fields.description) {
-      report(agentFile, 'frontmatter needs a name and a description');
     }
   }
 

@@ -182,11 +182,10 @@ It links every shared skill into `.claude/skills/`. It never overwrites or remov
 **Manually:**
 
 1. Create the file: `.agents/skills/<name>/SKILL.md` for a skill, `.claude/agents/<name>.md` for an agent.
-2. Add `name` and `description` to its frontmatter. A skill's `name` must match its directory name.
-3. Make sure it does not depend on your machine: no absolute home paths (`/Users/<you>/...`), local tools or credentials. For agent memory, use `memory: project` rather than a hardcoded directory.
-4. Opt it into git at the end of the AI section in `.gitignore`: `!/.agents/skills/<name>/` or `!/.claude/agents/<name>.md`.
-5. Stage the files (`git add`) and run `yarn check-agent-config`. It checks only staged and committed files.
-6. For a skill, run `yarn sync-agent-skills` so Claude Code can see it.
+2. Make sure it does not depend on your machine: no absolute home paths (`/Users/<you>/...`) or credentials. If it needs a tool, say how to install it.
+3. Opt it into git at the end of the AI section in `.gitignore`: `!/.agents/skills/<name>/` or `!/.claude/agents/<name>.md`.
+4. Stage the files (`git add`) and run `yarn check-agent-config`. It checks only staged and committed files.
+5. For a skill, run `yarn sync-agent-skills` so Claude Code can see it.
 
 ### Preparing Pull Request
 
