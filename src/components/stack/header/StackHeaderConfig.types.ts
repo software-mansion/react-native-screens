@@ -38,7 +38,7 @@ export interface StackHeaderConfigPropsBase {
   /**
    * Subtitle displayed in the header.
    *
-   * @platform android, ios
+   * @platform android, ios >= 26
    */
   subtitle?: string | undefined;
   /**
@@ -61,7 +61,7 @@ export interface StackHeaderConfigPropsBase {
    *   enabled.
    *
    * @defaultValue `false`
-   * @platform android, ios
+   * @platform android
    */
   transparent?: boolean | undefined;
   /**
@@ -72,7 +72,7 @@ export interface StackHeaderConfigPropsBase {
    * button is always hidden.
    *
    * @defaultValue `false`
-   * @platform android, ios
+   * @platform android
    */
   backButtonHidden?: boolean | undefined;
 }
