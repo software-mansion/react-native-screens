@@ -271,6 +271,13 @@ export interface TabsHostPropsBase {
    * Specifies the layout direction of the native container, its views and child
    * containers.
    *
+   * @remarks
+   * On iOS, the value will fallback to direction of the **native** app
+   * (`userInterfaceLayoutDirection`), potentially ignoring `react-native`'s
+   * override (e.g. when `forceRTL` is used). To mitigate this, you can pass
+   * `'ltr'`/`'rtl'` to this property depending on the value of
+   * `I18nManager.isRTL`.
+   *
    * @note
    * This is an implementation detail and may change. On Android, this property
    * relies on `react-native`'s `style.direction` (which sets native Android
@@ -279,12 +286,7 @@ export interface TabsHostPropsBase {
    * views.
    *
    * On iOS, this property sets `layoutDirection` trait override for the native
-   * tab bar controller. Property is propagated via the native trait system. The
-   * value will fallback to direction of the **native** app
-   * (`userInterfaceLayoutDirection`), potentially ignoring `react-native`'s
-   * override (e.g. when `forceRTL` is used). To mitigate this, you can pass
-   * `'ltr'`/`'rtl'` to this property depending on the value of
-   * `I18nManager.isRTL`.
+   * tab bar controller. Property is propagated via the native trait system.
    *
    * @defaultValue `'inherit'`
    * @platform android, ios
