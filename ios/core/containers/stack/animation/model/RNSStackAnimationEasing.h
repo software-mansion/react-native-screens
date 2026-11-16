@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, RNSStackAnimationEasingName) {
   RNSStackAnimationEasingNameLinear,
+  RNSStackAnimationEasingNameEase,
   RNSStackAnimationEasingNameEaseIn,
   RNSStackAnimationEasingNameEaseOut,
   RNSStackAnimationEasingNameEaseInOut,
@@ -16,7 +17,6 @@ typedef NS_ENUM(NSInteger, RNSStackAnimationEasingName) {
   RNSStackAnimationEasingNameEmphasized,
   RNSStackAnimationEasingNameEmphasizedAccelerate,
   RNSStackAnimationEasingNameEmphasizedDecelerate,
-  // Curves of the preset tables only; the `easing` option has no string for them.
   RNSStackAnimationEasingNameAccelerateDecelerate,
   RNSStackAnimationEasingNameAccelerateQuint,
   RNSStackAnimationEasingNameDecelerateQuint,

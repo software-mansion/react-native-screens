@@ -14,17 +14,25 @@ export type StackScreenAnimationBezier = [number, number, number, number];
  * @remarks
  * The following values are supported:
  * - `'linear'` — constant speed.
- * - `'easeIn'`, `'easeOut'`, `'easeInOut'` — the CSS `ease-in`, `ease-out`
- *   and `ease-in-out` curves.
+ * - `'ease'`, `'easeIn'`, `'easeOut'`, `'easeInOut'` — the CSS `ease`,
+ *   `ease-in`, `ease-out` and `ease-in-out` curves. `'ease'` is also Core
+ *   Animation's default timing function, the curve of the `iosFrom*` presets.
  * - `'standard'`, `'standardAccelerate'`, `'standardDecelerate'`,
  *   `'emphasized'`, `'emphasizedAccelerate'`, `'emphasizedDecelerate'` — the
  *   Material 3 easing tokens of the same names.
+ * - `'accelerateDecelerate'`, `'accelerateQuint'`, `'decelerateQuint'` — the
+ *   Android platform interpolators of the same names: a cosine curve, and
+ *   fifth-power curves that start or end slowly. `'accelerateDecelerate'` is
+ *   the curve of the `slideFrom*` presets and `'fade'`, the quint curves are
+ *   those of `'fadeFromBottom'` and `'fadeFromTop'`.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/easing-function | CSS easing functions}
  * @see {@link https://m3.material.io/styles/motion/easing-and-duration/tokens-specs | Material 3 easing tokens}
+ * @see {@link https://developer.android.com/reference/android/R.interpolator | Android platform interpolators}
  */
 export type StackScreenAnimationEasingName =
   | 'linear'
+  | 'ease'
   | 'easeIn'
   | 'easeOut'
   | 'easeInOut'
@@ -33,7 +41,10 @@ export type StackScreenAnimationEasingName =
   | 'standardDecelerate'
   | 'emphasized'
   | 'emphasizedAccelerate'
-  | 'emphasizedDecelerate';
+  | 'emphasizedDecelerate'
+  | 'accelerateDecelerate'
+  | 'accelerateQuint'
+  | 'decelerateQuint';
 
 /**
  * Easing curve: a {@link StackScreenAnimationEasingName} or a

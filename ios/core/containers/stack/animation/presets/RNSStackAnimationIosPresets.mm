@@ -6,8 +6,8 @@
 #import "RNSStackAnimationTransitionTimeline.h"
 
 // UIKit's push on iOS 18, measured on 18.6 (Apple documents neither value): 350 ms on the curve of
-// `kCAMediaTimingFunctionDefault`, whose control points `-[CAMediaTimingFunction getControlPointAtIndex:values:]`
-// returns as (0.25, 0.1) and (0.25, 1). iOS 26 moved the push to a spring, which this table does not follow.
+// `kCAMediaTimingFunctionDefault`, which is the `ease` easing. iOS 26 moved the push to a spring, which this table does
+// not follow.
 static const NSInteger kRNSIosDurationMs = 350;
 
 // The legacy iOS `RNSScreenStackAnimator`: the covered screen recedes `containerWidth * 0.3` under a black shadow view
@@ -36,7 +36,7 @@ static const CGFloat kRNSIosDimAlpha = 0.1;
 
 + (RNSStackAnimationEasing *)easing
 {
-  return [RNSStackAnimationEasing bezierWithX1:0.25 y1:0.1 x2:0.25 y2:1];
+  return [RNSStackAnimationEasing named:RNSStackAnimationEasingNameEase];
 }
 
 + (RNSStackAnimationTrack *)travelFromEdge:(RNSStackAnimationEdge)edge
