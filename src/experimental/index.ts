@@ -5,3 +5,4 @@
 
 export * from '../components/safe-area';
 export * from '../components/scroll-to-top-guard';
+export * from '../components/scroll-edge-element';

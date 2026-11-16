@@ -237,6 +237,9 @@
         "RNSScrollViewMarker": {
           "className": "RNSScrollViewMarkerComponentView"
         },
+        "RNSScrollEdgeElement": {
+          "className": "RNSScrollEdgeElementComponentView"
+        },
         "RNSFormSheetHost": {
           "className": "RNSFormSheetHostComponentView"
         },
