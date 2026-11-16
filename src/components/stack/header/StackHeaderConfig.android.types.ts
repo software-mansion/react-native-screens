@@ -13,11 +13,31 @@ import type { PlatformIconAndroid } from '../../shared/types';
  */
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
 
+/**
+ * Horizontal alignment of the title and the subtitle of a `'medium'` or
+ * `'large'` header.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'start'` — the text is aligned to the start edge.
+ * - `'center'` — the text is centered.
+ * - `'end'` — the text is aligned to the end edge.
+ */
 export type StackHeaderTitleHorizontalGravityAndroid =
   | 'start'
   | 'center'
   | 'end';
 
+/**
+ * Vertical alignment of the title and the subtitle of a `'medium'` or
+ * `'large'` header.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'top'` — the text is aligned to the top.
+ * - `'center'` — the text is centered.
+ * - `'bottom'` — the text is aligned to the bottom.
+ */
 export type StackHeaderTitleVerticalGravityAndroid =
   | 'top'
   | 'center'
@@ -51,6 +71,9 @@ export type StackHeaderBackgroundSubviewCollapseModeAndroid =
   | 'off'
   | 'parallax';
 
+/**
+ * Custom view placed in a slot of the toolbar.
+ */
 export interface StackHeaderToolbarSubviewAndroid {
   /**
    * Render callback for the React element placed in this toolbar slot.
@@ -69,6 +92,9 @@ export interface StackHeaderToolbarSubviewAndroid {
   render: () => ReactElement;
 }
 
+/**
+ * Custom view rendered as the header background.
+ */
 export interface StackHeaderBackgroundSubviewAndroid {
   /**
    * Controls how the background subview behaves when the app bar collapses.
@@ -108,6 +134,8 @@ export interface StackHeaderBackgroundSubviewAndroid {
  *   to be visible even if an icon is provided,
  * - `'never'` — never displays the element as a button in the Toolbar; it
  *   will be placed in the overflow menu instead.
+ *
+ * @see {@link https://developer.android.com/reference/android/view/MenuItem#setShowAsAction(int) | MenuItem.setShowAsAction}
  */
 export type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'always'
@@ -116,6 +144,9 @@ export type StackHeaderToolbarMenuItemShowAsActionAndroid =
   | 'ifRoomWithText'
   | 'never';
 
+/**
+ * Fields shared by the items and the submenus of the toolbar menu.
+ */
 export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * Unique identifier of the menu element.
@@ -247,6 +278,15 @@ export type StackHeaderToolbarMenuItemTypeAndroid =
   | 'toggle'
   | 'automatic';
 
+/**
+ * Item of the toolbar menu.
+ *
+ * @remarks
+ * Depending on its
+ * {@link StackHeaderToolbarMenuItemAndroid.itemType | itemType}, the item
+ * calls {@link StackHeaderToolbarMenuItemAndroid.onPress | onPress} or toggles
+ * its checked state.
+ */
 export interface StackHeaderToolbarMenuItemAndroid
   extends StackHeaderToolbarMenuItemBaseAndroid {
   /**
@@ -302,6 +342,13 @@ export interface StackHeaderToolbarMenuItemAndroid
   onPress?: (() => void) | undefined;
 }
 
+/**
+ * Group of toolbar menu items that share a selection behavior.
+ *
+ * @remarks
+ * An item joins a group through its
+ * {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId}.
+ */
 export interface StackHeaderToolbarMenuGroupAndroid {
   /**
    * Unique identifier of the group.
@@ -331,6 +378,14 @@ export interface StackHeaderToolbarMenuGroupAndroid {
   onSelectionChange?: ((selectedMenuElementIds: string[]) => void) | undefined;
 }
 
+/**
+ * Elements and groups of one level of the toolbar menu.
+ *
+ * @remarks
+ * The top level is set with
+ * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu}; each
+ * {@link StackHeaderToolbarMenuAndroid | submenu} holds the next level.
+ */
 export interface StackHeaderToolbarMenuBaseAndroid {
   /**
    * Group definitions for items in this menu level.
@@ -347,6 +402,12 @@ export interface StackHeaderToolbarMenuBaseAndroid {
   children?: StackHeaderToolbarMenuElementAndroid[] | undefined;
 }
 
+/**
+ * Submenu of the toolbar menu.
+ *
+ * @remarks
+ * Pressing a submenu opens a popup with its own elements.
+ */
 export interface StackHeaderToolbarMenuAndroid
   extends StackHeaderToolbarMenuItemBaseAndroid,
     StackHeaderToolbarMenuBaseAndroid {
@@ -373,10 +434,26 @@ export interface StackHeaderToolbarMenuAndroid
   menuTitle?: string | undefined;
 }
 
+/**
+ * Element of the toolbar menu.
+ *
+ * @remarks
+ * An element is either a {@link StackHeaderToolbarMenuItemAndroid | menu item}
+ * or a {@link StackHeaderToolbarMenuAndroid | submenu}, told apart by its
+ * `type`.
+ */
 export type StackHeaderToolbarMenuElementAndroid =
   | StackHeaderToolbarMenuItemAndroid
   | StackHeaderToolbarMenuAndroid;
 
+/**
+ * Options for updating a toolbar menu element at runtime.
+ *
+ * @remarks
+ * Accepts the fields of {@link StackHeaderToolbarMenuItemBaseAndroid} except
+ * `id`. Omitted keys keep their current values; an explicit `undefined` resets
+ * a field to its default.
+ */
 export interface StackHeaderToolbarMenuElementOptionsAndroid
   extends Partial<Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>> {
   /**
@@ -398,6 +475,10 @@ export interface StackHeaderToolbarMenuElementOptionsAndroid
   menuTitle?: string | undefined;
 }
 
+/**
+ * Update of one toolbar menu element, passed to
+ * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}.
+ */
 export interface StackHeaderToolbarMenuElementUpdateAndroid {
   /**
    * The ID of the menu element to update.
@@ -409,6 +490,10 @@ export interface StackHeaderToolbarMenuElementUpdateAndroid {
   options: StackHeaderToolbarMenuElementOptionsAndroid;
 }
 
+/**
+ * Android-specific commands of {@link Stack.HeaderConfig}, available through
+ * {@link StackHeaderConfigRef.android}.
+ */
 export interface StackHeaderConfigCommandsAndroid {
   /**
    * Applies one or more updates to the toolbar menu in a single batch.
@@ -450,6 +535,9 @@ export interface StackHeaderConfigCommandsAndroid {
   ) => void;
 }
 
+/**
+ * Android-specific props for {@link Stack.HeaderConfig}.
+ */
 export interface StackHeaderConfigPropsAndroid {
   /**
    * Specifies the type of the Material 3 app bar.
