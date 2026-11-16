@@ -128,6 +128,11 @@ export interface TabsScreenItemAppearanceIOS {
   disabled?: TabsScreenItemStateAppearanceIOS | undefined;
 }
 
+export interface TabsScreenItemTitlePositionAdjustmentIOS {
+  horizontal?: number | undefined;
+  vertical?: number | undefined;
+}
+
 export interface TabsScreenItemStateAppearanceIOS {
   /**
    * @summary Specifies the font family used for the title of each tab bar item
@@ -176,10 +181,7 @@ export interface TabsScreenItemStateAppearanceIOS {
    * @platform ios
    */
   tabBarItemTitlePositionAdjustment?:
-    | {
-        horizontal?: number | undefined;
-        vertical?: number | undefined;
-      }
+    | TabsScreenItemTitlePositionAdjustmentIOS
     | undefined;
   /**
    * @summary Specifies the icon color for each tab bar item when tab screen

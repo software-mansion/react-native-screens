@@ -51,6 +51,7 @@ export type {
   TabsScreenSystemItem,
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
+  TabsScreenItemTitlePositionAdjustmentIOS,
   TabsScreenItemStateAppearanceIOS,
   TabsScreenPropsIOS,
 } from './screen';
