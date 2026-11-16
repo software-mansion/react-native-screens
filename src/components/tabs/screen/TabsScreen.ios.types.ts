@@ -386,9 +386,9 @@ export interface TabsScreenPropsIOS {
    * @remarks
    * Effective only for tab screens with {@link TabsScreenPropsIOS.role | role}
    * set to `'search'` and only when a search bar is configured in the header
-   * of the screen stack nested in this tab (see `headerSearchBarOptions`).
-   * When enabled, selecting the search tab immediately activates the search
-   * field. Cancelling the search restores the previously selected tab.
+   * of the screen stack nested in this tab. When enabled, selecting the search
+   * tab immediately activates the search field. Cancelling the search restores
+   * the previously selected tab.
    *
    * @defaultValue `false`
    * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch | UISearchTab.automaticallyActivatesSearch}
