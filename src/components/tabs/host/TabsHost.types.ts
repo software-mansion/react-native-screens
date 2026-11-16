@@ -109,7 +109,8 @@ export type TabSelectedEvent = {
  * @remarks
  * - `'stale'` — the update was based on a stale navigation state, meaning a
  *   newer state has already been applied. Only reported when
- *   {@link TabsHostPropsBase.rejectStaleNavStateUpdates} is enabled.
+ *   {@link TabsHostPropsBase.rejectStaleNavStateUpdates | rejectStaleNavStateUpdates}
+ *   is enabled.
  * - `'repeated'` — the requested tab is already selected.
  */
 export type TabSelectionRejectionReason = 'stale' | 'repeated';
@@ -124,7 +125,7 @@ export type TabSelectionRejectionReason = 'stale' | 'repeated';
  * can reconcile its state.
  *
  * @see {@link TabSelectionRejectionReason} for possible rejection reasons.
- * @see {@link TabsHostPropsBase.rejectStaleNavStateUpdates}
+ * @see {@link TabsHostPropsBase.rejectStaleNavStateUpdates | rejectStaleNavStateUpdates}
  */
 export type TabSelectionRejectedEvent = {
   /** Screen key of the currently selected (active) tab. */
@@ -202,7 +203,7 @@ export interface TabsHostPropsBase {
    * native side". Depending on configuration and the provenance of the update
    * the update might get accepted or rejected.
    *
-   * @see {@link TabsHostPropsBase.rejectStaleNavStateUpdates}
+   * @see {@link TabsHostPropsBase.rejectStaleNavStateUpdates | rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavStateRequest} for description of the type model &
    *   accepted values.
    * @platform android, ios
@@ -236,7 +237,6 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   rejectStaleNavStateUpdates?: boolean | undefined;
-
   // General
   /**
    * Tabs of the host, declared with {@link Tabs.Screen}.
@@ -297,7 +297,6 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   colorScheme?: TabsColorScheme | undefined;
-
   // Events
   /**
    * A callback that gets invoked when the selected tab changes.
@@ -305,7 +304,6 @@ export interface TabsHostPropsBase {
    * @platform android, ios
    */
   onTabSelected?: NativeEventHandler<TabSelectedEvent> | undefined;
-
   /**
    * A callback that gets invoked when the native side rejects a tab selection
    * request.
@@ -316,7 +314,6 @@ export interface TabsHostPropsBase {
   onTabSelectionRejected?:
     | NativeEventHandler<TabSelectionRejectedEvent>
     | undefined;
-
   /**
    * A callback that gets invoked when the native side prevents a tab selection
    * because the target screen has
