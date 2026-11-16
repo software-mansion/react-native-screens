@@ -2,6 +2,18 @@ import type { ColorValue, TextStyle } from 'react-native';
 import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
 import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
 
+/**
+ * @remarks
+ * The following values are currently supported:
+ * - `'none'` — disables blur effect
+ * - `'systemDefault'` — uses UIKit's default tab bar blur effect
+ * - one of the {@link BlurEffect} styles, e.g. `'systemUltraThinMaterial'`
+ *
+ * Complete list of possible blur effect styles is available in the official
+ * UIKit documentation:
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
+ */
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
 export type TabsScreenRole = 'search';
@@ -22,108 +34,98 @@ export type TabsScreenSystemItem =
 
 export interface TabsScreenAppearanceIOS {
   /**
-   * @summary Specifies the appearance of tab bar items when they are in stacked layout.
+   * Specifies the appearance of tab bar items when they are in stacked
+   * layout.
    *
+   * @remarks
    * Tab bar items in stacked layout have the icon above the title.
    * Stacked layout is used e.g. on the iPhone in portrait orientation.
-   *
-   * @platform ios
    */
   stacked?: TabsScreenItemAppearanceIOS | undefined;
   /**
-   * @summary Specifies the appearance of tab bar items when they are in inline layout.
+   * Specifies the appearance of tab bar items when they are in inline layout.
    *
+   * @remarks
    * Tab bar items in inline layout have the icon next to the title.
-   * Inline layout is used in regular-width environments, e.g. in landscape orientation on the iPhone 16 Pro Max.
+   * Inline layout is used in regular-width environments, e.g. in landscape
+   * orientation on the iPhone 16 Pro Max.
    *
-   * Complete list of size classes for iOS and iPadOS devices is available in Apple's Human Interface Guidelines:
-   * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#iOS-iPadOS-device-size-classes|HIG: Device size classes}
+   * Size classes for iOS and iPadOS devices are described in Apple's Human
+   * Interface Guidelines:
    *
-   * @platform ios
+   * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#Size-classes | HIG: Size classes}
    */
   inline?: TabsScreenItemAppearanceIOS | undefined;
   /**
-   * @summary Specifies the appearance of tab bar items when they are in compact inline layout.
+   * Specifies the appearance of tab bar items when they are in compact inline
+   * layout.
    *
+   * @remarks
    * Tab bar items in compact inline layout have the icon next to the title.
-   * Compact inline layout is used in compact-width environments, e.g. in landscape orientation on the iPhone 16 Pro.
+   * Compact inline layout is used in compact-width environments, e.g. in
+   * landscape orientation on the iPhone 16 Pro.
    *
-   * Complete list of size classes for iOS and iPadOS devices is available in Apple's Human Interface Guidelines:
-   * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#iOS-iPadOS-device-size-classes|HIG: Device size classes}
+   * Size classes for iOS and iPadOS devices are described in Apple's Human
+   * Interface Guidelines:
    *
-   * @platform ios
+   * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#Size-classes | HIG: Size classes}
    */
   compactInline?: TabsScreenItemAppearanceIOS | undefined;
-
   /**
-   * @summary Specifies the background color for the entire tab bar when tab screen is selected.
+   * Specifies the background color for the entire tab bar when tab screen is
+   * selected.
    *
+   * @remarks
    * This property does not affect the tab bar starting from iOS 26.
-   *
-   * @platform ios
-   * @supported iOS 18 or lower
    */
   tabBarBackgroundColor?: ColorValue | undefined;
   /**
-   * @summary Specifies the blur effect applied to the tab bar when tab screen is selected.
+   * Specifies the blur effect applied to the tab bar when tab screen is
+   * selected.
    *
-   * Works with backgroundColor's alpha < 1.
+   * @remarks
+   * Works with
+   * {@link TabsScreenAppearanceIOS.tabBarBackgroundColor | tabBarBackgroundColor}'s
+   * alpha `< 1`.
    *
    * This property does not affect the tab bar starting from iOS 26.
    *
-   * The following values are currently supported:
-   *
-   * - `none` - disables blur effect
-   * - `systemDefault` - uses UIKit's default tab bar blur effect
-   * - one of styles mapped from UIKit's UIBlurEffectStyle, e.g. `systemUltraThinMaterial`
-   *
-   * Complete list of possible blur effect styles is available in the official UIKit documentation:
-   * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style|UIBlurEffect.Style}
-   *
-   * @default systemDefault
-   *
-   * @platform ios
-   * @supported iOS 18 or lower
+   * @defaultValue `'systemDefault'`
    */
   tabBarBlurEffect?: TabsScreenBlurEffect | undefined;
   /**
-   * @summary Specifies the shadow color for the tab bar when tab screen is selected.
+   * Specifies the shadow color for the tab bar when tab screen is selected.
    *
+   * @remarks
    * This property does not affect the tab bar starting from iOS 26.
-   *
-   * @platform ios
-   * @supported iOS 18 or lower
    */
   tabBarShadowColor?: ColorValue | undefined;
 }
 
 export interface TabsScreenItemAppearanceIOS {
   /**
-   * Defines appearance for all tab bar items which are in their enabled, unselected and unfocused state.
-   * The color scheme is determined by the configuration of the currently selected tab.
-   *
-   * @platform ios
+   * Defines appearance for all tab bar items which are in their enabled,
+   * unselected and unfocused state.
+   * The color scheme is determined by the configuration of the currently
+   * selected tab.
    */
   normal?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for the tab bar item that is currently active.
-   * The appearance is determined by the configuration of the currently selected tab itself.
-   *
-   * @platform ios
+   * The appearance is determined by the configuration of the currently
+   * selected tab itself.
    */
   selected?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for a tab bar item when it receives focus.
-   * The appearance is determined by the configuration of the currently selected tab.
-   *
-   * @platform ios
+   * The appearance is determined by the configuration of the currently
+   * selected tab.
    */
   focused?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for tab bar items when they are disabled.
-   * The appearance is determined by the configuration of the currently selected tab.
-   *
-   * @platform ios
+   * The appearance is determined by the configuration of the currently
+   * selected tab.
    */
   disabled?: TabsScreenItemStateAppearanceIOS | undefined;
 }
@@ -135,237 +137,252 @@ export interface TabsScreenItemTitlePositionAdjustmentIOS {
 
 export interface TabsScreenItemStateAppearanceIOS {
   /**
-   * @summary Specifies the font family used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
+   * Specifies the font family used for the title of each tab bar item when
+   * tab screen is selected.
    */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * @summary Specifies the font size used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
+   * Specifies the font size used for the title of each tab bar item when tab
+   * screen is selected.
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * @summary Specifies the font weight used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
+   * Specifies the font weight used for the title of each tab bar item when
+   * tab screen is selected.
    */
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * @summary Specifies the font style used for the title of each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
+   * Specifies the font style used for the title of each tab bar item when tab
+   * screen is selected.
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * @summary Specifies the font color used for the title of each tab bar item
-   * when tab screen is selected.
+   * Specifies the font color used for the title of each tab bar item when tab
+   * screen is selected.
    *
-   * Overrides the color defined in `tabBarTintColor` and `tabBarItemIconColor`.
-   *
-   * @platform ios
+   * @remarks
+   * Overrides the color defined in
+   * {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor} and
+   * {@link TabsScreenItemStateAppearanceIOS.tabBarItemIconColor | tabBarItemIconColor}.
    */
   tabBarItemTitleFontColor?: TextStyle['color'] | undefined;
   /**
-   * @summary Specifies the title offset for each tab bar item when tab screen
-   * is selected.
+   * Specifies the title offset for each tab bar item when tab screen is
+   * selected.
    *
+   * @remarks
    * Depending on the iOS version and the device's interface orientation,
    * this setting may affect the alignment of the text, badge and icon.
-   *
-   * @platform ios
    */
   tabBarItemTitlePositionAdjustment?:
     | TabsScreenItemTitlePositionAdjustmentIOS
     | undefined;
   /**
-   * @summary Specifies the icon color for each tab bar item when tab screen
-   * is selected.
+   * Specifies the icon color for each tab bar item when tab screen is
+   * selected.
    *
+   * @remarks
    * This also impacts the title text color.
    *
    * Starting from iOS 26, it only applies to selected tab bar item. Other items
    * adopt a dark or light appearance depending on the theme of the tab bar.
    *
-   * Is overridden by `tabBarItemTitleFontColor` (for title text color).
-   * Overrides `tabBarTintColor`.
-   *
-   * @platform ios
+   * Is overridden by
+   * {@link TabsScreenItemStateAppearanceIOS.tabBarItemTitleFontColor | tabBarItemTitleFontColor}
+   * (for title text color).
+   * Overrides {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor}.
    */
   tabBarItemIconColor?: ColorValue | undefined;
   /**
-   * @summary Specifies the background color of badges for each tab bar item
-   * when tab screen is selected.
-   *
-   * @platform ios
+   * Specifies the background color of badges for each tab bar item when tab
+   * screen is selected.
    */
   tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
 }
 
 export interface TabsScreenPropsIOS {
   /**
-   * @summary Specifies the standard tab bar appearance.
+   * Specifies the standard tab bar appearance.
    *
-   * Allows to customize the appearance depending on the tab bar item layout (stacked,
-   * inline, compact inline) and state (normal, selected, focused, disabled).
+   * @remarks
+   * Allows to customize the appearance depending on the tab bar item layout
+   * (stacked, inline, compact inline) and state (normal, selected, focused,
+   * disabled).
+   *
+   * The following fields are supported on iOS 18 or lower:
+   * {@link TabsScreenAppearanceIOS.tabBarBackgroundColor | tabBarBackgroundColor},
+   * {@link TabsScreenAppearanceIOS.tabBarBlurEffect | tabBarBlurEffect} and
+   * {@link TabsScreenAppearanceIOS.tabBarShadowColor | tabBarShadowColor}.
    *
    * @platform ios
    */
   standardAppearance?: TabsScreenAppearanceIOS | undefined;
   /**
-   * @summary Specifies the tab bar appearace when edge of scrollable content aligns
+   * Specifies the tab bar appearance when edge of scrollable content aligns
    * with the edge of the tab bar.
    *
-   * Allows to customize the appearance depending on the tab bar item layout (stacked,
-   * inline, compact inline) and state (normal, selected, focused, disabled).
+   * @remarks
+   * Allows to customize the appearance depending on the tab bar item layout
+   * (stacked, inline, compact inline) and state (normal, selected, focused,
+   * disabled).
    *
-   * If this property is `undefined`, UIKit uses `standardAppearance`, modified to
-   * have a transparent background.
+   * If this property is `undefined`, UIKit uses
+   * {@link TabsScreenPropsIOS.standardAppearance | standardAppearance},
+   * modified to have a transparent background.
+   *
+   * The following fields are supported on iOS 18 or lower:
+   * {@link TabsScreenAppearanceIOS.tabBarBackgroundColor | tabBarBackgroundColor},
+   * {@link TabsScreenAppearanceIOS.tabBarBlurEffect | tabBarBlurEffect} and
+   * {@link TabsScreenAppearanceIOS.tabBarShadowColor | tabBarShadowColor}.
    *
    * @platform ios
    */
   scrollEdgeAppearance?: TabsScreenAppearanceIOS | undefined;
   /**
-   * @summary Specifies the icon for the tab bar item.
+   * Specifies the icon for the tab bar item.
    *
+   * @remarks
    * Supported values:
    * - `{ type: 'imageSource', imageSource, renderingMode? }`
    *   Uses an image from the provided resource. With `renderingMode` set to
-   *   `template` the image is tinted with the state-dependent icon color. With
-   *   `original` it keeps its own colors.
+   *   `'template'` the image is tinted with the state-dependent icon color.
+   *   With `'original'` it keeps its own colors.
    * - `{ type: 'sfSymbol', name, renderingMode? }`
    *   Uses an SF Symbol with the specified name. If no system symbol
    *   matches, falls back to a custom symbol with that name from the app's
-   *   asset catalog. `renderingMode` defaults to `default`, the system
+   *   asset catalog. `renderingMode` defaults to `'default'`, the system
    *   behavior: a single color for system symbols, while for custom symbols
-   *   the rendering intent set in the asset catalog may change it. `original`
-   *   shows the symbol's own color layers (Apple's "multicolor" rendering).
+   *   the rendering intent set in the asset catalog may change it.
+   *   `'original'` shows the symbol's own color layers (Apple's "multicolor"
+   *   rendering).
    *
-   * See `TabsPlatformIconImageRenderingModeIOS` and
-   * `TabsPlatformIconSymbolRenderingModeIOS` for the meaning of each rendering mode.
+   * See {@link TabsPlatformIconImageRenderingModeIOS} and
+   * {@link TabsPlatformIconSymbolRenderingModeIOS} for the meaning of each
+   * rendering mode.
    *
-   * If no `selectedIcon` is provided, this icon will also
-   * be used as the selected state icon.
+   * If no {@link TabsScreenPropsIOS.selectedIcon | selectedIcon} is provided,
+   * this icon will also be used as the selected state icon.
    *
    * @platform ios
    */
   icon?: TabsScreenIconIOS | undefined;
   /**
-   * @summary Specifies the icon for tab bar item when it is selected.
+   * Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property. It must use the same icon
-   * `type` as `icon`; `renderingMode` may differ, e.g.
-   * `icon: { type: 'sfSymbol', name }` with
-   * `selectedIcon: { type: 'sfSymbol', name, renderingMode: 'original' }`
-   * shows the symbol tinted while unselected and in its own colors while selected.
+   * @remarks
+   * Supports the same values as {@link TabsScreenPropsIOS.icon | icon}
+   * property. It must use the same icon `type` as `icon`; `renderingMode` may
+   * differ.
    *
    * To use `selectedIcon`, `icon` must also be provided.
+   *
+   * @example
+   * The symbol is shown tinted while unselected and in its own colors while
+   * selected:
+   * ```tsx
+   * icon: { type: 'sfSymbol', name },
+   * selectedIcon: { type: 'sfSymbol', name, renderingMode: 'original' },
+   * ```
    *
    * @platform ios
    */
   selectedIcon?: TabsScreenIconIOS | undefined;
   /**
-   * @summary System-provided tab bar item with predefined icon and title
-   *
-   * Uses Apple's built-in tab bar items (e.g., bookmarks, contacts, downloads) with
-   * standard iOS styling and localized titles. Custom `icon` or `selectedIcon`
-   * properties will override the system icon, and the system-defined title can be
-   * overridden by providing a custom `title`.
+   * System-provided tab bar item with predefined icon and title.
    *
    * @remarks
-   * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which does not display
-   * any title (system or custom). This no longer applies on iOS 27; to get a similar separation
-   * use `role: 'search'` together with `automaticallyActivatesSearch`.
+   * Uses Apple's built-in tab bar items (e.g., bookmarks, contacts, downloads)
+   * with standard iOS styling and localized titles. Custom
+   * {@link TabsScreenPropsIOS.icon | icon} or
+   * {@link TabsScreenPropsIOS.selectedIcon | selectedIcon} properties will
+   * override the system icon, and the system-defined title can be overridden
+   * by providing a custom {@link TabsScreenPropsBase.title | title}.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem|UITabBarItem.SystemItem}
+   * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which
+   * does not display any title (system or custom). This no longer applies on
+   * iOS 27; to get a similar separation use `role: 'search'` together with
+   * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}.
    *
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem | UITabBarItem.SystemItem}
    * @platform ios
    */
   systemItem?: TabsScreenSystemItem | undefined;
   /**
-   * @summary Gives this tab a system role. Currently the only role is `'search'`,
+   * Gives this tab a system role. Currently the only role is `'search'`,
    * which marks the tab as the system search tab.
    *
-   * On iOS 26.1+ (where tabs are managed through the `UITab` API) a tab screen with
-   * `role: 'search'` is backed natively by `UISearchTab`, which enables the system
-   * search behavior: `automaticallyActivatesSearch` and the detached trailing
-   * placement UIKit gives search tabs. Behavior differs between OS versions: iOS 26.x
-   * detaches `UISearchTab` unconditionally, iOS 27.0 only while `automaticallyActivatesSearch`
-   * is enabled. This prop does not affect the tab bar item's icon or title - combine
-   * it with `systemItem: 'search'` for the system magnifier item. On iOS 27+ the detached
-   * (prominent) placement can be given to any tab instead through `TabsHost`
-   * `ios.prominentScreenKey`.
+   * @remarks
+   * On iOS 26.1+ (where tabs are managed through the `UITab` API) a tab screen
+   * with `role: 'search'` is backed natively by `UISearchTab`, which enables
+   * the system search behavior:
+   * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}
+   * and the detached trailing placement UIKit gives search tabs. Behavior
+   * differs between OS versions: iOS 26.x detaches `UISearchTab`
+   * unconditionally, iOS 27.0 only while `automaticallyActivatesSearch` is
+   * enabled. This prop does not affect the tab bar item's icon or title -
+   * combine it with `systemItem: 'search'` for the system magnifier item. On
+   * iOS 27+ the detached (prominent) placement can be given to any tab instead
+   * through {@link Tabs.Host | TabsHost}
+   * {@link TabsHostPropsIOS.prominentScreenKey | ios.prominentScreenKey}.
    *
-   * The native tab class cannot change during the screen's lifetime - changing
-   * `role` on a mounted tab screen is not supported and triggers an assertion
-   * in development builds.
+   * The native tab class cannot change during the screen's lifetime -
+   * changing `role` on a mounted tab screen is not supported and triggers an
+   * assertion in development builds.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab|UISearchTab}
-   *
-   * @default undefined
-   *
-   * @platform ios
-   * @supported iOS 26.1 or higher
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab | UISearchTab}
+   * @platform ios >= 26.1
    */
   role?: TabsScreenRole | undefined;
   /**
-   * @summary Specifies whether selecting this tab automatically activates its search field.
+   * Specifies whether selecting this tab automatically activates its search
+   * field.
    *
-   * Effective only for tab screens with `role: 'search'` and only when a search bar
-   * is configured in the header of the screen stack nested in this tab
-   * (see `headerSearchBarOptions`). When enabled, selecting the search tab immediately
-   * activates the search field. Cancelling the search restores the previously selected tab.
+   * @remarks
+   * Effective only for tab screens with `role: 'search'` and only when a
+   * search bar is configured in the header of the screen stack nested in this
+   * tab (see `headerSearchBarOptions`). When enabled, selecting the search tab
+   * immediately activates the search field. Cancelling the search restores the
+   * previously selected tab.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch|UISearchTab.automaticallyActivatesSearch}
-   *
-   * @default false
-   *
-   * @platform ios
-   * @supported iOS 26.1 or higher
+   * @defaultValue `false`
+   * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch | UISearchTab.automaticallyActivatesSearch}
+   * @platform ios >= 26.1
    */
   automaticallyActivatesSearch?: boolean | undefined;
   /**
-   * @summary Specifies if `contentInsetAdjustmentBehavior` of first ScrollView
-   * in first descendant chain from tab screen should be overridden back from `never`
-   * to `automatic`.
+   * Specifies if `contentInsetAdjustmentBehavior` of first ScrollView in first
+   * descendant chain from tab screen should be overridden back from `never` to
+   * `automatic`.
    *
-   * By default, `react-native`'s ScrollView has `contentInsetAdjustmentBehavior`
-   * set to `never` instead of UIKit-default (which is `automatic`). This
-   * prevents ScrollViews from respecting navigation bar insets.
-   * When this prop is set to `true`, `automatic` behavior is reverted.
+   * @remarks
+   * By default, `react-native`'s ScrollView has
+   * `contentInsetAdjustmentBehavior` set to `never` instead of UIKit-default
+   * (which is `automatic`). This prevents ScrollViews from respecting
+   * navigation bar insets. When this prop is set to `true`, `automatic`
+   * behavior is reverted.
    *
    * Supported only on Fabric.
    *
-   * @default true
-   *
+   * @defaultValue `true`
    * @platform ios
    */
   overrideScrollViewContentInsetAdjustmentBehavior?: boolean | undefined;
   /**
-   * @summary Allows to override system appearance for the tab bar.
+   * Allows to override system appearance for the tab bar.
    *
-   * Does not support dynamic changes to the prop value for the currently visible screen.
+   * @remarks
+   * Does not support dynamic changes to the prop value for the currently
+   * visible screen.
    *
-   * Please note that this prop is marked as **experimental** and might be subject to breaking changes or even removal.
-   * Consider using `colorScheme` on `TabsHost` instead.
+   * Consider using {@link TabsHostPropsBase.colorScheme | colorScheme} on
+   * {@link Tabs.Host | TabsHost} instead.
    *
-   * The following values are currently supported:
-   * - `unspecified` - an unspecified interface style,
-   * - `light` - the light interface style,
-   * - `dark` - the dark interface style.
+   * The supported values correspond to the official UIKit documentation.
    *
-   * The supported values correspond to the official UIKit documentation:
-   *
-   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle|UIUserInterfaceStyle}
-   *
-   * @default unspecified
-   *
+   * @defaultValue `'unspecified'`
+   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle | UIUserInterfaceStyle}
    * @platform ios
+   * @experimental
    */
   experimental_userInterfaceStyle?: UserInterfaceStyle | undefined;
 }
