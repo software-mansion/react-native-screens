@@ -19,7 +19,7 @@ export type StackHeaderPressHandler = () => void;
 /**
  * Function called when the selected items of a header menu change.
  *
- * @param selectedMenuElementIds - The IDs of the selected menu items.
+ * @param selectedMenuElementIds - The IDs of the currently selected menu items.
  */
 export type StackHeaderMenuSelectionHandler = (
   selectedMenuElementIds: string[],

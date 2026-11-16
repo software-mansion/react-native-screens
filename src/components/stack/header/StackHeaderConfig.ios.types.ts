@@ -93,7 +93,8 @@ export interface SupportsMenuIOS {
    * overflow menu), this menu is displayed in its place. Useful for custom
    * items ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS
    * doesn't display in the overflow menu otherwise. The `id`s used in the menu
-   * are expected to be unique across every `menu` and `menuRepresentation`.
+   * are expected to be unique across every
+   * {@link SupportsMenuIOS.menu | menu} and `menuRepresentation`.
    */
   menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
@@ -171,7 +172,7 @@ export interface SupportsIdentifierIOS {
    *
    * @note
    * This is an implementation detail and may change. Updating the identifier
-   * at runtime results in item rebuild and visual flash.
+   * at runtime results in the item being rebuilt and a visual flash.
    */
   identifier?: string | undefined;
 }
@@ -564,7 +565,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @remarks
    * Applies to the text of header items with the `'plain'` variant.
-   * Also applies to the back button title; the `backButton` attributes
+   * Also applies to the back button title; the
+   * {@link StackHeaderAppearanceIOS.backButton | backButton} attributes
    * override it per attribute. Attributes can be customized per control
    * state: `normal`, `highlighted`, `disabled` and `focused`.
    */
@@ -583,10 +585,10 @@ export interface StackHeaderAppearanceIOS {
    * Appearance of the back button title.
    *
    * @remarks
-   * Overrides the `button` attributes for the back button title,
-   * attribute by attribute — the unset attributes keep following the `button`
-   * appearance. Attributes can be customized per control state: `normal`,
-   * `highlighted`, `disabled` and `focused`.
+   * Overrides the {@link StackHeaderAppearanceIOS.button | button} attributes
+   * for the back button title, attribute by attribute — the unset attributes
+   * keep following the `button` appearance. Attributes can be customized per
+   * control state: `normal`, `highlighted`, `disabled` and `focused`.
    */
   backButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
@@ -601,7 +603,7 @@ export interface StackHeaderConfigPropsIOS {
    * @remarks
    * Configured on the screen whose back button it applies to (the screen that
    * is pushed on top). When unset, the system derives the back title from the
-   * previous screen's `title`.
+   * previous screen's {@link StackHeaderConfigPropsBase.title | title}.
    *
    * @platform ios
    */

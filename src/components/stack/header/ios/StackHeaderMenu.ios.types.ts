@@ -11,7 +11,8 @@ import type {
  * The following values are available:
  * - `'action'` — a button that fires
  *   {@link StackHeaderMenuItemIOS.onPress | onPress} when tapped. Cannot be
- *   used inside a `singleSelection` menu.
+ *   used inside a {@link StackHeaderMenuIOS.singleSelection | singleSelection}
+ *   menu.
  * - `'toggle'` — a stateful item whose on/off state is tracked automatically.
  *   Toggle items do not fire `onPress`; instead, parent menu (or Single
  *   Selection Root in case of
@@ -37,7 +38,8 @@ export interface StackHeaderMenuItemIOS {
    *
    * @remarks
    * Used to locate the item inside a menu tree and to identify selected items
-   * in {@link StackHeaderMenuIOS.onSelectionChange} callback.
+   * in {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
+   * callback.
    */
   id: string;
   /**
@@ -59,8 +61,9 @@ export interface StackHeaderMenuItemIOS {
    *
    * @remarks
    * Only meaningful when {@link StackHeaderMenuItemIOS.itemType | itemType}
-   * resolves to `'toggle'`. Inside a `singleSelection` hierarchy, at most one
-   * item can set this to `true`.
+   * resolves to `'toggle'`. Inside a
+   * {@link StackHeaderMenuIOS.singleSelection | singleSelection} hierarchy, at
+   * most one item can set this to `true`.
    *
    * @defaultValue `false`
    */
@@ -145,8 +148,9 @@ export interface StackHeaderMenuIOS {
    * Root. At most one toggle item in the entire hierarchy rooted at this menu
    * can be selected at a time.
    *
-   * Items with `itemType` set to `'automatic'` are resolved to `'toggle'`
-   * inside a `singleSelection` hierarchy. `'action'` items are disallowed.
+   * Items with {@link StackHeaderMenuItemIOS.itemType | itemType} set to
+   * `'automatic'` are resolved to `'toggle'` inside a `singleSelection`
+   * hierarchy. `'action'` items are disallowed.
    *
    * @defaultValue `false`
    */
