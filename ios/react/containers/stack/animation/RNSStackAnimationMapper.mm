@@ -1,7 +1,6 @@
 #import "RNSStackAnimationMapper.h"
 #import "RNSLog.h"
 #import "RNSStackAnimationPresetConfig.h"
-#import "RNSStackAnimationPresets.h"
 
 static NSString *const kTypeKey = @"type";
 static NSString *const kNameKey = @"name";
@@ -18,11 +17,6 @@ static NSString *const kTypeCustom = @"custom";
   RNSStackAnimationPresetConfig *preset = [self presetConfigFromValue:value];
   if (preset == nil) {
     return RNSStackAnimationPresetConfig.defaultConfig;
-  }
-  if (preset.name != RNSStackAnimationPresetNameDefault &&
-      [RNSStackAnimationPresets transitionTimelineForConfig:preset kind:RNSStackAnimationTransitionKindPush] == nil) {
-    RNSLogW(@"[RNScreens] Animation preset '%@' is not supported on iOS. UIKit's default transition plays instead.",
-            [RNSStackAnimationPresetConfig stringFromName:preset.name]);
   }
   return preset;
 }
@@ -80,7 +74,7 @@ static NSString *const kTypeCustom = @"custom";
     }
     [options addObject:key];
   }
-  // Options of the other presets are accepted and ignored: those presets play `default`.
+  // Options of the other presets are accepted and ignored.
   if (options.count > 0 &&
       (preset.name == RNSStackAnimationPresetNameDefault || preset.name == RNSStackAnimationPresetNameNone)) {
     return
