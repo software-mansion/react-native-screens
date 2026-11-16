@@ -17,7 +17,9 @@ import com.google.android.material.R as MaterialR
  * built per request, so arbitrary curves never accumulate. Main thread only.
  */
 internal object Interpolators {
-    // CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords.
+    // CSS Easing Functions Level 1, the `ease` / `ease-in` / `ease-out` / `ease-in-out` keywords;
+    // `ease` is also Core Animation's default timing function (`kCAMediaTimingFunctionDefault`).
+    private val CSS_EASE = Easing.Bezier(0.25f, 0.1f, 0.25f, 1f)
     private val CSS_EASE_IN = Easing.Bezier(0.42f, 0f, 1f, 1f)
     private val CSS_EASE_OUT = Easing.Bezier(0f, 0f, 0.58f, 1f)
     private val CSS_EASE_IN_OUT = Easing.Bezier(0.42f, 0f, 0.58f, 1f)
@@ -40,6 +42,7 @@ internal object Interpolators {
     ): Interpolator =
         when (name) {
             EasingName.LINEAR -> context.inflate(android.R.interpolator.linear)
+            EasingName.EASE -> CSS_EASE.toInterpolator()
             EasingName.EASE_IN -> CSS_EASE_IN.toInterpolator()
             EasingName.EASE_OUT -> CSS_EASE_OUT.toInterpolator()
             EasingName.EASE_IN_OUT -> CSS_EASE_IN_OUT.toInterpolator()
