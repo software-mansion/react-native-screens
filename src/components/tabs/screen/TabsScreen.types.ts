@@ -65,10 +65,6 @@ export interface TabsScreenRepeatedTabSelectionEffects {
    * When Stack is nested inside tab screen and repeated selection is detected,
    * the Stack will pop to root screen.
    *
-   * @info
-   * Only a Stack v4 (legacy) nested in the tab screen is popped to its root.
-   * {@link Stack.Host} does not support it yet.
-   *
    * @defaultValue `true`
    */
   popToRoot?: boolean | undefined;
@@ -169,13 +165,6 @@ export interface TabsScreenPropsBase {
    * Note that:
    * - some components (like {@link Split.Host}) may choose not to query
    *   its child components,
-   * - Stack v4 (legacy) implementation returns some supported orientations,
-   *   overriding orientation from the tab screen **unless** the Stack v4
-   *   screen has no explicit `screenOrientation` prop and
-   *   `featureFlags.experiment.iosOrientationInheritanceFixEnabled` is
-   *   enabled (the default), in which case it returns `'inherit'` and no
-   *   longer overrides the parent (see
-   *   https://github.com/software-mansion/react-native-screens/pull/4408).
    *
    * @defaultValue `'inherit'`
    * @platform ios
