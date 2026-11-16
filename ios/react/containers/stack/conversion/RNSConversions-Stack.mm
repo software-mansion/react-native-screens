@@ -5,6 +5,20 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
+UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromReactRNSStackHostLayoutDirection(
+    react::RNSStackHostLayoutDirection layoutDirection)
+{
+  using enum react::RNSStackHostLayoutDirection;
+  switch (layoutDirection) {
+    case Inherit:
+      return UITraitEnvironmentLayoutDirectionUnspecified;
+    case Ltr:
+      return UITraitEnvironmentLayoutDirectionLeftToRight;
+    case Rtl:
+      return UITraitEnvironmentLayoutDirectionRightToLeft;
+  }
+}
+
 RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
     react::RNSStackScreenActivityMode mode)
 {

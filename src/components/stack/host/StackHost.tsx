@@ -7,8 +7,10 @@ import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 function StackHost(props: StackHostProps) {
   const { children, ref, direction, ...restProps } = props;
 
-  // RN's `direction` style sets the native View's layoutDirection, which the
-  // stack's native subtree inherits. iOS needs a trait override instead.
+  // Android lays the native subtree out by the View's layoutDirection, which RN
+  // sets from the `direction` style on every layout. iOS lays system views out by
+  // the layoutDirection trait, which the native side overrides from
+  // `layoutDirection`.
   const directionStyle = Platform.OS === 'android' ? { direction } : undefined;
 
   const headlessModeEnabled =
@@ -22,6 +24,7 @@ function StackHost(props: StackHostProps) {
         directionStyle,
         headlessModeEnabled && styles.headless,
       ]}
+      layoutDirection={direction}
       {...restProps}
       headlessModeEnabled={headlessModeEnabled}>
       {children}
