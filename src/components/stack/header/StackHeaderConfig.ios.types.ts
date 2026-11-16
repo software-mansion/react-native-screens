@@ -136,8 +136,6 @@ export interface SupportsVisibilityPriorityIOS {
    * When the items do not fit, the header moves the ones with the lowest
    * priority into the overflow ("...") menu, and keeps the higher ones.
    *
-   * Only the relative order of the priorities matters.
-   *
    * When the item is placed in an implicit group of items, the group
    * inherits this priority.
    *
