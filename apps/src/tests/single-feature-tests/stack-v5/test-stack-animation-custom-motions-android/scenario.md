@@ -7,7 +7,7 @@ screen's motion is written as tracks, one per animated property. Pass: each
 track moves its property between its endpoints for its own duration, an
 omitted endpoint is the property's rest value, a dim scrim tints the screen it
 is written on, and an invalid track plays `default` instead. Presets used as a
-screen's motion are covered by `test-stack-animation-preset-composition-android`.
+screen's motion are covered by `test-stack-animation-preset-composition`.
 
 **OS test creation version:** Android API Level 37.
 

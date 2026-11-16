@@ -14,7 +14,7 @@ import TestStackAnimationIOSFrom from './test-stack-animation-ios-from';
 import TestStackAnimationNone from './test-stack-animation-none';
 import TestStackAnimationOptions from './test-stack-animation-options';
 import TestStackAnimationReplaceAndroid from './test-stack-animation-replace-android';
-import TestStackAnimationPresetCompositionAndroid from './test-stack-animation-preset-composition-android';
+import TestStackAnimationPresetComposition from './test-stack-animation-preset-composition';
 import TestStackAnimationCustomMotionsAndroid from './test-stack-animation-custom-motions-android';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
@@ -65,7 +65,7 @@ export { default as TestStackAnimationIOSFrom } from './test-stack-animation-ios
 export { default as TestStackAnimationNone } from './test-stack-animation-none';
 export { default as TestStackAnimationOptions } from './test-stack-animation-options';
 export { default as TestStackAnimationReplaceAndroid } from './test-stack-animation-replace-android';
-export { default as TestStackAnimationPresetCompositionAndroid } from './test-stack-animation-preset-composition-android';
+export { default as TestStackAnimationPresetComposition } from './test-stack-animation-preset-composition';
 export { default as TestStackAnimationCustomMotionsAndroid } from './test-stack-animation-custom-motions-android';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
@@ -115,7 +115,7 @@ const scenarios = {
   TestStackAnimationNone,
   TestStackAnimationOptions,
   TestStackAnimationReplaceAndroid,
-  TestStackAnimationPresetCompositionAndroid,
+  TestStackAnimationPresetComposition,
   TestStackAnimationCustomMotionsAndroid,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
