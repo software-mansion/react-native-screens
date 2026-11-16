@@ -7,6 +7,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, RNSStackAnimationEasingName) {
   RNSStackAnimationEasingNameLinear,
+  RNSStackAnimationEasingNameEaseIn,
+  RNSStackAnimationEasingNameEaseOut,
+  RNSStackAnimationEasingNameEaseInOut,
+  RNSStackAnimationEasingNameStandard,
+  RNSStackAnimationEasingNameStandardAccelerate,
+  RNSStackAnimationEasingNameStandardDecelerate,
+  RNSStackAnimationEasingNameEmphasized,
+  RNSStackAnimationEasingNameEmphasizedAccelerate,
+  RNSStackAnimationEasingNameEmphasizedDecelerate,
+  // Curves of the preset tables only; the `easing` option has no string for them.
   RNSStackAnimationEasingNameAccelerateDecelerate,
   RNSStackAnimationEasingNameAccelerateQuint,
   RNSStackAnimationEasingNameDecelerateQuint,
@@ -18,6 +28,11 @@ typedef NS_ENUM(NSInteger, RNSStackAnimationEasingName) {
 @interface RNSStackAnimationEasing : NSObject
 
 + (RNSStackAnimationEasing *)named:(RNSStackAnimationEasingName)name;
+
+/**
+ * The curve named `string` in the `easing` option, nil for any other string.
+ */
++ (nullable RNSStackAnimationEasing *)easingNamed:(NSString *)string;
 
 /**
  * The cubic bezier from (0, 0) to (1, 1) with control points (x1, y1) and (x2, y2); x1 and x2 must be in [0, 1], so

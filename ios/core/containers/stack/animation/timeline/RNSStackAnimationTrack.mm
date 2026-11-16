@@ -10,6 +10,11 @@
   return self;
 }
 
+- (instancetype)withTiming:(RNSStackAnimationTiming *)timing
+{
+  return [[[self class] alloc] initWithTiming:timing];
+}
+
 @end
 
 @implementation RNSStackAnimationTranslateTrack
@@ -25,6 +30,11 @@
     _to = to;
   }
   return self;
+}
+
+- (instancetype)withTiming:(RNSStackAnimationTiming *)timing
+{
+  return [[[self class] alloc] initWithAxis:_axis from:_from to:_to timing:timing];
 }
 
 @end
@@ -44,6 +54,11 @@
   return self;
 }
 
+- (instancetype)withTiming:(RNSStackAnimationTiming *)timing
+{
+  return [[[self class] alloc] initWithViewProperty:_viewProperty from:_from to:_to timing:timing];
+}
+
 @end
 
 @implementation RNSStackAnimationDimTrack
@@ -59,6 +74,11 @@
     _to = to;
   }
   return self;
+}
+
+- (instancetype)withTiming:(RNSStackAnimationTiming *)timing
+{
+  return [[[self class] alloc] initWithColor:_color from:_from to:_to timing:timing];
 }
 
 @end

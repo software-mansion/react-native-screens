@@ -44,8 +44,9 @@ export type StackScreenAnimationEasing =
   | StackScreenAnimationBezier;
 
 /**
- * Distance on the screen: a number is density-independent pixels, `'N%'` is a
- * fraction of the container's width or height.
+ * Distance on the screen: a number is density-independent pixels (dp on
+ * Android, points on iOS), `'N%'` is a fraction of the container's width or
+ * height.
  */
 export type StackScreenAnimationLength = number | `${number}%`;
 

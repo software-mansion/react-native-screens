@@ -3,9 +3,47 @@
 #import "RNSStackAnimationIosPresets.h"
 #import "RNSStackAnimationPresetConfig.h"
 #import "RNSStackAnimationSlidePresets.h"
+#import "RNSStackAnimationTimeline.h"
 #import "RNSStackAnimationTransitionTimeline.h"
 
-static NSArray<RNSStackAnimationTrack *> *RNSMotionTracks(RNSStackAnimationPresetName name, BOOL isAppearing)
+@implementation RNSStackAnimationPresets
+
++ (nullable RNSStackAnimationTransitionTimeline *)transitionTimelineForConfig:(id<RNSStackAnimationConfig>)config
+                                                                         kind:(RNSStackAnimationTransitionKind)kind
+{
+  if (![config isKindOfClass:RNSStackAnimationPresetConfig.class]) {
+    return nil;
+  }
+  RNSStackAnimationPresetConfig *preset = static_cast<RNSStackAnimationPresetConfig *>(config);
+  switch (preset.name) {
+    case RNSStackAnimationPresetNameDefault:
+      return nil;
+    case RNSStackAnimationPresetNameNone:
+      return RNSStackAnimationTransitionTimeline.staticTimeline;
+    default:
+      break;
+  }
+  // Both transitions, so that `duration` scales them against the longer one.
+  RNSStackAnimationPresetOptions *options = preset.options;
+  RNSStackAnimationTransitionTimeline *push = [self transitionForName:preset.name
+                                                             distance:options.distance
+                                                                 kind:RNSStackAnimationTransitionKindPush];
+  RNSStackAnimationTransitionTimeline *pop = [self transitionForName:preset.name
+                                                            distance:options.distance
+                                                                kind:RNSStackAnimationTransitionKindPop];
+  RNSStackAnimationTimeline *animation = [[RNSStackAnimationTimeline alloc] initWithPush:push pop:pop];
+  if (options.durationMs != nil) {
+    animation = [animation retimedTo:options.durationMs.integerValue];
+  }
+  if (options.easing != nil) {
+    animation = [animation withEasing:options.easing];
+  }
+  return [animation transitionForKind:kind];
+}
+
++ (NSArray<RNSStackAnimationTrack *> *)motionTracksForName:(RNSStackAnimationPresetName)name
+                                                  distance:(nullable RNSStackAnimationLength *)distance
+                                                 appearing:(BOOL)isAppearing
 {
   switch (name) {
     case RNSStackAnimationPresetNameFade:
@@ -23,9 +61,13 @@ static NSArray<RNSStackAnimationTrack *> *RNSMotionTracks(RNSStackAnimationPrese
     case RNSStackAnimationPresetNameSlideFromTop:
       return [RNSStackAnimationSlidePresets tracksFromEdge:RNSStackAnimationEdgeTop appearing:isAppearing];
     case RNSStackAnimationPresetNameFadeFromBottom:
-      return [RNSStackAnimationFadePresets fadeFromTracksFromEdge:RNSStackAnimationEdgeBottom appearing:isAppearing];
+      return [RNSStackAnimationFadePresets fadeFromTracksFromEdge:RNSStackAnimationEdgeBottom
+                                                         distance:distance
+                                                        appearing:isAppearing];
     case RNSStackAnimationPresetNameFadeFromTop:
-      return [RNSStackAnimationFadePresets fadeFromTracksFromEdge:RNSStackAnimationEdgeTop appearing:isAppearing];
+      return [RNSStackAnimationFadePresets fadeFromTracksFromEdge:RNSStackAnimationEdgeTop
+                                                         distance:distance
+                                                        appearing:isAppearing];
     default:
       return @[];
   }
@@ -33,7 +75,7 @@ static NSArray<RNSStackAnimationTrack *> *RNSMotionTracks(RNSStackAnimationPrese
 
 // The name whose vector points the other way; a preset's pop transition is its opposite's. Names without a vector are
 // their own opposite.
-static RNSStackAnimationPresetName RNSOppositeName(RNSStackAnimationPresetName name)
++ (RNSStackAnimationPresetName)oppositeNameOf:(RNSStackAnimationPresetName)name
 {
   switch (name) {
     case RNSStackAnimationPresetNameSlideFromRight:
@@ -69,7 +111,7 @@ static RNSStackAnimationPresetName RNSOppositeName(RNSStackAnimationPresetName n
 // `fade` crossfades them, as the legacy Android `rns_fade_in.xml` / `rns_fade_out.xml` pair. The vertical slides and
 // the `fadeFrom*` names keep the other screen static, as the legacy `RNSScreenStackAnimator` and the legacy Android
 // `rns_no_animation_*.xml` on that side.
-static BOOL RNSAnimatesBothScreens(RNSStackAnimationPresetName name)
++ (BOOL)animatesBothScreens:(RNSStackAnimationPresetName)name
 {
   switch (name) {
     case RNSStackAnimationPresetNameFade:
@@ -85,11 +127,12 @@ static BOOL RNSAnimatesBothScreens(RNSStackAnimationPresetName name)
 
 // The pushed or popped screen moves along the name's vector, and the other screen with it for the names that animate
 // both; the `iosFrom*` names give the two screens different motions. A pop plays the opposite name.
-static RNSStackAnimationTransitionTimeline *RNSTransition(RNSStackAnimationPresetName name,
-                                                          RNSStackAnimationTransitionKind kind)
++ (RNSStackAnimationTransitionTimeline *)transitionForName:(RNSStackAnimationPresetName)name
+                                                  distance:(nullable RNSStackAnimationLength *)distance
+                                                      kind:(RNSStackAnimationTransitionKind)kind
 {
   BOOL isPush = kind == RNSStackAnimationTransitionKindPush;
-  RNSStackAnimationPresetName movingName = isPush ? name : RNSOppositeName(name);
+  RNSStackAnimationPresetName movingName = isPush ? name : [self oppositeNameOf:name];
   switch (movingName) {
     case RNSStackAnimationPresetNameIosFromRight:
       return [RNSStackAnimationIosPresets transitionFromEdge:RNSStackAnimationEdgeRight kind:kind];
@@ -102,31 +145,15 @@ static RNSStackAnimationTransitionTimeline *RNSTransition(RNSStackAnimationPrese
     default:
       break;
   }
-  NSArray<RNSStackAnimationTrack *> *movingScreenTracks = RNSMotionTracks(movingName, isPush);
-  NSArray<RNSStackAnimationTrack *> *otherScreenTracks =
-      RNSAnimatesBothScreens(movingName) ? RNSMotionTracks(movingName, !isPush) : @[];
+  NSArray<RNSStackAnimationTrack *> *movingScreenTracks = [self motionTracksForName:movingName
+                                                                           distance:distance
+                                                                          appearing:isPush];
+  NSArray<RNSStackAnimationTrack *> *otherScreenTracks = [self animatesBothScreens:movingName]
+      ? [self motionTracksForName:movingName distance:distance appearing:!isPush]
+      : @[];
   return [RNSStackAnimationTransitionTimeline timelineForKind:kind
                                                   enterTracks:isPush ? movingScreenTracks : otherScreenTracks
                                                    exitTracks:isPush ? otherScreenTracks : movingScreenTracks];
-}
-
-@implementation RNSStackAnimationPresets
-
-+ (nullable RNSStackAnimationTransitionTimeline *)transitionTimelineForConfig:(id<RNSStackAnimationConfig>)config
-                                                                         kind:(RNSStackAnimationTransitionKind)kind
-{
-  if (![config isKindOfClass:RNSStackAnimationPresetConfig.class]) {
-    return nil;
-  }
-  RNSStackAnimationPresetName name = static_cast<RNSStackAnimationPresetConfig *>(config).name;
-  switch (name) {
-    case RNSStackAnimationPresetNameDefault:
-      return nil;
-    case RNSStackAnimationPresetNameNone:
-      return RNSStackAnimationTransitionTimeline.staticTimeline;
-    default:
-      return RNSTransition(name, kind);
-  }
 }
 
 @end
