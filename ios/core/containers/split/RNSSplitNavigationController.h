@@ -1,6 +1,8 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSStackNavigationController.h"
+#import "RNSViewControllerViewLifecycleEventsObserver.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -8,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @class RNSSplitNavigationController
- * @brief A subclass of UINavigationController, creates a view that wraps view associated with
+ * @brief A subclass of RNSStackNavigationController, creates a view that wraps view associated with
  * RNSSplitScreenController.
  *
  * UISplitViewController resizes column views natively - on display mode change or column resize, so
@@ -16,12 +18,17 @@ NS_ASSUME_NONNULL_BEGIN
  * subtree. This controller observes its own view's frame via KVO and notifies `frameOriginChangeDelegate`
  * whenever the frame origin changes.
  */
-@interface RNSSplitNavigationController : UINavigationController
+@interface RNSSplitNavigationController : RNSStackNavigationController
 
 /**
  * Notified whenever the origin of this controller's view frame changes.
  */
 @property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> frameOriginChangeDelegate;
+
+/**
+ * Notified about the lifecycle events of this controller's view.
+ */
+@property (nonatomic, weak, nullable) id<RNSViewControllerViewLifecycleEventsObserver> viewLifecycleEventsObserver;
 
 @end
 
