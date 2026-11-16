@@ -1,24 +1,36 @@
-import type {
-  NativeSyntheticEvent,
-  StyleProp,
-  ViewProps,
-  ViewStyle,
-} from 'react-native';
+import type { StyleProp, ViewProps, ViewStyle } from 'react-native';
 
 import type { TabsScreenPropsIOS } from './TabsScreen.ios.types';
 import type { TabsScreenPropsAndroid } from './TabsScreen.android.types';
-import type { InterfaceOrientation } from '../../shared/types';
+import type {
+  EmptyEventPayload,
+  InterfaceOrientation,
+  NativeEventHandler,
+} from '../../shared/types';
 
 // #region General helpers
 
-export type EmptyObject = Record<string, never>;
-
-export type TabsScreenEventHandler<T> = (
-  event: NativeSyntheticEvent<T>,
-) => void;
-
 // Currently iOS-only, but we plan to support it on Android
 export type TabsScreenOrientation = InterfaceOrientation | 'inherit';
+
+export type TabsScreenStyleProps = {
+  backgroundColor?: ViewStyle['backgroundColor'] | undefined;
+};
+
+export interface TabsScreenRepeatedTabSelectionEffects {
+  /**
+   * @default true
+   */
+  popToRoot?: boolean | undefined;
+  /**
+   * @default true
+   */
+  scrollToTop?: boolean | undefined;
+}
+
+export interface TabsScreenSpecialEffects {
+  repeatedTabSelection?: TabsScreenRepeatedTabSelectionEffects | undefined;
+}
 
 // #endregion General helpers
 
@@ -41,7 +53,7 @@ export interface TabsScreenPropsBase {
 
   // General
   children?: ViewProps['children'] | undefined;
-  style?: StyleProp<Pick<ViewStyle, 'backgroundColor'>> | undefined;
+  style?: StyleProp<TabsScreenStyleProps> | undefined;
   /**
    * @summary Title of the tab screen, displayed in the tab bar item.
    *
@@ -79,22 +91,7 @@ export interface TabsScreenPropsBase {
    *
    * @platform android, ios
    */
-  specialEffects?:
-    | {
-        repeatedTabSelection?:
-          | {
-              /**
-               * @default true
-               */
-              popToRoot?: boolean | undefined;
-              /**
-               * @default true
-               */
-              scrollToTop?: boolean | undefined;
-            }
-          | undefined;
-      }
-    | undefined;
+  specialEffects?: TabsScreenSpecialEffects | undefined;
   /**
    * @summary Specifies supported orientations for the tab screen.
    *
@@ -176,28 +173,28 @@ export interface TabsScreenPropsBase {
    *
    * @platform android, ios
    */
-  onWillAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * @summary A callback that gets invoked when the tab screen did appear.
    * This is called as soon as the transition ends.
    *
    * @platform android, ios
    */
-  onDidAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * @summary A callback that gets invoked when the tab screen will disappear.
    * This is called as soon as the transition begins.
    *
    * @platform android, ios
    */
-  onWillDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * @summary A callback that gets invoked when the tab screen did disappear.
    * This is called as soon as the transition ends.
    *
    * @platform android, ios
    */
-  onDidDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 }
 
 export interface TabsScreenProps extends TabsScreenPropsBase {

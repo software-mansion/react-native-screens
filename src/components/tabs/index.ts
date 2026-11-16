@@ -24,12 +24,16 @@ export type {
 } from './host';
 
 export type {
-  TabsScreenEventHandler,
   TabsScreenOrientation,
+  TabsScreenStyleProps,
+  TabsScreenSpecialEffects,
+  TabsScreenRepeatedTabSelectionEffects,
   TabsScreenPropsBase,
   TabsScreenProps,
   // Android
   TabsScreenIconAndroid,
+  TabsScreenIconDrawableResourceAndroid,
+  TabsScreenIconImageSourceAndroid,
   TabsScreenIconTintingAndroid,
   TabBarItemLabelVisibilityMode,
   TabsScreenItemStateAppearanceAndroid,
@@ -37,6 +41,8 @@ export type {
   TabsScreenPropsAndroid,
   // iOS
   TabsScreenIconIOS,
+  TabsScreenIconSfSymbolIOS,
+  TabsScreenIconImageSourceIOS,
   TabsScreenIconImageRenderingModeIOS,
   TabsScreenIconSymbolRenderingModeIOS,
   TabsScreenBlurEffect,

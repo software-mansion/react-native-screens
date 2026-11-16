@@ -39,7 +39,7 @@ export type TabsScreenIconSymbolRenderingModeIOS =
   | 'monochrome'
   | 'original';
 
-type WithImageRenderingMode<Icon> = Icon & {
+export interface TabsScreenIconImageSourceIOS extends PlatformIconShared {
   /**
    * @summary How the tab bar renders this image. See
    * {@link TabsScreenIconImageRenderingModeIOS}.
@@ -49,9 +49,9 @@ type WithImageRenderingMode<Icon> = Icon & {
    * `icon` and `selectedIcon` may use different values.
    */
   renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
-};
+}
 
-type WithSymbolRenderingMode<Icon> = Icon & {
+export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
   /**
    * @summary How the tab bar renders this symbol. See
    * {@link TabsScreenIconSymbolRenderingModeIOS}.
@@ -62,7 +62,7 @@ type WithSymbolRenderingMode<Icon> = Icon & {
    * `icon` and `selectedIcon` may use different values.
    */
   renderingMode?: TabsScreenIconSymbolRenderingModeIOS | undefined;
-};
+}
 
 /**
  * How the tab bar tints an `imageSource` or `drawableResource` icon on Android.
@@ -76,7 +76,8 @@ type WithSymbolRenderingMode<Icon> = Icon & {
  */
 export type TabsScreenIconTintingAndroid = 'default' | 'tinted' | 'original';
 
-type WithTinting<Icon> = Icon & {
+export interface TabsScreenIconDrawableResourceAndroid
+  extends PlatformIconAndroidDrawableResource {
   /**
    * @summary How the tab bar tints this icon. See
    * `TabsScreenIconTintingAndroid`.
@@ -86,12 +87,24 @@ type WithTinting<Icon> = Icon & {
    * `icon` and `selectedIcon` may use different values.
    */
   tinting?: TabsScreenIconTintingAndroid | undefined;
-};
+}
+
+export interface TabsScreenIconImageSourceAndroid extends PlatformIconShared {
+  /**
+   * @summary How the tab bar tints this icon. See
+   * `TabsScreenIconTintingAndroid`.
+   *
+   * Defaults to `default`, which tints the icon.
+   *
+   * `icon` and `selectedIcon` may use different values.
+   */
+  tinting?: TabsScreenIconTintingAndroid | undefined;
+}
 
 export type TabsScreenIconIOS =
-  | WithSymbolRenderingMode<PlatformIconIOSSfSymbol>
-  | WithImageRenderingMode<PlatformIconShared>;
+  | TabsScreenIconSfSymbolIOS
+  | TabsScreenIconImageSourceIOS;
 
 export type TabsScreenIconAndroid =
-  | WithTinting<PlatformIconAndroidDrawableResource>
-  | WithTinting<PlatformIconShared>;
+  | TabsScreenIconDrawableResourceAndroid
+  | TabsScreenIconImageSourceAndroid;
