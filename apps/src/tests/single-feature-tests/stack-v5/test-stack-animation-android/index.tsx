@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import type { StackHostDirection } from 'react-native-screens';
+import type { StackDirection } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { StackContainer } from '@apps/shared/containers/stack';
@@ -17,7 +17,7 @@ import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/St
 const DIRECTION_OPTIONS = [
   'ltr',
   'rtl',
-] as const satisfies readonly StackHostDirection[];
+] as const satisfies readonly StackDirection[];
 type DirectionOption = (typeof DIRECTION_OPTIONS)[number];
 
 function TestStackAnimationAndroid() {
