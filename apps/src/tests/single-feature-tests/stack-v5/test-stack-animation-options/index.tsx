@@ -50,7 +50,7 @@ const ANIMATION_OPTIONS = [
     },
   },
   {
-    label: 'fadeFromBottom 2000 ms 300 dp',
+    label: 'fadeFromBottom 2000 ms 300',
     animation: {
       type: 'preset',
       name: 'fadeFromBottom',
@@ -87,16 +87,14 @@ const ANIMATION_OPTIONS = [
   },
 ] satisfies readonly AnimationPresetOption[];
 
-function TestStackAnimationOptionsAndroid() {
+function TestStackAnimationOptions() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="slideFromRight"
+      withHeaderPicker
     />
   );
 }
 
-export default createScenario(
-  TestStackAnimationOptionsAndroid,
-  scenarioDescription,
-);
+export default createScenario(TestStackAnimationOptions, scenarioDescription);
