@@ -468,8 +468,7 @@ export type StackHeaderToolbarMenuElementAndroid =
  *
  * @remarks
  * Accepts the fields of {@link StackHeaderToolbarMenuItemBaseAndroid} except
- * `id`. Omitted keys keep their current values; an explicit `undefined` resets
- * a field to its default.
+ * `id`.
  */
 export interface StackHeaderToolbarMenuElementOptionsAndroid
   extends Partial<Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>> {
@@ -903,9 +902,6 @@ export interface StackHeaderConfigPropsAndroid {
   toolbarMenu?: StackHeaderToolbarMenuBaseAndroid | undefined;
   /**
    * Enables visual dividers between menu groups.
-   *
-   * @remarks
-   * Below API level 28, the value of this prop is ignored.
    *
    * @defaultValue `false`
    * @platform android >= 28
