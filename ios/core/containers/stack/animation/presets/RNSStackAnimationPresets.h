@@ -11,8 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackAnimationPresets : NSObject
 
 /**
- * The transition of `kind` that `config` plays, or nil for UIKit's own transition, which is also what a preset without
- * an iOS transition gets.
+ * The transition of `kind` that `config` plays, or nil for UIKit's own transition.
  */
 + (nullable RNSStackAnimationTransitionTimeline *)transitionTimelineForConfig:(id<RNSStackAnimationConfig>)config
                                                                          kind:(RNSStackAnimationTransitionKind)kind;

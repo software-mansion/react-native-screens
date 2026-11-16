@@ -34,12 +34,16 @@
   }
 
   CGSize containerSize = containerView.bounds.size;
-  RNSStackAnimationMotionBinding *enterBinding = [[RNSStackAnimationMotionBinding alloc] initWithMotion:_timeline.enter
-                                                                                                   view:toView
-                                                                                          containerSize:containerSize];
+  UIUserInterfaceLayoutDirection layoutDirection = containerView.effectiveUserInterfaceLayoutDirection;
+  RNSStackAnimationMotionBinding *enterBinding =
+      [[RNSStackAnimationMotionBinding alloc] initWithMotion:_timeline.enter
+                                                        view:toView
+                                               containerSize:containerSize
+                                             layoutDirection:layoutDirection];
   RNSStackAnimationMotionBinding *exitBinding = [[RNSStackAnimationMotionBinding alloc] initWithMotion:_timeline.exit
                                                                                                   view:fromView
-                                                                                         containerSize:containerSize];
+                                                                                         containerSize:containerSize
+                                                                                       layoutDirection:layoutDirection];
 
   // Keyframes inside a property animator take its duration and its timing curve, so the linear animator leaves every
   // track's curve to the keyframes.
