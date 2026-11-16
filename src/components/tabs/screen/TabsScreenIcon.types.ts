@@ -9,6 +9,7 @@ import type {
  * `UIImage.RenderingMode`.
  *
  * @remarks
+ * The following values are supported:
  * - `'default'` — the system behavior (UIKit's automatic mode), also used
  *   when {@link TabsScreenIconImageSourceIOS.renderingMode | renderingMode} is
  *   unset: the tab bar decides how to draw the image.
@@ -29,6 +30,7 @@ export type TabsScreenIconImageRenderingModeIOS =
  * SF Symbols rendering modes.
  *
  * @remarks
+ * The following values are supported:
  * - `'default'` — the system behavior (UIKit's automatic mode), also used
  *   when {@link TabsScreenIconSfSymbolIOS.renderingMode | renderingMode} is
  *   unset: system symbols are rendered in a single color, the state-dependent
@@ -88,6 +90,7 @@ export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
  * Android.
  *
  * @remarks
+ * The following values are supported:
  * - `'default'` — the tab bar's default, also used when `tinting` is unset:
  *   the icon is tinted, as with `'tinted'`.
  * - `'tinted'` — the icon is drawn in the state-dependent item icon color
