@@ -11,19 +11,62 @@ import type {
 // #region General helpers
 
 // Currently iOS-only, but we plan to support it on Android
+/**
+ * Interface orientations a tab screen supports.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'inherit'` — tab screen supports the same orientations as parent
+ *   component,
+ * - `'all'` — tab screen supports all orientations,
+ * - `'allButUpsideDown'` — tab screen supports all but the upside-down
+ *   portrait interface orientation,
+ * - `'portrait'` — tab screen supports both portrait-up and portrait-down
+ *   interface orientations,
+ * - `'portraitUp'` — tab screen supports a portrait-up interface
+ *   orientation,
+ * - `'portraitDown'` — tab screen supports a portrait-down interface
+ *   orientation,
+ * - `'landscape'` — tab screen supports both landscape-left and
+ *   landscape-right interface orientations,
+ * - `'landscapeLeft'` — tab screen supports landscape-left interface
+ *   orientation,
+ * - `'landscapeRight'` — tab screen supports landscape-right interface
+ *   orientation.
+ *
+ * The supported values (apart from `'inherit'`, `'portrait'`, `'portraitUp'`,
+ * `'portraitDown'`) correspond to the official UIKit documentation:
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
+ */
 export type TabsScreenOrientation = InterfaceOrientation | 'inherit';
 
 export type TabsScreenStyleProps = {
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
 
+/**
+ * Special effects for repeated tab selection (selecting already focused tab
+ * bar item).
+ *
+ * @remarks
+ * {@link TabsScreenRepeatedTabSelectionEffects.popToRoot | popToRoot} has
+ * priority over
+ * {@link TabsScreenRepeatedTabSelectionEffects.scrollToTop | scrollToTop}.
+ */
 export interface TabsScreenRepeatedTabSelectionEffects {
   /**
-   * @default true
+   * When Stack is nested inside tab screen and repeated selection is detected,
+   * the Stack will pop to root screen.
+   *
+   * @defaultValue `true`
    */
   popToRoot?: boolean | undefined;
   /**
-   * @default true
+   * When there is a ScrollView in first descendant chain from tab screen and
+   * repeated selection is detected, ScrollView will be scrolled to top.
+   *
+   * @defaultValue `true`
    */
   scrollToTop?: boolean | undefined;
 }
@@ -37,16 +80,16 @@ export interface TabsScreenSpecialEffects {
 export interface TabsScreenPropsBase {
   // Control
   /**
-   * @summary Identifies screen, e.g. when receiving onNativeFocusChange event.
+   * Identifies screen, e.g. when receiving
+   * {@link TabsHostPropsBase.onTabSelected | onTabSelected} event.
    *
    * @platform android, ios
    */
   screenKey: string;
   /**
-   * @summary When set to `true`, prevents native tab selection for this screen.
+   * When set to `true`, prevents native tab selection for this screen.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform android, ios
    */
   preventNativeSelection?: boolean | undefined;
@@ -55,14 +98,15 @@ export interface TabsScreenPropsBase {
   children?: ViewProps['children'] | undefined;
   style?: StyleProp<TabsScreenStyleProps> | undefined;
   /**
-   * @summary Title of the tab screen, displayed in the tab bar item.
+   * Title of the tab screen, displayed in the tab bar item.
    *
    * @platform android, ios
    */
   title?: string | undefined;
   /**
-   * @summary Specifies content of tab bar item badge.
+   * Specifies content of tab bar item badge.
    *
+   * @remarks
    * On iOS, badge is displayed as regular string.
    *
    * On Android, the value is interpreted in the following order:
@@ -74,122 +118,86 @@ export interface TabsScreenPropsBase {
    */
   badgeValue?: string | undefined;
   /**
-   * @summary Specifies which special effects (also known as microinteractions)
-   * are enabled for the tab screen.
+   * Specifies which special effects (also known as microinteractions) are
+   * enabled for the tab screen.
    *
-   * For repeated tab selection (selecting already focused tab bar item),
-   * there are 2 supported special effects:
-   * - `popToRoot` - when Stack is nested inside tab screen and repeated
-   *   selection is detected, the Stack will pop to root screen,
-   * - `scrollToTop` - when there is a ScrollView in first descendant
-   *   chain from tab screen and repeated selection is detected, ScrollView
-   *   will be scrolled to top.
-   *
-   * `popToRoot` has priority over `scrollToTop`.
-   *
-   * @default All special effects are enabled by default.
-   *
+   * @defaultValue All special effects are enabled by default.
    * @platform android, ios
    */
   specialEffects?: TabsScreenSpecialEffects | undefined;
   /**
-   * @summary Specifies supported orientations for the tab screen.
+   * Specifies supported orientations for the tab screen.
    *
+   * @remarks
    * Procedure for determining supported orientations:
    * 1. Traversal initiates from the root component and moves to the
    *    deepest child possible.
    * 2. Components are queried for their supported orientations:
-   *    - if `orientation` is explicitly set (e.g., `portrait`,
-   *      `landscape`), it is immediately used,
-   *    - if `orientation` is set to `inherit`, the parent component
+   *    - if `orientation` is explicitly set (e.g., `'portrait'`,
+   *      `'landscape'`), it is immediately used,
+   *    - if `orientation` is set to `'inherit'`, the parent component
    *      is queried.
    *
    * Note that:
-   * - some components (like `SplitHost`) may choose not to query
+   * - some components (like {@link Split.Host}) may choose not to query
    *   its child components,
    * - Stack v4 (legacy) implementation returns some supported orientations,
    *   overriding orientation from the tab screen **unless** the Stack v4
    *   screen has no explicit `screenOrientation` prop and
    *   `featureFlags.experiment.iosOrientationInheritanceFixEnabled` is
-   *   enabled (the default), in which case it returns `inherit` and no
+   *   enabled (the default), in which case it returns `'inherit'` and no
    *   longer overrides the parent (see
    *   https://github.com/software-mansion/react-native-screens/pull/4408).
    *
-   * The following values are currently supported:
-   *
-   * - `inherit` - tab screen supports the same orientations as parent
-   *   component,
-   * - `all` - tab screen supports all orientations,
-   * - `allButUpsideDown` - tab screen supports all but the upside-down
-   *   portrait interface orientation,
-   * - `portrait` - tab screen supports both portrait-up and portrait-down
-   *   interface orientations,
-   * - 'portraitUp' - tab screen supports a portrait-up interface
-   *   orientation,
-   * - `portraitDown` - tab screen supports a portrait-down interface
-   *   orientation,
-   * - `landscape` - tab screen supports both landscape-left and
-   *   landscape-right interface orientations,
-   * - `landscapeLeft` - tab screen supports landscape-left interface
-   *   orientaion,
-   * - `landscapeRight` - tab screen supports landscape-right interface
-   *   orientaion.
-   *
-   * The supported values (apart from `inherit`, `portrait`, `portraitUp`,
-   * `portraitDown`) correspond to the official UIKit documentation:
-   *
-   * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask|UIInterfaceOrientationMask}
-   *
-   * @default inherit
-   *
+   * @defaultValue `'inherit'`
    * @platform ios
    */
   orientation?: TabsScreenOrientation | undefined;
 
   // Accessibility
   /**
-   * @summary testID for the TabsScreen
+   * testID for the {@link Tabs.Screen}
    */
   testID?: string | undefined;
   /**
-   * @summary accessibilityLabel for the TabsScreen
+   * accessibilityLabel for the {@link Tabs.Screen}
    */
   accessibilityLabel?: string | undefined;
   /**
-   * @summary testID for the TabBarItem
+   * testID for the TabBarItem
    */
   tabBarItemTestID?: string | undefined;
   /**
-   * @summary accessibilityLabel for the TabBarItem
+   * accessibilityLabel for the TabBarItem
    *
-   * @supported iOS, Android API level >=26
+   * @platform android >= 26, ios
    */
   tabBarItemAccessibilityLabel?: string | undefined;
 
   // Events
   /**
-   * @summary A callback that gets invoked when the tab screen will appear.
+   * A callback that gets invoked when the tab screen will appear.
    * This is called as soon as the transition begins.
    *
    * @platform android, ios
    */
   onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
-   * @summary A callback that gets invoked when the tab screen did appear.
+   * A callback that gets invoked when the tab screen did appear.
    * This is called as soon as the transition ends.
    *
    * @platform android, ios
    */
   onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
-   * @summary A callback that gets invoked when the tab screen will disappear.
+   * A callback that gets invoked when the tab screen will disappear.
    * This is called as soon as the transition begins.
    *
    * @platform android, ios
    */
   onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
-   * @summary A callback that gets invoked when the tab screen did disappear.
+   * A callback that gets invoked when the tab screen did disappear.
    * This is called as soon as the transition ends.
    *
    * @platform android, ios

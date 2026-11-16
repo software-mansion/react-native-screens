@@ -5,15 +5,19 @@ import type {
 } from '../../shared/types';
 
 /**
- * How the tab bar renders an `imageSource` icon on iOS. The names follow
+ * How the tab bar renders an `'imageSource'` icon on iOS. The names follow
  * `UIImage.RenderingMode`.
  *
- * - `default` - the system behavior (UIKit's automatic mode), also used when
- *   `renderingMode` is unset: the tab bar decides how to draw the image.
- * - `template` - the image is used as a template image: its shape is drawn in
- *   the state-dependent item icon color (`tabBarItemIconColor`,
- *   `tabBarTintColor`).
- * - `original` - the image keeps its own colors and ignores the item icon color.
+ * @remarks
+ * - `'default'` — the system behavior (UIKit's automatic mode), also used
+ *   when {@link TabsScreenIconImageSourceIOS.renderingMode | renderingMode} is
+ *   unset: the tab bar decides how to draw the image.
+ * - `'template'` — the image is used as a template image: its shape is drawn
+ *   in the state-dependent item icon color
+ *   ({@link TabsScreenItemStateAppearanceIOS.tabBarItemIconColor | tabBarItemIconColor},
+ *   {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor}).
+ * - `'original'` — the image keeps its own colors and ignores the item icon
+ *   color.
  */
 export type TabsScreenIconImageRenderingModeIOS =
   | 'default'
@@ -21,16 +25,20 @@ export type TabsScreenIconImageRenderingModeIOS =
   | 'original';
 
 /**
- * How the tab bar renders an `sfSymbol` icon on iOS. The names follow the
+ * How the tab bar renders an `'sfSymbol'` icon on iOS. The names follow the
  * SF Symbols rendering modes.
  *
- * - `default` - the system behavior (UIKit's automatic mode), also used when
- *   `renderingMode` is unset: system symbols are rendered in a single color,
- *   the state-dependent item icon color; for custom symbols the rendering mode
- *   set in the asset catalog may change it.
- * - `monochrome` - the symbol is rendered in a single color: the
- *   state-dependent item icon color (`tabBarItemIconColor`, `tabBarTintColor`).
- * - `original` - the symbol keeps its own colors (Apple's "multicolor"
+ * @remarks
+ * - `'default'` — the system behavior (UIKit's automatic mode), also used
+ *   when {@link TabsScreenIconSfSymbolIOS.renderingMode | renderingMode} is
+ *   unset: system symbols are rendered in a single color, the state-dependent
+ *   item icon color; for custom symbols the rendering mode set in the asset
+ *   catalog may change it.
+ * - `'monochrome'` — the symbol is rendered in a single color: the
+ *   state-dependent item icon color
+ *   ({@link TabsScreenItemStateAppearanceIOS.tabBarItemIconColor | tabBarItemIconColor},
+ *   {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor}).
+ * - `'original'` — the symbol keeps its own colors (Apple's "multicolor"
  *   rendering) and ignores the item icon color. A symbol without color layers
  *   is drawn as authored.
  */
@@ -41,62 +49,73 @@ export type TabsScreenIconSymbolRenderingModeIOS =
 
 export interface TabsScreenIconImageSourceIOS extends PlatformIconShared {
   /**
-   * @summary How the tab bar renders this image. See
-   * {@link TabsScreenIconImageRenderingModeIOS}.
+   * How the tab bar renders this image.
    *
-   * Defaults to `default`, the system behavior.
+   * @remarks
+   * {@link TabsScreenPropsIOS.icon | icon} and
+   * {@link TabsScreenPropsIOS.selectedIcon | selectedIcon} may use different
+   * values.
    *
-   * `icon` and `selectedIcon` may use different values.
+   * @defaultValue `'default'`, the system behavior.
    */
   renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
 }
 
 export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
   /**
-   * @summary How the tab bar renders this symbol. See
-   * {@link TabsScreenIconSymbolRenderingModeIOS}.
+   * How the tab bar renders this symbol.
    *
-   * Defaults to `default`, the system behavior. Set `renderingMode`
-   * explicitly to be independent of it.
+   * @remarks
+   * Set `renderingMode` explicitly to be independent of the system behavior.
    *
-   * `icon` and `selectedIcon` may use different values.
+   * {@link TabsScreenPropsIOS.icon | icon} and
+   * {@link TabsScreenPropsIOS.selectedIcon | selectedIcon} may use different
+   * values.
+   *
+   * @defaultValue `'default'`, the system behavior.
    */
   renderingMode?: TabsScreenIconSymbolRenderingModeIOS | undefined;
 }
 
 /**
- * How the tab bar tints an `imageSource` or `drawableResource` icon on Android.
+ * How the tab bar tints an `'imageSource'` or `'drawableResource'` icon on
+ * Android.
  *
- * - `default` - the tab bar's default, also used when `tinting` is unset: the
- *   icon is tinted, as with `tinted`.
- * - `tinted` - the icon is drawn in the state-dependent item icon color
- *   (`tabBarItemIconColor`).
- * - `original` - the icon keeps its own colors and ignores the item icon color,
- *   e.g. a multicolor VectorDrawable.
+ * @remarks
+ * - `'default'` — the tab bar's default, also used when `tinting` is unset:
+ *   the icon is tinted, as with `'tinted'`.
+ * - `'tinted'` — the icon is drawn in the state-dependent item icon color
+ *   ({@link TabsScreenItemStateAppearanceAndroid.tabBarItemIconColor | tabBarItemIconColor}).
+ * - `'original'` — the icon keeps its own colors and ignores the item icon
+ *   color, e.g. a multicolor VectorDrawable.
  */
 export type TabsScreenIconTintingAndroid = 'default' | 'tinted' | 'original';
 
 export interface TabsScreenIconDrawableResourceAndroid
   extends PlatformIconAndroidDrawableResource {
   /**
-   * @summary How the tab bar tints this icon. See
-   * `TabsScreenIconTintingAndroid`.
+   * How the tab bar tints this icon.
    *
-   * Defaults to `default`, which tints the icon.
+   * @remarks
+   * {@link TabsScreenPropsAndroid.icon | icon} and
+   * {@link TabsScreenPropsAndroid.selectedIcon | selectedIcon} may use
+   * different values.
    *
-   * `icon` and `selectedIcon` may use different values.
+   * @defaultValue `'default'`, which tints the icon.
    */
   tinting?: TabsScreenIconTintingAndroid | undefined;
 }
 
 export interface TabsScreenIconImageSourceAndroid extends PlatformIconShared {
   /**
-   * @summary How the tab bar tints this icon. See
-   * `TabsScreenIconTintingAndroid`.
+   * How the tab bar tints this icon.
    *
-   * Defaults to `default`, which tints the icon.
+   * @remarks
+   * {@link TabsScreenPropsAndroid.icon | icon} and
+   * {@link TabsScreenPropsAndroid.selectedIcon | selectedIcon} may use
+   * different values.
    *
-   * `icon` and `selectedIcon` may use different values.
+   * @defaultValue `'default'`, which tints the icon.
    */
   tinting?: TabsScreenIconTintingAndroid | undefined;
 }
