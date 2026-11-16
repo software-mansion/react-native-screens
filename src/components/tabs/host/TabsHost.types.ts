@@ -10,7 +10,7 @@ import type {
 // #region Control
 
 /**
- * Request to select a tab, passed to
+ * Navigation state requested from JS, passed to
  * {@link TabsHostPropsBase.navStateRequest | navStateRequest}.
  */
 export type TabsHostNavStateRequest = {
@@ -209,7 +209,7 @@ export interface TabsHostPropsBase {
    */
   navStateRequest: TabsHostNavStateRequest;
   /**
-   * If true, the native side will reject any navigation state updates coming
+   * If `true`, the native side will reject any navigation state updates coming
    * from JS if they are stale.
    *
    * @remarks
