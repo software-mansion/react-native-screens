@@ -784,11 +784,10 @@ export interface StackHeaderConfigPropsIOS {
    * {@link StackHeaderAppearanceIOS.subtitleFontStyle | subtitleFontStyle} and
    * {@link StackHeaderAppearanceIOS.subtitleFontColor | subtitleFontColor}.
    *
-   * Native platform limitations:
-   * - On iOS 26, header items resolve the `button` / `prominentButton`
-   *   attributes once, from whichever appearance is in effect at the moment the
-   *   items are attached to the navigation bar, and do not update on property
-   *   changes or scroll edge transitions.
+   * Native platform limitation: on iOS 26, header items resolve the `button` /
+   * `prominentButton` attributes once, from whichever appearance is in effect
+   * at the moment the items are attached to the navigation bar, and do not
+   * update on property changes or scroll edge transitions.
    *
    * @platform ios
    */
@@ -810,11 +809,10 @@ export interface StackHeaderConfigPropsIOS {
    * {@link StackHeaderAppearanceIOS.subtitleFontStyle | subtitleFontStyle} and
    * {@link StackHeaderAppearanceIOS.subtitleFontColor | subtitleFontColor}.
    *
-   * Native platform limitations:
-   * - On iOS 26, header items resolve the `button` / `prominentButton`
-   *   attributes once, from whichever appearance is in effect at the moment the
-   *   items are attached to the navigation bar, and do not update on property
-   *   changes or scroll edge transitions.
+   * Native platform limitation: on iOS 26, header items resolve the `button` /
+   * `prominentButton` attributes once, from whichever appearance is in effect
+   * at the moment the items are attached to the navigation bar, and do not
+   * update on property changes or scroll edge transitions.
    *
    * @platform ios
    */

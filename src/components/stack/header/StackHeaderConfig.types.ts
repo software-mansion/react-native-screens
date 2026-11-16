@@ -55,7 +55,6 @@ export interface StackHeaderConfigPropsBase {
    * When `true`, content is rendered behind the header instead of starting
    * below it.
    *
-   * On Android:
    * - The header background color is not affected by this prop.
    * - Setting this prop to `true` is not supported when header scrolling is
    *   enabled.
