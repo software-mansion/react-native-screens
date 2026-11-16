@@ -7,10 +7,10 @@ import type { TabsScreenIconAndroid } from './TabsScreenIcon.types';
  * @remarks
  * The following values are available:
  * - `'auto'` — the label behaves as in `'labeled'` mode when there are 3
- *   items or less, or as in `'selected'` mode when there are 4 items or more
- * - `'selected'` — the label is only shown on the selected navigation item
- * - `'labeled'` — the label is shown on all navigation items
- * - `'unlabeled'` — the label is hidden for all navigation items
+ *   items or less, or as in `'selected'` mode when there are 4 items or more.
+ * - `'selected'` — the label is only shown on the selected navigation item.
+ * - `'labeled'` — the label is shown on all navigation items.
+ * - `'unlabeled'` — the label is hidden for all navigation items.
  *
  * The supported values correspond to the official Material Components
  * documentation.
@@ -217,7 +217,7 @@ export interface TabsScreenPropsAndroid {
    * To use `selectedIcon`, `icon` must also be provided.
    *
    * @example
-   * The drawable is tinted while unselected and shows its own colors while
+   * The drawable is shown tinted while unselected and in its own colors while
    * selected:
    * ```tsx
    * <Tabs.Screen
