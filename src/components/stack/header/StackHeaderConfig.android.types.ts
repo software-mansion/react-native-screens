@@ -19,9 +19,11 @@ export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
  *
  * @remarks
  * The following values are supported:
- * - `'start'` — the text is aligned to the start edge.
- * - `'center'` — the text is centered.
- * - `'end'` — the text is aligned to the end edge.
+ * - `'start'` — the start edge: left in left-to-right layouts, right in
+ *   right-to-left layouts.
+ * - `'center'`
+ * - `'end'` — the end edge: right in left-to-right layouts, left in
+ *   right-to-left layouts.
  */
 export type StackHeaderTitleHorizontalGravityAndroid =
   | 'start'
@@ -34,9 +36,9 @@ export type StackHeaderTitleHorizontalGravityAndroid =
  *
  * @remarks
  * The following values are supported:
- * - `'top'` — the text is aligned to the top.
- * - `'center'` — the text is centered.
- * - `'bottom'` — the text is aligned to the bottom.
+ * - `'top'`
+ * - `'center'`
+ * - `'bottom'`
  */
 export type StackHeaderTitleVerticalGravityAndroid =
   | 'top'
@@ -119,7 +121,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
 }
 
 /**
- * Whether a menu element is displayed as a button in the Toolbar.
+ * When a menu element is displayed as a button in the Toolbar.
  *
  * @remarks
  * The following values are available:
@@ -219,14 +221,16 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Specifies the icon for the menu element.
    *
    * @remarks
-   * `imageSource` type doesn't support SVGs on Android. For loading SVGs use
-   * `drawableResource` type. `drawableResource` type requires passing a
+   * `'imageSource'` type doesn't support SVGs on Android. For loading SVGs use
+   * `'drawableResource'` type. `'drawableResource'` type requires passing a
    * drawable to resources via Android Studio.
    *
    * The icon will be visible only if the menu element is shown in the Toolbar.
    *
-   * An icon set via the `updateToolbarMenuElements` view command takes
-   * precedence over this one until the next `toolbarMenu` change.
+   * An icon set via the
+   * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}
+   * view command takes precedence over this one until the next
+   * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} change.
    */
   icon?: PlatformIconAndroid | undefined;
   /**
@@ -268,10 +272,14 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
  *
  * @remarks
  * The following values are available:
- * - `'action'` — the item fires `onPress` without any toggle state,
- * - `'toggle'` — the item is checkable; requires `groupId`,
- * - `'automatic'` — the item becomes checkable if it has a `groupId`,
- *   otherwise it behaves as an action.
+ * - `'action'` — the item fires
+ *   {@link StackHeaderToolbarMenuItemAndroid.onPress | onPress} without any
+ *   toggle state,
+ * - `'toggle'` — the item is checkable; requires
+ *   {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId},
+ * - `'automatic'` — the item becomes checkable if it has a
+ *   {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId}, otherwise it
+ *   behaves as an action.
  */
 export type StackHeaderToolbarMenuItemTypeAndroid =
   | 'action'
@@ -283,9 +291,10 @@ export type StackHeaderToolbarMenuItemTypeAndroid =
  *
  * @remarks
  * Depending on its
- * {@link StackHeaderToolbarMenuItemAndroid.itemType | itemType}, the item
- * calls {@link StackHeaderToolbarMenuItemAndroid.onPress | onPress} or toggles
- * its checked state.
+ * {@link StackHeaderToolbarMenuItemAndroid.itemType | itemType} and
+ * {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId}, the item calls
+ * {@link StackHeaderToolbarMenuItemAndroid.onPress | onPress} or toggles its
+ * checked state.
  */
 export interface StackHeaderToolbarMenuItemAndroid
   extends StackHeaderToolbarMenuItemBaseAndroid {
@@ -309,7 +318,8 @@ export interface StackHeaderToolbarMenuItemAndroid
    * Controls how the item behaves when clicked.
    *
    * @remarks
-   * If `'toggle'` menu item is shown in the toolbar by setting `showAsAction`
+   * If `'toggle'` menu item is shown in the toolbar by setting
+   * {@link StackHeaderToolbarMenuItemBaseAndroid.showAsAction | showAsAction}
    * prop to value other than `'never'`, there is no visual indication of the
    * item toggle state.
    *
@@ -322,11 +332,14 @@ export interface StackHeaderToolbarMenuItemAndroid
    * @remarks
    * Only meaningful when effective `itemType` is `'toggle'`.
    *
-   * The initial state does not trigger `onSelectionChange` on the group at
-   * mount time.
+   * The initial state does not trigger
+   * {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}
+   * on the group at mount time.
    *
-   * A `toolbarMenu` prop change restores the selection to this value. Neither
-   * that restore nor a native header rebuild triggers `onSelectionChange`.
+   * A {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} prop
+   * change restores the selection to this value. Neither that restore nor a
+   * native header rebuild triggers
+   * {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}.
    *
    * @defaultValue `false`
    */
@@ -336,8 +349,9 @@ export interface StackHeaderToolbarMenuItemAndroid
    *
    * @remarks
    * Not called for items that behave as toggles (items with a `groupId` or
-   * `itemType: 'toggle'`). For those items, use `onSelectionChange` on the
-   * group instead.
+   * `itemType: 'toggle'`). For those items, use
+   * {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}
+   * on the group instead.
    */
   onPress?: (() => void) | undefined;
 }
@@ -392,8 +406,9 @@ export interface StackHeaderToolbarMenuBaseAndroid {
    *
    * @remarks
    * Groups enable selection behavior (single or multi-toggle) for items that
-   * share the same `groupId`. A group is scoped to the menu level it is defined
-   * in — groups cannot span submenus.
+   * share the same {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId}.
+   * A group is scoped to the menu level it is defined in — groups cannot span
+   * submenus.
    */
   groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
   /**
@@ -514,17 +529,24 @@ export interface StackHeaderConfigCommandsAndroid {
    * Batches run in call order on a serial FIFO queue, so a later call is never
    * overtaken by an earlier one whose icon happened to load late.
    *
-   * Updates persist for the lifetime of the current `toolbarMenu`
+   * Updates persist for the lifetime of the current
+   * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu}
    * configuration: they survive every native header rebuild — an effective
-   * color scheme change, a header `type`, `maxLines` or
-   * `collapsedTitleGravityMode` change, hiding and re-showing the header,
-   * reattaching the screen (e.g. switching tabs) — and unrelated re-renders.
-   * Updates sent while the header is hidden are recorded — and emit their
-   * selection events — as usual, and take effect when the header is next shown.
-   * Only a `toolbarMenu` prop change resets them, dropping the batches still
-   * queued as well (see its docs). An update whose `id` is not in the current
-   * menu is ignored. An `icon` set via this command takes precedence over the
-   * icon declared in `toolbarMenu` until the next `toolbarMenu` change.
+   * color scheme change, a header
+   * {@link StackHeaderConfigPropsAndroid.type | type},
+   * {@link StackHeaderConfigPropsAndroid.maxLines | maxLines} or
+   * {@link StackHeaderConfigPropsAndroid.collapsedTitleGravityMode | collapsedTitleGravityMode}
+   * change, hiding and re-showing the header, reattaching the screen (e.g.
+   * switching tabs) — and unrelated re-renders. Updates sent while the header
+   * is hidden are recorded — and emit their selection events — as usual, and
+   * take effect when the header is next shown. Only a
+   * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} prop change
+   * resets them, dropping the batches still queued as well (see its docs). An
+   * update whose `id` is not in the current menu is ignored. An `icon` set via
+   * this command takes precedence over the icon declared in
+   * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} until the
+   * next {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu}
+   * change.
    *
    * @param updates - A single update object or an array of updates.
    * @platform android
@@ -547,8 +569,10 @@ export interface StackHeaderConfigPropsAndroid {
    * M3 Expressive headers aren't currently supported (there is no stable
    * `MDC-Android` version yet).
    *
-   * Changing this prop at runtime rebuilds the header. Toolbar menu state
-   * survives the rebuild — see `updateToolbarMenuElements`.
+   * @note
+   * This is an implementation detail and may change. Changing this prop at
+   * runtime rebuilds the header. Toolbar menu state survives the rebuild — see
+   * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}.
    *
    * @defaultValue `'small'`
    * @see {@link https://m3.material.io/components/app-bars/overview | Material Design 3: App bars}
@@ -595,8 +619,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
-   * transparent.
+   * provide
+   * {@link StackHeaderConfigPropsAndroid.backButtonTintColorNormal | backButtonTintColorNormal}.
+   * Otherwise, the icon will become transparent.
    *
    * @platform android
    */
@@ -607,8 +632,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `backButtonTintColorNormal`. Otherwise, the icon will become
-   * transparent.
+   * provide
+   * {@link StackHeaderConfigPropsAndroid.backButtonTintColorNormal | backButtonTintColorNormal}.
+   * Otherwise, the icon will become transparent.
    *
    * @platform android
    */
@@ -619,8 +645,8 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * When `undefined`, the native back arrow (`homeAsUpIndicator`) is used.
    *
-   * `imageSource` type doesn't support SVGs on Android. For loading SVGs use
-   * `drawableResource` type. `drawableResource` type requires passing a
+   * `'imageSource'` type doesn't support SVGs on Android. For loading SVGs use
+   * `'drawableResource'` type. `'drawableResource'` type requires passing a
    * drawable to resources via Android Studio.
    *
    * @platform android
@@ -633,8 +659,8 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * When `undefined`, the Material 3 Expressive default overflow icon is used.
    *
-   * `imageSource` type doesn't support SVGs on Android. For loading SVGs use
-   * `drawableResource` type. `drawableResource` type requires passing a
+   * `'imageSource'` type doesn't support SVGs on Android. For loading SVGs use
+   * `'drawableResource'` type. `'drawableResource'` type requires passing a
    * drawable to resources via Android Studio.
    *
    * @platform android
@@ -657,8 +683,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
-   * transparent.
+   * provide
+   * {@link StackHeaderConfigPropsAndroid.overflowIconTintColorNormal | overflowIconTintColorNormal}.
+   * Otherwise, the icon will become transparent.
    *
    * @platform android
    */
@@ -669,8 +696,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Due to native platform limitations, if you set this prop, you must also
-   * provide `overflowIconTintColorNormal`. Otherwise, the icon will become
-   * transparent.
+   * provide
+   * {@link StackHeaderConfigPropsAndroid.overflowIconTintColorNormal | overflowIconTintColorNormal}.
+   * Otherwise, the icon will become transparent.
    *
    * @platform android
    */
@@ -681,8 +709,8 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * When `undefined`, falls back to the type-specific default:
-   * - `'small'` -> `false`
-   * - `'medium'` / `'large'` -> `true`
+   * - `'small'`: `false`
+   * - `'medium'` / `'large'`: `true`
    *
    * Changing any `scrollFlag*` at runtime while the header is partially
    * collapsed snaps it back to its fully expanded state. A fully collapsed
@@ -696,7 +724,8 @@ export interface StackHeaderConfigPropsAndroid {
    * When enabled, the header re-expands as soon as the user scrolls back toward
    * the top of the content, regardless of the ScrollView's current scroll
    * position. Without this flag, the header only begins expanding once the list
-   * has reached the top of its content. Requires `scrollFlagScroll`.
+   * has reached the top of its content. Requires
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * @remarks
    * When `undefined`, falls back to the type-specific default (`false` for all
@@ -706,10 +735,12 @@ export interface StackHeaderConfigPropsAndroid {
    */
   scrollFlagEnterAlways?: boolean | undefined;
   /**
-   * Modifies `scrollFlagEnterAlways` so that the initial re-entry stops at the
-   * header's collapsed height (the toolbar); the remainder expands only after
-   * the ScrollView reaches the top of its content. Requires
-   * `scrollFlagEnterAlways`.
+   * Modifies
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagEnterAlways | scrollFlagEnterAlways}
+   * so that the initial re-entry stops at the header's collapsed height (the
+   * toolbar); the remainder expands only after the ScrollView reaches the top
+   * of its content. Requires
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagEnterAlways | scrollFlagEnterAlways}.
    *
    * @remarks
    * When `undefined`, falls back to the type-specific default (`false` for all
@@ -723,15 +754,16 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * When enabled, the header collapses only until its minimum height (the
    * toolbar) remains pinned at the top. Without this flag, the entire header
-   * scrolls off the screen. Requires `scrollFlagScroll`.
+   * scrolls off the screen. Requires
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * @remarks
    * When `undefined`, falls back to the type-specific default:
-   * - `'small'` -> `false`
-   * - `'medium'` / `'large'` -> `true`
+   * - `'small'`: `false`
+   * - `'medium'` / `'large'`: `true`
    *
    * Setting this flag for `'small'` header is equivalent to disabling
-   * `scrollFlagScroll`.
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * Even when this flag is disabled, a strip with the height of the system top
    * inset (status bar and display cutout) remains visible at the top.
@@ -741,14 +773,15 @@ export interface StackHeaderConfigPropsAndroid {
   scrollFlagExitUntilCollapsed?: boolean | undefined;
   /**
    * When enabled, the header snaps to its nearest edge (fully expanded, or
-   * fully collapsed as defined by `scrollFlagExitUntilCollapsed`) after a
-   * scroll gesture ends, instead of resting partway. Requires
-   * `scrollFlagScroll`.
+   * fully collapsed as defined by
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagExitUntilCollapsed | scrollFlagExitUntilCollapsed})
+   * after a scroll gesture ends, instead of resting partway. Requires
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * @remarks
    * When `undefined`, falls back to the type-specific default:
-   * - `'small'` -> `false`
-   * - `'medium'` / `'large'` -> `true`
+   * - `'small'`: `false`
+   * - `'medium'` / `'large'`: `true`
    *
    * @platform android
    */
@@ -769,8 +802,9 @@ export interface StackHeaderConfigPropsAndroid {
    * is instead controlled by that content scrim — see
    * {@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor}.
    *
-   * Has no effect while the header is `transparent` (there is no scrolling
-   * content behavior installed in that mode).
+   * Has no effect while the header is
+   * {@link StackHeaderConfigPropsBase.transparent | transparent} (there is no
+   * scrolling content behavior installed in that mode).
    *
    * @defaultValue `true`
    * @platform android
@@ -801,8 +835,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * For `'medium'` / `'large'` headers, this is the color of the content scrim
    * that fades in as the header collapses. The scrim is drawn above the header
-   * background (and the `backgroundSubview`, if any) but below the toolbar
-   * content.
+   * background (and the
+   * {@link StackHeaderConfigPropsAndroid.backgroundSubview | backgroundSubview},
+   * if any) but below the toolbar content.
    *
    * A translucent color is composited over the header background instead of
    * replacing it.
@@ -847,22 +882,25 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * This prop serves as initial configuration of the toolbar menu. If you want
-   * to change some property in runtime, use `updateToolbarMenuElements` view
-   * command.
+   * to change some property in runtime, use
+   * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}
+   * view command.
    *
    * Changing this prop at runtime rebuilds the toolbar menu and resets all of
    * its runtime state: checkbox/radio selections return to their
-   * `initialToggleState` and every change applied via
-   * `updateToolbarMenuElements` is discarded, including batches still waiting
-   * in the queue (e.g. for an icon download). Any real change counts, even one
-   * only swapping an item's icon; re-sending an identical menu is a no-op and
-   * preserves the state.
+   * {@link StackHeaderToolbarMenuItemAndroid.initialToggleState | initialToggleState}
+   * and every change applied via
+   * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}
+   * is discarded, including batches still waiting in the queue (e.g. for an
+   * icon download). Any real change counts, even one only swapping an item's
+   * icon; re-sending an identical menu is a no-op and preserves the state.
    *
    * An invalid menu is rejected — for example duplicate item or group ids, a
-   * `groupId` that is not declared at the same menu level, or more than one
-   * `initialToggleState` in a single-selection group. The menu is validated
-   * when the prop is set, and a rejected menu leaves the previous one in
-   * effect.
+   * {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId} that is not
+   * declared at the same menu level, or more than one
+   * {@link StackHeaderToolbarMenuItemAndroid.initialToggleState | initialToggleState}
+   * in a single-selection group. The menu is validated when the prop is set,
+   * and a rejected menu leaves the previous one in effect.
    *
    * @platform android
    */
@@ -882,7 +920,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Applies to the `'small'` header only; ignored for `'medium'` / `'large'`
-   * (use `expandedTitleHorizontalGravity` / `collapsedTitleHorizontalGravity`
+   * (use
+   * {@link StackHeaderConfigPropsAndroid.expandedTitleHorizontalGravity | expandedTitleHorizontalGravity} /
+   * {@link StackHeaderConfigPropsAndroid.collapsedTitleHorizontalGravity | collapsedTitleHorizontalGravity}
    * instead). The title is centered independently of the subtitle. Combining a
    * centered title with leading and/or center subviews is not recommended —
    * they may overlap or be laid out incorrectly.
@@ -908,8 +948,8 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Applies to `'medium'` / `'large'` headers only; ignored for `'small'` (use
-   * `titleCentered` instead). The subtitle always follows the title's
-   * alignment.
+   * {@link StackHeaderConfigPropsAndroid.titleCentered | titleCentered}
+   * instead). The subtitle always follows the title's alignment.
    *
    * @defaultValue `'start'`
    * @platform android
@@ -935,7 +975,8 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * Applies to `'medium'` / `'large'` headers only; ignored for `'small'`. The
    * subtitle always follows the title's alignment. `'center'` is further
-   * affected by `collapsedTitleGravityMode`.
+   * affected by
+   * {@link StackHeaderConfigPropsAndroid.collapsedTitleGravityMode | collapsedTitleGravityMode}.
    *
    * @defaultValue `'start'`
    * @platform android
@@ -963,12 +1004,14 @@ export interface StackHeaderConfigPropsAndroid {
    * collapsed state; it is only visually meaningful with
    * `collapsedTitleHorizontalGravity: 'center'`.
    *
-   * Because the underlying Material field is set at construction time, changing
-   * this prop rebuilds the header.
-   *
    * If the header is laid out during a screen transition, due to a native bug,
    * the title and the subtitle might be laid out incorrectly when
    * `'entireSpace'` gravity mode is used.
+   *
+   * @note
+   * This is an implementation detail and may change. Because the underlying
+   * Material field is set at construction time, changing this prop rebuilds the
+   * header.
    *
    * @defaultValue `'availableSpace'`
    * @platform android
@@ -988,8 +1031,10 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * A value less than `1` is invalid and falls back to `1`.
    *
-   * Changing this value at runtime rebuilds the header. This is required due to
-   * a native platform limitation.
+   * @note
+   * This is an implementation detail and may change. Changing this value at
+   * runtime rebuilds the header. This is required due to a native platform
+   * limitation.
    *
    * @defaultValue `1`
    * @platform android
@@ -1021,9 +1066,11 @@ export interface StackHeaderConfigPropsAndroid {
    * End inset of the toolbar content area.
    *
    * @remarks
-   * The end-side counterpart of `contentInsetStart`. Applies to all header
-   * types. Like its start-side counterpart it is a minimum, so it is inert
-   * while the toolbar menu shows items that already reach further in.
+   * The end-side counterpart of
+   * {@link StackHeaderConfigPropsAndroid.contentInsetStart | contentInsetStart}.
+   * Applies to all header types. Like its start-side counterpart it is a
+   * minimum, so it is inert while the toolbar menu shows items that already
+   * reach further in.
    *
    * If value is not provided, falls back to Material's default.
    *
