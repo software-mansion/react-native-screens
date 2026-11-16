@@ -14,18 +14,16 @@ const ANIMATION_OPTIONS = [
   'slideFromRight',
 ] as const satisfies readonly StackScreenAnimation[];
 
-function TestStackAnimationIOSAndroid() {
+function TestStackAnimationIOSFrom() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="iosFromRight"
       withDirectionPicker
       withColorReference
+      withHeaderPicker
     />
   );
 }
 
-export default createScenario(
-  TestStackAnimationIOSAndroid,
-  scenarioDescription,
-);
+export default createScenario(TestStackAnimationIOSFrom, scenarioDescription);
