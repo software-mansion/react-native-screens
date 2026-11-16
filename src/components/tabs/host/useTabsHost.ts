@@ -3,6 +3,7 @@ import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsHostAndroidNativeComponentProps } from '../../../fabric/tabs/TabsHostAndroidNativeComponent';
 import type { NativeProps as TabsHostIOSNativeComponentProps } from '../../../fabric/tabs/TabsHostIOSNativeComponent';
 import { RNSLog } from '../../../private';
+import type { NativeEventHandler } from '../../shared/types';
 import type { TabSelectedEvent } from './TabsHost.types';
 
 type TabsHostPlatformNativeComponentProps =
@@ -11,9 +12,7 @@ type TabsHostPlatformNativeComponentProps =
 
 interface TabsHostConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  onTabSelected?:
-    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
-    | undefined;
+  onTabSelected?: NativeEventHandler<TabSelectedEvent> | undefined;
 }
 
 export function useTabsHost<T extends TabsHostPlatformNativeComponentProps>({

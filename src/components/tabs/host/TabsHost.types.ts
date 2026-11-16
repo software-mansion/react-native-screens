@@ -1,7 +1,11 @@
-import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
+import type { ColorValue, ViewProps } from 'react-native';
 import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
-import type { ColorScheme, Direction } from '../../shared/types';
+import type {
+  ColorScheme,
+  Direction,
+  NativeEventHandler,
+} from '../../shared/types';
 
 // #region Control
 
@@ -45,6 +49,12 @@ export type TabsHostNavStateRequest = {
 
 // #region General helpers
 
+export type TabSelectionActionOrigin =
+  | 'user'
+  | 'programmatic-js'
+  | 'programmatic-native'
+  | 'implicit';
+
 /**
  * @summary Payload of the event emitted when a tab selection occurs on the native side.
  *
@@ -73,7 +83,7 @@ export type TabSelectedEvent = {
    *   (e.g. UIKit reshuffling the selection during a horizontal size-class transition on iPad).
    *   Currently only emitted on iOS.
    */
-  actionOrigin: 'user' | 'programmatic-js' | 'programmatic-native' | 'implicit';
+  actionOrigin: TabSelectionActionOrigin;
 };
 
 /**
@@ -122,9 +132,9 @@ export type TabSelectionPreventedEvent = {
   preventedScreenKey: string;
 };
 
-export type TabsHostColorScheme = ColorScheme | 'inherit';
+export type TabsColorScheme = ColorScheme | 'inherit';
 
-export type TabsHostDirection = Direction | 'inherit';
+export type TabsDirection = Direction | 'inherit';
 
 export type TabsHostNativeContainerStyleProps = {
   /**
@@ -224,7 +234,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  direction?: TabsHostDirection | undefined;
+  direction?: TabsDirection | undefined;
   /**
    * @summary Specifies the color scheme used by the container and any child containers.
    *
@@ -237,7 +247,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  colorScheme?: TabsHostColorScheme | undefined;
+  colorScheme?: TabsColorScheme | undefined;
 
   // Events
   /**
@@ -245,9 +255,7 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  onTabSelected?:
-    | ((event: NativeSyntheticEvent<TabSelectedEvent>) => void)
-    | undefined;
+  onTabSelected?: NativeEventHandler<TabSelectedEvent> | undefined;
 
   /**
    * @summary
@@ -256,7 +264,7 @@ export interface TabsHostPropsBase {
    * @see {@link TabSelectionRejectedEvent}
    */
   onTabSelectionRejected?:
-    | ((event: NativeSyntheticEvent<TabSelectionRejectedEvent>) => void)
+    | NativeEventHandler<TabSelectionRejectedEvent>
     | undefined;
 
   /**
@@ -267,7 +275,7 @@ export interface TabsHostPropsBase {
    * @see {@link TabSelectionPreventedEvent}
    */
   onTabSelectionPrevented?:
-    | ((event: NativeSyntheticEvent<TabSelectionPreventedEvent>) => void)
+    | NativeEventHandler<TabSelectionPreventedEvent>
     | undefined;
 }
 
