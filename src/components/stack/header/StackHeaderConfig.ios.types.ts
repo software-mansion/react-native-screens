@@ -80,9 +80,7 @@ export interface StackHeaderBaseItemIOS {
  */
 export interface SupportsMenuIOS {
   /**
-   * Menu definition for the context menu that appears when the item is
-   * tapped, or long-pressed when the item also has
-   * {@link StackHeaderInlineItemIOS.onPress | onPress}.
+   * Menu definition for the context menu that appears when item is tapped.
    */
   menu?: StackHeaderMenuIOS | undefined;
   /**
@@ -164,11 +162,11 @@ export interface SupportsIdentifierIOS {
    *
    * @remarks
    * When navigating between screens, iOS tries to match similarly looking items
-   * (e.g. the same SF Symbol) and animate between them. If the heuristic fails,
-   * a simpler crossfade is applied. In a situation where visually different
-   * items should be logically considered the same across screens, you may use
-   * this prop to tell this fact to the system. The identifier shouldn't be
-   * updated at runtime.
+   * (i.e. same sfSymbol) and animate between them. If the heuristic fails, a
+   * simpler crossfade is applied. In a situation where visually different items
+   * should be logically considered the same across screens, you may use this
+   * prop to tell this fact to the system. The identifier shouldn't be updated
+   * at runtime.
    *
    * @note
    * This is an implementation detail and may change. Updating the identifier
