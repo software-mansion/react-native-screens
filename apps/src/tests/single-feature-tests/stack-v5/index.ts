@@ -10,7 +10,7 @@ import TestStackAnimationOperationsAndroid from './test-stack-animation-operatio
 import TestStackAnimationUpdate from './test-stack-animation-update';
 import TestStackAnimationSlide from './test-stack-animation-slide';
 import TestStackAnimationFade from './test-stack-animation-fade';
-import TestStackAnimationIOSAndroid from './test-stack-animation-ios-android';
+import TestStackAnimationIOSFrom from './test-stack-animation-ios-from';
 import TestStackAnimationNone from './test-stack-animation-none';
 import TestStackAnimationOptionsAndroid from './test-stack-animation-options-android';
 import TestStackAnimationReplaceAndroid from './test-stack-animation-replace-android';
@@ -61,7 +61,7 @@ export { default as TestStackAnimationOperationsAndroid } from './test-stack-ani
 export { default as TestStackAnimationUpdate } from './test-stack-animation-update';
 export { default as TestStackAnimationSlide } from './test-stack-animation-slide';
 export { default as TestStackAnimationFade } from './test-stack-animation-fade';
-export { default as TestStackAnimationIOSAndroid } from './test-stack-animation-ios-android';
+export { default as TestStackAnimationIOSFrom } from './test-stack-animation-ios-from';
 export { default as TestStackAnimationNone } from './test-stack-animation-none';
 export { default as TestStackAnimationOptionsAndroid } from './test-stack-animation-options-android';
 export { default as TestStackAnimationReplaceAndroid } from './test-stack-animation-replace-android';
@@ -111,7 +111,7 @@ const scenarios = {
   TestStackAnimationUpdate,
   TestStackAnimationSlide,
   TestStackAnimationFade,
-  TestStackAnimationIOSAndroid,
+  TestStackAnimationIOSFrom,
   TestStackAnimationNone,
   TestStackAnimationOptionsAndroid,
   TestStackAnimationReplaceAndroid,

@@ -5,12 +5,11 @@
 **Description:** Verify the slide presets of the `animation` prop of
 `Stack.Screen`. Pass: the horizontal presets move both screens the full width
 in the same direction, `slideFromBottom` and `slideFromTop` move only the
-screen that enters or leaves, and every preset reverses on pop. On Android
-every preset follows the predictive back gesture and, when the host's layout
-direction is `rtl`, which the "START"/"END" row reports, `slideFromTrailing`
-and `slideFromLeading` swap sides while `slideFromRight` and `slideFromLeft` do
-not. On iOS the header back button and the back button menu pop with the
-preset.
+screen that enters or leaves, every preset reverses on pop, and when the
+host's layout direction is `rtl`, `slideFromTrailing` and `slideFromLeading`
+swap sides while `slideFromRight` and `slideFromLeft` do not. On Android every
+preset follows the predictive back gesture; on iOS the header back button and
+the back button menu pop with the preset.
 
 **OS test creation version:** iOS 18.6 and 27.2, Android API Level 37.
 
@@ -108,32 +107,77 @@ assertable with Detox.
 
    - [ ] "Blue" rises back out through the top edge and "Home" is static.
 
-## Steps - Android
+---
 
 ### `slideFromTrailing` and `slideFromLeading`
 
 1. On "Home", set "next push" to `slideFromTrailing`, then tap "Push Blue".
 
-   - [ ] The same as `slideFromRight`: "Blue" travels in from the right edge
-         across the full width while "Home" travels out to the left, as one
-         band.
+   - [ ] "Blue" enters from the right edge.
+   - [ ] "Home" leaves to the left, as one band with "Blue".
 
 2. On "Blue", tap "Pop".
 
-   - [ ] "Blue" travels out to the right across the full width while "Home"
-         travels back in from the left, as one band.
+   - [ ] "Blue" leaves to the right.
+   - [ ] "Home" returns from the left, as one band with "Blue".
 
 3. On "Home", set "next push" to `slideFromLeading`, then tap "Push Blue".
 
-   - [ ] The same as `slideFromLeft`: "Blue" enters from the left edge and
-         "Home" leaves to the right, as one band.
+   - [ ] "Blue" enters from the left edge.
+   - [ ] "Home" leaves to the right, as one band with "Blue".
 
 4. On "Blue", tap "Pop".
 
-   - [ ] "Blue" leaves to the left and "Home" returns from the right, as one
-         band.
+   - [ ] "Blue" leaves to the left.
+   - [ ] "Home" returns from the right, as one band with "Blue".
 
 ---
+
+### Layout direction
+
+1. On "Home", set "next push" to `slideFromRight`, then set "direction" to
+   `rtl`.
+
+   - [ ] Android: "START" moves to the right of the row and "END" to the left.
+   - [ ] iOS: the row still reads "START" on the left.
+   - [ ] The card, the pickers and the buttons stay where they are.
+
+2. Tap "Push Blue".
+
+   - [ ] "Blue" enters from the right edge.
+   - [ ] "Home" leaves to the left.
+
+3. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right.
+   - [ ] "Home" returns from the left.
+
+4. On "Home", set "next push" to `slideFromTrailing`, then tap "Push Blue".
+
+   - [ ] "Blue" enters from the left edge.
+   - [ ] "Home" leaves to the right, as one band with "Blue".
+
+5. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the left.
+   - [ ] "Home" returns from the right, as one band with "Blue".
+
+6. On "Home", set "next push" to `slideFromLeading`, then tap "Push Blue".
+
+   - [ ] "Blue" enters from the right edge.
+   - [ ] "Home" leaves to the left, as one band with "Blue".
+
+7. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right.
+   - [ ] "Home" returns from the left, as one band with "Blue".
+
+8. Set "direction" to `ltr`.
+
+   - [ ] "direction" reads `ltr`.
+   - [ ] The row reads "START" on the left.
+
+## Steps - Android
 
 ### Predictive back gesture
 
@@ -155,50 +199,6 @@ assertable with Detox.
    - [ ] "Blue" travels out to the right across the full width while "Home"
          travels back in from the left, as one band.
 
----
-
-### Layout direction
-
-1. Set "direction" to `rtl`.
-
-   - [ ] "START" moves to the right of the row and "END" to the left. The card,
-         the pickers and the buttons are centred, so they stay where they are.
-
-2. Tap "Push Blue".
-
-   - [ ] "Blue" still enters from the right edge and "Home" still leaves to the
-         left.
-
-3. On "Blue", tap "Pop".
-
-   - [ ] "Blue" travels out to the right and "Home" returns from the left, the
-         same way as under `ltr`.
-
-4. On "Home", set "next push" to `slideFromTrailing`, then tap "Push Blue".
-
-   - [ ] Mirrored: "Blue" enters from the left edge and "Home" leaves to the
-         right, as one band.
-
-5. On "Blue", tap "Pop".
-
-   - [ ] "Blue" leaves to the left and "Home" returns from the right, as one
-         band.
-
-6. On "Home", set "next push" to `slideFromLeading`, then tap "Push Blue".
-
-   - [ ] "Blue" enters from the right edge and "Home" leaves to the left, as
-         one band.
-
-7. On "Blue", tap "Pop".
-
-   - [ ] "Blue" leaves to the right and "Home" returns from the left, as one
-         band.
-
-8. Set "direction" to `ltr`.
-
-   - [ ] "START" returns to the left of the row and "END" to the right. You end
-         on "Home" with "direction" reading `ltr`.
-
 ## Steps - iOS
 
 ### Header back button
@@ -215,10 +215,7 @@ assertable with Detox.
    - [ ] "Red" enters from the right as one band with "Blue". The header stays
          in place and shows "Red" and a back button by the end of the
          transition, with nothing left over.
-   - [ ] iOS 18: the header title and the back button label crossfade over the
-         whole transition.
-   - [ ] iOS 26+: the header title crossfades in the middle of the transition
-         and the back button stays in place.
+   - [ ] iOS: the header title crossfades.
 
 3. Tap the back button in the header.
 

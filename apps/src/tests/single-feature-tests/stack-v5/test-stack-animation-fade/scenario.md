@@ -4,11 +4,11 @@
 
 **Description:** Verify the fade presets of the `animation` prop of
 `Stack.Screen`. Pass: `fade` crossfades the two screens without moving either
-and takes the same time in both directions. On Android `fadeFromBottom` and
-`fadeFromTop` move the entering or leaving screen a short distance while its
-opacity changes and leave the other screen static, their pop is shorter than
-their push, and all three follow the predictive back gesture. On iOS the header
-back button pops with `fade`.
+and takes the same time in both directions; `fadeFromBottom` and `fadeFromTop`
+move the entering or leaving screen a short distance while its opacity changes
+and leave the other screen static, and their pop is shorter than their push. On
+Android all three follow the predictive back gesture; on iOS the header back
+button pops with the preset.
 
 **OS test creation version:** iOS 18.6 and 27.2, Android API Level 37.
 
@@ -24,10 +24,10 @@ interactive back gestures are not assertable with Detox.
 - iPhone: simulator or device.
 - Android emulator or device with gesture navigation enabled. The interactive
   predictive back gesture needs API 34 or newer.
-- Android, for the groups whose heading says "extended animation duration
-  scale" only: in Developer options set "Animator duration scale" and
-  "Transition animation scale" to 5x before the first of them and back to 1x
-  after the last. iOS runs every group at real speed.
+- Groups whose heading says "Android: 5x animation scale, iOS: normal": on
+  Android, in Developer options set "Animator duration scale" and "Transition
+  animation scale" to 5x before the first of them and back to 1x after the
+  last. On iOS they run at normal speed, like every other group.
 - Android: run the screen directly. In `apps/App.tsx` import and render
   `TestStackAnimationFade` as the root component instead of `Example`. Opened
   through the in-app menu, system back leaves the screen instead of popping the
@@ -44,8 +44,8 @@ interactive back gestures are not assertable with Detox.
 - While both screens are translucent the background behind them shows through
   faintly: on Android the window background, on iOS the app's background behind
   the stack (in this example app: white in light mode, black in dark mode).
-- **Known issue:** on iOS the back swipe of a `fade` screen plays the `default`
-  slide (labs #2066).
+- **Known issue:** on iOS the back swipe plays the `default` slide, whatever the
+  preset (labs #2066).
 
 ## Steps
 
@@ -61,7 +61,7 @@ interactive back gestures are not assertable with Detox.
 
 ---
 
-### `fade` (on Android with extended animation duration scale)
+### `fade` (Android: 5x animation scale, iOS: normal)
 
 1. Tap "Push Blue".
 
@@ -73,31 +73,34 @@ interactive back gestures are not assertable with Detox.
    - [ ] Neither frame moves. "Blue" fades out while "Home" fades in, over the
          same time the push took.
 
-## Steps - Android
+---
 
-### `fadeFromBottom` and `fadeFromTop` (with extended animation duration scale)
+### `fadeFromBottom` and `fadeFromTop` (Android: 5x animation scale, iOS: normal)
 
 1. On "Home", set "next push" to `fadeFromBottom`, then tap "Push Blue".
 
-   - [ ] "Blue" rises a short distance, about a twelfth of the height, while
-         fading in and slowing towards the end. "Home" is static (see Note).
+   - [ ] "Blue" rises a short distance, about a twelfth of the height.
+   - [ ] "Blue" fades in while it rises and slows towards the end.
+   - [ ] "Home" is static (see Note).
 
 2. On "Blue", tap "Pop".
 
-   - [ ] "Blue" sinks back the same short distance while fading out, over less
-         time than the push took. "Home" is static.
+   - [ ] "Blue" sinks back the same short distance while fading out.
+   - [ ] The pop takes less time than the push.
+   - [ ] "Home" is static.
 
 3. On "Home", set "next push" to `fadeFromTop`, then tap "Push Blue".
 
-   - [ ] Mirrored vertically: "Blue" drops in from the same short distance above
-         while fading in. "Home" is static.
+   - [ ] "Blue" drops in from the same short distance above while fading in.
+   - [ ] "Home" is static.
 
 4. On "Blue", tap "Pop".
 
-   - [ ] "Blue" rises the same short distance while fading out, again over less
-         time than the push took. "Home" is static.
+   - [ ] "Blue" rises the same short distance while fading out.
+   - [ ] The pop takes less time than the push.
+   - [ ] "Home" is static.
 
----
+## Steps - Android
 
 ### Predictive back gesture
 
@@ -140,7 +143,8 @@ interactive back gestures are not assertable with Detox.
 
 ### Header
 
-1. On "Home", set "next push header hidden" to `false`, then tap "Push Blue".
+1. On "Home", set "next push" to `fade` and "next push header hidden" to
+   `false`, then tap "Push Blue".
 
    - [ ] "Blue" fades in over "Home" and the header with the title "Blue" and a
          back button fades in over the same time.
@@ -160,6 +164,19 @@ interactive back gestures are not assertable with Detox.
 
    - [ ] "Blue" fades out while "Home" fades in and the header fades out over
          the same time.
+
+5. On "Home", set "next push" to `fadeFromBottom`, then tap "Push Blue".
+
+   - [ ] "Blue" rises a short distance while fading in.
+   - [ ] "Home" is static.
+   - [ ] The header with the title "Blue" and a back button fades in over the
+         same time without moving.
+
+6. Tap the back button in the header.
+
+   - [ ] "Blue" sinks a short distance while fading out.
+   - [ ] "Home" is static.
+   - [ ] The header fades out over the same time.
 
 ---
 
