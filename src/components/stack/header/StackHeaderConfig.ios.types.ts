@@ -49,6 +49,9 @@ export interface StackHeaderMenuOptionsIOS {
   icon?: PlatformIconIOS | undefined;
 }
 
+/**
+ * Identifier, title and icon of a header item.
+ */
 export interface StackHeaderBaseItemIOS {
   /**
    * A unique identifier within the screen header.
@@ -70,6 +73,9 @@ export interface StackHeaderBaseItemIOS {
   icon?: PlatformIconIOS | undefined;
 }
 
+/**
+ * Fields of a header item that attach a menu to it.
+ */
 export interface SupportsMenuIOS {
   /**
    * Menu definition for the context menu that appears when item is tapped.
@@ -88,6 +94,9 @@ export interface SupportsMenuIOS {
   menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
 
+/**
+ * Field of a header item that controls its shared background.
+ */
 export interface SupportsSharedBackgroundIOS {
   /**
    * Whether the liquid glass background for this item should be hidden.
@@ -115,6 +124,9 @@ export interface SupportsSharedBackgroundIOS {
  */
 export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';
 
+/**
+ * Field of a header item that sets its visibility priority.
+ */
 export interface SupportsVisibilityPriorityIOS {
   /**
    * Decides which items give way first when the header runs out of room.
@@ -136,6 +148,9 @@ export interface SupportsVisibilityPriorityIOS {
   visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
 }
 
+/**
+ * Field of a header item that matches it across screens during transitions.
+ */
 export interface SupportsIdentifierIOS {
   /**
    * Stable identifier used to match the item across different screens
@@ -301,11 +316,18 @@ export type StackHeaderSpacerItemIOS =
   | StackHeaderFixedSpacerItemIOS
   | StackHeaderFlexibleSpacerItemIOS;
 
+/**
+ * Item of {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
+ * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}.
+ */
 export type StackHeaderItemIOS =
   | StackHeaderInlineItemIOS
   | StackHeaderInlineCustomItemIOS
   | StackHeaderSpacerItemIOS;
 
+/**
+ * Custom view displayed in place of the title or the subtitle text.
+ */
 export interface StackHeaderTitleCustomItemIOS {
   /**
    * A unique identifier within the screen header.
@@ -448,6 +470,9 @@ export interface StackHeaderButtonAppearanceIOS {
   focused?: StackHeaderButtonStateAppearanceIOS | undefined;
 }
 
+/**
+ * Fonts and colors of the header text and the header items.
+ */
 export interface StackHeaderAppearanceIOS {
   /**
    * Specifies the font family used for the title of the header.
@@ -556,6 +581,9 @@ export interface StackHeaderAppearanceIOS {
   backButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
 
+/**
+ * iOS-specific props for {@link Stack.HeaderConfig}.
+ */
 export interface StackHeaderConfigPropsIOS {
   /**
    * Title displayed next to the back button on this screen.
@@ -782,6 +810,10 @@ export interface StackHeaderConfigPropsIOS {
   scrollEdgeAppearance?: StackHeaderAppearanceIOS | undefined;
 }
 
+/**
+ * iOS-specific commands of {@link Stack.HeaderConfig}, available through
+ * {@link StackHeaderConfigRef.ios}.
+ */
 export interface StackHeaderConfigCommandsIOS {
   /**
    * Updates properties of a menu action (leaf item) at runtime.

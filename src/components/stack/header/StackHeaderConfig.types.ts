@@ -4,10 +4,21 @@ import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
+/**
+ * Function that returns the element rendered in a custom part of the header.
+ */
 export type StackHeaderElementFactory = () => ReactElement;
 
+/**
+ * Function called when a header item or a menu item is pressed.
+ */
 export type StackHeaderPressHandler = () => void;
 
+/**
+ * Function called when the selected items of a header menu change.
+ *
+ * @param selectedMenuElementIds - The IDs of the selected menu items.
+ */
 export type StackHeaderMenuSelectionHandler = (
   selectedMenuElementIds: string[],
 ) => void;
