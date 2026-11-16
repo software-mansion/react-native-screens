@@ -14,6 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithName:(RNSStackAnimationPresetName)name;
 
+/**
+ * The preset named `string` in the `animation` prop, without options; nil for any other string.
+ */
++ (nullable RNSStackAnimationPresetConfig *)configNamed:(NSString *)string;
+
++ (NSString *)stringFromName:(RNSStackAnimationPresetName)name;
+
 @end
 
 NS_ASSUME_NONNULL_END

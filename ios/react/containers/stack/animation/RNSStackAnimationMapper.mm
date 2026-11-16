@@ -22,7 +22,7 @@ static NSString *const kTypeCustom = @"custom";
   if (preset.name != RNSStackAnimationPresetNameDefault &&
       [RNSStackAnimationPresets transitionTimelineForConfig:preset kind:RNSStackAnimationTransitionKindPush] == nil) {
     RNSLogW(@"[RNScreens] Animation preset '%@' is not supported on iOS. UIKit's default transition plays instead.",
-            RNSStackAnimationPresetNameToString(preset.name));
+            [RNSStackAnimationPresetConfig stringFromName:preset.name]);
   }
   return preset;
 }
@@ -51,11 +51,11 @@ static NSString *const kTypeCustom = @"custom";
 
 + (nullable RNSStackAnimationPresetConfig *)presetConfigFromName:(NSString *)string
 {
-  RNSStackAnimationPresetName name;
-  if (!RNSStackAnimationPresetNameFromString(string, &name)) {
+  RNSStackAnimationPresetConfig *preset = [RNSStackAnimationPresetConfig configNamed:string];
+  if (preset == nil) {
     return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Unknown animation preset: %@.", string]];
   }
-  return [[RNSStackAnimationPresetConfig alloc] initWithName:name];
+  return preset;
 }
 
 + (nullable RNSStackAnimationPresetConfig *)presetConfigFromDictionary:(NSDictionary *)map
@@ -83,10 +83,11 @@ static NSString *const kTypeCustom = @"custom";
   // Options of the other presets are accepted and ignored: those presets play `default`.
   if (options.count > 0 &&
       (preset.name == RNSStackAnimationPresetNameDefault || preset.name == RNSStackAnimationPresetNameNone)) {
-    return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Option '%@' is not supported by animation "
-                                                             @"preset '%@' as the whole animation.",
-                                                             options.firstObject,
-                                                             RNSStackAnimationPresetNameToString(preset.name)]];
+    return
+        [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Option '%@' is not supported by animation "
+                                                          @"preset '%@' as the whole animation.",
+                                                          options.firstObject,
+                                                          [RNSStackAnimationPresetConfig stringFromName:preset.name]]];
   }
   return preset;
 }
