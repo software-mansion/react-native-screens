@@ -121,7 +121,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
 }
 
 /**
- * When a menu element is displayed as a button in the Toolbar.
+ * Controls when a menu element is displayed as a button in the Toolbar.
  *
  * @remarks
  * The following values are available:
@@ -210,9 +210,9 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * This prop only affects top-level menu elements. Items inside submenus are
    * always displayed in the popup and ignore this setting.
    *
-   * Due to native limitations, the width limit for the `'ifRoom'` options is
-   * determined during the initial render and will not adapt to subsequent
-   * layout or orientation changes.
+   * Due to native limitations, the width limit for the `'ifRoom'` and
+   * `'ifRoomWithText'` options is determined during the initial render and will
+   * not adapt to subsequent layout or orientation changes.
    *
    * @defaultValue `'never'`
    */
@@ -277,9 +277,8 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
  *   toggle state,
  * - `'toggle'` — the item is checkable; requires
  *   {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId},
- * - `'automatic'` — the item becomes checkable if it has a
- *   {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId}, otherwise it
- *   behaves as an action.
+ * - `'automatic'` — the item becomes checkable if it has a `groupId`, otherwise
+ *   it behaves as an action.
  */
 export type StackHeaderToolbarMenuItemTypeAndroid =
   | 'action'
@@ -338,8 +337,7 @@ export interface StackHeaderToolbarMenuItemAndroid
    *
    * A {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} prop
    * change restores the selection to this value. Neither that restore nor a
-   * native header rebuild triggers
-   * {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}.
+   * native header rebuild triggers `onSelectionChange`.
    *
    * @defaultValue `false`
    */
@@ -484,7 +482,8 @@ export interface StackHeaderToolbarMenuElementOptionsAndroid
    *
    * @remarks
    * Only applies to `type: 'menu'` elements. Ignored if the target is a regular
-   * menu item. Setting it to `undefined` drops the `menuTitle` prop as well,
+   * menu item. Setting it to `undefined` drops the
+   * {@link StackHeaderToolbarMenuAndroid.menuTitle | menuTitle} prop as well,
    * leaving the header to fall back to `title`.
    */
   menuTitle?: string | undefined;
@@ -539,14 +538,11 @@ export interface StackHeaderConfigCommandsAndroid {
    * change, hiding and re-showing the header, reattaching the screen (e.g.
    * switching tabs) — and unrelated re-renders. Updates sent while the header
    * is hidden are recorded — and emit their selection events — as usual, and
-   * take effect when the header is next shown. Only a
-   * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} prop change
+   * take effect when the header is next shown. Only a `toolbarMenu` prop change
    * resets them, dropping the batches still queued as well (see its docs). An
    * update whose `id` is not in the current menu is ignored. An `icon` set via
-   * this command takes precedence over the icon declared in
-   * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} until the
-   * next {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu}
-   * change.
+   * this command takes precedence over the icon declared in `toolbarMenu` until
+   * the next `toolbarMenu` change.
    *
    * @param updates - A single update object or an array of updates.
    * @platform android
@@ -608,8 +604,8 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * When `undefined`, the default tint color is used. This applies to the
-   * native back arrow and `drawableResource` icons that have an associated
-   * tint. For `imageSource` icons, no tint is applied by default.
+   * native back arrow and `'drawableResource'` icons that have an associated
+   * tint. For `'imageSource'` icons, no tint is applied by default.
    *
    * @platform android
    */
@@ -671,8 +667,8 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * When `undefined`, the default tint (the Material theme's menu icon color)
-   * is used. This applies to the default overflow icon and `drawableResource`
-   * icons that have an associated tint. For `imageSource` icons, no tint is
+   * is used. This applies to the default overflow icon and `'drawableResource'`
+   * icons that have an associated tint. For `'imageSource'` icons, no tint is
    * applied by default.
    *
    * @platform android
@@ -739,8 +735,7 @@ export interface StackHeaderConfigPropsAndroid {
    * {@link StackHeaderConfigPropsAndroid.scrollFlagEnterAlways | scrollFlagEnterAlways}
    * so that the initial re-entry stops at the header's collapsed height (the
    * toolbar); the remainder expands only after the ScrollView reaches the top
-   * of its content. Requires
-   * {@link StackHeaderConfigPropsAndroid.scrollFlagEnterAlways | scrollFlagEnterAlways}.
+   * of its content. Requires `scrollFlagEnterAlways`.
    *
    * @remarks
    * When `undefined`, falls back to the type-specific default (`false` for all
@@ -763,7 +758,7 @@ export interface StackHeaderConfigPropsAndroid {
    * - `'medium'` / `'large'`: `true`
    *
    * Setting this flag for `'small'` header is equivalent to disabling
-   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
+   * `scrollFlagScroll`.
    *
    * Even when this flag is disabled, a strip with the height of the system top
    * inset (status bar and display cutout) remains visible at the top.
@@ -792,8 +787,8 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * For reliable behavior the content scroll view should be designated with a
-   * `ScrollViewMarker`. Without it, the app bar cannot always locate the scroll
-   * view, which can cause the lifted state to flicker while scrolling.
+   * {@link ScrollViewMarker}. Without it, the app bar cannot always locate the
+   * scroll view, which can cause the lifted state to flicker while scrolling.
    *
    * Applies to the `'small'` header only. For `'medium'` and `'large'` headers
    * the Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
@@ -862,8 +857,7 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * For `'medium'` / `'large'` headers, the scrim fades in and out together
    * with the content scrim as the header collapses. When not provided, it
-   * matches the content scrim color
-   * ({@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor}).
+   * matches the content scrim color (`scrolledBackgroundColor`).
    *
    * Set to `'transparent'` to disable the scrim entirely.
    *
@@ -889,18 +883,16 @@ export interface StackHeaderConfigPropsAndroid {
    * Changing this prop at runtime rebuilds the toolbar menu and resets all of
    * its runtime state: checkbox/radio selections return to their
    * {@link StackHeaderToolbarMenuItemAndroid.initialToggleState | initialToggleState}
-   * and every change applied via
-   * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}
-   * is discarded, including batches still waiting in the queue (e.g. for an
-   * icon download). Any real change counts, even one only swapping an item's
-   * icon; re-sending an identical menu is a no-op and preserves the state.
+   * and every change applied via `updateToolbarMenuElements` is discarded,
+   * including batches still waiting in the queue (e.g. for an icon download).
+   * Any real change counts, even one only swapping an item's icon; re-sending
+   * an identical menu is a no-op and preserves the state.
    *
    * An invalid menu is rejected — for example duplicate item or group ids, a
    * {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId} that is not
-   * declared at the same menu level, or more than one
-   * {@link StackHeaderToolbarMenuItemAndroid.initialToggleState | initialToggleState}
-   * in a single-selection group. The menu is validated when the prop is set,
-   * and a rejected menu leaves the previous one in effect.
+   * declared at the same menu level, or more than one `initialToggleState` in a
+   * single-selection group. The menu is validated when the prop is set, and a
+   * rejected menu leaves the previous one in effect.
    *
    * @platform android
    */
