@@ -133,7 +133,8 @@ export interface TabsHostPropsIOS {
    * Specifies component used as bottom accessory.
    *
    * @remarks
-   * This prop is a function that accepts `environment` as a parameter and
+   * This prop is a function that accepts
+   * {@link TabsBottomAccessoryEnvironment | environment} as a parameter and
    * returns the component that will be rendered in the bottom accessory.
    *
    * If this prop is `undefined`, the bottom accessory will not be rendered.
@@ -200,7 +201,8 @@ export interface TabsHostPropsIOS {
    * its own surface and stays visible when the tab bar minimizes on scroll (see
    * {@link TabsHostPropsIOS.tabBarMinimizeBehavior | tabBarMinimizeBehavior}).
    *
-   * When omitted, a tab with `role: 'search'` and
+   * When omitted, a tab with {@link TabsScreenPropsIOS.role | role} set to
+   * `'search'` and
    * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}
    * enabled becomes prominent automatically, otherwise no tab is prominent.
    *
