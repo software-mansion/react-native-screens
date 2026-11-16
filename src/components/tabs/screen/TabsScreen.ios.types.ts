@@ -6,8 +6,8 @@ import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
  * Blur effect applied to the tab bar.
  *
  * @remarks
- * Accepts any {@link BlurEffect} value, plus:
- * - `'systemDefault'` — uses UIKit's default tab bar blur effect.
+ * Accepts any {@link BlurEffect} value and `'systemDefault'`, which uses
+ * UIKit's default tab bar blur effect.
  */
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -15,8 +15,7 @@ export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
  * System role of a tab.
  *
  * @remarks
- * The following values are supported:
- * - `'search'` — the system search tab.
+ * The only supported value is `'search'`, the system search tab.
  */
 export type TabsScreenRole = 'search';
 
