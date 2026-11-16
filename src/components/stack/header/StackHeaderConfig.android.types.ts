@@ -415,7 +415,7 @@ export interface StackHeaderToolbarMenuAndroid
    * Marks this object as a submenu.
    *
    * @remarks
-   * Android's `MenuItem` interface claims that nesting submenus isn't supported
+   * Android's `SubMenu` interface claims that nesting submenus isn't supported
    * but Material's implementation handles it correctly.
    */
   type: 'menu';
@@ -508,7 +508,8 @@ export interface StackHeaderConfigCommandsAndroid {
    * - updates apply in array order, so an `id` may repeat and later values
    *   win field by field;
    * - once applied, each affected group emits at most one, coalesced
-   *   `onToolbarMenuGroupSelectionChange`.
+   *   {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}
+   *   call.
    *
    * Batches run in call order on a serial FIFO queue, so a later call is never
    * overtaken by an earlier one whose icon happened to load late.
@@ -870,7 +871,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Enables visual dividers between menu groups.
    *
    * @remarks
-   * On earlier versions, the value of this prop is ignored.
+   * Below API level 28, the value of this prop is ignored.
    *
    * @defaultValue `false`
    * @platform android >= 28
@@ -883,8 +884,8 @@ export interface StackHeaderConfigPropsAndroid {
    * Applies to the `'small'` header only; ignored for `'medium'` / `'large'`
    * (use `expandedTitleHorizontalGravity` / `collapsedTitleHorizontalGravity`
    * instead). The title is centered independently of the subtitle. Combining a
-   * centered title with left and/or center subviews is not recommended — they
-   * may overlap or be laid out incorrectly.
+   * centered title with leading and/or center subviews is not recommended —
+   * they may overlap or be laid out incorrectly.
    *
    * @defaultValue `false`
    * @platform android
