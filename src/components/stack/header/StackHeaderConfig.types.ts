@@ -6,6 +6,8 @@ import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
 
 /**
  * Function that returns the element rendered in a custom part of the header.
+ *
+ * @returns The element to render.
  */
 export type StackHeaderElementFactory = () => ReactElement;
 

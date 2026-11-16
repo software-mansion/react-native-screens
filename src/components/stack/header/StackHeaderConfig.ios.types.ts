@@ -65,16 +65,18 @@ export interface StackHeaderBaseItemIOS {
    * Icon displayed for the header item.
    *
    * @remarks
-   * Supports SF Symbols, xcassets, and image sources. For async image sources,
-   * the item renders without an icon first and updates when loaded. Ignored
-   * when custom view ({@link StackHeaderInlineCustomItemIOS.render | render})
-   * is set.
+   * Supports SF Symbols, xcassets, and image sources. Ignored when custom view
+   * ({@link StackHeaderInlineCustomItemIOS.render | render}) is set.
+   *
+   * @note
+   * This is an implementation detail and may change. For async image sources,
+   * the item renders without an icon first and updates when loaded.
    */
   icon?: PlatformIconIOS | undefined;
 }
 
 /**
- * Fields of a header item that attach a menu to it.
+ * Menu fields of a header item.
  */
 export interface SupportsMenuIOS {
   /**
@@ -151,7 +153,8 @@ export interface SupportsVisibilityPriorityIOS {
 }
 
 /**
- * Field of a header item that matches it across screens during transitions.
+ * Field of a header item that identifies it across screens for transition
+ * animations.
  */
 export interface SupportsIdentifierIOS {
   /**
@@ -164,7 +167,11 @@ export interface SupportsIdentifierIOS {
    * a simpler crossfade is applied. In a situation where visually different
    * items should be logically considered the same across screens, you may use
    * this prop to tell this fact to the system. The identifier shouldn't be
-   * updated at runtime; doing so will result in item rebuild and visual flash.
+   * updated at runtime.
+   *
+   * @note
+   * This is an implementation detail and may change. Updating the identifier
+   * at runtime results in item rebuild and visual flash.
    */
   identifier?: string | undefined;
 }
@@ -181,7 +188,7 @@ export interface SupportsIdentifierIOS {
 export type StackHeaderItemVariantIOS = 'plain' | 'prominent';
 
 /**
- * Native header item with text label.
+ * Native header item with a title or an icon.
  */
 export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
@@ -319,7 +326,8 @@ export type StackHeaderSpacerItemIOS =
   | StackHeaderFlexibleSpacerItemIOS;
 
 /**
- * Item of {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
+ * Item that can be placed in
+ * {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
  * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}.
  */
 export type StackHeaderItemIOS =
@@ -328,7 +336,7 @@ export type StackHeaderItemIOS =
   | StackHeaderSpacerItemIOS;
 
 /**
- * Custom view displayed in place of the title or the subtitle text.
+ * Custom item rendered in place of the title, subtitle or large subtitle text.
  */
 export interface StackHeaderTitleCustomItemIOS {
   /**
@@ -346,7 +354,7 @@ export interface StackHeaderTitleCustomItemIOS {
    * Note: Due to layout process limitations, text view will not resize and
    * ellipsize to fit available space without manually setting desired view
    * width. For text-only elements that should ellipsize it is recommended to
-   * use regular `title` instead.
+   * use regular {@link StackHeaderConfigPropsBase.title | title} instead.
    */
   render: StackHeaderElementFactory;
 }
@@ -641,11 +649,13 @@ export interface StackHeaderConfigPropsIOS {
    * entirely.
    *
    * Some fields of the items are supported only on newer iOS versions:
-   * - `menuRepresentation` ({@link SupportsMenuIOS}) — iOS 16 or higher.
-   * - `hidesSharedBackground` ({@link SupportsSharedBackgroundIOS}) and
-   *   `identifier` ({@link SupportsIdentifierIOS}) — iOS 26 or higher.
-   * - `visibilityPriority` ({@link SupportsVisibilityPriorityIOS}) — iOS 27 or
+   * - {@link SupportsMenuIOS.menuRepresentation | menuRepresentation} — iOS 16
+   *   or higher.
+   * - {@link SupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
+   *   and {@link SupportsIdentifierIOS.identifier | identifier} — iOS 26 or
    *   higher.
+   * - {@link SupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
+   *   — iOS 27 or higher.
    *
    * @platform ios
    */
@@ -681,11 +691,13 @@ export interface StackHeaderConfigPropsIOS {
    * entirely.
    *
    * Some fields of the items are supported only on newer iOS versions:
-   * - `menuRepresentation` ({@link SupportsMenuIOS}) — iOS 16 or higher.
-   * - `hidesSharedBackground` ({@link SupportsSharedBackgroundIOS}) and
-   *   `identifier` ({@link SupportsIdentifierIOS}) — iOS 26 or higher.
-   * - `visibilityPriority` ({@link SupportsVisibilityPriorityIOS}) — iOS 27 or
+   * - {@link SupportsMenuIOS.menuRepresentation | menuRepresentation} — iOS 16
+   *   or higher.
+   * - {@link SupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
+   *   and {@link SupportsIdentifierIOS.identifier | identifier} — iOS 26 or
    *   higher.
+   * - {@link SupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
+   *   — iOS 27 or higher.
    *
    * @platform ios
    */
@@ -722,7 +734,7 @@ export interface StackHeaderConfigPropsIOS {
   largeSubtitle?: string | undefined;
   /**
    * Custom item to display as a subtitle for large header. Takes precedence
-   * over `largeSubtitle` text.
+   * over {@link StackHeaderConfigPropsIOS.largeSubtitle | largeSubtitle} text.
    *
    * @platform ios >= 26
    */
@@ -773,16 +785,18 @@ export interface StackHeaderConfigPropsIOS {
    * is not aligned with the edge of the header.
    *
    * @remarks
+   * The subtitle fields are supported on iOS 26 or higher:
+   * {@link StackHeaderAppearanceIOS.subtitleFontFamily | subtitleFontFamily},
+   * {@link StackHeaderAppearanceIOS.subtitleFontSize | subtitleFontSize},
+   * {@link StackHeaderAppearanceIOS.subtitleFontWeight | subtitleFontWeight},
+   * {@link StackHeaderAppearanceIOS.subtitleFontStyle | subtitleFontStyle} and
+   * {@link StackHeaderAppearanceIOS.subtitleFontColor | subtitleFontColor}.
+   *
    * Native platform limitations:
    * - On iOS 26, header items resolve the `button` / `prominentButton`
    *   attributes once, from whichever appearance is in effect at the moment the
    *   items are attached to the navigation bar, and do not update on property
    *   changes or scroll edge transitions.
-   *
-   * The subtitle fields of {@link StackHeaderAppearanceIOS}
-   * (`subtitleFontFamily`, `subtitleFontSize`, `subtitleFontWeight`,
-   * `subtitleFontStyle` and `subtitleFontColor`) are supported on iOS 26 or
-   * higher.
    *
    * @platform ios
    */
@@ -792,20 +806,23 @@ export interface StackHeaderConfigPropsIOS {
    * is aligned with the edge of the header.
    *
    * @remarks
-   * If unset, derives the configuration from `standardAppearance`, otherwise
-   * becomes a standalone definition. In both cases it keeps transparent
-   * background by default (`iOS < 18`).
+   * If unset, derives the configuration from
+   * {@link StackHeaderConfigPropsIOS.standardAppearance | standardAppearance},
+   * otherwise becomes a standalone definition. In both cases it keeps
+   * transparent background by default (`iOS < 18`).
+   *
+   * The subtitle fields are supported on iOS 26 or higher:
+   * {@link StackHeaderAppearanceIOS.subtitleFontFamily | subtitleFontFamily},
+   * {@link StackHeaderAppearanceIOS.subtitleFontSize | subtitleFontSize},
+   * {@link StackHeaderAppearanceIOS.subtitleFontWeight | subtitleFontWeight},
+   * {@link StackHeaderAppearanceIOS.subtitleFontStyle | subtitleFontStyle} and
+   * {@link StackHeaderAppearanceIOS.subtitleFontColor | subtitleFontColor}.
    *
    * Native platform limitations:
    * - On iOS 26, header items resolve the `button` / `prominentButton`
    *   attributes once, from whichever appearance is in effect at the moment the
    *   items are attached to the navigation bar, and do not update on property
    *   changes or scroll edge transitions.
-   *
-   * The subtitle fields of {@link StackHeaderAppearanceIOS}
-   * (`subtitleFontFamily`, `subtitleFontSize`, `subtitleFontWeight`,
-   * `subtitleFontStyle` and `subtitleFontColor`) are supported on iOS 26 or
-   * higher.
    *
    * @platform ios
    */
