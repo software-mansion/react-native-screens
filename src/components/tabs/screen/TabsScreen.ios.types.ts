@@ -3,6 +3,8 @@ import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
 import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
 
 /**
+ * Blur effect applied to the tab bar.
+ *
  * @remarks
  * The following values are currently supported:
  * - `'none'` — disables blur effect
@@ -16,8 +18,35 @@ import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
  */
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
+/**
+ * System role of a tab.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'search'` — the system search tab.
+ */
 export type TabsScreenRole = 'search';
 
+/**
+ * System-provided tab bar item with a predefined icon and title.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'bookmarks'`
+ * - `'contacts'`
+ * - `'downloads'`
+ * - `'favorites'`
+ * - `'featured'`
+ * - `'history'`
+ * - `'more'`
+ * - `'mostRecent'`
+ * - `'mostViewed'`
+ * - `'recents'`
+ * - `'search'`
+ * - `'topRated'`
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem | UITabBarItem.SystemItem}
+ */
 export type TabsScreenSystemItem =
   | 'bookmarks'
   | 'contacts'
@@ -32,6 +61,9 @@ export type TabsScreenSystemItem =
   | 'search'
   | 'topRated';
 
+/**
+ * Appearance of the tab bar and of its items in each layout.
+ */
 export interface TabsScreenAppearanceIOS {
   /**
    * Specifies the appearance of tab bar items when they are in stacked
@@ -102,6 +134,9 @@ export interface TabsScreenAppearanceIOS {
   tabBarShadowColor?: ColorValue | undefined;
 }
 
+/**
+ * Appearance of tab bar items in each state.
+ */
 export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines appearance for all tab bar items which are in their enabled,
@@ -130,11 +165,25 @@ export interface TabsScreenItemAppearanceIOS {
   disabled?: TabsScreenItemStateAppearanceIOS | undefined;
 }
 
+/**
+ * Offset of the title of a tab bar item from its default position.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritemstateappearance/titlepositionadjustment | UITabBarItemStateAppearance.titlePositionAdjustment}
+ */
 export interface TabsScreenItemTitlePositionAdjustmentIOS {
+  /**
+   * Horizontal offset of the title, in points.
+   */
   horizontal?: number | undefined;
+  /**
+   * Vertical offset of the title, in points.
+   */
   vertical?: number | undefined;
 }
 
+/**
+ * Appearance of tab bar items in one state.
+ */
 export interface TabsScreenItemStateAppearanceIOS {
   /**
    * Specifies the font family used for the title of each tab bar item when
@@ -200,6 +249,9 @@ export interface TabsScreenItemStateAppearanceIOS {
   tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
 }
 
+/**
+ * iOS-specific props for {@link Tabs.Screen}.
+ */
 export interface TabsScreenPropsIOS {
   /**
    * Specifies the standard tab bar appearance.
