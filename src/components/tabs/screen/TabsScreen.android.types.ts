@@ -23,6 +23,9 @@ export type TabBarItemLabelVisibilityMode =
   | 'labeled'
   | 'unlabeled';
 
+/**
+ * Colors of tab bar items in one state.
+ */
 export interface TabsScreenItemStateAppearanceAndroid {
   /**
    * Specifies the font color used for the title of each tab bar item.
@@ -34,6 +37,9 @@ export interface TabsScreenItemStateAppearanceAndroid {
   tabBarItemIconColor?: ColorValue | undefined;
 }
 
+/**
+ * Appearance of the tab bar and of its items.
+ */
 export interface TabsScreenAppearanceAndroid {
   /**
    * Specifies the background color for the entire tab bar.
@@ -159,6 +165,9 @@ export interface TabsScreenAppearanceAndroid {
   tabBarItemBadgeTextColor?: ColorValue | undefined;
 }
 
+/**
+ * Android-specific props for {@link Tabs.Screen}.
+ */
 export interface TabsScreenPropsAndroid {
   /**
    * Specifies the standard tab bar appearance.
