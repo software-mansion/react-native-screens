@@ -186,6 +186,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setProminentScreenKey:(nullable NSString *)screenKey;
 
 /**
+ * Re-fit the titles of the tab bar items on the next layout. Call it when an item's content changes after the tab bar
+ * has been laid out, e.g. when an icon finishes loading.
+ *
+ * No-op below iOS 26.
+ */
+- (void)setNeedsTabBarItemTitlesRefit;
+
+/**
  * Idempotent teardown. Releases observer references and any retained host references.
  * Called by the host on view lifecycle end.
  */

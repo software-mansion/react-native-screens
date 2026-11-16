@@ -1,6 +1,7 @@
 #import "RNSTabBarAppearanceCoordinator.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
+#import "RNSTabBarController.h"
 #import "RNSTabBarItemCoordinator.h"
 #import "RNSTabsScreenViewController.h"
 
@@ -243,6 +244,9 @@ static UIImage *_Nullable RNSImageWithImageRenderingMode(UIImage *_Nullable imag
   if ([screenParentViewController isKindOfClass:[UITabBarController class]]) {
     UITabBarController *tabBarVC = (UITabBarController *)screenParentViewController;
     [tabBarVC.tabBar setNeedsLayout];
+    if ([tabBarVC isKindOfClass:[RNSTabBarController class]]) {
+      [(RNSTabBarController *)tabBarVC setNeedsTabBarItemTitlesRefit];
+    }
   }
 }
 

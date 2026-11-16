@@ -112,6 +112,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   NSString *_Nullable _prominentScreenKey;
 
   BOOL _needsUpdateOfProminentIdentifier;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  /// See `setNeedsTabBarItemTitlesRefit`.
+  BOOL _needsTabBarItemTitlesRefit;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (instancetype)init
@@ -195,6 +200,26 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 #pragma mark - UIKit callbacks
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (_needsTabBarItemTitlesRefit && self.tabBar.window != nil) {
+      _needsTabBarItemTitlesRefit = NO;
+      // Let the bar apply pending item changes first. Assigning an equal title is a no-op, hence the nil.
+      [self.tabBar layoutIfNeeded];
+      for (UITabBarItem *item in self.tabBar.items) {
+        NSString *title = item.title;
+        item.title = nil;
+        item.title = title;
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
@@ -280,6 +305,18 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 #pragma mark - Signals
+
+- (void)setNeedsTabBarItemTitlesRefit
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    // iOS 26 fits an item's title only on the bar's first layout with that item, not when its image, font or
+    // neighbours change later (#4749). Re-assigning the title makes it fit again, see `viewDidLayoutSubviews`.
+    _needsTabBarItemTitlesRefit = YES;
+    [self.viewIfLoaded setNeedsLayout];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
 
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate
 {
@@ -837,6 +874,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   [self installScreenControllers:_tabScreenControllers animated:[self installedScreenControllers].count != 0];
+  [self setNeedsTabBarItemTitlesRefit];
 }
 
 - (void)updateSelectedViewControllerIfNeeded
@@ -948,6 +986,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                                      withTintColor:_appearanceProvider.tabBarTintColor
                                               tabScreenControllers:_tabScreenControllers
                                                        imageLoader:_imageLoader];
+  [self setNeedsTabBarItemTitlesRefit];
 }
 
 - (void)updateTabBarA11yIfNeeded
