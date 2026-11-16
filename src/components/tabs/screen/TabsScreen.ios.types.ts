@@ -318,10 +318,10 @@ export interface TabsScreenPropsIOS {
    * <Tabs.Screen
    *   screenKey="favorites"
    *   ios={{
-   *     icon: { type: 'sfSymbol', name: 'star' },
+   *     icon: { type: 'sfSymbol', name: 'leaf' },
    *     selectedIcon: {
    *       type: 'sfSymbol',
-   *       name: 'star',
+   *       name: 'leaf',
    *       renderingMode: 'original',
    *     },
    *   }}>
