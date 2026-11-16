@@ -1,6 +1,5 @@
 import type { ReactElement } from 'react';
 import type { ColorValue, TextStyle } from 'react-native';
-import type { StackHeaderSubviewCollapseModeAndroid } from './android/StackHeaderSubview.android.types';
 import type { PlatformIconAndroid } from '../../shared/types';
 
 export type StackHeaderTypeAndroid = 'small' | 'medium' | 'large';
@@ -20,7 +19,8 @@ export type StackHeaderCollapsedTitleGravityModeAndroid =
   | 'availableSpace';
 
 export type StackHeaderBackgroundSubviewCollapseModeAndroid =
-  StackHeaderSubviewCollapseModeAndroid;
+  | 'off'
+  | 'parallax';
 
 export interface StackHeaderToolbarSubviewAndroid {
   /**
@@ -64,7 +64,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
    *
    * @platform android
    */
-  collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
+  collapseMode?: StackHeaderBackgroundSubviewCollapseModeAndroid | undefined;
   /**
    * @summary Render callback for the React element used as the header
    * background.
@@ -361,7 +361,7 @@ export interface StackHeaderToolbarMenuGroupAndroid {
    *
    * @platform android
    */
-  onSelectionChange?: (selectedMenuElementIds: string[]) => void;
+  onSelectionChange?: ((selectedMenuElementIds: string[]) => void) | undefined;
 }
 
 export interface StackHeaderToolbarMenuBaseAndroid {
@@ -381,7 +381,7 @@ export interface StackHeaderToolbarMenuBaseAndroid {
    *
    * @platform android
    */
-  children?: StackHeaderToolbarMenuElementAndroid[];
+  children?: StackHeaderToolbarMenuElementAndroid[] | undefined;
 }
 
 export interface StackHeaderToolbarMenuAndroid
@@ -417,9 +417,8 @@ export type StackHeaderToolbarMenuElementAndroid =
   | StackHeaderToolbarMenuItemAndroid
   | StackHeaderToolbarMenuAndroid;
 
-export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
-  Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>
-> & {
+export interface StackHeaderToolbarMenuElementOptionsAndroid
+  extends Partial<Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>> {
   /**
    * @summary Sets the checked state of the menu item.
    *
@@ -441,7 +440,7 @@ export type StackHeaderToolbarMenuElementOptionsAndroid = Partial<
    * @platform android
    */
   menuTitle?: string | undefined;
-};
+}
 
 export interface StackHeaderToolbarMenuElementUpdateAndroid {
   /**
