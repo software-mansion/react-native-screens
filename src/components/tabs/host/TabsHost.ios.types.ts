@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { TabsBottomAccessoryEnvironment } from '../bottom-accessory/TabsBottomAccessory.types';
-import type { ColorValue, NativeSyntheticEvent } from 'react-native';
+import type { ColorValue } from 'react-native';
+import type { NativeEventHandler } from '../../shared/types';
 
 /**
  * @summary Payload of the event emitted when the user taps the "More" tab bar item.
@@ -214,7 +215,5 @@ export interface TabsHostPropsIOS {
    *
    * @platform ios
    */
-  onMoreTabSelected?:
-    | ((event: NativeSyntheticEvent<MoreTabSelectedEvent>) => void)
-    | undefined;
+  onMoreTabSelected?: NativeEventHandler<MoreTabSelectedEvent> | undefined;
 }

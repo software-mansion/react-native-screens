@@ -38,7 +38,9 @@ function ConfigScreen() {
   };
 
   const currentOption = (() => {
-    const bgColor = hostConfig.nativeContainerStyle?.backgroundColor;
+    const bgColor = StyleSheet.flatten(
+      hostConfig.nativeContainerStyle,
+    )?.backgroundColor;
     if (bgColor === Colors.BlueLight100) return 'blue';
     if (bgColor === Colors.YellowLight100) return 'yellow';
     if (bgColor === Colors.PurpleLight100) return 'purple';
