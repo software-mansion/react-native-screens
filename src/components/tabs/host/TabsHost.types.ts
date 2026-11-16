@@ -61,6 +61,7 @@ export type TabsHostNavStateRequest = {
  * Origin (actor) that requested a tab transition.
  *
  * @remarks
+ * The following values are supported:
  * - `'user'` — direct native UI interaction (e.g. tab bar tap, iOS tab
  *   drag-and-drop).
  * - `'programmatic-js'` — JS-initiated request delivered via the
@@ -107,6 +108,7 @@ export type TabSelectedEvent = {
  * Reason why a tab selection request was rejected by the native side.
  *
  * @remarks
+ * The following values are supported:
  * - `'stale'` — the update was based on a stale navigation state, meaning a
  *   newer state has already been applied. Only reported when
  *   {@link TabsHostPropsBase.rejectStaleNavStateUpdates | rejectStaleNavStateUpdates}
