@@ -9,6 +9,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - Props
+
+@interface RNSStackHostComponentView ()
+
+@property (nonatomic, readonly) UITraitEnvironmentLayoutDirection layoutDirection;
+
+@end
+
 #pragma mark - Communication with StackScreen
 
 @interface RNSStackHostComponentView ()

@@ -26,6 +26,7 @@
 #if !TARGET_OS_TV
   RNSStackPopGestureRecognizerDelegate *_Nonnull _popGestureRecognizerDelegate;
 #endif // !TARGET_OS_TV
+  BOOL _needsLayoutDirectionUpdateBelowIOS17;
 }
 
 - (instancetype)init
@@ -51,9 +52,17 @@
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
   _navigationControllerDelegate = [RNSStackNavigationControllerDelegate new];
   self.delegate = _navigationControllerDelegate;
+  _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
+  _needsLayoutDirectionUpdateBelowIOS17 = NO;
 #if !TARGET_OS_TV
   _popGestureRecognizerDelegate = [[RNSStackPopGestureRecognizerDelegate alloc] initWithNavigationController:self];
 #endif // !TARGET_OS_TV
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    [self registerForTraitChanges:@[ UITraitLayoutDirection.class ]
+                       withAction:@selector(updateViewSemanticContentAttribute)];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
 }
 
 - (void)viewDidLoad
@@ -65,6 +74,7 @@
     recognizer.delegate = _popGestureRecognizerDelegate;
   }
 #endif // !TARGET_OS_TV
+  [self updateViewSemanticContentAttribute];
 }
 
 #pragma mark-- Layout
@@ -73,6 +83,76 @@
 {
   [super viewDidLayoutSubviews];
   [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
+}
+
+#pragma mark - Layout direction
+
+- (void)setLayoutDirection:(UITraitEnvironmentLayoutDirection)layoutDirection
+{
+  _layoutDirection = layoutDirection;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (@available(iOS 17.0, *)) {
+    // Assigning `Unspecified` installs an override with that value, which views resolve against the app direction
+    // instead of the parent's (undocumented, 18 and 27). Removing the override restores inheritance, see
+    // https://developer.apple.com/videos/play/wwdc2023/10057/.
+    if (layoutDirection == UITraitEnvironmentLayoutDirectionUnspecified) {
+      [self.traitOverrides removeTrait:UITraitLayoutDirection.class];
+    } else {
+      self.traitOverrides.layoutDirection = layoutDirection;
+    }
+    return;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  // Before iOS 17 only the parent overrides a child's traits; applied once there is one.
+  _needsLayoutDirectionUpdateBelowIOS17 = YES;
+  if (self.parentViewController != nil) {
+    [self updateLayoutDirectionBelowIOS17];
+  }
+}
+
+- (void)updateLayoutDirectionBelowIOS17
+{
+  _needsLayoutDirectionUpdateBelowIOS17 = NO;
+  [self.parentViewController
+      setOverrideTraitCollection:[UITraitCollection traitCollectionWithLayoutDirection:_layoutDirection]
+          forChildViewController:self];
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+  [super traitCollectionDidChange:previousTraitCollection];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  // From iOS 17 the trait change registration in `initState` covers this.
+  if (@available(iOS 17.0, *)) {
+    return;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(17_0)
+  if (self.traitCollection.layoutDirection != previousTraitCollection.layoutDirection) {
+    [self updateViewSemanticContentAttribute];
+  }
+}
+
+// UIKit picks the edge of the system pop recognizers and the direction of the content swipe from this view's
+// `semanticContentAttribute` resolved against the app direction, never from the trait (undocumented): an RTL trait in
+// an LTR app pushes from the left but pops from the left edge. Descendants keep their own direction: a view resolves it
+// from its own attribute and the trait. See https://developer.apple.com/forums/thread/704049.
+- (void)updateViewSemanticContentAttribute
+{
+  if (!self.isViewLoaded) {
+    return;
+  }
+  switch (self.traitCollection.layoutDirection) {
+    case UITraitEnvironmentLayoutDirectionLeftToRight:
+      self.view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+      break;
+    case UITraitEnvironmentLayoutDirectionRightToLeft:
+      self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+      break;
+    case UITraitEnvironmentLayoutDirectionUnspecified:
+      // Views resolve an unspecified trait against the app direction, and so does this attribute.
+      self.view.semanticContentAttribute = UISemanticContentAttributeUnspecified;
+      break;
+  }
 }
 
 #pragma mark - RNSContainer
@@ -104,6 +184,9 @@
   [super didMoveToParentViewController:parent];
 
   if (parent != nil) {
+    if (_needsLayoutDirectionUpdateBelowIOS17) {
+      [self updateLayoutDirectionBelowIOS17];
+    }
     [self attachToParentContainerItem];
   } else {
     [self detachFromParentContainerItem];
