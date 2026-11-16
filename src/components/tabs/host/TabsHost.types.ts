@@ -239,8 +239,6 @@ export type TabsDirection = Direction | 'inherit';
 export type TabsHostNativeContainerStyleProps = {
   /**
    * Specifies the background color of the native container.
-   *
-   * @platform android, ios
    */
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
