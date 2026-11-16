@@ -7,7 +7,7 @@ import { DEFAULT_TAB_ROUTE_OPTIONS } from '@apps/shared/containers/tabs';
 
 const EXTRA_TAB_KEYS = ['Tab2', 'Tab3', 'Tab4'];
 
-function TestTabsConditionalTabs() {
+function TestTabsDynamicTabCount() {
   const [showExtraTabs, setShowExtraTabs] = React.useState(true);
   const [toggleCount, setToggleCount] = React.useState(0);
 
@@ -18,17 +18,16 @@ function TestTabsConditionalTabs() {
 
   return (
     <Tabs.Host
-      navStateRequest={{ selectedScreenKey: 'Tab1', baseProvenance: 0 }}
-      tabBarHidden={!showExtraTabs}>
+      navStateRequest={{ selectedScreenKey: 'Tab1', baseProvenance: 0 }}>
       <Tabs.Screen {...DEFAULT_TAB_ROUTE_OPTIONS} screenKey="Tab1" title="Tab1">
         <View
           style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Extra tabs: {showExtraTabs ? 'shown' : 'hidden'}</Text>
+          <Text>Extra tabs: {showExtraTabs ? 'rendered' : 'removed'}</Text>
           <Text>Toggles: {toggleCount}</Text>
           <Button
-            title={showExtraTabs ? 'Hide extra tabs' : 'Show extra tabs'}
+            title={showExtraTabs ? 'Remove extra tabs' : 'Add extra tabs'}
             onPress={toggle}
-            testID="conditional-tabs-toggle"
+            testID="dynamic-tab-count-toggle"
           />
         </View>
       </Tabs.Screen>
@@ -53,4 +52,4 @@ function TestTabsConditionalTabs() {
   );
 }
 
-export default createScenario(TestTabsConditionalTabs, scenarioDescription);
+export default createScenario(TestTabsDynamicTabCount, scenarioDescription);
