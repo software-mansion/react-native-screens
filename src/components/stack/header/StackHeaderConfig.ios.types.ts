@@ -78,7 +78,9 @@ export interface StackHeaderBaseItemIOS {
  */
 export interface SupportsMenuIOS {
   /**
-   * Menu definition for the context menu that appears when item is tapped.
+   * Menu definition for the context menu that appears when the item is
+   * tapped, or long-pressed when the item also has
+   * {@link StackHeaderInlineItemIOS.onPress | onPress}.
    */
   menu?: StackHeaderMenuIOS | undefined;
   /**
@@ -158,11 +160,11 @@ export interface SupportsIdentifierIOS {
    *
    * @remarks
    * When navigating between screens, iOS tries to match similarly looking items
-   * (i.e. same sfSymbol) and animate between them. If the heuristic fails, a
-   * simpler crossfade is applied. In a situation where visually different items
-   * should be logically considered the same across screens, you may use this
-   * prop to tell this fact to the system. The identifier shouldn't be updated
-   * at runtime; doing so will result in item rebuild and visual flash.
+   * (e.g. the same SF Symbol) and animate between them. If the heuristic fails,
+   * a simpler crossfade is applied. In a situation where visually different
+   * items should be logically considered the same across screens, you may use
+   * this prop to tell this fact to the system. The identifier shouldn't be
+   * updated at runtime; doing so will result in item rebuild and visual flash.
    */
   identifier?: string | undefined;
 }
@@ -257,7 +259,7 @@ export interface StackHeaderInlineCustomItemIOS
 }
 
 /**
- * A spacer item for visual separation of items.
+ * A fixed-width spacer item for visual separation of items.
  *
  * @remarks
  * Separates items defined in
@@ -286,7 +288,7 @@ export interface StackHeaderFixedSpacerItemIOS {
 }
 
 /**
- * A spacer item for visual separation of items.
+ * A flexible spacer item for visual separation of items.
  *
  * @remarks
  * Separates items defined in
@@ -631,7 +633,7 @@ export interface StackHeaderConfigPropsIOS {
    *
    * @remarks
    * Items are placed next to the back button, if present. If there is not
-   * enough space to fit all leading items at once, they are all moved to
+   * enough space to fit all leading items at once, they are all moved to the
    * overflow menu. This differs from trailing items, which are moved one by
    * one.
    *

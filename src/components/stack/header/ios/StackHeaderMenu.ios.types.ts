@@ -106,7 +106,7 @@ export interface StackHeaderMenuItemIOS {
  * A menu is a container that can hold both leaf items
  * ({@link StackHeaderMenuItemIOS}) and nested menus. Set
  * {@link StackHeaderMenuIOS.singleSelection | singleSelection} to `true` to
- * make the menu behave like radio group across its entire hierarchy.
+ * make the menu behave like a radio group across its entire hierarchy.
  *
  * Note: The topmost menu that enables this prop becomes Single Selection Root.
  * Only the root receives
@@ -191,9 +191,10 @@ export interface StackHeaderMenuIOS {
    *
    * @remarks
    * Receives an array of IDs of all currently selected toggle items in this
-   * menu's hierarchy. For Single Selection Root, always returns one item. When
-   * defined below Single Selection Root, the callback doesn't fire. In regular
-   * non-single-selection case, only changes to direct children are reflected.
+   * menu's hierarchy. For Single Selection Root, the array always has one item.
+   * When defined below Single Selection Root, the callback doesn't fire. In
+   * regular non-single-selection case, only changes to direct children are
+   * reflected.
    */
   onSelectionChange?: StackHeaderMenuSelectionHandler | undefined;
 }
