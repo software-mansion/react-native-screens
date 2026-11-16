@@ -38,7 +38,7 @@ const RESPONSES = {
 const IGNORE_ISSUES_CREATED_BEFORE = '2022-01-01';
 
 module.exports = async ({ github, context, core }) => {
-  const { issue, label, action } = context.payload;
+  const { label } = context.payload;
   const response = RESPONSES[label?.name];
 
   if (!response) {
@@ -46,15 +46,24 @@ module.exports = async ({ github, context, core }) => {
     return;
   }
 
-  if (issue.pull_request) {
+  if (context.payload.issue.pull_request) {
     core.notice('Triggered on a pull request. Skipping.');
     return;
   }
 
+  // Act on the label's current membership, not on the event action: runs in the
+  // concurrency group are not guaranteed to execute in dispatch order, so a stale
+  // `unlabeled` run must not retract a response for a label that was reapplied.
+  const { data: issue } = await github.rest.issues.get({
+    ...context.repo,
+    issue_number: context.payload.issue.number,
+  });
+  const isLabeled = issue.labels.some((l) => (typeof l === 'string' ? l : l.name) === label.name);
+
   // Retraction runs before the checks below: those decide whether to nag, not
   // whether to clean up. A response must still be removed when the issue was
   // closed after it was posted.
-  if (action === 'unlabeled') {
+  if (!isLabeled) {
     const posted = await findResponse({ github, context, issue, marker: response.marker });
 
     if (!posted) {
