@@ -65,12 +65,10 @@ export interface StackHeaderBaseItemIOS {
    * Icon displayed for the header item.
    *
    * @remarks
-   * Supports SF Symbols, xcassets, and image sources. Ignored when custom view
-   * ({@link StackHeaderInlineCustomItemIOS.render | render}) is set.
-   *
-   * @note
-   * This is an implementation detail and may change. For async image sources,
-   * the item renders without an icon first and updates when loaded.
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the item renders without an icon first and updates when loaded. Ignored
+   * when custom view ({@link StackHeaderInlineCustomItemIOS.render | render})
+   * is set.
    */
   icon?: PlatformIconIOS | undefined;
 }
@@ -166,11 +164,7 @@ export interface SupportsIdentifierIOS {
    * simpler crossfade is applied. In a situation where visually different items
    * should be logically considered the same across screens, you may use this
    * prop to tell this fact to the system. The identifier shouldn't be updated
-   * at runtime.
-   *
-   * @note
-   * This is an implementation detail and may change. Updating the identifier
-   * at runtime results in the item being rebuilt and a visual flash.
+   * at runtime; doing so will result in item rebuild and visual flash.
    */
   identifier?: string | undefined;
 }

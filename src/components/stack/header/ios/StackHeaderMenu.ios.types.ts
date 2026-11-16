@@ -72,10 +72,7 @@ export interface StackHeaderMenuItemIOS {
    * Icon displayed for the menu item.
    *
    * @remarks
-   * Supports SF Symbols, xcassets, and image sources.
-   *
-   * @note
-   * This is an implementation detail and may change. For async image sources,
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
    * the menu item renders without an icon first and updates when loaded.
    */
   icon?: PlatformIconIOS | undefined;
@@ -159,10 +156,7 @@ export interface StackHeaderMenuIOS {
    * Icon displayed for the submenu.
    *
    * @remarks
-   * Supports SF Symbols, xcassets, and image sources.
-   *
-   * @note
-   * This is an implementation detail and may change. For async image sources,
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
    * the menu renders without an icon first and updates when loaded.
    */
   icon?: PlatformIconIOS | undefined;
