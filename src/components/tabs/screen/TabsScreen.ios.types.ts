@@ -315,14 +315,18 @@ export interface TabsScreenPropsIOS {
    * The symbol is shown tinted while unselected and in its own colors while
    * selected:
    * ```tsx
-   * ios={{
-   *   icon: { type: 'sfSymbol', name: 'star' },
-   *   selectedIcon: {
-   *     type: 'sfSymbol',
-   *     name: 'star',
-   *     renderingMode: 'original',
-   *   },
-   * }}
+   * <Tabs.Screen
+   *   screenKey="favorites"
+   *   ios={{
+   *     icon: { type: 'sfSymbol', name: 'star' },
+   *     selectedIcon: {
+   *       type: 'sfSymbol',
+   *       name: 'star',
+   *       renderingMode: 'original',
+   *     },
+   *   }}>
+   *   <FavoritesScreen />
+   * </Tabs.Screen>
    * ```
    *
    * @platform ios
@@ -341,7 +345,8 @@ export interface TabsScreenPropsIOS {
    *
    * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which
    * does not display any title (system or custom). This no longer applies on
-   * iOS 27; to get a similar separation use `role: 'search'` together with
+   * iOS 27; to get a similar separation use
+   * {@link TabsScreenPropsIOS.role | role} set to `'search'` together with
    * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}.
    *
    * @platform ios
@@ -360,9 +365,10 @@ export interface TabsScreenPropsIOS {
    * differs between OS versions: iOS 26.x detaches `UISearchTab`
    * unconditionally, iOS 27.0 only while `automaticallyActivatesSearch` is
    * enabled. This prop does not affect the tab bar item's icon or title -
-   * combine it with `systemItem: 'search'` for the system magnifier item. On
-   * iOS 27+ the detached (prominent) placement can be given to any tab instead
-   * through {@link Tabs.Host}
+   * combine it with {@link TabsScreenPropsIOS.systemItem | systemItem} set to
+   * `'search'` for the system magnifier item. On iOS 27+ the detached
+   * (prominent) placement can be given to any tab instead through
+   * {@link Tabs.Host}
    * {@link TabsHostPropsIOS.prominentScreenKey | ios.prominentScreenKey}.
    *
    * The native tab class cannot change during the screen's lifetime -
@@ -378,11 +384,11 @@ export interface TabsScreenPropsIOS {
    * field.
    *
    * @remarks
-   * Effective only for tab screens with `role: 'search'` and only when a
-   * search bar is configured in the header of the screen stack nested in this
-   * tab (see `headerSearchBarOptions`). When enabled, selecting the search tab
-   * immediately activates the search field. Cancelling the search restores the
-   * previously selected tab.
+   * Effective only for tab screens with {@link TabsScreenPropsIOS.role | role}
+   * set to `'search'` and only when a search bar is configured in the header
+   * of the screen stack nested in this tab (see `headerSearchBarOptions`).
+   * When enabled, selecting the search tab immediately activates the search
+   * field. Cancelling the search restores the previously selected tab.
    *
    * @defaultValue `false`
    * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch | UISearchTab.automaticallyActivatesSearch}
