@@ -35,7 +35,7 @@ import type {
  *   orientation.
  *
  * The supported values (apart from `'inherit'`, `'portrait'`, `'portraitUp'`,
- * `'portraitDown'`) correspond to the official UIKit documentation:
+ * `'portraitDown'`) correspond to the official UIKit documentation.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
  */
@@ -64,6 +64,10 @@ export interface TabsScreenRepeatedTabSelectionEffects {
   /**
    * When Stack is nested inside tab screen and repeated selection is detected,
    * the Stack will pop to root screen.
+   *
+   * @info
+   * Only a Stack v4 (legacy) nested in the tab screen is popped to its root.
+   * {@link Stack.Host} does not support it yet.
    *
    * @defaultValue `true`
    */
@@ -108,7 +112,6 @@ export interface TabsScreenPropsBase {
    * @platform android, ios
    */
   preventNativeSelection?: boolean | undefined;
-
   // General
   /**
    * Content of the tab screen.
@@ -178,7 +181,6 @@ export interface TabsScreenPropsBase {
    * @platform ios
    */
   orientation?: TabsScreenOrientation | undefined;
-
   // Accessibility
   /**
    * testID for the {@link Tabs.Screen}
@@ -204,7 +206,6 @@ export interface TabsScreenPropsBase {
    * @platform android >= 26, ios
    */
   tabBarItemAccessibilityLabel?: string | undefined;
-
   // Events
   /**
    * A callback that gets invoked when the tab screen will appear.
