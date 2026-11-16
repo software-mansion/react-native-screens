@@ -14,7 +14,7 @@ export const scenarioDescription: ScenarioDescription = {
   },
   deviceSetup: {
     'android-phone':
-      'System animations on (Settings → Accessibility → Color and motion → Remove animations is off). For **Interrupted operations (with extended animation duration scale)** only: in Developer options set "Animator duration scale" and "Transition animation scale" to 5x before step 1 of that group and back to 1x after its step 5.',
+      'System animations on (Settings → Accessibility → Color and motion → Remove animations is off).',
   },
   e2eCoverage: 'incomplete',
   e2eCoverageDetails:

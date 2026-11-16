@@ -9,9 +9,9 @@
 | E2E coverage | Incomplete                                |
 | Smoke test   | No                                        |
 
-| Device        | Test on      | Setup                                                                                                                                                                                                                                                                                                                               |
-| ------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android phone | API Level 37 | System animations on (Settings → Accessibility → Color and motion → Remove animations is off). For **Interrupted operations (with extended animation duration scale)** only: in Developer options set "Animator duration scale" and "Transition animation scale" to 5x before step 1 of that group and back to 1x after its step 5. |
+| Device        | Test on      | Setup                                                                                          |
+| ------------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| Android phone | API Level 37 | System animations on (Settings → Accessibility → Color and motion → Remove animations is off). |
 
 **E2E coverage details:** No step is automated. For manual testing perform all steps. Which screen moves, in which direction, and whether an intermediate screen flashes are not assertable with Detox; only the resulting stack would be.
 
@@ -147,36 +147,38 @@ batch is ever visible. Every replace here uses the default `replaceAnimation:
 
 ---
 
-### Interrupted operations (with extended animation duration scale)
+### Interrupted operations
 
-1. Tap "Push Right", then tap "Push Bottom" on "Right" while it is still
-   sliding in.
+1. Tap "Push Right 2000 ms", then tap "Push Bottom 2000 ms" on "Right 2000 ms"
+   while it is still sliding in.
 
-   - [ ] The running transition jumps to its end, then "Bottom" rises from the
-         bottom edge above a static "Right"; no stale copy of another screen
-         is left behind.
+   - [ ] The running transition jumps to its end.
+   - [ ] "Bottom 2000 ms" rises from the bottom edge above a static
+         "Right 2000 ms".
+   - [ ] No stale copy of another screen is left behind.
 
-2. On "Bottom", tap "Pop", then tap "Pop" on "Right" while "Bottom" is still
-   sinking.
+2. On "Bottom 2000 ms", tap "Pop", then tap "Pop" on "Right 2000 ms" while
+   "Bottom 2000 ms" is still sinking.
 
-   - [ ] "Right" is removed without its pop animation and "Home" slides in
-         from the left over the window background (see Note); "Home" is the
-         only screen left, without a crash.
+   - [ ] "Right 2000 ms" is removed without its pop animation (see Note).
+   - [ ] "Home" slides in from the left over the window background.
+   - [ ] "Home" is the only screen left, without a crash.
 
-3. Tap "Push Right + Bottom + Left", then tap "Pop 3" on "Left" while it is
-   still sliding in.
+3. Tap "Push Right + Bottom + Left 2000 ms", then tap "Pop 3" on
+   "Left 2000 ms" while it is still sliding in.
 
-   - [ ] "Left" is removed without its pop animation and "Home" is shown at
-         once, with nothing sliding in (see Note).
+   - [ ] "Left 2000 ms" is removed without its pop animation (see Note).
+   - [ ] "Home" is shown at once, with nothing sliding in.
    - [ ] "Pop" is disabled on "Home".
 
-4. Tap "Push Right", then tap "Replace with Bottom" on "Right" while it is
-   still sliding in.
+4. Tap "Push Right 2000 ms", then tap "Replace with Bottom" on "Right 2000 ms"
+   while it is still sliding in.
 
-   - [ ] "Right" is removed at once and "Bottom" slides in from the left over
-         the window background (see Note); "Home" does not appear.
+   - [ ] "Right 2000 ms" is removed at once (see Note).
+   - [ ] "Bottom" slides in from the left over the window background.
+   - [ ] "Home" does not appear.
 
 5. On "Bottom", tap "Pop".
 
-   - [ ] "Bottom" sinks to the bottom edge above a static "Home", and "Pop"
-         is disabled on "Home".
+   - [ ] "Bottom" sinks to the bottom edge above a static "Home".
+   - [ ] "Pop" is disabled on "Home".
