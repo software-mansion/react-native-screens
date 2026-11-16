@@ -6,15 +6,8 @@ import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
  * Blur effect applied to the tab bar.
  *
  * @remarks
- * The following values are currently supported:
- * - `'none'` — disables blur effect
- * - `'systemDefault'` — uses UIKit's default tab bar blur effect
- * - one of the {@link BlurEffect} styles, e.g. `'systemUltraThinMaterial'`
- *
- * Complete list of possible blur effect styles is available in the official
- * UIKit documentation:
- *
- * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
+ * Accepts any {@link BlurEffect} value, plus:
+ * - `'systemDefault'` — uses UIKit's default tab bar blur effect.
  */
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -83,7 +76,7 @@ export interface TabsScreenAppearanceIOS {
    * orientation on the iPhone 16 Pro Max.
    *
    * Size classes for iOS and iPadOS devices are described in Apple's Human
-   * Interface Guidelines:
+   * Interface Guidelines.
    *
    * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#Size-classes | HIG: Size classes}
    */
@@ -98,7 +91,7 @@ export interface TabsScreenAppearanceIOS {
    * landscape orientation on the iPhone 16 Pro.
    *
    * Size classes for iOS and iPadOS devices are described in Apple's Human
-   * Interface Guidelines:
+   * Interface Guidelines.
    *
    * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#Size-classes | HIG: Size classes}
    */
@@ -261,11 +254,6 @@ export interface TabsScreenPropsIOS {
    * (stacked, inline, compact inline) and state (normal, selected, focused,
    * disabled).
    *
-   * The following fields are supported on iOS 18 or lower:
-   * {@link TabsScreenAppearanceIOS.tabBarBackgroundColor | tabBarBackgroundColor},
-   * {@link TabsScreenAppearanceIOS.tabBarBlurEffect | tabBarBlurEffect} and
-   * {@link TabsScreenAppearanceIOS.tabBarShadowColor | tabBarShadowColor}.
-   *
    * @platform ios
    */
   standardAppearance?: TabsScreenAppearanceIOS | undefined;
@@ -281,11 +269,6 @@ export interface TabsScreenPropsIOS {
    * If this property is `undefined`, UIKit uses
    * {@link TabsScreenPropsIOS.standardAppearance | standardAppearance},
    * modified to have a transparent background.
-   *
-   * The following fields are supported on iOS 18 or lower:
-   * {@link TabsScreenAppearanceIOS.tabBarBackgroundColor | tabBarBackgroundColor},
-   * {@link TabsScreenAppearanceIOS.tabBarBlurEffect | tabBarBlurEffect} and
-   * {@link TabsScreenAppearanceIOS.tabBarShadowColor | tabBarShadowColor}.
    *
    * @platform ios
    */
@@ -332,8 +315,14 @@ export interface TabsScreenPropsIOS {
    * The symbol is shown tinted while unselected and in its own colors while
    * selected:
    * ```tsx
-   * icon: { type: 'sfSymbol', name },
-   * selectedIcon: { type: 'sfSymbol', name, renderingMode: 'original' },
+   * ios={{
+   *   icon: { type: 'sfSymbol', name: 'star' },
+   *   selectedIcon: {
+   *     type: 'sfSymbol',
+   *     name: 'star',
+   *     renderingMode: 'original',
+   *   },
+   * }}
    * ```
    *
    * @platform ios
@@ -355,7 +344,6 @@ export interface TabsScreenPropsIOS {
    * iOS 27; to get a similar separation use `role: 'search'` together with
    * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem | UITabBarItem.SystemItem}
    * @platform ios
    */
   systemItem?: TabsScreenSystemItem | undefined;
@@ -374,7 +362,7 @@ export interface TabsScreenPropsIOS {
    * enabled. This prop does not affect the tab bar item's icon or title -
    * combine it with `systemItem: 'search'` for the system magnifier item. On
    * iOS 27+ the detached (prominent) placement can be given to any tab instead
-   * through {@link Tabs.Host | TabsHost}
+   * through {@link Tabs.Host}
    * {@link TabsHostPropsIOS.prominentScreenKey | ios.prominentScreenKey}.
    *
    * The native tab class cannot change during the screen's lifetime -
@@ -427,12 +415,9 @@ export interface TabsScreenPropsIOS {
    * visible screen.
    *
    * Consider using {@link TabsHostPropsBase.colorScheme | colorScheme} on
-   * {@link Tabs.Host | TabsHost} instead.
-   *
-   * The supported values correspond to the official UIKit documentation.
+   * {@link Tabs.Host} instead.
    *
    * @defaultValue `'unspecified'`
-   * @see {@link https://developer.apple.com/documentation/uikit/uiuserinterfacestyle | UIUserInterfaceStyle}
    * @platform ios
    * @experimental
    */
