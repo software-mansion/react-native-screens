@@ -5,13 +5,51 @@
 static const CGFloat kRNSBezierTolerance = 1e-6;
 static const int kRNSBezierMaxIterations = 32;
 
+typedef struct {
+  CGFloat x1, y1, x2, y2;
+} RNSStackAnimationControlPoints;
+
 @interface RNSStackAnimationNamedEasing ()
 - (instancetype)initWithName:(RNSStackAnimationEasingName)name;
 @end
 
 @interface RNSStackAnimationBezierEasing ()
 - (instancetype)initWithX1:(CGFloat)x1 y1:(CGFloat)y1 x2:(CGFloat)x2 y2:(CGFloat)y2;
++ (CGFloat)valueAt:(CGFloat)progress controlPoints:(RNSStackAnimationControlPoints)points;
 @end
+
+// The strings of the `easing` option; keep them in sync with `StackScreenAnimationEasingName` in
+// `src/components/stack/screen/animation/types.ts`.
+static const struct {
+  RNSStackAnimationEasingName name;
+  const char *string;
+} kRNSStackAnimationEasingNames[] = {
+    {RNSStackAnimationEasingNameLinear, "linear"},
+    {RNSStackAnimationEasingNameEaseIn, "easeIn"},
+    {RNSStackAnimationEasingNameEaseOut, "easeOut"},
+    {RNSStackAnimationEasingNameEaseInOut, "easeInOut"},
+    {RNSStackAnimationEasingNameStandard, "standard"},
+    {RNSStackAnimationEasingNameStandardAccelerate, "standardAccelerate"},
+    {RNSStackAnimationEasingNameStandardDecelerate, "standardDecelerate"},
+    {RNSStackAnimationEasingNameEmphasized, "emphasized"},
+    {RNSStackAnimationEasingNameEmphasizedAccelerate, "emphasizedAccelerate"},
+    {RNSStackAnimationEasingNameEmphasizedDecelerate, "emphasizedDecelerate"},
+};
+
+// CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords:
+// https://www.w3.org/TR/css-easing-1/#cubic-bezier-easing-functions
+static const RNSStackAnimationControlPoints kRNSEaseIn = {0.42, 0, 1, 1};
+static const RNSStackAnimationControlPoints kRNSEaseOut = {0, 0, 0.58, 1};
+static const RNSStackAnimationControlPoints kRNSEaseInOut = {0.42, 0, 0.58, 1};
+// Material 3 easing tokens: https://m3.material.io/styles/motion/easing-and-duration/tokens-specs
+static const RNSStackAnimationControlPoints kRNSStandard = {0.2, 0, 0, 1};
+static const RNSStackAnimationControlPoints kRNSStandardAccelerate = {0.3, 0, 1, 1};
+static const RNSStackAnimationControlPoints kRNSStandardDecelerate = {0, 0, 0, 1};
+// The two halves of the `emphasized` path `M 0,0 C 0.05,0 0.133333,0.06 0.166666,0.4 C 0.208333,0.82 0.25,1 1,1`,
+// each normalized to the unit square; the token page lists the same values under the two names.
+static const RNSStackAnimationControlPoints kRNSEmphasizedAccelerate = {0.3, 0, 0.8, 0.15};
+static const RNSStackAnimationControlPoints kRNSEmphasizedDecelerate = {0.05, 0.7, 0.1, 1};
+static const CGPoint kRNSEmphasizedJoin = {1.0 / 6, 0.4};
 
 @implementation RNSStackAnimationEasing
 
@@ -23,6 +61,16 @@ static const int kRNSBezierMaxIterations = 32;
 + (RNSStackAnimationEasing *)bezierWithX1:(CGFloat)x1 y1:(CGFloat)y1 x2:(CGFloat)x2 y2:(CGFloat)y2
 {
   return [[RNSStackAnimationBezierEasing alloc] initWithX1:x1 y1:y1 x2:x2 y2:y2];
+}
+
++ (nullable RNSStackAnimationEasing *)easingNamed:(NSString *)string
+{
+  for (const auto &entry : kRNSStackAnimationEasingNames) {
+    if (strcmp(entry.string, string.UTF8String) == 0) {
+      return [self named:entry.name];
+    }
+  }
+  return nil;
 }
 
 - (CGFloat)valueAt:(CGFloat)progress
@@ -48,6 +96,24 @@ static const int kRNSBezierMaxIterations = 32;
   switch (_name) {
     case RNSStackAnimationEasingNameLinear:
       return progress;
+    case RNSStackAnimationEasingNameEaseIn:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEaseIn];
+    case RNSStackAnimationEasingNameEaseOut:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEaseOut];
+    case RNSStackAnimationEasingNameEaseInOut:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEaseInOut];
+    case RNSStackAnimationEasingNameStandard:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSStandard];
+    case RNSStackAnimationEasingNameStandardAccelerate:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSStandardAccelerate];
+    case RNSStackAnimationEasingNameStandardDecelerate:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSStandardDecelerate];
+    case RNSStackAnimationEasingNameEmphasized:
+      return [RNSStackAnimationNamedEasing emphasizedValueAt:progress];
+    case RNSStackAnimationEasingNameEmphasizedAccelerate:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEmphasizedAccelerate];
+    case RNSStackAnimationEasingNameEmphasizedDecelerate:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEmphasizedDecelerate];
     case RNSStackAnimationEasingNameAccelerateDecelerate:
       // AOSP `AccelerateDecelerateInterpolator.getInterpolation`, the curve of
       // `@android:interpolator/accelerate_decelerate`:
@@ -63,6 +129,19 @@ static const int kRNSBezierMaxIterations = 32;
       // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/view/animation/DecelerateInterpolator.java
       return 1 - pow(1 - progress, 5);
   }
+}
+
+// Two cubic segments joined at `kRNSEmphasizedJoin`, each the normalized curve of the matching token.
++ (CGFloat)emphasizedValueAt:(CGFloat)progress
+{
+  if (progress < kRNSEmphasizedJoin.x) {
+    return kRNSEmphasizedJoin.y *
+        [RNSStackAnimationBezierEasing valueAt:progress / kRNSEmphasizedJoin.x controlPoints:kRNSEmphasizedAccelerate];
+  }
+  CGFloat segmentProgress = (progress - kRNSEmphasizedJoin.x) / (1 - kRNSEmphasizedJoin.x);
+  return kRNSEmphasizedJoin.y +
+      (1 - kRNSEmphasizedJoin.y) *
+      [RNSStackAnimationBezierEasing valueAt:segmentProgress controlPoints:kRNSEmphasizedDecelerate];
 }
 
 @end
@@ -81,16 +160,22 @@ static const int kRNSBezierMaxIterations = 32;
   return self;
 }
 
+- (CGFloat)valueAt:(CGFloat)progress
+{
+  RNSStackAnimationControlPoints points = {_x1, _y1, _x2, _y2};
+  return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:points];
+}
+
 // The output is y at the parameter where x equals the progress, found by Newton's method with a bisection fallback.
 // Core Animation and UIKit expose a cubic timing curve's control points only, not its value at a time.
 // https://www.w3.org/TR/css-easing-1/#cubic-bezier-easing-functions
-- (CGFloat)valueAt:(CGFloat)progress
++ (CGFloat)valueAt:(CGFloat)progress controlPoints:(RNSStackAnimationControlPoints)points
 {
   CGFloat low = 0;
   CGFloat high = 1;
   CGFloat s = progress;
   for (int i = 0; i < kRNSBezierMaxIterations; i++) {
-    CGFloat error = [RNSStackAnimationBezierEasing coordinateAt:s c1:_x1 c2:_x2] - progress;
+    CGFloat error = [self coordinateAt:s c1:points.x1 c2:points.x2] - progress;
     if (fabs(error) < kRNSBezierTolerance) {
       break;
     }
@@ -99,10 +184,10 @@ static const int kRNSBezierMaxIterations = 32;
     } else {
       high = s;
     }
-    CGFloat next = s - error / [RNSStackAnimationBezierEasing slopeAt:s c1:_x1 c2:_x2];
+    CGFloat next = s - error / [self slopeAt:s c1:points.x1 c2:points.x2];
     s = next > low && next < high ? next : (low + high) / 2;
   }
-  return [RNSStackAnimationBezierEasing coordinateAt:s c1:_y1 c2:_y2];
+  return [self coordinateAt:s c1:points.y1 c2:points.y2];
 }
 
 // One coordinate of the curve at parameter `s`, with the end points 0 and 1 and the control points' `c1` and `c2`:

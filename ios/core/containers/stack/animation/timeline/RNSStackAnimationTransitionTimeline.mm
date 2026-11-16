@@ -3,6 +3,10 @@
 #import "RNSStackAnimationTiming.h"
 #import "RNSStackAnimationTrack.h"
 
+// Scaling rounds each track on its own, so a short transition can round every track to 0 ms; a 0 ms animator would
+// end the transition before UIKit updates the navigation bar (the reason `RNSStackNoneAnimator` lasts 1 ms).
+static const NSInteger kRNSMinDurationMs = 1;
+
 @implementation RNSStackAnimationTransitionTimeline
 
 - (instancetype)initWithEnter:(RNSStackAnimationMotionTimeline *)enter
@@ -21,15 +25,32 @@
                     enterTracks:(NSArray<RNSStackAnimationTrack *> *)enterTracks
                      exitTracks:(NSArray<RNSStackAnimationTrack *> *)exitTracks
 {
-  NSInteger durationMs = 0;
-  for (RNSStackAnimationTrack *track in [enterTracks arrayByAddingObjectsFromArray:exitTracks]) {
-    durationMs = MAX(durationMs, track.timing.endMs);
+  return [self timelineWithEnterTracks:enterTracks
+                            exitTracks:exitTracks
+                            exitZOrder:kind == RNSStackAnimationTransitionKindPush ? RNSStackAnimationZOrderUnder
+                                                                                   : RNSStackAnimationZOrderOver];
+}
+
+- (instancetype)scaledBy:(double)factor
+{
+  if (self.isStatic) {
+    return self;
   }
-  RNSStackAnimationZOrder exitZOrder =
-      kind == RNSStackAnimationTransitionKindPush ? RNSStackAnimationZOrderUnder : RNSStackAnimationZOrderOver;
-  return [[self alloc] initWithEnter:[RNSStackAnimationMotionTimeline timelineSpanning:durationMs tracks:enterTracks]
-                                exit:[RNSStackAnimationMotionTimeline timelineSpanning:durationMs tracks:exitTracks]
-                          exitZOrder:exitZOrder];
+  return [[self class] timelineWithEnterTracks:[RNSStackAnimationTransitionTimeline tracks:_enter.tracks
+                                                                                  scaledBy:factor]
+                                    exitTracks:[RNSStackAnimationTransitionTimeline tracks:_exit.tracks scaledBy:factor]
+                                    exitZOrder:_exitZOrder];
+}
+
+- (instancetype)withEasing:(RNSStackAnimationEasing *)easing
+{
+  if (self.isStatic) {
+    return self;
+  }
+  return
+      [[self class] timelineWithEnterTracks:[RNSStackAnimationTransitionTimeline tracks:_enter.tracks withEasing:easing]
+                                 exitTracks:[RNSStackAnimationTransitionTimeline tracks:_exit.tracks withEasing:easing]
+                                 exitZOrder:_exitZOrder];
 }
 
 - (NSInteger)durationMs
@@ -52,6 +73,42 @@
                                                                exitTracks:@[]];
   });
   return staticTimeline;
+}
+
++ (instancetype)timelineWithEnterTracks:(NSArray<RNSStackAnimationTrack *> *)enterTracks
+                             exitTracks:(NSArray<RNSStackAnimationTrack *> *)exitTracks
+                             exitZOrder:(RNSStackAnimationZOrder)exitZOrder
+{
+  NSArray<RNSStackAnimationTrack *> *tracks = [enterTracks arrayByAddingObjectsFromArray:exitTracks];
+  NSInteger durationMs = 0;
+  for (RNSStackAnimationTrack *track in tracks) {
+    durationMs = MAX(durationMs, track.timing.endMs);
+  }
+  if (tracks.count > 0) {
+    durationMs = MAX(durationMs, kRNSMinDurationMs);
+  }
+  return [[self alloc] initWithEnter:[RNSStackAnimationMotionTimeline timelineSpanning:durationMs tracks:enterTracks]
+                                exit:[RNSStackAnimationMotionTimeline timelineSpanning:durationMs tracks:exitTracks]
+                          exitZOrder:exitZOrder];
+}
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks scaledBy:(double)factor
+{
+  NSMutableArray<RNSStackAnimationTrack *> *scaled = [NSMutableArray arrayWithCapacity:tracks.count];
+  for (RNSStackAnimationTrack *track in tracks) {
+    [scaled addObject:[track withTiming:[track.timing scaledBy:factor]]];
+  }
+  return scaled;
+}
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks
+                                   withEasing:(RNSStackAnimationEasing *)easing
+{
+  NSMutableArray<RNSStackAnimationTrack *> *eased = [NSMutableArray arrayWithCapacity:tracks.count];
+  for (RNSStackAnimationTrack *track in tracks) {
+    [eased addObject:[track withTiming:[track.timing withEasing:easing]]];
+  }
+  return eased;
 }
 
 @end

@@ -36,9 +36,11 @@ static const CGFloat kRNSRiseDistanceFraction = 0.08;
                 easing:[RNSStackAnimationEasing named:RNSStackAnimationEasingNameAccelerateDecelerate]] ];
 }
 
-+ (NSArray<RNSStackAnimationTrack *> *)fadeFromTracksFromEdge:(RNSStackAnimationEdge)edge appearing:(BOOL)isAppearing
++ (NSArray<RNSStackAnimationTrack *> *)fadeFromTracksFromEdge:(RNSStackAnimationEdge)edge
+                                                     distance:(nullable RNSStackAnimationLength *)distance
+                                                    appearing:(BOOL)isAppearing
 {
-  RNSStackAnimationLength *distance = [RNSStackAnimationLength fraction:kRNSRiseDistanceFraction];
+  RNSStackAnimationLength *travel = distance ?: [RNSStackAnimationLength fraction:kRNSRiseDistanceFraction];
   if (isAppearing) {
     RNSStackAnimationEasing *decelerate = [RNSStackAnimationEasing named:RNSStackAnimationEasingNameDecelerateQuint];
     return @[
@@ -48,7 +50,7 @@ static const CGFloat kRNSRiseDistanceFraction = 0.08;
                                            durationMs:kRNSRiseFadeDurationMs
                                                easing:decelerate],
       [RNSStackAnimationPresetTracks translationTrackFromEdge:edge
-                                                     distance:distance
+                                                     distance:travel
                                                     appearing:YES
                                                    durationMs:kRNSRiseDurationMs
                                                        easing:decelerate],
@@ -62,7 +64,7 @@ static const CGFloat kRNSRiseDistanceFraction = 0.08;
                                              easing:[RNSStackAnimationEasing named:RNSStackAnimationEasingNameLinear]],
     [RNSStackAnimationPresetTracks
         translationTrackFromEdge:edge
-                        distance:distance
+                        distance:travel
                        appearing:NO
                       durationMs:kRNSFallDurationMs
                           easing:[RNSStackAnimationEasing named:RNSStackAnimationEasingNameAccelerateQuint]],

@@ -6,6 +6,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackAnimationEasing;
 @class RNSStackAnimationMotionTimeline;
 @class RNSStackAnimationTrack;
 
@@ -39,6 +40,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)timelineForKind:(RNSStackAnimationTransitionKind)kind
                     enterTracks:(NSArray<RNSStackAnimationTrack *> *)enterTracks
                      exitTracks:(NSArray<RNSStackAnimationTrack *> *)exitTracks;
+
+/**
+ * Both motions rebuilt from their scaled tracks, so the duration follows the rounded tracks; the static timeline
+ * stays static.
+ */
+- (instancetype)scaledBy:(double)factor;
+
+- (instancetype)withEasing:(RNSStackAnimationEasing *)easing;
 
 @end
 

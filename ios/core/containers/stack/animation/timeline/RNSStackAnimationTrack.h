@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithTiming:(RNSStackAnimationTiming *)timing;
 
+- (instancetype)withTiming:(RNSStackAnimationTiming *)timing;
+
 @end
 
 @interface RNSStackAnimationTranslateTrack : RNSStackAnimationTrack

@@ -5,6 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackAnimationLength;
 @class RNSStackAnimationTrack;
 
 @interface RNSStackAnimationFadePresets : NSObject
@@ -15,10 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray<RNSStackAnimationTrack *> *)tracksAppearing:(BOOL)isAppearing;
 
 /**
- * One screen fading while travelling a short distance along `edge`'s vector: a rise when appearing, a shorter fall
- * when disappearing.
+ * One screen fading while travelling `distance` along `edge`'s vector: a rise when appearing, a shorter fall when
+ * disappearing. A nil `distance` is the legacy 8 % of the container's height.
  */
-+ (NSArray<RNSStackAnimationTrack *> *)fadeFromTracksFromEdge:(RNSStackAnimationEdge)edge appearing:(BOOL)isAppearing;
++ (NSArray<RNSStackAnimationTrack *> *)fadeFromTracksFromEdge:(RNSStackAnimationEdge)edge
+                                                     distance:(nullable RNSStackAnimationLength *)distance
+                                                    appearing:(BOOL)isAppearing;
 
 @end
 
