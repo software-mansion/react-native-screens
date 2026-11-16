@@ -9,6 +9,10 @@ import type {
 
 // #region Control
 
+/**
+ * Request to select a tab, passed to
+ * {@link TabsHostPropsBase.navStateRequest | navStateRequest}.
+ */
 export type TabsHostNavStateRequest = {
   /**
    * Valid screen key.
@@ -172,6 +176,9 @@ export type TabsColorScheme = ColorScheme | 'inherit';
  */
 export type TabsDirection = Direction | 'inherit';
 
+/**
+ * Style of the native container of {@link Tabs.Host}.
+ */
 export type TabsHostNativeContainerStyleProps = {
   /**
    * Specifies the background color of the native container.
@@ -181,6 +188,9 @@ export type TabsHostNativeContainerStyleProps = {
 
 // #endregion General helpers
 
+/**
+ * Cross-platform props for {@link Tabs.Host}.
+ */
 export interface TabsHostPropsBase {
   // Control
   /**
@@ -195,6 +205,7 @@ export interface TabsHostPropsBase {
    * @see {@link TabsHostPropsBase.rejectStaleNavStateUpdates}
    * @see {@link TabsHostNavStateRequest} for description of the type model &
    *   accepted values.
+   * @platform android, ios
    */
   navStateRequest: TabsHostNavStateRequest;
   /**
@@ -222,10 +233,16 @@ export interface TabsHostPropsBase {
    * active navigation state.
    *
    * @defaultValue `false`
+   * @platform android, ios
    */
   rejectStaleNavStateUpdates?: boolean | undefined;
 
   // General
+  /**
+   * Tabs of the host, declared with {@link Tabs.Screen}.
+   *
+   * @platform android, ios
+   */
   children: NonNullable<ViewProps['children']>;
   /**
    * Hides the tab bar.
@@ -294,6 +311,7 @@ export interface TabsHostPropsBase {
    * request.
    *
    * @see {@link TabSelectionRejectedEvent}
+   * @platform android, ios
    */
   onTabSelectionRejected?:
     | NativeEventHandler<TabSelectionRejectedEvent>
@@ -306,13 +324,27 @@ export interface TabsHostPropsBase {
    * enabled.
    *
    * @see {@link TabSelectionPreventedEvent}
+   * @platform android, ios
    */
   onTabSelectionPrevented?:
     | NativeEventHandler<TabSelectionPreventedEvent>
     | undefined;
 }
 
+/**
+ * Props for {@link Tabs.Host}.
+ */
 export interface TabsHostProps extends TabsHostPropsBase {
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
   ios?: TabsHostPropsIOS | undefined;
+  /**
+   * Android-specific props.
+   *
+   * @platform android
+   */
   android?: TabsHostPropsAndroid | undefined;
 }

@@ -51,7 +51,23 @@ export type {
 
 export type { TabsBottomAccessoryEnvironment } from './bottom-accessory';
 
+/**
+ * Native tab navigation, with a platform tab bar that switches between
+ * screens.
+ *
+ * @remarks
+ * {@link Tabs.Host} hosts the tab bar and shows the selected
+ * {@link Tabs.Screen}; each screen configures its own tab bar item.
+ *
+ * @namespace
+ */
 export const Tabs = {
+  /**
+   * Container that shows a native tab bar and the content of the selected
+   * {@link Tabs.Screen}.
+   *
+   * @platform android, ios
+   */
   Host: TabsHost,
   Screen: TabsScreen,
 };
