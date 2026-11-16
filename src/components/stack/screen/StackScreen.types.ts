@@ -162,8 +162,9 @@ export type StackScreenProps = {
    * value on the top screen takes effect for the next pop.
    *
    * On iOS, `'default'` plays UIKit's own transition and every other preset
-   * plays as described; a custom animation logs a warning and plays
-   * `'default'`. A pop by the back swipe always plays UIKit's transition.
+   * and custom animation plays as described; a motion written as tracks logs
+   * a warning and plays `'default'`. A pop by the back swipe always plays
+   * UIKit's transition.
    *
    * @note
    * This is an implementation detail and may change. A value the native side

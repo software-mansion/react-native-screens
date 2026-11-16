@@ -36,10 +36,14 @@ static const NSInteger kRNSMinDurationMs = 1;
   if (self.isStatic) {
     return self;
   }
-  return [[self class] timelineWithEnterTracks:[RNSStackAnimationTransitionTimeline tracks:_enter.tracks
-                                                                                  scaledBy:factor]
-                                    exitTracks:[RNSStackAnimationTransitionTimeline tracks:_exit.tracks scaledBy:factor]
+  return [[self class] timelineWithEnterTracks:[RNSStackAnimationTrack tracks:_enter.tracks scaledBy:factor]
+                                    exitTracks:[RNSStackAnimationTrack tracks:_exit.tracks scaledBy:factor]
                                     exitZOrder:_exitZOrder];
+}
+
+- (instancetype)retimedTo:(NSInteger)durationMs
+{
+  return [self scaledBy:durationMs / static_cast<double>(self.durationMs)];
 }
 
 - (instancetype)withEasing:(RNSStackAnimationEasing *)easing
@@ -47,10 +51,9 @@ static const NSInteger kRNSMinDurationMs = 1;
   if (self.isStatic) {
     return self;
   }
-  return
-      [[self class] timelineWithEnterTracks:[RNSStackAnimationTransitionTimeline tracks:_enter.tracks withEasing:easing]
-                                 exitTracks:[RNSStackAnimationTransitionTimeline tracks:_exit.tracks withEasing:easing]
-                                 exitZOrder:_exitZOrder];
+  return [[self class] timelineWithEnterTracks:[RNSStackAnimationTrack tracks:_enter.tracks withEasing:easing]
+                                    exitTracks:[RNSStackAnimationTrack tracks:_exit.tracks withEasing:easing]
+                                    exitZOrder:_exitZOrder];
 }
 
 - (NSInteger)durationMs
@@ -90,25 +93,6 @@ static const NSInteger kRNSMinDurationMs = 1;
   return [[self alloc] initWithEnter:[RNSStackAnimationMotionTimeline timelineSpanning:durationMs tracks:enterTracks]
                                 exit:[RNSStackAnimationMotionTimeline timelineSpanning:durationMs tracks:exitTracks]
                           exitZOrder:exitZOrder];
-}
-
-+ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks scaledBy:(double)factor
-{
-  NSMutableArray<RNSStackAnimationTrack *> *scaled = [NSMutableArray arrayWithCapacity:tracks.count];
-  for (RNSStackAnimationTrack *track in tracks) {
-    [scaled addObject:[track withTiming:[track.timing scaledBy:factor]]];
-  }
-  return scaled;
-}
-
-+ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks
-                                   withEasing:(RNSStackAnimationEasing *)easing
-{
-  NSMutableArray<RNSStackAnimationTrack *> *eased = [NSMutableArray arrayWithCapacity:tracks.count];
-  for (RNSStackAnimationTrack *track in tracks) {
-    [eased addObject:[track withTiming:[track.timing withEasing:easing]]];
-  }
-  return eased;
 }
 
 @end
