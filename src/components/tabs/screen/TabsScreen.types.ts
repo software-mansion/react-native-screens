@@ -41,7 +41,13 @@ import type {
  */
 export type TabsScreenOrientation = InterfaceOrientation | 'inherit';
 
+/**
+ * Style of a {@link Tabs.Screen}.
+ */
 export type TabsScreenStyleProps = {
+  /**
+   * Background color of the tab screen.
+   */
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
 
@@ -71,12 +77,21 @@ export interface TabsScreenRepeatedTabSelectionEffects {
   scrollToTop?: boolean | undefined;
 }
 
+/**
+ * Special effects (also known as microinteractions) of a tab screen.
+ */
 export interface TabsScreenSpecialEffects {
+  /**
+   * Special effects for repeated tab selection.
+   */
   repeatedTabSelection?: TabsScreenRepeatedTabSelectionEffects | undefined;
 }
 
 // #endregion General helpers
 
+/**
+ * Cross-platform props for {@link Tabs.Screen}.
+ */
 export interface TabsScreenPropsBase {
   // Control
   /**
@@ -95,7 +110,17 @@ export interface TabsScreenPropsBase {
   preventNativeSelection?: boolean | undefined;
 
   // General
+  /**
+   * Content of the tab screen.
+   *
+   * @platform android, ios
+   */
   children?: ViewProps['children'] | undefined;
+  /**
+   * Style of the tab screen.
+   *
+   * @platform android, ios
+   */
   style?: StyleProp<TabsScreenStyleProps> | undefined;
   /**
    * Title of the tab screen, displayed in the tab bar item.
@@ -157,14 +182,20 @@ export interface TabsScreenPropsBase {
   // Accessibility
   /**
    * testID for the {@link Tabs.Screen}
+   *
+   * @platform android, ios
    */
   testID?: string | undefined;
   /**
    * accessibilityLabel for the {@link Tabs.Screen}
+   *
+   * @platform android, ios
    */
   accessibilityLabel?: string | undefined;
   /**
    * testID for the TabBarItem
+   *
+   * @platform android, ios
    */
   tabBarItemTestID?: string | undefined;
   /**
@@ -205,7 +236,20 @@ export interface TabsScreenPropsBase {
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 }
 
+/**
+ * Props for {@link Tabs.Screen}.
+ */
 export interface TabsScreenProps extends TabsScreenPropsBase {
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
   ios?: TabsScreenPropsIOS | undefined;
+  /**
+   * Android-specific props.
+   *
+   * @platform android
+   */
   android?: TabsScreenPropsAndroid | undefined;
 }

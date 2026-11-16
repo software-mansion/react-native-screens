@@ -47,6 +47,9 @@ export type TabsScreenIconSymbolRenderingModeIOS =
   | 'monochrome'
   | 'original';
 
+/**
+ * Tab bar item icon on iOS, loaded from an image source.
+ */
 export interface TabsScreenIconImageSourceIOS extends PlatformIconShared {
   /**
    * How the tab bar renders this image.
@@ -61,6 +64,9 @@ export interface TabsScreenIconImageSourceIOS extends PlatformIconShared {
   renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
 }
 
+/**
+ * Tab bar item icon on iOS, from the SF Symbols set.
+ */
 export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
   /**
    * How the tab bar renders this symbol.
@@ -91,6 +97,9 @@ export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
  */
 export type TabsScreenIconTintingAndroid = 'default' | 'tinted' | 'original';
 
+/**
+ * Tab bar item icon on Android, loaded from a drawable resource.
+ */
 export interface TabsScreenIconDrawableResourceAndroid
   extends PlatformIconAndroidDrawableResource {
   /**
@@ -106,6 +115,9 @@ export interface TabsScreenIconDrawableResourceAndroid
   tinting?: TabsScreenIconTintingAndroid | undefined;
 }
 
+/**
+ * Tab bar item icon on Android, loaded from an image source.
+ */
 export interface TabsScreenIconImageSourceAndroid extends PlatformIconShared {
   /**
    * How the tab bar tints this icon.
@@ -120,10 +132,28 @@ export interface TabsScreenIconImageSourceAndroid extends PlatformIconShared {
   tinting?: TabsScreenIconTintingAndroid | undefined;
 }
 
+/**
+ * Icon of a tab bar item on iOS.
+ *
+ * @remarks
+ * The `type` field selects the kind of the icon. The following kinds are
+ * supported:
+ * - {@link TabsScreenIconSfSymbolIOS} — an SF Symbol.
+ * - {@link TabsScreenIconImageSourceIOS} — an image source.
+ */
 export type TabsScreenIconIOS =
   | TabsScreenIconSfSymbolIOS
   | TabsScreenIconImageSourceIOS;
 
+/**
+ * Icon of a tab bar item on Android.
+ *
+ * @remarks
+ * The `type` field selects the kind of the icon. The following kinds are
+ * supported:
+ * - {@link TabsScreenIconDrawableResourceAndroid} — a drawable resource.
+ * - {@link TabsScreenIconImageSourceAndroid} — an image source.
+ */
 export type TabsScreenIconAndroid =
   | TabsScreenIconDrawableResourceAndroid
   | TabsScreenIconImageSourceAndroid;

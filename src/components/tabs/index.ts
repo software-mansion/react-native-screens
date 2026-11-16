@@ -58,5 +58,11 @@ export type { TabsBottomAccessoryEnvironment } from './bottom-accessory';
 
 export const Tabs = {
   Host: TabsHost,
+  /**
+   * A single tab of {@link Tabs.Host}: its tab bar item and the content shown
+   * when the tab is selected.
+   *
+   * @platform android, ios
+   */
   Screen: TabsScreen,
 };
