@@ -15,37 +15,39 @@ static const NSInteger kRNSIosDurationMs = 350;
 static const CGFloat kRNSIosParallaxFraction = 0.3;
 static const CGFloat kRNSIosDimAlpha = 0.1;
 
-static RNSStackAnimationEasing *RNSIosEasing()
-{
-  return [RNSStackAnimationEasing bezierWithX1:0.25 y1:0.1 x2:0.25 y2:1];
-}
-
-static RNSStackAnimationTrack *RNSIosTravel(RNSStackAnimationEdge edge, CGFloat fraction, BOOL isAppearing)
-{
-  return [RNSStackAnimationPresetTracks translationTrackFromEdge:edge
-                                                        distance:[RNSStackAnimationLength fraction:fraction]
-                                                       appearing:isAppearing
-                                                      durationMs:kRNSIosDurationMs
-                                                          easing:RNSIosEasing()];
-}
-
 @implementation RNSStackAnimationIosPresets
 
 + (RNSStackAnimationTransitionTimeline *)transitionFromEdge:(RNSStackAnimationEdge)edge
                                                        kind:(RNSStackAnimationTransitionKind)kind
 {
   BOOL isPush = kind == RNSStackAnimationTransitionKindPush;
-  NSArray<RNSStackAnimationTrack *> *movingScreenTracks = @[ RNSIosTravel(edge, 1, isPush) ];
+  NSArray<RNSStackAnimationTrack *> *movingScreenTracks = @[ [self travelFromEdge:edge fraction:1 appearing:isPush] ];
   NSArray<RNSStackAnimationTrack *> *backgroundTracks = @[
-    RNSIosTravel(edge, kRNSIosParallaxFraction, !isPush),
+    [self travelFromEdge:edge fraction:kRNSIosParallaxFraction appearing:!isPush],
     [RNSStackAnimationPresetTracks dimTrackFrom:isPush ? 0 : kRNSIosDimAlpha
                                              to:isPush ? kRNSIosDimAlpha : 0
                                      durationMs:kRNSIosDurationMs
-                                         easing:RNSIosEasing()],
+                                         easing:[self easing]],
   ];
   return [RNSStackAnimationTransitionTimeline timelineForKind:kind
                                                   enterTracks:isPush ? movingScreenTracks : backgroundTracks
                                                    exitTracks:isPush ? backgroundTracks : movingScreenTracks];
+}
+
++ (RNSStackAnimationEasing *)easing
+{
+  return [RNSStackAnimationEasing bezierWithX1:0.25 y1:0.1 x2:0.25 y2:1];
+}
+
++ (RNSStackAnimationTrack *)travelFromEdge:(RNSStackAnimationEdge)edge
+                                  fraction:(CGFloat)fraction
+                                 appearing:(BOOL)isAppearing
+{
+  return [RNSStackAnimationPresetTracks translationTrackFromEdge:edge
+                                                        distance:[RNSStackAnimationLength fraction:fraction]
+                                                       appearing:isAppearing
+                                                      durationMs:kRNSIosDurationMs
+                                                          easing:[self easing]];
 }
 
 @end
