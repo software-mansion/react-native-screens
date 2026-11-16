@@ -47,6 +47,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)scaledBy:(double)factor;
 
+/**
+ * Both motions scaled so the transition lasts `durationMs`; the static timeline stays static.
+ */
+- (instancetype)retimedTo:(NSInteger)durationMs;
+
 - (instancetype)withEasing:(RNSStackAnimationEasing *)easing;
 
 @end

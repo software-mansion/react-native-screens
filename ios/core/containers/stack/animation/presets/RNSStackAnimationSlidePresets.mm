@@ -12,11 +12,13 @@ static const CGFloat kRNSSlideDistanceFraction = 1;
 
 @implementation RNSStackAnimationSlidePresets
 
-+ (NSArray<RNSStackAnimationTrack *> *)tracksFromEdge:(RNSStackAnimationEdge)edge appearing:(BOOL)isAppearing
++ (NSArray<RNSStackAnimationTrack *> *)tracksFromEdge:(RNSStackAnimationEdge)edge
+                                             distance:(nullable RNSStackAnimationLength *)distance
+                                            appearing:(BOOL)isAppearing
 {
   return @[ [RNSStackAnimationPresetTracks
       translationTrackFromEdge:edge
-                      distance:[RNSStackAnimationLength fraction:kRNSSlideDistanceFraction]
+                      distance:distance ?: [RNSStackAnimationLength fraction:kRNSSlideDistanceFraction]
                      appearing:isAppearing
                     durationMs:kRNSSlideDurationMs
                         easing:[RNSStackAnimationEasing named:RNSStackAnimationEasingNameAccelerateDecelerate]] ];

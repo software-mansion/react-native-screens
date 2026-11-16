@@ -1,4 +1,5 @@
 #import "RNSStackAnimationTrack.h"
+#import "RNSStackAnimationTiming.h"
 
 @implementation RNSStackAnimationTrack
 
@@ -13,6 +14,35 @@
 - (instancetype)withTiming:(RNSStackAnimationTiming *)timing
 {
   return [[[self class] alloc] initWithTiming:timing];
+}
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks scaledBy:(double)factor
+{
+  NSMutableArray<RNSStackAnimationTrack *> *scaled = [NSMutableArray arrayWithCapacity:tracks.count];
+  for (RNSStackAnimationTrack *track in tracks) {
+    [scaled addObject:[track withTiming:[track.timing scaledBy:factor]]];
+  }
+  return scaled;
+}
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks
+                                    retimedTo:(NSInteger)durationMs
+{
+  NSInteger endMs = 0;
+  for (RNSStackAnimationTrack *track in tracks) {
+    endMs = MAX(endMs, track.timing.endMs);
+  }
+  return endMs == 0 ? tracks : [self tracks:tracks scaledBy:durationMs / static_cast<double>(endMs)];
+}
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks
+                                   withEasing:(RNSStackAnimationEasing *)easing
+{
+  NSMutableArray<RNSStackAnimationTrack *> *eased = [NSMutableArray arrayWithCapacity:tracks.count];
+  for (RNSStackAnimationTrack *track in tracks) {
+    [eased addObject:[track withTiming:[track.timing withEasing:easing]]];
+  }
+  return eased;
 }
 
 @end
