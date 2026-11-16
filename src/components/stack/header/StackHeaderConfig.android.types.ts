@@ -1,6 +1,10 @@
-import type { ReactElement } from 'react';
 import type { ColorValue, TextStyle } from 'react-native';
 import type { PlatformIconAndroid } from '../../shared/types';
+import type {
+  StackHeaderElementFactory,
+  StackHeaderMenuSelectionHandler,
+  StackHeaderPressHandler,
+} from './StackHeaderConfig.types';
 
 /**
  * Type of the Material 3 app bar used as the header.
@@ -91,7 +95,7 @@ export interface StackHeaderToolbarSubviewAndroid {
    * produce incorrect dimensions. Flex layout within a root that has a known
    * size works as expected.
    */
-  render: () => ReactElement;
+  render: StackHeaderElementFactory;
 }
 
 /**
@@ -117,7 +121,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
    * The subview is stretched to match the header (`AppBarLayout`) dimensions,
    * so parent-relative sizing (e.g. `flex: 1`) works correctly.
    */
-  render: () => ReactElement;
+  render: StackHeaderElementFactory;
 }
 
 /**
@@ -351,7 +355,7 @@ export interface StackHeaderToolbarMenuItemAndroid
    * {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}
    * on the group instead.
    */
-  onPress?: (() => void) | undefined;
+  onPress?: StackHeaderPressHandler | undefined;
 }
 
 /**
@@ -387,7 +391,7 @@ export interface StackHeaderToolbarMenuGroupAndroid {
    * Callback invoked when the selection within the group changes. Receives the
    * list of currently selected item IDs.
    */
-  onSelectionChange?: ((selectedMenuElementIds: string[]) => void) | undefined;
+  onSelectionChange?: StackHeaderMenuSelectionHandler | undefined;
 }
 
 /**
