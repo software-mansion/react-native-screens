@@ -6,8 +6,8 @@ import type { TabsScreenIconAndroid } from './TabsScreenIcon.types';
  *
  * @remarks
  * The following values are available:
- * - `'auto'` — the label behaves as in “labeled” mode when there are 3 items
- *   or less, or as in “selected” mode when there are 4 items or more
+ * - `'auto'` — the label behaves as in `'labeled'` mode when there are 3
+ *   items or less, or as in `'selected'` mode when there are 4 items or more
  * - `'selected'` — the label is only shown on the selected navigation item
  * - `'labeled'` — the label is shown on all navigation items
  * - `'unlabeled'` — the label is hidden for all navigation items
@@ -53,8 +53,8 @@ export interface TabsScreenAppearanceAndroid {
    * Specifies the label visibility mode.
    *
    * @remarks
-   * The label visibility mode defines when the labels of each item bar should
-   * be displayed.
+   * The label visibility mode defines when the labels of each tab bar item
+   * should be displayed.
    *
    * @defaultValue `'auto'`
    */
@@ -77,13 +77,14 @@ export interface TabsScreenAppearanceAndroid {
    */
   selected?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
-   * Defines the colors for a tab bar item when it receives focus.
+   * Defines the colors for a tab bar item when it receives focus (used mostly
+   * for keyboard navigation).
    * The color scheme is determined by the configuration of the currently
    * selected tab.
    *
    * @note
    * This is an implementation detail and may change. Maps to Android
-   * `state_focused=true` (Used mostly for keyboard navigation).
+   * `state_focused=true`.
    */
   focused?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
@@ -190,8 +191,8 @@ export interface TabsScreenPropsAndroid {
    *   `'default'`: the tab bar tints the image with the item icon color.
    *   `'original'` keeps the image's own colors.
    *
-   *   Remarks: `'imageSource'` type doesn't support SVGs on Android.
-   *   For loading SVGs use `'drawableResource'` type.
+   *   `'imageSource'` type doesn't support SVGs on Android. For loading SVGs
+   *   use `'drawableResource'` type.
    *
    * - `{ type: 'drawableResource', name, tinting? }`
    *   Uses a drawable resource with the given name. `tinting` defaults to
@@ -199,7 +200,7 @@ export interface TabsScreenPropsAndroid {
    *   `'original'` keeps the drawable's own colors, e.g. of a multicolor
    *   VectorDrawable.
    *
-   *   Remarks: Requires passing a drawable to resources via Android Studio.
+   *   Requires passing a drawable to resources via Android Studio.
    *
    * See {@link TabsPlatformIconTintingAndroid} for the meaning of each value.
    *
@@ -211,11 +212,27 @@ export interface TabsScreenPropsAndroid {
    *
    * @remarks
    * Supports the same values as {@link TabsScreenPropsAndroid.icon | icon}
-   * property for given platform. `tinting` may differ from the one of `icon`,
-   * e.g. a drawable that is tinted while unselected and shows its own colors
-   * while selected.
+   * property for given platform. `tinting` may differ from the one of `icon`.
    *
    * To use `selectedIcon`, `icon` must also be provided.
+   *
+   * @example
+   * The drawable is tinted while unselected and shows its own colors while
+   * selected:
+   * ```tsx
+   * <Tabs.Screen
+   *   screenKey="favorites"
+   *   android={{
+   *     icon: { type: 'drawableResource', name: 'ic_star' },
+   *     selectedIcon: {
+   *       type: 'drawableResource',
+   *       name: 'ic_star',
+   *       tinting: 'original',
+   *     },
+   *   }}>
+   *   <FavoritesScreen />
+   * </Tabs.Screen>
+   * ```
    *
    * @platform android
    */
