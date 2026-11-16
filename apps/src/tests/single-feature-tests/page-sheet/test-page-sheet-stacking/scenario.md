@@ -8,7 +8,7 @@
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+TBD
 
 ## Prerequisites
 
@@ -19,7 +19,8 @@ TBD: Planned, but will be implemented separately.
 ## Note
 
 - On Android both styles present the same bottom sheet dialog, so the stack behaves exactly like `test-form-sheet-stacking`. The content of each sheet is anchored to the top; on iOS it is centered within the current detent.
-- **iPad:** the First and Third sheets are wide, bottom-anchored cards; the Second is a centered floating panel. Presenting the panel from the card and the card from the panel must both work.
+- **iPad:** the First and Third sheets are wide, bottom-anchored cards; the Second is a centered floating panel (iOS 26). Presenting the panel from the card and the card from the panel must both work.
+- **iPad:** the centering of FormSheet happens on iOS 26, on iOS 27 the FormSheet keeps smaller size, but is no longer centered
 
 ## Steps
 

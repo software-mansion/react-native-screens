@@ -8,17 +8,16 @@
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+TBD
 
 ## Prerequisites
 
 - iPad: device or simulator, app in full-screen mode (regular width and regular height size classes). This is the primary target of the scenario.
 - iPhone: device or simulator, for the parity check only.
 
-## Note
+## Notes
 
-- Both sheets share one native implementation; the only difference is `UIModalPresentationPageSheet` vs `UIModalPresentationFormSheet`. Every sheet prop (detents, grabber, corner radius, undimmed detent, `fitToContents`, events) applies to both.
-- Detent behaviour of a page sheet on iPad may differ between iPadOS versions. Record what you observe in step 3 of the iPad section.
+- The described behavior is observed on iOS 26, use this version for testing. On iOS 27, FormSheet no longer appears centered.
 
 ## Steps
 
