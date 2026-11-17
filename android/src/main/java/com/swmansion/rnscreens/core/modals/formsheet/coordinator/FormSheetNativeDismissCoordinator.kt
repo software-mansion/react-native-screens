@@ -8,7 +8,7 @@ internal class FormSheetNativeDismissCoordinator(
     private val behaviorController: FormSheetBehaviorController?,
     private val onDismissAllowed: () -> Unit,
     private val onDismissPrevented: () -> Unit,
-) : FormSheetDialog.CancelRequestInterceptor {
+) : FormSheetDialog.NativeDismissInterceptor {
     private val preventNativeDismissBackPressCallback =
         object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
@@ -23,12 +23,12 @@ internal class FormSheetNativeDismissCoordinator(
         }
 
     internal fun setup() {
-        dialog.cancelRequestInterceptor = this
+        dialog.nativeDismissInterceptor = this
         dialog.onBackPressedDispatcher.addCallback(preventNativeDismissBackPressCallback)
     }
 
     internal fun destroy() {
-        dialog.cancelRequestInterceptor = null
+        dialog.nativeDismissInterceptor = null
         preventNativeDismissBackPressCallback.remove()
     }
 
@@ -40,5 +40,23 @@ internal class FormSheetNativeDismissCoordinator(
         }
 
         onDismissAllowed()
+    }
+
+    override fun handleGestureEnd(dispatchGestureCompleted: () -> Boolean): Boolean {
+        val controller = behaviorController
+        if (!shouldPreventDismiss || controller == null) {
+            return dispatchGestureCompleted()
+        }
+
+        // Releasing the drag with hiding disabled makes the sheet snap back right away, instead of sliding
+        // off screen first and being restored after the cancel request.
+        val isDismissAttempt = controller.isDraggedBelowLowestDetent
+        val handled = controller.withHidingDisabled(dispatchGestureCompleted)
+        if (isDismissAttempt) {
+            // Without hiding, Material settles at the nearest offset, which isn't a detent for single-detent sheets.
+            controller.settleAtLastStableState()
+            onDismissPrevented()
+        }
+        return handled
     }
 }

@@ -14,6 +14,13 @@ internal class FormSheetBehaviorController(
     private var currentDetentsCount: Int = 1
     private var lastEmittedDetentIndex: Int = FORM_SHEET_UNKNOWN_DETENT_INDEX
     private var lastStableState: Int = BottomSheetBehavior.STATE_COLLAPSED
+    private var lastSlideOffset: Float = 0f
+
+    /**
+     * Whether the user is dragging the sheet below its lowest detent, i.e. towards dismissal.
+     */
+    internal val isDraggedBelowLowestDetent: Boolean
+        get() = behavior.state == BottomSheetBehavior.STATE_DRAGGING && lastSlideOffset < 0f
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -33,7 +40,9 @@ internal class FormSheetBehaviorController(
             override fun onSlide(
                 bottomSheet: View,
                 slideOffset: Float,
-            ) = Unit
+            ) {
+                lastSlideOffset = slideOffset
+            }
         }
 
     init {
@@ -54,7 +63,23 @@ internal class FormSheetBehaviorController(
             return
         }
 
+        settleAtLastStableState()
+    }
+
+    internal fun settleAtLastStableState() {
         behavior.state = lastStableState
+    }
+
+    /**
+     * Runs [block] with hiding disabled, so releasing a drag inside [block] doesn't slide the sheet off screen.
+     */
+    internal fun <T> withHidingDisabled(block: () -> T): T {
+        behavior.isHideable = false
+        try {
+            return block()
+        } finally {
+            behavior.isHideable = true
+        }
     }
 
     private fun rememberStateIfStable(state: Int) {
@@ -138,6 +163,9 @@ internal class FormSheetBehaviorController(
                 )
             }
         }
+
+        // Material doesn't notify callbacks about a state set before the sheet is laid out.
+        rememberStateIfStable(behavior.state)
     }
 
     private fun configureFitToContents(

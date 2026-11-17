@@ -32,7 +32,7 @@ internal class FormSheetPresentation(
         FormSheetDialog(themedContext).apply {
             setContentView(container)
             // Backdrop taps are handled by Material's `touch_outside` view, which calls `cancel()`,
-            // intercepted by FormSheetDialog.cancelRequestInterceptor, that's responsible for
+            // intercepted by FormSheetDialog.nativeDismissInterceptor, that's responsible for
             // preventNativeDismiss handling.
             setCanceledOnTouchOutside(true)
         }
