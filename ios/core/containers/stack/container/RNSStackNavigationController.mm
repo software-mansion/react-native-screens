@@ -245,6 +245,7 @@
   if ([target isEqualToArray:_stackModel]) {
     return;
   }
+  [self finishRunningCustomTransition];
   RNSStackScreenController *outgoing = _stackModel.lastObject;
   RNSStackScreenController *incoming = target.lastObject;
   BOOL animated = outgoing != nil;
@@ -272,6 +273,7 @@
 
 - (nullable UIViewController *)popViewControllerAnimated:(BOOL)animated
 {
+  [self finishRunningCustomTransition];
   // The system pop recognizers call this when they begin (undocumented). The swipe can still cancel,
   // so the screen leaves the model only when it commits, through the coordinator `super` creates.
   if ([self isSystemPopGestureBeginning]) {
@@ -287,12 +289,29 @@
 // The back button menu pops through here.
 - (nullable NSArray<UIViewController *> *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
+  [self finishRunningCustomTransition];
   NSUInteger index = [_stackModel indexOfObject:static_cast<RNSStackScreenController *>(viewController)];
   if (index != NSNotFound) {
+    [self cutStackModelAboveIndex:index];
+  }
+  return [super popToViewController:viewController animated:animated];
+}
+
+// A tab bar re-selecting its tab pops to root through here. `RNSTabBarController` refuses the repeated selection,
+// so only another tab bar controller reaches it.
+- (nullable NSArray<UIViewController *> *)popToRootViewControllerAnimated:(BOOL)animated
+{
+  [self finishRunningCustomTransition];
+  [self cutStackModelAboveIndex:0];
+  return [super popToRootViewControllerAnimated:animated];
+}
+
+- (void)cutStackModelAboveIndex:(NSUInteger)index
+{
+  if (index + 1 < _stackModel.count) {
     [_stackModel removeObjectsInRange:NSMakeRange(index + 1, _stackModel.count - index - 1)];
     [self dumpStackModel];
   }
-  return [super popToViewController:viewController animated:animated];
 }
 
 - (void)removeTopFromStackModel
@@ -315,6 +334,14 @@
           [strongSelf dumpStackModel];
         }
       }];
+}
+
+// UIKit queues a navigation call behind a running custom animator and a swipe's queued pop then plays without the
+// finger (undocumented, 18 and 27). UIKit finishes its own running transition inside the next call on 26 and later
+// (undocumented); this does the same for ours.
+- (void)finishRunningCustomTransition
+{
+  [_navigationControllerDelegate.transitionAnimator finish];
 }
 
 - (BOOL)isSystemPopGestureBeginning
