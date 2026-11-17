@@ -391,7 +391,8 @@ export interface StackScreenAnimationDimTrack
  * @remarks
  * A property without a track stays at rest; a motion without tracks is a
  * screen that stays put, like `'none'`. Scale and rotation apply about the
- * screen's center, then the translation, as on an Android `View`.
+ * screen's center, then the translation. On iOS the navigation bar is not part
+ * of the screen: it does not scale, turn or dim with it.
  */
 export interface StackScreenAnimationCustomMotion {
   /**
