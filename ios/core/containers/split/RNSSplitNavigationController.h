@@ -2,7 +2,6 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSStackNavigationController.h"
-#import "RNSViewControllerViewLifecycleEventsObserver.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,11 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Notified whenever the origin of this controller's view frame changes.
  */
 @property (nonatomic, weak, nullable) id<RNSViewFrameChangeDelegate> frameOriginChangeDelegate;
-
-/**
- * Notified about the lifecycle events of this controller's view.
- */
-@property (nonatomic, weak, nullable) id<RNSViewControllerViewLifecycleEventsObserver> viewLifecycleEventsObserver;
 
 @end
 
