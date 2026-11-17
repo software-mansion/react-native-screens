@@ -70,9 +70,9 @@ export type TabsHostNavStateRequest = {
  * The following values are supported:
  * - `'user'` — direct native UI interaction (e.g. tab bar tap, iOS tab
  *   drag-and-drop).
- * - `'programmatic-js'` — JS-initiated request delivered via the
+ * - `'programmaticJs'` — JS-initiated request delivered via the
  *   {@link TabsHostPropsBase.navStateRequest | navStateRequest} prop.
- * - `'programmatic-native'` — request initiated from the native side by an
+ * - `'programmaticNative'` — request initiated from the native side by an
  *   actor integrating directly against the native container.
  * - `'implicit'` — platform side effect not attributable to an explicit actor
  *   (e.g. UIKit reshuffling the selection during a horizontal size-class
@@ -80,8 +80,8 @@ export type TabsHostNavStateRequest = {
  */
 export type TabSelectionActionOrigin =
   | 'user'
-  | 'programmatic-js'
-  | 'programmatic-native'
+  | 'programmaticJs'
+  | 'programmaticNative'
   | 'implicit';
 
 /**
