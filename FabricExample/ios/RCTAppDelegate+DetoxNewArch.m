@@ -10,7 +10,6 @@
 //
 // Remove once the Detox release in use supports React Native 0.89.
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma clang diagnostic ignored "-Wdeprecated-implementations"
 
 @interface RCTAppDelegate (DetoxNewArchProbe)
