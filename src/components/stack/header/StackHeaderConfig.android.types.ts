@@ -707,15 +707,13 @@ export interface StackHeaderConfigPropsAndroid {
    * `scrollFlag*` prop to take effect.
    *
    * @remarks
-   * When `undefined`, falls back to the type-specific default:
-   * - `'small'`: `false`
-   * - `'medium'` / `'large'`: `true`
-   *
    * Changing any `scrollFlag*` at runtime while the header is partially
    * collapsed snaps it back to its fully expanded state. A fully collapsed
    * header stays collapsed, unless the new flags do not allow collapsing at
    * all - then it expands.
    *
+   * @defaultValue `false` for the `'small'` header and `true` for the
+   * `'medium'` and `'large'` headers.
    * @platform android
    */
   scrollFlagScroll?: boolean | undefined;
@@ -726,10 +724,7 @@ export interface StackHeaderConfigPropsAndroid {
    * has reached the top of its content. Requires
    * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
-   * @remarks
-   * When `undefined`, falls back to the type-specific default (`false` for all
-   * types).
-   *
+   * @defaultValue `false`
    * @platform android
    */
   scrollFlagEnterAlways?: boolean | undefined;
@@ -741,11 +736,9 @@ export interface StackHeaderConfigPropsAndroid {
    * of its content. Requires `scrollFlagEnterAlways`.
    *
    * @remarks
-   * When `undefined`, falls back to the type-specific default (`false` for all
-   * types).
-   *
    * This flag does not have any effect for `'small'` header.
    *
+   * @defaultValue `false`
    * @platform android
    */
   scrollFlagEnterAlwaysCollapsed?: boolean | undefined;
@@ -756,16 +749,14 @@ export interface StackHeaderConfigPropsAndroid {
    * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * @remarks
-   * When `undefined`, falls back to the type-specific default:
-   * - `'small'`: `false`
-   * - `'medium'` / `'large'`: `true`
-   *
    * Setting this flag for `'small'` header is equivalent to disabling
    * `scrollFlagScroll`.
    *
    * Even when this flag is disabled, a strip with the height of the system top
    * inset (status bar and display cutout) remains visible at the top.
    *
+   * @defaultValue `false` for the `'small'` header and `true` for the
+   * `'medium'` and `'large'` headers.
    * @platform android
    */
   scrollFlagExitUntilCollapsed?: boolean | undefined;
@@ -776,11 +767,8 @@ export interface StackHeaderConfigPropsAndroid {
    * after a scroll gesture ends, instead of resting partway. Requires
    * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
-   * @remarks
-   * When `undefined`, falls back to the type-specific default:
-   * - `'small'`: `false`
-   * - `'medium'` / `'large'`: `true`
-   *
+   * @defaultValue `false` for the `'small'` header and `true` for the
+   * `'medium'` and `'large'` headers.
    * @platform android
    */
   scrollFlagSnap?: boolean | undefined;
@@ -816,8 +804,7 @@ export interface StackHeaderConfigPropsAndroid {
    * color of the expanded state — the collapsed state color is controlled by
    * {@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor}.
    *
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   backgroundColor?: ColorValue | undefined;
@@ -840,8 +827,7 @@ export interface StackHeaderConfigPropsAndroid {
    * A translucent color is composited over the header background instead of
    * replacing it.
    *
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   scrolledBackgroundColor?: ColorValue | undefined;
@@ -1049,8 +1035,7 @@ export interface StackHeaderConfigPropsAndroid {
    * collapsed title look off-center when `collapsedTitleGravityMode:
    * 'availableSpace'` is used.
    *
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   contentInsetStart?: number | undefined;
@@ -1064,98 +1049,77 @@ export interface StackHeaderConfigPropsAndroid {
    * minimum, so it is inert while the toolbar menu shows items that already
    * reach further in.
    *
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   contentInsetEnd?: number | undefined;
   /**
    * Color of the title text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   titleColor?: ColorValue | undefined;
   /**
    * Font family of the title text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * Font size (SP) of the title text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Font weight of the title text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Font style of the title text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * Color of the subtitle text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleColor?: ColorValue | undefined;
   /**
    * Font family of the subtitle text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * Font size (SP) of the subtitle text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Font weight of the subtitle text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Font style of the subtitle text. Applies to `'small'` header only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
@@ -1163,9 +1127,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Color of the expanded title text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleColor?: ColorValue | undefined;
@@ -1173,9 +1135,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font family of the expanded title text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
@@ -1183,9 +1143,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font size (SP) of the expanded title text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontSize?: TextStyle['fontSize'] | undefined;
@@ -1193,9 +1151,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font weight of the expanded title text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
@@ -1203,9 +1159,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font style of the expanded title text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
@@ -1213,9 +1167,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Color of the collapsed title text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleColor?: ColorValue | undefined;
@@ -1223,9 +1175,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font family of the collapsed title text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
@@ -1233,9 +1183,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font size (SP) of the collapsed title text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontSize?: TextStyle['fontSize'] | undefined;
@@ -1243,9 +1191,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font weight of the collapsed title text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
@@ -1253,9 +1199,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font style of the collapsed title text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
@@ -1263,9 +1207,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Color of the expanded subtitle text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleColor?: ColorValue | undefined;
@@ -1273,9 +1215,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font family of the expanded subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
@@ -1283,9 +1223,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font size (SP) of the expanded subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
@@ -1293,9 +1231,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font weight of the expanded subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
@@ -1303,9 +1239,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font style of the expanded subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
@@ -1313,9 +1247,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Color of the collapsed subtitle text. Applies to `'medium'` and `'large'`
    * headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleColor?: ColorValue | undefined;
@@ -1323,9 +1255,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font family of the collapsed subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
@@ -1333,9 +1263,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font size (SP) of the collapsed subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
@@ -1343,9 +1271,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font weight of the collapsed subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
@@ -1353,9 +1279,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Font style of the collapsed subtitle text. Applies to `'medium'` and
    * `'large'` headers only.
    *
-   * @remarks
-   * If value is not provided, falls back to Material's default.
-   *
+   * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
