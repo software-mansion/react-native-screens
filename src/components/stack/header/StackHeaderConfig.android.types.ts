@@ -439,8 +439,9 @@ export interface StackHeaderToolbarMenuAndroid
    * Header title displayed at the top of the submenu popup.
    *
    * @remarks
-   * This is distinct from `title`, which controls the label shown in the parent
-   * menu's item row.
+   * This is distinct from
+   * {@link StackHeaderToolbarMenuItemBaseAndroid.title | title}, which controls
+   * the label shown in the parent menu's item row.
    *
    * When left unset, the header falls back to `title`; when both are unset, the
    * popup shows no header.
@@ -486,7 +487,8 @@ export interface StackHeaderToolbarMenuElementOptionsAndroid
    * Only applies to `type: 'menu'` elements. Ignored if the target is a regular
    * menu item. Setting it to `undefined` drops the
    * {@link StackHeaderToolbarMenuAndroid.menuTitle | menuTitle} prop as well,
-   * leaving the header to fall back to `title`.
+   * leaving the header to fall back to
+   * {@link StackHeaderToolbarMenuItemBaseAndroid.title | title}.
    */
   menuTitle?: string | undefined;
 }
