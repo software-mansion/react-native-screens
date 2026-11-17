@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type {
-  StackHostDirection,
+  StackDirection,
   StackScreenAnimation,
 } from 'react-native-screens';
 import {
@@ -18,7 +18,7 @@ const DIRECTION_OPTIONS = [
   'ltr',
   'rtl',
   'inherit',
-] as const satisfies readonly StackHostDirection[];
+] as const satisfies readonly StackDirection[];
 type DirectionOption = (typeof DIRECTION_OPTIONS)[number];
 
 // One swatch per screen colour, so whichever screen is underneath has its match here.

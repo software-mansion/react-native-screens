@@ -1,9 +1,9 @@
 buildscript {
     ext {
-        rnsDefaultTargetSdkVersion = 34
-        rnsDefaultCompileSdkVersion = 34
-        rnsDefaultMinSdkVersion = 21
-        rnsDefaultKotlinVersion = '1.8.0'
+        rnsDefaultTargetSdkVersion = 36
+        rnsDefaultCompileSdkVersion = 36
+        rnsDefaultMinSdkVersion = 24
+        rnsDefaultKotlinVersion = '2.3.21'
     }
     ext.safeExtGet = {prop, fallback ->
         def props = (prop instanceof String) ? [prop] : prop
@@ -19,9 +19,9 @@ buildscript {
     dependencies {
         def isRunningInContextOfScreensRepo = project == rootProject
         if (isRunningInContextOfScreensRepo) {
-            classpath('com.android.tools.build:gradle:8.2.1')
+            classpath('com.android.tools.build:gradle:9.2.1')
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-            classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+            classpath "com.diffplug.spotless:spotless-plugin-gradle:8.11.0"
         }
     }
 }

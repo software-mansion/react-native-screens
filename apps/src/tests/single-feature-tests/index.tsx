@@ -12,6 +12,7 @@ import StackV5ScenarioGroup from './stack-v5';
 import StackV4ScenarioGroup from './stack-v4';
 import ScrollViewMarkerScenarioGroup from './scroll-view-marker';
 import FormSheetScenarioGroup from './form-sheet';
+import PageSheetScenarioGroup from './page-sheet';
 import ContainedModalScenarioGroup from './contained-modal';
 import ScrollToTopGuardScenarioGroup from './scroll-to-top-guard';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
@@ -23,6 +24,7 @@ export * from './stack-v5';
 export * from './stack-v4';
 export * from './scroll-view-marker';
 export * from './form-sheet';
+export * from './page-sheet';
 export * from './contained-modal';
 export * from './scroll-to-top-guard';
 
@@ -33,6 +35,7 @@ export const COMPONENT_SCENARIOS = {
   StackV4: StackV4ScenarioGroup,
   ScrollViewMarker: ScrollViewMarkerScenarioGroup,
   FormSheet: FormSheetScenarioGroup,
+  PageSheet: PageSheetScenarioGroup,
   ContainedModal: ContainedModalScenarioGroup,
   ScrollToTopGuard: ScrollToTopGuardScenarioGroup,
 } as const;

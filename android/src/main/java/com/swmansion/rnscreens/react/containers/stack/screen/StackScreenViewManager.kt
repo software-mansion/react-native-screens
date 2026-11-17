@@ -179,6 +179,13 @@ internal class StackScreenViewManager :
             }
     }
 
+    override fun setReportsFrameToShadowTree(
+        view: StackScreen,
+        value: Boolean,
+    ) {
+        // iOS only.
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackScreen"
         private const val TAG = "StackScreenViewManager"

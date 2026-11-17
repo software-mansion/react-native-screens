@@ -1,13 +1,17 @@
 import type { ViewProps, StyleProp, ViewStyle } from 'react-native';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 /**
  * Props for {@link ContainedModalOverContent}.
  *
- * @platform ios
- * @since 5.0
  * @experimental
  */
 export interface ContainedModalProps {
+  /**
+   * Content of the modal.
+   *
+   * @platform ios
+   */
   children?: ViewProps['children'] | undefined;
 
   /**
@@ -23,7 +27,6 @@ export interface ContainedModalProps {
    * screen; the presentation is restored when the covering content goes away.
    *
    * @platform ios
-   * @since 5.0
    */
   isOpen: boolean;
 
@@ -34,12 +37,14 @@ export interface ContainedModalProps {
    * @remarks
    * The targeted provider must be an ancestor of the modal in the React tree;
    * the modal presents within that provider's bounds. Rendering a modal with
-   * no matching ancestor provider is a programming error (asserts in debug;
-   * in release the presentation is rejected and `onPresentationRejected`
-   * fires). Must not be empty.
+   * no matching ancestor provider is a programming error. Must not be empty.
+   *
+   * @note
+   * This is an implementation detail and may change. Without a matching
+   * provider, the modal asserts in debug builds; in release builds, the
+   * presentation is rejected and `onPresentationRejected` fires.
    *
    * @platform ios
-   * @since 5.0
    */
   targetContainerId: string;
 
@@ -55,9 +60,8 @@ export interface ContainedModalProps {
    * back to `false`, or re-open after the blocking modal closes).
    *
    * @platform ios
-   * @since 5.0
    */
-  onPresentationRejected?: (() => void) | undefined;
+  onPresentationRejected?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view is about to appear.
@@ -70,9 +74,8 @@ export interface ContainedModalProps {
    * `true` throughout the suspension.
    *
    * @platform ios
-   * @since 5.0
    */
-  onWillAppear?: (() => void) | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view has appeared.
@@ -85,9 +88,8 @@ export interface ContainedModalProps {
    * `true` throughout the suspension.
    *
    * @platform ios
-   * @since 5.0
    */
-  onDidAppear?: (() => void) | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view is about to disappear.
@@ -102,35 +104,39 @@ export interface ContainedModalProps {
    * see its remarks.
    *
    * @platform ios
-   * @since 5.0
    */
-  onWillDisappear?: (() => void) | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
    * Called when the modal's view has disappeared.
    *
    * @remarks
    * Fires on a programmatic dismissal (`isOpen` set to `false`). On a
-   * suspension it is NOT guaranteed: a react-native-screens stack push over
-   * the provider detaches the views before the disappearance transition
-   * completes, so only `onWillDisappear` fires there. Don't rely on a
-   * balanced Will/Did disappear pair around suspensions - key suspension
-   * logic off `onWillDisappear` and `onDidAppear` (restore) instead.
+   * suspension it is NOT guaranteed: when a react-native-screens stack pushes
+   * over the provider, only `onWillDisappear` fires. Don't rely on a balanced
+   * Will/Did disappear pair around suspensions - key suspension logic off
+   * `onWillDisappear` and `onDidAppear` (restore) instead.
+   *
+   * @note
+   * This is an implementation detail and may change. The stack push detaches
+   * the views before the disappearance transition completes.
    *
    * @platform ios
-   * @since 5.0
    */
-  onDidDisappear?: (() => void) | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 }
 
 /**
  * Props for {@link ContainedModalProvider}.
  *
- * @platform ios
- * @since 5.0
  * @experimental
  */
 export interface ContainedModalProviderProps {
+  /**
+   * Content the matched contained modals are presented over.
+   *
+   * @platform ios
+   */
   children?: ViewProps['children'] | undefined;
 
   /**
@@ -141,7 +147,6 @@ export interface ContainedModalProviderProps {
    * providers in unrelated subtrees may share an id). Must not be empty.
    *
    * @platform ios
-   * @since 5.0
    */
   containerId: string;
 
@@ -153,7 +158,6 @@ export interface ContainedModalProviderProps {
    * matched contained modal is presented in.
    *
    * @platform ios
-   * @since 5.0
    */
   style?: StyleProp<ViewStyle> | undefined;
 }

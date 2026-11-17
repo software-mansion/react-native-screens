@@ -1,210 +1,164 @@
-import type { ColorValue, NativeSyntheticEvent, ViewProps } from 'react-native';
-import type { BlurEffect } from '../../shared/types';
+import type { StyleProp, ViewProps } from 'react-native';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
+import type {
+  SheetBackgroundEffect as FormSheetBackgroundEffect,
+  SheetDetentChangedEvent as FormSheetDetentChangedEvent,
+  SheetDetents as FormSheetDetents,
+  SheetInitialDetentIndex as FormSheetInitialDetentIndex,
+  SheetLargestUndimmedDetentIndex as FormSheetLargestUndimmedDetentIndex,
+  SheetNativeContainerStyleProps as FormSheetNativeContainerStyleProps,
+  SheetPreferredCornerRadius as FormSheetPreferredCornerRadius,
+} from '../sheet';
 
-export type EmptyEventPayload = Record<string, never>;
-
-export type FormSheetEventHandler<T> = (e: NativeSyntheticEvent<T>) => void;
-
-export interface FormSheetDetentChangedEvent {
-  index: number;
-}
-
-/**
- * `UIBlurEffect.Style` a {@link FormSheetBackgroundEffectBlur} is rendered with.
- */
-export type FormSheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
-
-/**
- * Flat fill rendered behind the sheet's content.
- */
-export interface FormSheetBackgroundEffectColor {
-  /**
-   * Discriminator of the effect.
-   */
-  type: 'color';
-  /**
-   * Color of the fill.
-   */
-  color: ColorValue;
-}
+// Renamed re-exports keep the shared declarations' typedocs visible on the
+// consumer side.
+export type {
+  SheetDetentChangedEvent as FormSheetDetentChangedEvent,
+  SheetDetents as FormSheetDetents,
+  SheetPreferredCornerRadius as FormSheetPreferredCornerRadius,
+  SheetLargestUndimmedDetentIndex as FormSheetLargestUndimmedDetentIndex,
+  SheetInitialDetentIndex as FormSheetInitialDetentIndex,
+  SheetBackgroundEffectBlurStyle as FormSheetBackgroundEffectBlurStyle,
+  SheetBackgroundEffectColor as FormSheetBackgroundEffectColor,
+  SheetBackgroundEffectBlur as FormSheetBackgroundEffectBlur,
+  SheetBackgroundEffect as FormSheetBackgroundEffect,
+  SheetNativeContainerStyleProps as FormSheetNativeContainerStyleProps,
+} from '../sheet';
 
 /**
- * Blur material rendered behind the sheet's content.
+ * Props for {@link FormSheet}.
  */
-export interface FormSheetBackgroundEffectBlur {
-  /**
-   * Discriminator of the effect.
-   */
-  type: 'blur';
-  /**
-   * `UIBlurEffect.Style` the material is rendered with.
-   */
-  style: FormSheetBackgroundEffectBlurStyle;
-}
-
-/**
- * Material the system renders behind the sheet's content.
- *
- * @remarks
- * - `'automatic'` - whatever UIKit uses for sheets on the current iOS version,
- * - `'none'` - no material at all; the sheet is transparent and only its content is drawn,
- * - {@link FormSheetBackgroundEffectColor} - a flat fill (`UIColorEffect`),
- * - {@link FormSheetBackgroundEffectBlur} - a `UIBlurEffect` with the given `UIBlurEffect.Style`.
- */
-export type FormSheetBackgroundEffect =
-  | 'automatic'
-  | 'none'
-  | FormSheetBackgroundEffectColor
-  | FormSheetBackgroundEffectBlur;
-
-export type FormSheetNativeContainerStyleProps = {
-  /**
-   * @summary Specifies the background color of the native container hosting the sheet content.
-   *
-   * @platform android, ios
-   */
-  backgroundColor?: ColorValue | undefined;
-};
-
 export interface FormSheetProps {
+  /**
+   * Content of the sheet.
+   *
+   * @platform android, ios, tvos >= 26
+   */
   children?: ViewProps['children'] | undefined;
 
   /**
-   * @summary Determines whether the form sheet is currently visible.
+   * Determines whether the form sheet is currently visible.
    *
-   * Presentation is driven by state transitions: updating this property
-   * from `false` to `true` triggers the sheet to present, while changing
-   * it from `true` to `false` triggers a programmatic dismissal.
+   * @remarks
+   * Presentation is driven by state transitions: updating this property from
+   * `false` to `true` triggers the sheet to present, while changing it from
+   * `true` to `false` triggers a programmatic dismissal.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
   isOpen: boolean;
 
   /**
-   * @summary Defines the resting positions of the sheet.
-   *
-   * This can be either an array of fractional screen heights (ranging from `0.0` to `1.0`)
-   * or the `fitToContents` string literal.
-   *
-   * - Fractional heights: The sheet will snap to these specific height proportions.
-   * - `fitToContents`: The sheet automatically calculates its height to wrap its content.
-   *   It will dynamically animate to adapt to any internal layout changes.
-   *
-   * On iOS, these map directly to `UISheetPresentationController` detents.
-   * If an empty array is provided, it defaults to a single large detent.
+   * Defines the resting positions of the sheet.
    *
    * @remarks
-   * `fitToContents` is supported on iOS 16+. On iOS 15, it falls back to a medium detent
+   * If the prop is not set or the array is empty, the sheet has a single
+   * large detent. On Android, at most three detents are supported.
+   * `'fitToContents'` is supported on iOS 16+.
    *
+   * @note
+   * This is an implementation detail and may change. On iOS 15,
+   * `'fitToContents'` falls back to a large detent, and only the system's
+   * medium and large detents are used.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/detents | UISheetPresentationController.detents}
    * @platform android, ios
    */
-  detents?: number[] | 'fitToContents' | undefined;
+  detents?: FormSheetDetents | undefined;
 
   /**
-   * @summary Determines whether the sheet requests a grabber at the top.
+   * Determines whether the sheet shows a grabber at the top.
    *
-   * When `true`, the sheet requests that a small grabber indicator be shown
-   * at the top to hint that the sheet can be resized. The system may still
-   * hide the grabber in some presentation contexts.
+   * @remarks
+   * When `true`, a small grabber indicator is shown at the top of the sheet to
+   * hint that the sheet can be resized.
    *
-   * @default false
+   * @defaultValue `false`
    * @platform android, ios
    */
   prefersGrabberVisible?: boolean | undefined;
 
   /**
-   * @summary The corner radius that the sheet will attempt to present with.
-   *
-   * If set to `systemDefault` or a negative number, it defaults to the system's
-   * automatic dimension (`UISheetPresentationControllerAutomaticDimension`).
+   * The corner radius that the sheet will attempt to present with.
    *
    * @remarks
-   * On Android, non-uniform rounded-corner clipping is only applied on API level 33+.
-   * On older versions this prop is ignored, because clipping the sheet content to non-uniform
-   * rounded corners is not reliable on those versions.
+   * If set to `'systemDefault'` or a negative number, the system's default
+   * corner radius is used.
    *
-   * @default systemDefault
-   * @platform android, ios
-   * @supported android API level 33 or higher, iOS
+   * @defaultValue `'systemDefault'`
+   * @platform android >= 33, ios
    */
-  preferredCornerRadius?: number | 'systemDefault' | undefined;
+  preferredCornerRadius?: FormSheetPreferredCornerRadius | undefined;
 
   /**
-   * @summary The largest sheet detent for which a view underneath won't be dimmed.
+   * The largest sheet detent for which a view underneath won't be dimmed.
    *
-   * This prop can be set to a number, which indicates the index of the detent in the
-   * `detents` array for which there won't be a dimming view beneath the sheet.
-   *
-   * Additionally, there are the following options available:
-   * * `none` - there will be a dimming view for all detent levels.
-   * * `last` - there won't be a dimming view for any detent level.
-   *
-   * @default 'none'
+   * @defaultValue `'none'`
    * @platform ios
    */
-  largestUndimmedDetentIndex?: number | 'none' | 'last' | undefined;
+  largestUndimmedDetentIndex?: FormSheetLargestUndimmedDetentIndex | undefined;
 
   /**
-   * @summary The index of the detent the sheet should snap to when first opened.
+   * The index of the detent the sheet should snap to when first opened.
    *
-   * This prop can be set to a number, indicating the zero-based index of the detent in the
-   * `detents` array. If set to `last`, it will snap to the largest defined detent.
+   * @remarks
    * This prop only applies when the sheet transitions from closed to open.
    *
-   * @default 0
-   * @platform ios
+   * @defaultValue `0`
+   * @platform android, ios
    */
-  initialDetentIndex?: number | 'last' | undefined;
+  initialDetentIndex?: FormSheetInitialDetentIndex | undefined;
 
   /**
-   * @summary Determines whether scrolling expands the sheet to a larger detent.
+   * Determines whether scrolling expands the sheet to a larger detent.
    *
-   * When set to `true`, scrolling up within a child scroll view (starting from the top edge)
-   * will first expand the sheet to a larger detent before scrolling the content.
-   * When set to `false`, scrolling within the child scroll view will scroll the content normally
-   * without expanding the sheet.
-   * Note that manual dragging of the sheet's non-scrollable area will still expand the
-   * sheet regardless of this setting.
+   * @remarks
+   * When set to `true`, scrolling up within a child scroll view (starting from
+   * the top edge) will first expand the sheet to a larger detent before
+   * scrolling the content. When set to `false`, scrolling within the child
+   * scroll view will scroll the content normally without expanding the sheet.
+   * Note that manual dragging of the sheet's non-scrollable area will still
+   * expand the sheet regardless of this setting.
    *
-   * On iOS, this maps directly to `UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge`.
-   *
-   * @default true
+   * @defaultValue `true`
+   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/prefersscrollingexpandswhenscrolledtoedge | UISheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge}
    * @platform ios
    */
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
 
   /**
-   * @summary Prevents the user from dismissing the sheet natively by swiping down or tapping the backdrop.
+   * Prevents the user from dismissing the sheet natively by swiping down or
+   * tapping the backdrop.
    *
-   * When set to `true`, the sheet will resist the swipe-down gesture and backdrop tap,
-   * remaining on the resting detent. Programmatically dismissing the sheet via `isOpen={false}` will still work.
+   * @remarks
+   * When set to `true`, the sheet will resist the swipe-down gesture and
+   * backdrop tap, remaining on the resting detent. Programmatically dismissing
+   * the sheet via `isOpen={false}` will still work.
    *
-   * @default false
+   * @defaultValue `false`
    * @platform android, ios
    */
   preventNativeDismiss?: boolean | undefined;
 
   /**
-   * @summary Style applied to the native container hosting the sheet content.
+   * Style applied to the native container hosting the sheet content.
    *
-   * These properties are forwarded directly to the underlying native view.
-   *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  nativeContainerStyle?: FormSheetNativeContainerStyleProps | undefined;
+  nativeContainerStyle?:
+    | StyleProp<FormSheetNativeContainerStyleProps>
+    | undefined;
 
   /**
    * Material the system renders behind the sheet's content.
    *
    * @remarks
    * The material is drawn behind the native container, so an opaque
-   * `nativeContainerStyle.backgroundColor` covers it; replacing the material still matters then,
-   * because it removes the Liquid Glass highlight and edges of `'automatic'`.
-   *
-   * On iOS, this maps to `UIPresentationController.backgroundEffect`.
+   * `nativeContainerStyle.backgroundColor` covers it.
    *
    * @defaultValue `'automatic'`
    * @see {@link FormSheetBackgroundEffect}
+   * @see {@link https://developer.apple.com/documentation/uikit/uipresentationcontroller/backgroundeffect | UIPresentationController.backgroundEffect}
    * @platform ios >= 26.1
    */
   backgroundEffect?: FormSheetBackgroundEffect | undefined;
@@ -212,77 +166,87 @@ export interface FormSheetProps {
   // Events
 
   /**
-   * @summary A callback that gets invoked when the FormSheet will appear.
-   * This is called as soon as the transition begins.
+   * A callback that gets invoked when the FormSheet will appear. This is
+   * called as soon as the transition begins.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  onWillAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary A callback that gets invoked when the FormSheet did appear.
-   * This is called as soon as the transition ends.
+   * A callback that gets invoked when the sheet did appear. This is called
+   * as soon as the transition ends.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  onDidAppear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary A callback that gets invoked when the FormSheet will disappear.
-   * This is called as soon as the transition begins.
+   * A callback that gets invoked when the sheet will disappear. This is
+   * called as soon as the transition begins.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  onWillDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary A callback that gets invoked when the FormSheet did disappear.
-   * This is called as soon as the transition ends.
+   * A callback that gets invoked when the sheet did disappear. This is
+   * called as soon as the transition ends.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  onDidDisappear?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary Called when the sheet is dismissed programmatically.
+   * Called when the sheet is dismissed programmatically.
    *
-   * This event is fired when the sheet was dismissed via the `isOpen` prop changing to `false`.
+   * @remarks
+   * This event is fired when the sheet was dismissed via the `isOpen` prop
+   * changing to `false`.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  onDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onDismiss?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary Called when the sheet is dismissed natively.
+   * Called when the sheet is dismissed natively.
    *
-   * It is highly recommended to use this callback to synchronize
-   * your local React state to prevent UI mismatches (e.g., updating `isOpen` back to `false`).
+   * @remarks
+   * It is highly recommended to use this callback to synchronize your local
+   * React state to prevent UI mismatches, e.g. by setting `isOpen` back to
+   * `false`.
    *
-   * @platform android, ios
+   * @platform android, ios, tvos >= 26
    */
-  onNativeDismiss?: FormSheetEventHandler<EmptyEventPayload> | undefined;
+  onNativeDismiss?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   /**
-   * @summary Called when the sheet settles at a new detent.
+   * Called when the sheet settles at a new detent.
    *
-   * Provides the `index` of the newly selected detent from the `detents` array.
+   * @remarks
+   * Provides the `index` of the newly selected detent from the `detents`
+   * array.
+   *
+   * @note
+   * This is an implementation detail and may change. On iOS 15, the sheet
+   * uses only the system's medium and large detents, and the index refers to
+   * them: `0` for medium and `1` for large. With fewer than two detents, the
+   * index is always `0`.
    *
    * @platform android, ios
    */
-  onDetentChanged?:
-    | FormSheetEventHandler<FormSheetDetentChangedEvent>
-    | undefined;
+  onDetentChanged?: NativeEventHandler<FormSheetDetentChangedEvent> | undefined;
 
   /**
-   * @summary Called when the user attempts to dismiss the sheet by swiping down or tapping the backdrop, but the dismissal is prevented.
+   * Called when the user attempts to dismiss the sheet by swiping down or
+   * tapping the backdrop, but the dismissal is prevented.
    *
-   * This event is only fired if `preventNativeDismiss` is set to `true`.
-   * It is useful for triggering custom feedback, such as an alert
-   * to inform the user why the sheet cannot be closed.
+   * @remarks
+   * This event is only fired if `preventNativeDismiss` is set to `true`. It is
+   * useful for triggering custom feedback, such as an alert to inform the user
+   * why the sheet cannot be closed.
    *
    * @platform android, ios
    */
-  onNativeDismissPrevented?:
-    | FormSheetEventHandler<EmptyEventPayload>
-    | undefined;
+  onNativeDismissPrevented?: NativeEventHandler<EmptyEventPayload> | undefined;
 }

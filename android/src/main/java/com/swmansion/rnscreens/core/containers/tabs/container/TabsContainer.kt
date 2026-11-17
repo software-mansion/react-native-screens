@@ -167,7 +167,7 @@ class TabsContainer internal constructor(
 
     private val a11yCoordinator = TabsHostA11yCoordinator(bottomNavigationView)
 
-    private var interfaceInsetsChangeListener: OnInterfaceInsetsChangeListener? = null
+    private val interfaceInsetsChangeListeners = mutableListOf<OnInterfaceInsetsChangeListener>()
 
     internal var tabBarHidden: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -377,21 +377,20 @@ class TabsContainer internal constructor(
         }
     }
 
-    override fun setOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
-        if (interfaceInsetsChangeListener == null) {
+    override fun addOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
+        if (interfaceInsetsChangeListeners.isEmpty()) {
             bottomNavigationView.addOnLayoutChangeListener(this)
         }
-        interfaceInsetsChangeListener = listener
+        interfaceInsetsChangeListeners.add(listener)
     }
 
     override fun removeOnInterfaceInsetsChangeListener(listener: OnInterfaceInsetsChangeListener) {
-        if (interfaceInsetsChangeListener == listener) {
-            interfaceInsetsChangeListener = null
+        if (interfaceInsetsChangeListeners.remove(listener) && interfaceInsetsChangeListeners.isEmpty()) {
             bottomNavigationView.removeOnLayoutChangeListener(this)
         }
     }
 
-    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, bottomNavigationView.height.toFloat())
+    override fun getInterfaceInsets(): EdgeInsets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight().toFloat())
 
     override fun getResolvedUiNightMode() = colorSchemeCoordinator.getResolvedUiNightMode()
 
@@ -875,12 +874,12 @@ class TabsContainer internal constructor(
             "[RNScreens] Requested fragment for key: $screenKey does not exist"
         }
 
-    private fun updateInterfaceInsets(newHeight: Int? = null) {
-        val height = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
+    // A hidden tab bar is `GONE`, so `bottomNavigationView.height` keeps the last laid out value.
+    private fun currentTabBarHeight(newHeight: Int? = null): Int = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
 
-        interfaceInsetsChangeListener?.apply {
-            this.onInterfaceInsetsChange(EdgeInsets(0.0f, 0.0f, 0.0f, height.toFloat()))
-        }
+    private fun updateInterfaceInsets(newHeight: Int? = null) {
+        val insets = EdgeInsets(0.0f, 0.0f, 0.0f, currentTabBarHeight(newHeight).toFloat())
+        interfaceInsetsChangeListeners.forEach { it.onInterfaceInsetsChange(insets) }
     }
 
     private fun getInsetsForBottomNavigationView(insets: WindowInsets): WindowInsets? {
