@@ -47,6 +47,15 @@ class SheetContainer(
         grabberView.visibility = if (visible) VISIBLE else GONE
     }
 
+    internal fun measureGrabberHeight(): Int {
+        if (grabberView.visibility == GONE) {
+            return 0
+        }
+        val unspecified = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        grabberView.measure(unspecified, unspecified)
+        return grabberView.measuredHeight
+    }
+
     private fun shouldHoldBackFromSheet(
         target: View,
         dy: Int,
