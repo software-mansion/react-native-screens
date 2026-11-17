@@ -113,17 +113,27 @@ stay manual.
 
 1. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
 
-2. Click "Toggle leading/trailing items count" to get 3 on both sides.
+2. Enable `paddingRemoved` with the default 2 items on both sides.
+
+  - [ ] No visible change. Each small item sits alone in a bubble of minimal size, so there is no padding to remove.
+
+3. Disable `paddingRemoved`. Click "Toggle leading/trailing items count" to get 3 on both sides.
 
   - [ ] Two items on each side appear in shared bubble.
 
-3. Enable `paddingRemoved`.
+4. Enable `paddingRemoved`.
 
-  - [ ] Items loose padding and are closer to each other (more visible for the buttons that share the bubble).
+  - [ ] Items in the shared bubble lose padding and move closer to each other. Standalone items don't change.
 
   - [ ] Position of items on device matches element tree.
 
-4. Disable `paddingRemoved` at runtime.
+5. Click the first leading item to enlarge it.
+
+  - [ ] The bubble wraps the enlarged item tightly; the item may poke out of the bubble's rounded corners (see Known Issues).
+
+  - [ ] Position of items on device matches element tree.
+
+6. Disable `paddingRemoved` at runtime.
 
   - [ ] Padding is restored and position of items on device matches element tree.
 
