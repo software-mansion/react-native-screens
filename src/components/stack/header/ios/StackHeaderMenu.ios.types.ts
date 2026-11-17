@@ -40,20 +40,27 @@ export interface StackHeaderMenuItemIOS {
    * Used to locate the item inside a menu tree and to identify selected items
    * in {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
    * callback.
+   *
+   * @platform ios
    */
   id: string;
   /**
    * Marks this object as a menu item definition.
+   *
+   * @platform ios
    */
   type: 'menuItem';
   /**
    * Title displayed for the menu item.
+   *
+   * @platform ios
    */
   title?: string | undefined;
   /**
    * Determines the behavior of the menu item.
    *
    * @defaultValue `'automatic'`
+   * @platform ios
    */
   itemType?: StackHeaderMenuItemTypeIOS | undefined;
   /**
@@ -66,6 +73,7 @@ export interface StackHeaderMenuItemIOS {
    * most one item can set this to `true`.
    *
    * @defaultValue `false`
+   * @platform ios
    */
   initialToggleState?: boolean | undefined;
   /**
@@ -74,6 +82,8 @@ export interface StackHeaderMenuItemIOS {
    * @remarks
    * Supports SF Symbols, xcassets, and image sources. For async image sources,
    * the menu item renders without an icon first and updates when loaded.
+   *
+   * @platform ios
    */
   icon?: PlatformIconIOS | undefined;
   /**
@@ -84,6 +94,8 @@ export interface StackHeaderMenuItemIOS {
    * this callback will not fire — use
    * {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange} on the
    * parent menu instead.
+   *
+   * @platform ios
    */
   onPress?: StackHeaderPressHandler | undefined;
   /**
@@ -93,10 +105,10 @@ export interface StackHeaderMenuItemIOS {
    * When enabled, selecting this item will not dismiss the menu, allowing the
    * user to continue interacting with other items.
    *
-   * This prop should only be used for items in top-level menus. Requires iOS
-   * 16.0 or later.
+   * This prop should only be used for items in top-level menus.
    *
    * @defaultValue `false`
+   * @platform ios >= 16
    */
   keepsMenuPresented?: boolean | undefined;
 }
@@ -127,14 +139,20 @@ export interface StackHeaderMenuIOS {
    * @remarks
    * Used to locate the menu inside a tree and as the reference when querying or
    * manipulating menu state.
+   *
+   * @platform ios
    */
   id: string;
   /**
    * Marks this object as a menu definition.
+   *
+   * @platform ios
    */
   type: 'menu';
   /**
    * Title displayed for the menu.
+   *
+   * @platform ios
    */
   title?: string | undefined;
   /**
@@ -150,6 +168,7 @@ export interface StackHeaderMenuIOS {
    * hierarchy. `'action'` items are disallowed.
    *
    * @defaultValue `false`
+   * @platform ios
    */
   singleSelection?: boolean | undefined;
   /**
@@ -158,6 +177,8 @@ export interface StackHeaderMenuIOS {
    * @remarks
    * Supports SF Symbols, xcassets, and image sources. For async image sources,
    * the menu renders without an icon first and updates when loaded.
+   *
+   * @platform ios
    */
   icon?: PlatformIconIOS | undefined;
   /**
@@ -168,6 +189,7 @@ export interface StackHeaderMenuIOS {
    * with horizontal bars separating it from the surrounding items.
    *
    * @defaultValue `false`
+   * @platform ios
    */
   displayInline?: boolean | undefined;
   /**
@@ -177,9 +199,8 @@ export interface StackHeaderMenuIOS {
    * When enabled, the menu children are rendered as a horizontal palette
    * row instead of a vertical list. Best suited for menus with icon-only items.
    *
-   * Requires iOS 17.0 or later. On older versions, this option is ignored.
-   *
    * @defaultValue `false`
+   * @platform ios >= 17
    */
   displayAsPalette?: boolean | undefined;
   /**
@@ -188,6 +209,8 @@ export interface StackHeaderMenuIOS {
    * @remarks
    * Each child is either a {@link StackHeaderMenuItemIOS} (leaf) or another
    * {@link StackHeaderMenuIOS}, allowing arbitrarily nested menu trees.
+   *
+   * @platform ios
    */
   children: StackHeaderMenuElementIOS[];
   /**
@@ -199,6 +222,8 @@ export interface StackHeaderMenuIOS {
    * When defined below Single Selection Root, the callback doesn't fire. In
    * regular non-single-selection case, only changes to direct children are
    * reflected.
+   *
+   * @platform ios
    */
   onSelectionChange?: StackHeaderMenuSelectionHandler | undefined;
 }

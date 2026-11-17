@@ -15,10 +15,14 @@ import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 export interface StackHeaderMenuItemOptionsIOS {
   /**
    * New title for the menu action.
+   *
+   * @platform ios
    */
   title?: string | undefined;
   /**
    * New icon for the menu action.
+   *
+   * @platform ios
    */
   icon?: PlatformIconIOS | undefined;
   /**
@@ -28,6 +32,8 @@ export interface StackHeaderMenuItemOptionsIOS {
    * When inside a single selection hierarchy, setting `true` deselects the
    * previously selected item and selects this one. Setting `false` is a noop
    * in this case - only has effect for regular toggles.
+   *
+   * @platform ios
    */
   toggleState?: boolean | undefined;
 }
@@ -41,10 +47,14 @@ export interface StackHeaderMenuItemOptionsIOS {
 export interface StackHeaderMenuOptionsIOS {
   /**
    * New title for the submenu.
+   *
+   * @platform ios
    */
   title?: string | undefined;
   /**
    * New icon for the submenu.
+   *
+   * @platform ios
    */
   icon?: PlatformIconIOS | undefined;
 }
@@ -55,10 +65,14 @@ export interface StackHeaderMenuOptionsIOS {
 export interface StackHeaderBaseItemIOS {
   /**
    * A unique identifier within the screen header.
+   *
+   * @platform ios
    */
   id: string;
   /**
    * A title for the item that is displayed in the header.
+   *
+   * @platform ios
    */
   title?: string | undefined;
   /**
@@ -69,6 +83,8 @@ export interface StackHeaderBaseItemIOS {
    * the item renders without an icon first and updates when loaded. Ignored
    * when custom view ({@link StackHeaderInlineCustomItemIOS.render | render})
    * is set.
+   *
+   * @platform ios
    */
   icon?: PlatformIconIOS | undefined;
 }
@@ -79,6 +95,8 @@ export interface StackHeaderBaseItemIOS {
 export interface StackHeaderSupportsMenuIOS {
   /**
    * Menu definition for the context menu that appears when item is tapped.
+   *
+   * @platform ios
    */
   menu?: StackHeaderMenuIOS | undefined;
   /**
@@ -91,6 +109,8 @@ export interface StackHeaderSupportsMenuIOS {
    * doesn't display in the overflow menu otherwise. The `id`s used in the menu
    * are expected to be unique across every
    * {@link StackHeaderSupportsMenuIOS.menu | menu} and `menuRepresentation`.
+   *
+   * @platform ios >= 16
    */
   menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
@@ -108,6 +128,7 @@ export interface StackHeaderSupportsSharedBackgroundIOS {
    * from this item.
    *
    * @defaultValue `false`
+   * @platform ios >= 26
    */
   hidesSharedBackground?: boolean | undefined;
 }
@@ -143,6 +164,7 @@ export interface StackHeaderSupportsVisibilityPriorityIOS {
    * moved into the overflow menu has no content to show there.
    *
    * @defaultValue `'standard'`
+   * @platform ios >= 27
    */
   visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
 }
@@ -163,6 +185,8 @@ export interface StackHeaderSupportsIdentifierIOS {
    * should be logically considered the same across screens, you may use this
    * prop to tell this fact to the system. The identifier shouldn't be updated
    * at runtime; doing so will result in item rebuild and visual flash.
+   *
+   * @platform ios >= 26
    */
   identifier?: string | undefined;
 }
@@ -189,12 +213,15 @@ export interface StackHeaderInlineItemIOS
     StackHeaderSupportsVisibilityPriorityIOS {
   /**
    * Marks this object as a header item definition.
+   *
+   * @platform ios
    */
   type: 'item';
   /**
    * Visual variant (style) of the item.
    *
    * @defaultValue `'plain'`
+   * @platform ios
    */
   variant?: StackHeaderItemVariantIOS | undefined;
   /**
@@ -205,6 +232,8 @@ export interface StackHeaderInlineItemIOS
    * the tint affects the emphasized background instead.
    *
    * When unset, the item uses the default system tint.
+   *
+   * @platform ios
    */
   tintColor?: ColorValue | undefined;
   /**
@@ -216,6 +245,7 @@ export interface StackHeaderInlineItemIOS
    * {@link StackHeaderSupportsMenuIOS.menu | menu} is triggered.
    *
    * @defaultValue `false`
+   * @platform ios
    */
   disabled?: boolean | undefined;
   /**
@@ -225,6 +255,8 @@ export interface StackHeaderInlineItemIOS
    * Fires when the user taps the header item. When combined with
    * {@link StackHeaderSupportsMenuIOS.menu | menu}, tapping fires `onPress` and
    * long-pressing shows the menu.
+   *
+   * @platform ios
    */
   onPress?: StackHeaderPressHandler | undefined;
 }
@@ -239,10 +271,14 @@ export interface StackHeaderInlineCustomItemIOS
     StackHeaderSupportsVisibilityPriorityIOS {
   /**
    * A unique identifier within the screen header.
+   *
+   * @platform ios
    */
   id: string;
   /**
    * Marks this object as a header item definition.
+   *
+   * @platform ios
    */
   type: 'item';
   /**
@@ -252,6 +288,8 @@ export interface StackHeaderInlineCustomItemIOS
    * The subview is sized by React Native's layout engine but positioned by the
    * platform native layout. Each item's size is calculated independently and
    * will not respect flex layout. Use static width and height for best results.
+   *
+   * @platform ios
    */
   render: StackHeaderElementFactory;
 }
@@ -269,18 +307,26 @@ export interface StackHeaderInlineCustomItemIOS
 export interface StackHeaderFixedSpacerItemIOS {
   /**
    * A unique identifier within the screen header.
+   *
+   * @platform ios
    */
   id: string;
   /**
    * Marks this object as a spacer definition.
+   *
+   * @platform ios
    */
   type: 'spacer';
   /**
    * Marks this object as a fixed-size spacer definition.
+   *
+   * @platform ios
    */
   sizing: 'fixed';
   /**
    * Specifies space width between adjacent header items.
+   *
+   * @platform ios
    */
   width: number;
 }
@@ -297,14 +343,20 @@ export interface StackHeaderFixedSpacerItemIOS {
 export interface StackHeaderFlexibleSpacerItemIOS {
   /**
    * A unique identifier within the screen header.
+   *
+   * @platform ios
    */
   id: string;
   /**
    * Marks this object as a spacer definition.
+   *
+   * @platform ios
    */
   type: 'spacer';
   /**
    * Marks this object as a flexible-size spacer definition.
+   *
+   * @platform ios
    */
   sizing: 'flexible';
 }
@@ -332,6 +384,8 @@ export type StackHeaderItemIOS =
 export interface StackHeaderTitleCustomItemIOS {
   /**
    * A unique identifier within the screen header.
+   *
+   * @platform ios
    */
   id: string;
   /**
@@ -346,6 +400,8 @@ export interface StackHeaderTitleCustomItemIOS {
    * ellipsize to fit available space without manually setting desired view
    * width. For text-only elements that should ellipsize it is recommended to
    * use regular {@link StackHeaderConfigPropsBase.title | title} instead.
+   *
+   * @platform ios
    */
   render: StackHeaderElementFactory;
 }
@@ -420,6 +476,8 @@ export type StackHeaderSafeAreaAdjustmentIOS =
 export interface StackHeaderButtonStateAppearanceIOS {
   /**
    * Specifies the font family used for the item's text.
+   *
+   * @platform ios
    */
   fontFamily?: TextStyle['fontFamily'] | undefined;
   /**
@@ -427,18 +485,26 @@ export interface StackHeaderButtonStateAppearanceIOS {
    *
    * @remarks
    * This prop also scales SF Symbol icons of the items.
+   *
+   * @platform ios
    */
   fontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Specifies the font weight used for the item's text.
+   *
+   * @platform ios
    */
   fontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Specifies the font style used for the item's text.
+   *
+   * @platform ios
    */
   fontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * Specifies the font color used for the item's text.
+   *
+   * @platform ios
    */
   fontColor?: TextStyle['color'] | undefined;
 }
@@ -455,18 +521,26 @@ export interface StackHeaderButtonStateAppearanceIOS {
 export interface StackHeaderButtonAppearanceIOS {
   /**
    * Text attributes of the item in the normal state.
+   *
+   * @platform ios
    */
   normal?: StackHeaderButtonStateAppearanceIOS | undefined;
   /**
    * Text attributes of the item in the highlighted (pressed) state.
+   *
+   * @platform ios
    */
   highlighted?: StackHeaderButtonStateAppearanceIOS | undefined;
   /**
    * Text attributes of the item in the disabled state.
+   *
+   * @platform ios
    */
   disabled?: StackHeaderButtonStateAppearanceIOS | undefined;
   /**
    * Text attributes of the item in the focused state.
+   *
+   * @platform ios
    */
   focused?: StackHeaderButtonStateAppearanceIOS | undefined;
 }
@@ -477,42 +551,62 @@ export interface StackHeaderButtonAppearanceIOS {
 export interface StackHeaderAppearanceIOS {
   /**
    * Specifies the font family used for the title of the header.
+   *
+   * @platform ios
    */
   titleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * Specifies the font size used for the title of the header.
+   *
+   * @platform ios
    */
   titleFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Specifies the font weight used for the title of the header.
+   *
+   * @platform ios
    */
   titleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Specifies the font style used for the title of the header.
+   *
+   * @platform ios
    */
   titleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * Specifies the font color used for the title of the header.
+   *
+   * @platform ios
    */
   titleFontColor?: TextStyle['color'] | undefined;
   /**
    * Specifies the font family used for the large title of the header.
+   *
+   * @platform ios
    */
   largeTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * Specifies the font size used for the large title of the header.
+   *
+   * @platform ios
    */
   largeTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Specifies the font weight used for the large title of the header.
+   *
+   * @platform ios
    */
   largeTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Specifies the font style used for the large title of the header.
+   *
+   * @platform ios
    */
   largeTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * Specifies the font color used for the large title of the header.
+   *
+   * @platform ios
    */
   largeTitleFontColor?: TextStyle['color'] | undefined;
   /**
@@ -520,6 +614,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @remarks
    * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios >= 26
    */
   subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
@@ -527,6 +623,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @remarks
    * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios >= 26
    */
   subtitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
@@ -534,6 +632,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @remarks
    * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios >= 26
    */
   subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
@@ -541,6 +641,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @remarks
    * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios >= 26
    */
   subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
@@ -548,6 +650,8 @@ export interface StackHeaderAppearanceIOS {
    *
    * @remarks
    * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios >= 26
    */
   subtitleFontColor?: TextStyle['color'] | undefined;
   /**
@@ -559,6 +663,8 @@ export interface StackHeaderAppearanceIOS {
    * {@link StackHeaderAppearanceIOS.backButton | backButton} attributes
    * override it per attribute. Attributes can be customized per control
    * state: `normal`, `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
    */
   button?: StackHeaderButtonAppearanceIOS | undefined;
   /**
@@ -569,6 +675,8 @@ export interface StackHeaderAppearanceIOS {
    * variant (on iOS below 26 these fall back to the `done` style, which this
    * prop styles as well). Attributes can be customized per control state:
    * `normal`, `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
    */
   prominentButton?: StackHeaderButtonAppearanceIOS | undefined;
   /**
@@ -579,6 +687,8 @@ export interface StackHeaderAppearanceIOS {
    * for the back button title, attribute by attribute — the unset attributes
    * keep following the `button` appearance. Attributes can be customized per
    * control state: `normal`, `highlighted`, `disabled` and `focused`.
+   *
+   * @platform ios
    */
   backButton?: StackHeaderButtonAppearanceIOS | undefined;
 }
@@ -640,15 +750,6 @@ export interface StackHeaderConfigPropsIOS {
    * Note: Custom items are not put into the overflow menu, but are removed
    * entirely.
    *
-   * Some fields of the items are supported only on newer iOS versions:
-   * - {@link StackHeaderSupportsMenuIOS.menuRepresentation | menuRepresentation}
-   *   — iOS 16 or higher.
-   * - {@link StackHeaderSupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
-   *   and {@link StackHeaderSupportsIdentifierIOS.identifier | identifier}
-   *   — iOS 26 or higher.
-   * - {@link StackHeaderSupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
-   *   — iOS 27 or higher.
-   *
    * @platform ios
    */
   leadingItems?: StackHeaderItemIOS[] | undefined;
@@ -682,15 +783,6 @@ export interface StackHeaderConfigPropsIOS {
    *
    * Note: Custom items are not put into the overflow menu, but are removed
    * entirely.
-   *
-   * Some fields of the items are supported only on newer iOS versions:
-   * - {@link StackHeaderSupportsMenuIOS.menuRepresentation | menuRepresentation}
-   *   — iOS 16 or higher.
-   * - {@link StackHeaderSupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
-   *   and {@link StackHeaderSupportsIdentifierIOS.identifier | identifier}
-   *   — iOS 26 or higher.
-   * - {@link StackHeaderSupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
-   *   — iOS 27 or higher.
    *
    * @platform ios
    */
@@ -781,13 +873,6 @@ export interface StackHeaderConfigPropsIOS {
    * is not aligned with the edge of the header.
    *
    * @remarks
-   * The subtitle fields are supported on iOS 26 or higher:
-   * {@link StackHeaderAppearanceIOS.subtitleFontFamily | subtitleFontFamily},
-   * {@link StackHeaderAppearanceIOS.subtitleFontSize | subtitleFontSize},
-   * {@link StackHeaderAppearanceIOS.subtitleFontWeight | subtitleFontWeight},
-   * {@link StackHeaderAppearanceIOS.subtitleFontStyle | subtitleFontStyle} and
-   * {@link StackHeaderAppearanceIOS.subtitleFontColor | subtitleFontColor}.
-   *
    * Native platform limitation: on iOS 26, header items resolve the `button` /
    * `prominentButton` attributes once, from whichever appearance is in effect
    * at the moment the items are attached to the navigation bar, and do not
@@ -806,13 +891,6 @@ export interface StackHeaderConfigPropsIOS {
    * otherwise becomes a standalone definition. In both cases it keeps
    * transparent background by default (`iOS < 18`).
    *
-   * The subtitle fields are supported on iOS 26 or higher:
-   * {@link StackHeaderAppearanceIOS.subtitleFontFamily | subtitleFontFamily},
-   * {@link StackHeaderAppearanceIOS.subtitleFontSize | subtitleFontSize},
-   * {@link StackHeaderAppearanceIOS.subtitleFontWeight | subtitleFontWeight},
-   * {@link StackHeaderAppearanceIOS.subtitleFontStyle | subtitleFontStyle} and
-   * {@link StackHeaderAppearanceIOS.subtitleFontColor | subtitleFontColor}.
-   *
    * Native platform limitation: on iOS 26, header items resolve the `button` /
    * `prominentButton` attributes once, from whichever appearance is in effect
    * at the moment the items are attached to the navigation bar, and do not
@@ -824,8 +902,8 @@ export interface StackHeaderConfigPropsIOS {
 }
 
 /**
- * iOS-specific commands of {@link Stack.HeaderConfig}, available through
- * {@link StackHeaderConfigRef.ios}.
+ * iOS-specific commands of {@link Stack.HeaderConfig}, available through the
+ * {@link StackHeaderConfigRef.ios | ios} key of {@link StackHeaderConfigRef}.
  */
 export interface StackHeaderConfigCommandsIOS {
   /**
