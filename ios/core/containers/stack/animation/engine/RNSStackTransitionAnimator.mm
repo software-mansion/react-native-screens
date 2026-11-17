@@ -16,6 +16,35 @@
   return [UIViewPropertyAnimator new];
 }
 
+- (UIViewPropertyAnimator *)linearAnimatorForTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+                                             animations:(nullable void (^)(void))animations
+                                             completion:(nullable void (^)(void))completion
+{
+  // UIKit adds no Core Animation animation for a property set to the value it already has, and a property animator
+  // without animations completes at once, ending the transition early. Animating a hidden view keeps the transition
+  // open for its whole duration without changing anything on screen.
+  UIView *hiddenView = [UIView new];
+  hiddenView.hidden = YES;
+  [transitionContext.containerView addSubview:hiddenView];
+  UIViewPropertyAnimator *animator =
+      [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                 curve:UIViewAnimationCurveLinear
+                                            animations:^{
+                                              hiddenView.alpha = 0;
+                                              if (animations != nil) {
+                                                animations();
+                                              }
+                                            }];
+  [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+    [hiddenView removeFromSuperview];
+    if (completion != nil) {
+      completion();
+    }
+    [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
+  }];
+  return animator;
+}
+
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
   [[self interruptibleAnimatorForTransition:transitionContext] startAnimation];

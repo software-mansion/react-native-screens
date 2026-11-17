@@ -44,6 +44,12 @@ static const double kRNSStackKeyframeStepMs = 8;
           case RNSStackAnimationViewPropertyOpacity:
             _animatesAlpha = YES;
             break;
+          case RNSStackAnimationViewPropertyScale:
+          case RNSStackAnimationViewPropertyScaleX:
+          case RNSStackAnimationViewPropertyScaleY:
+          case RNSStackAnimationViewPropertyRotate:
+            _animatesTransform = YES;
+            break;
         }
       } else if ([track isKindOfClass:RNSStackAnimationDimTrack.class]) {
         RNSAssert(_scrim == nil, @"[RNScreens] A motion can dim its screen with one track only.");
@@ -106,6 +112,9 @@ static const double kRNSStackKeyframeStepMs = 8;
 {
   CGFloat translationX = 0;
   CGFloat translationY = 0;
+  CGFloat scaleX = 1;
+  CGFloat scaleY = 1;
+  CGFloat rotationDegrees = 0;
   CGFloat alpha = 1;
   CGFloat scrimAlpha = 0;
   for (RNSStackAnimationTrack *track in _motion.tracks) {
@@ -127,6 +136,19 @@ static const double kRNSStackKeyframeStepMs = 8;
         case RNSStackAnimationViewPropertyOpacity:
           alpha = value;
           break;
+        case RNSStackAnimationViewPropertyScale:
+          scaleX = value;
+          scaleY = value;
+          break;
+        case RNSStackAnimationViewPropertyScaleX:
+          scaleX = value;
+          break;
+        case RNSStackAnimationViewPropertyScaleY:
+          scaleY = value;
+          break;
+        case RNSStackAnimationViewPropertyRotate:
+          rotationDegrees = value;
+          break;
       }
     } else if ([track isKindOfClass:RNSStackAnimationDimTrack.class]) {
       auto dim = static_cast<RNSStackAnimationDimTrack *>(track);
@@ -134,9 +156,14 @@ static const double kRNSStackKeyframeStepMs = 8;
     }
   }
   if (_animatesTransform) {
-    CGAffineTransform translation = CGAffineTransformMakeTranslation(translationX, translationY);
-    _view.transform = translation;
-    _scrim.transform = translation;
+    // Scale, then rotation, both about the view's center, then translation: the same order as on Android.
+    // `CGAffineTransformConcat(a, b)` applies `a` first.
+    CGAffineTransform transform = CGAffineTransformMakeScale(scaleX, scaleY);
+    transform = CGAffineTransformConcat(transform, CGAffineTransformMakeRotation(rotationDegrees * M_PI / 180));
+    transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(translationX, translationY));
+    _view.transform = transform;
+    // The scrim is a sibling of the screen, so it takes the same transform to keep covering it.
+    _scrim.transform = transform;
   }
   if (_animatesAlpha) {
     _view.alpha = alpha;

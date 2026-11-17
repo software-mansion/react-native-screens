@@ -58,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
                                   to:(CGFloat)to
                               timing:(RNSStackAnimationTiming *)timing;
 
+/**
+ * The `UIView` default of `property`: what an omitted endpoint of a custom track stands for.
+ */
++ (CGFloat)restValueOfViewProperty:(RNSStackAnimationViewProperty)property;
+
 @end
 
 /**

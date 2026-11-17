@@ -1,7 +1,6 @@
 #pragma once
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "RNSStackAnimationEdge.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,6 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSStackAnimationTranslateTrack;
 
 @interface RNSStackAnimationPresetTracks : NSObject
+
+/**
+ * The scrim color of a dim without one: black, as the shadow view of the legacy iOS `RNSScreenStackAnimator`.
+ */
+@property (class, nonatomic, readonly) UIColor *defaultDimColor;
 
 /**
  * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives at rest along it, a
@@ -31,9 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
                                           durationMs:(NSInteger)durationMs
                                               easing:(RNSStackAnimationEasing *)easing;
 
-/**
- * A black scrim over the screen.
- */
 + (RNSStackAnimationDimTrack *)dimTrackFrom:(CGFloat)from
                                          to:(CGFloat)to
                                  durationMs:(NSInteger)durationMs
