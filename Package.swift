@@ -15,6 +15,7 @@ let headerSearchPaths: [String] = [
     "ios/core/containers/tabs/bottom-accessory",
     "ios/core/containers/tabs/container",
     "ios/core/containers/tabs/screen",
+    "ios/core/modals",
     "ios/core/modals/contained-modal",
     "ios/core/modals/sheet",
     "ios/core/scroll-view",
