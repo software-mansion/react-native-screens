@@ -4,6 +4,10 @@ description: >-
   ARGENT_SERVER_LOG for the caller to collect on failure.
 
 inputs:
+  argent-version:
+    description: Version of @swmansion/argent to install.
+    required: false
+    default: '0.26.0'
   port:
     description: Port to serve the tool-server on.
     required: false
@@ -22,8 +26,10 @@ runs:
     # only pins the installer, which then installs the latest release globally.
     - name: Install Argent
       shell: bash
+      env:
+        ARGENT_VERSION: ${{ inputs.argent-version }}
       run: |
-        npm install --global @swmansion/argent@0.26.0
+        npm install --global "@swmansion/argent@$ARGENT_VERSION"
         argent init --yes
         argent --version
 

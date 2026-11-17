@@ -1,4 +1,4 @@
-name: Test Android e2e - new architecture
+name: Test Android e2e
 on:
   pull_request:
     branches:
@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/android-e2e-test-fabric.yml'
       - '.github/actions/argent-server/**'
+      - '.github/actions/install-node-deps/**'
       - '.argent/**'
       - 'react-native-screens-testing'
       - 'scripts/e2e/run-argent-flows-android.sh'
@@ -54,25 +55,10 @@ jobs:
           distribution: 'zulu'
           cache: 'gradle'
 
-      - name: Setup Node.js (version from .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install root node dependencies
-        run: yarn install && yarn submodules:react-navigation
-
       - name: Install node dependencies
-        id: install_deps
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        continue-on-error: true
-        run: yarn install
-
-      - if: steps.install_deps.outcome == 'failure'
-        name: Reinstall node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
+        uses: ./.github/actions/install-node-deps
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -103,25 +89,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (version from .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install root node dependencies
-        run: yarn install && yarn submodules:react-navigation
-
       - name: Install node dependencies
-        id: install_deps
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        continue-on-error: true
-        run: yarn install
-
-      - if: steps.install_deps.outcome == 'failure'
-        name: Reinstall node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
+        uses: ./.github/actions/install-node-deps
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
 
       # Unpacked where Detox's android.release binaryPath expects it.
       - name: Download APKs built by the build job

@@ -1,4 +1,4 @@
-name: Test iOS e2e - new architecture
+name: Test iOS e2e
 on:
   pull_request:
     branches:
@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/ios-e2e-test-fabric.yml'
       - '.github/actions/argent-server/**'
+      - '.github/actions/install-node-deps/**'
       - '.argent/**'
       - 'react-native-screens-testing'
       - 'scripts/e2e/argent-failure-summary.sh'
@@ -43,18 +44,12 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Setup Node.js (version from .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
       - name: Get Xcode version
         run: xcodebuild -version
-      - name: Install root node dependencies
-        run: yarn install && yarn submodules:react-navigation
       - name: Install node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
+        uses: ./.github/actions/install-node-deps
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
       - name: Install pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
@@ -97,20 +92,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: Setup Node.js (version from .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install AppleSimulatorUtils
         run: brew tap wix/brew && brew trust wix/brew && brew install applesimutils
-      - name: Install root node dependencies
-        run: yarn install && yarn submodules:react-navigation
       - name: Install node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
+        uses: ./.github/actions/install-node-deps
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
       - name: Download app built by the build job
         uses: actions/download-artifact@v4
         with:
