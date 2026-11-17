@@ -1,0 +1,59 @@
+name: Set up Android AVD
+description: >-
+  Installs the emulator dependencies, enables KVM and restores the e2e AVD
+  from cache, creating it and its snapshot on a cache miss. Booting the
+  emulator for the actual run is left to the caller.
+
+inputs:
+  api-level:
+    description: Android API level of the AVD.
+    required: true
+  profile:
+    description: Hardware profile of the AVD, e.g. `pixel_7`.
+    required: true
+  cores:
+    description: Number of CPU cores of the AVD.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install AVD dependencies
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt-get install -y libpulse0 libgl1 libxkbfile1
+
+    - name: Enable KVM
+      shell: bash
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: AVD cache
+      uses: actions/cache@v4
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        # A snapshot only loads on the hardware config it was taken with.
+        key: avd-${{ inputs.api-level }}-${{ inputs.profile }}-${{ inputs.cores }}cores
+
+    - name: Create AVD and generate snapshot for caching
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.api-level }}
+        target: default
+        profile: ${{ inputs.profile }}
+        cores: ${{ inputs.cores }}
+        ram-size: '4096M'
+        disk-size: '10G'
+        disable-animations: false
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        avd-name: e2e_emulator
+        arch: x86_64
+        script: echo "Generated AVD snapshot for caching."
