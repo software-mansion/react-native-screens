@@ -1,19 +1,16 @@
 import React, {
   type ComponentRef,
-  type Ref,
-  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
 } from 'react';
-import type {
-  StackHeaderConfigProps,
-  StackHeaderConfigRef,
-} from './StackHeaderConfig.types';
+import type { StackHeaderConfigProps } from './StackHeaderConfig.types';
 import StackHeaderConfigIOSNativeComponent, {
   Commands as StackHeaderConfigIOSNativeCommands,
+  ButtonAppearance,
+  ButtonStateAppearance,
   HeaderAppearance,
   MenuItemPressEvent,
   MenuSelectionChangeEvent,
@@ -23,9 +20,16 @@ import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
 import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
-import { NativeSyntheticEvent, StyleSheet, processColor } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  StyleSheet,
+  processColor,
+  type TextStyle,
+} from 'react-native';
 import type {
   StackHeaderAppearanceIOS,
+  StackHeaderButtonAppearanceIOS,
+  StackHeaderButtonStateAppearanceIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderInlineItemIOS,
   StackHeaderMenuItemOptionsIOS,
@@ -36,16 +40,10 @@ import type {
 import { findMenuElementByIdInMenus, validateMenuCallbacks } from './utils';
 import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
-function StackHeaderConfig(
-  props: StackHeaderConfigProps,
-  forwardedRef: Ref<StackHeaderConfigRef>,
-) {
+function StackHeaderConfig(props: StackHeaderConfigProps) {
   // android props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { ios, android, ...restProps } = props;
+  const { ref: forwardedRef, ios, android, ...restProps } = props;
 
   const {
     leadingItems,
@@ -58,6 +56,9 @@ function StackHeaderConfig(
     largeSubtitle,
     largeTitleEnabled,
     prompt,
+    minimizationBehavior,
+    restorationBehavior,
+    safeAreaAdjustment,
     backButtonTitle,
     backButtonDisplayMode,
     backButtonMenuEnabled,
@@ -110,10 +111,10 @@ function StackHeaderConfig(
       [
         ...(leadingItems ?? [])
           .filter(it => it && it.type === 'item')
-          .map(it => it.menu),
+          .flatMap(it => [it.menu, it.menuRepresentation]),
         ...(trailingItems ?? [])
           .filter(it => it && it.type === 'item')
-          .map(it => it.menu),
+          .flatMap(it => [it.menu, it.menuRepresentation]),
         titleMenu,
       ].filter(it => !!it),
     [leadingItems, trailingItems, titleMenu],
@@ -166,6 +167,9 @@ function StackHeaderConfig(
       largeSubtitle={largeSubtitle}
       largeTitleEnabled={!!largeTitleEnabled}
       prompt={prompt}
+      minimizationBehavior={minimizationBehavior}
+      restorationBehavior={restorationBehavior}
+      safeAreaAdjustment={safeAreaAdjustment}
       standardAppearance={mapAppearanceToNativeProp(standardAppearance)}
       scrollEdgeAppearance={mapAppearanceToNativeProp(scrollEdgeAppearance)}
       titleMenu={resolvedTitleMenu}
@@ -182,33 +186,128 @@ function StackHeaderConfig(
   );
 }
 
+function toNativeFontWeight(
+  weight: TextStyle['fontWeight'],
+): string | undefined {
+  return weight !== undefined ? String(weight) : undefined;
+}
+
+const BUTTON_APPEARANCE_STATES = [
+  'normal',
+  'highlighted',
+  'disabled',
+  'focused',
+] as const;
+
+const BUTTON_STATE_APPEARANCE_KEYS = [
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'fontStyle',
+  'fontColor',
+] as const;
+
+function warnUnknownKeys(
+  path: string,
+  object: object,
+  allowedKeys: readonly string[],
+) {
+  for (const key of Object.keys(object)) {
+    if (!allowedKeys.includes(key)) {
+      console.warn(`[Stack] Unsupported key "${key}" in ${path}`);
+    }
+  }
+}
+
+function assertsPlainObject(path: string, value: unknown): boolean {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    console.warn(
+      `[Stack] Expected ${path} to be an object, got ${typeof value}`,
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function mapButtonStateAppearanceToNativeProp(
+  path: string,
+  stateAppearance?: StackHeaderButtonStateAppearanceIOS,
+): ButtonStateAppearance | undefined {
+  if (stateAppearance === undefined) return undefined;
+  if (!assertsPlainObject(path, stateAppearance)) return undefined;
+
+  warnUnknownKeys(path, stateAppearance, BUTTON_STATE_APPEARANCE_KEYS);
+
+  // Font family, size and style pass through unchanged via the spread; color
+  // and weight need conversion to the wire format.
+  return {
+    ...stateAppearance,
+    fontColor: processColor(stateAppearance.fontColor),
+    fontWeight: toNativeFontWeight(stateAppearance.fontWeight),
+  };
+}
+
+function mapButtonAppearanceToNativeProp(
+  path: string,
+  buttonAppearance?: StackHeaderButtonAppearanceIOS,
+): ButtonAppearance | undefined {
+  if (buttonAppearance === undefined) return undefined;
+  if (!assertsPlainObject(path, buttonAppearance)) return undefined;
+
+  warnUnknownKeys(path, buttonAppearance, BUTTON_APPEARANCE_STATES);
+
+  return {
+    normal: mapButtonStateAppearanceToNativeProp(
+      `${path}.normal`,
+      buttonAppearance.normal,
+    ),
+    highlighted: mapButtonStateAppearanceToNativeProp(
+      `${path}.highlighted`,
+      buttonAppearance.highlighted,
+    ),
+    disabled: mapButtonStateAppearanceToNativeProp(
+      `${path}.disabled`,
+      buttonAppearance.disabled,
+    ),
+    focused: mapButtonStateAppearanceToNativeProp(
+      `${path}.focused`,
+      buttonAppearance.focused,
+    ),
+  };
+}
+
 function mapAppearanceToNativeProp(
   appearance?: StackHeaderAppearanceIOS,
 ): HeaderAppearance | undefined {
   if (!appearance) return undefined;
 
-  const {
-    titleFontColor,
-    titleFontWeight,
-    largeTitleFontColor,
-    largeTitleFontWeight,
-    subtitleFontColor,
-    subtitleFontWeight,
-  } = appearance;
-
+  // Font family, size and style pass through unchanged via the spread; color
+  // and weight need conversion to the wire format.
   return {
     ...appearance,
-    titleFontColor: processColor(titleFontColor),
-    titleFontWeight:
-      titleFontWeight !== undefined ? String(titleFontWeight) : undefined,
-    largeTitleFontColor: processColor(largeTitleFontColor),
-    largeTitleFontWeight:
-      largeTitleFontWeight !== undefined
-        ? String(largeTitleFontWeight)
-        : undefined,
-    subtitleFontColor: processColor(subtitleFontColor),
-    subtitleFontWeight:
-      subtitleFontWeight !== undefined ? String(subtitleFontWeight) : undefined,
+
+    titleFontColor: processColor(appearance.titleFontColor),
+    titleFontWeight: toNativeFontWeight(appearance.titleFontWeight),
+
+    largeTitleFontColor: processColor(appearance.largeTitleFontColor),
+    largeTitleFontWeight: toNativeFontWeight(appearance.largeTitleFontWeight),
+
+    subtitleFontColor: processColor(appearance.subtitleFontColor),
+    subtitleFontWeight: toNativeFontWeight(appearance.subtitleFontWeight),
+
+    button: mapButtonAppearanceToNativeProp(
+      'appearance.button',
+      appearance.button,
+    ),
+    prominentButton: mapButtonAppearanceToNativeProp(
+      'appearance.prominentButton',
+      appearance.prominentButton,
+    ),
+    backButton: mapButtonAppearanceToNativeProp(
+      'appearance.backButton',
+      appearance.backButton,
+    ),
   };
 }
 
@@ -298,6 +397,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default forwardRef<StackHeaderConfigRef, StackHeaderConfigProps>(
-  StackHeaderConfig,
-);
+export default StackHeaderConfig;

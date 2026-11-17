@@ -3,10 +3,17 @@ import { device, expect, element, by, waitFor } from 'detox';
 import { IosElementAttributes } from 'detox/detox';
 import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { barButtonIcon, headerTitle } from '@e2e/framework/header-items-ios';
+import {
+  barButtonIcon,
+  expectBarButtonIconShown,
+  headerTitle,
+} from '@e2e/framework/header-items-ios';
 import { getMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_UI_NAVIGATION_BAR_PLATTER_VIEW } from '@e2e/framework/native-classes-ios';
-import { describeIfIOS26 } from '@e2e/framework/platform';
+import {
+  describeIfIOSAtLeast,
+  describeIfIOSVersion,
+} from '@e2e/framework/platform';
 
 // Every SF Symbol the test screen cycles through (SYMBOL_CYCLES in the test
 // screen's index.tsx).
@@ -26,7 +33,7 @@ const ALL_SYMBOLS = [
 async function expectExactBarButtonSymbols(expected: string[]) {
   for (const name of ALL_SYMBOLS) {
     if (expected.includes(name)) {
-      await expect(barButtonIcon(name)).toBeVisible();
+      await expectBarButtonIconShown(name);
     } else {
       await expect(barButtonIcon(name)).not.toExist();
     }
@@ -104,7 +111,7 @@ async function expectItemsInOwnPlatters(sfSymbolNames: string[]) {
 
 // The identifier-driven item-matching behavior under test only exists on
 // iOS 26+ (see scenario.md, "OS test creation version").
-describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
+describeIfIOSAtLeast('26.0')('Stack Header Item Identifier (iOS)', () => {
   describe('sfSymbols with identifiers (default)', () => {
     beforeAll(async () => {
       await device.reloadReactNative();
@@ -165,7 +172,11 @@ describeIfIOS26('Stack Header Item Identifier (iOS)', () => {
     });
   });
 
-  describe('separators enabled', () => {
+  // On iOS 27 each platter is a Swift class (`UIPlatformGlassInteractionView`)
+  // that `by.type` resolves only by its unstable mangled name, and the iOS 26
+  // class `_UINavigationBarPlatterView` no longer exists, so per-item platters
+  // are checked on iOS 26 only (see scenario.md, "E2E test").
+  describeIfIOSVersion('26')('separators enabled', () => {
     beforeAll(async () => {
       await device.reloadReactNative();
       await selectSingleFeatureTestsScreen(

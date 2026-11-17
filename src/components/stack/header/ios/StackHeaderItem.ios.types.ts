@@ -1,5 +1,10 @@
 import type { ReactElement } from 'react';
+import type { ColorValue } from 'react-native';
 import type { PlatformIconIOS } from '../../../shared/types';
+import type {
+  StackHeaderItemVariantIOS,
+  StackHeaderItemVisibilityPriorityIOS,
+} from '../StackHeaderConfig.ios.types';
 import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
 
 export type StackHeaderItemPlacement =
@@ -14,9 +19,14 @@ export type StackHeaderItemProps = {
   itemId?: string | undefined;
   identifier?: string | undefined;
   hidesSharedBackground?: boolean | undefined;
+  visibilityPriority?: StackHeaderItemVisibilityPriorityIOS | undefined;
   title?: string | undefined;
   icon?: PlatformIconIOS | undefined;
   render?: (() => ReactElement) | undefined;
   menu?: StackHeaderMenuIOS | undefined;
+  menuRepresentation?: StackHeaderMenuIOS | undefined;
+  variant?: StackHeaderItemVariantIOS | undefined;
+  tintColor?: ColorValue | undefined;
+  disabled?: boolean | undefined;
   onPress?: (() => void) | undefined;
 };

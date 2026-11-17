@@ -1,80 +1,24 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import FormSheetHostNativeComponent from '../../../fabric/modals/form-sheet/FormSheetHostNativeComponent';
-import FormSheetContentWrapperNativeComponent from '../../../fabric/modals/form-sheet/FormSheetContentWrapperNativeComponent';
+import { SheetBase } from '../sheet';
 import type { FormSheetProps } from './FormSheet.types';
-import {
-  resolveInitialDetentIndex,
-  resolveLargestUndimmedDetentIndex,
-  resolveNativeCornerRadius,
-  resolveNativeDetents,
-} from './FormSheetUtils';
 
+/**
+ * Presents its children in a native sheet.
+ *
+ * @remarks
+ * The sheet is presented when {@link FormSheetProps.isOpen | isOpen} becomes
+ * `true` and dismissed when it becomes `false`. It rests at the heights given
+ * by {@link FormSheetProps.detents | detents}; the user can drag it between
+ * them, and dismiss it natively unless
+ * {@link FormSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
+ *
+ * On iPhone, the sheet spans the full width of the screen and is anchored to
+ * its bottom. On iPad, it is a centered floating panel of a fixed width, and
+ * the screen behind it is dimmed. On Android, it is a bottom sheet dialog.
+ *
+ * @see {@link PageSheet} for a sheet that differs only in its iPad layout.
+ * @platform android, ios, tvos >= 26
+ */
 export function FormSheet(props: FormSheetProps) {
-  const {
-    children,
-    detents,
-    initialDetentIndex,
-    largestUndimmedDetentIndex,
-    preferredCornerRadius,
-    nativeContainerStyle,
-    ...rest
-  } = props;
-
-  const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
-  const nativeDetents = resolveNativeDetents(detents);
-
-  const detentsCount = nativeDetents?.length ?? 0;
-
-  const resolvedInitialDetentIndex = resolveInitialDetentIndex(
-    initialDetentIndex,
-    detentsCount,
-  );
-
-  const resolvedUndimmedDetentIndex = resolveLargestUndimmedDetentIndex(
-    largestUndimmedDetentIndex,
-    detentsCount,
-  );
-
-  const isFitToContents = detents === 'fitToContents';
-
-  return (
-    <FormSheetHostNativeComponent
-      style={styles.host}
-      detents={nativeDetents}
-      initialDetentIndex={resolvedInitialDetentIndex}
-      largestUndimmedDetentIndex={resolvedUndimmedDetentIndex}
-      preferredCornerRadius={nativeCornerRadius}
-      nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
-      {...rest}>
-      {isFitToContents ? (
-        <FormSheetContentWrapperNativeComponent
-          style={styles.absoluteWithNoBottom}>
-          {children}
-        </FormSheetContentWrapperNativeComponent>
-      ) : (
-        children
-      )}
-    </FormSheetHostNativeComponent>
-  );
+  return <SheetBase {...props} presentationStyle="formSheet" />;
 }
-
-const styles = StyleSheet.create({
-  // We use absolute positioning so the Host view doesn't affect the layout of its siblings.
-  // Setting `top: 0` and `left: 0` explicitly anchors the view to a predictable origin,
-  // preventing it from floating at an arbitrary offset based on its position in the Element tree.
-  //
-  // IMPORTANT: "Absolute" positioning is still relative to the nearest positioned containing
-  // box. This anchors it to that specific container's (0,0), not the global window (0,0).
-  host: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  absoluteWithNoBottom: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-});

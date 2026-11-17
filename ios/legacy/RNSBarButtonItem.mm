@@ -89,6 +89,34 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   }
 #endif
 
+// tvOS and visionOS are excluded on purpose: `visibilityPriority` exists there, but the only
+// supported value is `standard`, which is already the default.
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.0, *)) {
+    NSString *visibilityPriority = dict[@"visibilityPriority"];
+    if ([visibilityPriority isEqualToString:@"low"]) {
+      self.visibilityPriority = UIBarButtonItemVisibilityPriorityLow;
+    } else if ([visibilityPriority isEqualToString:@"high"]) {
+      self.visibilityPriority = UIBarButtonItemVisibilityPriorityHigh;
+    } else if ([visibilityPriority isEqualToString:@"standard"]) {
+      self.visibilityPriority = UIBarButtonItemVisibilityPriorityStandard;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_1) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.1, *)) {
+    NSString *axisBehavior = dict[@"axisBehavior"];
+    if ([axisBehavior isEqualToString:@"horizontalOnly"]) {
+      self.axisBehavior = UIBarButtonItemAxisBehaviorHorizontalOnly;
+    } else if ([axisBehavior isEqualToString:@"verticalPreferred"]) {
+      self.axisBehavior = UIBarButtonItemAxisBehaviorVerticalPreferred;
+    } else if ([axisBehavior isEqualToString:@"automatic"]) {
+      self.axisBehavior = UIBarButtonItemAxisBehaviorAutomatic;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_1) && !TARGET_OS_TV && !TARGET_OS_VISION
+
   NSString *variant = dict[@"variant"];
   if (variant) {
     if ([variant isEqualToString:@"done"]) {
@@ -318,6 +346,10 @@ static UIMenuOptions RNSMakeUIMenuOptionsFromConfig(NSDictionary *config);
   id titleColor = titleStyle[@"color"];
   if (titleColor) {
     attrs[NSForegroundColorAttributeName] = [RCTConvert UIColor:titleColor];
+  }
+  id letterSpacing = titleStyle[@"letterSpacing"];
+  if ([letterSpacing isKindOfClass:[NSNumber class]]) {
+    attrs[NSKernAttributeName] = letterSpacing;
   }
   [self setTitleTextAttributes:attrs forState:UIControlStateNormal];
   [self setTitleTextAttributes:attrs forState:UIControlStateHighlighted];

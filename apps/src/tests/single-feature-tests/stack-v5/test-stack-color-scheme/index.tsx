@@ -29,13 +29,13 @@ import type {
   StackHeaderConfigRef,
   StackHeaderToolbarMenuBaseAndroid,
   StackHeaderTypeAndroid,
-  StackHostColorScheme,
+  StackColorScheme,
 } from 'react-native-screens';
 import { Colors } from '@apps/shared/styling';
 
 const ColorSchemeContext = createContext<{
-  hostColorScheme: StackHostColorScheme;
-  setHostColorScheme: (val: StackHostColorScheme) => void;
+  hostColorScheme: StackColorScheme;
+  setHostColorScheme: (val: StackColorScheme) => void;
   reactColorScheme: Appearance.ColorSchemeOverride;
   setReactColorScheme: (val: Appearance.ColorSchemeOverride) => void;
 }>({
@@ -68,7 +68,7 @@ function ColorSchemePickers() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>StackHost color scheme</Text>
-        <SettingsPicker<StackHostColorScheme>
+        <SettingsPicker<StackColorScheme>
           label={'colorScheme'}
           value={hostColorScheme}
           onValueChange={setHostColorScheme}
@@ -318,7 +318,7 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
 
 function TestStackColorScheme() {
   const [hostColorScheme, setHostColorScheme] =
-    useState<StackHostColorScheme>('inherit');
+    useState<StackColorScheme>('inherit');
   const [reactColorScheme, setReactColorScheme] =
     useState<Appearance.ColorSchemeOverride>('auto');
 

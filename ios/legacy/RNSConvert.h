@@ -4,6 +4,7 @@
 #if defined(__cplusplus)
 #import <react/renderer/components/rnscreens/Props.h>
 #endif // __cplusplus
+#import "RNSDefines.h"
 #import "RNSLegacyEnums.h"
 
 #if defined(__cplusplus)
@@ -31,10 +32,18 @@ namespace react = facebook::react;
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewTypeFromCppEquivalent:
     (react::RNSScreenStackHeaderSubviewType)subviewType;
 
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
++ (UIBarButtonItemVisibilityPriority)UIBarButtonItemVisibilityPriorityFromCppEquivalent:
+    (react::RNSScreenStackHeaderSubviewVisibilityPriority)visibilityPriority API_AVAILABLE(ios(27.0));
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (react::RNSScreenReplaceAnimation)replaceAnimation;
 
 + (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:(react::RNSScreenSwipeDirection)swipeDirection;
+
++ (RNSScreenSheetBackgroundEffect)RNSScreenSheetBackgroundEffectFromCppEquivalent:
+    (react::RNSScreenSheetBackgroundEffect)sheetBackgroundEffect;
 
 + (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents;
 
@@ -56,6 +65,21 @@ namespace react = facebook::react;
 
 + (UIUserInterfaceStyle)UIUserInterfaceStyleFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigUserInterfaceStyle)userInterfaceStyle;
+
++ (RNSHeaderMinimizationBehavior)RNSHeaderMinimizationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigMinimizationBehavior)minimizationBehavior;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+/// Converts a resolved (non-`Undefined`) `RNSHeaderMinimizationBehavior` to its UIKit counterpart.
++ (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:
+    (RNSHeaderMinimizationBehavior)minimizationBehavior API_AVAILABLE(ios(27.0));
+
++ (UIBarMinimizationRestorationBehavior)UIBarMinimizationRestorationBehaviorFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigRestorationBehavior)restorationBehavior API_AVAILABLE(ios(27.0));
+
++ (UIBarMinimizationSafeAreaAdjustment)UIBarMinimizationSafeAreaAdjustmentFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigSafeAreaAdjustment)safeAreaAdjustment API_AVAILABLE(ios(27.0));
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 + (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
 

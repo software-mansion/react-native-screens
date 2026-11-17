@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import TabsScreenAndroidNativeComponent, {
   type Appearance,
+  type IconTinting,
   type ItemStateAppearance,
   type NativeProps as TabsScreenAndroidNativeComponentProps,
 } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
@@ -16,7 +17,7 @@ import type {
   TabsScreenItemStateAppearanceAndroid,
 } from './TabsScreen.android.types';
 import type { TabsScreenProps } from '../screen/TabsScreen.types';
-import type { PlatformIconAndroid } from '../../shared/types';
+import type { TabsScreenIconAndroid } from './TabsScreenIcon.types';
 import { useTabsScreen } from './useTabsScreen';
 import { parseAndroidIconToNativeProps } from '../../shared';
 
@@ -128,13 +129,15 @@ function mapItemStateAppearanceToNativeProp(
 }
 
 function parseIconsToNativeProps(
-  icon: PlatformIconAndroid | undefined,
-  selectedIcon: PlatformIconAndroid | undefined,
+  icon: TabsScreenIconAndroid | undefined,
+  selectedIcon: TabsScreenIconAndroid | undefined,
 ): {
   imageIconResource?: ImageResolvedAssetSource | undefined;
   drawableIconResourceName?: string | undefined;
+  iconTinting?: IconTinting | undefined;
   selectedImageIconResource?: ImageResolvedAssetSource | undefined;
   selectedDrawableIconResourceName?: string | undefined;
+  selectedIconTinting?: IconTinting | undefined;
 } {
   const parsedIcon = parseAndroidIconToNativeProps(icon);
   const parsedSelectedIcon = parseAndroidIconToNativeProps(selectedIcon);
@@ -142,9 +145,11 @@ function parseIconsToNativeProps(
   return {
     imageIconResource: parsedIcon.imageIconResource,
     drawableIconResourceName: parsedIcon.drawableIconResourceName,
+    iconTinting: icon?.tinting,
     selectedImageIconResource: parsedSelectedIcon.imageIconResource,
     selectedDrawableIconResourceName:
       parsedSelectedIcon.drawableIconResourceName,
+    selectedIconTinting: selectedIcon?.tinting,
   };
 }
 

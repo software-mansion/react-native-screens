@@ -220,6 +220,17 @@ There are also legacy & **deprecated** options available:
 
 Defaults to `[1.0]` literal.
 
+### `sheetBackgroundEffect` (iOS only)
+
+Material rendered by the system behind the sheet's content.
+Works only when `stackPresentation` is set to `formSheet`.
+
+- `automatic` - whatever the system uses for sheets on the current iOS version; on iOS 26 this is Liquid Glass,
+  including its interactive highlight,
+- `color` - a flat fill with the screen's `backgroundColor`, which makes the sheet look opaque.
+
+Defaults to `automatic`. Has no effect on iOS versions below 26.1.
+
 ### `sheetExpandsWhenScrolledToEdge` (iOS only)
 
 Whether the sheet should expand to larger detent when scrolling.
@@ -578,11 +589,15 @@ Allows for customizing font family to be used for back button title on iOS.
 
 Allows for customizing font size to be used for back button title on iOS.
 
+### `backTitleLetterSpacing` (iOS only)
+
+Customize letter spacing in points for the back button title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. The value is added to the spacing after each character, on top of the font's own kerning; `0` turns the font's kerning off. When omitted, the default spacing is used.
+
 ### `backTitleVisible` (iOS only)
 
 Whether the back button title should be visible. Defaults to `true`.
 
-When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`, and `backTitle` works only for back button menu.
+When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `backTitleLetterSpacing`, `disableBackButtonMenu`, and `backTitle` works only for back button menu.
 
 ### `blurEffect` (iOS only)
 
@@ -626,7 +641,7 @@ An array of objects describing native bar button items to display on the left or
 
 `title: string` — Title of the button.
 
-`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; }` — Style for the button title.
+`titleStyle?: { fontFamily?: string; fontSize?: number; fontWeight?: string; color?: ColorValue; letterSpacing?: number; }` — Style for the button title. `letterSpacing` is in points and maps to the attributed-string kern; `0` turns the font's kerning off.
 
 `icon?: PlatformIconIOS` — Icon for the item.
 
@@ -791,6 +806,10 @@ Customize the size of the font to be used for the large title.
 
 Customize the weight of the font to be used for the large title.
 
+### `largeTitleLetterSpacing` (iOS only)
+
+Customize letter spacing in points for the large title. Maps to the attributed-string kern (`NSKernAttributeName`). Negative and fractional values are supported. The value is added to the spacing after each character, on top of the font's own kerning; `0` turns the font's kerning off. When omitted, the default spacing is used.
+
 ### `largeTitleHideShadow` (iOS only)
 
 Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
@@ -814,6 +833,13 @@ Customize the size of the font to be used for the title.
 ### `titleFontWeight`
 
 Customize the weight of the font to be used for the title.
+
+### `titleLetterSpacing`
+
+Customize letter spacing in points for the title. Negative and fractional values are supported. When omitted, the default spacing is used.
+
+- On iOS it maps to the attributed-string kern (`NSKernAttributeName`). The value is added to the spacing after each character, on top of the font's own kerning; `0` turns the font's kerning off.
+- On Android it is converted to ems, like `letterSpacing` on `Text`.
 
 ### `topInsetEnabled` (Android only)
 

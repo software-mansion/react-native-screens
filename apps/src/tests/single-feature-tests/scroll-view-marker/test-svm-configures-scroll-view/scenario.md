@@ -65,46 +65,46 @@ and Detox cannot verify any of them.
 1. Launch the app and navigate to **ScrollViewMarker scenarios → Basic
    functionality**.
 
-- [ ] Visible: the heuristic-interrupting label, a vertical list of
-      coloured full-width rectangles, and the floating selector pill
-      near the bottom with `hard` highlighted.
+    - [ ] Visible: the heuristic-interrupting label, a vertical list of
+          coloured full-width rectangles, and the floating selector pill
+          near the bottom with `hard` highlighted.
 
 2. Scroll the list up so rectangles leave the screen at the top, and
    stop mid-list. Observe the top edge (`hard` is selected).
 
-- [ ] The scrolled-out content above the boundary is blurred/washed
-      out and ends at a sharp, straight cutoff with a thin dividing
-      line; below it the rectangles are fully crisp.
-- [ ] The effect appears only while content is scrolled past the top;
-      after scrolling back to the very top it disappears.
+    - [ ] The scrolled-out content above the boundary is blurred/washed
+          out and ends at a sharp, straight cutoff with a thin dividing
+          line; below it the rectangles are fully crisp.
+    - [ ] The effect appears only while content is scrolled past the top;
+          after scrolling back to the very top it disappears.
 
 3. Keep the content scrolled mid-list and tap `soft` in the selector.
 
-- [ ] The `soft` chip becomes highlighted.
-- [ ] The top edge changes in place to a gradual blur/fade with no
-      dividing line.
-- [ ] The list itself does not change: scroll position is kept and
-      every rectangle keeps its colour.
+    - [ ] The `soft` chip becomes highlighted.
+    - [ ] The top edge changes in place to a gradual blur/fade with no
+          dividing line.
+    - [ ] The list itself does not change: scroll position is kept and
+          every rectangle keeps its colour.
 
 4. Scroll up and down a few times with `soft` selected.
 
-- [ ] The soft fade renders consistently in both scroll directions
-      and disappears when the content rests at the very top.
+    - [ ] The soft fade renders consistently in both scroll directions
+          and disappears when the content rests at the very top.
 
 5. Tap `hidden`, then scroll up and down past the top edge.
 
-- [ ] The rectangles stay fully crisp up to the edge - no blur, no
-      fade, no dividing line, in both directions.
+    - [ ] The rectangles stay fully crisp up to the edge - no blur, no
+          fade, no dividing line, in both directions.
 
 6. Tap `automatic`, then scroll up and down past the top edge.
 
-- [ ] A soft blur/fade is shown again, visually matching the `soft`
-      value.
+    - [ ] A soft blur/fade is shown again, visually matching the `soft`
+          value.
 
 7. Tap `hard` again and scroll up and down past the top edge. Then,
    with the content resting mid-list, cycle through all four values a
    few times in any order.
 
-- [ ] The sharp cutoff with the dividing line is back for `hard`.
-- [ ] Cycling never causes a crash, flicker at rest, a
-      scroll-position jump, or a colour change of the rectangles.
+    - [ ] The sharp cutoff with the dividing line is back for `hard`.
+    - [ ] Cycling never causes a crash, flicker at rest, a
+          scroll-position jump, or a colour change of the rectangles.

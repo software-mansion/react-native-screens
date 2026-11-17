@@ -53,6 +53,9 @@ namespace react = facebook::react;
 {
   UIViewController *controller = screenCtrl;
   float headerHeightErrata = 0.f;
+  // When screens extend under opaque navigation bars (iOS 26+), the `SafeAreaView` rendered inside this wrapper insets
+  // the content below the bar, so the bar height is already part of the wrapper's frame and must not be added again.
+  const BOOL wrapperFrameIncludesNavigationBar = [RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar];
 
   do {
     if ([controller isKindOfClass:RNSScreen.class]) {
@@ -60,7 +63,7 @@ namespace react = facebook::react;
       if ([currentScreen.screenView registerContentWrapper:self contentHeightErrata:headerHeightErrata]) {
         break;
       }
-    } else if ([controller isKindOfClass:RNSNavigationController.class]) {
+    } else if (!wrapperFrameIncludesNavigationBar && [controller isKindOfClass:RNSNavigationController.class]) {
       RNSNavigationController *navigationController = static_cast<RNSNavigationController *>(controller);
       UINavigationBar *navigationBar = navigationController.navigationBar;
 
@@ -195,6 +198,17 @@ namespace react = facebook::react;
 {
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   [self notifyDelegateWithFrame:RCTCGRectFromRect(layoutMetrics.frame)];
+}
+
+- (void)prepareForRecycle
+{
+  [super prepareForRecycle];
+  // A reused wrapper must start like a new one. Its previous owner might not have cleared the delegate on unmount
+  // (the wrapper's parent is not always a screen view), and Fabric calls `updateLayoutMetrics:` on a reused view before
+  // mounting it in its new parent. Without this, the reused wrapper would report its first frame to the previous,
+  // possibly invalidated, screen.
+  // See https://github.com/software-mansion/react-native-screens/issues/5143
+  self.delegate = nil;
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

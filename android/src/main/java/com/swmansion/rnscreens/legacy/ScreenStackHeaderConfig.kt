@@ -20,6 +20,7 @@ import com.facebook.react.uimanager.ReactPointerEventsView
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.BuildConfig
+import com.swmansion.rnscreens.core.utils.spToPx
 import com.swmansion.rnscreens.legacy.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.legacy.events.HeaderDetachedEvent
 import kotlin.math.max
@@ -74,6 +75,10 @@ class ScreenStackHeaderConfig(
     private var direction: String? = null
     private var titleFontSize = 0f
     private var titleFontWeight = 0
+    private var titleLetterSpacing: Float? = null
+
+    // The toolbar theme's title spacing, restored when titleLetterSpacing is cleared.
+    private var defaultTitleLetterSpacing: Float? = null
     private var backgroundColor: Int? = null
     private var isBackButtonHidden = false
     private var isShadowHidden = false
@@ -231,7 +236,13 @@ class ScreenStackHeaderConfig(
 
     fun onUpdate() {
         val stack = screenStack
-        val isTop = stack == null || stack.topScreen == parent
+        // A screen that is not in a stack has nothing to configure a header for, and
+        // `canNavigateBack()` below asserts on exactly this condition. Treating a null
+        // stack as "is top" let a detached screen reach that assertion and throw.
+        if (stack == null) {
+            return
+        }
+        val isTop = stack.topScreen == parent
 
         if (!isAttachedToWindow || !isTop || isDestroyed) {
             return
@@ -326,6 +337,16 @@ class ScreenStackHeaderConfig(
             }
             if (titleFontSize > 0) {
                 titleTextView.textSize = titleFontSize
+            }
+            val letterSpacing = titleLetterSpacing
+            if (letterSpacing != null) {
+                if (defaultTitleLetterSpacing == null) {
+                    defaultTitleLetterSpacing = titleTextView.letterSpacing
+                }
+                // TextView letter spacing is in ems; convert from points like React Native's Text does.
+                titleTextView.letterSpacing = titleTextView.spToPx(letterSpacing) / titleTextView.textSize
+            } else {
+                defaultTitleLetterSpacing?.let { titleTextView.letterSpacing = it }
             }
         }
 
@@ -442,6 +463,10 @@ class ScreenStackHeaderConfig(
 
     fun setTitleFontSize(titleFontSize: Float) {
         this.titleFontSize = titleFontSize
+    }
+
+    fun setTitleLetterSpacing(titleLetterSpacing: Float?) {
+        this.titleLetterSpacing = titleLetterSpacing
     }
 
     fun setTitleColor(color: Int) {

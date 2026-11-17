@@ -2,7 +2,7 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by } from 'detox';
 import { expectStillOnRoute, waitForTopmostRoute } from '@e2e/app/stack-route';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { dismissToast, expectNoToast } from '@e2e/app/toast';
+import { dismissToastAt, expectNoToast } from '@e2e/app/toast';
 import {
   expectTopmostButtons,
   expectTopmostVisible,
@@ -23,10 +23,7 @@ import { stackV5BackButton } from '@e2e/framework/stack-header-android';
  * back press would navigate out of the example app's own navigation.
  */
 
-// The toast renders as `${index + 1}. ${message}`, so its label carries the
-// 1-based position of the toast in the (bottom-anchored) stack.
 const TOAST_MESSAGE = 'Native dismiss prevented';
-const toastLabel = (position: number) => `${position}. ${TOAST_MESSAGE}`;
 
 describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
   // React Native's core `<Button>` uppercases its `title` on Android
@@ -48,7 +45,7 @@ describeIfAndroid('Stack v5: prevent native dismiss - single stack', () => {
    */
   async function dismissToasts(count: number): Promise<void> {
     for (let position = count; position >= 1; position--) {
-      await dismissToast(toastLabel(position));
+      await dismissToastAt(position, TOAST_MESSAGE);
     }
   }
 

@@ -8,14 +8,16 @@
 
 ## E2E test
 
-Incomplete: Every step of both sections is covered - menu contents at each
+Incomplete: every step of both sections is automated - menu contents at each
 toggle combination, collapsed-vs-inlined submenus via the presence of the
-disclosure chevron, and the palette's horizontal icon row.
+disclosure chevron, and the palette's vertical list vs. horizontal icon row.
 
 Not covered:
 
 - The menu separators.
 - The exact top-to-bottom ordering of inlined items.
+- On iOS 27, whether the Options and Palette header items are visible: they are
+  only checked to exist, and are tapped by coordinates to open their menus.
 
 ## Prerequisites
 
@@ -27,42 +29,44 @@ Not covered:
 
 1. Ensure both toggles are set to `false`
 2. Tap the overflow menu button (three dots) in the header
-  - [ ] Menu shows: Copy, Paste, Share, Sort By as a collapsed submenu, Delete
+    - [ ] Menu shows: Copy, Paste, Share, Sort By as a collapsed submenu, Delete
 3. Tap Sort By
-  - [ ] A nested submenu shows: Name, Date, Size and Rating as a collapsed submenu
+    - [ ] A nested submenu shows: Name, Date, Size and Rating as a collapsed submenu
 4. Tap Rating
-  - [ ] A nested submenu opens with: Best Reviews, Most Reviews, Highest Rated
+    - [ ] A nested submenu opens with: Best Reviews, Most Reviews, Highest Rated
 5. Dismiss the menu
 6. Toggle "displayInline (Rating)" to `true`
 7. Open the menu
-  - [ ] Menu shows: Copy, Paste, Share, Sort By as a collapsed submenu, Delete
+    - [ ] Menu shows: Copy, Paste, Share, Sort By as a collapsed submenu, Delete
 8. Tap Sort By
-  - [ ] Submenu opens with: Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated (all inline)
+    - [ ] Submenu opens with: Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated (all inline)
 9. Dismiss the menu
 10. Toggle "displayInline (Rating)" back to `false` and "displayInline (Sort By): false" to `true`
 11. Open the menu
-  - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, Rating as a collapsed submenu, menu separator, Delete
+    - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, Rating as a collapsed submenu, menu separator, Delete
 12. Tap Rating
-  - [ ] A nested submenu opens with: Best Reviews, Most Reviews, Highest Rated
+    - [ ] A nested submenu opens with: Best Reviews, Most Reviews, Highest Rated
 13. Dismiss the menu
 14. Toggle "displayInline (Rating)" to `true` again
 15. Tap the overflow menu button (three dots)
-  - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated, menu separator, Delete, all inline
+    - [ ] Menu shows: Copy, Paste, Share, menu separator, Name, Date, Size, menu separator, Best Reviews, Most Reviews, Highest Rated, menu separator, Delete, all inline
+
+---
 
 ### displayAsPalette
 
 1. Ensure both toggles are set to `false`
 2. Tap the Palette button in the header
-  - [ ] Menu shows: Text Style as a collapsed submenu, Reset Formatting
+    - [ ] Menu shows: Text Style as a collapsed submenu, Reset Formatting
 3. Tap Text Style
-  - [ ] A nested submenu opens with: Bold, Italic, Underline, Strikethrough as a (regular) vertical list
+    - [ ] A nested submenu opens with: Bold, Italic, Underline, Strikethrough as a (regular) vertical list
 4. Dismiss the menu
 5. Toggle "displayAsPalette (Text Style)" to `true`
 6. Tap the Palette button
-  - [ ] Menu still shows: Text Style as a collapsed submenu, Reset Formatting
+    - [ ] Menu still shows: Text Style as a collapsed submenu, Reset Formatting
 7. Tap Text Style
-  - [ ] Menu shows a horizontal palette row with Bold, Italic, Underline, Strikethrough icons
+    - [ ] Menu shows a horizontal palette row with Bold, Italic, Underline, Strikethrough icons
 8. Dismiss the menu
 9. Toggle "displayInline (Text Style)" to `true`
 10. Tap the Palette button
-  - [ ] Menu shows: Text Style as a horizontal palette row with Bold, Italic, Underline, Strikethrough icons, and Reset Formatting below
+    - [ ] Menu shows: Text Style as a horizontal palette row with Bold, Italic, Underline, Strikethrough icons, and Reset Formatting below

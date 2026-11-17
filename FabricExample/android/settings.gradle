@@ -4,3 +4,8 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex -> ex.autol
 rootProject.name = 'FabricExample'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// Detox is built from source (patched in ../patches) until it supports RN 0.89,
+// see https://github.com/facebook/react-native/pull/58469.
+include ':detox'
+project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')

@@ -10,6 +10,8 @@ import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
+// TODO: Type the display modes as a string union, so that codegen generates
+// an enum and `SplitHost` does not need to cast `onDisplayModeWillChange`.
 type DisplayModeWillChangeEvent = {
   currentDisplayMode: string;
   nextDisplayMode: string;
@@ -115,10 +117,14 @@ interface NativeCommands {
     viewRef: React.ComponentRef<ComponentType>,
     column: string,
   ) => void;
+  hideColumn: (
+    viewRef: React.ComponentRef<ComponentType>,
+    column: string,
+  ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['showColumn'],
+  supportedCommands: ['showColumn', 'hideColumn'],
 });
 
 export default codegenNativeComponent<NativeProps>(

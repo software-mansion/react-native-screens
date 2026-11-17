@@ -7,7 +7,10 @@ import {
 } from '@e2e/framework/gestures';
 import { getMatches } from '@e2e/framework/matchers';
 import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
-import { describeIfIOS26, describeIfIPadOS26 } from '@e2e/framework/platform';
+import {
+  describeIfIOSAtLeast,
+  describeIfIPadOSAtLeast,
+} from '@e2e/framework/platform';
 import {
   bottomAccessoryElement,
   expectBottomAccessoryAboveTabBar,
@@ -137,7 +140,7 @@ async function verifyConfigTabInitialContent() {
   ).toBeVisible();
 }
 
-describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
+describeIfIOSAtLeast('26.0')('Tabs bottomAccessory (iOS 26+)', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
@@ -274,6 +277,8 @@ describeIfIOS26('Tabs bottomAccessory (iOS 26+)', () => {
     await expectBottomAccessoryAboveTabBar();
   });
 });
+
+const describeIfIPadOS26 = describeIfIPadOSAtLeast('26.0');
 
 describeIfIPadOS26('@ipad Tabs bottomAccessory (iPadOS 26+)', () => {
   // The Config scroll view spans the full window height and is the same across
