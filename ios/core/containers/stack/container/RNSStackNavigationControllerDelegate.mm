@@ -27,14 +27,22 @@ static RNSStackScreenController *_Nullable RNSStackScreenControllerOrNil(UIViewC
                                                   outgoing:RNSStackScreenControllerOrNil(fromVC)
                                                   incoming:RNSStackScreenControllerOrNil(toVC)];
   if (timeline == nil) {
+    _transitionAnimator = nil;
     return nil;
   }
   // A static timeline gets here with pops UIKit starts itself (back button, back menu, tvOS Menu). The container
   // applies its own static changes without animation, see `applyStackModel:`.
-  if (timeline.isStatic) {
-    return [RNSStackNoneAnimator new];
+  _transitionAnimator =
+      timeline.isStatic ? [RNSStackNoneAnimator new] : [[RNSStackTimelineAnimator alloc] initWithTimeline:timeline];
+  _transitionAnimator.delegate = self;
+  return _transitionAnimator;
+}
+
+- (void)transitionAnimatorDidEnd:(RNSStackTransitionAnimator *)animator
+{
+  if (_transitionAnimator == animator) {
+    _transitionAnimator = nil;
   }
-  return [[RNSStackTimelineAnimator alloc] initWithTimeline:timeline];
 }
 
 @end

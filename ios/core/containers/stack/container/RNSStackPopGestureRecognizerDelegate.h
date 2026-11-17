@@ -6,6 +6,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackNavigationController;
+
 /**
  * Delegate of a navigation controller's system pop recognizers, in place of UIKit's own. UIKit's
  * delegate refuses every swipe once the navigation controller's delegate implements
@@ -14,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSStackPopGestureRecognizerDelegate : NSObject <UIGestureRecognizerDelegate>
 
-- (instancetype)initWithNavigationController:(UINavigationController *)navigationController;
+- (instancetype)initWithNavigationController:(RNSStackNavigationController *)navigationController;
 
 @end
 
