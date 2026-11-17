@@ -25,7 +25,7 @@ class JSI_EXPORT RNSStackHostShadowNode final : public ConcreteViewShadowNode<
 
 #if !defined(ANDROID)
  private:
-  void updateDisplayForHeadlessMode();
+  void unsetForceFlattenViewForHeadlessMode();
 #endif // !defined(ANDROID)
 };
 

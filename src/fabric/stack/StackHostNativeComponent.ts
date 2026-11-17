@@ -13,9 +13,10 @@ export interface NativeProps extends ViewProps {
   // General
   colorScheme?: CT.WithDefault<StackHostColorScheme, 'inherit'>;
 
-  // Internal, iOS. In headless mode the host takes no part in layout and does
-  // not show the stack itself. The stack is shown by the native component the
-  // host is rendered in.
+  // Internal, iOS. In headless mode the host does not show the stack itself.
+  // The stack is shown by the native component the host is rendered in. A
+  // host in headless mode has to be rendered with `display: 'contents'`, so
+  // that it takes no part in layout.
   headlessModeEnabled?: CT.WithDefault<boolean, false>;
 }
 
