@@ -112,7 +112,7 @@
     },
     "extraDependencies": {
       "type": "array",
-      "description": "npm packages, besides react, react-native and react-native-screens, that the app needs. Only names from allowed-dependencies.json are accepted, each with an exact version that exists on npm.",
+      "description": "npm packages, besides react, react-native and react-native-screens, that the app needs. Only names from allowed-dependencies.json are accepted, each with an exact version that exists on npm. Packages whose name starts with `expo-` need appKind expo and are installed at the version that matches expoSdkVersion.",
       "items": {
         "type": "object",
         "additionalProperties": false,
