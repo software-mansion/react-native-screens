@@ -22,14 +22,37 @@ inputs:
 runs:
   using: composite
   steps:
-    # Install the pinned CLI globally first: `npx @swmansion/argent@<v> init`
-    # only pins the installer, which then installs the latest release globally.
+    # The CLI goes to its own npm prefix, so it can be cached apart from the
+    # runner's Node install. The key carries the Node version: the CLI ships
+    # native addons built against it.
+    - name: Prepare Argent install dir
+      id: argent-prefix
+      shell: bash
+      run: |
+        echo "dir=$HOME/.argent-cli" >> "$GITHUB_OUTPUT"
+        echo "node=$(node --version)" >> "$GITHUB_OUTPUT"
+        echo "$HOME/.argent-cli/bin" >> "$GITHUB_PATH"
+
+    - name: Argent cache
+      id: argent-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.argent-prefix.outputs.dir }}
+        key: argent-${{ inputs.argent-version }}-${{ runner.os }}-${{ runner.arch }}-node-${{ steps.argent-prefix.outputs.node }}
+
+    # Install the pinned CLI first: `npx @swmansion/argent@<v> init` only pins
+    # the installer, which then installs the latest release globally.
     - name: Install Argent
+      if: steps.argent-cache.outputs.cache-hit != 'true'
       shell: bash
       env:
         ARGENT_VERSION: ${{ inputs.argent-version }}
+        ARGENT_PREFIX: ${{ steps.argent-prefix.outputs.dir }}
+      run: npm install --global --prefix "$ARGENT_PREFIX" "@swmansion/argent@$ARGENT_VERSION"
+
+    - name: Initialize Argent
+      shell: bash
       run: |
-        npm install --global "@swmansion/argent@$ARGENT_VERSION"
         argent init --yes
         argent --version
 
