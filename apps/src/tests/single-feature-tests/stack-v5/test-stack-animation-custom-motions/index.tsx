@@ -46,7 +46,7 @@ const ANIMATION_OPTIONS = [
     },
   },
   {
-    label: 'from 200 dp left + fade 600 ms',
+    label: 'from 200 left + fade 600 ms',
     animation: {
       type: 'custom',
       push: {
@@ -201,18 +201,30 @@ const ANIMATION_OPTIONS = [
       },
     } as unknown as StackScreenAnimation,
   },
+  {
+    label: 'invalid: opacity to 2',
+    // The types accept any number; the native range check falls back to `default`.
+    animation: {
+      type: 'custom',
+      push: {
+        type: 'custom',
+        enter: { type: 'custom', opacity: { to: 2, duration: 600 } },
+      },
+    },
+  },
 ] satisfies readonly AnimationPresetOption[];
 
-function TestStackAnimationCustomMotionsAndroid() {
+function TestStackAnimationCustomMotions() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="iosFromRight linear 2000 ms"
+      withHeaderPicker
     />
   );
 }
 
 export default createScenario(
-  TestStackAnimationCustomMotionsAndroid,
+  TestStackAnimationCustomMotions,
   scenarioDescription,
 );
