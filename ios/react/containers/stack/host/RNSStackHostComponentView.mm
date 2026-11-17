@@ -8,6 +8,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSStackHostComponentDescriptor.h>
+#import "RNSAssert.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 
@@ -51,15 +52,12 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
-  if (_headlessModeEnabled) {
-    if (self.window != nil && _stackNavigationController == nil) {
-      RCTLogError(
-          @"[RNScreens] Stack.Host expects a navigation controller from its parent, but it has not got one. "
-          @"The stack is not shown.");
-    }
+  // In headless mode the host does not show the stack itself.
+  if (_headlessModeEnabled || self.window == nil) {
     return;
   }
-  if (self.window != nil && _stackNavigationController.parentViewController == nil) {
+  [self setupNavigationControllerIfNeeded];
+  if (_stackNavigationController.parentViewController == nil) {
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
                                           toViewControllerManaging:self.reactSuperview
                                                  withContainerView:self];
@@ -84,33 +82,27 @@ namespace react = facebook::react;
   return [super hitTest:point withEvent:event];
 }
 
-#pragma mark - External navigation controller
-
-- (nullable RNSStackNavigationController *)externalNavigationController
-{
-  return _headlessModeEnabled ? _stackNavigationController : nil;
-}
-
-- (void)setExternalNavigationController:(nullable RNSStackNavigationController *)navigationController
-{
-  RCTAssert(_headlessModeEnabled, @"[RNScreens] Only a Stack.Host in headless mode takes a navigation controller");
-  if (navigationController == _stackNavigationController) {
-    return;
-  }
-  RCTAssert(navigationController == nil || navigationController.viewControllers.count == 0,
-            @"[RNScreens] Stack.Host expects an empty navigation controller");
-  _stackNavigationController = navigationController;
-  [self flushPendingOperations];
-}
+#pragma mark - Navigation controller
 
 /**
- * The host learns from its props whether it is in headless mode, so it creates its own navigation controller only
- * when the first props are applied.
+ * The delegate is asked once, when the host needs its navigation controller for the first time. The host creates one
+ * itself when it gets none.
  */
-- (void)createOwnNavigationControllerIfNeeded
+- (void)setupNavigationControllerIfNeeded
 {
-  if (_headlessModeEnabled || _stackNavigationController != nil) {
+  if (_stackNavigationController != nil) {
     return;
+  }
+  _stackNavigationController = [_delegate navigationControllerForStackHost:self];
+  if (_stackNavigationController != nil) {
+    RNSAssert(_stackNavigationController.viewControllers.count == 0,
+              @"[RNScreens] Stack.Host expects an empty navigation controller");
+    return;
+  }
+  if (_headlessModeEnabled) {
+    RCTLogError(
+        @"[RNScreens] Stack.Host in headless mode got no navigation controller from its delegate. "
+        @"The stack is not shown.");
   }
   _stackNavigationController = [RNSStackNavigationController new];
 }
@@ -186,7 +178,6 @@ namespace react = facebook::react;
     }
   }
   _didSetHeadlessModeEnabled = YES;
-  [self createOwnNavigationControllerIfNeeded];
 
   [super updateProps:props oldProps:oldProps];
 }
@@ -204,16 +195,6 @@ namespace react = facebook::react;
 }
 
 #pragma mark - Utils
-
-- (void)flushPendingOperations
-{
-  if (_stackNavigationController == nil) {
-    return;
-  }
-  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
-                                           withRenderedScreens:_renderedScreens];
-  [_stackNavigationController commitTransaction];
-}
 
 - (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
 {
@@ -254,7 +235,10 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [self flushPendingOperations];
+  [self setupNavigationControllerIfNeeded];
+  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
+                                           withRenderedScreens:_renderedScreens];
+  [_stackNavigationController commitTransaction];
 }
 
 #pragma mark - Dynamic frameworks support

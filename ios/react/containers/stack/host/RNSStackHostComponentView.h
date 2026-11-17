@@ -1,27 +1,16 @@
 #pragma once
 
 #import "RNSReactBaseView.h"
+#import "RNSStackHostDelegate.h"
 #import "RNSStackScreenComponentView.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class RNSStackNavigationController;
 
 @interface RNSStackHostComponentView : RNSReactBaseView
 
 @property (nonatomic, readonly) BOOL headlessModeEnabled;
 
-@end
-
-#pragma mark - External navigation controller
-
-@interface RNSStackHostComponentView ()
-
-/**
- * The navigation controller the host operates on, for a host in headless mode, which does not create one itself.
- * Setting it applies the operations collected so far to the controller.
- */
-@property (nonatomic, strong, nullable) RNSStackNavigationController *externalNavigationController;
+@property (nonatomic, weak, nullable) id<RNSStackHostDelegate> delegate;
 
 @end
 
