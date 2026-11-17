@@ -84,7 +84,11 @@
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+  [self reportColumnFrame];
+}
 
+- (void)reportColumnFrame
+{
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
   // we're attaching our touch handler and we don't need to apply any offset corrections,
   // because it's positioned relatively to the column view
@@ -96,18 +100,18 @@
   UIView *ancestorView = [self findSplitHostController].view;
   RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
-  [self reportColumnFrameInContextOfView:ancestorView];
-}
-
-- (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController
-{
-  [self reportColumnFrameInContextOfView:splitViewController.view];
-}
-
-- (void)reportColumnFrameInContextOfView:(UIView *)ancestorView
-{
   CGRect frame = [self.view convertRect:self.view.frame toView:ancestorView];
   [_delegate splitScreenController:self didChangeColumnFrame:frame];
+}
+
+- (void)columnPositioningDidChange
+{
+  if (self.view.window == nil) {
+    // The column is not on screen, or it hosts a stack and its view is not in the view hierarchy.
+    return;
+  }
+
+  [self reportColumnFrame];
 }
 
 #pragma mark - RNSViewControllerViewLifecycleEventsObserver
