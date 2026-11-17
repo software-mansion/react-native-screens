@@ -21,8 +21,8 @@ static const double kRNSStackKeyframeStepMs = 8;
   BOOL _isRightToLeft;
   BOOL _animatesTransform;
   BOOL _animatesAlpha;
-  // A sibling drawn directly above the screen and moved with it, so that it never becomes one of the screen view's
-  // subviews, which belong to its content.
+  // The last subview of the screen for the transition only, so the screen's transform and opacity apply to the scrim
+  // and its content together, same as on Android.
   UIView *_Nullable _scrim;
 }
 
@@ -55,12 +55,13 @@ static const double kRNSStackKeyframeStepMs = 8;
         RNSAssert(_scrim == nil, @"[RNScreens] A motion can dim its screen with one track only.");
         auto dim = static_cast<RNSStackAnimationDimTrack *>(track);
         _scrim = [UIView new];
-        _scrim.bounds = view.bounds;
-        _scrim.center = view.center;
+        _scrim.frame = view.bounds;
         _scrim.backgroundColor = dim.color;
         _scrim.alpha = dim.from;
         _scrim.userInteractionEnabled = NO;
-        [view.superview insertSubview:_scrim aboveSubview:view];
+        // Relies on React mounting the screen's children by index: as the last subview, the scrim keeps their
+        // indices, and a child mounted during the transition goes in below it.
+        [view addSubview:_scrim];
       }
     }
   }
@@ -162,8 +163,6 @@ static const double kRNSStackKeyframeStepMs = 8;
     transform = CGAffineTransformConcat(transform, CGAffineTransformMakeRotation(rotationDegrees * M_PI / 180));
     transform = CGAffineTransformConcat(transform, CGAffineTransformMakeTranslation(translationX, translationY));
     _view.transform = transform;
-    // The scrim is a sibling of the screen, so it takes the same transform to keep covering it.
-    _scrim.transform = transform;
   }
   if (_animatesAlpha) {
     _view.alpha = alpha;
