@@ -674,11 +674,12 @@ export interface StackHeaderConfigPropsIOS {
    */
   titleMenu?: StackHeaderMenuIOS | undefined;
   /**
-   * A list of items placed starting from the trailing edge. If there is not
-   * enough space to fit some items, they are moved to the overflow menu, one by
-   * one.
+   * A list of items placed starting from the trailing edge.
    *
    * @remarks
+   * If there is not enough space to fit some items, they are moved to the
+   * overflow menu, one by one.
+   *
    * Note: Custom items are not put into the overflow menu, but are removed
    * entirely.
    *
@@ -725,8 +726,11 @@ export interface StackHeaderConfigPropsIOS {
    */
   largeSubtitle?: string | undefined;
   /**
-   * Custom item to display as a subtitle for large header. Takes precedence
-   * over {@link StackHeaderConfigPropsIOS.largeSubtitle | largeSubtitle} text.
+   * Custom item to display as a subtitle for large header.
+   *
+   * @remarks
+   * Takes precedence over
+   * {@link StackHeaderConfigPropsIOS.largeSubtitle | largeSubtitle} text.
    *
    * @platform ios >= 26
    */
