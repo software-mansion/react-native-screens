@@ -10,7 +10,7 @@ RNSStackHostShadowNode::RNSStackHostShadowNode(
     ShadowNodeTraits traits)
     : ConcreteViewShadowNode(fragment, family, traits) {
 #if !defined(ANDROID)
-  updateDisplayForExternalNavigationController();
+  updateDisplayForHeadlessMode();
 #endif // !defined(ANDROID)
 }
 
@@ -19,28 +19,24 @@ RNSStackHostShadowNode::RNSStackHostShadowNode(
     const ShadowNodeFragment &fragment)
     : ConcreteViewShadowNode(sourceShadowNode, fragment) {
 #if !defined(ANDROID)
-  updateDisplayForExternalNavigationController();
+  updateDisplayForHeadlessMode();
 #endif // !defined(ANDROID)
 }
 
 #if !defined(ANDROID)
 /**
- * A host that uses an external navigation controller is out of layout.
- * However, the host still needs its view, which receives the screens
- * and operates on the navigation controller.
+ * A host in headless mode is out of layout. However, the host still needs its
+ * view, which receives the screens.
  *
  * React Native marks every node rendered with `display: contents` for
- * flattening (`ForceFlattenView`) when it applies the style. Inside a Split
- * column `Stack.Host` renders that way and still needs its view, which
- * owns the navigation controller the Split installs in the column so the mark
- * is cleared after every construction.
+ * flattening (`ForceFlattenView`) when it applies the style, so the mark is
+ * cleared after every construction.
  */
-void RNSStackHostShadowNode::updateDisplayForExternalNavigationController() {
+void RNSStackHostShadowNode::updateDisplayForHeadlessMode() {
   const auto &props = getConcreteProps();
   auto style = yogaNode_.style();
-  auto display = props.usesExternalNavigationController
-      ? yoga::Display::Contents
-      : props.yogaStyle.display();
+  auto display = props.headlessModeEnabled ? yoga::Display::Contents
+                                           : props.yogaStyle.display();
   if (style.display() != display) {
     style.setDisplay(display);
     yogaNode_.setStyle(style);

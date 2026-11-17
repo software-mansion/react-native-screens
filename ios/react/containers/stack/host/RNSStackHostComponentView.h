@@ -16,8 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSStackHostComponentView ()
 
 /**
- * The navigation controller the host operates on, for a host with `usesExternalNavigationController`, which does not
- * create one itself. Setting it applies the operations collected so far to the controller.
+ * The navigation controller the host operates on, for a host in headless mode, which does not create one itself.
+ * Setting it applies the operations collected so far to the controller.
  */
 @property (nonatomic, strong, nullable) RNSStackNavigationController *externalNavigationController;
 

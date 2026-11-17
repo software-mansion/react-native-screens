@@ -26,7 +26,7 @@ namespace react = facebook::react;
   RNSStackNavigationController *_Nullable _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
-  BOOL _usesExternalNavigationController;
+  BOOL _headlessModeEnabled;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -51,7 +51,7 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
-  if (_usesExternalNavigationController) {
+  if (_headlessModeEnabled) {
     if (self.window != nil && _stackNavigationController == nil) {
       RCTLogError(
           @"[RNScreens] Stack.Host expects a navigation controller from its parent, but it has not got one. "
@@ -88,13 +88,12 @@ namespace react = facebook::react;
 
 - (nullable RNSStackNavigationController *)externalNavigationController
 {
-  return _usesExternalNavigationController ? _stackNavigationController : nil;
+  return _headlessModeEnabled ? _stackNavigationController : nil;
 }
 
 - (void)setExternalNavigationController:(nullable RNSStackNavigationController *)navigationController
 {
-  RCTAssert(_usesExternalNavigationController,
-            @"[RNScreens] Only a Stack.Host with `usesExternalNavigationController` takes a navigation controller");
+  RCTAssert(_headlessModeEnabled, @"[RNScreens] Only a Stack.Host in headless mode takes a navigation controller");
   if (navigationController == _stackNavigationController) {
     return;
   }
@@ -104,22 +103,22 @@ namespace react = facebook::react;
   [self flushPendingOperations];
 }
 
-- (void)updateUsesExternalNavigationController:(BOOL)usesExternalNavigationController
+- (void)updateHeadlessModeEnabled:(BOOL)headlessModeEnabled
 {
   if (_stackNavigationController != nil) {
     RCTLogError(@"[RNScreens] Stack.Host cannot switch between its own and an external navigation controller");
     return;
   }
-  _usesExternalNavigationController = usesExternalNavigationController;
+  _headlessModeEnabled = headlessModeEnabled;
 }
 
 /**
- * The host learns from its props whether it uses an external navigation controller, so it creates its own one only
+ * The host learns from its props whether it is in headless mode, so it creates its own navigation controller only
  * when the first props are applied.
  */
 - (void)createOwnNavigationControllerIfNeeded
 {
-  if (_usesExternalNavigationController || _stackNavigationController != nil) {
+  if (_headlessModeEnabled || _stackNavigationController != nil) {
     return;
   }
   _stackNavigationController = [RNSStackNavigationController new];
@@ -188,8 +187,8 @@ namespace react = facebook::react;
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(props);
 
-  if (oldComponentProps.usesExternalNavigationController != newComponentProps.usesExternalNavigationController) {
-    [self updateUsesExternalNavigationController:newComponentProps.usesExternalNavigationController];
+  if (oldComponentProps.headlessModeEnabled != newComponentProps.headlessModeEnabled) {
+    [self updateHeadlessModeEnabled:newComponentProps.headlessModeEnabled];
   }
   [self createOwnNavigationControllerIfNeeded];
 

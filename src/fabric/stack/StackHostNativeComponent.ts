@@ -13,10 +13,10 @@ export interface NativeProps extends ViewProps {
   // General
   colorScheme?: CT.WithDefault<StackHostColorScheme, 'inherit'>;
 
-  // Internal, iOS. The host does not create a navigation controller of its
-  // own. It takes no part in layout and operates on the navigation controller
-  // it gets from the native container it is rendered in.
-  usesExternalNavigationController?: CT.WithDefault<boolean, false>;
+  // Internal, iOS. In headless mode the host takes no part in layout and does
+  // not show the stack itself. The stack is shown by the native component the
+  // host is rendered in.
+  headlessModeEnabled?: CT.WithDefault<boolean, false>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHost', {

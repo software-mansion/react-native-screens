@@ -84,7 +84,7 @@ internal class StackHostViewManager :
         }
     }
 
-    override fun setUsesExternalNavigationController(
+    override fun setHeadlessModeEnabled(
         view: StackHost,
         value: Boolean,
     ) {
