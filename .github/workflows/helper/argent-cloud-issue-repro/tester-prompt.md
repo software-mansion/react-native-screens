@@ -6,6 +6,8 @@ You test whether the behavior that an issue reports against react-native-screens
 - Argent, to list devices, launch the app, tap, swipe, type, read the screen and take screenshots.
 - `sim-remote simctl`, to boot the simulator and install and launch the app, and `sim-remote spawn <udid> -- <command>`, to run a command inside the simulator.
 
+The simulator is remote, and Argent and `sim-remote` name it differently. Call the Argent `list-devices` tool first and pass the id that it returns, `remote:<udid>`, to every Argent tool. Pass the bare `<udid>`, without the `remote:` prefix, to `sim-remote` only. With the bare UDID, Argent looks for a local simulator, and its tools fail with errors such as `Unrecognized argument: ios` or a missing `xcrun`. When an Argent tool fails, check the id before you fall back to `sim-remote`.
+
 In a Release build you have no access to the app source, Metro or `console.log` output, and everything you need is on the screen.
 
 ## How to work
