@@ -114,7 +114,7 @@ UIBarMinimizationSafeAreaAdjustmentFromReactRNSStackHeaderConfigIOSSafeAreaAdjus
 }
 
 #endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
-
+  
 RNSHeaderItemVisibilityPriority RNSHeaderItemVisibilityPriorityFromReactRNSStackHeaderItemIOSVisibilityPriority(
     react::RNSStackHeaderItemIOSVisibilityPriority visibilityPriority)
 {
