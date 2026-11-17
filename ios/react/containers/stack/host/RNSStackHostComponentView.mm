@@ -1,14 +1,12 @@
 #import "RNSStackHostComponentView.h"
 
 #import <React/RCTConversions.h>
-#import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSStackHostComponentDescriptor.h>
-#import "RNSAssert.h"
 #import "RNSDefines.h"
 #import "RNSLog.h"
 
@@ -27,7 +25,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSStackHostComponentView {
-  RNSStackNavigationController *_Nullable _stackNavigationController;
+  RNSStackNavigationController *_Nonnull _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
   BOOL _didSetHeadlessModeEnabled;
@@ -46,6 +44,7 @@ namespace react = facebook::react;
   static const auto defaultProps = std::make_shared<const react::RNSStackHostProps>();
   _props = defaultProps;
 
+  _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
 }
@@ -56,11 +55,10 @@ namespace react = facebook::react;
 {
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
   // In headless mode the host does not show the stack itself.
-  if (_headlessModeEnabled || self.window == nil) {
+  if (_headlessModeEnabled) {
     return;
   }
-  [self setupNavigationControllerIfNeeded];
-  if (_stackNavigationController.parentViewController == nil) {
+  if (self.window != nil && _stackNavigationController.parentViewController == nil) {
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
                                           toViewControllerManaging:self.reactSuperview
                                                  withContainerView:self];
@@ -83,31 +81,6 @@ namespace react = facebook::react;
     }
   }
   return [super hitTest:point withEvent:event];
-}
-
-#pragma mark - Navigation controller
-
-/**
- * The delegate is asked once, when the host needs its navigation controller for the first time. The host creates one
- * itself when it gets none.
- */
-- (void)setupNavigationControllerIfNeeded
-{
-  if (_stackNavigationController != nil) {
-    return;
-  }
-  _stackNavigationController = [_delegate navigationControllerForStackHost:self];
-  if (_stackNavigationController != nil) {
-    RNSAssert(_stackNavigationController.viewControllers.count == 0,
-              @"[RNScreens] Stack.Host expects an empty navigation controller");
-    return;
-  }
-  if (_headlessModeEnabled) {
-    RCTLogError(
-        @"[RNScreens] Stack.Host in headless mode got no navigation controller from its delegate. "
-        @"The stack is not shown.");
-  }
-  _stackNavigationController = [RNSStackNavigationController new];
 }
 
 #pragma mark - Communication with StackScreen
@@ -238,7 +211,6 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [self setupNavigationControllerIfNeeded];
   [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
                                            withRenderedScreens:_renderedScreens];
   [_stackNavigationController commitTransaction];
