@@ -45,6 +45,17 @@ UIBarButtonItemStyle UIBarButtonItemStyleFromReactRNSStackHeaderItemIOSVariant(
   }
 }
 
+RNSStackHeaderMode RNSStackHeaderModeFromReactRNSStackHeaderConfigIOSHeaderMode(
+    react::RNSStackHeaderConfigIOSHeaderMode headerMode)
+{
+  switch (headerMode) {
+    case react::RNSStackHeaderConfigIOSHeaderMode::Float:
+      return RNSStackHeaderModeFloat;
+    case react::RNSStackHeaderConfigIOSHeaderMode::Screen:
+      return RNSStackHeaderModeScreen;
+  }
+}
+
 RNSHeaderItemSpacerPlacement RNSHeaderItemSpacerPlacementFromReactRNSStackHeaderItemSpacerIOSPlacement(
     react::RNSStackHeaderItemSpacerIOSPlacement placement)
 {

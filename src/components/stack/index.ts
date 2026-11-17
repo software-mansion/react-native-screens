@@ -29,6 +29,7 @@ export type {
 export type {
   StackHeaderConfigPropsBase,
   StackHeaderConfigProps,
+  StackHeaderMode,
   StackHeaderConfigRef,
   // Android
   StackHeaderTypeAndroid,

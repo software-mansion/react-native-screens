@@ -1,8 +1,10 @@
 #import "RNSStackNavigationController.h"
 #import "RNSAssert.h"
 #import "RNSContainer.h"
+#import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
+#import "RNSStackInteractivePopGestureDelegate.h"
 #import "RNSStackNavigationBar.h"
 #import "RNSStackOperation.h"
 #import "RNSStackScreenController.h"
@@ -12,6 +14,11 @@
   NSMutableArray<RNSPushOperation *> *_Nonnull _pendingPushOperations;
   NSMutableArray<RNSPopOperation *> *_Nonnull _pendingPopOperations;
   RNSParentContainerItemRegistry *_Nonnull _parentContainerRegistry;
+#if !TARGET_OS_TV
+  RNSStackInteractivePopGestureDelegate *_Nonnull _interactivePopGestureDelegate;
+  // Delegates set up by UIKit, keyed by their gesture recognizers. Both held weakly - UIKit owns them.
+  NSMapTable<UIGestureRecognizer *, id<UIGestureRecognizerDelegate>> *_Nonnull _originalInteractivePopGestureDelegates;
+#endif // !TARGET_OS_TV
 }
 
 - (instancetype)init
@@ -34,13 +41,66 @@
   _pendingPushOperations = [NSMutableArray array];
   _pendingPopOperations = [NSMutableArray array];
   _parentContainerRegistry = [RNSParentContainerItemRegistry new];
+#if !TARGET_OS_TV
+  _interactivePopGestureDelegate = [[RNSStackInteractivePopGestureDelegate alloc] initWithNavigationController:self];
+  _originalInteractivePopGestureDelegates = [NSMapTable weakToWeakObjectsMapTable];
+#endif // !TARGET_OS_TV
 }
+
+#pragma mark - Interactive pop gesture
+
+#if !TARGET_OS_TV
+- (void)updateInteractivePopGestureDelegates
+{
+  UIViewController *topController = self.topViewController;
+  BOOL topControllerUsesScreenNavigationBar = [topController isKindOfClass:RNSStackScreenController.class] &&
+      static_cast<RNSStackScreenController *>(topController).isScreenNavigationBarEnabled;
+
+  [self updateDelegateOfInteractivePopGestureRecognizer:self.interactivePopGestureRecognizer
+                                    usingCustomDelegate:topControllerUsesScreenNavigationBar];
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    [self updateDelegateOfInteractivePopGestureRecognizer:self.interactiveContentPopGestureRecognizer
+                                      usingCustomDelegate:topControllerUsesScreenNavigationBar];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
+
+- (void)updateDelegateOfInteractivePopGestureRecognizer:(nullable UIGestureRecognizer *)recognizer
+                                    usingCustomDelegate:(BOOL)usesCustomDelegate
+{
+  if (recognizer == nil) {
+    return;
+  }
+
+  // UIKit assigns its delegate lazily - remember it, so that it can be restored.
+  id<UIGestureRecognizerDelegate> currentDelegate = recognizer.delegate;
+  if (currentDelegate != nil && currentDelegate != _interactivePopGestureDelegate) {
+    [_originalInteractivePopGestureDelegates setObject:currentDelegate forKey:recognizer];
+  }
+
+  id<UIGestureRecognizerDelegate> originalDelegate = [_originalInteractivePopGestureDelegates objectForKey:recognizer];
+  if (originalDelegate == nil) {
+    // UIKit has not set up the recognizer yet
+    return;
+  }
+
+  id<UIGestureRecognizerDelegate> targetDelegate =
+      usesCustomDelegate ? _interactivePopGestureDelegate : originalDelegate;
+  if (recognizer.delegate != targetDelegate) {
+    recognizer.delegate = targetDelegate;
+  }
+}
+#endif // !TARGET_OS_TV
 
 #pragma mark-- Layout
 
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+#if !TARGET_OS_TV
+  [self updateInteractivePopGestureDelegates];
+#endif // !TARGET_OS_TV
   [_navigationBarFrameChangeDelegate viewFrameDidChange:self.navigationBar];
 }
 

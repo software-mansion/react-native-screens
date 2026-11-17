@@ -8,6 +8,7 @@
 #import "RNSStackHeaderMenuCoordinator.h"
 #import "RNSStackHeaderMenuFinder.h"
 #import "RNSStackHeaderMenuTrackerRegistry.h"
+#import "RNSStackNavigationBar.h"
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
@@ -51,13 +52,26 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 
 - (void)updateNavigationBarVisibilityAnimated:(BOOL)animated
 {
+  RNSStackScreenController *controller = [self requireScreenController];
+  BOOL hidden = _configDataProvider == nil || _configDataProvider.hidden;
+
+  // The screen's own navigation bar is a part of the screen, its visibility does not depend on
+  // the screen being on top of the stack.
+  [controller setScreenNavigationBarHidden:hidden];
+
   RNSStackNavigationController *navController = [self getNavigationController];
   if (navController == nil || navController.topViewController != _screenController) {
     return;
   }
 
-  BOOL hidden = _configDataProvider == nil || _configDataProvider.hidden;
-  [navController.navigationBarCoordinator setHidden:hidden forNavigationController:navController animated:animated];
+  // In screen mode the shared navigation bar is hidden, the screen displays its own bar instead.
+  BOOL sharedNavigationBarHidden = hidden || controller.isScreenNavigationBarEnabled;
+  [navController.navigationBarCoordinator setHidden:sharedNavigationBarHidden
+                            forNavigationController:navController
+                                           animated:animated];
+#if !TARGET_OS_TV
+  [navController updateInteractivePopGestureDelegates];
+#endif // !TARGET_OS_TV
 }
 
 - (void)rebuild
@@ -67,6 +81,8 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   }
 
   RNSStackScreenController *controller = [self requireScreenController];
+
+  [self syncHeaderModeForController:controller];
 
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
@@ -140,7 +156,14 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     return;
   }
 
-  [self applyConfigPropertiesForController:[self requireScreenController]];
+  RNSStackScreenController *controller = [self requireScreenController];
+  if ([self syncHeaderModeForController:controller]) {
+    // Header content has to be moved to a different navigation item.
+    [self rebuild];
+    return;
+  }
+
+  [self applyConfigPropertiesForController:controller];
   [self updateNavigationBarVisibilityAnimated:YES];
 #if !TARGET_OS_TV
   [self updateBackButtonMenuEnabled];
@@ -150,12 +173,18 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #if !TARGET_OS_TV
 - (void)updateBackButtonMenuEnabled
 {
+  BOOL enabled = _configDataProvider == nil || _configDataProvider.backButtonMenuEnabled;
+  RNSStackScreenController *controller = [self requireScreenController];
+  if (controller.isScreenNavigationBarEnabled) {
+    controller.screenNavigationBar.backButtonMenuEnabled = enabled;
+    return;
+  }
+
   RNSStackNavigationController *navController = [self getNavigationController];
   if (navController == nil || navController.topViewController != _screenController) {
     return;
   }
 
-  BOOL enabled = _configDataProvider == nil || _configDataProvider.backButtonMenuEnabled;
   [navController.navigationBarCoordinator setBackButtonMenuEnabled:enabled forNavigationController:navController];
 }
 #endif // !TARGET_OS_TV
@@ -191,7 +220,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
         }
       }
 
-      [controller.navigationItem setLeftBarButtonItems:[_leadingBarButtonItems copy] animated:YES];
+      [controller.headerNavigationItem setLeftBarButtonItems:[_leadingBarButtonItems copy] animated:YES];
       break;
     }
     case RNSHeaderItemPlacementTrailing: {
@@ -206,18 +235,18 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
         }
       }
 
-      [controller.navigationItem setRightBarButtonItems:[_trailingBarButtonItems copy] animated:YES];
+      [controller.headerNavigationItem setRightBarButtonItems:[_trailingBarButtonItems copy] animated:YES];
       break;
     }
     case RNSHeaderItemPlacementTitle:
-      controller.navigationItem.titleView = targetItem.customView != nil
+      controller.headerNavigationItem.titleView = targetItem.customView != nil
           ? [RNSStackHeaderContentFactory wrappedViewForHeaderItem:targetItem frameChangeDelegate:_frameChangeDelegate]
           : nil;
       break;
     case RNSHeaderItemPlacementSubtitle:
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
-        controller.navigationItem.subtitleView = targetItem.customView != nil
+        controller.headerNavigationItem.subtitleView = targetItem.customView != nil
             ? [RNSStackHeaderContentFactory wrappedViewForHeaderItem:targetItem
                                                  frameChangeDelegate:_frameChangeDelegate]
             : nil;
@@ -227,7 +256,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     case RNSHeaderItemPlacementLargeSubtitle:
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
       if (@available(iOS 26.0, *)) {
-        controller.navigationItem.largeSubtitleView = targetItem.customView != nil
+        controller.headerNavigationItem.largeSubtitleView = targetItem.customView != nil
             ? [RNSStackHeaderContentFactory wrappedViewForHeaderItem:targetItem
                                                  frameChangeDelegate:_frameChangeDelegate]
             : nil;
@@ -317,8 +346,28 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   [_trackerRegistry clear];
 
   RNSStackScreenController *controller = [self requireScreenController];
-  UINavigationItem *navItem = controller.navigationItem;
+  [self resetNavigationItem:controller.headerNavigationItem];
+  if (controller.isScreenNavigationBarEnabled) {
+    // Title is mirrored onto the shared navigation item in screen mode
+    [self resetNavigationItem:controller.navigationItem];
+  }
+  controller.screenNavigationBarEnabled = NO;
 
+#if !TARGET_OS_TV
+  [self clearAppliedBackButtonConfig];
+#endif // !TARGET_OS_TV
+
+  [self updateNavigationBarVisibilityAnimated:YES];
+#if !TARGET_OS_TV
+  [self updateBackButtonMenuEnabled];
+#endif // !TARGET_OS_TV
+}
+
+/**
+ Brings the navigation item back to its unconfigured state.
+ */
+- (void)resetNavigationItem:(UINavigationItem *)navItem
+{
   navItem.title = nil;
   navItem.titleView = nil;
   navItem.standardAppearance = nil;
@@ -351,14 +400,32 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #if !TARGET_OS_TV
   navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+#endif // !TARGET_OS_TV
+}
 
+/**
+ Makes the screen controller use the navigation bar matching the header mode requested by the config.
+ Returns YES when the mode has changed: the header content has to be applied again, onto a different
+ navigation item.
+ */
+- (BOOL)syncHeaderModeForController:(RNSStackScreenController *)controller
+{
+  BOOL wantsScreenNavigationBar =
+      _configDataProvider != nil && _configDataProvider.headerMode == RNSStackHeaderModeScreen;
+  if (controller.isScreenNavigationBarEnabled == wantsScreenNavigationBar) {
+    return NO;
+  }
+
+  [self resetNavigationItem:controller.headerNavigationItem];
+  if (controller.isScreenNavigationBarEnabled) {
+    [self resetNavigationItem:controller.navigationItem];
+  }
+#if !TARGET_OS_TV
   [self clearAppliedBackButtonConfig];
 #endif // !TARGET_OS_TV
 
-  [self updateNavigationBarVisibilityAnimated:YES];
-#if !TARGET_OS_TV
-  [self updateBackButtonMenuEnabled];
-#endif // !TARGET_OS_TV
+  controller.screenNavigationBarEnabled = wantsScreenNavigationBar;
+  return YES;
 }
 
 /**
@@ -467,9 +534,14 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 
 - (void)applyConfigPropertiesForController:(RNSStackScreenController *)controller
 {
-  UINavigationItem *navItem = controller.navigationItem;
+  UINavigationItem *navItem = controller.headerNavigationItem;
 
   navItem.title = _configDataProvider.title;
+  if (controller.isScreenNavigationBarEnabled) {
+    // Mirrored, so that the shared navigation bar displays a correct back button title
+    // for a screen in float mode pushed on top of this one.
+    controller.navigationItem.title = _configDataProvider.title;
+  }
   navItem.standardAppearance = _configDataProvider.standardAppearance;
   navItem.scrollEdgeAppearance = _configDataProvider.scrollEdgeAppearance;
 
@@ -480,6 +552,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     // UIKit does not resize an already visible navigation bar when the prompt
     // of its navigation item changes - request layout explicitly.
     [controller.navigationController.view setNeedsLayout];
+    [controller.view setNeedsLayout];
   }
 
   [self applyBackButtonConfigForController:controller];
@@ -512,6 +585,15 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #if !TARGET_OS_TV
 - (void)applyBackButtonConfigForController:(RNSStackScreenController *)controller
 {
+  if (controller.isScreenNavigationBarEnabled) {
+    // The back button of the screen's own navigation bar is provided by its own back item.
+    [controller updateScreenNavigationBarItems];
+    UINavigationItem *backItem = controller.screenNavigationBarBackItem;
+    backItem.backButtonTitle = _configDataProvider.backButtonTitle;
+    backItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
+    return;
+  }
+
   NSArray<UIViewController *> *viewControllers = controller.navigationController.viewControllers;
   NSUInteger index = [viewControllers indexOfObject:controller];
   if (index == NSNotFound || index == 0) {
@@ -540,7 +622,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
               largeSubtitleView:(nullable UIView *)largeSubtitleView
                   forController:(RNSStackScreenController *)controller
 {
-  UINavigationItem *navItem = controller.navigationItem;
+  UINavigationItem *navItem = controller.headerNavigationItem;
 
 #if !TARGET_OS_TV
   navItem.leftItemsSupplementBackButton = YES;
@@ -564,7 +646,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #if !TARGET_OS_TV
   if (@available(iOS 16.0, *)) {
     RNSStackHeaderMenuData *titleMenuData = _configDataProvider.titleMenu;
-    UINavigationItem *navItem = controller.navigationItem;
+    UINavigationItem *navItem = controller.headerNavigationItem;
 
     if (titleMenuData == nil) {
       navItem.titleMenuProvider = nil;
