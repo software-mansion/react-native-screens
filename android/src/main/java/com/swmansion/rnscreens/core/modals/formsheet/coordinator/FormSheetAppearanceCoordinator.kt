@@ -7,7 +7,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.core.modals.formsheet.model.FormSheetConfig
-import com.swmansion.rnscreens.utils.dpToPx
+import com.swmansion.rnscreens.core.utils.dpToPx
 
 internal class FormSheetAppearanceCoordinator(
     private val bottomSheetView: FrameLayout?,

@@ -19,8 +19,8 @@ Incomplete: not covered at all.
 
 1. Launch the app and navigate to the screen Tab Bar Initially Hidden.
 
-- [ ] The tab bar should be not visible even for a frame. There should be no animation visible.
+    - [ ] The tab bar should be not visible even for a frame. There should be no animation visible.
 
 2. Toggle `tabBarHidden` to `false`.
 
-- [ ] Tab bar should appear with animation.
+    - [ ] Tab bar should appear with animation.

@@ -28,52 +28,52 @@ TBD: Planned, but will be implemented separately.
 
 1. Launch the app and navigate to the **Corner Radius** screen.
 
-- [ ] The host screen shows "Current Radius: systemDefault" and the "Open FormSheet" button.
+    - [ ] The host screen shows "Current Radius: systemDefault" and the "Open FormSheet" button.
 
 ---
 
 ### System default
 
-2. Tap "Open FormSheet".
+1. Tap "Open FormSheet".
 
-- [ ] The sheet presents at the lower detent (0.6). The affected corners (see Note: top corners on iOS 18 and Android, all corners on iOS 26 and iPad) have the platform-default rounding. The title inside reads "Current Radius: systemDefault".
+    - [ ] The sheet presents at the lower detent (0.6). The affected corners (see Note: top corners on iOS 18 and Android, all corners on iOS 26 and iPad) have the platform-default rounding. The title inside reads "Current Radius: systemDefault".
 
 ---
 
 ### Dynamic updates
 
-3. Tap "Sharp (0)" inside the sheet.
+1. Tap "Sharp (0)" inside the sheet.
 
-- [ ] The corners become sharp immediately, without re-presenting the sheet. The title reads "Current Radius: 0".
+    - [ ] The corners become sharp immediately, without re-presenting the sheet. The title reads "Current Radius: 0".
 
-4. Tap "Small (10)".
+2. Tap "Small (10)".
 
-- [ ] The corners get a slight rounding; the title reads "Current Radius: 10".
+    - [ ] The corners get a slight rounding; the title reads "Current Radius: 10".
 
-5. Tap "Large (50)".
+3. Tap "Large (50)".
 
-- [ ] The corners get a deep rounding; the title reads "Current Radius: 50".
+    - [ ] The corners get a deep rounding; the title reads "Current Radius: 50".
 
-6. Tap "System default".
+4. Tap "System default".
 
-- [ ] The corners return to the system-default rounding; the title reads "Current Radius: systemDefault".
+    - [ ] The corners return to the system-default rounding; the title reads "Current Radius: systemDefault".
 
 ---
 
 ### Dismissal
 
-7. Tap "Dismiss from JS" (or swipe the sheet down).
+1. Tap "Dismiss from JS" (or swipe the sheet down).
 
-- [ ] The sheet dismisses and the host screen shows the last selected radius; "Open FormSheet" is pressable again.
+    - [ ] The sheet dismisses and the host screen shows the last selected radius; "Open FormSheet" is pressable again.
 
 ---
 
 ### Android only - Known limitation at 1.0 detent
 
-8. Tap "Open FormSheet", drag the sheet up to the largest detent (1.0), then tap "Large (50)".
+1. Tap "Open FormSheet", drag the sheet up to the largest detent (1.0), then tap "Large (50)".
 
-- [ ] The corners become flat instead of rounded (see Note) – this is the documented Material limitation, not a regression.
+    - [ ] The corners become flat instead of rounded (see Note) – this is the documented Material limitation, not a regression.
 
-9. Tap "Dismiss from JS".
+2. Tap "Dismiss from JS".
 
-- [ ] The sheet dismisses.
+    - [ ] The sheet dismisses.

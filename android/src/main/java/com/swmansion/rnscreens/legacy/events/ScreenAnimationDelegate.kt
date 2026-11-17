@@ -67,7 +67,12 @@ class ScreenAnimationDelegate(
                 isExitAnimation,
             )
 
-            wrapper.screen.endRemovalTransition()
+            // Check fragment state, not animation direction: when a form sheet is removed during its
+            // ENTER animation, AndroidX can merge the removal into the running operation and end the
+            // ENTER animator without ever creating an EXIT one.
+            if (wrapper.fragment.isRemoving) {
+                wrapper.screen.endRemovalTransition()
+            }
         }
     }
 

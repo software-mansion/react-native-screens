@@ -19,7 +19,7 @@ import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.core.modals.formsheet.interfaces.FormSheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.core.modals.formsheet.interfaces.FormSheetContentSizeChangeProvider
-import com.swmansion.rnscreens.helpers.getFabricUIManagerNotNull
+import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")

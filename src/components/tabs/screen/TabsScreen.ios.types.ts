@@ -1,9 +1,6 @@
 import type { ColorValue, TextStyle } from 'react-native';
-import type {
-  UserInterfaceStyle,
-  BlurEffect,
-  PlatformIconIOS,
-} from '../../shared/types';
+import type { UserInterfaceStyle, BlurEffect } from '../../shared/types';
+import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
 
 export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
 
@@ -235,33 +232,41 @@ export interface TabsScreenPropsIOS {
    * @summary Specifies the icon for the tab bar item.
    *
    * Supported values:
-   * - `{ type: 'imageSource', imageSource }`
-   *   Uses an image from the provided resource.
-   * - `{ type: 'sfSymbol', name }`
-   *   Uses an SF Symbol with the specified name.
-   * - `{ type: 'xcasset', name }`
-   *   Uses asset from Xcassets.
-   * - `{ type: 'templateSource', templateSource }`
-   *   Uses the provided image as a template image.
-   *   The icon color will depend on the current state
-   *   of the tab bar item and icon color-related props.
+   * - `{ type: 'imageSource', imageSource, renderingMode? }`
+   *   Uses an image from the provided resource. With `renderingMode` set to
+   *   `template` the image is tinted with the state-dependent icon color. With
+   *   `original` it keeps its own colors.
+   * - `{ type: 'sfSymbol', name, renderingMode? }`
+   *   Uses an SF Symbol with the specified name. If no system symbol
+   *   matches, falls back to a custom symbol with that name from the app's
+   *   asset catalog. `renderingMode` defaults to `default`, the system
+   *   behavior: a single color for system symbols, while for custom symbols
+   *   the rendering intent set in the asset catalog may change it. `original`
+   *   shows the symbol's own color layers (Apple's "multicolor" rendering).
+   *
+   * See `TabsScreenIconImageRenderingModeIOS` and
+   * `TabsScreenIconSymbolRenderingModeIOS` for the meaning of each rendering mode.
    *
    * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: TabsScreenIconIOS | undefined;
   /**
    * @summary Specifies the icon for tab bar item when it is selected.
    *
-   * Supports the same values as `icon` property.
+   * Supports the same values as `icon` property. It must use the same icon
+   * `type` as `icon`; `renderingMode` may differ, e.g.
+   * `icon: { type: 'sfSymbol', name }` with
+   * `selectedIcon: { type: 'sfSymbol', name, renderingMode: 'original' }`
+   * shows the symbol tinted while unselected and in its own colors while selected.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
    * @platform ios
    */
-  selectedIcon?: PlatformIconIOS | undefined;
+  selectedIcon?: TabsScreenIconIOS | undefined;
   /**
    * @summary System-provided tab bar item with predefined icon and title
    *
@@ -290,7 +295,9 @@ export interface TabsScreenPropsIOS {
    * placement UIKit gives search tabs. Behavior differs between OS versions: iOS 26.x
    * detaches `UISearchTab` unconditionally, iOS 27.0 only while `automaticallyActivatesSearch`
    * is enabled. This prop does not affect the tab bar item's icon or title - combine
-   * it with `systemItem: 'search'` for the system magnifier item.
+   * it with `systemItem: 'search'` for the system magnifier item. On iOS 27+ the detached
+   * (prominent) placement can be given to any tab instead through `TabsHost`
+   * `ios.prominentScreenKey`.
    *
    * The native tab class cannot change during the screen's lifetime - changing
    * `role` on a mounted tab screen is not supported and triggers an assertion

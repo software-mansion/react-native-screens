@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { tapHeaderView } from '@e2e/framework/header-items-ios';
 import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
 
@@ -23,7 +24,7 @@ describeIfIOS('Test791', () => {
 
     for (let i = 0; i < 5; ++i) {
       await expect(element(by.id('push-text'))).toBeVisible();
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).atIndex(0).tap();
+      await tapHeaderView(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON));
     }
 
     await expect(element(by.id('main-text'))).toBeVisible();

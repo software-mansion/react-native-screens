@@ -61,7 +61,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: "yarn"
+          # No dependency cache: caches of the default branch can be written by any workflow run on
+          # it, including ones that run third-party code, and this job publishes to npm.
           registry-url: https://registry.npmjs.org/
 
       # With validation bypassed there is no release branch to infer the

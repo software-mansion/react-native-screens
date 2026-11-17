@@ -75,6 +75,8 @@ Back button menu behaves similarly on both versions.
   - The entry for First displays "First", NOT the back title configured for
     the previously popped Second screen
 
+---
+
 ### `title` + `displayMode` (iOS 26)
 
 1. Launch the test screen.
@@ -107,6 +109,8 @@ Back button menu behaves similarly on both versions.
 12. Long-press the back button to open the back menu.
   - The entry for First displays "First", NOT "Custom title" configured for
     the previously popped Second screen
+
+---
 
 ### `menuEnabled` (both versions)
 

@@ -1,0 +1,181 @@
+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
+index 62d4c2a..f73f066 100644
+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
+@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
+ import com.facebook.react.ReactApplication
+ import com.facebook.react.ReactInstanceManager
+ import com.facebook.react.bridge.ReactContext
+-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
+ 
+ 
+ fun ReactApplication.getInstanceManagerSafe(): ReactInstanceManager {
+@@ -28,7 +27,9 @@ fun ReactApplication.getCurrentReactContextSafe(): ReactContext {
+ 
+ /**
+  * A method to check if Fabric is enabled in the React Native application.
++ *
++ * react-native-screens patch: RN 0.89 removed `DefaultNewArchitectureEntryPoint.fabricEnabled`
++ * (facebook/react-native#58469). FabricExample runs the New Architecture only, so the legacy
++ * path (and its bridge-only idling resources) is dropped. Remove once Detox ships a fix.
+  */
+-fun isFabricEnabled(): Boolean {
+-    return DefaultNewArchitectureEntryPoint.fabricEnabled
+-}
++fun isFabricEnabled(): Boolean = true
+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt
+deleted file mode 100644
+index 2e3ec8b..0000000
+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt
++++ /dev/null
+@@ -1,72 +0,0 @@
+-package com.wix.detox.reactnative.idlingresources.bridge
+-
+-import android.util.Log
+-import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener
+-import com.facebook.react.bridge.ReactContext
+-import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+-import java.util.concurrent.atomic.AtomicBoolean
+-
+-/**
+- * Created by simonracz on 01/06/2017.
+- */
+-/**
+- *
+- *
+- * IdlingResource for Espresso, which monitors the traffic of
+- * React Native's JS bridge.
+- *
+- */
+-class BridgeIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
+-    NotThreadSafeBridgeIdleDebugListener {
+-    private val idleNow = AtomicBoolean(true)
+-
+-    init {
+-        reactContext.catalystInstance.addBridgeIdleDebugListener(this)
+-    }
+-
+-    fun onDetach() {
+-        reactContext.catalystInstance.removeBridgeIdleDebugListener(this)
+-    }
+-
+-    override fun getName(): String {
+-        return BridgeIdlingResource::class.java.name
+-    }
+-
+-    override fun getDebugName(): String {
+-        return "bridge"
+-    }
+-
+-    override fun getBusyHint(): Map<String, Any>? {
+-        return null
+-    }
+-
+-    override fun checkIdle(): Boolean {
+-        val ret = idleNow.get()
+-        if (!ret) {
+-            Log.i(LOG_TAG, "JS Bridge is busy")
+-        }
+-        return ret
+-    }
+-
+-    override fun onTransitionToBridgeIdle() {
+-        idleNow.set(true)
+-        notifyIdle()
+-    }
+-
+-    override fun onTransitionToBridgeBusy() {
+-        idleNow.set(false)
+-        // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
+-    }
+-
+-    override fun onBridgeDestroyed() {
+-    }
+-
+-    override fun onUnregistered() {
+-        super.onUnregistered()
+-        onDetach()
+-    }
+-
+-    companion object {
+-        private const val LOG_TAG = "Detox"
+-    }
+-}
+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
+index bc3e0c9..834ba1d 100644
+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
+@@ -5,10 +5,8 @@ import com.wix.detox.reactnative.getCurrentReactContext
+ import com.wix.detox.reactnative.getCurrentReactContextSafe
+ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+ import com.wix.detox.reactnative.idlingresources.animations.AnimatedModuleIdlingResource
+-import com.wix.detox.reactnative.idlingresources.bridge.BridgeIdlingResource
+ import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
+ import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
+-import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
+ import com.wix.detox.reactnative.idlingresources.uimodule.paper.UIModuleIdlingResource
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.withContext
+@@ -20,8 +18,6 @@ class OldArchitectureDetoxIdlingResourceFactoryStrategy(private val reactApplica
+             val reactContext = reactApplication.getCurrentReactContextSafe()
+ 
+             val result = mutableMapOf(
+-                IdlingResourcesName.Timers to TimersIdlingResource(reactContext),
+-                IdlingResourcesName.RNBridge to BridgeIdlingResource(reactContext),
+                 IdlingResourcesName.UI to UIModuleIdlingResource(reactContext),
+                 IdlingResourcesName.Animations to AnimatedModuleIdlingResource(reactContext),
+                 IdlingResourcesName.Network to NetworkIdlingResource(reactContext),
+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/timers/TimersIdlingResource.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/timers/TimersIdlingResource.kt
+index 462908c..300e0b4 100644
+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/timers/TimersIdlingResource.kt
++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/timers/TimersIdlingResource.kt
+@@ -1,49 +1,3 @@
+ package com.wix.detox.reactnative.idlingresources.timers
+ 
+-import android.annotation.SuppressLint
+-import android.view.Choreographer
+-import androidx.test.espresso.IdlingResource
+-import com.facebook.react.bridge.ReactContext
+-import com.facebook.react.modules.core.TimingModule
+-import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+-
+ const val BUSY_WINDOW_THRESHOLD: Long = 1500L
+-
+-class TimersIdlingResource @JvmOverloads constructor(
+-    reactContext: ReactContext,
+-    private val getChoreographer: () -> Choreographer = { Choreographer.getInstance() }
+-) : DetoxIdlingResource(), Choreographer.FrameCallback {
+-
+-    private val timingModule: TimingModule = reactContext.getNativeModule(TimingModule::class.java)!!
+-
+-    override fun getName(): String = this.javaClass.name
+-    override fun getDebugName(): String = "timers"
+-    override fun getBusyHint(): Map<String, Any>? = null
+-
+-    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
+-        super.registerIdleTransitionCallback(callback)
+-        getChoreographer().postFrameCallback(this)
+-    }
+-
+-    override fun onUnregistered() {
+-        super.onUnregistered()
+-        getChoreographer().removeFrameCallback(this)
+-    }
+-
+-    @SuppressLint("VisibleForTests")
+-    override fun checkIdle(): Boolean {
+-        val isIdle = !timingModule.hasActiveTimersInRange(BUSY_WINDOW_THRESHOLD)
+-
+-        if (isIdle) {
+-            notifyIdle()
+-        } else {
+-            getChoreographer().postFrameCallback(this)
+-        }
+-
+-        return isIdle
+-    }
+-
+-    override fun doFrame(frameTimeNanos: Long) {
+-        isIdleNow
+-    }
+-}

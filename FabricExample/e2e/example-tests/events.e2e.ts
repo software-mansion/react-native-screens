@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON } from '@e2e/framework/native-classes-android';
-import { CLASS_NAME_UI_BUTTON_BAR_BUTTON } from '@e2e/framework/native-classes-ios';
+import { tapBarBackButton } from '@e2e/framework/back-button';
 
 const pressBack = async () => {
   if (device.getPlatform() === 'android') {
@@ -10,6 +10,15 @@ const pressBack = async () => {
       .atIndex(0)
       .tap();
   }
+};
+
+// `tapBarBackButton` taps the iOS 27 back button by coordinates without
+// waiting for the app to idle, so a tap during the push transition is lost.
+// Gate it on the push's last event.
+const awaitChatsPushed = async () => {
+  await waitFor(element(by.text('8. Privacy | transitionEnd | opening')))
+    .toExist()
+    .withTimeout(5000);
 };
 
 const awaitClassicalEventBehavior = async () => {
@@ -75,7 +84,8 @@ describe('Events', () => {
 
     await element(by.id('events-go-to-chats')).tap();
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await awaitChatsPushed();
+      await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
     }
@@ -92,7 +102,8 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await awaitChatsPushed();
+      await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
     }
@@ -137,7 +148,8 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     if (device.getPlatform() === 'ios') {
-      await element(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)).tap();
+      await awaitChatsPushed();
+      await tapBarBackButton();
     } else {
       await element(by.type(CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON)).tap();
     }

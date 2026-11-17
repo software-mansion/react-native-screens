@@ -183,6 +183,25 @@ export interface TabsHostPropsIOS {
    */
   tabBarSidebarPreferredPlacement?: TabBarSidebarPreferredPlacement | undefined;
   /**
+   * @summary `screenKey` of the tab screen that should receive the prominent treatment.
+   *
+   * Must match the `screenKey` of one of the child `TabsScreen`s. Where supported, that tab
+   * receives enhanced visual emphasis in the tab bar - it is detached from the other items
+   * onto its own surface and stays visible when the tab bar minimizes on scroll
+   * (see `tabBarMinimizeBehavior`).
+   *
+   * When omitted, a tab with `role: 'search'` and `automaticallyActivatesSearch` enabled
+   * becomes prominent automatically, otherwise no tab is prominent.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/prominenttabidentifier|UITabBarController.prominentTabIdentifier}
+   *
+   * Not supported on tvOS.
+   *
+   * @platform ios
+   * @supported iOS 27 or higher
+   */
+  prominentScreenKey?: string | undefined;
+  /**
    * @summary
    * A callback that gets invoked when the user taps the "More" tab bar item.
    *

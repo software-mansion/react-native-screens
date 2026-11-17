@@ -11,6 +11,16 @@
 
 // --- AndroidX / Material ---
 
+// The library's `FormSheet` content container.
+export const CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER =
+  'com.swmansion.rnscreens.core.modals.formsheet.dialog.FormSheetContainer';
+// The FormSheet grabber; `GONE` while `prefersGrabberVisible` is off.
+export const CLASS_NAME_ANDROID_BOTTOM_SHEET_DRAG_HANDLE_VIEW =
+  'com.google.android.material.bottomsheet.BottomSheetDragHandleView';
+// `BottomSheetDialog`'s root layout, spanning the dialog window.
+export const CLASS_NAME_ANDROID_COORDINATOR_LAYOUT =
+  'androidx.coordinatorlayout.widget.CoordinatorLayout';
+
 export const CLASS_NAME_ANDROID_APP_COMPAT_IMAGE_BUTTON =
   'androidx.appcompat.widget.AppCompatImageButton';
 export const CLASS_NAME_ANDROID_MENU_DROP_DOWN_LIST_VIEW =

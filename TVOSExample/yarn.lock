@@ -3580,7 +3580,6 @@ __metadata:
     react-native: "npm:react-native-tvos@0.87.1-0"
     react-native-gesture-handler: "npm:^3.3.0"
     react-native-reanimated: "npm:4.6.0"
-    react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:5.9.1"
     react-native-screens: "link:../"
     react-native-worklets: "npm:0.12.2"
@@ -7488,15 +7487,15 @@ __metadata:
   linkType: hard
 
 "joi@npm:^17.2.1":
-  version: 17.13.3
-  resolution: "joi@npm:17.13.3"
+  version: 17.13.8
+  resolution: "joi@npm:17.13.8"
   dependencies:
     "@hapi/hoek": "npm:^9.3.0"
     "@hapi/topo": "npm:^5.1.0"
     "@sideway/address": "npm:^4.1.5"
     "@sideway/formula": "npm:^3.0.1"
     "@sideway/pinpoint": "npm:^2.0.0"
-  checksum: 10c0/9262aef1da3f1bec5b03caf50c46368899fe03b8ff26cbe3d53af4584dd1049079fc97230bbf1500b6149db7cc765b9ee45f0deb24bb6fc3fa06229d7148c17f
+  checksum: 10c0/7fe2b38d26dfcbcf1836892384ba2f42f83058795f32dcb3733de4c3b97cac923a8b9053738f10701663872a994f77af351c71e1428117a20bbfc1f94768f648
   languageName: node
   linkType: hard
 
@@ -9129,16 +9128,6 @@ __metadata:
     react-native: 0.83 - 0.87
     react-native-worklets: 0.12.x
   checksum: 10c0/947c9038b9c876a5e77364afd4b256327e05317537022b283aa76dc35af20b5cb4786989117fd1c3926c583595165703903e91ab3c204f90fdb6296022eff614
-  languageName: node
-  linkType: hard
-
-"react-native-restart@npm:^0.0.27":
-  version: 0.0.27
-  resolution: "react-native-restart@npm:0.0.27"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/13ef35f98d12658e29a2c84aa68946cec6e0add946eb3a5d4ffae1fdce050bb563e269e55d9c037e47072a78bcea98f010536d9d7dd9c26eec9e7c9795bf713f
   languageName: node
   linkType: hard
 

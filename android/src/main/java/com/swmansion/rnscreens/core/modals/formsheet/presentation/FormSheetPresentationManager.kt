@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.swmansion.rnscreens.common.event.ViewAppearanceEventEmitter
+import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 
 internal class FormSheetPresentationManager(
     private val presentationFactory: () -> FormSheetPresentation,

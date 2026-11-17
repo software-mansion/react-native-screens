@@ -58,73 +58,73 @@ simulated device is required for all steps.
 1. Launch the app and navigate to the **Tab Bar Layout Appearances (iOS)**
    screen. Use an **iPhone** simulator in **portrait** orientation.
 
-- [ ] Four tabs are visible (Info, Tab1, Tab2, Tab3). The first
-  tab (Info) is selected by default. Its title **"Info"** should appear in
-  a **red** italic font. On iOS18, unselected tabs
-  should have normal (non-italic) titles in **darker red**.
-  On iOS 26, unselected tab titles revert to the system
-  default appearance (not red).
+    - [ ] Four tabs are visible (Info, Tab1, Tab2, Tab3). The first
+          tab (Info) is selected by default. Its title **"Info"** should appear in
+          a **red** italic font. On iOS18, unselected tabs
+          should have normal (non-italic) titles in **darker red**.
+          On iOS 26, unselected tab titles revert to the system
+          default appearance (not red).
 
 2. Tap **Tab1**.
 
-- [ ] "Tab1" title becomes **italic** and **red**.
-  On iOS18, the previously selected "Info" tab title becomes normal
-  and darker red. On iOS 26, "Info" tab use system
-  default appearance.
+    - [ ] "Tab1" title becomes **italic** and **red**.
+          On iOS18, the previously selected "Info" tab title becomes normal
+          and darker red. On iOS 26, "Info" tab use system
+          default appearance.
 
 3. Tap **Tab2**, then **Tab3**, then back to **Tab1**.
 
-- [ ] Each selected tab displays an italic, red title.
-  All other tabs display normal titles (iOS 18: darker red, iOS 26: system
-default color)
+    - [ ] Each selected tab displays an italic, red title.
+          All other tabs display normal titles (iOS 18: darker red, iOS 26: system
+          default color)
 
 ---
 
 ### compactInline mode — iPhone Pro landscape (non-Max)
 
-4. On an **iPhone Pro** simulator, rotate to **landscape** and navigate to the screen.
+1. On an **iPhone Pro** simulator, rotate to **landscape** and navigate to the screen.
 
-- [ ] Selected tab title appears in the **italic**, **green**.
-Unselected tab titles: display normal, on iOS 18: darker green, on iOS 26: system
-default color.
+    - [ ] Selected tab title appears in the **italic**, **green**.
+          Unselected tab titles: display normal, on iOS 18: darker green, on iOS 26: system
+          default color.
 
-5. Tap **Tab1**, **Tab2**, **Tab3** in turn.
+2. Tap **Tab1**, **Tab2**, **Tab3** in turn.
 
-- [ ] Each tapped tab's title becomes italic and green. All other tab
-(unselected) display normal titles, on iOS 18: darker green, on iOS 26: system
-default color.
+    - [ ] Each tapped tab's title becomes italic and green. All other tab
+          (unselected) display normal titles, on iOS 18: darker green, on iOS 26: system
+          default color.
 
 ---
 
 ### Rotate between modes — stacked ↔ compactInline (on iPhone Pro)
 
-6. On an **iPhone Pro** simulator, start in portrait (red stacked),
+1. On an **iPhone Pro** simulator, start in portrait (red stacked),
    then rotate to landscape (green compactInline), then rotate back to portrait.
 
-- [ ] Title colors and italic/normal styles update instantly with each
-rotation to match the newly active layout appearance.
+    - [ ] Title colors and italic/normal styles update instantly with each
+          rotation to match the newly active layout appearance.
 
 ---
 
 ### iOS 18 only: inline mode — iPhone Pro Max landscape
 
-7. On an **iPhone Pro Max**,
+1. On an **iPhone Pro Max**,
    rotate to **landscape** orientation and navigate to the screen.
 
-- [ ] Selected tab title appears in the **italic**, **blue**.
-Unselected tab titles: display normal, darker blue.
+    - [ ] Selected tab title appears in the **italic**, **blue**.
+          Unselected tab titles: display normal, darker blue.
 
-8. Tap **Tab1**, **Tab2**, **Tab3** in turn.
+2. Tap **Tab1**, **Tab2**, **Tab3** in turn.
 
-- [ ] Each tapped tab's title becomes italic and blue.
-Unselected tabs remain normal and darker blue.
+    - [ ] Each tapped tab's title becomes italic and blue.
+          Unselected tabs remain normal and darker blue.
 
 ---
 
 ### iOS 18 only: Rotate between modes — stacked ↔ inline (iPhone Pro Max)
 
-9. On an **iPhone Pro Max** simulator, start in portrait (red stacked),
+1. On an **iPhone Pro Max** simulator, start in portrait (red stacked),
    then rotate to landscape (blue inline), then rotate back to portrait.
 
-- [ ] Title colors and italic/normal styles update instantly with each
-rotation to match the newly active layout appearance.
+    - [ ] Title colors and italic/normal styles update instantly with each
+          rotation to match the newly active layout appearance.

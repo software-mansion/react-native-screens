@@ -96,6 +96,7 @@ export interface NativeProps extends ViewProps {
     'automatic'
   >;
   bottomAccessoryHidden?: CT.WithDefault<boolean, false>;
+  prominentScreenKey?: string | undefined;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsHostIOS', {

@@ -2,22 +2,25 @@ import { device, expect, element, by, waitFor } from 'detox';
 import { selectPickerOption } from '@e2e/app/settings-controls';
 import { scrollToAndTap } from '@e2e/framework/gestures';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
-import { dismissToast } from '@e2e/app/toast';
+import { dismissNextToast } from '@e2e/app/toast';
 import {
   checkmarkFor,
   contextMenu,
   dismissContextMenu,
   menuRow,
   menuRowIcon,
-  openContextMenu,
+  openHeaderItemMenu,
   openHeaderTitleMenu,
 } from '@e2e/framework/context-menu-ios';
-import { headerItem, headerTitle } from '@e2e/framework/header-items-ios';
+import {
+  expectHeaderItemShown,
+  headerTitle,
+} from '@e2e/framework/header-items-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 const SCROLLVIEW_ID = 'header-menu-scrollview';
 
-const menuOneBarButton = headerItem('Menu 1', { control: true });
+const MENU_ONE_TITLE = 'Menu 1';
 
 const HEADER_TITLE = 'Header Menu';
 
@@ -42,7 +45,18 @@ async function tapSendButton(buttonId: string) {
 }
 
 async function openMenuOne() {
-  await openContextMenu(menuOneBarButton);
+  await openHeaderItemMenu(MENU_ONE_TITLE, { control: true });
+}
+
+/**
+ * The dismiss tap also reaches the screen beneath the menu, so it lands on a
+ * plain heading: at its leading edge, clear of every menu this screen opens.
+ */
+async function dismissMenu() {
+  await dismissContextMenu({
+    over: by.text('setMenuItemOptions (Menu 1)'),
+    xFraction: 0.02,
+  });
 }
 
 describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
@@ -56,7 +70,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
 
   it('should display the header with a trailing item exposing a real menu', async () => {
     await expect(headerTitleLabel).toExist();
-    await expect(menuOneBarButton).toBeVisible();
+    await expectHeaderItemShown(MENU_ONE_TITLE, { control: true });
   });
 
   describe('opening Menu 1', () => {
@@ -69,13 +83,13 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
       await expect(element(by.text('Toggle 1-3'))).toBeVisible();
       await expect(element(by.text('Submenu with Radio'))).toBeVisible();
 
-      await dismissContextMenu();
+      await dismissMenu();
     });
 
     it('should dismiss the menu and emit toast after tapping the action item "Action 1-1"', async () => {
       await openMenuOne();
       await element(by.text('Action 1-1')).tap();
-      await dismissToast('1. Clicked Action 1-1');
+      await dismissNextToast('Clicked Action 1-1');
 
       await expect(contextMenu()).not.toExist();
     });
@@ -83,9 +97,9 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
 
   describe('toggle item selection persists across reopening the menu', () => {
     it('should show a checkmark next to Toggle 1-1 after selecting it and reopening the menu', async () => {
-      await menuOneBarButton.tap();
+      await openMenuOne();
       await element(by.text('Toggle 1-1')).tap();
-      await dismissToast('1. Selected "toggle-1-1"');
+      await dismissNextToast('Selected "toggle-1-1"');
 
       await expect(contextMenu()).not.toExist();
 
@@ -96,7 +110,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
 
     it('should show checkmarks next to both Toggle 1-1 and Toggle 1-3 after selecting Toggle 1-3 too', async () => {
       await element(by.text('Toggle 1-3')).tap();
-      await dismissToast('1. Selected "toggle-1-1", "toggle-1-3"');
+      await dismissNextToast('Selected "toggle-1-1", "toggle-1-3"');
 
       await expect(contextMenu()).not.toExist();
 
@@ -108,7 +122,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
 
     it('should remove the checkmark next to Toggle 1-1 after tapping it again, leaving only Toggle 1-3 checked', async () => {
       await element(by.text('Toggle 1-1')).tap();
-      await dismissToast('1. Selected "toggle-1-3"');
+      await dismissNextToast('Selected "toggle-1-3"');
 
       await expect(contextMenu()).not.toExist();
 
@@ -142,7 +156,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
     it('should select Radio 1-2 in the nested SubSubMenu, dismiss the whole menu chain, and clear Radio 1-1', async () => {
       await element(by.text('SubSubMenu with Radio')).tap();
       await element(by.text('Radio 1-2')).tap();
-      await dismissToast('1. Selected unique "radio-1-2"');
+      await dismissNextToast('Selected unique "radio-1-2"');
 
       await expect(contextMenu()).not.toExist();
       await openMenuOne();
@@ -158,7 +172,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
 
   describe('title menu', () => {
     it('should open a menu with both title actions when the header title is tapped', async () => {
-      await dismissContextMenu();
+      await dismissMenu();
 
       await openHeaderTitleMenu(HEADER_TITLE);
 
@@ -168,7 +182,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
 
     it('should dismiss the title menu and emit a toast after tapping "Title Action 1"', async () => {
       await element(by.text('Title Action 1')).tap();
-      await dismissToast('1. Clicked "Title Action 1"');
+      await dismissNextToast('Clicked "Title Action 1"');
 
       await expect(contextMenu()).not.toExist();
     });
@@ -176,7 +190,7 @@ describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
     it('should dismiss the title menu and emit a toast after tapping "Title Action 2"', async () => {
       await openHeaderTitleMenu(HEADER_TITLE);
       await element(by.text('Title Action 2')).tap();
-      await dismissToast('1. Clicked "Title Action 2"');
+      await dismissNextToast('Clicked "Title Action 2"');
 
       await expect(contextMenu()).not.toExist();
     });
@@ -206,7 +220,7 @@ describeIfIOS(
 
     it('should add an icon to the renamed item while keeping its title', async () => {
       await expect(menuRowIcon('star.fill', 'New Title')).not.toExist();
-      await dismissContextMenu();
+      await dismissMenu();
 
       await setPicker('menu-item-options-title-picker', 'title', 'no change');
       await setPicker('menu-item-options-icon-picker', 'icon', 'star.fill');
@@ -219,7 +233,7 @@ describeIfIOS(
     });
 
     it('should check Toggle 1-1 and emit a selection toast when toggleState is set to true', async () => {
-      await dismissContextMenu();
+      await dismissMenu();
 
       await setPicker(
         'menu-item-options-target-id-picker',
@@ -233,7 +247,7 @@ describeIfIOS(
       );
       await tapSendButton('send-menu-item-options-button');
 
-      await dismissToast('1. Selected "toggle-1-1"');
+      await dismissNextToast('Selected "toggle-1-1"');
 
       await openMenuOne();
 
@@ -241,7 +255,7 @@ describeIfIOS(
     });
 
     it('should keep Radio 1-1 selected when deselecting it in a singleSelection submenu', async () => {
-      await dismissContextMenu();
+      await dismissMenu();
 
       await setPicker(
         'menu-item-options-target-id-picker',
@@ -262,7 +276,7 @@ describeIfIOS(
     });
 
     it('should move the singleSelection checkmark from Radio 1-1 to Radio 1-2', async () => {
-      await dismissContextMenu();
+      await dismissMenu();
 
       await setPicker(
         'menu-item-options-target-id-picker',
@@ -276,7 +290,7 @@ describeIfIOS(
       );
       await tapSendButton('send-menu-item-options-button');
 
-      await dismissToast('1. Selected unique "radio-1-2"');
+      await dismissNextToast('Selected unique "radio-1-2"');
 
       await openMenuOne();
       await element(by.text('Submenu with Radio')).tap();
@@ -313,7 +327,7 @@ describeIfIOS(
 
     it('should add an icon to the renamed submenu while keeping its title', async () => {
       await expect(menuRowIcon('bell.fill', 'New Title')).not.toExist();
-      await dismissContextMenu();
+      await dismissMenu();
 
       await setPicker('menu-options-title-picker', 'title', 'no change');
       await setPicker('menu-options-icon-picker', 'icon', 'bell.fill');
@@ -324,7 +338,7 @@ describeIfIOS(
       await expect(element(by.text('New Title'))).toBeVisible();
       await expect(menuRowIcon('bell.fill', 'New Title')).toBeVisible();
 
-      await dismissContextMenu();
+      await dismissMenu();
     });
   },
 );

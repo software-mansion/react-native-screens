@@ -4,6 +4,7 @@ import { waitForRouteName } from '@e2e/app/stack-route';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { tapBarBackButton } from '@e2e/framework/back-button';
 import { tapTopmostButton } from '@e2e/framework/gestures';
+import { expectHeaderViewShown } from '@e2e/framework/header-items-ios';
 import { readSingleText, readTopmostText } from '@e2e/framework/matchers';
 import {
   CLASS_NAME_UI_BUTTON_BAR_BUTTON,
@@ -73,12 +74,10 @@ describeIfIOS('@smoke Stack v5: simple navigation', () => {
       .withTimeout(3000);
   }
 
-  const backButtonIcon = element(
-    by
-      .id('chevron.backward')
-      .and(by.type(CLASS_NAME_UI_IMAGE_VIEW))
-      .withAncestor(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON)),
-  );
+  const backButtonIcon = by
+    .id('chevron.backward')
+    .and(by.type(CLASS_NAME_UI_IMAGE_VIEW))
+    .withAncestor(by.type(CLASS_NAME_UI_BUTTON_BAR_BUTTON));
 
   beforeAll(async () => {
     await device.reloadReactNative();
@@ -97,7 +96,7 @@ describeIfIOS('@smoke Stack v5: simple navigation', () => {
     await expect(element(by.text('Push A'))).toBeVisible();
     await expect(element(by.text('Push B'))).toBeVisible();
     await expect(element(by.text('Pop'))).not.toExist();
-    await expect(backButtonIcon).not.toExist();
+    await expect(element(backButtonIcon)).not.toExist();
   });
 
   it('should push A with a new key and reveal Pop + back button', async () => {
@@ -106,7 +105,7 @@ describeIfIOS('@smoke Stack v5: simple navigation', () => {
     firstAKey = await readRouteKey();
     jestExpect(firstAKey).not.toBe(homeKey);
     await expect(element(by.text('Pop'))).toBeVisible();
-    await expect(backButtonIcon).toBeVisible();
+    await expectHeaderViewShown(backButtonIcon);
   });
 
   it('should push B on top of A with a new key', async () => {
@@ -115,7 +114,7 @@ describeIfIOS('@smoke Stack v5: simple navigation', () => {
     firstBKey = await readRouteKey();
     jestExpect(firstBKey).not.toBe(firstAKey);
     jestExpect(firstBKey).not.toBe(homeKey);
-    await expect(backButtonIcon).toBeVisible();
+    await expectHeaderViewShown(backButtonIcon);
   });
 
   it('should push a second A instance with a key distinct from the first A', async () => {
@@ -142,7 +141,7 @@ describeIfIOS('@smoke Stack v5: simple navigation', () => {
     await waitForRouteName('Home');
     jestExpect(await readRouteKey()).toBe(homeKey);
     await expect(element(by.text('Pop'))).not.toExist();
-    await expect(backButtonIcon).not.toExist();
+    await expect(element(backButtonIcon)).not.toExist();
   });
 
   it('should navigate to Home with egde swipe', async () => {

@@ -1,5 +1,6 @@
 import { device, expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
+import { tapBarBackButton } from '@e2e/framework/back-button';
 import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
 
 // On iOS 26+ cancel button does not contain any text.
@@ -59,7 +60,7 @@ describeIfIOS('Test758', () => {
   });
 
   it('search bar query should still be present after coming back from another screen', async () => {
-    await element(by.text('First')).tap();
+    await tapBarBackButton();
     await expect(element(by.text('th'))).toBeVisible();
   });
 

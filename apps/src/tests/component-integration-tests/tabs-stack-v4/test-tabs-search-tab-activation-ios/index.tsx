@@ -73,6 +73,8 @@ function SearchListScreen({
 }) {
   const [search, setSearch] = useState('');
   const { hideNavigationBar } = useContext(HideNavigationBarContext);
+  // JS-side selection state - must follow UIKit after every user selection.
+  const { isSelected } = useTabsNavigationContext();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -86,8 +88,12 @@ function SearchListScreen({
 
   return (
     <ScrollView
+      testID="search-list-scrollview"
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag">
+      <Text testID="search-list-selected-in-js-label" style={styles.hint}>
+        Selected in JS: {isSelected ? 'yes' : 'no'}
+      </Text>
       {PLACES.filter(
         item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
       ).map(place => (
@@ -182,6 +188,7 @@ function ConfigTab() {
     <View style={styles.screen}>
       <Text style={styles.label}>Search Tab Activation</Text>
       <SettingsSwitch
+        testID="automatically-activates-search-switch"
         label="automaticallyActivatesSearch"
         value={automaticallyActivatesSearch}
         onValueChange={onAutomaticallyActivatesSearchChange}

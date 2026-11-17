@@ -1,0 +1,31 @@
+name: Resolve the reports repository
+description: 'Read the private reports repository from a secret, mask it and its name part (the owner stays visible) in the logs and export it to the later steps of the job as REPORTS_REPO (`owner/name`), REPORTS_OWNER and REPORTS_NAME.'
+
+inputs:
+  repo:
+    description: The reports repository as `owner/name`
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Resolve the reports repository
+      shell: bash
+      env:
+        REPO: ${{ inputs.repo }}
+      run: |
+        set -euo pipefail
+        # The value is a secret, so it is masked by the runner already; the name part is masked on
+        # its own too, because it shows up without the owner in API paths and in URLs.
+        if [[ ! "$REPO" =~ ^([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)$ ]]; then
+          echo "::error::the reports repository secret must be set to owner/name"
+          exit 1
+        fi
+        owner="${BASH_REMATCH[1]}"
+        name="${BASH_REMATCH[2]}"
+        echo "::add-mask::$name"
+        {
+          echo "REPORTS_REPO=$REPO"
+          echo "REPORTS_OWNER=$owner"
+          echo "REPORTS_NAME=$name"
+        } >> "$GITHUB_ENV"

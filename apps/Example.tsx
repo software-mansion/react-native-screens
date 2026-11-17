@@ -9,9 +9,9 @@ import {
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RNRestart from 'react-native-restart';
 
 import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
+import NativeAppRestart from './src/specs/NativeAppRestart';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
@@ -27,6 +27,7 @@ import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 import BarButtonItems from './src/screens/BarButtonItems';
+import CustomNativeTabsIcons from './src/screens/CustomNativeTabsIcons';
 
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -66,6 +67,11 @@ const SCREENS: Record<
   SwipeBackAnimation: {
     title: 'Swipe Back Animation',
     component: SwipeBackAnimation,
+    type: 'example',
+  },
+  CustomNativeTabsIcons: {
+    title: 'Custom Native Tabs Icons',
+    component: CustomNativeTabsIcons,
     type: 'example',
   },
   StackPresentation: {
@@ -166,7 +172,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           value={I18nManager.isRTL}
           onValueChange={() => {
             I18nManager.forceRTL(!I18nManager.isRTL);
-            RNRestart.Restart();
+            NativeAppRestart.restart();
           }}
           testID="root-screen-switch-rtl"
         />

@@ -39,7 +39,7 @@ Whenever the header minimizes or restores, the header items do as well.
     - [ ] The `minimizationBehavior` picker is set to `automatic`.
     - [ ] The `restorationBehavior` picker is set to `automatic`.
     - [ ] The header has two resizing items on the leading side
-        and two on the trailing side.
+          and two on the trailing side.
 
 2. Scroll down, then back up to the top.
 
