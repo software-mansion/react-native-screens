@@ -11,10 +11,10 @@
 
 // --- AndroidX / Material ---
 
-// The library's `FormSheet` content container.
-export const CLASS_NAME_ANDROID_RNS_FORM_SHEET_CONTAINER =
-  'com.swmansion.rnscreens.core.modals.formsheet.dialog.FormSheetContainer';
-// The FormSheet grabber; `GONE` while `prefersGrabberVisible` is off.
+// The library's sheet content container (`FormSheet`, `PageSheet`).
+export const CLASS_NAME_ANDROID_RNS_SHEET_CONTAINER =
+  'com.swmansion.rnscreens.core.modals.sheet.dialog.SheetContainer';
+// The sheet grabber; `GONE` while `prefersGrabberVisible` is off.
 export const CLASS_NAME_ANDROID_BOTTOM_SHEET_DRAG_HANDLE_VIEW =
   'com.google.android.material.bottomsheet.BottomSheetDragHandleView';
 // `BottomSheetDialog`'s root layout, spanning the dialog window.
