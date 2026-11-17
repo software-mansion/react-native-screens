@@ -126,6 +126,7 @@ export { default as Test2559 } from './Test2559';
 export { default as Test2560 } from './Test2560';
 export { default as Test2611 } from './Test2611';
 export { default as Test2631 } from './Test2631';
+export { default as Test2659 } from './Test2659'; // [E2E skipped]: can't check transition progress during an interactive sheet drag
 export { default as Test2668 } from './Test2668';
 export { default as Test2675 } from './Test2675';
 export { default as Test2714 } from './Test2714';
