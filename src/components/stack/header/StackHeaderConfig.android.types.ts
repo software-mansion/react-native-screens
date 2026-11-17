@@ -189,6 +189,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * the item is placed in the toolbar. There is no default accessibility label
    * for items inside overflow menu/submenus.
    *
+   * @info
    * Due to native platform limitations, it's not possible to provide `testID`
    * for menu items inside overflow menu/submenus. If possible, use
    * `accessibilityLabel` instead.
@@ -214,6 +215,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * This prop only affects top-level menu elements. Items inside submenus are
    * always displayed in the popup and ignore this setting.
    *
+   * @info
    * Due to native limitations, the width limit for the `'ifRoom'` and
    * `'ifRoomWithText'` options is determined during the initial render and will
    * not adapt to subsequent layout or orientation changes.
@@ -241,7 +243,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Specifies the tint color to apply to the menu element icon when it is
    * pressed.
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
    */
@@ -250,7 +252,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Specifies the tint color to apply to the menu element icon when it is
    * focused (e.g. by keyboard navigation).
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
    */
@@ -259,7 +261,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Specifies the tint color to apply to the menu element icon when it is
    * disabled.
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you should also
    * provide `iconTintColorNormal`. Otherwise, the icon will become transparent
    * when the item is not disabled.
@@ -316,7 +318,7 @@ export interface StackHeaderToolbarMenuItemAndroid
   /**
    * Controls how the item behaves when clicked.
    *
-   * @remarks
+   * @note
    * If `'toggle'` menu item is shown in the toolbar by setting
    * {@link StackHeaderToolbarMenuItemBaseAndroid.showAsAction | showAsAction}
    * prop to value other than `'never'`, there is no visual indication of the
@@ -612,7 +614,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * Tint color applied to the back button icon when it is pressed.
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide
    * {@link StackHeaderConfigPropsAndroid.backButtonTintColorNormal | backButtonTintColorNormal}.
@@ -625,7 +627,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Tint color applied to the back button icon when it is focused (e.g. by
    * keyboard navigation).
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide
    * {@link StackHeaderConfigPropsAndroid.backButtonTintColorNormal | backButtonTintColorNormal}.
@@ -668,7 +670,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * Tint color applied to the overflow menu icon when it is pressed.
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide
    * {@link StackHeaderConfigPropsAndroid.overflowIconTintColorNormal | overflowIconTintColorNormal}.
@@ -681,7 +683,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Tint color applied to the overflow menu icon when it is focused (e.g. by
    * keyboard navigation).
    *
-   * @remarks
+   * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide
    * {@link StackHeaderConfigPropsAndroid.overflowIconTintColorNormal | overflowIconTintColorNormal}.
@@ -740,6 +742,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Setting this flag for `'small'` header is equivalent to disabling
    * `scrollFlagScroll`.
    *
+   * @note
    * Even when this flag is disabled, a strip with the height of the system top
    * inset (status bar and display cutout) remains visible at the top.
    *
@@ -970,6 +973,7 @@ export interface StackHeaderConfigPropsAndroid {
    * collapsed state; it is only visually meaningful with
    * `collapsedTitleHorizontalGravity: 'center'`.
    *
+   * @info
    * If the header is laid out during a screen transition, due to a native bug,
    * the title and the subtitle might be laid out incorrectly when
    * `'entireSpace'` gravity mode is used.
