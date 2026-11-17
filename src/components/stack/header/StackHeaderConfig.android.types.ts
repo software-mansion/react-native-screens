@@ -90,6 +90,7 @@ export interface StackHeaderToolbarSubviewAndroid {
    * not participate in a shared flex layout and cannot influence each other's
    * sizing.
    *
+   * @warning
    * Intrinsic sizing and explicit dimensions work as expected. Avoid
    * parent-relative sizing (e.g. `flex: 1`) on the root element — it will
    * produce incorrect dimensions. Flex layout within a root that has a known
