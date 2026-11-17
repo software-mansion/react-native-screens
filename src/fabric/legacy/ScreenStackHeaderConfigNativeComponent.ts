@@ -7,6 +7,7 @@ import type {
   ViewProps,
   ColorValue,
 } from 'react-native';
+import type { UnsafeMixed } from '../codegenUtils';
 
 type DirectionType = 'rtl' | 'ltr';
 
@@ -45,6 +46,25 @@ type BlurEffect =
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
+type HeaderLetterSpacing = {
+  title?: CT.Float | undefined;
+  largeTitle?: CT.Float | undefined;
+  backTitle?: CT.Float | undefined;
+};
+
+// `undefined` is an internal value used when the prop is not specified on the JS side.
+// It is resolved natively: `never` for an opaque header, `automatic` for a translucent one.
+type MinimizationBehavior =
+  | 'undefined'
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+type RestorationBehavior = 'automatic' | 'atScrollEdge';
+
+type SafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
+
 export interface NativeProps extends ViewProps {
   onAttached?: CT.DirectEventHandler<OnAttachedEvent> | undefined;
   onDetached?: CT.DirectEventHandler<OnDetachedEvent> | undefined;
@@ -71,10 +91,15 @@ export interface NativeProps extends ViewProps {
   titleFontWeight?: string | undefined;
   titleColor?: ColorValue | undefined;
   disableBackButtonMenu?: boolean | undefined;
+  // An object, so that an omitted spacing stays distinct from an explicit 0.
+  letterSpacing?: UnsafeMixed<HeaderLetterSpacing> | undefined;
   backButtonDisplayMode?: CT.WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean | undefined;
   backButtonInCustomView?: boolean | undefined;
   blurEffect?: CT.WithDefault<BlurEffect, 'none'>;
+  minimizationBehavior?: CT.WithDefault<MinimizationBehavior, 'undefined'>;
+  restorationBehavior?: CT.WithDefault<RestorationBehavior, 'automatic'>;
+  safeAreaAdjustment?: CT.WithDefault<SafeAreaAdjustment, 'automatic'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean | undefined;
   headerLeftBarButtonItems?: CT.UnsafeMixed[] | undefined;

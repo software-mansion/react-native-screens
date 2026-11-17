@@ -1,0 +1,38 @@
+buildscript {
+    ext.safeExtGet = { prop, fallback ->
+        rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+    }
+}
+
+apply plugin: 'com.android.library'
+// Generates the TurboModule specs from `codegenConfig` in package.json.
+apply plugin: 'com.facebook.react'
+
+// AGP 9 compiles Kotlin itself unless the app opts out with `android.builtInKotlin=false`;
+// applying the Kotlin plugin on top of built-in Kotlin fails the build.
+def shouldApplyKotlinPlugin() {
+    def agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpMajorVersion <= 8) {
+        return true
+    }
+    def builtInKotlin = providers.gradleProperty("android.builtInKotlin").orNull
+    return builtInKotlin != null && !builtInKotlin.toBoolean()
+}
+
+if (shouldApplyKotlinPlugin()) {
+    apply plugin: 'kotlin-android'
+}
+
+android {
+    namespace "com.swmansion.rnscreens.apps"
+    compileSdkVersion safeExtGet('compileSdkVersion', 36)
+
+    defaultConfig {
+        minSdkVersion safeExtGet('minSdkVersion', 24)
+        targetSdkVersion safeExtGet('targetSdkVersion', 36)
+    }
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+}

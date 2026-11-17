@@ -101,6 +101,7 @@ android {
         versionName "1.0"
         testBuildType System.getProperty('testBuildType', 'release') // Detox
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
+        missingDimensionStrategy 'detox', 'full' // Detox built from source
     }
     signingConfigs {
         debug {
@@ -135,7 +136,7 @@ android {
 
 dependencies {
     // Detox
-    androidTestImplementation('com.wix:detox:+') {
+    androidTestImplementation(project(path: ':detox')) {
         // Both rn-screens and detox are using this class
         // https://github.com/wix/Detox/issues/2848
         exclude group: 'com.google.android.material'

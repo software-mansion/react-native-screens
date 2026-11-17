@@ -1,6 +1,22 @@
 name: Test Android e2e
 on:
   pull_request:
+    # The defaults plus ready_for_review, so marking a draft ready starts a run.
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+    # PRs run the suite only when the suite itself changes. Library changes
+    # are tested once they land on main (see `push`).
+    paths:
+      - '.github/workflows/android-e2e-test-fabric.yml'
+      - 'FabricExample/.detoxrc.js'
+      - 'FabricExample/e2e/**'
+      - 'scripts/e2e/**'
+      - '.github/actions/argent-server/**'
+      - '.github/actions/install-node-deps/**'
+      - '.argent/**'
+      - 'react-native-screens-testing'
+  push:
     branches:
       - main
     paths:
@@ -9,18 +25,14 @@ on:
       - '.github/actions/install-node-deps/**'
       - '.argent/**'
       - 'react-native-screens-testing'
-      - 'scripts/e2e/run-argent-flows-android.sh'
-      - 'scripts/e2e/argent-failure-summary.sh'
-      - 'scripts/e2e/start-argent-server.sh'
       - 'package.json'
       - 'android/**'
       - 'common/**'
+      - 'cpp/**'
+      - 'src/**'
       - 'FabricExample/**'
       - 'apps/**'
-      - 'src/**'
-  push:
-    branches:
-      - main
+      - 'scripts/e2e/**'
   workflow_dispatch:
     inputs:
       argent-only:
@@ -36,6 +48,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    # Skip draft PRs and, in a PR stack, every PR but the lowest unmerged one.
+    # Pushes and manual runs carry no `pull_request`, so they always run. The
+    # test and argent jobs need this one, so they are skipped with it.
+    if: >-
+      !github.event.pull_request.draft &&
+      (github.event.pull_request.stack == null ||
+       github.event.pull_request.stack.base.ref == github.event.pull_request.base.ref)
     env:
       WORKING_DIRECTORY: FabricExample
     steps:
@@ -85,6 +104,7 @@ jobs:
       WORKING_DIRECTORY: FabricExample
       API_LEVEL: 34
       AVD_PROFILE: pixel_7
+      AVD_CORES: 4
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -119,7 +139,8 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}
+          # A snapshot only loads on the hardware config it was taken with.
+          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}-${{ env.AVD_CORES }}cores
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -128,6 +149,7 @@ jobs:
           api-level: ${{ env.API_LEVEL }}
           target: default
           profile: ${{ env.AVD_PROFILE }}
+          cores: ${{ env.AVD_CORES }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
@@ -144,11 +166,14 @@ jobs:
           api-level: ${{ env.API_LEVEL }}
           target: default
           profile: ${{ env.AVD_PROFILE }}
+          cores: ${{ env.AVD_CORES }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # No snapshot on shutdown: on a cache hit nothing reads it, and on a miss it
+          # would replace the clean snapshot from the step above in the saved cache.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           avd-name: e2e_emulator
           arch: x86_64
           script: yarn test-e2e-android
@@ -168,6 +193,7 @@ jobs:
     env:
       API_LEVEL: 34
       AVD_PROFILE: pixel_7
+      AVD_CORES: 4
       # The emulator advertises its gRPC console in
       # $XDG_RUNTIME_DIR/avd/running/pid_*.ini, which is where Argent's Android
       # backend looks for it. The variable is unset on runners, so pin it.
@@ -220,7 +246,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}
+          key: avd-${{ env.API_LEVEL }}-${{ env.AVD_PROFILE }}-${{ env.AVD_CORES }}cores
 
       # Host process; it outlives this step and serves the emulator boot below.
       - name: Install Argent and start the tool-server
@@ -237,11 +263,12 @@ jobs:
           api-level: ${{ env.API_LEVEL }}
           target: default
           profile: ${{ env.AVD_PROFILE }}
+          cores: ${{ env.AVD_CORES }}
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -camera-back none -grpc 8554
+          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -camera-back none -no-snapshot-save -grpc 8554
           avd-name: e2e_emulator
           arch: x86_64
           script: ./scripts/e2e/run-argent-flows-android.sh

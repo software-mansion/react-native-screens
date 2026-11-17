@@ -233,9 +233,9 @@ export interface TabsScreenPropsIOS {
    *
    * Supported values:
    * - `{ type: 'imageSource', imageSource, renderingMode? }`
-   *   Uses an image from the provided resource. `renderingMode` defaults to
-   *   `default`, which keeps the image's own colors. With `template` it is
-   *   used as a template image and follows the state-dependent icon color.
+   *   Uses an image from the provided resource. With `renderingMode` set to
+   *   `template` the image is tinted with the state-dependent icon color. With
+   *   `original` it keeps its own colors.
    * - `{ type: 'sfSymbol', name, renderingMode? }`
    *   Uses an SF Symbol with the specified name. If no system symbol
    *   matches, falls back to a custom symbol with that name from the app's
@@ -243,17 +243,6 @@ export interface TabsScreenPropsIOS {
    *   behavior: a single color for system symbols, while for custom symbols
    *   the rendering intent set in the asset catalog may change it. `original`
    *   shows the symbol's own color layers (Apple's "multicolor" rendering).
-   * - `{ type: 'xcasset', name }`
-   *   Deprecated: use `sfSymbol` for custom symbols from the asset catalog, or
-   *   `imageSource` with `{ uri: 'name' }` for asset catalog images (append
-   *   `.png` to names containing a dot; add `renderingMode: 'template'` for an
-   *   asset whose "Render As" is not `Original Image`).
-   *   Uses an image from the asset catalog. Its colors follow the asset's
-   *   "Render As" setting in the catalog: `Original Image` keeps its own colors,
-   *   `Default` and `Template Image` follow the state-dependent icon color.
-   * - `{ type: 'templateSource', templateSource }`
-   *   Deprecated: use `{ type: 'imageSource', imageSource, renderingMode: 'template' }`
-   *   instead. Uses the provided image as a template image.
    *
    * See `TabsScreenIconImageRenderingModeIOS` and
    * `TabsScreenIconSymbolRenderingModeIOS` for the meaning of each rendering mode.

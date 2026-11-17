@@ -7,7 +7,7 @@
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewFinder.h"
 #import "RNSScrollViewHelper.h"
-#import "RNSTabBarAppearanceCoordinator.h"
+#import "RNSTabBarAppearanceMapper.h"
 #import "RNSTabBarController.h"
 
 #import <React/RCTConversions.h>
@@ -18,14 +18,13 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#import "RNSScrollViewMarkerComponentView.h"
 #import "RNSScrollViewSeeking.h"
 
 namespace react = facebook::react;
 
 #pragma mark - View implementation
 
-@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking>
+@interface RNSTabsScreenComponentView () <RNSScrollViewSeeking, RNSTabsScreenViewControllerDelegate>
 @end
 
 @implementation RNSTabsScreenComponentView {
@@ -61,6 +60,7 @@ namespace react = facebook::react;
 
   _controller = [RNSTabsScreenViewController new];
   _controller.view = self;
+  _controller.delegate = self;
 
   _reactSuperview = nil;
   _reactEventEmitter = [RNSTabsScreenEventEmitter new];
@@ -125,7 +125,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark RNSScrollViewSeeking
 
-- (void)registerDescendantScrollView:(UIScrollView *)scrollView fromMarker:(RNSScrollViewMarkerComponentView *)marker
+- (void)registerDescendantScrollView:(UIScrollView *)scrollView
 {
   // Native iOS-26 scroll-edge behavior (status-bar tap scroll-to-top, scroll edge appearance).
   [_controller setContentScrollView:scrollView forEdge:NSDirectionalRectEdgeAll];
@@ -149,6 +149,28 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RNSTabBarController *)findTabBarController
 {
   return static_cast<RNSTabBarController *>(_controller.tabBarController);
+}
+
+#pragma mark - RNSTabsScreenViewControllerDelegate
+
+- (void)viewControllerViewWillAppear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnWillAppear];
+}
+
+- (void)viewControllerViewDidAppear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnDidAppear];
+}
+
+- (void)viewControllerViewWillDisappear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnWillDisappear];
+}
+
+- (void)viewControllerViewDidDisappear:(RNSTabsScreenViewController *)controller
+{
+  [self.reactEventEmitter emitOnDidDisappear];
 }
 
 #pragma mark - RNSScrollViewBehaviorOverriding
@@ -238,18 +260,18 @@ RNS_IGNORE_SUPER_CALL_END
 
   if (newComponentProps.standardAppearance != oldComponentProps.standardAppearance) {
     _standardAppearance = [UITabBarAppearance new];
-    [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_standardAppearance
-                                          fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
-                                                                  newComponentProps.standardAppearance)];
+    [RNSTabBarAppearanceMapper configureTabBarAppearance:_standardAppearance
+                                     fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                             newComponentProps.standardAppearance)];
     tabItemNeedsAppearanceUpdate = YES;
   }
 
   if (newComponentProps.scrollEdgeAppearance != oldComponentProps.scrollEdgeAppearance) {
     if (newComponentProps.scrollEdgeAppearance.type() == folly::dynamic::OBJECT) {
       _scrollEdgeAppearance = [UITabBarAppearance new];
-      [RNSTabBarAppearanceCoordinator configureTabBarAppearance:_scrollEdgeAppearance
-                                            fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
-                                                                    newComponentProps.scrollEdgeAppearance)];
+      [RNSTabBarAppearanceMapper configureTabBarAppearance:_scrollEdgeAppearance
+                                       fromAppearanceProps:rnscreens::conversion::RNSConvertFollyDynamicToId(
+                                                               newComponentProps.scrollEdgeAppearance)];
     } else {
       _scrollEdgeAppearance = nil;
     }

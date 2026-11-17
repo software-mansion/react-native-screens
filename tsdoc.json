@@ -1,0 +1,17 @@
+// Tags used by the doc comments of the public JS API (RFC-1947). TypeDoc reads
+// this file next to `tsconfig.json` when generating the API reference.
+//
+// The list replaces TypeDoc's own tags instead of extending them, so a TypeDoc
+// tag that is not TSDoc standard has to be declared here too (`@namespace`).
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "tagDefinitions": [
+    { "tagName": "@platform", "syntaxKind": "block" },
+    { "tagName": "@note", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@tip", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@info", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@warning", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@danger", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@namespace", "syntaxKind": "modifier" }
+  ]
+}

@@ -3,10 +3,10 @@
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/UIView+React.h>
-#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <react/renderer/components/rnscreens/RNSStackHostComponentDescriptor.h>
 #import "RNSDefines.h"
 #import "RNSLog.h"
 
@@ -176,11 +176,18 @@ namespace react = facebook::react;
 
 #pragma mark - RCTMountingTransactionObserving
 
+- (void)mountingTransactionWillMount:(const facebook::react::MountingTransaction &)transaction
+                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  [_stackNavigationController beginTransaction];
+}
+
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_stackOperationCoordinator executePendingOperationsIfNeeded:_stackNavigationController
+  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
                                            withRenderedScreens:_renderedScreens];
+  [_stackNavigationController commitTransaction];
 }
 
 #pragma mark - Dynamic frameworks support

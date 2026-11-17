@@ -31,9 +31,6 @@ import type {
 } from './StackHeaderConfig.android.types';
 import { parseAndroidIconToNativeProps } from '../../shared';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function StackHeaderConfig(props: StackHeaderConfigProps) {
   // ios props are safely dropped
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

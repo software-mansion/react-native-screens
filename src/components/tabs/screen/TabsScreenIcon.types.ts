@@ -1,8 +1,6 @@
 import type {
   PlatformIconAndroidDrawableResource,
   PlatformIconIOSSfSymbol,
-  PlatformIconIOSTemplate,
-  PlatformIconIOSXcasset,
   PlatformIconShared,
 } from '../../shared/types';
 
@@ -10,10 +8,8 @@ import type {
  * How the tab bar renders an `imageSource` icon on iOS. The names follow
  * `UIImage.RenderingMode`.
  *
- * - `default` - the tab bar's default for images, also used when
- *   `renderingMode` is unset: the image keeps its own colors, as with
- *   `original`. This is not UIKit's automatic mode, in which the tab bar would
- *   draw the image as a template image.
+ * - `default` - the system behavior (UIKit's automatic mode), also used when
+ *   `renderingMode` is unset: the tab bar decides how to draw the image.
  * - `template` - the image is used as a template image: its shape is drawn in
  *   the state-dependent item icon color (`tabBarItemIconColor`,
  *   `tabBarTintColor`).
@@ -46,9 +42,9 @@ export type TabsScreenIconSymbolRenderingModeIOS =
 type WithImageRenderingMode<Icon> = Icon & {
   /**
    * @summary How the tab bar renders this image. See
-   * `TabsScreenIconImageRenderingModeIOS`.
+   * {@link TabsScreenIconImageRenderingModeIOS}.
    *
-   * Defaults to `default`, which keeps the image's own colors.
+   * Defaults to `default`, the system behavior.
    *
    * `icon` and `selectedIcon` may use different values.
    */
@@ -58,7 +54,7 @@ type WithImageRenderingMode<Icon> = Icon & {
 type WithSymbolRenderingMode<Icon> = Icon & {
   /**
    * @summary How the tab bar renders this symbol. See
-   * `TabsScreenIconSymbolRenderingModeIOS`.
+   * {@link TabsScreenIconSymbolRenderingModeIOS}.
    *
    * Defaults to `default`, the system behavior. Set `renderingMode`
    * explicitly to be independent of it.
@@ -92,24 +88,8 @@ type WithTinting<Icon> = Icon & {
   tinting?: TabsScreenIconTintingAndroid | undefined;
 };
 
-/**
- * @deprecated Use `{ type: 'imageSource', imageSource, renderingMode: 'template' }` instead.
- */
-export type TabsScreenIconTemplateIOS = PlatformIconIOSTemplate;
-
-/**
- * @deprecated Use `{ type: 'sfSymbol', name }` for custom symbols from the asset
- * catalog, or `{ type: 'imageSource', imageSource: { uri: 'name' } }` for asset
- * catalog images (append `.png` to names containing a dot). `imageSource` keeps
- * the image's own colors by default, so for an asset whose "Render As" is not
- * `Original Image`, add `renderingMode: 'template'`.
- */
-export type TabsScreenIconXcassetIOS = PlatformIconIOSXcasset;
-
 export type TabsScreenIconIOS =
   | WithSymbolRenderingMode<PlatformIconIOSSfSymbol>
-  | TabsScreenIconXcassetIOS
-  | TabsScreenIconTemplateIOS
   | WithImageRenderingMode<PlatformIconShared>;
 
 export type TabsScreenIconAndroid =

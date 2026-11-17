@@ -3,6 +3,7 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSConversions-SplitView.h"
+#import "RNSNavigationItemCustomizing.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
@@ -52,7 +53,7 @@ namespace react = facebook::react;
 
 - (void)setupController
 {
-  _controller = [[RNSSplitScreenController alloc] initWithSplitScreenComponentView:self];
+  _controller = [RNSSplitScreenController new];
   _controller.view = self;
   _controller.delegate = self;
 }
@@ -177,6 +178,15 @@ namespace react = facebook::react;
   return NO;
 }
 
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [super mountChildComponentView:childComponentView index:index];
+
+  if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizing)]) {
+    [(id<RNSNavigationItemCustomizing>)childComponentView configureNavigationItem:_controller.navigationItem];
+  }
+}
+
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
 {
   [super updateState:state oldState:oldState];
@@ -209,6 +219,7 @@ namespace react = facebook::react;
   // Controller keeps the strong reference to the component via the `.view` property.
   // Therefore, we need to enforce a proper cleanup, breaking the retain cycle,
   // when we want to destroy the component.
+  [_controller releaseColumnNavigationController];
   _controller = nil;
 }
 

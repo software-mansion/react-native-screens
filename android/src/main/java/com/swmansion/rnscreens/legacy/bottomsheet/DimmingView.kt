@@ -32,6 +32,10 @@ internal class DimmingView(
     init {
         pointerEventsProxy.pointerEventsImpl = DimmingViewPointerEventsImpl(this)
         setFocusable(false)
+        // Keep the backdrop out of the accessibility tree, like `touch_outside` in Material's
+        // BottomSheetDialog. Clickable and unlabelled, it was the first node TalkBack focused
+        // when a sheet opened. Screen readers close the sheet with Back instead.
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
     }
 
     internal val blockGestures

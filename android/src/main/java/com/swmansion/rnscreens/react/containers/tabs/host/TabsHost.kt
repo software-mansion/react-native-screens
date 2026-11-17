@@ -102,6 +102,11 @@ class TabsHost(
             "[RNScreens] Nullish fragment manager - can't run container operations"
         }
 
+    internal val reactSubviewCount: Int
+        get() = renderedScreens.size
+
+    internal fun getReactSubviewAt(index: Int): TabsScreen? = renderedScreens.getOrNull(index)
+
     internal fun mountReactSubviewAt(
         tabsScreen: TabsScreen,
         index: Int,
@@ -241,7 +246,7 @@ class TabsHost(
     }
 
     override fun didMountItems(uiManager: UIManager) {
-        container.flushPendingUpdates()
+        container.endUpdateBatch()
     }
 
     /**
@@ -258,7 +263,9 @@ class TabsHost(
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
 
-    override fun willMountItems(uiManager: UIManager) = Unit
+    override fun willMountItems(uiManager: UIManager) {
+        container.beginUpdateBatch()
+    }
 
     override fun didDispatchMountItems(uiManager: UIManager) = Unit
 

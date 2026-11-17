@@ -2,7 +2,7 @@
 
 #import <React/RCTSurfaceTouchHandler.h>
 #import <React/RCTSurfaceView.h>
-#import "RNSModalScreen.h"
+#import "RNSModalScreen.h" // legacy-compat: legacy modal screens carry their own touch handler (D3)
 
 @implementation UIView (RNSUtility)
 

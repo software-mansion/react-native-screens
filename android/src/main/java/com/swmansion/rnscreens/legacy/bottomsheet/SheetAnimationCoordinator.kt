@@ -30,6 +30,12 @@ internal class SheetAnimationCoordinator(
     private var isSheetAnimationInProgress: Boolean = false
     private var currentContentAnimator: ValueAnimator? = null
 
+    /**
+     * translationY the resize animation offsets from and returns to, captured when the animation
+     * starts. Null when no resize animation runs - then it is simply the current translationY.
+     */
+    private var resizeAnimationOriginTranslationY: Float? = null
+
     private var lastKeyboardBottomOffset: Int = 0
     private var lastScreenContainerBottomOffset: Int = 0
     private val screenContainerRect = android.graphics.Rect()
@@ -84,16 +90,15 @@ internal class SheetAnimationCoordinator(
      */
     internal fun updateSheetContentHeightWithAnimation(
         behavior: BottomSheetBehavior<Screen>,
-        oldHeight: Int,
         newHeight: Int,
     ) {
-        val currentTranslationY = screen.translationY
+        val originTranslationY = resizeAnimationOriginTranslationY ?: screen.translationY
 
         /*
          * WHY OVERFLOW MATTERS:
          * BottomSheetBehavior has a physical limit (maxHeight) defined by the parent container.
          * If the new content height exceeds this limit (by its size or keyboard offset), simply
-         * animating translationY back to 'currentTranslationY' would attempt to render the sheet
+         * animating translationY back to its origin would attempt to render the sheet
          * larger than the screen.
          *
          * We need to constrain the height within the container's bounds.
@@ -101,8 +106,7 @@ internal class SheetAnimationCoordinator(
          * expanding exactly at the maxHeight, preventing from being pushed
          * off-screen or causing layout synchronization issues with the CoordinatorLayout.
          */
-        val clampedOldHeight = screen.resolveClampedHeight(oldHeight, currentTranslationY)
-        val clampedNewHeight = screen.resolveClampedHeight(newHeight, currentTranslationY)
+        val clampedNewHeight = screen.resolveClampedHeight(newHeight, originTranslationY)
 
         // If an entry/exit animation or a keyboard animation is in progress - it owns
         // translationY writes. Then when the content size is changing, we silently
@@ -115,13 +119,15 @@ internal class SheetAnimationCoordinator(
             return
         }
 
-        val visibleDelta = (clampedNewHeight - clampedOldHeight).toFloat()
-        if (visibleDelta == 0f) return
+        // Compare with screen.height, because that is where the animation visually starts from, also when
+        // interrupting a running one. Equal heights are a no-op only when no resize animation is running,
+        // otherwise translationY still has to get back to the origin.
+        if (clampedNewHeight == screen.height && resizeAnimationOriginTranslationY == null) return
 
-        if (visibleDelta > 0) {
-            animateContentExpanding(behavior, clampedNewHeight, currentTranslationY, visibleDelta)
+        if (clampedNewHeight >= screen.height) {
+            animateContentExpanding(behavior, clampedNewHeight, originTranslationY)
         } else {
-            animateContentShrinking(behavior, clampedNewHeight, currentTranslationY, visibleDelta)
+            animateContentShrinking(behavior, clampedNewHeight, originTranslationY)
         }
     }
 
@@ -132,9 +138,10 @@ internal class SheetAnimationCoordinator(
      * content height, then we're forcing a layout pass. This ensures the view calculates
      * with its new bounds when the animation starts.
      *
-     * In the animation, we're translating the Screen back to its (newly calculated) origin
-     * position, providing an impression that FormSheet expands. It already has the final size,
-     * but some content is not yet visible on the screen.
+     * In the animation, we're translating the Screen back to its origin position, providing
+     * an impression that FormSheet expands. It already has the final size, but some content
+     * is not yet visible on the screen. The animation starts from wherever the Screen is drawn
+     * right now, so interrupting a running content animation is a plain retarget.
      *
      * After animation, we just need to send a notification that ShadowTree state should be updated,
      * as the positioning of pressables has changed due to the Y translation manipulation.
@@ -142,13 +149,15 @@ internal class SheetAnimationCoordinator(
     private fun animateContentExpanding(
         behavior: BottomSheetBehavior<Screen>,
         clampedNewHeight: Int,
-        currentTranslationY: Float,
-        visibleDelta: Float,
+        originTranslationY: Float,
     ) {
-        screen.translationY += visibleDelta
+        // The layout grows upwards by the height difference - translate the Screen down by the
+        // same amount so that it stays drawn where it is.
+        screen.translationY += clampedNewHeight - screen.height
         cancelCurrentContentAnimation()
+        resizeAnimationOriginTranslationY = originTranslationY
         currentContentAnimator =
-            ValueAnimator.ofFloat(screen.translationY, currentTranslationY).apply {
+            ValueAnimator.ofFloat(screen.translationY, originTranslationY).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationStart(animation: Animator) {
@@ -158,6 +167,7 @@ internal class SheetAnimationCoordinator(
 
                         override fun onAnimationEnd(animation: Animator) {
                             currentContentAnimator = null
+                            resizeAnimationOriginTranslationY = null
                             screen.finalizeBottomSheetLayoutUpdates()
                         }
                     },
@@ -170,19 +180,17 @@ internal class SheetAnimationCoordinator(
     /*
      * Shrinking content animation:
      *
-     * Before the animation, our Screen translationY is 0 - because its actual layout and visual position are equal.
+     * Before the animation, I'm updating sheet metrics to the target value - the layout is not updated until
+     * the end action. This is done deliberately: the Screen keeps its current size during the whole animation,
+     * therefore there is no view clipping, and a height change arriving mid-animation is measured against
+     * that still-laid-out size.
      *
-     * Before the animation, I'm updating sheet metrics to the target value - it won't update until the next layout pass,
-     * which is controlled by end action. This is done deliberately, to allow catching the case when quick combination
-     * of shrink & expand animation is detected.
-     *
-     * In the animation, we're translating the Screen down by the calculated height delta to the position (which will
-     * be new absolute 0 for the Screen, after ending the transition), providing an impression that FormSheet shrinks.
-     * FormSheet's size remains unchanged during the whole animation, therefore there is no view clipping.
+     * In the animation, we're translating the Screen down to the position at which the current layout shows
+     * the final geometry (origin + height difference), providing an impression that FormSheet shrinks.
      *
      * After animation, we can update the layout: the maximum FormSheet height is updated and we're forcing
      * another layout pass. Additionally, since the actual layout and the target position are equal,
-     * we can reset translationY to 0.
+     * we can reset translationY to the origin.
      *
      * After animation, we need to send a notification that ShadowTree state should be updated,
      * as the FormSheet size has changed and the positioning of pressables has changed due to the Y translation manipulation.
@@ -190,13 +198,15 @@ internal class SheetAnimationCoordinator(
     private fun animateContentShrinking(
         behavior: BottomSheetBehavior<Screen>,
         clampedNewHeight: Int,
-        currentTranslationY: Float,
-        visibleDelta: Float,
+        originTranslationY: Float,
     ) {
-        val targetTranslationY = currentTranslationY - visibleDelta
+        val targetTranslationY = originTranslationY + (screen.height - clampedNewHeight)
         cancelCurrentContentAnimation()
+        resizeAnimationOriginTranslationY = originTranslationY
+        // Start animation from where the sheet is drawn to properly handle the translationY origin,
+        // when this content change is interrupting another content resize animation.
         currentContentAnimator =
-            ValueAnimator.ofFloat(currentTranslationY, targetTranslationY).apply {
+            ValueAnimator.ofFloat(screen.translationY, targetTranslationY).apply {
                 addListener(
                     object : AnimatorListenerAdapter() {
                         override fun onAnimationStart(animation: Animator) {
@@ -205,8 +215,9 @@ internal class SheetAnimationCoordinator(
 
                         override fun onAnimationEnd(animation: Animator) {
                             currentContentAnimator = null
+                            resizeAnimationOriginTranslationY = null
                             screen.layoutBottomSheetAtHeight(clampedNewHeight)
-                            screen.translationY = currentTranslationY
+                            screen.translationY = originTranslationY
                             screen.finalizeBottomSheetLayoutUpdates()
                         }
                     },
@@ -344,6 +355,7 @@ internal class SheetAnimationCoordinator(
         currentContentAnimator?.removeAllUpdateListeners()
         currentContentAnimator?.cancel()
         currentContentAnimator = null
+        resizeAnimationOriginTranslationY = null
     }
 
     private fun Screen.layoutBottomSheetAtHeight(height: Int) = layout(left, bottom - height, right, bottom)
