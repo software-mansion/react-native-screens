@@ -225,10 +225,6 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Specifies the icon for the menu element.
    *
    * @remarks
-   * `'imageSource'` type doesn't support SVGs on Android. For loading SVGs use
-   * `'drawableResource'` type. `'drawableResource'` type requires passing a
-   * drawable to resources via Android Studio.
-   *
    * The icon will be visible only if the menu element is shown in the Toolbar.
    *
    * An icon set via the
@@ -644,10 +640,6 @@ export interface StackHeaderConfigPropsAndroid {
    * @remarks
    * When `undefined`, the native back arrow (`homeAsUpIndicator`) is used.
    *
-   * `'imageSource'` type doesn't support SVGs on Android. For loading SVGs use
-   * `'drawableResource'` type. `'drawableResource'` type requires passing a
-   * drawable to resources via Android Studio.
-   *
    * @platform android
    */
   backButtonIcon?: PlatformIconAndroid | undefined;
@@ -657,10 +649,6 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * When `undefined`, the Material 3 Expressive default overflow icon is used.
-   *
-   * `'imageSource'` type doesn't support SVGs on Android. For loading SVGs use
-   * `'drawableResource'` type. `'drawableResource'` type requires passing a
-   * drawable to resources via Android Studio.
    *
    * @platform android
    */

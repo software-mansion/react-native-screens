@@ -152,7 +152,9 @@ export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
  * This is an implementation detail and may change. On iOS, the image is
  * loaded with React Native's image loader, so `headers` and the other fields
  * of the source are used. On Android, only the `uri` of the source is used:
- * its other fields are ignored and animated images are not supported.
+ * its other fields are ignored and animated images are not supported. SVG
+ * images are not supported on Android either; use a
+ * {@link PlatformIconAndroidDrawableResource | drawable resource} instead.
  */
 export interface PlatformIconShared {
   /**
