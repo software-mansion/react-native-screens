@@ -8,6 +8,7 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTRootComponentView.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
@@ -48,6 +49,7 @@ struct ContentWrapperBox {
                              UISheetPresentationControllerDelegate,
 #endif
                              RCTRNSScreenViewProtocol,
+                             RCTMountingTransactionObserving,
                              CAAnimationDelegate>
 @end
 
@@ -1257,8 +1259,18 @@ RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateContentScrollViewEdgeEffectsIfExists
 {
-  [RNSScrollEdgeEffectApplicator applyToScrollView:[RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self]
-                                      withProvider:self];
+  _shouldUpdateScrollEdgeEffects = NO;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26, *)) {
+    UIScrollView *scrollView = [RNSScrollViewFinder findScrollViewInFirstDescendantChainFrom:self];
+    // Content that renders a loading state first mounts its scroll view in a later
+    // transaction. Keep the update pending until `mountingTransactionDidMount:` finds it.
+    _shouldUpdateScrollEdgeEffects = scrollView == nil;
+    if (scrollView != nil) {
+      [RNSScrollEdgeEffectApplicator applyToScrollView:scrollView withProvider:self];
+    }
+  }
+#endif
 }
 
 #pragma mark - RNSSafeAreaProviding
@@ -1538,7 +1550,6 @@ RNS_IGNORE_SUPER_CALL_END
   [super finalizeUpdates:updateMask];
   if (_shouldUpdateScrollEdgeEffects) {
     [self updateContentScrollViewEdgeEffectsIfExists];
-    _shouldUpdateScrollEdgeEffects = NO;
   }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -1546,6 +1557,14 @@ RNS_IGNORE_SUPER_CALL_END
     [self updateFormSheetPresentationStyle];
   }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  if (_shouldUpdateScrollEdgeEffects) {
+    [self updateContentScrollViewEdgeEffectsIfExists];
+  }
 }
 
 #pragma mark - Commands

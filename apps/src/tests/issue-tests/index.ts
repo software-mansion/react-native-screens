@@ -235,6 +235,7 @@ export { default as Test5092 } from './Test5092';
 export { default as Test5112 } from './Test5112';
 export { default as Test5127 } from './Test5127';
 export { default as Test5143 } from './Test5143';
+export { default as Test5249 } from './Test5249'; // [E2E skipped]: can't check scroll edge effect visibility
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
@@ -257,4 +258,3 @@ export { default as TestSplit } from './TestSplit';
 export { default as TestSafeAreaViewIOS } from './TestSafeAreaViewIOS';
 export { default as TestStackNesting } from './TestStackNesting';
 export { default as TestScreenFooterKeyboardInsets } from './TestScreenFooterKeyboardInsets';
-export { default as TestScrollEdgeLateMount } from './TestScrollEdgeLateMount';

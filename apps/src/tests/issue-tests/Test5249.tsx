@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -70,7 +76,10 @@ function DetailsScreen({
       {Array.from({ length: 20 }, (_, index) => (
         <View
           key={index}
-          style={[styles.band, { backgroundColor: COLORS[index % COLORS.length] }]}>
+          style={[
+            styles.band,
+            { backgroundColor: COLORS[index % COLORS.length] },
+          ]}>
           <Text style={styles.bandText}>Band {index + 1}</Text>
         </View>
       ))}
@@ -78,7 +87,7 @@ function DetailsScreen({
   );
 }
 
-export default function TestScrollEdgeLateMount() {
+export default function Test5249() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
