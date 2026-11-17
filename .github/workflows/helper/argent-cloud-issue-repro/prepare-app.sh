@@ -100,7 +100,7 @@ validate_overlay() {
         ;;
     esac
     case "$file" in
-      *..*)
+      ../* | */../* | */.. | ..)
         echo "::error::overlay file '$file' has a '..' segment"
         rejected=1
         ;;
