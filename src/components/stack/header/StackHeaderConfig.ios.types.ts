@@ -396,10 +396,11 @@ export interface StackHeaderTitleCustomItemIOS {
    * platform native layout. Each item's size is calculated independently and
    * will not respect flex layout. Use static width and height for best results.
    *
-   * Note: Due to layout process limitations, text view will not resize and
-   * ellipsize to fit available space without manually setting desired view
-   * width. For text-only elements that should ellipsize it is recommended to
-   * use regular {@link StackHeaderConfigPropsBase.title | title} instead.
+   * @note
+   * Due to layout process limitations, text view will not resize and ellipsize
+   * to fit available space without manually setting desired view width. For
+   * text-only elements that should ellipsize it is recommended to use regular
+   * {@link StackHeaderConfigPropsBase.title | title} instead.
    *
    * @platform ios
    */
@@ -747,8 +748,8 @@ export interface StackHeaderConfigPropsIOS {
    * overflow menu. This differs from trailing items, which are moved one by
    * one.
    *
-   * Note: Custom items are not put into the overflow menu, but are removed
-   * entirely.
+   * @note
+   * Custom items are not put into the overflow menu, but are removed entirely.
    *
    * @platform ios
    */
@@ -781,8 +782,8 @@ export interface StackHeaderConfigPropsIOS {
    * If there is not enough space to fit some items, they are moved to the
    * overflow menu, one by one.
    *
-   * Note: Custom items are not put into the overflow menu, but are removed
-   * entirely.
+   * @note
+   * Custom items are not put into the overflow menu, but are removed entirely.
    *
    * @platform ios
    */
@@ -872,11 +873,11 @@ export interface StackHeaderConfigPropsIOS {
    * Appearance of the header when the edge of scrollable content
    * is not aligned with the edge of the header.
    *
-   * @remarks
-   * Native platform limitation: on iOS 26, header items resolve the `button` /
-   * `prominentButton` attributes once, from whichever appearance is in effect
-   * at the moment the items are attached to the navigation bar, and do not
-   * update on property changes or scroll edge transitions.
+   * @info
+   * On iOS 26, header items resolve the `button` / `prominentButton` attributes
+   * once, from whichever appearance is in effect at the moment the items are
+   * attached to the navigation bar, and do not update on property changes or
+   * scroll edge transitions.
    *
    * @platform ios
    */
@@ -891,10 +892,11 @@ export interface StackHeaderConfigPropsIOS {
    * otherwise becomes a standalone definition. In both cases it keeps
    * transparent background by default (`iOS < 18`).
    *
-   * Native platform limitation: on iOS 26, header items resolve the `button` /
-   * `prominentButton` attributes once, from whichever appearance is in effect
-   * at the moment the items are attached to the navigation bar, and do not
-   * update on property changes or scroll edge transitions.
+   * @info
+   * On iOS 26, header items resolve the `button` / `prominentButton` attributes
+   * once, from whichever appearance is in effect at the moment the items are
+   * attached to the navigation bar, and do not update on property changes or
+   * scroll edge transitions.
    *
    * @platform ios
    */

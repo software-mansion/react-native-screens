@@ -123,8 +123,8 @@ export interface StackHeaderMenuItemIOS {
  * {@link StackHeaderMenuIOS.singleSelection | singleSelection} to `true` to
  * make the menu behave like a radio group across its entire hierarchy.
  *
- * Note: The topmost menu that enables this prop becomes Single Selection Root.
- * Only the root receives
+ * The topmost menu that enables this prop becomes Single Selection Root. Only
+ * the root receives
  * {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange} event, with
  * exactly one item id passed to the callback. Only one item may be selected,
  * across the whole hierarchy under Single Selection Root (even when mixing
