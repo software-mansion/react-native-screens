@@ -8,8 +8,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHostComponentView : RNSReactBaseView
 
-@property (nonatomic, readonly) BOOL headlessModeEnabled;
-
 @property (nonatomic, weak, nullable) id<RNSStackHostDelegate> delegate;
 
 @end
