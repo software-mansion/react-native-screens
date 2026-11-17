@@ -8,6 +8,7 @@ import { Colors } from '@apps/shared/styling';
 function TestFormSheetFitToContents() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isGrabberVisible, setIsGrabberVisible] = useState(false);
 
   const handleDismiss = () => {
     setIsOpen(false);
@@ -24,7 +25,8 @@ function TestFormSheetFitToContents() {
       <FormSheet
         isOpen={isOpen}
         onNativeDismiss={handleDismiss}
-        detents="fitToContents">
+        detents="fitToContents"
+        prefersGrabberVisible={isGrabberVisible}>
         <View style={styles.sheetContent}>
           <Text style={styles.sheetTitle}>FormSheet content</Text>
 
@@ -49,6 +51,14 @@ function TestFormSheetFitToContents() {
               </Text>
             </View>
           )}
+
+          <View style={styles.spacing} />
+
+          <Button
+            title={isGrabberVisible ? 'Hide Grabber' : 'Show Grabber'}
+            color={Colors.primary}
+            onPress={() => setIsGrabberVisible(!isGrabberVisible)}
+          />
 
           <View style={styles.spacing} />
 
