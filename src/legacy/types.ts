@@ -34,7 +34,21 @@ export type SearchBarCommands = {
   cancelSearch: () => void;
 };
 
+export type SheetCommands = {
+  selectDetent: (index: number | 'last') => void;
+};
+
 export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
+
+export type HeaderMinimizationBehavior =
+  | 'automatic'
+  | 'never'
+  | 'onScrollDown'
+  | 'onScrollUp';
+
+export type HeaderRestorationBehavior = 'automatic' | 'atScrollEdge';
+
+export type HeaderSafeAreaAdjustment = 'automatic' | 'enabled' | 'disabled';
 
 export type StackPresentationTypes =
   | 'push'
@@ -64,6 +78,8 @@ export type BlurEffectTypes = BlurEffect;
 export type ScreenReplaceTypes = 'push' | 'pop';
 
 export type SwipeDirectionTypes = 'vertical' | 'horizontal';
+
+export type SheetBackgroundEffectTypes = 'automatic' | 'color';
 
 export type ScreenOrientationTypes =
   | 'default'
@@ -417,6 +433,19 @@ export interface ScreenProps extends ViewProps {
     | 'all'
     | undefined;
   /**
+   * Material rendered by the system behind the sheet's content.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * - `automatic` - whatever the system uses for sheets on the current iOS version; on iOS 26 this is Liquid Glass,
+   *   including its interactive highlight,
+   * - `color` - a flat fill with the screen's `backgroundColor`, which makes the sheet look opaque.
+   *
+   * Defaults to `automatic`. Has no effect on iOS versions below 26.1.
+   *
+   * @platform ios
+   */
+  sheetBackgroundEffect?: SheetBackgroundEffectTypes | undefined;
+  /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
    * Not dynamic - changing it after the component is rendered won't have an effect.
@@ -500,6 +529,20 @@ export interface ScreenProps extends ViewProps {
    * Defaults to `0` - which represents first detent in the detents array.
    */
   sheetInitialDetentIndex?: number | 'last' | undefined;
+  /**
+   * Reference to imperatively control the sheet.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Currently supported operations are:
+   *
+   * * `selectDetent` - animates the presented sheet to the detent at the given index of `sheetAllowedDetents` array,
+   *   or to the last (largest) detent when `last` is passed. The user can still drag the sheet between all detents
+   *   afterwards. If the detent changes, `onSheetDetentChanged` is called, the same as after a user-driven change.
+   *
+   * The sheet has to be presented, earlier calls are ignored. To choose the detent the sheet opens at,
+   * use `sheetInitialDetentIndex` instead.
+   */
+  sheetRef?: React.Ref<SheetCommands> | undefined;
   /**
    * Whether the sheet content should be rendered behind the Status Bar or display cutouts.
    *
@@ -692,9 +735,16 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number | undefined;
   /**
+   * Customize letter spacing in points for the back button title, mapping to the attributed-string kern.
+   * The value is added on top of the font's own kerning; `0` turns the font's kerning off.
+   * When undefined, the default spacing is used.
+   * @platform ios
+   */
+  backTitleLetterSpacing?: number | undefined;
+  /**
    * Whether the back button title should be visible or not. Defaults to `true`.
    *
-   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `disableBackButtonMenu`.
+   * When set to `false` it works as a "kill switch": it enforces `backButtonDisplayMode=minimal` and ignores `backButtonDisplayMode`, `backTitleFontSize`, `backTitleFontFamily`, `backTitleLetterSpacing`, `disableBackButtonMenu`.
    * For `backTitle` it works only in back button menu.
    *
    * @platform ios
@@ -794,9 +844,71 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   largeTitleFontWeight?: string | undefined;
   /**
+   * Customize letter spacing in points for the large title, mapping to the attributed-string kern.
+   * The value is added on top of the font's own kerning; `0` turns the font's kerning off.
+   * When undefined, the default spacing is used.
+   * @platform ios
+   */
+  largeTitleLetterSpacing?: number | undefined;
+  /**
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean | undefined;
+  /**
+   * Controls when the navigation bar minimizes in response to scrolling.
+   * The following values are currently supported (they correspond to {@link https://developer.apple.com/documentation/uikit/uibarminimizationbehavior?language=objc|UIBarMinimizationBehavior}):
+   *
+   * - `automatic` – the system determines the minimization behavior
+   * - `never` – the navigation bar does not minimize
+   * - `onScrollDown` – the navigation bar minimizes when the user scrolls down
+   * - `onScrollUp` – the navigation bar minimizes when the user scrolls up
+   *
+   * When the prop is not specified (`undefined`), the behavior depends on the header's `translucent` prop:
+   *
+   * - translucent header – `automatic`
+   * - opaque header – `never`. Minimization of an opaque header is not reliably supported
+   *   by the legacy stack (it breaks the content insets applied for an opaque header), so it is
+   *   disabled by default. Set the prop explicitly (e.g. to `automatic`) to opt in anyway.
+   *
+   * @default `undefined` (`automatic` for translucent header, `never` for opaque header)
+   *
+   * @platform ios
+   *
+   * @supported iOS 27 or higher
+   */
+  minimizationBehavior?: HeaderMinimizationBehavior | undefined;
+  /**
+   * Controls when a minimized navigation bar restores.
+   * It is honored only together with `minimizationBehavior: 'onScrollDown'`, otherwise the system falls back to `automatic`.
+   * The following values are currently supported (they correspond to {@link https://developer.apple.com/documentation/uikit/uibarminimizationrestorationbehavior?language=objc|UIBarMinimizationRestorationBehavior}):
+   *
+   * - `automatic` – the navigation bar restores when the user reverses scroll direction
+   * - `atScrollEdge` – the navigation bar restores only when the scroll view's content reaches the scroll edge
+   *
+   * @default `automatic`
+   *
+   * @platform ios
+   *
+   * @supported iOS 27 or higher
+   */
+  restorationBehavior?: HeaderRestorationBehavior | undefined;
+  /**
+   * Controls whether the safe area adjusts while the navigation bar minimizes.
+   *
+   * @remarks
+   * The values correspond to
+   * {@link https://developer.apple.com/documentation/uikit/uibarminimizationsafeareaadjustment | UIBarMinimizationSafeAreaAdjustment}.
+   * The following values are supported:
+   * - `'automatic'` — the system determines the safe area adjustment.
+   * - `'enabled'` — the safe area adjusts as the navigation bar minimizes,
+   *   allowing content to reflow.
+   * - `'disabled'` — the safe area remains unchanged as the navigation bar
+   *   minimizes.
+   *
+   * @defaultValue `'automatic'`
+   * @platform ios >= 27
+   */
+  safeAreaAdjustment?: HeaderSafeAreaAdjustment | undefined;
   /**
    * Callback which is executed when screen header is attached
    */
@@ -825,6 +937,13 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Customize the weight of the font to be used for the title.
    */
   titleFontWeight?: string | undefined;
+  /**
+   * Customize letter spacing in points for the title.
+   * On iOS it maps to the attributed-string kern, added on top of the font's own kerning;
+   * `0` turns the font's kerning off. On Android it is converted to ems like `Text`'s `letterSpacing`.
+   * When undefined, the default spacing is used.
+   */
+  titleLetterSpacing?: number | undefined;
   /**
    * @deprecated Setting this prop has no effect. Retained only for backward compatibility.
    *
@@ -1166,6 +1285,11 @@ interface SharedHeaderBarButtonItem {
         fontSize?: number | undefined;
         fontWeight?: string | undefined;
         color?: ColorValue | undefined;
+        /**
+         * Letter spacing in points, mapping to the attributed-string kern.
+         * `0` turns the font's kerning off; when undefined, the default spacing is used.
+         */
+        letterSpacing?: number | undefined;
       }
     | undefined;
   /**
@@ -1209,6 +1333,29 @@ interface SharedHeaderBarButtonItem {
    * Read more: https://developer.apple.com/documentation/uikit/uibarbuttonitem/sharesbackground
    */
   sharesBackground?: boolean | undefined;
+  /**
+   * Controls whether the item can move into the vertical bar on iPhone Duo.
+   *
+   * @remarks
+   * When the open iPhone Duo display shows both a horizontal and a vertical
+   * bar, the system can move an item with an icon into the vertical bar.
+   *
+   * The following values are supported:
+   * - `'automatic'` - the system decides from the item's content.
+   * - `'horizontalOnly'` - the item stays in the horizontal bar and is hidden
+   *   when no horizontal bar is present.
+   * - `'verticalPreferred'` - the item prefers the vertical bar when both bars
+   *   are present.
+   *
+   * @defaultValue `'automatic'`
+   * @see {@link https://developer.apple.com/documentation/uikit/uibarbuttonitem/axisbehavior-swift.property | UIBarButtonItem.axisBehavior}
+   * @platform ios >= 27.1
+   */
+  axisBehavior?:
+    | 'automatic'
+    | 'horizontalOnly'
+    | 'verticalPreferred'
+    | undefined;
   /**
    * An identifier used to match items across transitions in a navigation bar or toolbar.
    * Only available from iOS 26.0 and later.

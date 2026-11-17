@@ -27,10 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSString *titleFontFamily;
 @property (nonatomic, retain) NSNumber *titleFontSize;
 @property (nonatomic, retain) NSString *titleFontWeight;
+@property (nonatomic, retain, nullable) NSNumber *titleLetterSpacing;
 @property (nonatomic, retain) UIColor *titleColor;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
+@property (nonatomic, retain, nullable) NSNumber *backTitleLetterSpacing;
 @property (nonatomic, getter=isBackTitleVisible) BOOL backTitleVisible;
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, retain) UIColor *color;
@@ -38,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
 @property (nonatomic, retain) NSString *largeTitleFontWeight;
+@property (nonatomic, retain, nullable) NSNumber *largeTitleLetterSpacing;
 @property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;
@@ -49,6 +52,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 @property (nonatomic) RNSBlurEffectStyle blurEffect;
+@property (nonatomic) RNSHeaderMinimizationBehavior minimizationBehavior;
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+@property (nonatomic) UIBarMinimizationRestorationBehavior restorationBehavior API_AVAILABLE(ios(27.0));
+@property (nonatomic) UIBarMinimizationSafeAreaAdjustment safeAreaAdjustment API_AVAILABLE(ios(27.0));
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerRightBarButtonItems;
 @property (nonatomic, copy, nullable) NSArray<NSDictionary<NSString *, id> *> *headerLeftBarButtonItems;
 @property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
@@ -69,6 +77,16 @@ NS_ASSUME_NONNULL_END
  * Keep in sync with `getSafeAreaEdges` in `src/legacy/components/ScreenStackItem.tsx`.
  */
 + (BOOL)screensExtendUnderOpaqueNavigationBar;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
+/**
+ * Returns the minimization behavior that should be applied to the navigation item. When `minimizationBehavior` is
+ * not specified (`RNSHeaderMinimizationBehaviorUndefined`), it resolves to `UIBarMinimizationBehaviorNever` for an
+ * opaque header and `UIBarMinimizationBehaviorAutomatic` for a translucent one. Minimization of an opaque header is not
+ * reliably supported by the legacy stack.
+ */
+- (UIBarMinimizationBehavior)resolvedMinimizationBehavior API_AVAILABLE(ios(27.0));
+#endif // Check for iOS >= 27 && !TARGET_OS_VISION && !TARGET_OS_TV
 
 /**
  * Returns true iff subview of given `type` is present.

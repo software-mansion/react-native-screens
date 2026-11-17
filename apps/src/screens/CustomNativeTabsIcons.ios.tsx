@@ -72,7 +72,11 @@ const ROUTES: TabRouteConfig[] = [
       ...DEFAULT_TAB_ROUTE_OPTIONS,
       title: 'Walker',
       ios: {
-        icon: { type: 'xcasset', name: 'nanomc.walker' },
+        icon: {
+          type: 'imageSource',
+          imageSource: { uri: 'nanomc.walker.png' },
+          renderingMode: 'original',
+        },
       },
     },
   },

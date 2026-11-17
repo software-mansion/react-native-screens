@@ -76,7 +76,7 @@ namespace react = facebook::react;
 {
   const UIView *superview = self.superview;
   while (superview != nil) {
-    if ([superview respondsToSelector:@selector(registerDescendantScrollView:fromMarker:)]) {
+    if ([superview respondsToSelector:@selector(registerDescendantScrollView:)]) {
       return static_cast<id<RNSScrollViewSeeking>>(superview);
     }
     if ([superview respondsToSelector:@selector(reactSuperview)]) {
@@ -112,7 +112,7 @@ namespace react = facebook::react;
     return;
   }
 
-  [seekingAncestor registerDescendantScrollView:scrollView fromMarker:self];
+  [seekingAncestor registerDescendantScrollView:scrollView];
 }
 
 - (void)configureScrollView:(nullable UIScrollView *)scrollView

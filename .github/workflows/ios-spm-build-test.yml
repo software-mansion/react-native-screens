@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-    paths:
+    paths: &paths
       - '.github/workflows/ios-spm-build-test.yml'
       - 'Package.swift'
       - 'package.json'
@@ -16,10 +16,11 @@ on:
   push:
     branches:
       - main
+    paths: *paths
   workflow_dispatch:
 jobs:
   build:
-    runs-on: xcode-27-xlarge
+    runs-on: xcode-27
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: SPMBlankExample

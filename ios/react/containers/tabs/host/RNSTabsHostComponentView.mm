@@ -9,12 +9,14 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSTabsHostComponentDescriptor.h>
-#import "RNSTabsHostComponentView+RNSImageLoader.h"
+#import "RNSTabsHostComponentView+RNSImageLoaderRetrieval.h"
 
 #import "RNSContainerHelpers.h"
 #import "RNSConversions-Tabs.h"
 #import "RNSDefines.h"
+#import "RNSImageLoader.h"
 #import "RNSLog.h"
+#import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
 #import "RNSTabBarController.h"
 #import "RNSTabsBottomAccessoryComponentView.h"
 #import "RNSTabsBottomAccessoryHelper.h"
@@ -33,7 +35,7 @@ namespace react = facebook::react;
 
 #pragma mark - View implementation
 
-@interface RNSTabsHostComponentView () <RCTMountingTransactionObserving>
+@interface RNSTabsHostComponentView () <RCTMountingTransactionObserving, RNSOrientationDelegate>
 @end
 
 @implementation RNSTabsHostComponentView {
@@ -41,7 +43,7 @@ namespace react = facebook::react;
 
   RNSTabsHostEventEmitter *_Nonnull _reactEventEmitter;
 
-  RCTImageLoader *_Nullable _imageLoader;
+  RNSImageLoader *_Nonnull _imageLoader;
 
   // RCTViewComponentView does not expose this field, therefore we maintain
   // it on our side.
@@ -75,7 +77,11 @@ namespace react = facebook::react;
 {
   [self resetProps];
 
-  _controller = [[RNSTabBarController alloc] initWithTabsHostComponentView:self];
+  _controller = [RNSTabBarController new];
+  _controller.appearanceProvider = self;
+  _imageLoader = [RNSImageLoader new];
+  _controller.imageLoader = _imageLoader;
+  _controller.orientationDelegate = self;
   [[maybe_unused]] BOOL didRegisterObserver = [_controller addNavigationStateObserver:self];
   RCTAssert(didRegisterObserver,
             @"[RNScreens] Failed to register RNSTabsHostComponentView as navigation state observer");
@@ -354,7 +360,10 @@ namespace react = facebook::react;
   react::RNSTabsHostShadowNode::ConcreteState::Shared receivedState =
       std::static_pointer_cast<const react::RNSTabsHostShadowNode::ConcreteState>(state);
 
-  _imageLoader = [self retrieveImageLoaderFromState:receivedState];
+  RCTImageLoader *reactImageLoader = [self retrieveImageLoaderFromState:receivedState];
+  if (reactImageLoader != nil) {
+    _imageLoader.reactImageLoader = reactImageLoader;
+  }
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
@@ -398,7 +407,7 @@ namespace react = facebook::react;
 {
   _hasModifiedTabsScreensInCurrentTransaction = NO;
   _hasModifiedBottomAccessoryInCurrentTransation = NO;
-  [_controller reactMountingTransactionWillMount];
+  [_controller beginTransaction];
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
@@ -407,7 +416,7 @@ namespace react = facebook::react;
   if (self.hasModifiedReactSubviewsInCurrentTransaction) {
     [self updateContainer];
   }
-  [_controller reactMountingTransactionDidMount];
+  [_controller commitTransaction];
 }
 
 #pragma mark - Common
@@ -485,11 +494,11 @@ namespace react = facebook::react;
   ]];
 }
 
-#pragma mark - React Image Loader
+#pragma mark - RNSOrientationDelegate
 
-- (nullable RCTImageLoader *)reactImageLoader
+- (void)containerDidRequestOrientationUpdate:(UIViewController *)container
 {
-  return _imageLoader;
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
 
 #pragma mark - RNSTabsNavigationStateObserver

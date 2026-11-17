@@ -7,8 +7,8 @@ type Props = {
   label: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
-  style?: ViewStyle;
-  testID?: string;
+  style?: ViewStyle | undefined;
+  testID?: string | undefined;
 };
 
 export const SettingsSwitch = ({

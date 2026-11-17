@@ -35,6 +35,11 @@ const demoScreens = [
   { name: 'IdentifierExample', title: 'Identifier Example' },
   { name: 'IdentifierExample2', title: 'Identifier Example 2' },
   { name: 'ExessiveItemsExample', title: 'Exessive Items Example' },
+  {
+    name: 'AxisBehaviorHorizontalOnlyDemo',
+    title: 'Axis Behavior Horizontal Only',
+  },
+  { name: 'AxisBehaviorAutomaticDemo', title: 'Axis Behavior Automatic' },
 ];
 
 const MainScreen = ({ navigation }: any) => (
@@ -82,6 +87,8 @@ const BackButtonVisibleDemo = DemoScreenContent;
 const IdentifierExample = DemoScreenContent;
 const IdentifierExample2 = DemoScreenContent;
 const ExessiveItemsExample = DemoScreenContent;
+const AxisBehaviorHorizontalOnlyDemo = DemoScreenContent;
+const AxisBehaviorAutomaticDemo = DemoScreenContent;
 
 export default function BarButtonItemsExample() {
   return (
@@ -662,6 +669,50 @@ export default function BarButtonItemsExample() {
               type: 'button',
               label: 'Button 4',
               onPress: () => Alert.alert('Button 4 pressed'),
+            },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="AxisBehaviorHorizontalOnlyDemo"
+        component={AxisBehaviorHorizontalOnlyDemo}
+        options={{
+          title: 'Inbox',
+          unstable_headerRightItems: () => [
+            {
+              type: 'button',
+              label: 'Help',
+              icon: { type: 'sfSymbol', name: 'questionmark.circle' },
+              axisBehavior: 'horizontalOnly',
+              onPress: () => Alert.alert('Help pressed'),
+            },
+            {
+              type: 'button',
+              label: 'Grid',
+              icon: { type: 'sfSymbol', name: 'square.grid.2x2' },
+              onPress: () => Alert.alert('Grid pressed'),
+            },
+          ],
+        }}
+      />
+      <Stack.Screen
+        name="AxisBehaviorAutomaticDemo"
+        component={AxisBehaviorAutomaticDemo}
+        options={{
+          title: 'Inbox',
+          unstable_headerRightItems: () => [
+            {
+              type: 'button',
+              label: 'Help',
+              icon: { type: 'sfSymbol', name: 'questionmark.circle' },
+              axisBehavior: 'automatic',
+              onPress: () => Alert.alert('Help pressed'),
+            },
+            {
+              type: 'button',
+              label: 'Grid',
+              icon: { type: 'sfSymbol', name: 'square.grid.2x2' },
+              onPress: () => Alert.alert('Grid pressed'),
             },
           ],
         }}

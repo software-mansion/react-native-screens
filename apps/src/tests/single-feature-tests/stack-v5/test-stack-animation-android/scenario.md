@@ -2,166 +2,166 @@
 
 ## Details
 
-**Description:** Verify screen transition animations on the v5
-`StackContainer` on Android, which are driven by the Android **Transition
-API** (see [PR #3629](https://github.com/software-mansion/react-native-screens/pull/3629)).
-The screen uses deliberately high-contrast, full-bleed screens — **Home**
-(yellow), **Blue**, **Red**, and a **NestedHost** that embeds a second
-`StackContainer` (**NestedHome** yellow / **NestedBlue** / **NestedRed**) —
-so the transition, its button shadows, and any content jump are easy to see.
+**Description:** Verify how the v5 `StackContainer` plays a transition on
+Android with the `default` `animation`, which is the platform look for the
+running API level: a push, a pop, the predictive back gesture, the header back
+arrow, the system back button and a nested container. Pass: every transition
+runs in the right direction and to completion, a screen that moves over a
+static one is drawn above it, and a nested container animates on its own.
+Changing `animation` at runtime is covered by
+`test-stack-animation-update-android`; the other presets by
+`test-stack-animation-slide-android`, `-fade-android`, `-ios-android` and
+`-none-android`.
 
-The test validates that push, on-screen **Pop** and
-the **predictive back gesture** all animate smoothly, and guards against the
-four regressions PR #3629 fixed:
-
-1. disappearing shadows during a transition,
-2. content jumping to a different position mid-transition,
-3. non-continuous animation (notably the interactive predictive back gesture),
-4. native-pop completing instantly instead of animating.
-
-It also checks that a **nested** `StackContainer` animates the same way as
-the top-level one.
-
-**OS test creation version:** Android API Level 36.
+**OS test creation version:** Android API Level 37 and API Level 30.
 
 ## E2E test
 
-Incomplete: Not automated. Animation smoothness, button shadows continuity, absence of content
-jumps, and the interactive predictive back gesture are visual / interactive
-qualities that Detox cannot assert reliably. This scenario is manual only.
+Incomplete: no step is automated. For manual testing perform all steps.
+
+The direction a screen moves in, the travel distance, the scale, the draw order
+over a static screen and the interactive predictive back gesture are not
+assertable with Detox.
 
 ## Prerequisites
 
-- Android emulator or device
-
-- **System animations must be enabled** — this test observes transition
-  animations, so they will not play at all if the OS is set to remove/disable
-  them. Before testing, verify: **Settings → Accessibility → Color and motion → Remove animations** is **OFF**.
-
-### Android launch
-
-- To exercise the predictive back gesture, run the
-  screen **directly** by editing
-  [apps/App.tsx](../../../../../App.tsx): import and render
-  `TestStackAnimationAndroid` as the root component instead of `Example`, e.g.:
-
-  ```tsx
-  import { TestStackAnimationAndroid as Example } from './src/tests/single-feature-tests';
-  ```
-
-  With the v5 `StackContainer` at the root, the system back button and
-  gesture-back pop the stack directly. When the screen is nested inside the
-  example app's own navigation, native back navigates out to the
-  system/selection menu instead of popping the stack (issue
-  [#1459](https://github.com/software-mansion/react-native-screens-labs/issues/1459)),
-  which is why Android is tested via the direct launch.
-
-- The predictive back gesture requires **Gesture navigation** to be enabled
-  (**Settings → System → Navigation mode → Gesture navigation**) and, on
-  devices where it is not on by default, the OS **predictive back** setting
-  to be enabled.
+- Android emulator or device with gesture navigation enabled, on **API 33 or
+  newer** for all groups except **`default` below API 33**.
+- Step 2 of **Header and system back button** on a **physical** device: use
+  3-button navigation for that step ("Settings → System → Navigation mode").
+  On emulator, you can use emulator's back button instead.
+- **`default` below API 33** needs a second emulator or device with gesture
+  navigation enabled on **API 32 or older**, where `default` is a different
+  animation.
+- Run the screen directly. In `apps/App.tsx` import and render
+  `TestStackAnimationAndroid` as the root component instead of `Example`.
+  Opened through the in-app menu, system back leaves the screen instead of
+  popping the stack.
+- System animations are on: "Settings → Accessibility → Color and motion →
+  Remove animations" is off.
 
 ## Note
 
-- On **push**, the incoming screen slides in from right to left; on **pop**,
-  the animation reverses — the outgoing screen slides out from left to right.
+- Static: the screen does not move at all and stays fully visible for the whole
+  transition.
+- "A short distance" means about a tenth of the screen width, the travel
+  `default` uses on API 33 and newer.
+- During a `default` pop, once the outgoing screen has faded out a narrow strip
+  of the window background can show at the trailing edge while the revealed
+  screen finishes its travel.
+- "NestedHost" is the only route with an explicit animation: it rises from and
+  sinks to the bottom edge.
 
 ## Steps
 
 ### Baseline
 
-1. Launch the app directly via `App.tsx` (see Android launch) so the **Home**
-   screen is shown.
+1. Launch the screen directly (see Prerequisites).
 
-    - [ ] **Home** is shown with **Push Blue** /
-          **Push Red** / **Push NestedHost** buttons. No **Pop** button is shown.
-
----
-
-### Push animation
-
-1. Tap **Push Blue**.
-
-    - [ ] The **Blue** screen slides from right to left
-          in over **Home** with a smooth, continuous
-          animation. Button shadows persist during and after the transition.
-          Neither screen's content jumps; both move as rigid blocks.
-
-2. On **Blue**, tap **Push Red**.
-
-    - [ ] The **Red** screen slides in over **Blue**, same as step 1 — smooth,
-          button shadows present, no content jump.
+   - [ ] The screen is yellow, reads "Name: Home" and shows "Push Blue",
+         "Push Red" and "Push NestedHost" without a "Pop" button.
 
 ---
 
-### Pop animation (on-screen button)
+### Push and pop
 
-1. On **Red**, tap **Pop**.
+1. Tap "Push Blue".
 
-    - [ ] **Red** slides back out and **Blue** is revealed with a smooth
-          animation (the reverse of the push). The button shadows stay visible;
-          no content jump occurs.
+   - [ ] "Blue" (blue) slides in from the right a short distance (see Note)
+         while fading in, and "Home" slides the same short distance to the left
+         underneath. "Blue" is drawn above "Home" and the motion decelerates
+         smoothly.
 
----
+2. On "Blue", tap "Pop".
 
-### Predictive back gesture (interactive)
-
-1. On **Blue**, tap **Push Red**.
-
-    - [ ] The **Red** screen slides in over **Blue**, same as step 1 of
-          **Push animation** — smooth, button shadows present, no content jump.
-
-2. On **Red** slowly swipe inward from the **left screen edge** and **hold** without
-   releasing.
-
-    - [ ] The gesture is **interactive and continuous**: **Red** follows your
-          finger and the screen underneath (**Blue**) is progressively revealed,
-          tracking the drag position. The animation is not stepped or frozen, and
-          the button shadows remain visible.
-
-3. Continue the swipe **past** the commit threshold and release.
-
-    - [ ] The pop **completes smoothly from the current gesture position** to
-          fully showing **Blue** — the animation continues to completion rather
-          than snapping instantly.
-
-4. Push back to **Red**, start the same edge swipe, but then swipe back towards the left edge.
-
-    - [ ] The gesture is **cancelled smoothly**: **Red** animates back into place
-          and no navigation change occurs.
+   - [ ] "Blue" slides the short distance to the right on top while fading out,
+         and "Home" slides back in from the left by the same distance. A narrow
+         strip of window background at the right edge late in the pop is
+         expected (see Note).
 
 ---
 
-### Nested stack animations
+### Predictive back gesture
 
-1. Pop/navigate back to **Home**, then tap **Push NestedHost**.
+1. Tap "Push Blue", then swipe in from the left screen edge and release past
+   the middle.
 
-    - [ ] The nested host slides in and shows **NestedHome** with **Push
-          NestedBlue** / **Push NestedRed** / **Pop** buttons. The push is
-          animated with the same quality as the outer stack.
+   - [ ] "Blue" tracks the finger and fades while "Home" is progressively
+         revealed; on release the motion continues from that position until only
+         "Home" is shown.
 
-2. On **NestedHome**, tap **Push NestedBlue**, then on **NestedBlue** tap
-    **Push NestedRed**.
+2. Tap "Push Blue", swipe in from the left screen edge to the middle, then
+   swipe back to the edge and release.
 
-    - [ ] Each push inside the **nested** stack slides in smoothly, with visible  
-          button shadows and no content jump — identical behaviour to the top-level stack.
+   - [ ] "Blue" returns to rest, fully opaque and with no residual offset, and
+         nothing is popped.
 
-3. Inside the nested stack, tap **Pop**, then perform a **predictive back gesture**
-(swipe from the left edge) twice.
+3. On "Blue", tap "Push Red", then swipe in from the left screen edge and
+   release past the middle.
 
-    - [ ] Each pop inside the nested stack animates smoothly (button and interactive
-          gesture all behave as they do on the outer stack).
-          When the nested stack has only **NestedHome** left, a further back
-          pops the whole **NestedHost** route and returns to **Home**, animated.
+   - [ ] "Red" (red) tracks the finger and is popped, leaving "Blue".
+
+4. Swipe in from the left screen edge and release past the middle again.
+
+   - [ ] "Blue" tracks the finger the same way and is popped, leaving "Home".
 
 ---
 
-### Re-pushing the same route (edge case)
+### Header and system back button
 
-1. From **Home**, tap **Push Blue**; on **Blue**, tap **Push Blue** again;
-    on the new **Blue**, tap **Push Blue** once more.
+1. Tap "Push Red", then tap the back arrow in the header of "Red".
 
-    - [ ] Every push animates a fresh **Blue** screen sliding in over the previous
-          one (three stacked Blue instances). No transition is skipped, and no
-          screen jumps or loses its button shadows, even though consecutive screens share
-          the same color.
+   - [ ] "Red" slides the short distance to the right while fading out, and
+         "Home" slides back in from the left, the same pop as in step 2 of
+         **Push and pop**.
+
+2. Tap "Push Red", then press the system back button once: on an emulator, the
+   Back button in the emulator toolbar (see Prerequisites).
+
+   - [ ] The same pop as in step 1 plays to its end without any finger input,
+         leaving "Home".
+
+---
+
+### Nested stack
+
+1. Tap "Push NestedHost".
+
+   - [ ] A green screen reading "Name: NestedHome" rises from the bottom edge
+         above a static "Home".
+
+2. On "NestedHome", tap "Push NestedBlue".
+
+   - [ ] "NestedBlue" slides in from the right a short distance and fades in
+         while "NestedHome" slides the same distance to the left; nothing
+         rises from the bottom edge.
+
+3. On "NestedBlue", tap "Pop".
+
+   - [ ] "NestedBlue" slides the short distance to the right and fades out
+         while "NestedHome" slides back in from the left.
+
+4. On "NestedHome", tap "Pop".
+
+   - [ ] The green screen sinks to the bottom edge above a static "Home".
+
+---
+
+### `default` below API 33
+
+1. On the API 32 or older device, launch the screen directly and tap
+   "Push Blue".
+
+   - [ ] Nothing slides sideways: "Blue" zooms in from 85 % of its size while
+         fading in, and "Home" grows to 115 % and dims to 40 % opacity
+         underneath.
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" shrinks to 85 % and fades out on top, while "Home" shrinks back
+         to its own size and fades in.
+
+3. Tap "Push Blue", then swipe in from the left screen edge and release.
+
+   - [ ] Nothing moves while the finger is down; on release the pop plays the
+         same zoom as in step 2, leaving "Home".

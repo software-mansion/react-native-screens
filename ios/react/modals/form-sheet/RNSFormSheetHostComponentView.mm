@@ -8,6 +8,9 @@
 #import "RNSFormSheetHostShadowStateProxy.h"
 #import "RNSFormSheetProviders.h"
 
+#import "RNSConversions-FormSheet.h"
+#import "RNSDefines.h"
+
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
@@ -34,7 +37,7 @@ namespace react = facebook::react;
 
   // Props
   BOOL _isOpen;
-  std::vector<double> _detents;
+  NSArray<NSNumber *> *_Nonnull _detents;
   BOOL _prefersGrabberVisible;
   CGFloat _preferredCornerRadius;
   NSInteger _largestUndimmedDetentIndex;
@@ -42,6 +45,7 @@ namespace react = facebook::react;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _preventNativeDismiss;
   UIColor *_Nullable _nativeContainerBackgroundColor;
+  UIVisualEffect *_Nullable _backgroundEffect;
 
   CGFloat _reactContentsHeight;
 }
@@ -69,7 +73,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _isOpen = NO;
-  _detents = {};
+  _detents = @[];
   _prefersGrabberVisible = NO;
   _preferredCornerRadius = -1.0;
   _largestUndimmedDetentIndex = kRNSFormSheetAlwaysDimmed;
@@ -77,6 +81,7 @@ namespace react = facebook::react;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _preventNativeDismiss = NO;
   _nativeContainerBackgroundColor = nil;
+  _backgroundEffect = nil;
 
   _reactContentsHeight = 0.0;
 }
@@ -110,12 +115,12 @@ namespace react = facebook::react;
 
 #pragma mark - RNSFormSheetBehaviorProvider
 
-- (const std::vector<double> &)detents
+- (NSArray<NSNumber *> *)detents
 {
   return _detents;
 }
 
-- (CGFloat)reactContentsHeight
+- (CGFloat)contentsHeight
 {
   return _reactContentsHeight;
 }
@@ -213,7 +218,7 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_controller.contentView insertReactSubview:childComponentView atIndex:index];
+  [_controller.contentView insertSubview:childComponentView atIndex:index];
 
   // Assuming that for `fitToContents` the RNSFormSheetContentWrapperComponentView will be a direct child of
   // RNSFormSheetHostComponentView.
@@ -228,7 +233,7 @@ namespace react = facebook::react;
     ((RNSFormSheetContentWrapperComponentView *)childComponentView).delegate = nil;
   }
 
-  [_controller.contentView removeReactSubview:childComponentView];
+  [childComponentView removeFromSuperview];
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -236,6 +241,12 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSFormSheetHostProps>(props);
+
+  // Applied before `isOpen`, so a first-time presentation in the same batch already uses the requested style.
+  if (oldComponentProps.presentationStyle != newComponentProps.presentationStyle) {
+    _controller.presentationStyle =
+        rnscreens::conversion::RNSFormSheetPresentationStyleFromHostProp(newComponentProps.presentationStyle);
+  }
 
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
@@ -253,7 +264,11 @@ namespace react = facebook::react;
   }
 
   if (oldComponentProps.detents != newComponentProps.detents) {
-    _detents = newComponentProps.detents;
+    NSMutableArray<NSNumber *> *detents = [NSMutableArray arrayWithCapacity:newComponentProps.detents.size()];
+    for (double detent : newComponentProps.detents) {
+      [detents addObject:@(detent)];
+    }
+    _detents = detents;
     [_controller setNeedsBehaviorUpdate];
   }
 
@@ -288,6 +303,17 @@ namespace react = facebook::react;
     _nativeContainerBackgroundColor = RCTUIColorFromSharedColor(newComponentProps.nativeContainerBackgroundColor);
     [_controller setNeedsAppearanceUpdate];
   }
+
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
+    if (oldComponentProps.backgroundEffect != newComponentProps.backgroundEffect ||
+        oldComponentProps.backgroundEffectColor != newComponentProps.backgroundEffectColor ||
+        oldComponentProps.backgroundEffectBlurStyle != newComponentProps.backgroundEffectBlurStyle) {
+      _backgroundEffect = rnscreens::conversion::RNSFormSheetBackgroundEffectFromProps(newComponentProps);
+      [_controller setNeedsAppearanceUpdate];
+    }
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   if (oldComponentProps.initialDetentIndex != newComponentProps.initialDetentIndex) {
     _initialDetentIndex = newComponentProps.initialDetentIndex;

@@ -66,6 +66,10 @@ struct ContentWrapperBox {
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   NSMutableArray<UIView *> *_reactSubviews;
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  UIVisualEffect *_appliedSheetBackgroundEffect;
+  UIColor *_appliedSheetBackgroundEffectColor;
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -100,6 +104,7 @@ struct ContentWrapperBox {
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
+  _sheetBackgroundEffect = RNSScreenSheetBackgroundEffectAutomatic;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _sheetsScrollViewTag = 0;
@@ -227,7 +232,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)correctScrollViewFrame:(nonnull RCTScrollViewComponentView *)scrollViewComponent
                     withHeader:(nullable UIView *)headerView
 {
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
   }
@@ -257,7 +262,7 @@ RNS_IGNORE_SUPER_CALL_END
     return;
   }
 
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *_Nullable contentWrapper = [self registeredContentWrapper];
   if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
     return;
   }
@@ -494,6 +499,18 @@ RNS_IGNORE_SUPER_CALL_END
   contentWrapper.delegate = self;
   [contentWrapper triggerDelegateUpdate];
   return YES;
+}
+
+/// Returns the content wrapper registered with this screen, or nil if it is no longer registered.
+///
+/// `_contentWrapperBox` holds a weak pointer, but an unmounted wrapper stays alive in Fabric's recycle pool and can be
+/// reused by another screen. This happens when a nested screen's wrapper registered with this form sheet and the nested
+/// screen is removed while the sheet stays presented. A wrapper that is still registered has this screen as its
+/// delegate. Unmounting, recycling and mounting in another screen all change the delegate.
+- (nullable RNSScreenContentWrapper *)registeredContentWrapper
+{
+  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
+  return contentWrapper.delegate == self ? contentWrapper : nil;
 }
 
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
@@ -748,7 +765,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (nullable RCTScrollViewComponentView *)tryFindDescendantScrollView
 {
   // Step 1: Query registered content wrapper for the scrollview.
-  RNSScreenContentWrapper *contentWrapper = _contentWrapperBox.contentWrapper;
+  RNSScreenContentWrapper *contentWrapper = [self registeredContentWrapper];
 
   if (RCTScrollViewComponentView *_Nullable scrollViewComponent =
           [contentWrapper childRCTScrollViewComponentAndContentContainer].scrollViewComponent;
@@ -908,27 +925,85 @@ RNS_IGNORE_SUPER_CALL_END
 {
   // We first check if we are running on iOS 16+ as the API is different
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
-  if (_sheetAllowedDetents.count > 0) {
-    // We should be running on custom detents in this case, thus identifier should be a stringified number.
-    return identifier.integerValue;
-  } else
+  if (@available(iOS 16.0, *)) {
+    if (_sheetAllowedDetents.count > 0) {
+      // We should be running on custom detents in this case, thus identifier should be a stringified number.
+      return identifier.integerValue;
+    }
+  }
 #endif // iOS 16 check
-  {
-    // We're using system defined identifiers.
-    if (_sheetAllowedDetents.count >= 2 || _sheetAllowedDetents.count == 0) {
-      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
-        return 0;
-      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
-        return 1;
-      } else {
-        RCTLogError(@"[RNScreens] Unexpected detent identifier %@", identifier);
-      }
-    } else {
-      // There is only single option.
+  // We're using system defined identifiers.
+  if (_sheetAllowedDetents.count >= 2 || _sheetAllowedDetents.count == 0) {
+    if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
       return 0;
+    } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
+      return 1;
+    } else {
+      RCTLogError(@"[RNScreens] Unexpected detent identifier %@", identifier);
     }
   }
   return 0;
+}
+
+- (UISheetPresentationControllerDetentIdentifier)detentIdentifierAtIndex:(NSInteger)index
+                                                                forSheet:(UISheetPresentationController *)sheet
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return sheet.detents[index].identifier;
+  }
+#endif // iOS 16 check
+  // We're using system defined detents.
+  return index == 0 ? UISheetPresentationControllerDetentIdentifierMedium
+                    : UISheetPresentationControllerDetentIdentifierLarge;
+}
+
+/**
+ * Maps an index of `sheetAllowedDetents` array to an index of the detents set on the sheet. Below iOS 16 these are
+ * system defined detents (medium & large, or just one of them, see `updateFormSheetPresentationStyle`), so any index
+ * past the last of them selects the largest one.
+ */
+- (NSInteger)effectiveDetentIndexForIndex:(NSInteger)index forSheet:(UISheetPresentationController *)sheet
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
+  if (@available(iOS 16.0, *)) {
+    return index;
+  }
+#endif // iOS 16 check
+  return MIN(index, (NSInteger)sheet.detents.count - 1);
+}
+
+- (void)selectSheetDetentAtIndex:(NSInteger)index
+{
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    RCTLogWarn(@"[RNScreens] selectDetent called on a screen that isn't presented as a form sheet. Command ignored.");
+    return;
+  }
+
+  UISheetPresentationController *sheet = _controller.sheetPresentationController;
+  if (sheet == nil || _controller.presentingViewController == nil || _controller.isBeingDismissed) {
+    RCTLogWarn(@"[RNScreens] selectDetent called while the form sheet is not presented. Command ignored.");
+    return;
+  }
+
+  NSInteger detentIndex = [self effectiveDetentIndexForIndex:index forSheet:sheet];
+  if (detentIndex < 0 || detentIndex >= (NSInteger)sheet.detents.count) {
+    RCTLogError(@"[RNScreens] selectDetent index (%ld) exceeds effective detents count (%lu). Command ignored.",
+                (long)index,
+                (unsigned long)sheet.detents.count);
+    return;
+  }
+
+  // Sheet with no selected detent identifier rests at its smallest detent.
+  NSInteger currentIndex =
+      sheet.selectedDetentIdentifier != nil ? [self detentIndexFromDetentIdentifier:sheet.selectedDetentIdentifier] : 0;
+  if (currentIndex == detentIndex) {
+    return;
+  }
+
+  [self setSelectedDetentForSheet:sheet to:[self detentIdentifierAtIndex:detentIndex forSheet:sheet] animate:YES];
+  // UIKit notifies UISheetPresentationControllerDelegate only about the detent changes made by the user.
+  [self notifySheetDetentChangeToIndex:detentIndex isStable:YES];
 }
 
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
@@ -937,6 +1012,30 @@ RNS_IGNORE_SUPER_CALL_END
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
   [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
+
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+- (void)setBackgroundEffectForSheet:(UISheetPresentationController *)sheet
+                            animate:(BOOL)animate API_AVAILABLE(ios(26.1))
+{
+  UIColor *color = _sheetBackgroundEffect == RNSScreenSheetBackgroundEffectColor ? self.backgroundColor : nil;
+
+  BOOL alreadyApplied = color == nil
+      ? sheet.backgroundEffect == nil
+      : sheet.backgroundEffect == _appliedSheetBackgroundEffect && [_appliedSheetBackgroundEffectColor isEqual:color];
+  if (alreadyApplied) {
+    return;
+  }
+
+  UIVisualEffect *effect = color != nil ? [UIColorEffect effectWithColor:color] : nil;
+  _appliedSheetBackgroundEffect = effect;
+  _appliedSheetBackgroundEffectColor = color;
+  [self setPropertyForSheet:sheet
+                  withBlock:^{
+                    sheet.backgroundEffect = effect;
+                  }
+                    animate:animate];
+}
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
 /**
  * Updates settings for sheet presentation controller.
@@ -1039,6 +1138,11 @@ RNS_IGNORE_SUPER_CALL_END
   sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
   [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
   [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+#if !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
+  if (@available(iOS 26.1, *)) {
+    [self setBackgroundEffectForSheet:sheet animate:YES];
+  }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
 
   // lud - largest undimmed detent
   // First we try to take value from the prop or default.
@@ -1068,7 +1172,7 @@ RNS_IGNORE_SUPER_CALL_END
 
   // We trigger update from content wrapper, because on Fabric we update props after the children are mounted & laid
   // out.
-  [self->_contentWrapperBox.contentWrapper triggerDelegateUpdate];
+  [[self registeredContentWrapper] triggerDelegateUpdate];
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)
@@ -1249,11 +1353,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
-    auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
     contentWrapper.delegate = self;
     _contentWrapperBox.contentWrapper = contentWrapper;
   } else if ([childComponentView isKindOfClass:RNSScreenStackHeaderConfig.class]) {
-    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config = static_cast<RNSScreenStackHeaderConfig *>(childComponentView);
     _config.screenView = self;
   }
   [_reactSubviews insertObject:childComponentView atIndex:index];
@@ -1266,8 +1370,13 @@ RNS_IGNORE_SUPER_CALL_END
     _config = nil;
   }
   if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
-    _contentWrapperBox.contentWrapper.delegate = nil;
-    _contentWrapperBox.contentWrapper = nil;
+    auto contentWrapper = static_cast<RNSScreenContentWrapper *>(childComponentView);
+    // The box may hold a nested screen's wrapper that registered with this form sheet instead of this child.
+    // The unmounted wrapper must stop reporting regardless of which screen it reported to.
+    contentWrapper.delegate = nil;
+    if (_contentWrapperBox.contentWrapper == contentWrapper) {
+      _contentWrapperBox.contentWrapper = nil;
+    }
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
@@ -1334,6 +1443,12 @@ RNS_IGNORE_SUPER_CALL_END
   [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
+
+  if (newScreenProps.sheetBackgroundEffect != oldScreenProps.sheetBackgroundEffect) {
+    [self setSheetBackgroundEffect:[RNSConvert
+                                       RNSScreenSheetBackgroundEffectFromCppEquivalent:newScreenProps
+                                                                                           .sheetBackgroundEffect]];
+  }
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
@@ -1430,6 +1545,20 @@ RNS_IGNORE_SUPER_CALL_END
   if (updateMask & RNComponentViewUpdateMaskProps) {
     [self updateFormSheetPresentationStyle];
   }
+#endif // !TARGET_OS_TV && !TARGET_OS_VISION
+}
+
+#pragma mark - Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSScreenHandleCommand(self, commandName, args);
+}
+
+- (void)selectDetent:(NSInteger)index
+{
+#if !TARGET_OS_TV && !TARGET_OS_VISION
+  [self selectSheetDetentAtIndex:index];
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
 }
 

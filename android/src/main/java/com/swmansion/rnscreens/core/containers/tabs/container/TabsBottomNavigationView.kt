@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens.core.containers.tabs.container
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -10,13 +9,9 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFla
  * The tab bar of [TabsContainer]. Hosts may subclass it to integrate with their view system;
  * the container creates it through the factory it is given.
  */
-@SuppressLint("ViewConstructor") // Should not be restored & should only be constructed by us.
 open class TabsBottomNavigationView(
     context: Context,
-    val container: TabsContainer,
 ) : BottomNavigationView(context) {
-    private var actionOrigin: TabsActionOrigin? = null
-
     internal fun findMenuItem(menuItemId: Int): MenuItem? = menu.findItem(menuItemId)
 
     internal fun requireMenuItem(menuItemId: Int): MenuItem =
@@ -49,28 +44,4 @@ open class TabsBottomNavigationView(
     }
 
     // endregion
-
-    internal fun setSelectedItemIdWithActionOrigin(
-        itemId: Int,
-        actionOrigin: TabsActionOrigin,
-    ) {
-        require(actionOrigin !== TabsActionOrigin.USER) {
-            "[RNScreens] User-triggered actions should be processed via regular setSelectedItemId callback"
-        }
-        this.actionOrigin = actionOrigin
-        selectedItemId = itemId
-        this.actionOrigin = null
-    }
-
-    final override fun setSelectedItemId(itemId: Int) {
-        if (this.actionOrigin == null) {
-            this.actionOrigin = TabsActionOrigin.USER
-        }
-
-        val actionOrigin = checkNotNull(this.actionOrigin)
-        super.setSelectedItemId(itemId)
-        container.onAfterSetSelectedItemId(itemId, actionOrigin)
-
-        this.actionOrigin = null
-    }
 }

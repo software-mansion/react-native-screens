@@ -3,9 +3,6 @@ import { Platform, StyleSheet } from 'react-native';
 import StackHostNativeComponent from '../../../fabric/stack/StackHostNativeComponent';
 import type { StackHostProps } from './StackHost.types';
 
-/**
- * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
- */
 function StackHost(props: StackHostProps) {
   const { children, ref, direction, ...restProps } = props;
 
