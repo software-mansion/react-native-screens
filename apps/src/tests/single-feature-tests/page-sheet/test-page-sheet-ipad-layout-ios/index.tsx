@@ -25,7 +25,7 @@ function SheetContent({
       <Text style={styles.description}>
         {kind === 'pageSheet'
           ? 'iPad: wide, bottom-anchored card. The host screen is dimmed only.'
-          : 'iPad: centered floating panel of a fixed size. The host screen is dimmed only.'}
+          : 'iPad: centered floating panel. The host screen is dimmed only.'}
       </Text>
       <View style={styles.spacing} />
       <Button

@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify what distinguishes `PageSheet` from `FormSheet`: the layout UIKit picks in a regular-width environment (iPad). The host screen owns one `PageSheet` and one `FormSheet` configured identically (detents `[0.5, 1.0]`, grabber visible). On iPad the page sheet must present as a wide, bottom-anchored card, while the form sheet presents as a centered floating panel of a fixed size; behind both, the host screen is only dimmed and keeps its size and position. On iPhone (compact width) both sheets must be indistinguishable.
+**Description:** Verify what distinguishes `PageSheet` from `FormSheet`: the layout UIKit picks in a regular-width environment (iPad). The host screen owns one `PageSheet` and one `FormSheet` configured identically (detents `[0.5, 1.0]`, grabber visible). On iPad the page sheet must present as a wide, bottom-anchored card, while the form sheet presents as a narrower floating panel, centered horizontally, that grows taller at the larger detent; behind both, the host screen is only dimmed and keeps its size and position. On iPhone (compact width) both sheets must be indistinguishable.
 
 **OS test creation version:** iOS: 26.1, iPadOS: 26.1.
 
@@ -33,21 +33,29 @@ TBD
 
 1. Tap "Open PageSheet".
 
-    - [ ] A wide card anchored to the bottom edge presents; it spans (almost) the full width of the screen with a top inset below the status bar.
+    - [ ] A wide card anchored to the bottom edge presents at half the screen height; it spans (almost) the full width of the screen.
     - [ ] The host screen is dimmed and keeps its size and position (it is not shrunk or pushed back).
     - [ ] The grabber is visible at the top of the card. "PageSheet content" and "Dismiss PageSheet" are centered within the card.
 
-2. Drag the card up to the largest detent and back down.
+2. Drag the card up to the largest detent.
 
-    - [ ] The card resizes between the two detents (or snaps back to the largest one - note the iPadOS version and the observed behaviour).
+    - [ ] The card expands to full height, with its top edge just below the status bar.
 
-3. Tap "Dismiss PageSheet", then tap "Open FormSheet".
+3. Drag the card down to the smaller detent.
 
-    - [ ] A centered floating panel of a fixed size presents (not bottom-anchored, not full width).
+    - [ ] The card returns to half the screen height.
+
+4. Tap "Dismiss PageSheet", then tap "Open FormSheet".
+
+    - [ ] A short floating panel presents, centered horizontally (not bottom-anchored, not full width).
     - [ ] The host screen is dimmed and keeps its size and position.
     - [ ] "FormSheet content" and "Dismiss FormSheet" are centered within the panel.
 
-4. Tap "Dismiss FormSheet".
+5. Drag the panel up to the largest detent.
+
+    - [ ] The panel grows taller; its width and bottom edge stay the same.
+
+6. Tap "Dismiss FormSheet".
 
     - [ ] The panel dismisses and the host screen is undimmed.
 
