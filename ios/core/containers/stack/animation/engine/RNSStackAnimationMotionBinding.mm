@@ -68,6 +68,24 @@ static const double kRNSStackKeyframeStepMs = 8;
   return self;
 }
 
+- (void)writePresentedValues
+{
+  // UIKit records no keyframe for a value the property already has. After a finished transition the view's model is
+  // already at rest while the screen still shows the finished transition's last frame, so the time-0 keyframe at
+  // rest would be dropped and the first frame would show that stale offset (undocumented, 18.6 and 27.2). With the
+  // model at the presented value, the time-0 keyframe differs from it whenever the screen is not at time 0.
+  CALayer *presentationLayer = _view.layer.presentationLayer;
+  if (presentationLayer == nil) {
+    return;
+  }
+  if (_animatesTransform && CATransform3DIsAffine(presentationLayer.transform)) {
+    _view.transform = CATransform3DGetAffineTransform(presentationLayer.transform);
+  }
+  if (_animatesAlpha) {
+    _view.alpha = presentationLayer.opacity;
+  }
+}
+
 - (void)addKeyframesForDurationMs:(NSInteger)durationMs
 {
   RNSAssert(_motion.durationMs <= durationMs, @"[RNScreens] A motion cannot outlast its transition.");
