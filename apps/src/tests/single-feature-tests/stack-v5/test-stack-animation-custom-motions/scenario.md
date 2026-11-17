@@ -5,9 +5,9 @@
 **Description:** Verify an `animation` prop of `Stack.Screen` where a screen's
 motion is written as tracks, one per animated property. Pass: each track moves
 its property between its endpoints for its own duration, an omitted endpoint is
-the property's rest value, a dim scrim tints the screen it is written on, and
-an invalid track plays `default` instead. Presets used as a screen's motion are
-covered by `test-stack-animation-preset-composition`.
+the property's rest value, a dim scrim tints the screen it is written on and
+fades out with it, and an invalid track plays `default` instead. Presets used
+as a screen's motion are covered by `test-stack-animation-preset-composition`.
 
 **OS test creation version:** iOS 18.6 and 27.2, Android API Level 37.
 
@@ -130,6 +130,13 @@ with Detox.
    - [ ] "Blue" slides in from the right over about 1 second.
    - [ ] "Blue" starts almost black and brightens to its color as it arrives.
    - [ ] "Home" is static and keeps its colors.
+
+4. On "Blue", tap "Pop". On "Home", set "next push" to
+   `fade out + darken 2000 ms`, then tap "Push Blue".
+
+   - [ ] Over about 2 seconds "Home" darkens and fades out at the same time.
+   - [ ] Then the whole screen is purple, not black, for about half a second.
+   - [ ] Then "Blue" fades in.
 
 ---
 

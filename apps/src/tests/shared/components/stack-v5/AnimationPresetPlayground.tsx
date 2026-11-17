@@ -69,7 +69,8 @@ const PlaygroundContext = React.createContext<PlaygroundConfig>({
  * `initialAnimation` is the label of the option every screen starts with. Every screen has a
  * hidden header with its name as the title, so the iOS back button menu lists it by name. With
  * `withHeaderPicker`, "next push header hidden" picks whether pushed screens show their header;
- * Home never does.
+ * Home never does. `backgroundColor` fills the area behind the screens, so a scenario can name the
+ * color that shows through a screen that fades out.
  */
 export function AnimationPresetPlayground({
   animationOptions,
@@ -77,12 +78,14 @@ export function AnimationPresetPlayground({
   withDirectionPicker = false,
   withColorReference = false,
   withHeaderPicker = false,
+  backgroundColor,
 }: {
   animationOptions: readonly AnimationPresetOption[];
   initialAnimation: string;
   withDirectionPicker?: boolean;
   withColorReference?: boolean;
   withHeaderPicker?: boolean;
+  backgroundColor?: string;
 }) {
   const [direction, setDirection] = React.useState<DirectionOption>('ltr');
 
@@ -118,50 +121,52 @@ export function AnimationPresetPlayground({
 
   return (
     <PlaygroundContext value={config}>
-      <StackContainerWithDynamicRouteConfigs
-        direction={direction}
-        routeConfigs={[
-          {
-            name: 'Home',
-            element: (
-              <PresetScreen
-                name="Home"
-                color={Colors.YellowLight100}
-                isPopEnabled={false}
-                routeNames={['Blue', 'Red']}
-                hasColorReference={withColorReference}
-              />
-            ),
-            options: optionsFor('Home'),
-          },
-          {
-            name: 'Blue',
-            element: (
-              <PresetScreen
-                name="Blue"
-                color={Colors.BlueLight100}
-                isPopEnabled={true}
-                routeNames={['Red']}
-                hasColorReference={withColorReference}
-              />
-            ),
-            options: optionsFor('Blue'),
-          },
-          {
-            name: 'Red',
-            element: (
-              <PresetScreen
-                name="Red"
-                color={Colors.RedLight100}
-                isPopEnabled={true}
-                routeNames={['Blue']}
-                hasColorReference={withColorReference}
-              />
-            ),
-            options: optionsFor('Red'),
-          },
-        ]}
-      />
+      <View style={[styles.background, { backgroundColor }]}>
+        <StackContainerWithDynamicRouteConfigs
+          direction={direction}
+          routeConfigs={[
+            {
+              name: 'Home',
+              element: (
+                <PresetScreen
+                  name="Home"
+                  color={Colors.YellowLight100}
+                  isPopEnabled={false}
+                  routeNames={['Blue', 'Red']}
+                  hasColorReference={withColorReference}
+                />
+              ),
+              options: optionsFor('Home'),
+            },
+            {
+              name: 'Blue',
+              element: (
+                <PresetScreen
+                  name="Blue"
+                  color={Colors.BlueLight100}
+                  isPopEnabled={true}
+                  routeNames={['Red']}
+                  hasColorReference={withColorReference}
+                />
+              ),
+              options: optionsFor('Blue'),
+            },
+            {
+              name: 'Red',
+              element: (
+                <PresetScreen
+                  name="Red"
+                  color={Colors.RedLight100}
+                  isPopEnabled={true}
+                  routeNames={['Blue']}
+                  hasColorReference={withColorReference}
+                />
+              ),
+              options: optionsFor('Red'),
+            },
+          ]}
+        />
+      </View>
     </PlaygroundContext>
   );
 }
@@ -333,6 +338,9 @@ function PresetScreen({
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+  },
   frame: {
     position: 'absolute',
     top: 12,
