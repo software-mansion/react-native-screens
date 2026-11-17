@@ -76,7 +76,7 @@ export interface StackHeaderBaseItemIOS {
 /**
  * Menu fields of a header item.
  */
-export interface SupportsMenuIOS {
+export interface StackHeaderSupportsMenuIOS {
   /**
    * Menu definition for the context menu that appears when item is tapped.
    */
@@ -90,7 +90,7 @@ export interface SupportsMenuIOS {
    * items ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS
    * doesn't display in the overflow menu otherwise. The `id`s used in the menu
    * are expected to be unique across every
-   * {@link SupportsMenuIOS.menu | menu} and `menuRepresentation`.
+   * {@link StackHeaderSupportsMenuIOS.menu | menu} and `menuRepresentation`.
    */
   menuRepresentation?: StackHeaderMenuIOS | undefined;
 }
@@ -98,7 +98,7 @@ export interface SupportsMenuIOS {
 /**
  * Field of a header item that controls its shared background.
  */
-export interface SupportsSharedBackgroundIOS {
+export interface StackHeaderSupportsSharedBackgroundIOS {
   /**
    * Whether the liquid glass background for this item should be hidden.
    *
@@ -128,7 +128,7 @@ export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';
 /**
  * Field of a header item that sets its visibility priority.
  */
-export interface SupportsVisibilityPriorityIOS {
+export interface StackHeaderSupportsVisibilityPriorityIOS {
   /**
    * Decides which items give way first when the header runs out of room.
    *
@@ -151,7 +151,7 @@ export interface SupportsVisibilityPriorityIOS {
  * Field of a header item that identifies it across screens for transition
  * animations.
  */
-export interface SupportsIdentifierIOS {
+export interface StackHeaderSupportsIdentifierIOS {
   /**
    * Stable identifier used to match the item across different screens
    * for more intelligent animation on transition.
@@ -183,10 +183,10 @@ export type StackHeaderItemVariantIOS = 'plain' | 'prominent';
  */
 export interface StackHeaderInlineItemIOS
   extends StackHeaderBaseItemIOS,
-    SupportsMenuIOS,
-    SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS,
-    SupportsVisibilityPriorityIOS {
+    StackHeaderSupportsMenuIOS,
+    StackHeaderSupportsIdentifierIOS,
+    StackHeaderSupportsSharedBackgroundIOS,
+    StackHeaderSupportsVisibilityPriorityIOS {
   /**
    * Marks this object as a header item definition.
    */
@@ -213,7 +213,7 @@ export interface StackHeaderInlineItemIOS
    * @remarks
    * A disabled item is grayed out and does not respond to user interaction:
    * neither {@link StackHeaderInlineItemIOS.onPress | onPress} nor
-   * {@link SupportsMenuIOS.menu | menu} is triggered.
+   * {@link StackHeaderSupportsMenuIOS.menu | menu} is triggered.
    *
    * @defaultValue `false`
    */
@@ -223,7 +223,7 @@ export interface StackHeaderInlineItemIOS
    *
    * @remarks
    * Fires when the user taps the header item. When combined with
-   * {@link SupportsMenuIOS.menu | menu}, tapping fires `onPress` and
+   * {@link StackHeaderSupportsMenuIOS.menu | menu}, tapping fires `onPress` and
    * long-pressing shows the menu.
    */
   onPress?: StackHeaderPressHandler | undefined;
@@ -233,10 +233,10 @@ export interface StackHeaderInlineItemIOS
  * Header item with custom view.
  */
 export interface StackHeaderInlineCustomItemIOS
-  extends SupportsMenuIOS,
-    SupportsIdentifierIOS,
-    SupportsSharedBackgroundIOS,
-    SupportsVisibilityPriorityIOS {
+  extends StackHeaderSupportsMenuIOS,
+    StackHeaderSupportsIdentifierIOS,
+    StackHeaderSupportsSharedBackgroundIOS,
+    StackHeaderSupportsVisibilityPriorityIOS {
   /**
    * A unique identifier within the screen header.
    */
@@ -641,12 +641,12 @@ export interface StackHeaderConfigPropsIOS {
    * entirely.
    *
    * Some fields of the items are supported only on newer iOS versions:
-   * - {@link SupportsMenuIOS.menuRepresentation | menuRepresentation} — iOS 16
-   *   or higher.
-   * - {@link SupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
-   *   and {@link SupportsIdentifierIOS.identifier | identifier} — iOS 26 or
-   *   higher.
-   * - {@link SupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
+   * - {@link StackHeaderSupportsMenuIOS.menuRepresentation | menuRepresentation}
+   *   — iOS 16 or higher.
+   * - {@link StackHeaderSupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
+   *   and {@link StackHeaderSupportsIdentifierIOS.identifier | identifier}
+   *   — iOS 26 or higher.
+   * - {@link StackHeaderSupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
    *   — iOS 27 or higher.
    *
    * @platform ios
@@ -683,12 +683,12 @@ export interface StackHeaderConfigPropsIOS {
    * entirely.
    *
    * Some fields of the items are supported only on newer iOS versions:
-   * - {@link SupportsMenuIOS.menuRepresentation | menuRepresentation} — iOS 16
-   *   or higher.
-   * - {@link SupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
-   *   and {@link SupportsIdentifierIOS.identifier | identifier} — iOS 26 or
-   *   higher.
-   * - {@link SupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
+   * - {@link StackHeaderSupportsMenuIOS.menuRepresentation | menuRepresentation}
+   *   — iOS 16 or higher.
+   * - {@link StackHeaderSupportsSharedBackgroundIOS.hidesSharedBackground | hidesSharedBackground}
+   *   and {@link StackHeaderSupportsIdentifierIOS.identifier | identifier}
+   *   — iOS 26 or higher.
+   * - {@link StackHeaderSupportsVisibilityPriorityIOS.visibilityPriority | visibilityPriority}
    *   — iOS 27 or higher.
    *
    * @platform ios
