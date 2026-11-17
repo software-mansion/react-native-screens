@@ -874,10 +874,10 @@ export interface StackHeaderConfigPropsIOS {
    * is not aligned with the edge of the header.
    *
    * @info
-   * On iOS 26, header items resolve the `button` / `prominentButton` attributes
-   * once, from whichever appearance is in effect at the moment the items are
-   * attached to the navigation bar, and do not update on property changes or
-   * scroll edge transitions.
+   * Native platform limitation: on iOS 26, header items resolve the `button` /
+   * `prominentButton` attributes once, from whichever appearance is in effect
+   * at the moment the items are attached to the navigation bar, and do not
+   * update on property changes or scroll edge transitions.
    *
    * @platform ios
    */
@@ -893,10 +893,10 @@ export interface StackHeaderConfigPropsIOS {
    * transparent background by default (`iOS < 18`).
    *
    * @info
-   * On iOS 26, header items resolve the `button` / `prominentButton` attributes
-   * once, from whichever appearance is in effect at the moment the items are
-   * attached to the navigation bar, and do not update on property changes or
-   * scroll edge transitions.
+   * Native platform limitation: on iOS 26, header items resolve the `button` /
+   * `prominentButton` attributes once, from whichever appearance is in effect
+   * at the moment the items are attached to the navigation bar, and do not
+   * update on property changes or scroll edge transitions.
    *
    * @platform ios
    */
