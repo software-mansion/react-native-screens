@@ -62,7 +62,7 @@ export interface StackHeaderMenuOptionsIOS {
 /**
  * Identifier, title and icon of a header item.
  */
-export interface StackHeaderBaseItemIOS {
+export interface StackHeaderItemBaseIOS {
   /**
    * A unique identifier within the screen header.
    *
@@ -206,7 +206,7 @@ export type StackHeaderItemVariantIOS = 'plain' | 'prominent';
  * Native header item with a title or an icon.
  */
 export interface StackHeaderInlineItemIOS
-  extends StackHeaderBaseItemIOS,
+  extends StackHeaderItemBaseIOS,
     StackHeaderSupportsMenuIOS,
     StackHeaderSupportsIdentifierIOS,
     StackHeaderSupportsSharedBackgroundIOS,

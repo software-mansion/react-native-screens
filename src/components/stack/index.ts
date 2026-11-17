@@ -65,7 +65,7 @@ export type {
   StackHeaderButtonStateAppearanceIOS,
   StackHeaderItemVariantIOS,
   StackHeaderInlineItemIOS,
-  StackHeaderBaseItemIOS,
+  StackHeaderItemBaseIOS,
   StackHeaderItemIOS,
   StackHeaderInlineCustomItemIOS,
   StackHeaderTitleCustomItemIOS,
