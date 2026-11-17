@@ -26,7 +26,7 @@ namespace react = facebook::react;
   RNSStackNavigationController *_Nullable _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
-  BOOL _headlessModeEnabled;
+  BOOL _didSetHeadlessModeEnabled;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -101,15 +101,6 @@ namespace react = facebook::react;
             @"[RNScreens] Stack.Host expects an empty navigation controller");
   _stackNavigationController = navigationController;
   [self flushPendingOperations];
-}
-
-- (void)updateHeadlessModeEnabled:(BOOL)headlessModeEnabled
-{
-  if (_stackNavigationController != nil) {
-    RCTLogError(@"[RNScreens] Stack.Host cannot switch between its own and an external navigation controller");
-    return;
-  }
-  _headlessModeEnabled = headlessModeEnabled;
 }
 
 /**
@@ -188,8 +179,13 @@ namespace react = facebook::react;
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(props);
 
   if (oldComponentProps.headlessModeEnabled != newComponentProps.headlessModeEnabled) {
-    [self updateHeadlessModeEnabled:newComponentProps.headlessModeEnabled];
+    if (_didSetHeadlessModeEnabled) {
+      RNSLogW(@"[RNScreens] Changing the headless mode of Stack.Host at runtime is not supported");
+    } else {
+      _headlessModeEnabled = newComponentProps.headlessModeEnabled;
+    }
   }
+  _didSetHeadlessModeEnabled = YES;
   [self createOwnNavigationControllerIfNeeded];
 
   [super updateProps:props oldProps:oldProps];

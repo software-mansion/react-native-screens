@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackHostComponentView : RNSReactBaseView
 
+@property (nonatomic, readonly) BOOL headlessModeEnabled;
+
 @end
 
 #pragma mark - External navigation controller
