@@ -33,9 +33,9 @@ internal class SheetDialog(
         fun handleCancelRequest()
 
         /**
-         * Wraps the dispatch of touch events that end a gesture (`ACTION_UP` / `ACTION_CANCEL`). The sheet's
-         * behavior decides whether a dragged sheet hides while handling these events, so the interceptor can
-         * adjust that decision before calling [dispatchGestureCompleted].
+         * Wraps the dispatch of touch events that can end a drag (`ACTION_UP` / `ACTION_POINTER_UP` / `ACTION_CANCEL`).
+         * The sheet's behavior decides whether a released sheet hides while handling these events, so the
+         * interceptor can adjust that decision before calling [dispatchGestureCompleted].
          */
         fun handleGestureEnd(dispatchGestureCompleted: () -> Boolean): Boolean
     }
@@ -66,7 +66,10 @@ internal class SheetDialog(
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         val interceptor = nativeDismissInterceptor
-        val isGestureEnd = ev.actionMasked == MotionEvent.ACTION_UP || ev.actionMasked == MotionEvent.ACTION_CANCEL
+        val isGestureEnd =
+            ev.actionMasked == MotionEvent.ACTION_UP ||
+                ev.actionMasked == MotionEvent.ACTION_POINTER_UP ||
+                ev.actionMasked == MotionEvent.ACTION_CANCEL
         if (interceptor == null || !isGestureEnd) {
             return super.dispatchTouchEvent(ev)
         }

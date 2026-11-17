@@ -50,10 +50,10 @@ internal class SheetNativeDismissCoordinator(
 
         // Releasing the drag with hiding disabled makes the sheet snap back right away, instead of sliding
         // off screen first and being restored after the cancel request.
-        val isDismissAttempt = controller.isDraggedBelowLowestDetent
+        val wasDraggedBelowLowestDetent = controller.isDraggedBelowLowestDetent
         val handled = controller.withHidingDisabled(dispatchGestureCompleted)
-        if (isDismissAttempt) {
-            // Without hiding, Material settles at the nearest offset, which isn't a detent for single-detent sheets.
+        // A lifted pointer doesn't release the sheet while another one keeps dragging it.
+        if (wasDraggedBelowLowestDetent && !controller.isDragging) {
             controller.settleAtLastStableState()
             onDismissPrevented()
         }

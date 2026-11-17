@@ -16,11 +16,14 @@ internal class SheetBehaviorController(
     private var lastStableState: Int = BottomSheetBehavior.STATE_COLLAPSED
     private var lastSlideOffset: Float = 0f
 
+    internal val isDragging: Boolean
+        get() = behavior.state == BottomSheetBehavior.STATE_DRAGGING
+
     /**
      * Whether the user is dragging the sheet below its lowest detent, i.e. towards dismissal.
      */
     internal val isDraggedBelowLowestDetent: Boolean
-        get() = behavior.state == BottomSheetBehavior.STATE_DRAGGING && lastSlideOffset < 0f
+        get() = isDragging && lastSlideOffset < 0f
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -178,6 +181,8 @@ internal class SheetBehaviorController(
         skipCollapsed = true
         isFitToContents = true
         maxHeight = detents.maxAllowedHeightForFitToContents(sheetAvailableSpace, contentHeight, bottomInset, keyboardLift)
+        // The collapsed offset must match the sole detent, so that the sheet doesn't rest anywhere else.
+        peekHeight = maxHeight
         state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -189,6 +194,8 @@ internal class SheetBehaviorController(
         skipCollapsed = true
         isFitToContents = true
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace, keyboardLift)
+        // The collapsed offset must match the sole detent, so that the sheet doesn't rest anywhere else.
+        peekHeight = maxHeight
         state = BottomSheetBehavior.STATE_EXPANDED
     }
 
