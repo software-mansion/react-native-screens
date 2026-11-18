@@ -113,9 +113,6 @@ export interface TabsHostPropsIOS {
    * Specifies the color used for selected tab's text and icon color.
    *
    * @remarks
-   * Starting from iOS 26, it also impacts glow of Liquid Glass tab selection
-   * view.
-   *
    * {@link TabsScreenItemStateAppearanceIOS.tabBarItemTitleFontColor | tabBarItemTitleFontColor}
    * and {@link TabsScreenItemStateAppearanceIOS.tabBarItemIconColor | tabBarItemIconColor}
    * defined on {@link Tabs.Screen} component override this color.
