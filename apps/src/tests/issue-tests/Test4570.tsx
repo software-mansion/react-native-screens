@@ -20,9 +20,8 @@ type Routes = { Home: undefined; Detail: { animation: DetailAnimation } };
 
 const Stack = createNativeStackNavigator<Routes>();
 
-// Restarts a layout transition before the previous one ends, so Reanimated
-// mounts synchronously on the UI thread every frame, including the frame of
-// the pop.
+// Restarts a layout transition before the previous one ends, so a Reanimated
+// layout animation is running when the screen is popped.
 function LayoutAnimationTicker() {
   const [wide, setWide] = useState(false);
 
