@@ -6,7 +6,8 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests back button configuration, layout with respect to changing widths of elements in header, ' +
     'and toggling the long press navigation history menu. Back button props are configured on the screen ' +
-    'that renders the back button, but the native configuration is performed on the screen below.',
+    'that renders the back button, but the native configuration is performed on the screen below. ' +
+    'The back button and the back menu follow the stack order after a replace and a push of several screens.',
   platforms: ['ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
