@@ -65,20 +65,27 @@
     return RNSContainedModalPresentationDecisionDefer;
   }
 
+  UIViewController *presentationSourceViewController = provider.presentationSourceViewController;
+  UIViewController *presentedViewController = presentationSourceViewController.presentedViewController;
+  BOOL isSourcePresentingAnotherModal = presentedViewController != nil && presentedViewController != controller &&
+      presentedViewController.presentingViewController == presentationSourceViewController;
+
   // Deferral: UIKit silently ignores a presentation request from an off-window
   // view (the completion never fires); the host re-flushes on window attach.
+  // Not when the provider is already presenting another modal: a replacing
+  // presentation is exactly what takes the provider's content - this host
+  // included - off-window, and deferring would surface the rejection only
+  // once that other modal is dismissed.
   if (provider.hostWindow == nil) {
-    return RNSContainedModalPresentationDecisionDefer;
+    return isSourcePresentingAnotherModal ? RNSContainedModalPresentationDecisionReject
+                                          : RNSContainedModalPresentationDecisionDefer;
   }
 
   // Rejection: no provider resolves for this modal (missing or mismatched
   // target), and nothing retries a request until the next prop change.
-  UIViewController *presentationSourceViewController = provider.presentationSourceViewController;
   if (presentationSourceViewController == nil) {
     return RNSContainedModalPresentationDecisionReject;
   }
-
-  UIViewController *presentedViewController = presentationSourceViewController.presentedViewController;
 
   // Deferral: our own request is in flight. UIKit already reports the
   // controller as presented, but `_state` is still Dismissed: it only flips
@@ -91,8 +98,7 @@
 
   // Rejection: one open modal per provider. `presentedViewController` also
   // reports presentations made by ancestors, hence the scoping.
-  if (presentedViewController != nil &&
-      presentedViewController.presentingViewController == presentationSourceViewController) {
+  if (isSourcePresentingAnotherModal) {
     return RNSContainedModalPresentationDecisionReject;
   }
 

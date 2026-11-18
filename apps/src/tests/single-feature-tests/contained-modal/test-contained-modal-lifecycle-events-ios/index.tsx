@@ -3,6 +3,7 @@ import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   ContainedModalProvider,
   ContainedModalOverContent,
+  ContainedModalReplacingContent,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
@@ -86,6 +87,12 @@ function EventsScreen() {
     addLog,
     clearLogs,
   } = useEventsStateContext();
+  // Switching swaps the component type, which remounts the first modal; only
+  // switch while it is closed.
+  const [isReplacing, setIsReplacing] = useState(false);
+  const FirstModal = isReplacing
+    ? ContainedModalReplacingContent
+    : ContainedModalOverContent;
 
   return (
     <View style={styles.container} testID="contained-modal-events-view">
@@ -117,12 +124,22 @@ function EventsScreen() {
           testID="clear-logs-button"
         />
       </View>
+      <View style={styles.row}>
+        <Button
+          title={
+            isReplacing ? 'Variant: replacing content' : 'Variant: over content'
+          }
+          color={Colors.primary}
+          onPress={() => setIsReplacing(value => !value)}
+          testID="contained-modal-variant-button"
+        />
+      </View>
 
       <ContainedModalProvider containerId="events" style={styles.provider}>
         <View style={styles.providerContent}>
           <Text style={styles.providerLabel}>Provider area</Text>
         </View>
-        <ContainedModalOverContent
+        <FirstModal
           isOpen={isOpen}
           targetContainerId="events"
           onPresentationRejected={() => {
@@ -141,7 +158,7 @@ function EventsScreen() {
               testID="dismiss-contained-modal-button"
             />
           </View>
-        </ContainedModalOverContent>
+        </FirstModal>
         {/* Second modal targeting the SAME provider: opening it while the
             first is presented must be rejected (one open modal per
             provider), surfaced via onPresentationRejected. */}
