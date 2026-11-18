@@ -1,4 +1,5 @@
 import { ViewProps } from 'react-native';
+import type { StackHeaderBackgroundSubviewCollapseModeAndroid } from '../StackHeaderConfig.android.types';
 
 export type StackHeaderSubviewTypeAndroid =
   | 'background'
@@ -6,11 +7,9 @@ export type StackHeaderSubviewTypeAndroid =
   | 'center'
   | 'trailing';
 
-export type StackHeaderSubviewCollapseModeAndroid = 'off' | 'parallax';
-
 export type StackHeaderSubviewProps = {
   children: NonNullable<ViewProps['children']>;
 
   type?: StackHeaderSubviewTypeAndroid | undefined;
-  collapseMode?: StackHeaderSubviewCollapseModeAndroid | undefined;
+  collapseMode?: StackHeaderBackgroundSubviewCollapseModeAndroid | undefined;
 };
