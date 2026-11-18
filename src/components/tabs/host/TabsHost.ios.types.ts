@@ -98,6 +98,18 @@ export type TabBarSidebarPreferredPlacement =
   | 'tabBar';
 
 /**
+ * Where the tab bar is placed when the interface has a regular horizontal size
+ * class.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'automatic'` — the system resolves to the platform default, on iPad the
+ *   tab bar moves to the top of the screen
+ * - `'bottom'` — the tab bar stays at the bottom of the screen, as on iPhone
+ */
+export type TabBarPlacement = 'automatic' | 'bottom';
+
+/**
  * iOS-specific props for {@link Tabs.Host}.
  */
 export interface TabsHostPropsIOS {
@@ -198,6 +210,21 @@ export interface TabsHostPropsIOS {
    * @platform ios >= 27
    */
   tabBarSidebarPreferredPlacement?: TabBarSidebarPreferredPlacement | undefined;
+  /**
+   * Specifies where the tab bar is placed when the interface has a regular
+   * horizontal size class, e.g. on iPad.
+   *
+   * @remarks
+   * With `'bottom'`, the tab bar controller gets a compact horizontal size
+   * class through `traitOverrides`, which keeps the tab bar at the bottom of
+   * the screen. UIKit has no dedicated API for it.
+   *
+   * The tab screens inherit the compact horizontal size class.
+   *
+   * @defaultValue `'automatic'`
+   * @platform ios >= 18
+   */
+  tabBarPlacement?: TabBarPlacement | undefined;
   /**
    * `screenKey` of the tab screen that should receive the prominent treatment.
    *

@@ -60,6 +60,8 @@ type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
 
 type TabBarSidebarPreferredPlacement = 'automatic' | 'sidebar' | 'tabBar';
 
+type TabBarPlacement = 'automatic' | 'bottom';
+
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
@@ -95,6 +97,7 @@ export interface NativeProps extends ViewProps {
     TabBarSidebarPreferredPlacement,
     'automatic'
   >;
+  tabBarPlacement?: CT.WithDefault<TabBarPlacement, 'automatic'>;
   bottomAccessoryHidden?: CT.WithDefault<boolean, false>;
   prominentScreenKey?: string | undefined;
 }

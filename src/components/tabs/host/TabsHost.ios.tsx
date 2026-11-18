@@ -53,6 +53,7 @@ function TabsHost(props: TabsHostProps) {
       tabBarHiddenAnimationEnabled={ios?.tabBarHiddenAnimationEnabled}
       tabBarControllerMode={ios?.tabBarControllerMode}
       tabBarSidebarPreferredPlacement={ios?.tabBarSidebarPreferredPlacement}
+      tabBarPlacement={ios?.tabBarPlacement}
       tabBarMinimizeBehavior={ios?.tabBarMinimizeBehavior}
       tabBarTintColor={ios?.tabBarTintColor}
       bottomAccessoryHidden={ios?.bottomAccessoryHidden}

@@ -21,6 +21,7 @@ export type {
   TabBarMinimizeBehavior,
   TabBarControllerMode,
   TabBarSidebarPreferredPlacement,
+  TabBarPlacement,
   TabsHostPropsIOS,
 } from './host';
 
