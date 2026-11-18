@@ -108,11 +108,12 @@ export interface StackHeaderBackgroundSubviewAndroid {
   /**
    * Controls how the background subview behaves when the app bar collapses.
    *
-   * @remarks
-   * `pin` is not currently supported because the background subview is
-   * stretched to match the entire `AppBarLayout`, which causes pinned content
-   * to move immediately rather than staying fixed. Support for `pin` collapse
-   * mode might be added in the future.
+   * @note
+   * This is an implementation detail and may change. `pin` is not currently
+   * supported because the background subview is stretched to match the entire
+   * `AppBarLayout`, which causes pinned content to move immediately rather than
+   * staying fixed. Support for `pin` collapse mode might be added in the
+   * future.
    *
    * @defaultValue `'off'`
    * @platform android
@@ -663,12 +664,9 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * Tint color applied to the back button icon in its normal state.
    *
-   * @remarks
-   * The default tint applies to the native back arrow and `'drawableResource'`
-   * icons that have an associated tint. For `'imageSource'` icons, no tint is
-   * applied by default.
-   *
-   * @defaultValue The default tint color is used.
+   * @defaultValue No tint is applied: the native back arrow and
+   * `'drawableResource'` icons keep their own tint, `'imageSource'` icons are
+   * drawn as is.
    * @platform android
    */
   backButtonTintColorNormal?: ColorValue | undefined;
@@ -715,13 +713,9 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * Tint color applied to the overflow menu icon in its normal state.
    *
-   * @remarks
-   * The default tint applies to the default overflow icon and
-   * `'drawableResource'` icons that have an associated tint. For `'imageSource'`
-   * icons, no tint is applied by default.
-   *
-   * @defaultValue The default tint (the Material theme's menu icon color) is
-   * used.
+   * @defaultValue No tint is applied: the default overflow icon and
+   * `'drawableResource'` icons keep their own tint, `'imageSource'` icons are
+   * drawn as is.
    * @platform android
    */
   overflowIconTintColorNormal?: ColorValue | undefined;
@@ -942,8 +936,7 @@ export interface StackHeaderConfigPropsAndroid {
    * An invalid menu is rejected — for example duplicate item or group ids, a
    * {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId} that is not
    * declared at the same menu level, or more than one `initialToggleState` in a
-   * single-selection group. The menu is validated when the prop is set, and a
-   * rejected menu leaves the previous one in effect.
+   * single-selection group. A rejected menu throws an error during render.
    *
    * @platform android
    */
