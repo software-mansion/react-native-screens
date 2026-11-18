@@ -18,7 +18,9 @@ export type TabsHostNavStateRequest = {
    * Valid screen key.
    *
    * @remarks
-   * It must correspond to one of the keys you assign to the `Tabs.Screen`s.
+   * It must correspond to the
+   * {@link TabsScreenPropsBase.screenKey | screenKey} of one of the
+   * {@link Tabs.Screen} components.
    */
   selectedScreenKey: string;
   /**
