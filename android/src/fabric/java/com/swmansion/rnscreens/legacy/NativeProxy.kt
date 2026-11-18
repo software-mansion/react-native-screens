@@ -30,18 +30,15 @@ class NativeProxy : UIManagerListener {
 
     external fun invalidateNative()
 
-    // Added by the thread that pulled the transaction removing the screen, drained on the UI
-    // thread before that transaction mounts.
-    private val screensPendingRemovalTransition = ConcurrentLinkedQueue<Screen>()
-
-    fun clearPendingRemovalTransitions() {
-        screensPendingRemovalTransition.clear()
-    }
-
     companion object {
         // we use ConcurrentHashMap here since it will be read on the JS thread,
         // and written to on the UI thread.
         private val viewsMap = ConcurrentHashMap<Int, WeakReference<Screen>>()
+
+        // Added by the thread that pulled the transaction removing the screen, drained on the UI
+        // thread before that transaction mounts. Shared by all proxies, because the native removal
+        // listener notifies only the most recently installed one.
+        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<Screen>()
 
         fun addScreenToMap(
             tag: Int,
@@ -56,6 +53,7 @@ class NativeProxy : UIManagerListener {
 
         fun clearMapOnInvalidate() {
             viewsMap.clear()
+            screensPendingRemovalTransition.clear()
         }
     }
 

@@ -49,7 +49,6 @@ class ScreensModule(
         super.invalidate()
         proxy?.let {
             UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)?.removeUIManagerEventListener(it)
-            it.clearPendingRemovalTransitions()
             it.invalidateNative()
         }
         proxy = null
