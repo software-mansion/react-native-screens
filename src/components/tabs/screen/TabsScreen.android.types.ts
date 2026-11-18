@@ -204,7 +204,7 @@ export interface TabsScreenPropsAndroid {
    *
    *   Remarks: Requires passing a drawable to resources via Android Studio.
    *
-   * See `TabsScreenIconTintingAndroid` for the meaning of each value.
+   * See `TabsPlatformIconTintingAndroid` for the meaning of each value.
    *
    * @platform android
    */

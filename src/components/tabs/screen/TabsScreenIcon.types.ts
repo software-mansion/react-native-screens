@@ -1,7 +1,10 @@
 import type {
   PlatformIconAndroidDrawableResource,
+  PlatformIconImageRenderingModeIOS,
   PlatformIconIOSSfSymbol,
   PlatformIconShared,
+  PlatformIconSymbolRenderingModeIOS,
+  PlatformIconTintingAndroid,
 } from '../../shared/types';
 
 /**
@@ -20,10 +23,8 @@ import type {
  * - `'original'` — the image keeps its own colors and ignores the item icon
  *   color.
  */
-export type TabsScreenIconImageRenderingModeIOS =
-  | 'default'
-  | 'template'
-  | 'original';
+export type TabsPlatformIconImageRenderingModeIOS =
+  PlatformIconImageRenderingModeIOS;
 
 /**
  * How the tab bar renders an `'sfSymbol'` icon on iOS. The names follow the
@@ -44,10 +45,8 @@ export type TabsScreenIconImageRenderingModeIOS =
  *   rendering) and ignores the item icon color. A symbol without color layers
  *   is drawn as authored.
  */
-export type TabsScreenIconSymbolRenderingModeIOS =
-  | 'default'
-  | 'monochrome'
-  | 'original';
+export type TabsPlatformIconSymbolRenderingModeIOS =
+  PlatformIconSymbolRenderingModeIOS;
 
 /**
  * Tab bar item icon on iOS, loaded from an image source.
@@ -64,7 +63,7 @@ export interface TabsScreenIconImageSourceIOS extends PlatformIconShared {
    * @defaultValue `'default'`, the system behavior.
    * @platform ios
    */
-  renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
+  renderingMode?: TabsPlatformIconImageRenderingModeIOS | undefined;
 }
 
 /**
@@ -85,7 +84,7 @@ export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
    * @defaultValue `'default'`, the system behavior.
    * @platform ios
    */
-  renderingMode?: TabsScreenIconSymbolRenderingModeIOS | undefined;
+  renderingMode?: TabsPlatformIconSymbolRenderingModeIOS | undefined;
 }
 
 /**
@@ -101,7 +100,7 @@ export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
  * - `'original'` — the icon keeps its own colors and ignores the item icon
  *   color, e.g. a multicolor VectorDrawable.
  */
-export type TabsScreenIconTintingAndroid = 'default' | 'tinted' | 'original';
+export type TabsPlatformIconTintingAndroid = PlatformIconTintingAndroid;
 
 /**
  * Tab bar item icon on Android, loaded from a drawable resource.
@@ -119,7 +118,7 @@ export interface TabsScreenIconDrawableResourceAndroid
    * @defaultValue `'default'`, which tints the icon.
    * @platform android
    */
-  tinting?: TabsScreenIconTintingAndroid | undefined;
+  tinting?: TabsPlatformIconTintingAndroid | undefined;
 }
 
 /**
@@ -137,7 +136,7 @@ export interface TabsScreenIconImageSourceAndroid extends PlatformIconShared {
    * @defaultValue `'default'`, which tints the icon.
    * @platform android
    */
-  tinting?: TabsScreenIconTintingAndroid | undefined;
+  tinting?: TabsPlatformIconTintingAndroid | undefined;
 }
 
 /**

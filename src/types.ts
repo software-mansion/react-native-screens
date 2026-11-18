@@ -14,4 +14,7 @@ export type {
   PlatformIconIOSXcasset,
   PlatformIconIOS,
   PlatformIconAndroid,
+  PlatformIconImageRenderingModeIOS,
+  PlatformIconSymbolRenderingModeIOS,
+  PlatformIconTintingAndroid,
 } from './components/shared/types';
