@@ -98,7 +98,9 @@ function ContentView() {
         onPress={toggleChaos}
       />
       <Text style={styles.step}>
-        1. Keep the tabs switching (Android only).
+        1. Keep the tabs switching (Android only). Make sure system animations
+        are enabled (no "Remove animations" / reduced motion): the first bar
+        must keep pulsing.
       </Text>
       <Text style={styles.step}>
         2. Send the app to the background and bring it back, many times in a

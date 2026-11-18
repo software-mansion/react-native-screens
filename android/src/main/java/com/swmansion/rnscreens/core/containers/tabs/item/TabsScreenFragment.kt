@@ -44,17 +44,18 @@ class TabsScreenFragment internal constructor(
     }
 
     /**
-     * The appearance events are emitted while the fragment manager is executing a state change.
-     * Their dispatch can be synchronous and mount pending React transactions on the spot (e.g. when
-     * Reanimated handles the event), so the delegate needs to know it must not commit transactions.
+     * The appearance events are emitted while the fragment manager executes a state change. Their
+     * dispatch can be synchronous and mount pending React transactions on the spot (e.g. when
+     * Reanimated handles the event), so containers must not commit to that fragment manager until
+     * the callback returns. See [TabsScreenFragmentLifecycleTracker].
      */
     private inline fun runInLifecycleCallback(block: () -> Unit) {
-        val fragmentDelegate = delegate.get()
-        fragmentDelegate?.onFragmentLifecycleCallbackStarted()
+        val fragmentManager = parentFragmentManager
+        TabsScreenFragmentLifecycleTracker.onCallbackStarted(fragmentManager)
         try {
             block()
         } finally {
-            fragmentDelegate?.onFragmentLifecycleCallbackFinished()
+            TabsScreenFragmentLifecycleTracker.onCallbackFinished(fragmentManager)
         }
     }
 

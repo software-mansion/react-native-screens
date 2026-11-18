@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItemDelega
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragment
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragmentDelegate
+import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragmentLifecycleTracker
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
@@ -123,12 +124,6 @@ class TabsContainer internal constructor(
      * Denotes whether container is currently performing update triggered by the `pendingStateUpdateRequest`.
      */
     private var isInExternalOperationContext: Boolean = false
-
-    /**
-     * Number of [TabsScreenFragment] lifecycle callbacks currently running. While it is positive,
-     * [fragmentManager] is executing a state change and a transaction committed to it throws.
-     */
-    private var fragmentLifecycleCallbackDepth: Int = 0
 
     private var fragmentManager: FragmentManager? = null
     private val requireFragmentManager: FragmentManager
@@ -217,7 +212,6 @@ class TabsContainer internal constructor(
     /**
      * Apply any pending invalidations and state updates in a single coordinated pass, right away
      * instead of with the next scheduled update. No-op when nothing is dirty or the view is detached.
-     * Postponed to the next scheduled update while a tab fragment runs a lifecycle callback.
      */
     fun flushPendingUpdates() = updateScheduler.flush()
 
@@ -499,38 +493,17 @@ class TabsContainer internal constructor(
 
     override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
-    override fun onFragmentLifecycleCallbackStarted() {
-        fragmentLifecycleCallbackDepth++
-    }
-
-    override fun onFragmentLifecycleCallbackFinished() {
-        fragmentLifecycleCallbackDepth--
-    }
-
     // endregion
 
     // region Private helpers
 
     /**
      * The update the [updateScheduler] runs. Skipped while detached: [onAttachedToWindow] flushes.
-     *
-     * Postponed while a tab fragment runs a lifecycle callback: the fragment manager is then
-     * executing a state change, and selecting a tab commits a transaction to it right away, which
-     * would throw "FragmentManager is already executing transactions". This happens when an
-     * appearance event emitted from the callback is dispatched synchronously and mounts a pending
-     * React transaction carrying a tab change, e.g. one made while the activity was paused.
      */
     private fun performContainerUpdateIfNeeded() {
-        if (!invalidationFlags.any() || !isAttachedToWindow) {
-            return
+        if (invalidationFlags.any() && isAttachedToWindow) {
+            performContainerUpdate()
         }
-
-        if (fragmentLifecycleCallbackDepth > 0) {
-            updateScheduler.requestUpdate()
-            return
-        }
-
-        performContainerUpdate()
     }
 
     /**
@@ -586,11 +559,28 @@ class TabsContainer internal constructor(
     }
 
     private fun performSelectedTabUpdateIfNeeded() {
-        if (invalidationFlags.isSelectedTabInvalidated) {
-            invalidationFlags.isSelectedTabInvalidated = false
-            performSelectedTabUpdate()
+        if (!invalidationFlags.isSelectedTabInvalidated) {
+            return
         }
+
+        // Selecting a tab commits a fragment transaction right away. While a tab fragment of the same
+        // fragment manager runs a lifecycle callback, that commit would throw "FragmentManager is
+        // already executing transactions": this happens when an appearance event emitted from the
+        // callback is dispatched synchronously and mounts a pending React transaction carrying a
+        // tab change, e.g. one made while the activity was paused. Keep the selection invalidated
+        // and select the tab in the next scheduled update instead. The other update steps don't
+        // commit transactions and still run now.
+        if (isFragmentManagerRunningTabsScreenFragmentCallback()) {
+            updateScheduler.requestUpdate()
+            return
+        }
+
+        invalidationFlags.isSelectedTabInvalidated = false
+        performSelectedTabUpdate()
     }
+
+    private fun isFragmentManagerRunningTabsScreenFragmentCallback(): Boolean =
+        fragmentManager?.let { TabsScreenFragmentLifecycleTracker.isRunningCallback(it) } ?: false
 
     private fun updateBottomNavigationViewAppearanceIfNeeded() {
         if (invalidationFlags.isNavigationMenuAppearanceInvalidated) {
@@ -641,7 +631,11 @@ class TabsContainer internal constructor(
             )
         }
 
-        pendingStateUpdateRequest = null
+        // Selecting the tab runs fragment lifecycle callbacks, during which a newer request can be
+        // submitted, its selection being postponed (see [performSelectedTabUpdateIfNeeded]). Keep it.
+        if (pendingStateUpdateRequest === stateUpdateRequest) {
+            pendingStateUpdateRequest = null
+        }
     }
 
     private fun updateNavigationMenuStructure() {
