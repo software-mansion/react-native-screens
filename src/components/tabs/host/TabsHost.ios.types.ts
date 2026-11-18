@@ -138,6 +138,7 @@ export interface TabsHostPropsIOS {
    *
    * If this prop is `undefined`, the bottom accessory will not be rendered.
    *
+   * @warning
    * In order to allow accessory rendering based on environment, the component
    * is rendered 2 times for both `'regular'` and `'inline'` environments at the
    * same time. Environment determines which component is visible at given
