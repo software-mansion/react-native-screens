@@ -8,11 +8,12 @@
 
 ## E2E test
 
-None.
+Incomplete: not automated, the steps need an iPad in a regular width, rotation and window resizing.
 
 ## Prerequisites
 
-- iOS simulator or device: iPad.
+- iPad simulator or device with iPadOS 18+, below it `bottom` only logs a warning.
+- iPhone simulator or device for the iPhone steps.
 
 ## Steps
 
