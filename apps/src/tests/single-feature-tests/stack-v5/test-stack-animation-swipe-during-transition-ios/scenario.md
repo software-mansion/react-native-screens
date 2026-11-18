@@ -76,4 +76,5 @@ A swipe that starts during a transition is not available in Detox.
    is still sliding out, swipe from the left screen edge to the right screen
    edge and release.
 
+   - [ ] "Blue" moves with the finger until the release.
    - [ ] "Home" is shown.
