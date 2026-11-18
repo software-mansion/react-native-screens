@@ -314,14 +314,14 @@
 }
 
 /**
- * @brief Gets the children RNSSplitScreenController instances.
+ * @brief Gets the RNSSplitScreenController instances of the visible columns that do NOT host a stack.
  *
- * Accesses Split controllers associated with presented columns. It asserts that each view controller is a navigation
- * controller and its topViewController is of type RNSSplitScreenController.
+ * In a column that hosts a stack the navigation controller holds the screens of the stack, and the
+ * RNSSplitScreenController of the column is not in the view controller hierarchy. Such a column is left out.
  *
- * @return An array of RNSSplitScreenController corresponding to current split view columns.
+ * @return An array of RNSSplitScreenController corresponding to the visible columns that do not host a stack.
  */
-- (NSArray<RNSSplitScreenController *> *)splitScreenControllers
+- (NSArray<RNSSplitScreenController *> *)visibleSplitScreenControllersWithoutStack
 {
   NSMutableArray<RNSSplitScreenController *> *splitScreenControllers =
       [NSMutableArray arrayWithCapacity:_visibleColumns.count];
@@ -339,16 +339,12 @@
               @"[RNScreens] Expected RNSStackNavigationController but got %@",
               NSStringFromClass(viewController.class));
 
-    UIViewController *maybeSplitScreenController = navigationController.topViewController;
-    RNSAssert(
-        maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for column %ld", (long)column);
-    RNSAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
-              @"[RNScreens] Expected RNSSplitScreenController but got %@",
-              NSStringFromClass(maybeSplitScreenController.class));
-
-    if ([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class]) {
-      [splitScreenControllers addObject:(RNSSplitScreenController *)maybeSplitScreenController];
+    UIViewController *topViewController = navigationController.topViewController;
+    if (![topViewController isKindOfClass:RNSSplitScreenController.class]) {
+      continue;
     }
+
+    [splitScreenControllers addObject:(RNSSplitScreenController *)topViewController];
   }
 
   return splitScreenControllers;
@@ -365,7 +361,7 @@
  */
 - (void)viewFrameDidChange:(nonnull UIView *)view
 {
-  for (RNSSplitScreenController *controller in self.splitScreenControllers) {
+  for (RNSSplitScreenController *controller in self.visibleSplitScreenControllersWithoutStack) {
     [controller columnPositioningDidChangeInSplitViewController:self];
   }
 }
@@ -500,7 +496,7 @@
       return;
     }
 
-    for (RNSSplitScreenController *controller in [strongSelf splitScreenControllers]) {
+    for (RNSSplitScreenController *controller in [strongSelf visibleSplitScreenControllersWithoutStack]) {
       [controller columnPositioningDidChangeInSplitViewController:strongSelf];
     }
   };

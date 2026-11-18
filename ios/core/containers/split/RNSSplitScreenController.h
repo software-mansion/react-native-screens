@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSViewControllerViewLifecycleEventsObserver.h"
 
 @class RNSSplitScreenController;
 @class RNSStackNavigationController;
@@ -33,8 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @brief A UIViewController subclass that manages a Split column in a UISplitViewController.
  *
  * It observes the column layout and lifecycle and reports them to its delegate.
+ *
+ * The lifecycle of the column is the one of the view of the navigation controller the Split installs for it. In a
+ * column that hosts a stack it is the navigation controller of the stack, and this controller has to be set as its
+ * `viewLifecycleEventsObserver`.
  */
-@interface RNSSplitScreenController : UIViewController
+@interface RNSSplitScreenController : UIViewController <RNSViewControllerViewLifecycleEventsObserver>
 
 @property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
 

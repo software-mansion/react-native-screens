@@ -3,10 +3,6 @@
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
 #import "RNSStackNavigationController.h"
-#import "RNSViewControllerViewLifecycleEventsObserver.h"
-
-@interface RNSSplitScreenController () <RNSViewControllerViewLifecycleEventsObserver>
-@end
 
 @implementation RNSSplitScreenController {
   RNSStackNavigationController *_Nullable _plainColumnNavigationController;
