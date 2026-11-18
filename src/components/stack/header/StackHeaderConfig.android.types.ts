@@ -426,8 +426,10 @@ export interface StackHeaderToolbarMenuGroupAndroid {
    */
   singleSelection?: boolean | undefined;
   /**
-   * Callback invoked when the selection within the group changes. Receives the
-   * list of currently selected item IDs.
+   * Callback invoked when the selection within the group changes.
+   *
+   * @remarks
+   * Receives the list of currently selected item IDs.
    *
    * @platform android
    */
@@ -752,10 +754,11 @@ export interface StackHeaderConfigPropsAndroid {
    */
   overflowIconTintColorFocused?: ColorValue | undefined;
   /**
-   * Whether the header reacts to nested scroll. Required for any other
-   * `scrollFlag*` prop to take effect.
+   * Whether the header reacts to nested scroll.
    *
    * @remarks
+   * Required for any other `scrollFlag*` prop to take effect.
+   *
    * Changing any `scrollFlag*` at runtime while the header is partially
    * collapsed snaps it back to its fully expanded state. A fully collapsed
    * header stays collapsed, unless the new flags do not allow collapsing at
@@ -769,8 +772,11 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * When enabled, the header re-expands as soon as the user scrolls back toward
    * the top of the content, regardless of the ScrollView's current scroll
-   * position. Without this flag, the header only begins expanding once the list
-   * has reached the top of its content. Requires
+   * position.
+   *
+   * @remarks
+   * Without this flag, the header only begins expanding once the list has
+   * reached the top of its content. Requires
    * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * @defaultValue `false`
@@ -782,9 +788,11 @@ export interface StackHeaderConfigPropsAndroid {
    * {@link StackHeaderConfigPropsAndroid.scrollFlagEnterAlways | scrollFlagEnterAlways}
    * so that the initial re-entry stops at the header's collapsed height (the
    * toolbar); the remainder expands only after the ScrollView reaches the top
-   * of its content. Requires `scrollFlagEnterAlways`.
+   * of its content.
    *
    * @remarks
+   * Requires `scrollFlagEnterAlways`.
+   *
    * This flag does not have any effect for `'small'` header.
    *
    * @defaultValue `false`
@@ -793,11 +801,12 @@ export interface StackHeaderConfigPropsAndroid {
   scrollFlagEnterAlwaysCollapsed?: boolean | undefined;
   /**
    * When enabled, the header collapses only until its minimum height (the
-   * toolbar) remains pinned at the top. Without this flag, the entire header
-   * scrolls off the screen. Requires
-   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
+   * toolbar) remains pinned at the top.
    *
    * @remarks
+   * Without this flag, the entire header scrolls off the screen. Requires
+   * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
+   *
    * Setting this flag for `'small'` header is equivalent to disabling
    * `scrollFlagScroll`.
    *
@@ -814,7 +823,10 @@ export interface StackHeaderConfigPropsAndroid {
    * When enabled, the header snaps to its nearest edge (fully expanded, or
    * fully collapsed as defined by
    * {@link StackHeaderConfigPropsAndroid.scrollFlagExitUntilCollapsed | scrollFlagExitUntilCollapsed})
-   * after a scroll gesture ends, instead of resting partway. Requires
+   * after a scroll gesture ends, instead of resting partway.
+   *
+   * @remarks
+   * Requires
    * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
    * @defaultValue `false` for the `'small'` header and `true` for the
@@ -1105,230 +1117,300 @@ export interface StackHeaderConfigPropsAndroid {
    */
   contentInsetEnd?: number | undefined;
   /**
-   * Color of the title text. Applies to `'small'` header only.
+   * Color of the title text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   titleColor?: ColorValue | undefined;
   /**
-   * Font family of the title text. Applies to `'small'` header only.
+   * Font family of the title text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * Font size (SP) of the title text. Applies to `'small'` header only.
+   * Font size (SP) of the title text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * Font weight of the title text. Applies to `'small'` header only.
+   * Font weight of the title text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * Font style of the title text. Applies to `'small'` header only.
+   * Font style of the title text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   titleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * Color of the subtitle text. Applies to `'small'` header only.
+   * Color of the subtitle text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleColor?: ColorValue | undefined;
   /**
-   * Font family of the subtitle text. Applies to `'small'` header only.
+   * Font family of the subtitle text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * Font size (SP) of the subtitle text. Applies to `'small'` header only.
+   * Font size (SP) of the subtitle text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * Font weight of the subtitle text. Applies to `'small'` header only.
+   * Font weight of the subtitle text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * Font style of the subtitle text. Applies to `'small'` header only.
+   * Font style of the subtitle text.
+   *
+   * @remarks
+   * Applies to `'small'` header only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   subtitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * Color of the expanded title text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Color of the expanded title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleColor?: ColorValue | undefined;
   /**
-   * Font family of the expanded title text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Font family of the expanded title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * Font size (SP) of the expanded title text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font size (SP) of the expanded title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * Font weight of the expanded title text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Font weight of the expanded title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * Font style of the expanded title text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Font style of the expanded title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * Color of the collapsed title text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Color of the collapsed title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleColor?: ColorValue | undefined;
   /**
-   * Font family of the collapsed title text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font family of the collapsed title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * Font size (SP) of the collapsed title text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font size (SP) of the collapsed title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * Font weight of the collapsed title text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font weight of the collapsed title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * Font style of the collapsed title text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Font style of the collapsed title text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * Color of the expanded subtitle text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Color of the expanded subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleColor?: ColorValue | undefined;
   /**
-   * Font family of the expanded subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font family of the expanded subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * Font size (SP) of the expanded subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font size (SP) of the expanded subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * Font weight of the expanded subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font weight of the expanded subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * Font style of the expanded subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font style of the expanded subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   expandedSubtitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
-   * Color of the collapsed subtitle text. Applies to `'medium'` and `'large'`
-   * headers only.
+   * Color of the collapsed subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleColor?: ColorValue | undefined;
   /**
-   * Font family of the collapsed subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font family of the collapsed subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
-   * Font size (SP) of the collapsed subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font size (SP) of the collapsed subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
-   * Font weight of the collapsed subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font weight of the collapsed subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
    */
   collapsedSubtitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
-   * Font style of the collapsed subtitle text. Applies to `'medium'` and
-   * `'large'` headers only.
+   * Font style of the collapsed subtitle text.
+   *
+   * @remarks
+   * Applies to `'medium'` and `'large'` headers only.
    *
    * @defaultValue Material's default is used.
    * @platform android
