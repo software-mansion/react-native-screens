@@ -71,7 +71,7 @@ internal class StackScreen(
     var screenKey: String? = null
         set(value) {
             require(
-                field == null,
+                field == null || field == value,
             ) { "[RNScreens] StackScreen can't change its screenKey." }
             field = value
         }
