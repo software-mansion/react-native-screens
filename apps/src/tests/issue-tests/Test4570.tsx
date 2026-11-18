@@ -12,7 +12,8 @@ type Routes = { Home: undefined; Detail: { withLayoutAnimation: boolean } };
 const Stack = createNativeStackNavigator<Routes>();
 
 // Restarts a layout transition before the previous one ends, so Reanimated
-// commits on the UI thread every frame, including the frame of the pop.
+// mounts synchronously on the UI thread every frame, including the frame of
+// the pop.
 function LayoutAnimationTicker() {
   const [wide, setWide] = useState(false);
 

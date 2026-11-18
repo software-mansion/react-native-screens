@@ -76,8 +76,8 @@ class NativeProxy : UIManagerListener {
         val screen = weakScreeRef.get()
         if (screen is Screen) {
             // The transaction removes the screen's children before the screen, so the transition
-            // must start before the transaction mounts. A transaction pulled on the UI thread mounts
-            // right after the pull returns.
+            // must start before the transaction mounts. A transaction pulled on the UI thread can't
+            // mount before the pull returns.
             if (UiThreadUtil.isOnUiThread()) {
                 screen.startRemovalTransition()
             } else {
