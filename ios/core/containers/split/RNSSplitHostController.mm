@@ -4,6 +4,7 @@
 #import "RNSDefines.h"
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
+#import "RNSSplitColumnNavigationControllerFrameObserver.h"
 #import "RNSSplitNavigationController.h"
 #import "RNSSplitScreenController.h"
 #import "RNSViewFrameChangeDelegate.h"
@@ -36,6 +37,14 @@
    * avoiding crashes when certain columns are collapsed or hidden.
    */
   NSMutableSet<NSNumber *> *_visibleColumns;
+
+  /**
+   * Observe the frames of the views of the navigation controllers installed for the columns.
+   *
+   * UISplitViewController moves the columns natively, on display mode change or column resize. These updates have to
+   * be passed to React to sync the ShadowTree layout of the column subtrees.
+   */
+  NSArray<RNSSplitColumnNavigationControllerFrameObserver *> *_columnNavigationControllerFrameObservers;
 }
 
 - (instancetype)initWithNumberOfColumns:(NSInteger)numberOfColumns
@@ -111,12 +120,11 @@
   NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
   for (RNSSplitScreenController *splitScreenController in currentColumns) {
-    RNSSplitNavigationController *navigationController = splitScreenController.columnNavigationController;
-    navigationController.frameOriginChangeDelegate = self;
-    [currentViewControllers addObject:navigationController];
+    [currentViewControllers addObject:splitScreenController.columnNavigationController];
   }
 
   self.viewControllers = currentViewControllers;
+  [self observeFramesOfColumnNavigationControllers:currentViewControllers];
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
@@ -125,6 +133,25 @@
 #endif
 
   _needsChildViewControllersUpdate = NO;
+}
+
+- (void)observeFramesOfColumnNavigationControllers:(NSArray<UINavigationController *> *)navigationControllers
+{
+  NSMutableArray<RNSSplitColumnNavigationControllerFrameObserver *> *frameObservers =
+      [NSMutableArray arrayWithCapacity:navigationControllers.count];
+  for (UINavigationController *navigationController in navigationControllers) {
+    // The frame observer needs the view, which UIKit loads only when it is about to show the column.
+    [navigationController loadViewIfNeeded];
+
+    RNSSplitColumnNavigationControllerFrameObserver *frameObserver =
+        [[RNSSplitColumnNavigationControllerFrameObserver alloc] initWithNavigationController:navigationController
+                                                                                     delegate:self];
+    [frameObserver registerForViewFrameChanges];
+    [frameObservers addObject:frameObserver];
+  }
+
+  // The observers of the navigation controllers installed before are released here and unregister themselves.
+  _columnNavigationControllerFrameObservers = frameObservers;
 }
 
 - (void)updateSplitAppearanceIfNeeded
@@ -331,7 +358,7 @@
 #pragma mark - RNSViewFrameChangeDelegate
 
 /**
- * @brief Notifies that the origin of a child RNSSplitNavigationController's view frame has changed.
+ * @brief Notifies that the origin of the frame of a column's navigation controller view has changed.
  *
  * It iterates over children controllers and notifies them for the layout update.
  *
