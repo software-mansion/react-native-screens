@@ -19,21 +19,24 @@ import { describeIfIOS } from '@e2e/framework/platform';
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
 const MENU_ROW_COUNT = 4;
 
-// `imageSource` and `templateSource` ids are the names React Native gives the
-// `require`d asset files in its asset catalog (FabricExample opts in with
-// `RCTUseAssetCatalog`): the bundled path without the `assets/` prefix, scale
-// suffix and extension, lowercased and joined with underscores. Renaming or
-// moving those assets requires updating them here.
+// `imageSource` and `templateSource` icons are `require`d files, and the id
+// React Native gives them depends on how it bundles them: with the asset
+// catalog (`RCTUseAssetCatalog` in Info.plist) it is the catalog name, e.g.
+// `metrowatchfolders_1_apps_assets_search_black`, which encodes the Metro
+// watch-folder index; without it, the bundled path, e.g.
+// `assets/_apps/assets/search_black.png`. Match on the asset's own name so the
+// spec survives either mode and Metro config changes. Detox matches the whole
+// id, so the patterns start with `.*`.
 const ICON_IDS = {
   sfSymbol: 'star.fill',
   xcasset: 'custom-icon-fill',
-  imageSource: 'metrowatchfolders_1_apps_assets_search_black',
-  templateSource: 'metrowatchfolders_1_apps_assets_variableicons_icon',
+  imageSource: /.*search_black(\.png)?/,
+  templateSource: /.*variable[Ii]cons.icon(@3x\.png)?/,
 } as const;
 
 // The icon of a single menu row, addressed by its icon id and its position in
 // the menu.
-const menuRowIconAt = (iconId: string, index: number) =>
+const menuRowIconAt = (iconId: string | RegExp, index: number) =>
   element(
     by
       .id(iconId)
@@ -42,7 +45,7 @@ const menuRowIconAt = (iconId: string, index: number) =>
 
 // Asserts that every menu row renders the icon carrying `iconId`.
 const expectAllMenuRowIconsToBeVisible = async (
-  iconId: string,
+  iconId: string | RegExp,
   rowCount: number = MENU_ROW_COUNT,
 ) => {
   for (let index = 0; index < rowCount; index++) {
@@ -55,7 +58,7 @@ const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
 
 // Asserts every submenu row renders `iconId`. Addressed by title, not index:
 // the parent menu's cells stay attached while the submenu is open.
-const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {
+const expectAllSubmenuRowIconsToBeVisible = async (iconId: string | RegExp) => {
   for (const rowTitle of SUBMENU_ROWS) {
     await expect(menuRowIcon(iconId, rowTitle)).toBeVisible();
   }
