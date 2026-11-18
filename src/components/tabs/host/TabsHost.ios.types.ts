@@ -62,7 +62,9 @@ export type TabBarMinimizeBehavior =
  * - `'automatic'` — the system sets the display mode based on the tab’s
  *   content
  * - `'tabBar'` — the system displays the content only as a tab bar
- * - `'tabSidebar'` — the tab bar is displayed as a sidebar
+ * - `'tabSidebar'` — enables the sidebar; the system displays the sidebar or
+ *   the tab bar depending on the context (see
+ *   {@link https://developer.apple.com/documentation/uikit/uitabbarcontroller/mode-swift.enum/tabsidebar | UITabBarController.Mode.tabSidebar})
  *
  * See the official documentation for more details.
  *
