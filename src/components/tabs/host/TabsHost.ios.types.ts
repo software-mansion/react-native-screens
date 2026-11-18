@@ -16,9 +16,17 @@ import type { NativeEventHandler } from '../../shared/types';
  * "More" tab was tapped.
  */
 export type MoreTabSelectedEvent = {
-  /** Screen key of the tab that was active when "More" was tapped. */
+  /**
+   * Screen key of the tab that was active when "More" was tapped.
+   *
+   * @platform ios
+   */
   selectedScreenKey: string;
-  /** Provenance of the navigation state when "More" was tapped. */
+  /**
+   * Provenance of the navigation state when "More" was tapped.
+   *
+   * @platform ios
+   */
   provenance: number;
 };
 
