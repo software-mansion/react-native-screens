@@ -39,7 +39,7 @@ import type {
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
  */
-export type TabsScreenOrientation = InterfaceOrientation | 'inherit';
+export type TabsOrientation = InterfaceOrientation | 'inherit';
 
 /**
  * Style of a {@link Tabs.Screen}.
@@ -178,7 +178,7 @@ export interface TabsScreenPropsBase {
    * @defaultValue `'inherit'`
    * @platform ios
    */
-  orientation?: TabsScreenOrientation | undefined;
+  orientation?: TabsOrientation | undefined;
   // Accessibility
   /**
    * testID for the {@link Tabs.Screen}

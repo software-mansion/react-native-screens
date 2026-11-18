@@ -24,7 +24,7 @@ export type {
 } from './host';
 
 export type {
-  TabsScreenOrientation,
+  TabsOrientation,
   TabsScreenStyleProps,
   TabsScreenSpecialEffects,
   TabsScreenRepeatedTabSelectionEffects,
