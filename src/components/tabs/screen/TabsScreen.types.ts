@@ -72,8 +72,11 @@ export interface TabsScreenRepeatedTabSelectionEffects {
    */
   popToRoot?: boolean | undefined;
   /**
-   * When there is a ScrollView in first descendant chain from tab screen and
-   * repeated selection is detected, ScrollView will be scrolled to top.
+   * When repeated selection is detected, the content scroll view of the tab
+   * screen is scrolled to the top.
+   *
+   * @remarks
+   * The content scroll view can be designated with a {@link ScrollViewMarker}.
    *
    * @defaultValue `true`
    * @platform android, ios
