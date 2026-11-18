@@ -19,13 +19,16 @@ import { describeIfIOS } from '@e2e/framework/platform';
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
 const MENU_ROW_COUNT = 4;
 
-// `imageSource` and `templateSource` ids are the bundled paths of the `require`d
-// asset files — renaming or moving those assets requires updating them here.
+// `imageSource` and `templateSource` ids are the names React Native gives the
+// `require`d asset files in its asset catalog (FabricExample opts in with
+// `RCTUseAssetCatalog`): the bundled path without the `assets/` prefix, scale
+// suffix and extension, lowercased and joined with underscores. Renaming or
+// moving those assets requires updating them here.
 const ICON_IDS = {
   sfSymbol: 'star.fill',
   xcasset: 'custom-icon-fill',
-  imageSource: 'assets/_apps/assets/search_black.png',
-  templateSource: 'assets/_apps/assets/variableIcons/icon@3x.png',
+  imageSource: 'metrowatchfolders_1_apps_assets_search_black',
+  templateSource: 'metrowatchfolders_1_apps_assets_variableicons_icon',
 } as const;
 
 // The icon of a single menu row, addressed by its icon id and its position in
