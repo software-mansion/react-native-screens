@@ -37,8 +37,9 @@ class NativeProxy : UIManagerListener {
 
         // Added by the thread that pulled the transaction removing the screen, drained on the UI
         // thread before that transaction mounts. Shared by all proxies, because the native removal
-        // listener notifies only the most recently installed one.
-        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<Screen>()
+        // listener notifies only the most recently installed one. Never cleared: invalidating one
+        // React instance must not drop another instance's screens.
+        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<WeakReference<Screen>>()
 
         fun addScreenToMap(
             tag: Int,
@@ -53,7 +54,6 @@ class NativeProxy : UIManagerListener {
 
         fun clearMapOnInvalidate() {
             viewsMap.clear()
-            screensPendingRemovalTransition.clear()
         }
     }
 
@@ -81,18 +81,18 @@ class NativeProxy : UIManagerListener {
             if (UiThreadUtil.isOnUiThread()) {
                 screen.startRemovalTransition()
             } else {
-                screensPendingRemovalTransition.add(screen)
+                screensPendingRemovalTransition.add(weakScreeRef)
             }
         } else {
             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
         }
     }
 
-    // Fabric calls it on the UI thread before every dispatch of mount items, after it has taken the
-    // items it is about to mount.
+    // Fabric calls it on the UI thread before each dispatch of queued mount items, after it has taken
+    // those items.
     override fun willMountItems(uiManager: UIManager) {
         generateSequence { screensPendingRemovalTransition.poll() }
-            .forEach { it.startRemovalTransition() }
+            .forEach { it.get()?.startRemovalTransition() }
     }
 
     override fun didMountItems(uiManager: UIManager) = Unit
