@@ -124,6 +124,12 @@ class TabsContainer internal constructor(
      */
     private var isInExternalOperationContext: Boolean = false
 
+    /**
+     * Number of [TabsScreenFragment] lifecycle callbacks currently running. While it is positive,
+     * [fragmentManager] is executing a state change and a transaction committed to it throws.
+     */
+    private var fragmentLifecycleCallbackDepth: Int = 0
+
     private var fragmentManager: FragmentManager? = null
     private val requireFragmentManager: FragmentManager
         get() = checkNotNull(fragmentManager) { "[RNScreens] Attempt to use nullish FragmentManager" }
@@ -211,6 +217,7 @@ class TabsContainer internal constructor(
     /**
      * Apply any pending invalidations and state updates in a single coordinated pass, right away
      * instead of with the next scheduled update. No-op when nothing is dirty or the view is detached.
+     * Postponed to the next scheduled update while a tab fragment runs a lifecycle callback.
      */
     fun flushPendingUpdates() = updateScheduler.flush()
 
@@ -492,17 +499,38 @@ class TabsContainer internal constructor(
 
     override fun onFragmentConfigurationChanged(config: Configuration) = onConfigurationChanged(config)
 
+    override fun onFragmentLifecycleCallbackStarted() {
+        fragmentLifecycleCallbackDepth++
+    }
+
+    override fun onFragmentLifecycleCallbackFinished() {
+        fragmentLifecycleCallbackDepth--
+    }
+
     // endregion
 
     // region Private helpers
 
     /**
      * The update the [updateScheduler] runs. Skipped while detached: [onAttachedToWindow] flushes.
+     *
+     * Postponed while a tab fragment runs a lifecycle callback: the fragment manager is then
+     * executing a state change, and selecting a tab commits a transaction to it right away, which
+     * would throw "FragmentManager is already executing transactions". This happens when an
+     * appearance event emitted from the callback is dispatched synchronously and mounts a pending
+     * React transaction carrying a tab change, e.g. one made while the activity was paused.
      */
     private fun performContainerUpdateIfNeeded() {
-        if (invalidationFlags.any() && isAttachedToWindow) {
-            performContainerUpdate()
+        if (!invalidationFlags.any() || !isAttachedToWindow) {
+            return
         }
+
+        if (fragmentLifecycleCallbackDepth > 0) {
+            updateScheduler.requestUpdate()
+            return
+        }
+
+        performContainerUpdate()
     }
 
     /**

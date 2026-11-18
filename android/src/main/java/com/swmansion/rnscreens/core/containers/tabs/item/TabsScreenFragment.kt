@@ -24,23 +24,38 @@ class TabsScreenFragment internal constructor(
     ): View = item.view
 
     override fun onStart() {
-        item.appearanceEventEmitter.emitOnWillAppear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnWillAppear() }
         super.onStart()
     }
 
     override fun onResume() {
-        item.appearanceEventEmitter.emitOnDidAppear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnDidAppear() }
         super.onResume()
     }
 
     override fun onPause() {
-        item.appearanceEventEmitter.emitOnWillDisappear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnWillDisappear() }
         super.onPause()
     }
 
     override fun onStop() {
-        item.appearanceEventEmitter.emitOnDidDisappear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnDidDisappear() }
         super.onStop()
+    }
+
+    /**
+     * The appearance events are emitted while the fragment manager is executing a state change.
+     * Their dispatch can be synchronous and mount pending React transactions on the spot (e.g. when
+     * Reanimated handles the event), so the delegate needs to know it must not commit transactions.
+     */
+    private inline fun runInLifecycleCallback(block: () -> Unit) {
+        val fragmentDelegate = delegate.get()
+        fragmentDelegate?.onFragmentLifecycleCallbackStarted()
+        try {
+            block()
+        } finally {
+            fragmentDelegate?.onFragmentLifecycleCallbackFinished()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
