@@ -1,168 +1,118 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import type { TabsScreenAppearanceIOS } from 'react-native-screens';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   TabsContainer,
   type TabRouteConfig,
-  useTabsNavigationContext,
 } from '@apps/shared/containers/tabs';
-import {
-  StackContainer,
-  type StackRouteConfig,
-  useStackNavigationContext,
-} from '@apps/shared/containers/stack';
 import { Colors } from '@apps/shared/styling';
 
 // Reproduces https://github.com/software-mansion/react-native-screens/issues/4749
 // and https://github.com/software-mansion/react-native-screens/issues/5107
+// (FB24250687).
 //
-// iOS 26. The tab bar fits each item's title on its first layout with that
-// item and doesn't fit it again when the item's content changes later. Here:
-// - the icons are PNGs, so they land asynchronously, after that first layout,
-// - every tab uses a custom font, weight and title offset,
-// - the Settings badge is set right after mount,
-// - the Discover title can be toggled at runtime.
-// Without the fix the titles render truncated ("Ho…") or too low and cut off
-// until each tab is selected. Expected: all titles in full.
+// iOS 26. When a tab bar item changes after the tab bar enters a window but
+// before its first layout, UIKit squashes the item titles: they render
+// truncated ("Ho…") or too low and cut off, until each tab is selected.
+// Plain titles and SF Symbols are enough to hit it, both on a cold launch and
+// when the tabs are mounted later.
 //
-// The Discover tab hosts a stack with its own appearance. Pushing and popping
-// in it must not make the tab bar flash (the regression that got #4411
-// reverted in #4476).
+// 1. Cold-launch the app: the tabs are mounted right away.
+// 2. Tap "Unmount tabs", then "Mount tabs", and repeat.
+// Expected: every time the tabs appear, all titles are shown in full.
 
-const ICON = require('@assets/variableIcons/icon.png');
-const ICON_SELECTED = require('@assets/variableIcons/icon_fill.png');
-
-const FONT = {
-  tabBarItemTitleFontFamily: 'Georgia',
-  tabBarItemTitleFontWeight: '600',
-  tabBarItemTitlePositionAdjustment: { vertical: 4 },
-} as const;
-
-function makeAppearance(selectedColor: string): TabsScreenAppearanceIOS {
-  return {
-    stacked: {
-      normal: { ...FONT, tabBarItemTitleFontColor: Colors.LightOffNavy },
-      selected: { ...FONT, tabBarItemTitleFontColor: selectedColor },
-    },
-  };
-}
-
-const APPEARANCE = makeAppearance(Colors.BlueDark100);
-const DISCOVER_APPEARANCE = makeAppearance(Colors.RedDark100);
-
-const DISCOVER_TITLES = ['Discover', 'Discover more'];
-
-function HomeTab() {
-  const { setRouteOptions } = useTabsNavigationContext();
-  const [titleIndex, setTitleIndex] = React.useState(0);
-
-  // An item update right after mount, like an unread count arriving.
-  React.useEffect(() => {
-    setRouteOptions('Settings', { badgeValue: '3' });
-  }, [setRouteOptions]);
-
-  const toggleTitle = () => {
-    const nextIndex = (titleIndex + 1) % DISCOVER_TITLES.length;
-    setTitleIndex(nextIndex);
-    setRouteOptions('Discover', { title: DISCOVER_TITLES[nextIndex] });
-  };
-
+function TabScreen({ title }: { title: string }) {
   return (
     <View style={styles.screen}>
+      <Text style={styles.title}>{title}</Text>
       <Text style={styles.text}>
-        All tab titles should be shown in full, in Georgia, on first appearance
-        and after toggling the title.
+        All tab titles should be shown in full, on a cold launch and after each
+        mount.
       </Text>
-      <Button
-        title={`Rename Discover to "${
-          DISCOVER_TITLES[(titleIndex + 1) % DISCOVER_TITLES.length]
-        }"`}
-        onPress={toggleTitle}
-      />
     </View>
   );
 }
-
-function StackScreen() {
-  const { push, pop, routeKey } = useStackNavigationContext();
-
-  return (
-    <View style={styles.screen}>
-      <Text style={styles.text}>
-        Push and pop. The tab bar must not flash and the titles must stay in
-        place.
-      </Text>
-      <Button title="Push" onPress={() => push('Details')} />
-      <Button title="Pop" onPress={() => pop(routeKey)} />
-    </View>
-  );
-}
-
-const STACK_ROUTE_CONFIGS: StackRouteConfig[] = [
-  { name: 'List', element: <StackScreen /> },
-  { name: 'Details', element: <StackScreen /> },
-];
-
-function DiscoverTab() {
-  return <StackContainer routeConfigs={STACK_ROUTE_CONFIGS} />;
-}
-
-function OtherTab() {
-  return <View style={styles.screen} />;
-}
-
-const ICONS = {
-  icon: { type: 'imageSource', imageSource: ICON },
-  selectedIcon: { type: 'imageSource', imageSource: ICON_SELECTED },
-} as const;
 
 const ROUTE_CONFIGS: TabRouteConfig[] = [
   {
     name: 'Home',
-    element: <HomeTab />,
+    element: <TabScreen title="Home" />,
     options: {
       title: 'Home',
-      ios: { ...ICONS, standardAppearance: APPEARANCE },
-      safeAreaConfiguration: { edges: { top: true } },
+      ios: { icon: { type: 'sfSymbol', name: 'house' } },
     },
   },
   {
     name: 'Discover',
-    element: <DiscoverTab />,
+    element: <TabScreen title="Discover" />,
     options: {
-      title: DISCOVER_TITLES[0],
-      ios: { ...ICONS, standardAppearance: DISCOVER_APPEARANCE },
+      title: 'Discover',
+      ios: { icon: { type: 'sfSymbol', name: 'safari' } },
     },
   },
   {
     name: 'Favorites',
-    element: <OtherTab />,
+    element: <TabScreen title="Favorites" />,
     options: {
       title: 'Favorites',
-      ios: { ...ICONS, standardAppearance: APPEARANCE },
+      ios: { icon: { type: 'sfSymbol', name: 'star' } },
+    },
+  },
+  {
+    name: 'Library',
+    element: <TabScreen title="Library" />,
+    options: {
+      title: 'Library',
+      ios: { icon: { type: 'sfSymbol', name: 'books.vertical' } },
     },
   },
   {
     name: 'Settings',
-    element: <OtherTab />,
+    element: <TabScreen title="Settings" />,
     options: {
       title: 'Settings',
-      ios: { ...ICONS, standardAppearance: APPEARANCE },
+      ios: { icon: { type: 'sfSymbol', name: 'gear' } },
     },
   },
 ];
 
 export default function App() {
-  return <TabsContainer routeConfigs={ROUTE_CONFIGS} />;
+  const [mounted, setMounted] = React.useState(true);
+
+  return (
+    <View style={styles.root}>
+      <SafeAreaView edges={['top']} style={styles.root}>
+        <Button
+          title={mounted ? 'Unmount tabs' : 'Mount tabs'}
+          onPress={() => setMounted(value => !value)}
+        />
+        {mounted ? (
+          <TabsContainer routeConfigs={ROUTE_CONFIGS} />
+        ) : (
+          <View style={styles.screen}>
+            <Text style={styles.text}>Tabs unmounted.</Text>
+          </View>
+        )}
+      </SafeAreaView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: Colors.White,
+  },
   screen: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
     backgroundColor: Colors.White,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   text: {
     padding: 16,
