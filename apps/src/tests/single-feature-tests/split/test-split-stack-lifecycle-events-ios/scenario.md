@@ -46,6 +46,6 @@ TBD.
 
     - [ ] The log lists `willAppear` and `didAppear` for "Primary SplitColumn" and for "Primary StackHost root".
 
-3. Repeat steps 1 and 2 a few times without clearing the log.
+3. Tap "Hide primary" and "Show primary" a few more times, without tapping "Clear log".
 
     - [ ] Every cycle adds the same four pairs of events; the list keeps all of them and scrolls.
