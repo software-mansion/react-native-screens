@@ -121,15 +121,15 @@ stay manual.
 
   - [ ] Two items on each side appear in shared bubble.
 
-4. Enable `paddingRemoved`.
-
-  - [ ] Items in the shared bubble lose padding and move closer to each other. Standalone items don't change.
+4. Click the first leading item to enlarge it.
 
   - [ ] Position of items on device matches element tree.
 
-5. Click the first leading item to enlarge it.
+5. Click the items in the shared bubbles to enlarge them. Enable `paddingRemoved`.
 
-  - [ ] The bubble wraps the enlarged item tightly; the item may poke out of the bubble's rounded corners (see Known Issues).
+  - [ ] Items in the shared bubble lose padding and move closer to each other.
+
+  - [ ] Bubbles wrap the enlarged items tightly; the items may poke out of the bubble's rounded corners (see Known Issues).
 
   - [ ] Position of items on device matches element tree.
 
