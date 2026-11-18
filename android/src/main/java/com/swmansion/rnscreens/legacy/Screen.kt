@@ -79,8 +79,6 @@ class Screen(
     var screenId: String? = null
     var isStatusBarAnimated: Boolean? = null
 
-    // Can be set on the mounting coordinator's thread (see `markAsBeingRemoved`), read on the UI thread.
-    @Volatile
     var isBeingRemoved = false
         private set
 
@@ -452,14 +450,6 @@ class Screen(
         }
 
     var nativeBackButtonDismissalEnabled: Boolean = true
-
-    /**
-     * Marks this screen as being removed from the native stack. Safe to call off the UI thread;
-     * must run before the mount transaction removing this screen executes.
-     */
-    fun markAsBeingRemoved() {
-        isBeingRemoved = true
-    }
 
     fun startRemovalTransition() {
         isBeingRemoved = true

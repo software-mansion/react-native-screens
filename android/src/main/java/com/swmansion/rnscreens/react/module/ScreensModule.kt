@@ -5,6 +5,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
@@ -16,6 +17,7 @@ import com.swmansion.rnscreens.legacy.ScreenStack // legacy-compat: v4 manual tr
 import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent // legacy-compat: v4 manual transition progress
 import java.util.concurrent.atomic.AtomicBoolean
 
+@OptIn(UnstableReactNativeAPI::class)
 @ReactModule(name = ScreensModule.NAME)
 class ScreensModule(
     private val reactContext: ReactApplicationContext,
@@ -45,7 +47,11 @@ class ScreensModule(
 
     override fun invalidate() {
         super.invalidate()
-        proxy?.invalidateNative()
+        proxy?.let {
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)?.removeUIManagerEventListener(it)
+            it.clearPendingRemovalTransitions()
+            it.invalidateNative()
+        }
         proxy = null
         reactContext.removeLifecycleEventListener(this)
         nativeUninstall()
@@ -67,6 +73,9 @@ class ScreensModule(
         val uiManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) ?: return
         proxy?.apply {
             nativeAddMutationsListener(uiManager as FabricUIManager)
+            // setupFabric runs again on every host resume, the listener must be added only once.
+            uiManager.removeUIManagerEventListener(this)
+            uiManager.addUIManagerEventListener(this)
         }
     }
 
