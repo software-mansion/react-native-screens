@@ -137,6 +137,10 @@
 
 - (void)observeFramesOfColumnNavigationControllers:(NSArray<UINavigationController *> *)navigationControllers
 {
+  for (RNSSplitColumnNavigationControllerFrameObserver *frameObserver in _columnNavigationControllerFrameObservers) {
+    [frameObserver unregisterForViewFrameChanges];
+  }
+
   NSMutableArray<RNSSplitColumnNavigationControllerFrameObserver *> *frameObservers =
       [NSMutableArray arrayWithCapacity:navigationControllers.count];
   for (UINavigationController *navigationController in navigationControllers) {
@@ -150,7 +154,6 @@
     [frameObservers addObject:frameObserver];
   }
 
-  // The observers of the navigation controllers installed before are released here and unregister themselves.
   _columnNavigationControllerFrameObservers = frameObservers;
 }
 
