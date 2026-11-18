@@ -11,6 +11,14 @@
 # token of the artifact and cache actions of this run, so a compromised template could taint the
 # app that goes to Argent Cloud and write caches of the default branch. No workflow that publishes
 # restores a dependency cache for that reason.
+#
+# `expo prebuild` runs config plugins in Node, and `--ignore-scripts` does not cover them: the
+# plugins that app.json lists, which this script writes, and the plugins that
+# @expo/prebuild-config applies by itself to the packages on its fixed list (see getAutoPlugins in
+# its withDefaultPlugins.js, for example expo-camera, expo-file-system or expo-notifications) when
+# they are installed. Before a package from that list goes on the allowlist, accept that its
+# plugin runs here. In a Debug run, `expo start` on the tester's machine evaluates the plugins of
+# app.json too.
 set -euo pipefail
 
 # The name of the app and the last part of its bundle identifier (com.swmansion.reproapp).
@@ -26,6 +34,7 @@ main() {
   read_library_packages
   validate_overlay
   validate_extra_dependencies
+  validate_expo_router
   # The workflow supports only the New Architecture.
   export RCT_NEW_ARCH_ENABLED=1
 
@@ -66,6 +75,11 @@ has_dependency() {
   grep -q -- "^$1@" <<< "$EXTRA_DEPENDENCIES"
 }
 
+# Expo packages must match the SDK of the template, so `expo install` picks their versions.
+is_expo_package() {
+  [[ "$1" == expo-* ]]
+}
+
 # The overlay is the only agent-written input that lands in the app. Only App.tsx and source files
 # under src/ are accepted, so the agent cannot change the Babel, Metro or Expo configuration, the
 # package manifest or anything native. Dotfiles and package.json are refused under src/ as well:
@@ -86,7 +100,7 @@ validate_overlay() {
         ;;
     esac
     case "$file" in
-      *..*)
+      ../* | */../* | */.. | ..)
         echo "::error::overlay file '$file' has a '..' segment"
         rejected=1
         ;;
@@ -123,8 +137,20 @@ validate_extra_dependencies() {
       echo "::error::dependency '$name' must have an exact version, got '$version'"
       rejected=1
     fi
+    if is_expo_package "$name" && [ "$APP_KIND" != "expo" ]; then
+      echo "::error::dependency '$name' is an Expo package; it needs appKind 'expo', got '$APP_KIND'"
+      rejected=1
+    fi
   done <<< "$EXTRA_DEPENDENCIES"
   [ "$rejected" -eq 0 ] || fail "extraDependencies were rejected"
+}
+
+# Expo Router finds the routes in src/app/ of the overlay; without them the app shows nothing but
+# Expo Router's "unmatched route" screen.
+validate_expo_router() {
+  has_dependency expo-router || return 0
+  [ -d "$OVERLAY_DIR/src/app" ] || fail "expo-router needs the routes under src/app/ of the overlay"
+  has_dependency react-native-safe-area-context || fail "expo-router needs react-native-safe-area-context among extraDependencies"
 }
 
 scaffold_rn_cli() {
@@ -151,18 +177,36 @@ scaffold_expo() {
   npx create-expo-app@latest "$APP_DIR" --template "blank-typescript@sdk-$EXPO_SDK_VERSION" --no-install
   (
     cd "$APP_DIR"
+    # `expo install` adds the config plugin of every package it installs to app.json; only the
+    # plugins of the template and the ones set below are kept.
+    local template_plugins
+    template_plugins=$(jq -c '.expo.plugins // []' app.json)
     npm install
     npx expo install babel-preset-expo
     install_library_packages
-    # The template has no bundle identifier, and prebuild needs one.
-    node -e '
+    local expo_router=false
+    has_dependency expo-router && expo_router=true
+    # The template has no bundle identifier, and prebuild needs one. Expo Router needs a URL scheme,
+    # its config plugin and its entry point, which loads the routes from src/app/.
+    TEMPLATE_PLUGINS="$template_plugins" EXPO_ROUTER="$expo_router" node -e '
       const fs = require("fs");
+      const expoRouter = process.env.EXPO_ROUTER === "true";
       const config = JSON.parse(fs.readFileSync("app.json", "utf8"));
       config.expo.name = "ReproApp";
       config.expo.slug = "reproapp";
       config.expo.newArchEnabled = true;
       config.expo.ios = { ...(config.expo.ios ?? {}), bundleIdentifier: "com.swmansion.reproapp" };
+      config.expo.plugins = JSON.parse(process.env.TEMPLATE_PLUGINS);
+      if (expoRouter) {
+        config.expo.scheme = "reproapp";
+        config.expo.plugins.push("expo-router");
+      }
       fs.writeFileSync("app.json", JSON.stringify(config, null, 2) + "\n");
+      if (expoRouter) {
+        const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+        pkg.main = "expo-router/entry";
+        fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+      }
     '
   )
   write_babel_config
@@ -172,13 +216,36 @@ scaffold_expo() {
 
 # Lifecycle scripts are disabled for the library and the extra dependencies: none of the
 # allowlisted packages needs them, and it removes the one way an npm package runs code here.
+# Expo packages are installed by `expo install` at the versions of the SDK, so the versions in the
+# plan are ignored for them; Expo Router also needs expo-linking. `expo install` saves `~` ranges
+# in package.json whatever npm flags it gets, so the lockfile is what pins them. An override keeps a single copy
+# of react-native-screens: expo-router depends on it directly, and a version of the plan outside
+# its range would otherwise nest a second copy with a second native module.
 install_library_packages() {
-  local packages=("${LIBRARY_PACKAGES[@]}")
+  local packages=("${LIBRARY_PACKAGES[@]}") expo_packages=()
   while IFS= read -r dependency; do
-    [ -n "$dependency" ] && packages+=("$dependency")
+    [ -n "$dependency" ] || continue
+    if is_expo_package "${dependency%@*}"; then
+      expo_packages+=("${dependency%@*}")
+    else
+      packages+=("$dependency")
+    fi
   done <<< "$EXTRA_DEPENDENCIES"
+  if has_dependency expo-router && ! has_dependency expo-linking; then
+    expo_packages+=(expo-linking)
+  fi
+  SCREENS_VERSION="$SCREENS_VERSION" node -e '
+    const fs = require("fs");
+    const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+    pkg.overrides = { ...(pkg.overrides ?? {}), "react-native-screens": process.env.SCREENS_VERSION };
+    fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+  '
   echo "Installing ${packages[*]} with lifecycle scripts disabled"
   npm install --ignore-scripts --save-exact "${packages[@]}"
+  if [ "${#expo_packages[@]}" -gt 0 ]; then
+    echo "Installing ${expo_packages[*]} at the versions of the SDK with lifecycle scripts disabled"
+    npx expo install "${expo_packages[@]}" -- --ignore-scripts --save-exact
+  fi
 }
 
 # The Babel config is always written here, never taken from the agent, so the only plugins are the

@@ -62,6 +62,10 @@ open class ScreenFragment :
     // in nested fragments. See more explanation in dispatchViewAnimationEvent
     private var isTransitioning = false
 
+    // The enter animation can end while the fragment is paused, e.g. when the app goes to the
+    // background in the middle of a push. In such case we dispatch the appear event on resume.
+    private var shouldDispatchAppearOnResume = false
+
     constructor() {
         throw IllegalStateException(
             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
@@ -78,6 +82,10 @@ open class ScreenFragment :
         if (shouldUpdateOnResume) {
             shouldUpdateOnResume = false
             ScreenWindowTraits.trySetWindowTraits(screen, tryGetActivity(), tryGetContext())
+        }
+        if (shouldDispatchAppearOnResume) {
+            shouldDispatchAppearOnResume = false
+            dispatchOnAppear()
         }
     }
 
@@ -309,6 +317,12 @@ open class ScreenFragment :
                 UiThreadUtil.runOnUiThread {
                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
                 }
+            } else if (screen.container?.topScreen === screen) {
+                if (animationEnd) {
+                    shouldDispatchAppearOnResume = true
+                } else {
+                    UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
+                }
             } else {
                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
             }
@@ -317,6 +331,7 @@ open class ScreenFragment :
 
     override fun onDestroy() {
         super.onDestroy()
+        shouldDispatchAppearOnResume = false
         val container = screen.container
         if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
             // we only send dismissed even when the screen has been removed from its container

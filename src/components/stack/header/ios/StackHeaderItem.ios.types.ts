@@ -1,9 +1,11 @@
 import type { ReactElement } from 'react';
 import type { ColorValue } from 'react-native';
 import type { PlatformIconIOS } from '../../../shared/types';
-import type { StackHeaderItemVariantIOS } from '../StackHeaderConfig.ios.types';
+import type {
+  StackHeaderItemVariantIOS,
+  StackHeaderItemVisibilityPriorityIOS,
+} from '../StackHeaderConfig.ios.types';
 import type { StackHeaderMenuIOS } from './StackHeaderMenu.ios.types';
-import type { StackHeaderItemVisibilityPriorityIOS } from '../StackHeaderConfig.ios.types';
 
 export type StackHeaderItemPlacement =
   | 'leading'
