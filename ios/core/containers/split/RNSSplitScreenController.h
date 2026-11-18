@@ -41,18 +41,19 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Navigation controller
 
 /**
- * @brief The navigation controller the Split installs for this column, rooted at this controller.
+ * @brief The navigation controller the Split installs for a plain column, i.e. a column that does not host a stack.
+ * It is rooted at this controller.
  *
- * Created on first access and kept until `releaseColumnNavigationController`.
+ * Created on first access and kept until `releasePlainColumnNavigationController`.
  */
-@property (nonatomic, strong, readonly) RNSStackNavigationController *columnNavigationController;
+@property (nonatomic, strong, readonly) RNSStackNavigationController *plainColumnNavigationController;
 
 /**
- * @brief Releases `columnNavigationController`.
+ * @brief Releases `plainColumnNavigationController`.
  *
  * The navigation controller retains this controller as its root, so the column has to call it before it is destroyed.
  */
-- (void)releaseColumnNavigationController;
+- (void)releasePlainColumnNavigationController;
 
 #pragma mark - Signals
 

@@ -386,7 +386,7 @@
   if (@available(iOS 26.0, *)) {
     RNSSplitScreenController *inspector = inspectors.firstObject;
     if (inspector != nil) {
-      [self setViewController:inspector.columnNavigationController forColumn:UISplitViewControllerColumnInspector];
+      [self setViewController:inspector.plainColumnNavigationController forColumn:UISplitViewControllerColumnInspector];
     }
   }
 #endif

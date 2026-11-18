@@ -435,7 +435,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   NSMutableArray<RNSStackNavigationController *> *navigationControllers = [NSMutableArray array];
   for (RNSSplitScreenController *controller in [self columnControllers]) {
-    [navigationControllers addObject:controller.columnNavigationController];
+    [navigationControllers addObject:controller.plainColumnNavigationController];
   }
   return navigationControllers;
 }
