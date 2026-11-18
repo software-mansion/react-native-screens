@@ -95,6 +95,8 @@ export interface StackHeaderToolbarSubviewAndroid {
    * parent-relative sizing (e.g. `flex: 1`) on the root element — it will
    * produce incorrect dimensions. Flex layout within a root that has a known
    * size works as expected.
+   *
+   * @platform android
    */
   render: StackHeaderElementFactory;
 }
@@ -113,6 +115,7 @@ export interface StackHeaderBackgroundSubviewAndroid {
    * mode might be added in the future.
    *
    * @defaultValue `'off'`
+   * @platform android
    */
   collapseMode?: StackHeaderBackgroundSubviewCollapseModeAndroid | undefined;
   /**
@@ -121,6 +124,8 @@ export interface StackHeaderBackgroundSubviewAndroid {
    * @remarks
    * The subview is stretched to match the header (`AppBarLayout`) dimensions,
    * so parent-relative sizing (e.g. `flex: 1`) works correctly.
+   *
+   * @platform android
    */
   render: StackHeaderElementFactory;
 }
@@ -157,10 +162,14 @@ export type StackHeaderToolbarMenuItemShowAsActionAndroid =
 export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * Unique identifier of the menu element.
+   *
+   * @platform android
    */
   id: string;
   /**
    * Title of the menu element.
+   *
+   * @platform android
    */
   title?: string | undefined;
   /**
@@ -171,6 +180,8 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * When the element is shown in the Toolbar with a text label, this condensed
    * title is used instead of `title`. The full `title` is still used everywhere
    * else (the overflow menu and submenus).
+   *
+   * @platform android
    */
   titleCondensed?: string | undefined;
   /**
@@ -180,6 +191,8 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * @remarks
    * Applies only to elements shown as a button in the Toolbar; it has no effect
    * on elements placed in the overflow menu.
+   *
+   * @platform android
    */
   tooltipText?: string | undefined;
   /**
@@ -194,18 +207,22 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Due to native platform limitations, it's not possible to provide `testID`
    * for menu items inside overflow menu/submenus. If possible, use
    * `accessibilityLabel` instead.
+   *
+   * @platform android
    */
   accessibilityLabel?: string | undefined;
   /**
    * Specifies if the menu element should be hidden.
    *
    * @defaultValue `false`
+   * @platform android
    */
   hidden?: boolean | undefined;
   /**
    * Specifies if the menu element should be disabled.
    *
    * @defaultValue `false`
+   * @platform android
    */
   disabled?: boolean | undefined;
   /**
@@ -222,6 +239,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * not adapt to subsequent layout or orientation changes.
    *
    * @defaultValue `'never'`
+   * @platform android
    */
   showAsAction?: StackHeaderToolbarMenuItemShowAsActionAndroid | undefined;
   /**
@@ -234,10 +252,14 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * {@link StackHeaderConfigCommandsAndroid.updateToolbarMenuElements | updateToolbarMenuElements}
    * view command takes precedence over this one until the next
    * {@link StackHeaderConfigPropsAndroid.toolbarMenu | toolbarMenu} change.
+   *
+   * @platform android
    */
   icon?: PlatformIconAndroid | undefined;
   /**
    * Specifies the tint color to apply to the menu element icon.
+   *
+   * @platform android
    */
   iconTintColorNormal?: ColorValue | undefined;
   /**
@@ -247,6 +269,8 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   *
+   * @platform android
    */
   iconTintColorPressed?: ColorValue | undefined;
   /**
@@ -256,6 +280,8 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * @info
    * Due to native platform limitations, if you set this prop, you must also
    * provide `iconTintColorNormal`. Otherwise, the icon will become transparent.
+   *
+   * @platform android
    */
   iconTintColorFocused?: ColorValue | undefined;
   /**
@@ -266,6 +292,8 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    * Due to native platform limitations, if you set this prop, you should also
    * provide `iconTintColorNormal`. Otherwise, the icon will become transparent
    * when the item is not disabled.
+   *
+   * @platform android
    */
   iconTintColorDisabled?: ColorValue | undefined;
 }
@@ -302,6 +330,8 @@ export interface StackHeaderToolbarMenuItemAndroid
   extends StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * Marks this object as a menu item.
+   *
+   * @platform android
    */
   type: 'menuItem';
   /**
@@ -314,6 +344,8 @@ export interface StackHeaderToolbarMenuItemAndroid
    *
    * Required when `itemType` is `'toggle'`. Cannot be set when `itemType` is
    * `'action'`.
+   *
+   * @platform android
    */
   groupId?: string | undefined;
   /**
@@ -326,6 +358,7 @@ export interface StackHeaderToolbarMenuItemAndroid
    * item toggle state.
    *
    * @defaultValue `'automatic'`
+   * @platform android
    */
   itemType?: StackHeaderToolbarMenuItemTypeAndroid | undefined;
   /**
@@ -343,6 +376,7 @@ export interface StackHeaderToolbarMenuItemAndroid
    * native header rebuild triggers `onSelectionChange`.
    *
    * @defaultValue `false`
+   * @platform android
    */
   initialToggleState?: boolean | undefined;
   /**
@@ -353,6 +387,8 @@ export interface StackHeaderToolbarMenuItemAndroid
    * `itemType: 'toggle'`). For those items, use
    * {@link StackHeaderToolbarMenuGroupAndroid.onSelectionChange | onSelectionChange}
    * on the group instead.
+   *
+   * @platform android
    */
   onPress?: StackHeaderPressHandler | undefined;
 }
@@ -374,6 +410,8 @@ export interface StackHeaderToolbarMenuGroupAndroid {
    * groups cannot span submenus.
    *
    * Group identifier must be unique across the entire menu tree.
+   *
+   * @platform android
    */
   groupId: string;
   /**
@@ -384,11 +422,14 @@ export interface StackHeaderToolbarMenuGroupAndroid {
    * behavior). When `false`, items toggle independently (checkbox behavior).
    *
    * @defaultValue `false`
+   * @platform android
    */
   singleSelection?: boolean | undefined;
   /**
    * Callback invoked when the selection within the group changes. Receives the
    * list of currently selected item IDs.
+   *
+   * @platform android
    */
   onSelectionChange?: StackHeaderMenuSelectionHandler | undefined;
 }
@@ -410,10 +451,14 @@ export interface StackHeaderToolbarMenuBaseAndroid {
    * share the same {@link StackHeaderToolbarMenuItemAndroid.groupId | groupId}.
    * A group is scoped to the menu level it is defined in — groups cannot span
    * submenus.
+   *
+   * @platform android
    */
   groups?: StackHeaderToolbarMenuGroupAndroid[] | undefined;
   /**
    * Menu elements displayed in the toolbar menu.
+   *
+   * @platform android
    */
   children?: StackHeaderToolbarMenuElementAndroid[] | undefined;
 }
@@ -433,6 +478,8 @@ export interface StackHeaderToolbarMenuAndroid
    * @remarks
    * Android's `SubMenu` interface claims that nesting submenus isn't supported
    * but Material's implementation handles it correctly.
+   *
+   * @platform android
    */
   type: 'menu';
   /**
@@ -447,6 +494,7 @@ export interface StackHeaderToolbarMenuAndroid
    * popup shows no header.
    *
    * @see {@link https://developer.android.com/reference/android/view/SubMenu#setHeaderTitle(java.lang.CharSequence) | SubMenu.setHeaderTitle}
+   * @platform android
    */
   menuTitle?: string | undefined;
 }
@@ -478,6 +526,8 @@ export interface StackHeaderToolbarMenuElementOptionsAndroid
    * @remarks
    * In single-selection groups, setting `checked: true` automatically unchecks
    * other group members.
+   *
+   * @platform android
    */
   checked?: boolean | undefined;
   /**
@@ -489,6 +539,8 @@ export interface StackHeaderToolbarMenuElementOptionsAndroid
    * {@link StackHeaderToolbarMenuAndroid.menuTitle | menuTitle} prop as well,
    * leaving the header to fall back to
    * {@link StackHeaderToolbarMenuItemBaseAndroid.title | title}.
+   *
+   * @platform android
    */
   menuTitle?: string | undefined;
 }
@@ -500,10 +552,14 @@ export interface StackHeaderToolbarMenuElementOptionsAndroid
 export interface StackHeaderToolbarMenuElementUpdateAndroid {
   /**
    * The ID of the menu element to update.
+   *
+   * @platform android
    */
   id: string;
   /**
    * Options to apply to the menu element.
+   *
+   * @platform android
    */
   options: StackHeaderToolbarMenuElementOptionsAndroid;
 }
