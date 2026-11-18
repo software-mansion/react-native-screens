@@ -2,14 +2,14 @@
 
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
-#import "RNSSplitNavigationController.h"
+#import "RNSStackNavigationController.h"
 #import "RNSViewControllerViewLifecycleEventsObserver.h"
 
 @interface RNSSplitScreenController () <RNSViewControllerViewLifecycleEventsObserver>
 @end
 
 @implementation RNSSplitScreenController {
-  RNSSplitNavigationController *_Nullable _columnNavigationController;
+  RNSStackNavigationController *_Nullable _columnNavigationController;
 }
 
 - (instancetype)init
@@ -51,19 +51,19 @@
  * with a plain view, under which the React content of the column is mounted. This controller leaves the view
  * controller hierarchy then.
  *
- * RNSSplitNavigationController is a stack navigation controller, which is meant to hold RNSStackScreenController
- * instances only. For a column that does not host a stack, this controller is still the root, as it was before the
- * navigation controller of a column became a stack one.
+ * RNSStackNavigationController is meant to hold RNSStackScreenController instances only. For a column that does not
+ * host a stack, this controller is still the root, as it was before the navigation controller of a column became a
+ * stack one.
  *
  * A navigation controller that holds this controller is never used by a stack: nothing is pushed onto it or popped
  * from it.
  */
-- (RNSSplitNavigationController *)columnNavigationController
+- (RNSStackNavigationController *)columnNavigationController
 {
   if (_columnNavigationController == nil) {
     // `initWithRootViewController:` would skip the `init` of RNSStackNavigationController, which sets up its navigation
     // bar. The controller is created with `init` and gets its root afterwards.
-    _columnNavigationController = [RNSSplitNavigationController new];
+    _columnNavigationController = [RNSStackNavigationController new];
     _columnNavigationController.viewControllers = @[ self ];
     _columnNavigationController.viewLifecycleEventsObserver = self;
   }

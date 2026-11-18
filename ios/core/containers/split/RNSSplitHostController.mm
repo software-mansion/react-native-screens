@@ -5,8 +5,8 @@
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
 #import "RNSSplitColumnNavigationControllerFrameObserver.h"
-#import "RNSSplitNavigationController.h"
 #import "RNSSplitScreenController.h"
+#import "RNSStackNavigationController.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 [[maybe_unused]] static const NSInteger minNumberOfColumns = 2;
@@ -117,7 +117,7 @@
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
 
-  NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
+  NSMutableArray<RNSStackNavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
   for (RNSSplitScreenController *splitScreenController in currentColumns) {
     [currentViewControllers addObject:splitScreenController.columnNavigationController];
@@ -332,15 +332,15 @@
     UIViewController *viewController = [self viewControllerForColumn:column];
     RNSAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
 
-    RNSSplitNavigationController *splitNavigationController =
-        [viewController isKindOfClass:RNSSplitNavigationController.class]
-        ? (RNSSplitNavigationController *)viewController
+    RNSStackNavigationController *navigationController =
+        [viewController isKindOfClass:RNSStackNavigationController.class]
+        ? (RNSStackNavigationController *)viewController
         : nil;
-    RNSAssert(splitNavigationController != nil,
-              @"[RNScreens] Expected RNSSplitNavigationController but got %@",
+    RNSAssert(navigationController != nil,
+              @"[RNScreens] Expected RNSStackNavigationController but got %@",
               NSStringFromClass(viewController.class));
 
-    UIViewController *maybeSplitScreenController = splitNavigationController.topViewController;
+    UIViewController *maybeSplitScreenController = navigationController.topViewController;
     RNSAssert(
         maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for column %ld", (long)column);
     RNSAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],

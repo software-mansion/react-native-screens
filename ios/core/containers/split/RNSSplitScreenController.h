@@ -2,8 +2,8 @@
 
 #import <UIKit/UIKit.h>
 
-@class RNSSplitNavigationController;
 @class RNSSplitScreenController;
+@class RNSStackNavigationController;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Created on first access and kept until `releaseColumnNavigationController`.
  */
-@property (nonatomic, strong, readonly) RNSSplitNavigationController *columnNavigationController;
+@property (nonatomic, strong, readonly) RNSStackNavigationController *columnNavigationController;
 
 /**
  * @brief Releases `columnNavigationController`.
