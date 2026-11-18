@@ -19,19 +19,15 @@ import { describeIfIOS } from '@e2e/framework/platform';
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
 const MENU_ROW_COUNT = 4;
 
-// `imageSource` and `templateSource` icons are `require`d files, and the id
-// React Native gives them depends on how it bundles them: with the asset
-// catalog (`RCTUseAssetCatalog` in Info.plist) it is the catalog name, e.g.
-// `metrowatchfolders_1_apps_assets_search_black`, which encodes the Metro
-// watch-folder index; without it, the bundled path, e.g.
-// `assets/_apps/assets/search_black.png`. Match on the asset's own name so the
-// spec survives either mode and Metro config changes. Detox matches the whole
-// id, so the patterns start with `.*`.
+// `imageSource` and `templateSource` ids are the asset catalog names of the
+// `require`d asset files. Their prefix depends on the Metro config, so match
+// the end only (Detox matches the whole id, hence `.*`). Renaming or moving
+// those assets requires updating them here.
 const ICON_IDS = {
   sfSymbol: 'star.fill',
   xcasset: 'custom-icon-fill',
-  imageSource: /.*search_black(\.png)?/,
-  templateSource: /.*variable[Ii]cons.icon(@3x\.png)?/,
+  imageSource: /.*_search_black/,
+  templateSource: /.*_variableicons_icon/,
 } as const;
 
 // The icon of a single menu row, addressed by its icon id and its position in
