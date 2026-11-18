@@ -209,7 +209,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   if (@available(iOS 26.0, *)) {
     if (_needsTabBarItemTitlesRefit && self.tabBar.window != nil) {
       _needsTabBarItemTitlesRefit = NO;
-      // Let the bar apply pending item changes first. Assigning an equal title is a no-op, hence the nil.
+      // Lay the bar out first: re-assigning the title before its first layout causes the bug instead of fixing it.
       [self.tabBar layoutIfNeeded];
       for (UITabBarItem *item in self.tabBar.items) {
         NSString *title = item.title;
@@ -309,9 +309,14 @@ static void rns_pushViewController(__unsafe_unretained id self,
 - (void)setNeedsTabBarItemTitlesRefit
 {
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 27.0, *)) {
+    return;
+  }
   if (@available(iOS 26.0, *)) {
-    // iOS 26 fits an item's title only on the bar's first layout with that item, not when its image, font or
-    // neighbours change later (#4749). Re-assigning the title makes it fit again, see `viewDidLayoutSubviews`.
+    // iOS 26 squashes and truncates tab titles when an item changes after the tab bar enters a window but before
+    // its first layout (#5107, FB24250687). Setting the title to nil and back after the bar has been laid out makes
+    // UIKit fit it again; doing it earlier causes the bug and an equal title is ignored. Undocumented, not
+    // reproducible on iOS 27. See `viewDidLayoutSubviews`.
     _needsTabBarItemTitlesRefit = YES;
     [self.viewIfLoaded setNeedsLayout];
   }
@@ -986,7 +991,6 @@ static void rns_pushViewController(__unsafe_unretained id self,
                                                      withTintColor:_appearanceProvider.tabBarTintColor
                                               tabScreenControllers:_tabScreenControllers
                                                        imageLoader:_imageLoader];
-  [self setNeedsTabBarItemTitlesRefit];
 }
 
 - (void)updateTabBarA11yIfNeeded
