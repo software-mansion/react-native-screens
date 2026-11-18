@@ -583,12 +583,16 @@ class TabsContainer internal constructor(
         fragmentManager?.let { TabsScreenFragmentLifecycleTracker.isRunningCallback(it) } ?: false
 
     private fun updateBottomNavigationViewAppearanceIfNeeded() {
-        if (invalidationFlags.isNavigationMenuAppearanceInvalidated) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = false
-            // Accessibility is re-applied to every tab together with the bar's appearance.
-            bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ACCESSIBILITY)
-            updateBottomNavigationViewAppearance()
+        // Nothing is selected yet (e.g. the first selection is postponed, see
+        // [performSelectedTabUpdateIfNeeded]); the appearance update that follows the first
+        // selection applies it.
+        if (!invalidationFlags.isNavigationMenuAppearanceInvalidated || navState.isEmpty()) {
+            return
         }
+        invalidationFlags.isNavigationMenuAppearanceInvalidated = false
+        // Accessibility is re-applied to every tab together with the bar's appearance.
+        bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ACCESSIBILITY)
+        updateBottomNavigationViewAppearance()
     }
 
     private fun performSelectedTabUpdate() {
@@ -602,8 +606,21 @@ class TabsContainer internal constructor(
 
         val stateUpdateRequest = requirePendingStateUpdateRequest()
 
+        // A postponed selection (see [performSelectedTabUpdateIfNeeded]) can outlive its tab: drop the
+        // request if the tab was removed in the meantime.
+        val nextSelectedFragment = getFragmentForScreenKey(stateUpdateRequest.selectedScreenKey)
+        if (nextSelectedFragment == null) {
+            RNSLog.w(
+                TAG,
+                "TabsContainer::performSelectedTabUpdate requested tab ${stateUpdateRequest.selectedScreenKey} " +
+                    "no longer exists; skipping update",
+            )
+            pendingStateUpdateRequest = null
+            return
+        }
+
         val nextSelectedMenuItemId =
-            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(stateUpdateRequest.selectedScreenKey))) {
+            checkNotNull(getMenuItemIdForFragment(nextSelectedFragment)) {
                 "[RNScreens] Failed to find Menu Item for screenKey: ${stateUpdateRequest.selectedScreenKey}"
             }
 
@@ -890,11 +907,6 @@ class TabsContainer internal constructor(
             ?.let { fragment -> bottomNavigationView.findMenuItem(fragment.menuItemId) }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireItemKey == screenKey }
-
-    private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
-        checkNotNull(getFragmentForScreenKey(screenKey)) {
-            "[RNScreens] Requested fragment for key: $screenKey does not exist"
-        }
 
     // A hidden tab bar is `GONE`, so `bottomNavigationView.height` keeps the last laid out value.
     private fun currentTabBarHeight(newHeight: Int? = null): Int = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
