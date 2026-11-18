@@ -47,10 +47,7 @@ class ScreensModule(
 
     override fun invalidate() {
         super.invalidate()
-        proxy?.let {
-            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)?.removeUIManagerEventListener(it)
-            it.invalidateNative()
-        }
+        proxy?.invalidateNative()
         proxy = null
         reactContext.removeLifecycleEventListener(this)
         nativeUninstall()
@@ -72,7 +69,7 @@ class ScreensModule(
         val uiManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) ?: return
         proxy?.apply {
             nativeAddMutationsListener(uiManager as FabricUIManager)
-            // setupFabric runs again on every host resume, the listener must be added only once.
+            // setupFabric runs again on every host resume, so the listener is removed before it is added.
             uiManager.removeUIManagerEventListener(this)
             uiManager.addUIManagerEventListener(this)
         }
