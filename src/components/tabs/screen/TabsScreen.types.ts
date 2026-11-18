@@ -171,8 +171,9 @@ export interface TabsScreenPropsBase {
    *    - if `orientation` is set to `'inherit'`, the parent component
    *      is queried.
    *
-   * Note that some components (like {@link Split.Host}) may choose not to
-   * query its child components.
+   * @info
+   * Some components (like {@link Split.Host}) may choose not to query its
+   * child components.
    *
    * @defaultValue `'inherit'`
    * @platform ios

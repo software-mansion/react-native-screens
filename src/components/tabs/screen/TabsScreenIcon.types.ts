@@ -75,11 +75,12 @@ export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
    * How the tab bar renders this symbol.
    *
    * @remarks
-   * Set `renderingMode` explicitly to be independent of the system behavior.
-   *
    * {@link TabsScreenPropsIOS.icon | icon} and
    * {@link TabsScreenPropsIOS.selectedIcon | selectedIcon} may use different
    * values.
+   *
+   * @tip
+   * Set `renderingMode` explicitly to be independent of the system behavior.
    *
    * @defaultValue `'default'`, the system behavior.
    * @platform ios
