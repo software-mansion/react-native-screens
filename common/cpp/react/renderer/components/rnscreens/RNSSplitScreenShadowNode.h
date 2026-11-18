@@ -20,10 +20,20 @@ using ConcreteViewShadowNodeSuperType = ConcreteViewShadowNode<
 class JSI_EXPORT RNSSplitScreenShadowNode final
     : public ConcreteViewShadowNodeSuperType {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
+  RNSSplitScreenShadowNode(
+      const ShadowNodeFragment &fragment,
+      const ShadowNodeFamily::Shared &family,
+      ShadowNodeTraits traits);
+
+  RNSSplitScreenShadowNode(
+      const ShadowNode &sourceShadowNode,
+      const ShadowNodeFragment &fragment);
+
 #pragma mark - ShadowNode overrides
+
+  void appendChild(const std::shared_ptr<const ShadowNode> &child) override;
 
   Point getContentOriginOffset(bool includeTransform) const override;
   static ShadowNodeTraits BaseTraits() {
@@ -31,6 +41,9 @@ class JSI_EXPORT RNSSplitScreenShadowNode final
     traits.set(ShadowNodeTraits::Trait::RootNodeKind);
     return traits;
   }
+
+ private:
+  void updateDisplayForContent();
 };
 
 } // namespace facebook::react
