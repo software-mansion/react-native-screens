@@ -5,9 +5,18 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import Animated, { LinearTransition } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
-type Routes = { Home: undefined; Detail: { withLayoutAnimation: boolean } };
+type DetailAnimation = 'none' | 'layout' | 'spinner';
+
+type Routes = { Home: undefined; Detail: { animation: DetailAnimation } };
 
 const Stack = createNativeStackNavigator<Routes>();
 
@@ -30,26 +39,46 @@ function LayoutAnimationTicker() {
   );
 }
 
+// Animates a transform on the UI thread every frame, like the spinner in #4570.
+function Spinner() {
+  const rotation = useSharedValue(0);
+
+  useEffect(() => {
+    rotation.value = withRepeat(
+      withTiming(360, { duration: 1000, easing: Easing.linear }),
+      -1,
+    );
+  }, [rotation]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  return <Animated.View style={[styles.spinner, animatedStyle]} />;
+}
+
 function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
   return (
     <View style={styles.home}>
       <Text>
         Push the detail screen and pop it. The orange content must stay visible
-        until the exit animation ends, with and without the layout animation.
+        until the exit animation ends, with and without a running Reanimated
+        animation.
       </Text>
       <Button
         testID="test4570-push-detail"
         title="Push detail"
-        onPress={() =>
-          navigation.navigate('Detail', { withLayoutAnimation: false })
-        }
+        onPress={() => navigation.navigate('Detail', { animation: 'none' })}
       />
       <Button
         testID="test4570-push-detail-with-layout-animation"
         title="Push detail with layout animation"
-        onPress={() =>
-          navigation.navigate('Detail', { withLayoutAnimation: true })
-        }
+        onPress={() => navigation.navigate('Detail', { animation: 'layout' })}
+      />
+      <Button
+        testID="test4570-push-detail-with-spinner"
+        title="Push detail with spinner"
+        onPress={() => navigation.navigate('Detail', { animation: 'spinner' })}
       />
     </View>
   );
@@ -61,7 +90,8 @@ function Detail({
 }: NativeStackScreenProps<Routes, 'Detail'>) {
   return (
     <View style={styles.detail}>
-      {route.params.withLayoutAnimation && <LayoutAnimationTicker />}
+      {route.params.animation === 'layout' && <LayoutAnimationTicker />}
+      {route.params.animation === 'spinner' && <Spinner />}
       <Text style={styles.detailText}>DETAIL CONTENT</Text>
       <Button
         testID="test4570-pop"
@@ -100,6 +130,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 24,
     backgroundColor: '#ff8c00',
+  },
+  spinner: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#1f6feb',
   },
   detailText: {
     fontSize: 32,
