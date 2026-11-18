@@ -13,6 +13,6 @@ internal class ScreensAnimation(
     ) {
         super.applyTransformation(interpolatedTime, t)
         // interpolated time should be the progress of the current transition
-        mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)
+        mFragment.dispatchTransitionProgressEvent(interpolatedTime, mFragment.isRemoving)
     }
 }
