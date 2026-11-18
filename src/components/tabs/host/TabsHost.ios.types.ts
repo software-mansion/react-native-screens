@@ -76,8 +76,7 @@ export type TabBarControllerMode = 'automatic' | 'tabBar' | 'tabSidebar';
  *
  * @remarks
  * The following values are currently supported:
- * - `'automatic'` — the system resolves to the platform default (the tab bar
- *   on iOS)
+ * - `'automatic'` — the system resolves to the platform default
  * - `'sidebar'` — the sidebar is displayed when it is available
  * - `'tabBar'` — the tab bar is displayed
  *
