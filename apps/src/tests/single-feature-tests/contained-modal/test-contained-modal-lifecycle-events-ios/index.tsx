@@ -87,8 +87,9 @@ function EventsScreen() {
     addLog,
     clearLogs,
   } = useEventsStateContext();
-  // Switching swaps the component type, which remounts the first modal; only
-  // switch while it is closed.
+  // Switching swaps the component type, which remounts the first modal; a
+  // remounted host whose old controller is still presented would get its
+  // request rejected, hence the switch is disabled while the modal is open.
   const [isReplacing, setIsReplacing] = useState(false);
   const FirstModal = isReplacing
     ? ContainedModalReplacingContent
@@ -131,6 +132,7 @@ function EventsScreen() {
           }
           color={Colors.primary}
           onPress={() => setIsReplacing(value => !value)}
+          disabled={isOpen}
           testID="contained-modal-variant-button"
         />
       </View>

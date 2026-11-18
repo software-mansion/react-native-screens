@@ -22,6 +22,9 @@ Perform the steps for `ContainedModalOverContent` first - the regular steps + st
 marked with "**Over**". Then, switch the "Variant" to "replacing content" and perform
 the regular steps + steps marked with "**Replacing**".
 
+The "Variant" button is disabled while any modal is open; dismiss every modal
+before switching.
+
 ## E2E test
 
 TBD.
