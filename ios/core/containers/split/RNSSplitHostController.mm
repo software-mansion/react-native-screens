@@ -41,8 +41,8 @@
   /**
    * Observe the frames of the views of the navigation controllers installed for the columns.
    *
-   * UISplitViewController moves the columns natively, on display mode change or column resize. These updates have to
-   * be passed to React to sync the ShadowTree layout of the column subtrees.
+   * UISplitViewController moves the columns on its own, on display mode change or column resize. The columns are
+   * notified then, so that they report their new frames to their delegates.
    */
   NSArray<RNSSplitColumnNavigationControllerFrameObserver *> *_columnNavigationControllerFrameObservers;
 }
