@@ -518,7 +518,7 @@ export type StackHeaderToolbarMenuElementAndroid =
  *
  * @remarks
  * Accepts the fields of {@link StackHeaderToolbarMenuItemBaseAndroid} except
- * `id`.
+ * {@link StackHeaderToolbarMenuItemBaseAndroid.id | id}.
  */
 export interface StackHeaderToolbarMenuElementOptionsAndroid
   extends Partial<Omit<StackHeaderToolbarMenuItemBaseAndroid, 'id'>> {
@@ -576,11 +576,13 @@ export interface StackHeaderConfigCommandsAndroid {
    *
    * @remarks
    * Accepts a single update or an array of them; each targets a menu element
-   * by `id` and applies its `options`. The call is queued and applied as one
-   * atomic batch:
-   * - if any update carries an `icon` that loads asynchronously, the whole
-   *   batch waits for every icon before applying (updates are never applied
-   *   partially);
+   * by {@link StackHeaderToolbarMenuElementUpdateAndroid.id | id} and applies
+   * its {@link StackHeaderToolbarMenuElementUpdateAndroid.options | options}.
+   * The call is queued and applied as one atomic batch:
+   * - if any update carries an
+   *   {@link StackHeaderToolbarMenuItemBaseAndroid.icon | icon} that loads
+   *   asynchronously, the whole batch waits for every icon before applying
+   *   (updates are never applied partially);
    * - updates apply in array order, so an `id` may repeat and later values
    *   win field by field;
    * - once applied, each affected group emits at most one, coalesced
@@ -1044,8 +1046,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * Applies to `'medium'` / `'large'` headers only and affects only the
-   * collapsed state; it is only visually meaningful with
-   * `collapsedTitleHorizontalGravity: 'center'`.
+   * collapsed state; it is only visually meaningful when
+   * {@link StackHeaderConfigPropsAndroid.collapsedTitleHorizontalGravity | collapsedTitleHorizontalGravity}
+   * is `'center'`.
    *
    * @info
    * If the header is laid out during a screen transition, due to a native bug,
@@ -1099,8 +1102,9 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @info
    * By default, native platform applies non-zero inset which makes centered
-   * collapsed title look off-center when `collapsedTitleGravityMode:
-   * 'availableSpace'` is used.
+   * collapsed title look off-center when
+   * {@link StackHeaderConfigPropsAndroid.collapsedTitleGravityMode | collapsedTitleGravityMode}
+   * is `'availableSpace'`.
    *
    * @defaultValue Material's default is used.
    * @platform android
