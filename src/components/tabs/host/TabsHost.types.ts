@@ -21,6 +21,8 @@ export type TabsHostNavStateRequest = {
    * It must correspond to the
    * {@link TabsScreenPropsBase.screenKey | screenKey} of one of the
    * {@link Tabs.Screen} components.
+   *
+   * @platform android, ios
    */
   selectedScreenKey: string;
   /**
@@ -51,6 +53,8 @@ export type TabsHostNavStateRequest = {
    * It is named `baseProvenance` (rather than `provenance`) to disambiguate it
    * from the `provenance` field on the {@link TabSelectedEvent} payload, which
    * carries the provenance of the state *resulting* from a transition.
+   *
+   * @platform android, ios
    */
   baseProvenance: number;
 };
@@ -89,19 +93,35 @@ export type TabSelectionActionOrigin =
  * selection context.
  */
 export type TabSelectedEvent = {
-  /** Screen key of the newly selected tab. */
+  /**
+   * Screen key of the newly selected tab.
+   *
+   * @platform android, ios
+   */
   selectedScreenKey: string;
-  /** Provenance of the navigation state after the selection. */
+  /**
+   * Provenance of the navigation state after the selection.
+   *
+   * @platform android, ios
+   */
   provenance: number;
-  /** Whether the same tab that was already selected has been selected again. */
+  /**
+   * Whether the same tab that was already selected has been selected again.
+   *
+   * @platform android, ios
+   */
   isRepeated: boolean;
   /**
    * Whether the selection triggered a special effect (e.g. scroll-to-top on
    * repeated selection).
+   *
+   * @platform android, ios
    */
   hasTriggeredSpecialEffect: boolean;
   /**
    * Origin (actor) that requested this tab transition.
+   *
+   * @platform android, ios
    */
   actionOrigin: TabSelectionActionOrigin;
 };
@@ -132,15 +152,35 @@ export type TabSelectionRejectionReason = 'stale' | 'repeated';
  * @see {@link TabsHostPropsBase.rejectStaleNavStateUpdates | rejectStaleNavStateUpdates}
  */
 export type TabSelectionRejectedEvent = {
-  /** Screen key of the currently selected (active) tab. */
+  /**
+   * Screen key of the currently selected (active) tab.
+   *
+   * @platform android, ios
+   */
   selectedScreenKey: string;
-  /** Provenance of the currently active navigation state. */
+  /**
+   * Provenance of the currently active navigation state.
+   *
+   * @platform android, ios
+   */
   provenance: number;
-  /** Screen key of the tab whose selection was rejected. */
+  /**
+   * Screen key of the tab whose selection was rejected.
+   *
+   * @platform android, ios
+   */
   rejectedScreenKey: string;
-  /** Base provenance of the rejected navigation state update. */
+  /**
+   * Base provenance of the rejected navigation state update.
+   *
+   * @platform android, ios
+   */
   rejectedBaseProvenance: number;
-  /** Reason the selection was rejected. */
+  /**
+   * Reason the selection was rejected.
+   *
+   * @platform android, ios
+   */
   rejectionReason: TabSelectionRejectionReason;
 };
 
@@ -151,11 +191,23 @@ export type TabSelectionRejectedEvent = {
  * enabled.
  */
 export type TabSelectionPreventedEvent = {
-  /** Screen key of the currently selected (active) tab. */
+  /**
+   * Screen key of the currently selected (active) tab.
+   *
+   * @platform android, ios
+   */
   selectedScreenKey: string;
-  /** Provenance of the currently active navigation state. */
+  /**
+   * Provenance of the currently active navigation state.
+   *
+   * @platform android, ios
+   */
   provenance: number;
-  /** Screen key of the tab whose selection was prevented. */
+  /**
+   * Screen key of the tab whose selection was prevented.
+   *
+   * @platform android, ios
+   */
   preventedScreenKey: string;
 };
 
@@ -187,6 +239,8 @@ export type TabsDirection = Direction | 'inherit';
 export type TabsHostNativeContainerStyleProps = {
   /**
    * Specifies the background color of the native container.
+   *
+   * @platform android, ios
    */
   backgroundColor?: ColorValue | undefined;
 };
