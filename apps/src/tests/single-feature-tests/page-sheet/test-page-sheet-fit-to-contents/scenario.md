@@ -2,7 +2,7 @@
 
 ## Details
 
-**Description:** Verify `detents="fitToContents"` of the `PageSheet` component. This test ensures that the PageSheet calculates its initial height to wrap its content upon opening and follows changes of the content height while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
+**Description:** Verify `detents="fitToContents"` of the `PageSheet` component. This test ensures that the PageSheet calculates its initial height to wrap its content upon opening and follows changes of the content height and grabber visibility while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
 
 **OS test creation version:** iOS: 26.1, iPadOS: 26.1, Android: API Level 36.
 
@@ -36,7 +36,7 @@ TBD
 
 1. Tap "Open PageSheet".
 
-    - [ ] The sheet presents with a height matching its content ("PageSheet content" title, description text, "Expand Content" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
+    - [ ] The sheet presents with a height matching its content ("PageSheet content" title, description text, "Expand Content", "Show Grabber" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
     - [ ] iPhone: the empty bottom inset area is added below the content.
     - [ ] iPad: the sheet height matches the content exactly – there is no bottom inset area below it.
     - [ ] Android: the sheet surface extends behind the navigation bar while the content sits above it.
@@ -56,6 +56,24 @@ TBD
     - [ ] The extra text box disappears and the sheet shrinks back to its original height.
     - [ ] iOS: the shrink is animated.
     - [ ] Android: the sheet snaps back immediately (no animation).
+
+---
+
+### Grabber
+
+1. Tap "Show Grabber".
+
+    - [ ] The grabber appears at the top of the sheet and the button now reads "Hide Grabber".
+    - [ ] The whole content is visible – "Dismiss from JS" is not clipped at the bottom.
+    - [ ] Android: the sheet grows by the grabber height and "Dismiss from JS" sits fully above the navigation bar.
+
+2. Tap "Expand Content".
+
+    - [ ] The sheet grows to fit the extra text box; the grabber, the whole extra text box and "Dismiss from JS" are visible.
+
+3. Tap "Collapse Content", then tap "Hide Grabber".
+
+    - [ ] The grabber disappears and the sheet returns to the height from step 1 of **Presentation**. The button reads "Show Grabber".
 
 ---
 

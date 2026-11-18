@@ -68,6 +68,10 @@ internal class SheetDimensionsCoordinator(
         invalidateGeometry()
     }
 
+    internal fun onGrabberVisibilityChanged() {
+        invalidateGeometry()
+    }
+
     // Schedules a measure pass; the metrics are resolved from there. The provider is a sibling of the sheet
     // subtree, not an ancestor, so it has to be asked for a re-measure explicitly. No-op while the dialog
     // is not shown - the first traversal after `show()` measures everything anyway.
@@ -97,11 +101,16 @@ internal class SheetDimensionsCoordinator(
      * our container are measured, so the values applied here are picked up by the very same traversal.
      */
     private fun resolveGeometry(sheetAvailableSpace: Int) {
+        // The grabber sits above the React content in the container, so the container has to fit both.
+        // A non-positive content height means "not measured yet" and is passed through as is.
+        val fitToContentsHeight =
+            if (currentContentHeight > 0) currentContentHeight + container.measureGrabberHeight() else currentContentHeight
+
         currentDetents?.let { detents ->
             behaviorController?.updateSheetBehavior(
                 detents = detents,
                 sheetAvailableSpace = sheetAvailableSpace,
-                contentHeightForFitToContents = currentContentHeight,
+                contentHeightForFitToContents = fitToContentsHeight,
                 nativeContainerPaddingBottom = lastBottomInset,
                 keyboardLift = keyboardLift,
                 initialDetentIndex = currentInitialDetentIndex,
@@ -115,7 +124,7 @@ internal class SheetDimensionsCoordinator(
                 sheetAvailableSpace,
                 lastTopInset,
                 lastBottomInset,
-                currentContentHeight,
+                fitToContentsHeight,
                 keyboardLift,
             ) ?: (sheetAvailableSpace - lastTopInset - lastBottomInset - keyboardLift).coerceAtLeast(0)
 

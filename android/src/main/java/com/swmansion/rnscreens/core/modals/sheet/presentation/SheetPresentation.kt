@@ -104,6 +104,7 @@ internal class SheetPresentation(
             applyInitialDetent = true,
         )
         container.setGrabberVisible(config.prefersGrabberVisible)
+        dimensionsCoordinator.onGrabberVisibilityChanged()
         appearanceCoordinator.updateCornerRadius(config.preferredCornerRadius)
         appearanceCoordinator.updateBackgroundColor(config.nativeContainerBackgroundColor)
         nativeDismissCoordinator.shouldPreventDismiss = config.shouldPreventNativeDismiss
@@ -122,6 +123,7 @@ internal class SheetPresentation(
 
         if (oldConfig.prefersGrabberVisible != newConfig.prefersGrabberVisible) {
             container.setGrabberVisible(newConfig.prefersGrabberVisible)
+            dimensionsCoordinator.onGrabberVisibilityChanged()
         }
 
         if (oldConfig.preferredCornerRadius != newConfig.preferredCornerRadius) {

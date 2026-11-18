@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Fit To Contents',
   key: 'test-page-sheet-fit-to-contents',
   details:
-    'detents="fitToContents": the sheet wraps its content and follows dynamic content height changes.',
+    'detents="fitToContents": the sheet wraps its content and follows dynamic content height and grabber visibility changes.',
   platforms: ['android', 'ios'],
   e2eCoverage: 'tbd',
   smokeTest: false,
