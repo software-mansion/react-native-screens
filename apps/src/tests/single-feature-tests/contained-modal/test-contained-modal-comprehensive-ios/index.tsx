@@ -30,7 +30,7 @@ interface ModalStateContextValue {
   isFullScreenOpen: boolean;
   setIsFullScreenOpen: (value: boolean) => void;
   isReplacing: boolean;
-  setIsReplacing: (value: boolean) => void;
+  setIsReplacing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ModalStateContext = createContext<ModalStateContextValue | null>(null);
@@ -139,6 +139,9 @@ function ContainedModalScreen() {
             }
             color={Colors.primary}
             onPress={() => setIsReplacing(value => !value)}
+            // Switching remounts every modal; a remounted host whose old
+            // controller is still presented would get its request rejected.
+            disabled={isOpen || isFullScreenOpen}
             testID="contained-modal-variant-button"
           />
           <Button

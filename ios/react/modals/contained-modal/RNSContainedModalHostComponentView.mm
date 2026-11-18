@@ -274,8 +274,9 @@ static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale
     _cachedProviderView = nil;
   }
 
-  // Before the `isOpen` check: on the first commit both arrive together and
-  // the flush that follows must present with the right style already set.
+  // Must be applied before the flush (`mountingTransactionDidMount` /
+  // `didMoveToWindow`): on the first commit `isOpen` arrives together with the
+  // style, and UIKit reads the style when the presentation starts.
   if (oldComponentProps.presentationStyle != newComponentProps.presentationStyle) {
     _controller.presentationStyle =
         rnscreens::conversion::ContainedModalPresentationStyleFromHostProp(newComponentProps.presentationStyle);
