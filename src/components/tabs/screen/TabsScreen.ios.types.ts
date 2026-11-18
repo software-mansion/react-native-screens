@@ -64,6 +64,8 @@ export interface TabsScreenAppearanceIOS {
    * @remarks
    * Tab bar items in stacked layout have the icon above the title.
    * Stacked layout is used e.g. on the iPhone in portrait orientation.
+   *
+   * @platform ios
    */
   stacked?: TabsScreenItemAppearanceIOS | undefined;
   /**
@@ -78,6 +80,7 @@ export interface TabsScreenAppearanceIOS {
    * Interface Guidelines.
    *
    * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#Size-classes | HIG: Size classes}
+   * @platform ios
    */
   inline?: TabsScreenItemAppearanceIOS | undefined;
   /**
@@ -93,14 +96,14 @@ export interface TabsScreenAppearanceIOS {
    * Interface Guidelines.
    *
    * @see {@link https://developer.apple.com/design/human-interface-guidelines/layout#Size-classes | HIG: Size classes}
+   * @platform ios
    */
   compactInline?: TabsScreenItemAppearanceIOS | undefined;
   /**
    * Specifies the background color for the entire tab bar when tab screen is
    * selected.
    *
-   * @remarks
-   * This property does not affect the tab bar starting from iOS 26.
+   * @platform ios <= 18
    */
   tabBarBackgroundColor?: ColorValue | undefined;
   /**
@@ -112,16 +115,14 @@ export interface TabsScreenAppearanceIOS {
    * {@link TabsScreenAppearanceIOS.tabBarBackgroundColor | tabBarBackgroundColor}'s
    * alpha `< 1`.
    *
-   * This property does not affect the tab bar starting from iOS 26.
-   *
    * @defaultValue `'systemDefault'`
+   * @platform ios <= 18
    */
   tabBarBlurEffect?: TabsScreenBlurEffect | undefined;
   /**
    * Specifies the shadow color for the tab bar when tab screen is selected.
    *
-   * @remarks
-   * This property does not affect the tab bar starting from iOS 26.
+   * @platform ios <= 18
    */
   tabBarShadowColor?: ColorValue | undefined;
 }
@@ -135,24 +136,32 @@ export interface TabsScreenItemAppearanceIOS {
    * unselected and unfocused state.
    * The color scheme is determined by the configuration of the currently
    * selected tab.
+   *
+   * @platform ios
    */
   normal?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for the tab bar item that is currently active.
    * The appearance is determined by the configuration of the currently
    * selected tab itself.
+   *
+   * @platform ios
    */
   selected?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for a tab bar item when it receives focus.
    * The appearance is determined by the configuration of the currently
    * selected tab.
+   *
+   * @platform ios
    */
   focused?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for tab bar items when they are disabled.
    * The appearance is determined by the configuration of the currently
    * selected tab.
+   *
+   * @platform ios
    */
   disabled?: TabsScreenItemStateAppearanceIOS | undefined;
 }
@@ -165,10 +174,14 @@ export interface TabsScreenItemAppearanceIOS {
 export interface TabsScreenItemTitlePositionAdjustmentIOS {
   /**
    * Horizontal offset of the title, in points.
+   *
+   * @platform ios
    */
   horizontal?: number | undefined;
   /**
    * Vertical offset of the title, in points.
+   *
+   * @platform ios
    */
   vertical?: number | undefined;
 }
@@ -180,21 +193,29 @@ export interface TabsScreenItemStateAppearanceIOS {
   /**
    * Specifies the font family used for the title of each tab bar item when
    * tab screen is selected.
+   *
+   * @platform ios
    */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
    * Specifies the font size used for the title of each tab bar item when tab
    * screen is selected.
+   *
+   * @platform ios
    */
   tabBarItemTitleFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Specifies the font weight used for the title of each tab bar item when
    * tab screen is selected.
+   *
+   * @platform ios
    */
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Specifies the font style used for the title of each tab bar item when tab
    * screen is selected.
+   *
+   * @platform ios
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
@@ -205,6 +226,8 @@ export interface TabsScreenItemStateAppearanceIOS {
    * Overrides the color defined in
    * {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor} and
    * {@link TabsScreenItemStateAppearanceIOS.tabBarItemIconColor | tabBarItemIconColor}.
+   *
+   * @platform ios
    */
   tabBarItemTitleFontColor?: TextStyle['color'] | undefined;
   /**
@@ -214,6 +237,8 @@ export interface TabsScreenItemStateAppearanceIOS {
    * @remarks
    * Depending on the iOS version and the device's interface orientation,
    * this setting may affect the alignment of the text, badge and icon.
+   *
+   * @platform ios
    */
   tabBarItemTitlePositionAdjustment?:
     | TabsScreenItemTitlePositionAdjustmentIOS
@@ -232,11 +257,15 @@ export interface TabsScreenItemStateAppearanceIOS {
    * {@link TabsScreenItemStateAppearanceIOS.tabBarItemTitleFontColor | tabBarItemTitleFontColor}
    * (for title text color).
    * Overrides {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor}.
+   *
+   * @platform ios
    */
   tabBarItemIconColor?: ColorValue | undefined;
   /**
    * Specifies the background color of badges for each tab bar item when tab
    * screen is selected.
+   *
+   * @platform ios
    */
   tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
 }
@@ -356,9 +385,9 @@ export interface TabsScreenPropsIOS {
    * which marks the tab as the system search tab.
    *
    * @remarks
-   * On iOS 26.1+ (where tabs are managed through the `UITab` API) a tab screen
-   * with `role: 'search'` is backed natively by `UISearchTab`, which enables
-   * the system search behavior:
+   * This prop relies on the `UITab` API. A tab screen with `role: 'search'` is
+   * backed natively by `UISearchTab`, which enables the system search
+   * behavior:
    * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}
    * and the detached trailing placement UIKit gives search tabs. Behavior
    * differs between OS versions: iOS 26.x detaches `UISearchTab`
