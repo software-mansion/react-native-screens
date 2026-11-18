@@ -43,7 +43,7 @@ covers all the steps.
     - [ ] Two tabs are visible: `Home` and the search tab (magnifier icon).
 
     - [ ] The Home tab shows `Selected in JS: yes` and
-          `Last selection: Home (programmatic-js), provenance: 0`.
+          `Last selection: Home (programmaticJs), provenance: 0`.
 
 2. Tap the search tab, then tap `Home`. Repeat 5 times.
 
@@ -59,11 +59,12 @@ covers all the steps.
     - [ ] Each button selects the other tab, which shows
           `Selected in JS: yes`.
 
-    - [ ] `Last selection` names the selected tab with the `programmatic-js`
+    - [ ] `Last selection` names the selected tab with the `programmaticJs`
           origin, and the provenance grows by one per selection.
 
 4. On Home, tap **Select Search (JS)**, then tap `Home` and the search tab in
    the tab bar.
 
     - [ ] Each selection advances the provenance by one, with the
-          `programmatic-js` origin for the button and `user` for the tab bar taps.
+          `programmaticJs` origin for the button and `user` for the tab bar
+          taps.
