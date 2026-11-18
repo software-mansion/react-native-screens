@@ -291,6 +291,38 @@ export interface TabsScreenItemStateAppearanceIOS {
    * @platform ios
    */
   tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
+  /**
+   * Specifies the font family used for the badge text of all tab bar items in
+   * this state, while this tab screen is the selected one.
+   *
+   * @platform ios
+   */
+  tabBarItemBadgeFontFamily?: TextStyle['fontFamily'] | undefined;
+  /**
+   * Specifies the font size used for the badge text of all tab bar items in
+   * this state, while this tab screen is the selected one.
+   *
+   * @remarks
+   * UIKit sizes the badge based on its text, so this also affects the badge
+   * size.
+   *
+   * @platform ios
+   */
+  tabBarItemBadgeFontSize?: TextStyle['fontSize'] | undefined;
+  /**
+   * Specifies the font weight used for the badge text of all tab bar items in
+   * this state, while this tab screen is the selected one.
+   *
+   * @platform ios
+   */
+  tabBarItemBadgeFontWeight?: TextStyle['fontWeight'] | undefined;
+  /**
+   * Specifies the color of the badge text of all tab bar items in this state,
+   * while this tab screen is the selected one.
+   *
+   * @platform ios
+   */
+  tabBarItemBadgeTextColor?: ColorValue | undefined;
 }
 
 /**

@@ -99,6 +99,30 @@
         [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemBadgeBackgroundColor"]];
   }
 
+  NSMutableDictionary *badgeTextAttributes = [[NSMutableDictionary alloc] init];
+
+  if (itemStateAppearanceProps[@"tabBarItemBadgeFontFamily"] != nil ||
+      itemStateAppearanceProps[@"tabBarItemBadgeFontSize"] != nil ||
+      itemStateAppearanceProps[@"tabBarItemBadgeFontWeight"] != nil) {
+    badgeTextAttributes[NSFontAttributeName] =
+        [RCTFont updateFont:tabBarItemStateAppearance.badgeTextAttributes[NSFontAttributeName]
+                 withFamily:itemStateAppearanceProps[@"tabBarItemBadgeFontFamily"]
+                       size:itemStateAppearanceProps[@"tabBarItemBadgeFontSize"]
+                     weight:itemStateAppearanceProps[@"tabBarItemBadgeFontWeight"]
+                      style:nil
+                    variant:nil
+            scaleMultiplier:1.0];
+  }
+
+  if (itemStateAppearanceProps[@"tabBarItemBadgeTextColor"] != nil) {
+    badgeTextAttributes[NSForegroundColorAttributeName] =
+        [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemBadgeTextColor"]];
+  }
+
+  if ([badgeTextAttributes count] > 0) {
+    tabBarItemStateAppearance.badgeTextAttributes = badgeTextAttributes;
+  }
+
   if (itemStateAppearanceProps[@"tabBarItemIconColor"] != nil) {
     tabBarItemStateAppearance.iconColor = [RCTConvert UIColor:itemStateAppearanceProps[@"tabBarItemIconColor"]];
   }
