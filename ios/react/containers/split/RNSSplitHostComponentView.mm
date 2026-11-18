@@ -434,8 +434,10 @@ RNS_IGNORE_SUPER_CALL_END
 - (NSArray<RNSStackNavigationController *> *)columnNavigationControllers
 {
   NSMutableArray<RNSStackNavigationController *> *navigationControllers = [NSMutableArray array];
-  for (RNSSplitScreenController *controller in [self columnControllers]) {
-    [navigationControllers addObject:controller.plainColumnNavigationController];
+  for (RNSSplitScreenComponentView *column in _reactSubviews) {
+    if (column.columnType == RNSSplitScreenColumnTypeColumn) {
+      [navigationControllers addObject:column.columnNavigationController];
+    }
   }
   return navigationControllers;
 }

@@ -5,9 +5,13 @@
 #import "RNSConversions-SplitView.h"
 #import "RNSNavigationItemCustomizing.h"
 #import "RNSSafeAreaViewNotifications.h"
+#import "RNSSplitHostComponentView.h"
+#import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentEventEmitter.h"
 #import "RNSSplitScreenController.h"
 #import "RNSSplitScreenShadowStateProxy.h"
+#import "RNSStackHostComponentView.h"
+#import "RNSStackNavigationController.h"
 
 namespace react = facebook::react;
 
@@ -20,6 +24,7 @@ namespace react = facebook::react;
   RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
+  RNSStackHostComponentView *_Nullable _stackHost;
 }
 
 - (RNSSplitScreenController *)controller
@@ -101,6 +106,38 @@ namespace react = facebook::react;
   [_viewsForFrameCorrection removeObject:view];
 }
 
+#pragma mark - Stack host
+
+- (BOOL)isStackHostOfColumn:(UIView<RCTComponentViewProtocol> *)childComponentView
+{
+  // The stack host is an only child of the column.
+  BOOL hasOtherChildren = _stackHost != nil || self.subviews.count > 0;
+  if (hasOtherChildren || ![childComponentView isKindOfClass:RNSStackHostComponentView.class]) {
+    return NO;
+  }
+  return static_cast<RNSStackHostComponentView *>(childComponentView).headlessModeEnabled;
+}
+
+- (void)setStackHost:(nullable RNSStackHostComponentView *)stackHost
+{
+  _stackHost.stackNavigationController.viewLifecycleEventsObserver = nil;
+  _stackHost = stackHost;
+  _stackHost.stackNavigationController.viewLifecycleEventsObserver = _controller;
+
+  // The column provides another navigation controller now. The one its controller created is not used anymore, and
+  // the Split has to install the one that takes its place.
+  [_controller releasePlainColumnNavigationController];
+  [_splitHost.splitHostController setNeedsUpdateOfChildViewControllers];
+}
+
+- (RNSStackNavigationController *)columnNavigationController
+{
+  if (_stackHost != nil) {
+    return _stackHost.stackNavigationController;
+  }
+  return _controller.plainColumnNavigationController;
+}
+
 #pragma mark - Layout
 
 /**
@@ -180,11 +217,28 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  if ([self isStackHostOfColumn:childComponentView]) {
+    [self setStackHost:static_cast<RNSStackHostComponentView *>(childComponentView)];
+    return;
+  }
+
+  RCTAssert(_stackHost == nil, @"[RNScreens] Stack.Host that navigates a Split.Column has to be its only child");
+
   [super mountChildComponentView:childComponentView index:index];
 
   if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizing)]) {
     [(id<RNSNavigationItemCustomizing>)childComponentView configureNavigationItem:_controller.navigationItem];
   }
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if (childComponentView == _stackHost) {
+    [self setStackHost:nil];
+    return;
+  }
+
+  [super unmountChildComponentView:childComponentView index:index];
 }
 
 - (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
