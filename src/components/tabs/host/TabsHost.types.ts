@@ -332,9 +332,11 @@ export interface TabsHostPropsBase {
    * @remarks
    * On iOS, the value will fallback to direction of the **native** app
    * (`userInterfaceLayoutDirection`), potentially ignoring `react-native`'s
-   * override (e.g. when `forceRTL` is used). To mitigate this, you can pass
-   * `'ltr'`/`'rtl'` to this property depending on the value of
-   * `I18nManager.isRTL`.
+   * override (e.g. when `forceRTL` is used).
+   *
+   * @tip
+   * To mitigate this, you can pass `'ltr'`/`'rtl'` to this property depending
+   * on the value of `I18nManager.isRTL`.
    *
    * @note
    * This is an implementation detail and may change. On Android, this property
