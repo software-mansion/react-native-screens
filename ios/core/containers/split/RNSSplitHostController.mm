@@ -117,11 +117,7 @@
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
 
-  NSMutableArray<RNSStackNavigationController *> *currentViewControllers =
-      [NSMutableArray arrayWithCapacity:currentColumns.count];
-  for (RNSSplitScreenController *splitScreenController in currentColumns) {
-    [currentViewControllers addObject:splitScreenController.columnNavigationController];
-  }
+  NSArray<RNSStackNavigationController *> *currentViewControllers = [self.columnsProvider columnNavigationControllers];
 
   self.viewControllers = currentViewControllers;
   [self observeFramesOfColumnNavigationControllers:currentViewControllers];

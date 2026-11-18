@@ -431,6 +431,15 @@ RNS_IGNORE_SUPER_CALL_END
   return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
 }
 
+- (NSArray<RNSStackNavigationController *> *)columnNavigationControllers
+{
+  NSMutableArray<RNSStackNavigationController *> *navigationControllers = [NSMutableArray array];
+  for (RNSSplitScreenController *controller in [self columnControllers]) {
+    [navigationControllers addObject:controller.columnNavigationController];
+  }
+  return navigationControllers;
+}
+
 - (NSArray<RNSSplitScreenController *> *)controllersOfColumnsWithType:(RNSSplitScreenColumnType)columnType
 {
   NSMutableArray<RNSSplitScreenController *> *controllers = [NSMutableArray array];
