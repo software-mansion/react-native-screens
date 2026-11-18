@@ -256,6 +256,10 @@ namespace react = facebook::react;
     _controller.headerCoordinator.frameChangeDelegate = _headerConfig;
     _controller.headerCoordinator.eventsDelegate = _headerConfig;
     _controller.headerCoordinator.imageLoader = _headerConfig.imageLoader;
+    // Fabric mounts a view after its props are set, so the config has not reached the navigation item yet. UIKit
+    // reads the item of a screen whose view never loads, e.g. the middle screen of a multi-push, for the back button
+    // and the back menu of the screen above.
+    [_controller.headerCoordinator applyConfigProperties];
   }
   [super mountChildComponentView:childComponentView index:index];
 }
