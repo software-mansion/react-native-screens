@@ -49,6 +49,14 @@ export const Split = {
   /**
    * A column of {@link Split.Host}.
    *
+   * @remarks
+   * A `Stack.Host` rendered as the only direct child of the column navigates
+   * the column, and the header of the stack is the navigation bar of the column.
+   * The column and the host take no part in layout then, so their `onLayout`
+   * and `measure` report an empty frame. Use
+   * {@link SplitColumnProps.disableStackIntegration | disableStackIntegration}
+   * to opt out.
+   *
    * @platform ios
    * @experimental
    */
