@@ -47,6 +47,8 @@ export type TabsScreenOrientation = InterfaceOrientation | 'inherit';
 export type TabsScreenStyleProps = {
   /**
    * Background color of the tab screen.
+   *
+   * @platform android, ios
    */
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
@@ -66,6 +68,7 @@ export interface TabsScreenRepeatedTabSelectionEffects {
    * the Stack will pop to root screen.
    *
    * @defaultValue `true`
+   * @platform android, ios
    */
   popToRoot?: boolean | undefined;
   /**
@@ -73,6 +76,7 @@ export interface TabsScreenRepeatedTabSelectionEffects {
    * repeated selection is detected, ScrollView will be scrolled to top.
    *
    * @defaultValue `true`
+   * @platform android, ios
    */
   scrollToTop?: boolean | undefined;
 }
@@ -83,6 +87,8 @@ export interface TabsScreenRepeatedTabSelectionEffects {
 export interface TabsScreenSpecialEffects {
   /**
    * Special effects for repeated tab selection.
+   *
+   * @platform android, ios
    */
   repeatedTabSelection?: TabsScreenRepeatedTabSelectionEffects | undefined;
 }

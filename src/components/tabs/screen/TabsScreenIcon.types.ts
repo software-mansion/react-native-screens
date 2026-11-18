@@ -62,6 +62,7 @@ export interface TabsScreenIconImageSourceIOS extends PlatformIconShared {
    * values.
    *
    * @defaultValue `'default'`, the system behavior.
+   * @platform ios
    */
   renderingMode?: TabsScreenIconImageRenderingModeIOS | undefined;
 }
@@ -81,6 +82,7 @@ export interface TabsScreenIconSfSymbolIOS extends PlatformIconIOSSfSymbol {
    * values.
    *
    * @defaultValue `'default'`, the system behavior.
+   * @platform ios
    */
   renderingMode?: TabsScreenIconSymbolRenderingModeIOS | undefined;
 }
@@ -114,6 +116,7 @@ export interface TabsScreenIconDrawableResourceAndroid
    * different values.
    *
    * @defaultValue `'default'`, which tints the icon.
+   * @platform android
    */
   tinting?: TabsScreenIconTintingAndroid | undefined;
 }
@@ -131,6 +134,7 @@ export interface TabsScreenIconImageSourceAndroid extends PlatformIconShared {
    * different values.
    *
    * @defaultValue `'default'`, which tints the icon.
+   * @platform android
    */
   tinting?: TabsScreenIconTintingAndroid | undefined;
 }
