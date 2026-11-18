@@ -1,4 +1,4 @@
-import type { ColorValue, ViewProps } from 'react-native';
+import type { StyleProp, ViewProps, ViewStyle } from 'react-native';
 import type { TabsHostPropsAndroid } from './TabsHost.android.types';
 import type { TabsHostPropsIOS } from './TabsHost.ios.types';
 import type {
@@ -242,7 +242,7 @@ export type TabsHostNativeContainerStyleProps = {
    *
    * @platform android, ios
    */
-  backgroundColor?: ColorValue | undefined;
+  backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
 
 // #endregion General helpers
@@ -324,7 +324,9 @@ export interface TabsHostPropsBase {
    *
    * @platform android, ios
    */
-  nativeContainerStyle?: TabsHostNativeContainerStyleProps | undefined;
+  nativeContainerStyle?:
+    | StyleProp<TabsHostNativeContainerStyleProps>
+    | undefined;
   /**
    * Specifies the layout direction of the native container, its views and child
    * containers.
