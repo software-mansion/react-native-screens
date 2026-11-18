@@ -190,17 +190,11 @@ export interface TabsScreenPropsAndroid {
    *   Uses an image from the provided resource. `tinting` defaults to
    *   `'default'`: the tab bar tints the image with the item icon color.
    *   `'original'` keeps the image's own colors.
-   *
-   *   `'imageSource'` type doesn't support SVGs on Android. For loading SVGs
-   *   use `'drawableResource'` type.
-   *
    * - `{ type: 'drawableResource', name, tinting? }`
    *   Uses a drawable resource with the given name. `tinting` defaults to
    *   `'default'`: the tab bar tints the drawable with the item icon color.
    *   `'original'` keeps the drawable's own colors, e.g. of a multicolor
    *   VectorDrawable.
-   *
-   *   Requires passing a drawable to resources via Android Studio.
    *
    * See {@link TabsPlatformIconTintingAndroid} for the meaning of each value.
    *
