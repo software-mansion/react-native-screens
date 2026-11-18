@@ -477,7 +477,7 @@ export interface StackHeaderToolbarMenuAndroid
   /**
    * Marks this object as a submenu.
    *
-   * @remarks
+   * @info
    * Android's `SubMenu` interface claims that nesting submenus isn't supported
    * but Material's implementation handles it correctly.
    *
@@ -843,16 +843,19 @@ export interface StackHeaderConfigPropsAndroid {
    * {@link ScrollViewMarker}. Without it, the app bar cannot always locate the
    * scroll view, which can cause the lifted state to flicker while scrolling.
    *
-   * Applies to the `'small'` header only. For `'medium'` and `'large'` headers
-   * the Material `CollapsingToolbarLayout` uses a fade title-collapse mode that
-   * installs its own content scrim and disables the app bar's lift-on-scroll,
-   * so this prop has no effect there. The collapsed appearance of those headers
-   * is instead controlled by that content scrim — see
-   * {@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor}.
+   * Applies to the `'small'` header only.
    *
    * Has no effect while the header is
    * {@link StackHeaderConfigPropsBase.transparent | transparent} (there is no
    * scrolling content behavior installed in that mode).
+   *
+   * @info
+   * For `'medium'` and `'large'` headers the Material `CollapsingToolbarLayout`
+   * uses a fade title-collapse mode that installs its own content scrim and
+   * disables the app bar's lift-on-scroll, so this prop has no effect there.
+   * The collapsed appearance of those headers is instead controlled by that
+   * content scrim — see
+   * {@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor}.
    *
    * @defaultValue `true`
    * @platform android
@@ -1094,6 +1097,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Applies to all header types. On `'medium'` / `'large'` it affects the
    * collapsed title only.
    *
+   * @info
    * By default, native platform applies non-zero inset which makes centered
    * collapsed title look off-center when `collapsedTitleGravityMode:
    * 'availableSpace'` is used.
