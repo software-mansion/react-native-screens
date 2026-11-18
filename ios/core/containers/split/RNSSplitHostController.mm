@@ -170,6 +170,10 @@
             NSStringFromClass(secondaryViewController.class));
   UINavigationController *navigationController = (UINavigationController *)secondaryViewController;
 
+  if (navigationController.navigationBarHidden) {
+    return;
+  }
+
   /** The assumption is that it should come in a single batch and it won't cause any delays in rendering the content. */
   [navigationController setNavigationBarHidden:YES animated:NO];
   [navigationController setNavigationBarHidden:NO animated:NO];
