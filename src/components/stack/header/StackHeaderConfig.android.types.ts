@@ -198,16 +198,14 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
   /**
    * Sets the accessibility label (content description) for the menu element.
    *
-   * @remarks
-   * When `undefined`, Android uses the `title` for the accessibility label when
-   * the item is placed in the toolbar. There is no default accessibility label
-   * for items inside overflow menu/submenus.
-   *
    * @info
    * Due to native platform limitations, it's not possible to provide `testID`
    * for menu items inside overflow menu/submenus. If possible, use
    * `accessibilityLabel` instead.
    *
+   * @defaultValue Android uses the `title` for the accessibility label when the
+   * item is placed in the toolbar. There is no default accessibility label for
+   * items inside overflow menu/submenus.
    * @platform android
    */
   accessibilityLabel?: string | undefined;
@@ -492,9 +490,8 @@ export interface StackHeaderToolbarMenuAndroid
    * {@link StackHeaderToolbarMenuItemBaseAndroid.title | title}, which controls
    * the label shown in the parent menu's item row.
    *
-   * When left unset, the header falls back to `title`; when both are unset, the
+   * @defaultValue The header falls back to `title`; when both are unset, the
    * popup shows no header.
-   *
    * @see {@link https://developer.android.com/reference/android/view/SubMenu#setHeaderTitle(java.lang.CharSequence) | SubMenu.setHeaderTitle}
    * @platform android
    */
@@ -667,10 +664,11 @@ export interface StackHeaderConfigPropsAndroid {
    * Tint color applied to the back button icon in its normal state.
    *
    * @remarks
-   * When `undefined`, the default tint color is used. This applies to the
-   * native back arrow and `'drawableResource'` icons that have an associated
-   * tint. For `'imageSource'` icons, no tint is applied by default.
+   * The default tint applies to the native back arrow and `'drawableResource'`
+   * icons that have an associated tint. For `'imageSource'` icons, no tint is
+   * applied by default.
    *
+   * @defaultValue The default tint color is used.
    * @platform android
    */
   backButtonTintColorNormal?: ColorValue | undefined;
@@ -702,9 +700,7 @@ export interface StackHeaderConfigPropsAndroid {
   /**
    * Custom icon for the back button.
    *
-   * @remarks
-   * When `undefined`, the native back arrow (`homeAsUpIndicator`) is used.
-   *
+   * @defaultValue The native back arrow (`homeAsUpIndicator`) is used.
    * @platform android
    */
   backButtonIcon?: PlatformIconAndroid | undefined;
@@ -712,9 +708,7 @@ export interface StackHeaderConfigPropsAndroid {
    * Custom icon for the overflow menu button (the three-dots button that opens
    * the toolbar menu's overflow popup).
    *
-   * @remarks
-   * When `undefined`, the Material 3 Expressive default overflow icon is used.
-   *
+   * @defaultValue The Material 3 Expressive default overflow icon is used.
    * @platform android
    */
   overflowIcon?: PlatformIconAndroid | undefined;
@@ -722,11 +716,12 @@ export interface StackHeaderConfigPropsAndroid {
    * Tint color applied to the overflow menu icon in its normal state.
    *
    * @remarks
-   * When `undefined`, the default tint (the Material theme's menu icon color)
-   * is used. This applies to the default overflow icon and `'drawableResource'`
-   * icons that have an associated tint. For `'imageSource'` icons, no tint is
-   * applied by default.
+   * The default tint applies to the default overflow icon and
+   * `'drawableResource'` icons that have an associated tint. For `'imageSource'`
+   * icons, no tint is applied by default.
    *
+   * @defaultValue The default tint (the Material theme's menu icon color) is
+   * used.
    * @platform android
    */
   overflowIconTintColorNormal?: ColorValue | undefined;
