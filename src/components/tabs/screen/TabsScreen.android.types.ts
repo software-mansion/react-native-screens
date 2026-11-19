@@ -29,10 +29,16 @@ export type TabBarItemLabelVisibilityMode =
 export interface TabsScreenItemStateAppearanceAndroid {
   /**
    * Specifies the font color used for the title of each tab bar item.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemTitleFontColor?: TextStyle['color'] | undefined;
   /**
    * Specifies the icon color for each tab bar item.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemIconColor?: ColorValue | undefined;
 }
@@ -43,10 +49,16 @@ export interface TabsScreenItemStateAppearanceAndroid {
 export interface TabsScreenAppearanceAndroid {
   /**
    * Specifies the background color for the entire tab bar.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarBackgroundColor?: ColorValue | undefined;
   /**
    * Specifies the color of each tab bar item's ripple effect.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemRippleColor?: ColorValue | undefined;
   /**
@@ -57,81 +69,104 @@ export interface TabsScreenAppearanceAndroid {
    * should be displayed.
    *
    * @defaultValue `'auto'`
+   * @platform android
    */
   tabBarItemLabelVisibilityMode?: TabBarItemLabelVisibilityMode | undefined;
   /**
    * Defines the colors for all tab bar items which are in their enabled,
    * unselected and unfocused state.
+   *
+   * @remarks
    * The color scheme is determined by the configuration of the currently
    * selected tab.
+   *
+   * @platform android
    */
   normal?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Defines the colors for the tab bar item that is currently active.
+   *
+   * @remarks
    * The color scheme is determined by the configuration of the currently
    * selected tab itself.
    *
-   * @note
-   * This is an implementation detail and may change. Maps to Android
-   * `state_selected=true`.
+   * Maps to Android `state_selected=true`.
+   *
+   * @platform android
    */
   selected?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Defines the colors for a tab bar item when it receives focus (used mostly
    * for keyboard navigation).
+   *
+   * @remarks
    * The color scheme is determined by the configuration of the currently
    * selected tab.
    *
-   * @note
-   * This is an implementation detail and may change. Maps to Android
-   * `state_focused=true`.
+   * Maps to Android `state_focused=true`.
+   *
+   * @platform android
    */
   focused?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Defines the colors for tab bar items when they are disabled.
+   *
+   * @remarks
    * The color scheme is determined by the configuration of the currently
    * selected tab.
    *
-   * @note
-   * This is an implementation detail and may change. Maps to Android
-   * `state_enabled=false`.
+   * Maps to Android `state_enabled=false`.
    */
   disabled?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
    * Specifies the icon size of this tab's item in dp.
    *
    * @remarks
-   * Applies to this tab only. Unset uses the system default.
+   * Applies to this tab only.
+   *
+   * @defaultValue Material's default icon size is used.
+   * @platform android
    */
   tabBarItemIconSize?: number | undefined;
   /**
    * Specifies the background color of the active indicator.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemActiveIndicatorColor?: ColorValue | undefined;
   /**
    * Specifies if the active indicator should be used.
    *
    * @defaultValue `true`
+   * @platform android
    */
   tabBarItemActiveIndicatorEnabled?: boolean | undefined;
   /**
    * Specifies the width of this tab's active indicator in dp.
    *
    * @remarks
-   * Applies to this tab only. If unset, it is this tab's icon size plus the
-   * default Material padding.
+   * Applies to this tab only.
+   *
+   * @defaultValue It is this tab's icon size plus the default Material padding.
+   * @platform android
    */
   tabBarItemActiveIndicatorWidth?: number | undefined;
   /**
    * Specifies the height of this tab's active indicator in dp.
    *
    * @remarks
-   * Applies to this tab only. If unset, it is this tab's icon size plus the
-   * default Material padding.
+   * Applies to this tab only.
+   *
+   * @defaultValue It is this tab's icon size plus the default Material padding.
+   * @platform android
    */
   tabBarItemActiveIndicatorHeight?: number | undefined;
   /**
    * Specifies the font family used for the title of each tab bar item.
+   *
+   * @defaultValue The platform's default font family is used.
+   * @platform android
    */
   tabBarItemTitleFontFamily?: TextStyle['fontFamily'] | undefined;
   /**
@@ -139,6 +174,9 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @remarks
    * The size is represented in scale-independent pixels (sp).
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemTitleSmallLabelFontSize?: TextStyle['fontSize'] | undefined;
   /**
@@ -146,22 +184,37 @@ export interface TabsScreenAppearanceAndroid {
    *
    * @remarks
    * The size is represented in scale-independent pixels (sp).
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemTitleLargeLabelFontSize?: TextStyle['fontSize'] | undefined;
   /**
    * Specifies the font weight used for the title of each tab bar item.
+   *
+   * @defaultValue `'normal'`
+   * @platform android
    */
   tabBarItemTitleFontWeight?: TextStyle['fontWeight'] | undefined;
   /**
    * Specifies the font style used for the title of each tab bar item.
+   *
+   * @defaultValue `'normal'`
+   * @platform android
    */
   tabBarItemTitleFontStyle?: TextStyle['fontStyle'] | undefined;
   /**
    * Specifies the background color of the badge.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
   /**
    * Specifies the text color of the badge.
+   *
+   * @defaultValue Material's default is used.
+   * @platform android
    */
   tabBarItemBadgeTextColor?: ColorValue | undefined;
 }
@@ -175,8 +228,12 @@ export interface TabsScreenPropsAndroid {
    *
    * @remarks
    * Allows to customize the appearance depending on the tab bar item state
-   * (normal, selected, focused, disabled). Configuration for the Bottom
-   * Navigation View is determined by the currently active tab screen.
+   * ({@link TabsScreenAppearanceAndroid.normal | normal},
+   * {@link TabsScreenAppearanceAndroid.selected | selected},
+   * {@link TabsScreenAppearanceAndroid.focused | focused},
+   * {@link TabsScreenAppearanceAndroid.disabled | disabled}). The tab bar uses
+   * the configuration of the currently selected tab screen, except for the
+   * fields that apply to this tab only.
    *
    * @platform android
    */
@@ -187,16 +244,12 @@ export interface TabsScreenPropsAndroid {
    * @remarks
    * Supported values:
    * - `{ type: 'imageSource', imageSource, tinting? }`
-   *   Uses an image from the provided resource. `tinting` defaults to
-   *   `'default'`: the tab bar tints the image with the item icon color.
-   *   `'original'` keeps the image's own colors.
+   *   Uses an image from the provided resource.
    * - `{ type: 'drawableResource', name, tinting? }`
-   *   Uses a drawable resource with the given name. `tinting` defaults to
-   *   `'default'`: the tab bar tints the drawable with the item icon color.
-   *   `'original'` keeps the drawable's own colors, e.g. of a multicolor
-   *   VectorDrawable.
+   *   Uses a drawable resource with the given name.
    *
-   * See {@link TabsPlatformIconTintingAndroid} for the meaning of each value.
+   * See {@link TabsPlatformIconTintingAndroid} for the meaning of each `tinting`
+   * value.
    *
    * @platform android
    */
@@ -208,8 +261,10 @@ export interface TabsScreenPropsAndroid {
    * Supports the same values as {@link TabsScreenPropsAndroid.icon | icon}
    * property for given platform. `tinting` may differ from the one of `icon`.
    *
+   * @warning
    * To use `selectedIcon`, `icon` must also be provided.
    *
+   * @defaultValue The {@link TabsScreenPropsAndroid.icon | icon} is used.
    * @example
    * The drawable is shown tinted while unselected and in its own colors while
    * selected:
@@ -227,7 +282,6 @@ export interface TabsScreenPropsAndroid {
    *   <FavoritesScreen />
    * </Tabs.Screen>
    * ```
-   *
    * @platform android
    */
   selectedIcon?: TabsScreenIconAndroid | undefined;
