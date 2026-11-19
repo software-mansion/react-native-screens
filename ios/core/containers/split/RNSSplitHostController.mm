@@ -4,8 +4,8 @@
 #import "RNSDefines.h"
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
+#import "RNSSplitColumnCoordinator.h"
 #import "RNSSplitColumnNavigationControllerFrameObserver.h"
-#import "RNSSplitScreenController.h"
 #import "RNSStackNavigationController.h"
 #import "RNSViewFrameChangeDelegate.h"
 
@@ -100,8 +100,8 @@
   RNSAssert(_needsChildViewControllersUpdate,
             @"[RNScreens] Child view controller must be invalidated when update is forced!");
 
-  NSArray<RNSSplitScreenController *> *currentColumns = [self.columnsProvider columnControllers];
-  NSArray<RNSSplitScreenController *> *currentInspectors = [self.columnsProvider inspectorControllers];
+  NSArray<RNSSplitColumnCoordinator *> *currentColumns = [self.columnsProvider columnCoordinators];
+  NSArray<RNSSplitColumnCoordinator *> *currentInspectors = [self.columnsProvider inspectorCoordinators];
 
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
@@ -282,12 +282,12 @@
 /** @brief Validates that child structure meets required constraints defined for columns and the inspector. */
 - (void)validateSplitViewHierarchy
 {
-  [self validateColumns:[self.columnsProvider columnControllers]];
-  [self validateInspectors:[self.columnsProvider inspectorControllers]];
+  [self validateColumns:[self.columnsProvider columnCoordinators]];
+  [self validateInspectors:[self.columnsProvider inspectorCoordinators]];
 }
 
 /** @brief Ensures that number of columns is valid and hasn't changed dynamically. */
-- (void)validateColumns:(NSArray<RNSSplitScreenController *> *)columns
+- (void)validateColumns:(NSArray<RNSSplitColumnCoordinator *> *)columns
 {
   RNSAssert((NSInteger)columns.count >= minNumberOfColumns && (NSInteger)columns.count <= maxNumberOfColumns,
             @"[RNScreens] Split can only have from %ld to %ld columns",
@@ -299,7 +299,7 @@
 }
 
 /** @brief Ensures that at most one inspector is present. */
-- (void)validateInspectors:(NSArray<RNSSplitScreenController *> *)inspectors
+- (void)validateInspectors:(NSArray<RNSSplitColumnCoordinator *> *)inspectors
 {
   RNSAssert((NSInteger)inspectors.count <= maxNumberOfInspectors,
             @"[RNScreens] Split can only have %ld inspector",
@@ -315,11 +315,11 @@
  */
 - (void)notifyColumnsAboutPositioningChange
 {
-  for (RNSSplitScreenController *controller in [self.columnsProvider columnControllers]) {
-    [controller columnPositioningDidChange];
+  for (RNSSplitColumnCoordinator *coordinator in [self.columnsProvider columnCoordinators]) {
+    [coordinator columnPositioningDidChange];
   }
-  for (RNSSplitScreenController *controller in [self.columnsProvider inspectorControllers]) {
-    [controller columnPositioningDidChange];
+  for (RNSSplitColumnCoordinator *coordinator in [self.columnsProvider inspectorCoordinators]) {
+    [coordinator columnPositioningDidChange];
   }
 }
 
@@ -328,7 +328,7 @@
 /**
  * @brief Notifies that the origin of the frame of a column's navigation controller view has changed.
  *
- * It iterates over children controllers and notifies them for the layout update.
+ * It notifies the coordinators of the columns for the layout update.
  *
  * @param view The view of the navigation controller whose frame origin changed.
  */
@@ -345,13 +345,13 @@
  *
  * Attaches a view controller for the inspector column.
  *
- * @param inspectors An array of controllers of the inspector-type columns.
+ * @param inspectors An array of coordinators of the inspector-type columns.
  */
-- (void)maybeSetupInspector:(NSArray<RNSSplitScreenController *> *)inspectors
+- (void)maybeSetupInspector:(NSArray<RNSSplitColumnCoordinator *> *)inspectors
 {
 #if !TARGET_OS_TV
   if (@available(iOS 26.0, *)) {
-    RNSSplitScreenController *inspector = inspectors.firstObject;
+    RNSSplitColumnCoordinator *inspector = inspectors.firstObject;
     if (inspector != nil) {
       [self setViewController:inspector.plainColumnNavigationController forColumn:UISplitViewControllerColumnInspector];
     }

@@ -4,16 +4,16 @@
 #import "RNSViewControllerViewLifecycleEventsObserver.h"
 
 @class RNSSplitPlainColumnContentView;
-@class RNSSplitScreenController;
+@class RNSSplitColumnCoordinator;
 @class RNSStackNavigationController;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * @protocol RNSSplitScreenControllerDelegate
- * @brief Receives layout and lifecycle notifications of a Split column from its controller.
+ * @protocol RNSSplitColumnCoordinatorDelegate
+ * @brief Receives layout and lifecycle notifications of a Split column from its coordinator.
  */
-@protocol RNSSplitScreenControllerDelegate <NSObject>
+@protocol RNSSplitColumnCoordinatorDelegate <NSObject>
 
 /**
  * @brief Called whenever the column frame changes.
@@ -21,38 +21,37 @@ NS_ASSUME_NONNULL_BEGIN
  * @param frame The column frame in the coordinate space of the SplitHost controller's view, or the column view frame
  * as is when the column is presented outside the SplitHost subtree (e.g. the inspector as a modal).
  */
-- (void)splitScreenController:(RNSSplitScreenController *)controller didChangeColumnFrame:(CGRect)frame;
+- (void)splitColumnCoordinator:(RNSSplitColumnCoordinator *)coordinator didChangeColumnFrame:(CGRect)frame;
 
-- (void)splitScreenControllerWillAppear:(RNSSplitScreenController *)controller;
-- (void)splitScreenControllerDidAppear:(RNSSplitScreenController *)controller;
-- (void)splitScreenControllerWillDisappear:(RNSSplitScreenController *)controller;
-- (void)splitScreenControllerDidDisappear:(RNSSplitScreenController *)controller;
+- (void)splitColumnWillAppear:(RNSSplitColumnCoordinator *)coordinator;
+- (void)splitColumnDidAppear:(RNSSplitColumnCoordinator *)coordinator;
+- (void)splitColumnWillDisappear:(RNSSplitColumnCoordinator *)coordinator;
+- (void)splitColumnDidDisappear:(RNSSplitColumnCoordinator *)coordinator;
 
 /**
- * @brief Called when `plainColumnContentView` of the controller is added to a window or removed from it.
+ * @brief Called when `plainColumnContentView` of the coordinator is added to a window or removed from it.
  *
  * @param window The window the view is in now, or nil when it was removed from one.
  */
-- (void)splitScreenController:(RNSSplitScreenController *)controller
+- (void)splitColumnCoordinator:(RNSSplitColumnCoordinator *)coordinator
     plainColumnContentViewDidMoveToWindow:(nullable UIWindow *)window;
 
 @end
 
 /**
- * @class RNSSplitScreenController
+ * @class RNSSplitColumnCoordinator
  * @brief Manages a Split column in a UISplitViewController.
  *
- * It is not a view controller. It owns what the Split shows for a plain column: the navigation controller, the stack
- * screen it is rooted at and the view of that screen. It observes the column layout and lifecycle and reports them to
- * its delegate.
+ * It owns what the Split shows for a plain column: the navigation controller, the stack screen it is rooted at and
+ * the view of that screen. It observes the column layout and lifecycle and reports them to its delegate.
  *
  * The lifecycle of the column is the one of the view of the navigation controller the Split installs for it. In a
- * column that hosts a stack it is the navigation controller of the stack, and this controller has to be set as its
+ * column that hosts a stack it is the navigation controller of the stack, and this coordinator has to be set as its
  * `viewLifecycleEventsObserver`.
  */
-@interface RNSSplitScreenController : NSObject <RNSViewControllerViewLifecycleEventsObserver>
+@interface RNSSplitColumnCoordinator : NSObject <RNSViewControllerViewLifecycleEventsObserver>
 
-@property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id<RNSSplitColumnCoordinatorDelegate> delegate;
 
 #pragma mark - Content
 
@@ -87,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Signals
 
 /**
- * @brief Determines if this controller is nested inside a SplitHost hierarchy.
+ * @brief Determines if the plain column is nested inside a SplitHost hierarchy.
  *
  * Used to differentiate between screens embedded in the native host and modal presentations.
  *

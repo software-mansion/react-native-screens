@@ -1,4 +1,4 @@
-#import "RNSSplitScreenController.h"
+#import "RNSSplitColumnCoordinator.h"
 
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
@@ -7,10 +7,10 @@
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
 
-@interface RNSSplitScreenController () <RNSSplitPlainColumnContentViewDelegate>
+@interface RNSSplitColumnCoordinator () <RNSSplitPlainColumnContentViewDelegate>
 @end
 
-@implementation RNSSplitScreenController {
+@implementation RNSSplitColumnCoordinator {
   RNSStackNavigationController *_Nullable _plainColumnNavigationController;
   RNSStackScreenController *_Nonnull _plainColumnScreenController;
 }
@@ -40,7 +40,7 @@
 /**
  * @brief Returns the SplitHost controller the plain column is installed in.
  *
- * The navigation controller of the plain column is asked, as this controller is not in the view controller hierarchy.
+ * The navigation controller of the plain column is asked, as the coordinator is not in the view controller hierarchy.
  *
  * @return `splitViewController` of the navigation controller if it is a RNSSplitHostController, otherwise nil (e.g.
  * for the inspector presented as a modal, outside the split hierarchy).
@@ -95,7 +95,7 @@
   // we're attaching our touch handler and we don't need to apply any offset corrections,
   // because it's positioned relatively to the column view
   if (![self isInSplitHostSubtree]) {
-    [_delegate splitScreenController:self didChangeColumnFrame:_plainColumnContentView.frame];
+    [_delegate splitColumnCoordinator:self didChangeColumnFrame:_plainColumnContentView.frame];
     return;
   }
 
@@ -103,7 +103,7 @@
   RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
   CGRect frame = [_plainColumnContentView convertRect:_plainColumnContentView.frame toView:ancestorView];
-  [_delegate splitScreenController:self didChangeColumnFrame:frame];
+  [_delegate splitColumnCoordinator:self didChangeColumnFrame:frame];
 }
 
 - (void)columnPositioningDidChange
@@ -125,29 +125,29 @@
 
 - (void)splitPlainColumnContentViewDidMoveToWindow
 {
-  [_delegate splitScreenController:self plainColumnContentViewDidMoveToWindow:_plainColumnContentView.window];
+  [_delegate splitColumnCoordinator:self plainColumnContentViewDidMoveToWindow:_plainColumnContentView.window];
 }
 
 #pragma mark - RNSViewControllerViewLifecycleEventsObserver
 
 - (void)viewControllerViewWillAppear:(UIViewController *)viewController
 {
-  [_delegate splitScreenControllerWillAppear:self];
+  [_delegate splitColumnWillAppear:self];
 }
 
 - (void)viewControllerViewDidAppear:(UIViewController *)viewController
 {
-  [_delegate splitScreenControllerDidAppear:self];
+  [_delegate splitColumnDidAppear:self];
 }
 
 - (void)viewControllerViewWillDisappear:(UIViewController *)viewController
 {
-  [_delegate splitScreenControllerWillDisappear:self];
+  [_delegate splitColumnWillDisappear:self];
 }
 
 - (void)viewControllerViewDidDisappear:(UIViewController *)viewController
 {
-  [_delegate splitScreenControllerDidDisappear:self];
+  [_delegate splitColumnDidDisappear:self];
 }
 
 @end
