@@ -1,4 +1,5 @@
 import React from 'react';
+import { I18nManager } from 'react-native';
 import { Stack } from 'react-native-screens';
 import type {
   NavigationAction,
@@ -66,7 +67,10 @@ export function StackContainer<
   );
 
   return (
-    <Stack.Host ref={hostRef} {...restProps}>
+    <Stack.Host
+      ref={hostRef}
+      direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+      {...restProps}>
       {stackNavState.stack.map(
         ({
           options: { headerConfig, headerConfigRef, ...options } = {},

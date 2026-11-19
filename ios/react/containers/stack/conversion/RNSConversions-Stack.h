@@ -13,6 +13,10 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
+UITraitEnvironmentLayoutDirection
+UITraitEnvironmentLayoutDirectionFromReactRNSStackHostLayoutDirection(
+    react::RNSStackHostLayoutDirection layoutDirection);
+
 RNSStackScreenActivityMode
 RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
     react::RNSStackScreenActivityMode mode);
