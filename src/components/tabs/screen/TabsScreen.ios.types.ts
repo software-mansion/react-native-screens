@@ -63,6 +63,11 @@ export type TabsScreenSystemItem =
 
 /**
  * Appearance of the tab bar and of its items in each layout.
+ *
+ * @remarks
+ * Allows to customize the appearance depending on the tab bar item layout
+ * (stacked, inline, compact inline) and state (normal, selected, focused,
+ * disabled).
  */
 export interface TabsScreenAppearanceIOS {
   /**
@@ -143,7 +148,7 @@ export interface TabsScreenItemAppearanceIOS {
    * unselected and unfocused state.
    *
    * @remarks
-   * The color scheme is determined by the configuration of the currently
+   * The appearance is determined by the configuration of the currently
    * selected tab.
    *
    * @platform ios
@@ -190,12 +195,14 @@ export interface TabsScreenItemTitlePositionAdjustmentIOS {
   /**
    * Horizontal offset of the title, in points.
    *
+   * @defaultValue `0`
    * @platform ios
    */
   horizontal?: number | undefined;
   /**
    * Vertical offset of the title, in points.
    *
+   * @defaultValue `0`
    * @platform ios
    */
   vertical?: number | undefined;
@@ -239,7 +246,7 @@ export interface TabsScreenItemStateAppearanceIOS {
    *
    * @remarks
    * Overrides the color defined in
-   * {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor} and
+   * {@link TabsHostPropsIOS.tabBarTintColor | ios.tabBarTintColor} and
    * {@link TabsScreenItemStateAppearanceIOS.tabBarItemIconColor | tabBarItemIconColor}.
    *
    * @platform ios
@@ -267,7 +274,7 @@ export interface TabsScreenItemStateAppearanceIOS {
    * Is overridden by
    * {@link TabsScreenItemStateAppearanceIOS.tabBarItemTitleFontColor | tabBarItemTitleFontColor}
    * (for title text color).
-   * Overrides {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor}.
+   * Overrides {@link TabsHostPropsIOS.tabBarTintColor | ios.tabBarTintColor}.
    *
    * @info
    * Starting from iOS 26, it only applies to selected tab bar item. Other items
@@ -292,11 +299,6 @@ export interface TabsScreenPropsIOS {
   /**
    * Specifies the standard tab bar appearance.
    *
-   * @remarks
-   * Allows to customize the appearance depending on the tab bar item layout
-   * (stacked, inline, compact inline) and state (normal, selected, focused,
-   * disabled).
-   *
    * @platform ios
    */
   standardAppearance?: TabsScreenAppearanceIOS | undefined;
@@ -305,10 +307,6 @@ export interface TabsScreenPropsIOS {
    * with the edge of the tab bar.
    *
    * @remarks
-   * Allows to customize the appearance depending on the tab bar item layout
-   * (stacked, inline, compact inline) and state (normal, selected, focused,
-   * disabled).
-   *
    * If this property is `undefined`, UIKit uses
    * {@link TabsScreenPropsIOS.standardAppearance | standardAppearance},
    * modified to have a transparent background.
@@ -455,8 +453,6 @@ export interface TabsScreenPropsIOS {
    * (which is `'automatic'`). This prevents ScrollViews from respecting
    * navigation bar insets. When this prop is set to `true`, `'automatic'`
    * behavior is reverted.
-   *
-   * Supported only on Fabric.
    *
    * @defaultValue `true`
    * @platform ios
