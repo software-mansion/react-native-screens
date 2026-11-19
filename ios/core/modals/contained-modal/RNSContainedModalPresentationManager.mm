@@ -4,6 +4,10 @@
 
 @implementation RNSContainedModalPresentationManager {
   RNSContainedModalPresentationState _state;
+  // Set when the current open request was rejected; cleared once `isOpen`
+  // goes back to `false`. A rejected request is dropped, so later updates
+  // (e.g. the host re-attaching to the window) must not perform it.
+  BOOL _isOpenRequestRejected;
 }
 
 - (instancetype)init
@@ -20,8 +24,12 @@
   BOOL shouldBeOpen = provider.isOpen;
 
   if (shouldBeOpen) {
+    if (_isOpenRequestRejected) {
+      return;
+    }
     [self presentIfNeededWithProvider:provider controller:controller];
   } else {
+    _isOpenRequestRejected = NO;
     [self dismissIfNeededWithProvider:provider controller:controller];
   }
 }
@@ -39,6 +47,7 @@
     case RNSContainedModalPresentationDecisionDefer:
       return;
     case RNSContainedModalPresentationDecisionReject:
+      _isOpenRequestRejected = YES;
       [controller.delegate modalControllerDidRejectPresentation:controller];
       return;
     case RNSContainedModalPresentationDecisionPresent:
