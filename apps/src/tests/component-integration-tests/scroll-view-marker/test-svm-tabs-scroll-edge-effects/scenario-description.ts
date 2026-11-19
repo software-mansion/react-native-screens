@@ -7,6 +7,13 @@ export const scenarioDescription: ScenarioDescription = {
     'Test whether scroll edge effects are applied correctly when ScrollViewMarker ' +
     'is used inside Tabs',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: {
+      createdOn: ['iOS 26.5'],
+      testOn: ['iOS 26.5'],
+    },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

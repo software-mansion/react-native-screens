@@ -27,7 +27,7 @@ Step-by-step instructions for a tester to manually verify the scenario.
 
 1. Navigate to ...
 
-    - [ ] Description of expected behavior after the navigation action.
+   - [ ] Description of expected behavior after the navigation action.
 
 ---
 
@@ -35,13 +35,13 @@ Step-by-step instructions for a tester to manually verify the scenario.
 
 1. Tap ...
 
-    - [ ] iOS 18: expected behavior on this OS version.
-    - [ ] iOS 26: expected behavior on this OS version.
+   - [ ] iOS 18: expected behavior on this OS version.
+   - [ ] iOS 26: expected behavior on this OS version.
 
 2. Tap ...
 
-    - [ ] Description of expected behavior after the action, wrapped onto
-          a second line.
+   - [ ] Description of expected behavior after the action, wrapped onto
+         a second line.
 
 ## Steps - iPhone Duo
 
@@ -55,7 +55,7 @@ Run Baseline step 1 from `## Steps` first.
 
 1. With the device closed in portrait, tap ...
 
-    - [ ] Description of expected behavior in the closed posture.
+   - [ ] Description of expected behavior in the closed posture.
 
 ---
 
@@ -63,5 +63,5 @@ Run Baseline step 1 from `## Steps` first.
 
 1. Open the device fully with the screen shown.
 
-    - [ ] Description of expected behavior after unfolding, e.g. the layout
-          updates and the state from Closed step 1 is kept.
+   - [ ] Description of expected behavior after unfolding, e.g. the layout
+         updates and the state from Closed step 1 is kept.

@@ -6,6 +6,10 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Validates the TabsHost prominentScreenKey prop, which makes an arbitrary tab prominent on iOS 27+.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27.2'], testOn: ['iOS 27.2'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

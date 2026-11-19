@@ -6,6 +6,10 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Test that content in the strip freed by a hidden tab bar receives touches.',
   platforms: ['android'],
+  devices: ['android-phone'],
+  osVersions: {
+    'android-phone': { createdOn: ['API Level 36'], testOn: ['API Level 36'] },
+  },
   e2eCoverage: 'full',
   smokeTest: false,
 };

@@ -11,9 +11,15 @@
 // The block is placed between SCENARIO_METADATA_START and SCENARIO_METADATA_END
 // markers. If a scenario.md has no block yet, it is inserted below the title.
 //
+// The whole scenario.md is then formatted with Prettier, which also owns the
+// list indentation of steps and expected-result checkboxes.
+//
 // Usage:
-//   node scripts/sync-scenario-metadata.cts           # write blocks
-//   node scripts/sync-scenario-metadata.cts --check   # fail if any block is outdated (CI)
+//   node scripts/sync-scenario-metadata.cts [dir...]           # write blocks
+//   node scripts/sync-scenario-metadata.cts --check [dir...]   # fail if any block
+//                                                              # or formatting is
+//                                                              # outdated (CI)
+// Without dirs, every scenario under apps/src/tests is processed.
 
 // Node's strip-only TypeScript support erases types without rewriting syntax, so
 // this CommonJS script must use `require` rather than `import`/`import =`.
@@ -21,6 +27,11 @@ const fs = require('node:fs') as typeof import('node:fs');
 const path = require('node:path') as typeof import('node:path');
 const vm = require('node:vm') as typeof import('node:vm');
 const ts = require('typescript') as typeof import('typescript');
+// Prettier 2 ships without type declarations.
+const prettier = require('prettier') as {
+  format: (source: string, options: object) => string;
+  resolveConfig: { sync: (file: string) => object | null };
+};
 
 type ScenarioDevice =
   | 'iphone'
@@ -35,7 +46,7 @@ interface ScenarioDescription {
   key: string;
   details?: string;
   platforms?: ('android' | 'ios')[];
-  devices?: ScenarioDevice[];
+  devices: ScenarioDevice[];
   osVersions?: Partial<
     Record<ScenarioDevice, { createdOn: string[]; testOn: string[] }>
   >;
@@ -84,6 +95,18 @@ const FORBIDDEN_MANUAL_CONTENT: { pattern: RegExp; field: string }[] = [
 
 const repoRoot = path.resolve(__dirname, '..');
 const testsRoot = path.join(repoRoot, 'apps', 'src', 'tests');
+
+// Test screens that do not have a scenario.md yet, relative to testsRoot.
+// Remove an entry once its scenario.md is written.
+const SCENARIOS_WITHOUT_SCENARIO_MD = new Set([
+  'component-integration-tests/orientation/orientation-stack-in-tabs',
+  'component-integration-tests/orientation/orientation-tabs-in-stack',
+  'single-feature-tests/split/test-command-show-column',
+  'single-feature-tests/split/test-top-column-for-collapsing',
+  'single-feature-tests/stack-v4/stack-v4-header-bar-minimization',
+  'single-feature-tests/stack-v4/stack-v4-header-bar-safe-area-adjustment',
+  'single-feature-tests/stack-v4/stack-v4-orientation',
+]);
 
 function findScenarioDirs(dir: string): string[] {
   const result: string[] = [];
@@ -204,6 +227,23 @@ function renderMetadata(description: ScenarioDescription): string {
   return lines.join('\n');
 }
 
+// Prettier's Markdown output is not always stable after one pass (nested list
+// indentation can shift again), so format until the output stops changing.
+function formatMarkdown(markdown: string, file: string): string {
+  const options = { ...prettier.resolveConfig.sync(file), filepath: file };
+  let formatted = markdown;
+  for (let pass = 0; pass < 5; pass += 1) {
+    const next = prettier.format(formatted, options);
+    if (next === formatted) {
+      return formatted;
+    }
+    formatted = next;
+  }
+  throw new Error(
+    `${file}: Prettier output does not stabilize, fix the list indentation by hand`,
+  );
+}
+
 // Returns scenario.md content with the metadata block replaced or inserted.
 function applyMetadata(markdown: string, block: string): string {
   if (
@@ -237,18 +277,31 @@ function applyMetadata(markdown: string, block: string): string {
 function main(): void {
   const args = process.argv.slice(2);
   const check = args.includes('--check');
+  const dirs = args.filter(arg => !arg.startsWith('--'));
 
   const problems: string[] = [];
   let updated = 0;
 
-  for (const dir of findScenarioDirs(testsRoot)) {
+  const scenarioDirs =
+    dirs.length > 0
+      ? dirs.map(dir => path.resolve(dir))
+      : findScenarioDirs(testsRoot);
+  for (const dir of scenarioDirs) {
     const relativeDir = path.relative(repoRoot, dir);
     const scenarioPath = path.join(dir, 'scenario.md');
+    const knownWithoutScenarioMd = SCENARIOS_WITHOUT_SCENARIO_MD.has(
+      path.relative(testsRoot, dir).split(path.sep).join('/'),
+    );
     if (!fs.existsSync(scenarioPath)) {
-      if (check) {
+      if (check && !knownWithoutScenarioMd) {
         problems.push(`${relativeDir}/scenario.md: missing`);
       }
       continue;
+    }
+    if (knownWithoutScenarioMd) {
+      problems.push(
+        `${relativeDir}: has a scenario.md, remove it from SCENARIOS_WITHOUT_SCENARIO_MD`,
+      );
     }
 
     let description: ScenarioDescription;
@@ -263,12 +316,6 @@ function main(): void {
       continue;
     }
 
-    // Scenarios without `devices` are not migrated yet; leave them alone in
-    // write mode, but keep --check strict.
-    if (!check && description.devices === undefined) {
-      continue;
-    }
-
     const errors = validate(description);
     if (errors.length > 0) {
       for (const error of errors) {
@@ -280,7 +327,10 @@ function main(): void {
     const markdown = fs.readFileSync(scenarioPath, 'utf8');
     let expected: string;
     try {
-      expected = applyMetadata(markdown, renderMetadata(description));
+      expected = formatMarkdown(
+        applyMetadata(markdown, renderMetadata(description)),
+        scenarioPath,
+      );
     } catch (error) {
       problems.push(`${relativeDir}/scenario.md: ${(error as Error).message}`);
       continue;
@@ -303,7 +353,7 @@ function main(): void {
     }
     if (check) {
       problems.push(
-        `${relativeDir}/scenario.md: metadata block is missing or outdated`,
+        `${relativeDir}/scenario.md: metadata block or formatting is missing or outdated`,
       );
     } else {
       fs.writeFileSync(scenarioPath, expected);
@@ -333,9 +383,12 @@ function writeScenarioMetadata(dir: string): void {
   );
   fs.writeFileSync(
     scenarioPath,
-    applyMetadata(
-      fs.readFileSync(scenarioPath, 'utf8'),
-      renderMetadata(description),
+    formatMarkdown(
+      applyMetadata(
+        fs.readFileSync(scenarioPath, 'utf8'),
+        renderMetadata(description),
+      ),
+      scenarioPath,
     ),
   );
 }

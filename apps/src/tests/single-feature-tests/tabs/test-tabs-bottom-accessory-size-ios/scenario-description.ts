@@ -9,6 +9,21 @@ export const scenarioDescription: ScenarioDescription = {
     'after fold, rotation and tab bar minimize changes, also when the ' +
     'accessory is hidden or removed during the change.',
   platforms: ['ios'],
+  devices: ['ipad', 'iphone-duo'],
+  osVersions: {
+    ipad: {
+      createdOn: ['iPadOS 27.0'],
+      testOn: ['iPadOS 27.0'],
+    },
+    'iphone-duo': {
+      createdOn: ['iOS 27.1'],
+      testOn: ['iOS 27.1'],
+    },
+  },
+  deviceSetup: {
+    ipad: 'App in full screen, portrait orientation at launch.',
+    'iphone-duo': 'Closed and in portrait orientation at launch.',
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

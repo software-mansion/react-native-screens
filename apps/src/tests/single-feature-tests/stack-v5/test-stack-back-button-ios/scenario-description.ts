@@ -8,6 +8,10 @@ export const scenarioDescription: ScenarioDescription = {
     'and toggling the long press navigation history menu. Back button props are configured on the screen ' +
     'that renders the back button, but the native configuration is performed on the screen below.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 26.4'], testOn: ['iOS 18.6', 'iOS 26.4'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

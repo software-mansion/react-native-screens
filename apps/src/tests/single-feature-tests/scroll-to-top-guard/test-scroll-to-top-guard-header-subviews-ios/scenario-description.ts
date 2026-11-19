@@ -7,6 +7,11 @@ export const scenarioDescription: ScenarioDescription = {
     'Wraps Stack v5 header left/right/title subviews in <ScrollToTopGuard> to prevent the ' +
     'iPadOS 26+ / iPhone iOS 27+ tap-to-scroll-to-top. Per-subview: guard on/off, hitSlop.',
   platforms: ['ios'],
+  devices: ['iphone', 'ipad'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27'], testOn: ['iOS 27'] },
+    ipad: { createdOn: ['iPadOS 26'], testOn: ['iPadOS 26'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

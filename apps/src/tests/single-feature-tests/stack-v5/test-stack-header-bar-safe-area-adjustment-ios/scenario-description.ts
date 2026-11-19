@@ -8,6 +8,10 @@ export const scenarioDescription: ScenarioDescription = {
     'adjusts while the navigation bar minimizes. The safe area is consumed ' +
     'by SafeAreaView.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27.2'], testOn: ['iOS 27.2'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

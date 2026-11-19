@@ -6,6 +6,15 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Verifies that the navigation state progresses exactly once per user and programmatic selection of a search-role tab.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: {
+      createdOn: ['iOS 27.0'],
+      testOn: ['iOS 27.0'],
+    },
+  },
   e2eCoverage: 'full',
+  e2eCoverageDetails:
+    'FabricExample/e2e/single-feature-tests/tabs/test-tabs-navigation-state-search-tab.e2e.ts covers all the steps.',
   smokeTest: false,
 };

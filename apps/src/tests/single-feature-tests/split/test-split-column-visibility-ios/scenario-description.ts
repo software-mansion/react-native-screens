@@ -6,6 +6,16 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Native column visibility transitions and preferred display mode updates.',
   platforms: ['ios'],
+  devices: ['ipad', 'iphone'],
+  osVersions: {
+    ipad: { createdOn: [], testOn: [] },
+    iphone: { createdOn: [], testOn: [] },
+  },
+  deviceSetup: {
+    ipad: 'Regular horizontal size class.',
+    iphone: 'Compact width (iPhone or a compact window).',
+  },
   e2eCoverage: 'incomplete',
+  e2eCoverageDetails: 'No Detox test exists for this scenario yet.',
   smokeTest: false,
 };

@@ -8,6 +8,13 @@ export const scenarioDescription: ScenarioDescription = {
     'has a red border, which should start right below the header and ' +
     'end right above the home indicator.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: {
+      createdOn: ['iOS 27.2'],
+      testOn: ['iOS 27.2'],
+    },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

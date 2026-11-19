@@ -7,6 +7,14 @@ export const scenarioDescription: ScenarioDescription = {
     'Test that a Stack v5 header inside a tab survives switching tabs, ' +
     'and that changes made while the tab is away are applied when it returns',
   platforms: ['android'],
+  devices: ['android-phone'],
+  osVersions: {
+    'android-phone': {
+      createdOn: ['API Level 37'],
+      testOn: ['API Level 37'],
+    },
+  },
   e2eCoverage: 'tbd',
+  e2eCoverageDetails: 'Planned, but will be implemented separately.',
   smokeTest: false,
 };

@@ -27,6 +27,8 @@ jobs:
         run: yarn lint-js
       - name: Check types
         run: yarn check-types
+      - name: Check scenario metadata
+        run: yarn sync-scenario-metadata --check
   lint-android:
     runs-on: ubuntu-latest
     concurrency:
