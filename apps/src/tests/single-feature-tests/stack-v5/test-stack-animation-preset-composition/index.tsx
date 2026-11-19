@@ -99,16 +99,17 @@ const ANIMATION_OPTIONS = [
   },
 ] satisfies readonly AnimationPresetOption[];
 
-function TestStackAnimationPresetCompositionAndroid() {
+function TestStackAnimationPresetComposition() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="slideFromRight"
+      withHeaderPicker
     />
   );
 }
 
 export default createScenario(
-  TestStackAnimationPresetCompositionAndroid,
+  TestStackAnimationPresetComposition,
   scenarioDescription,
 );

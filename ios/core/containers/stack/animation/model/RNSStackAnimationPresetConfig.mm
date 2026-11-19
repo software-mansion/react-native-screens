@@ -50,6 +50,16 @@ static const struct {
   return defaultConfig;
 }
 
++ (RNSStackAnimationPresetConfig *)noneConfig
+{
+  static RNSStackAnimationPresetConfig *noneConfig;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    noneConfig = [[RNSStackAnimationPresetConfig alloc] initWithName:RNSStackAnimationPresetNameNone];
+  });
+  return noneConfig;
+}
+
 + (nullable RNSStackAnimationPresetConfig *)configNamed:(NSString *)string
 {
   for (const auto &entry : kRNSStackAnimationPresetNames) {
@@ -71,7 +81,24 @@ static const struct {
   return @"";
 }
 
-+ (BOOL)presetNamed:(RNSStackAnimationPresetName)name acceptsOption:(RNSStackAnimationPresetOption)option
++ (BOOL)presetNamed:(RNSStackAnimationPresetName)name isAllowedAtLevel:(RNSStackAnimationPresetLevel)level
+{
+  switch (name) {
+    case RNSStackAnimationPresetNameDefault:
+      return level == RNSStackAnimationPresetLevelAnimation;
+    case RNSStackAnimationPresetNameIosFromRight:
+    case RNSStackAnimationPresetNameIosFromLeft:
+    case RNSStackAnimationPresetNameIosFromTrailing:
+    case RNSStackAnimationPresetNameIosFromLeading:
+      return level != RNSStackAnimationPresetLevelMotion;
+    default:
+      return YES;
+  }
+}
+
++ (BOOL)presetNamed:(RNSStackAnimationPresetName)name
+      acceptsOption:(RNSStackAnimationPresetOption)option
+            atLevel:(RNSStackAnimationPresetLevel)level
 {
   switch (name) {
     case RNSStackAnimationPresetNameDefault:
@@ -91,10 +118,22 @@ static const struct {
     case RNSStackAnimationPresetNameSlideFromLeading:
     case RNSStackAnimationPresetNameSlideFromBottom:
     case RNSStackAnimationPresetNameSlideFromTop:
-      return option != RNSStackAnimationPresetOptionDistance;
+      return option != RNSStackAnimationPresetOptionDistance || level == RNSStackAnimationPresetLevelMotion;
     case RNSStackAnimationPresetNameFadeFromBottom:
     case RNSStackAnimationPresetNameFadeFromTop:
       return YES;
+  }
+}
+
++ (NSString *)stringFromLevel:(RNSStackAnimationPresetLevel)level
+{
+  switch (level) {
+    case RNSStackAnimationPresetLevelAnimation:
+      return @"the whole animation";
+    case RNSStackAnimationPresetLevelTransition:
+      return @"a push or pop transition";
+    case RNSStackAnimationPresetLevelMotion:
+      return @"one screen's motion";
   }
 }
 

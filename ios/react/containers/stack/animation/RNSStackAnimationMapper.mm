@@ -1,5 +1,7 @@
 #import "RNSStackAnimationMapper.h"
 #import "RNSLog.h"
+#import "RNSStackAnimationCustomConfig.h"
+#import "RNSStackAnimationCustomTransitionConfig.h"
 #import "RNSStackAnimationEasing.h"
 #import "RNSStackAnimationLength.h"
 #import "RNSStackAnimationPresetConfig.h"
@@ -8,6 +10,10 @@ static NSString *const kTypeKey = @"type";
 static NSString *const kNameKey = @"name";
 static NSString *const kTypePreset = @"preset";
 static NSString *const kTypeCustom = @"custom";
+static NSString *const kPushKey = @"push";
+static NSString *const kPopKey = @"pop";
+static NSString *const kEnterKey = @"enter";
+static NSString *const kExitKey = @"exit";
 static NSString *const kDurationKey = @"duration";
 static NSString *const kEasingKey = @"easing";
 static NSString *const kDistanceKey = @"distance";
@@ -20,17 +26,16 @@ static NSString *const kPercentSuffix = @"%";
   if (value == nil) {
     return RNSStackAnimationPresetConfig.defaultConfig;
   }
-  RNSStackAnimationPresetConfig *preset = [self presetConfigFromValue:value];
-  if (preset == nil) {
-    return RNSStackAnimationPresetConfig.defaultConfig;
-  }
-  return preset;
+  return [self configFromValue:value level:RNSStackAnimationPresetLevelAnimation]
+      ?: RNSStackAnimationPresetConfig.defaultConfig;
 }
 
-+ (nullable RNSStackAnimationPresetConfig *)presetConfigFromValue:(id)value
+// Every level is written the same way: a preset name, `{ type: 'preset', name, ...options }` or `{ type: 'custom',
+// ...the next level }`. nil after a warning.
++ (nullable id)configFromValue:(id)value level:(RNSStackAnimationPresetLevel)level
 {
   if ([value isKindOfClass:NSString.class]) {
-    return [self presetConfigFromName:value];
+    return [self presetConfigFromName:value level:level];
   }
   if (![value isKindOfClass:NSDictionary.class]) {
     return [self rejectWithReason:@"[RNScreens] An animation must be a preset name or an object."];
@@ -41,32 +46,82 @@ static NSString *const kPercentSuffix = @"%";
     return [self rejectWithReason:@"[RNScreens] type property must be a non-null string."];
   }
   if ([type isEqualToString:kTypePreset]) {
-    return [self presetConfigFromDictionary:map];
+    return [self presetConfigFromDictionary:map level:level];
   }
   if ([type isEqualToString:kTypeCustom]) {
-    return [self rejectWithReason:@"[RNScreens] Custom animations are not supported on iOS."];
+    return [self customConfigFromDictionary:map level:level];
   }
   return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Unknown animation type: %@.", type]];
 }
 
++ (nullable id)customConfigFromDictionary:(NSDictionary *)map level:(RNSStackAnimationPresetLevel)level
+{
+  switch (level) {
+    case RNSStackAnimationPresetLevelAnimation: {
+      if (![self dictionary:map hasOnlyKeys:@[ kTypeKey, kPushKey, kPopKey ]]) {
+        return nil;
+      }
+      id push = [self partFromValue:map[kPushKey] level:RNSStackAnimationPresetLevelTransition];
+      id pop = push == nil ? nil : [self partFromValue:map[kPopKey] level:RNSStackAnimationPresetLevelTransition];
+      return pop == nil ? nil : [[RNSStackAnimationCustomConfig alloc] initWithPush:push pop:pop];
+    }
+    case RNSStackAnimationPresetLevelTransition: {
+      if (![self dictionary:map hasOnlyKeys:@[ kTypeKey, kEnterKey, kExitKey ]]) {
+        return nil;
+      }
+      id enter = [self partFromValue:map[kEnterKey] level:RNSStackAnimationPresetLevelMotion];
+      id exit = enter == nil ? nil : [self partFromValue:map[kExitKey] level:RNSStackAnimationPresetLevelMotion];
+      return exit == nil ? nil : [[RNSStackAnimationCustomTransitionConfig alloc] initWithEnter:enter exit:exit];
+    }
+    case RNSStackAnimationPresetLevelMotion:
+      return [self rejectWithReason:@"[RNScreens] A motion written as tracks is not supported on iOS."];
+  }
+}
+
+// An omitted part is `none`. The Fabric conversion drops `null` values (`RNSConvertFollyDynamicToId`), so nil covers an
+// omitted and a `null` key alike.
++ (nullable id)partFromValue:(nullable id)value level:(RNSStackAnimationPresetLevel)level
+{
+  return value == nil ? RNSStackAnimationPresetConfig.noneConfig : [self configFromValue:value level:level];
+}
+
+// A misplaced or misspelled key would otherwise read as omitted, which is `none`.
++ (BOOL)dictionary:(NSDictionary *)map hasOnlyKeys:(NSArray<NSString *> *)allowed
+{
+  for (NSString *key in map) {
+    if (![allowed containsObject:key]) {
+      [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Unknown animation key: %@.", key]];
+      return NO;
+    }
+  }
+  return YES;
+}
+
 + (nullable RNSStackAnimationPresetConfig *)presetConfigFromName:(NSString *)string
+                                                           level:(RNSStackAnimationPresetLevel)level
 {
   RNSStackAnimationPresetConfig *preset = [RNSStackAnimationPresetConfig configNamed:string];
   if (preset == nil) {
     return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Unknown animation preset: %@.", string]];
   }
+  if (![RNSStackAnimationPresetConfig presetNamed:preset.name isAllowedAtLevel:level]) {
+    return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Animation preset '%@' cannot be %@.",
+                                                             string,
+                                                             [RNSStackAnimationPresetConfig stringFromLevel:level]]];
+  }
   return preset;
 }
 
 + (nullable RNSStackAnimationPresetConfig *)presetConfigFromDictionary:(NSDictionary *)map
+                                                                 level:(RNSStackAnimationPresetLevel)level
 {
   id nameValue = map[kNameKey];
   if (![nameValue isKindOfClass:NSString.class]) {
     return [self rejectWithReason:@"[RNScreens] name property must be a non-null string."];
   }
-  RNSStackAnimationPresetConfig *namedPreset = [RNSStackAnimationPresetConfig configNamed:nameValue];
+  RNSStackAnimationPresetConfig *namedPreset = [self presetConfigFromName:nameValue level:level];
   if (namedPreset == nil) {
-    return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Unknown animation preset: %@.", nameValue]];
+    return nil;
   }
   RNSStackAnimationPresetName name = namedPreset.name;
   NSNumber *durationMs;
@@ -87,11 +142,12 @@ static NSString *const kPercentSuffix = @"%";
       return
           [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Unknown animation preset option: %@.", key]];
     }
-    if (![RNSStackAnimationPresetConfig presetNamed:name acceptsOption:option]) {
+    if (![RNSStackAnimationPresetConfig presetNamed:name acceptsOption:option atLevel:level]) {
       return [self rejectWithReason:[NSString stringWithFormat:@"[RNScreens] Option '%@' is not supported by animation "
-                                                               @"preset '%@' as the whole animation.",
+                                                               @"preset '%@' as %@.",
                                                                key,
-                                                               [RNSStackAnimationPresetConfig stringFromName:name]]];
+                                                               [RNSStackAnimationPresetConfig stringFromName:name],
+                                                               [RNSStackAnimationPresetConfig stringFromLevel:level]]];
     }
     id value = map[key];
     switch (option) {

@@ -6,6 +6,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackAnimationEasing;
 @class RNSStackAnimationLength;
 @class RNSStackAnimationTiming;
 
@@ -19,6 +20,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithTiming:(RNSStackAnimationTiming *)timing;
 
 - (instancetype)withTiming:(RNSStackAnimationTiming *)timing;
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks scaledBy:(double)factor;
+
+/**
+ * Every track scaled so the last one ends at `durationMs`; a list ending at 0 ms has nothing to scale.
+ */
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks
+                                    retimedTo:(NSInteger)durationMs;
+
++ (NSArray<RNSStackAnimationTrack *> *)tracks:(NSArray<RNSStackAnimationTrack *> *)tracks
+                                   withEasing:(RNSStackAnimationEasing *)easing;
 
 @end
 
