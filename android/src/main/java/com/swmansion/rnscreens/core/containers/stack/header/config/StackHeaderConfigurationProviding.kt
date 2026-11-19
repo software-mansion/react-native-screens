@@ -5,7 +5,7 @@ import com.swmansion.rnscreens.core.common.text.TextAppearance
 import com.swmansion.rnscreens.core.containers.stack.header.subview.StackHeaderSubviewProviding
 import com.swmansion.rnscreens.core.containers.stack.header.toolbar.StackHeaderToolbarMenuController
 
-internal interface StackHeaderConfigurationProviding {
+interface StackHeaderConfigurationProviding {
     val type: StackHeaderType
     val title: String
     val subtitle: String
