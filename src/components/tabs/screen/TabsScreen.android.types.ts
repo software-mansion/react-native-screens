@@ -271,6 +271,7 @@ export interface TabsScreenPropsAndroid {
    * ```tsx
    * <Tabs.Screen
    *   screenKey="favorites"
+   *   title="Favorites"
    *   android={{
    *     icon: { type: 'drawableResource', name: 'ic_star' },
    *     selectedIcon: {
