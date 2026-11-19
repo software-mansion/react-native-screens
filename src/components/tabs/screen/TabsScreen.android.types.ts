@@ -116,6 +116,9 @@ export interface TabsScreenAppearanceAndroid {
    * selected tab.
    *
    * Maps to Android `state_enabled=false`.
+   *
+   * @info
+   * Disabling a tab is not supported in v5, so this appearance is not shown.
    */
   disabled?: TabsScreenItemStateAppearanceAndroid | undefined;
   /**
@@ -242,14 +245,11 @@ export interface TabsScreenPropsAndroid {
    * Specifies the icon for the tab bar item.
    *
    * @remarks
-   * Supported values:
-   * - `{ type: 'imageSource', imageSource, tinting? }`
-   *   Uses an image from the provided resource.
-   * - `{ type: 'drawableResource', name, tinting? }`
-   *   Uses a drawable resource with the given name.
+   * The `type` field selects the kind of the icon, see
+   * {@link TabsScreenIconAndroid}.
    *
-   * See {@link TabsPlatformIconTintingAndroid} for the meaning of each `tinting`
-   * value.
+   * If no {@link TabsScreenPropsAndroid.selectedIcon | selectedIcon} is
+   * provided, this icon will also be used as the selected state icon.
    *
    * @platform android
    */
@@ -259,9 +259,9 @@ export interface TabsScreenPropsAndroid {
    *
    * @remarks
    * Supports the same values as {@link TabsScreenPropsAndroid.icon | icon}
-   * property for given platform. `tinting` may differ from the one of `icon`.
+   * property.
    *
-   * @warning
+   * @info
    * To use `selectedIcon`, `icon` must also be provided.
    *
    * @defaultValue The {@link TabsScreenPropsAndroid.icon | icon} is used.

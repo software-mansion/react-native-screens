@@ -342,6 +342,7 @@ export interface TabsScreenPropsIOS {
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
+   * @defaultValue The {@link TabsScreenPropsIOS.icon | icon} is used.
    * @example
    * The symbol is shown tinted while unselected and in its own colors while
    * selected:
