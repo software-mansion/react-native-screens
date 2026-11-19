@@ -58,6 +58,8 @@ export const Split = {
    * The integration does not work when there is a view between the column and
    * the host. Such a column has to opt out with
    * {@link SplitColumnProps.disableStackIntegration | disableStackIntegration}.
+   * A stack rendered inside `Tabs`, a sheet or a contained modal is never
+   * integrated, so the column does not have to opt out for it.
    *
    * An integrated column and its host take no part in layout, so their
    * `onLayout` and `measure` report an empty frame.

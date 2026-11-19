@@ -35,7 +35,9 @@ export interface SplitColumnProps extends ViewProps {
    *
    * With this prop the stack is nested in the column like any other content.
    * Set it when there is a view between the column and the `Stack.Host`, as
-   * the integration does not work then.
+   * the integration does not work then. A stack rendered inside `Tabs`, a
+   * sheet or a contained modal is never integrated, so it does not need the
+   * prop.
    *
    * The value is read when the column is mounted. Changing it later has no
    * effect.

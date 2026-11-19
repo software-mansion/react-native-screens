@@ -1,13 +1,13 @@
 import React from 'react';
 
 /**
- * Whether the component is rendered as the content of a `Split.Column` that
- * integrates with a stack.
+ * Whether a `Stack.Host` rendered here asks a `Split.Column` to integrate with
+ * it.
  *
- * `Split.Column` provides `true`, unless it has `disableStackIntegration`, and
- * `Stack.Screen` resets it to `false`. A `Stack.Host` reads `true` only when
- * it is the content of a column, not when it is nested in a screen of another
- * stack.
+ * `Split.Column` provides `true`, unless it has `disableStackIntegration`.
+ * Components that render their children in a native container of their own
+ * reset it to `false`: `Stack.Screen`, `Tabs.Host`, the sheets and
+ * contained modals.
  */
 const SplitColumnMarkerContext = React.createContext<boolean>(false);
 
