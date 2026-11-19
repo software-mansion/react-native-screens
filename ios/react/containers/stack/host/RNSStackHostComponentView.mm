@@ -19,13 +19,9 @@
 namespace react = facebook::react;
 
 @interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
-
-@property (nonatomic) BOOL headlessModeEnabled;
-
 @end
 
 @implementation RNSStackHostComponentView {
-  RNSStackNavigationController *_Nonnull _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
   BOOL _didSetHeadlessModeEnabled;

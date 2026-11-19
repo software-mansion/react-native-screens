@@ -431,6 +431,17 @@ RNS_IGNORE_SUPER_CALL_END
   return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
 }
 
+- (NSArray<RNSStackNavigationController *> *)columnNavigationControllers
+{
+  NSMutableArray<RNSStackNavigationController *> *navigationControllers = [NSMutableArray array];
+  for (RNSSplitScreenComponentView *column in _reactSubviews) {
+    if (column.columnType == RNSSplitScreenColumnTypeColumn) {
+      [navigationControllers addObject:column.columnNavigationController];
+    }
+  }
+  return navigationControllers;
+}
+
 - (NSArray<RNSSplitScreenController *> *)controllersOfColumnsWithType:(RNSSplitScreenColumnType)columnType
 {
   NSMutableArray<RNSSplitScreenController *> *controllers = [NSMutableArray array];

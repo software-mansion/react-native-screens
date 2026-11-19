@@ -3,13 +3,9 @@
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
 #import "RNSStackNavigationController.h"
-#import "RNSViewControllerViewLifecycleEventsObserver.h"
-
-@interface RNSSplitScreenController () <RNSViewControllerViewLifecycleEventsObserver>
-@end
 
 @implementation RNSSplitScreenController {
-  RNSStackNavigationController *_Nullable _columnNavigationController;
+  RNSStackNavigationController *_Nullable _plainColumnNavigationController;
 }
 
 - (instancetype)init
@@ -58,22 +54,22 @@
  * A navigation controller that holds this controller is never used by a stack: nothing is pushed onto it or popped
  * from it.
  */
-- (RNSStackNavigationController *)columnNavigationController
+- (RNSStackNavigationController *)plainColumnNavigationController
 {
-  if (_columnNavigationController == nil) {
+  if (_plainColumnNavigationController == nil) {
     // `initWithRootViewController:` would skip the `init` of RNSStackNavigationController, which sets up its navigation
     // bar. The controller is created with `init` and gets its root afterwards.
-    _columnNavigationController = [RNSStackNavigationController new];
-    _columnNavigationController.viewControllers = @[ self ];
-    _columnNavigationController.viewLifecycleEventsObserver = self;
+    _plainColumnNavigationController = [RNSStackNavigationController new];
+    _plainColumnNavigationController.viewControllers = @[ self ];
+    _plainColumnNavigationController.viewLifecycleEventsObserver = self;
   }
-  return _columnNavigationController;
+  return _plainColumnNavigationController;
 }
 
-- (void)releaseColumnNavigationController
+- (void)releasePlainColumnNavigationController
 {
-  _columnNavigationController.viewLifecycleEventsObserver = nil;
-  _columnNavigationController = nil;
+  _plainColumnNavigationController.viewLifecycleEventsObserver = nil;
+  _plainColumnNavigationController = nil;
 }
 
 #pragma mark - Signals
