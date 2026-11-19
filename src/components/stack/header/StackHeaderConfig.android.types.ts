@@ -7,6 +7,15 @@ import type {
 } from './StackHeaderConfig.types';
 
 /**
+ * Icon of a toolbar menu element, the back button or the overflow menu button
+ * of a Stack header on Android.
+ *
+ * @remarks
+ * Accepts any {@link PlatformIconAndroid} value.
+ */
+export type StackPlatformIconAndroid = PlatformIconAndroid;
+
+/**
  * Type of the Material 3 app bar used as the header.
  *
  * @remarks
@@ -254,7 +263,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    *
    * @platform android
    */
-  icon?: PlatformIconAndroid | undefined;
+  icon?: StackPlatformIconAndroid | undefined;
   /**
    * Specifies the tint color to apply to the menu element icon.
    *
@@ -701,7 +710,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @defaultValue The native back arrow (`homeAsUpIndicator`) is used.
    * @platform android
    */
-  backButtonIcon?: PlatformIconAndroid | undefined;
+  backButtonIcon?: StackPlatformIconAndroid | undefined;
   /**
    * Custom icon for the overflow menu button (the three-dots button that opens
    * the toolbar menu's overflow popup).
@@ -709,7 +718,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @defaultValue The Material 3 Expressive default overflow icon is used.
    * @platform android
    */
-  overflowIcon?: PlatformIconAndroid | undefined;
+  overflowIcon?: StackPlatformIconAndroid | undefined;
   /**
    * Tint color applied to the overflow menu icon in its normal state.
    *

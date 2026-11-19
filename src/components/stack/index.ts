@@ -34,6 +34,7 @@ export type {
   StackHeaderPressHandler,
   StackHeaderMenuSelectionHandler,
   // Android
+  StackPlatformIconAndroid,
   StackHeaderTypeAndroid,
   StackHeaderTitleHorizontalGravityAndroid,
   StackHeaderTitleVerticalGravityAndroid,
