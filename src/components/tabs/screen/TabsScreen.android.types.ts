@@ -30,14 +30,14 @@ export interface TabsScreenItemStateAppearanceAndroid {
   /**
    * Specifies the font color used for the title of each tab bar item.
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue A color from the default Material 3 theme is used.
    * @platform android
    */
   tabBarItemTitleFontColor?: TextStyle['color'] | undefined;
   /**
    * Specifies the icon color for each tab bar item.
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue A color from the default Material 3 theme is used.
    * @platform android
    */
   tabBarItemIconColor?: ColorValue | undefined;
@@ -50,14 +50,13 @@ export interface TabsScreenAppearanceAndroid {
   /**
    * Specifies the background color for the entire tab bar.
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue A color from the default Material 3 theme is used.
    * @platform android
    */
   tabBarBackgroundColor?: ColorValue | undefined;
   /**
    * Specifies the color of each tab bar item's ripple effect.
    *
-   * @defaultValue Material's default is used.
    * @platform android
    */
   tabBarItemRippleColor?: ColorValue | undefined;
@@ -134,7 +133,7 @@ export interface TabsScreenAppearanceAndroid {
   /**
    * Specifies the background color of the active indicator.
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue A color from the default Material 3 theme is used.
    * @platform android
    */
   tabBarItemActiveIndicatorColor?: ColorValue | undefined;
@@ -178,7 +177,7 @@ export interface TabsScreenAppearanceAndroid {
    * @remarks
    * The size is represented in scale-independent pixels (sp).
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue Material's default label size is used.
    * @platform android
    */
   tabBarItemTitleSmallLabelFontSize?: TextStyle['fontSize'] | undefined;
@@ -188,7 +187,7 @@ export interface TabsScreenAppearanceAndroid {
    * @remarks
    * The size is represented in scale-independent pixels (sp).
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue Material's default label size is used.
    * @platform android
    */
   tabBarItemTitleLargeLabelFontSize?: TextStyle['fontSize'] | undefined;
@@ -209,14 +208,14 @@ export interface TabsScreenAppearanceAndroid {
   /**
    * Specifies the background color of the badge.
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue A color from the default Material 3 theme is used.
    * @platform android
    */
   tabBarItemBadgeBackgroundColor?: ColorValue | undefined;
   /**
    * Specifies the text color of the badge.
    *
-   * @defaultValue Material's default is used.
+   * @defaultValue A color from the default Material 3 theme is used.
    * @platform android
    */
   tabBarItemBadgeTextColor?: ColorValue | undefined;
