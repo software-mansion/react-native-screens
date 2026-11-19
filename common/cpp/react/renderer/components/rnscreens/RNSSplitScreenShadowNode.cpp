@@ -6,21 +6,6 @@ namespace facebook::react {
 
 extern const char RNSSplitScreenComponentName[] = "RNSSplitScreen";
 
-RNSSplitScreenShadowNode::RNSSplitScreenShadowNode(
-    const ShadowNodeFragment &fragment,
-    const ShadowNodeFamily::Shared &family,
-    ShadowNodeTraits traits)
-    : ConcreteViewShadowNode(fragment, family, traits) {
-  updateDisplayForContent();
-}
-
-RNSSplitScreenShadowNode::RNSSplitScreenShadowNode(
-    const ShadowNode &sourceShadowNode,
-    const ShadowNodeFragment &fragment)
-    : ConcreteViewShadowNode(sourceShadowNode, fragment) {
-  updateDisplayForContent();
-}
-
 void RNSSplitScreenShadowNode::appendChild(
     const std::shared_ptr<const ShadowNode> &child) {
   ConcreteViewShadowNode::appendChild(child);

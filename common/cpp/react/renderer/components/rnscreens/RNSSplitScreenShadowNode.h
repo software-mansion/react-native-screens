@@ -20,16 +20,8 @@ using ConcreteViewShadowNodeSuperType = ConcreteViewShadowNode<
 class JSI_EXPORT RNSSplitScreenShadowNode final
     : public ConcreteViewShadowNodeSuperType {
  public:
+  using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
-
-  RNSSplitScreenShadowNode(
-      const ShadowNodeFragment &fragment,
-      const ShadowNodeFamily::Shared &family,
-      ShadowNodeTraits traits);
-
-  RNSSplitScreenShadowNode(
-      const ShadowNode &sourceShadowNode,
-      const ShadowNodeFragment &fragment);
 
 #pragma mark - ShadowNode overrides
 
@@ -42,7 +34,6 @@ class JSI_EXPORT RNSSplitScreenShadowNode final
     return traits;
   }
 
- private:
   void updateDisplayForContent();
 };
 
