@@ -141,7 +141,7 @@ function ContainedModalScreen() {
             onPress={() => setIsReplacing(value => !value)}
             // Switching remounts every modal; a remounted host whose old
             // controller is still presented would get its request rejected.
-            disabled={isOpen || isFullScreenOpen}
+            disabled={isOpen || isFullScreenOpen || isSheetModalOpen}
             testID="contained-modal-variant-button"
           />
           <Button
@@ -248,7 +248,10 @@ function ContainedModalScreen() {
           the sheet's coordinate space, not the window's. */}
       <FormSheet
         isOpen={isSheetOpen}
-        onNativeDismiss={() => setIsSheetOpen(false)}
+        onNativeDismiss={() => {
+          setIsSheetOpen(false);
+          setIsSheetModalOpen(false);
+        }}
         detents={[0.7]}>
         <View style={styles.sheetContent}>
           <Button

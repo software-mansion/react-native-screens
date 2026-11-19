@@ -29,5 +29,5 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalReplacingContent(props: ContainedModalProps) {
-  return <ContainedModalHost presentationStyle="replacingContent" {...props} />;
+  return <ContainedModalHost {...props} presentationStyle="replacingContent" />;
 }
