@@ -9,6 +9,7 @@ import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   ContainedModalProvider,
   ContainedModalOverContent,
+  ContainedModalReplacingContent,
   FormSheet,
 } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
@@ -28,6 +29,8 @@ interface ModalStateContextValue {
   setIsOpen: (value: boolean) => void;
   isFullScreenOpen: boolean;
   setIsFullScreenOpen: (value: boolean) => void;
+  isReplacing: boolean;
+  setIsReplacing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ModalStateContext = createContext<ModalStateContextValue | null>(null);
@@ -43,10 +46,21 @@ function useModalStateContext(): ModalStateContextValue {
 function TestContainedModalComprehensive() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
+  // Every modal in the scenario follows this switch, so each step runs
+  // against either variant. Switching swaps the component type, which
+  // remounts the modal subtrees (and resets any state inside them).
+  const [isReplacing, setIsReplacing] = useState(false);
 
   const modalState = useMemo(
-    () => ({ isOpen, setIsOpen, isFullScreenOpen, setIsFullScreenOpen }),
-    [isOpen, isFullScreenOpen],
+    () => ({
+      isOpen,
+      setIsOpen,
+      isFullScreenOpen,
+      setIsFullScreenOpen,
+      isReplacing,
+      setIsReplacing,
+    }),
+    [isOpen, isFullScreenOpen, isReplacing],
   );
 
   return (
@@ -71,8 +85,17 @@ function TestContainedModalComprehensive() {
 
 function ContainedModalScreen() {
   const navigation = useStackNavigationContext();
-  const { isOpen, setIsOpen, isFullScreenOpen, setIsFullScreenOpen } =
-    useModalStateContext();
+  const {
+    isOpen,
+    setIsOpen,
+    isFullScreenOpen,
+    setIsFullScreenOpen,
+    isReplacing,
+    setIsReplacing,
+  } = useModalStateContext();
+  const ContainedModal = isReplacing
+    ? ContainedModalReplacingContent
+    : ContainedModalOverContent;
   const [isLarge, setIsLarge] = useState(false);
   const [outsideTapCount, setOutsideTapCount] = useState(0);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -107,6 +130,19 @@ function ContainedModalScreen() {
             color={Colors.primary}
             onPress={() => setOutsideTapCount(count => count + 1)}
             testID="contained-modal-outside-button"
+          />
+          <Button
+            title={
+              isReplacing
+                ? 'Variant: replacing content'
+                : 'Variant: over content'
+            }
+            color={Colors.primary}
+            onPress={() => setIsReplacing(value => !value)}
+            // Switching remounts every modal; a remounted host whose old
+            // controller is still presented would get its request rejected.
+            disabled={isOpen || isFullScreenOpen || isSheetModalOpen}
+            testID="contained-modal-variant-button"
           />
           <Button
             title={isLarge ? 'Shrink provider' : 'Grow provider'}
@@ -152,9 +188,7 @@ function ContainedModalScreen() {
                   testID="open-contained-modal-button"
                 />
               </View>
-              <ContainedModalOverContent
-                isOpen={isOpen}
-                targetContainerId="pane">
+              <ContainedModal isOpen={isOpen} targetContainerId="pane">
                 <View style={styles.modalContent}>
                   <Text
                     style={styles.modalCounter}
@@ -188,12 +222,12 @@ function ContainedModalScreen() {
                     testID="dismiss-contained-modal-button"
                   />
                 </View>
-              </ContainedModalOverContent>
+              </ContainedModal>
             </ContainedModalProvider>
             <View style={styles.spacer} />
           </ScrollView>
         </View>
-        <ContainedModalOverContent
+        <ContainedModal
           isOpen={isFullScreenOpen}
           targetContainerId="full-screen">
           <View style={styles.fullScreenModalContent}>
@@ -207,14 +241,17 @@ function ContainedModalScreen() {
               testID="dismiss-fullscreen-contained-modal-button"
             />
           </View>
-        </ContainedModalOverContent>
+        </ContainedModal>
       </ContainedModalProvider>
       {/* Provider hosted inside a natively presented sheet: the sheet attaches
           its own touch handler, so the modal's press rects must be expressed in
           the sheet's coordinate space, not the window's. */}
       <FormSheet
         isOpen={isSheetOpen}
-        onNativeDismiss={() => setIsSheetOpen(false)}
+        onNativeDismiss={() => {
+          setIsSheetOpen(false);
+          setIsSheetModalOpen(false);
+        }}
         detents={[0.7]}>
         <View style={styles.sheetContent}>
           <Button
@@ -227,9 +264,7 @@ function ContainedModalScreen() {
             <View style={styles.providerContent}>
               <Text style={styles.counter}>Provider in sheet</Text>
             </View>
-            <ContainedModalOverContent
-              isOpen={isSheetModalOpen}
-              targetContainerId="sheet">
+            <ContainedModal isOpen={isSheetModalOpen} targetContainerId="sheet">
               <View style={styles.modalContent}>
                 <PressableWithFeedback
                   onPress={() => setSheetPressCount(count => count + 1)}
@@ -246,7 +281,7 @@ function ContainedModalScreen() {
                   testID="dismiss-sheet-contained-modal-button"
                 />
               </View>
-            </ContainedModalOverContent>
+            </ContainedModal>
           </ContainedModalProvider>
         </View>
       </FormSheet>
