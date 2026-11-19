@@ -4,6 +4,8 @@
 #import "RNSDefines.h"
 #import "RNSLog.h"
 #import "RNSParentContainerItemRegistry.h"
+#import "RNSStackAnimationResolver.h"
+#import "RNSStackAnimationTransitionTimeline.h"
 #import "RNSStackNavigationBar.h"
 #import "RNSStackNavigationControllerDelegate.h"
 #import "RNSStackOperation.h"
@@ -160,10 +162,27 @@
   if ([target isEqualToArray:_stackModel]) {
     return;
   }
-  BOOL animated = _stackModel.count > 0;
+  RNSStackScreenController *outgoing = _stackModel.lastObject;
+  RNSStackScreenController *incoming = target.lastObject;
+  BOOL animated = outgoing != nil;
+  // A change below an unchanged top is neither a push nor a pop, so no screen's animation applies to it.
+  if (animated && incoming != outgoing) {
+    RNSStackAnimationTransitionTimeline *timeline =
+        [RNSStackAnimationResolver transitionTimelineForKind:[self transitionKindTo:target]
+                                                    outgoing:outgoing
+                                                    incoming:incoming];
+    animated = !timeline.isStatic;
+  }
   [_stackModel setArray:target];
   [self setViewControllers:target animated:animated];
   [self dumpStackModel];
+}
+
+- (RNSStackAnimationTransitionKind)transitionKindTo:(nonnull NSArray<RNSStackScreenController *> *)target
+{
+  // UIKit plays `setViewControllers:` as a pop when the new top was already in the stack.
+  return [_stackModel containsObject:target.lastObject] ? RNSStackAnimationTransitionKindPop
+                                                        : RNSStackAnimationTransitionKindPush;
 }
 
 #pragma mark - Native pops

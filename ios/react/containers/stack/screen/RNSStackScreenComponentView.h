@@ -8,6 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RNSStackScreenController;
 @class RNSStackHostComponentView;
 @class RNSStackHeaderConfigComponentView;
+@protocol RNSStackAnimationConfig;
 
 typedef NS_ENUM(int, RNSStackScreenActivityMode) {
   RNSStackScreenActivityModeDetached = 0,
@@ -29,6 +30,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 
 @property (nonatomic, strong, readonly, nullable) NSString *screenKey;
 @property (nonatomic, readonly) RNSStackScreenActivityMode activityMode;
+@property (nonatomic, strong, readonly, nonnull) id<RNSStackAnimationConfig> animation;
 
 @end
 

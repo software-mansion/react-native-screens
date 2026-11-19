@@ -8,8 +8,11 @@
 #import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSConversions.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewSeeking.h"
+#import "RNSStackAnimationMapper.h"
+#import "RNSStackAnimationPresetConfig.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackHostComponentView.h"
 #import "RNSStackNavigationController.h"
@@ -106,6 +109,7 @@ namespace react = facebook::react;
   // container state
   _screenKey = nil;
   _activityMode = RNSStackScreenActivityModeDetached;
+  _animation = RNSStackAnimationPresetConfig.defaultConfig;
 }
 
 - (void)setupController
@@ -227,6 +231,11 @@ namespace react = facebook::react;
 
   if (oldComponentProps.reportsFrameToShadowTree != newComponentProps.reportsFrameToShadowTree) {
     _reportsFrameToShadowTree = newComponentProps.reportsFrameToShadowTree;
+  }
+
+  if (oldComponentProps.animation != newComponentProps.animation) {
+    _animation = [RNSStackAnimationMapper
+        animationConfigFromProp:rnscreens::conversion::RNSConvertFollyDynamicToId(newComponentProps.animation)];
   }
 
   [super updateProps:props oldProps:oldProps];
