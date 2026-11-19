@@ -6,14 +6,15 @@ import com.swmansion.rnscreens.core.containers.stack.animation.model.Length
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
 import com.swmansion.rnscreens.core.containers.stack.animation.timeline.TransitionTimeline
 
-// Every value below is taken from the legacy implementation's
-// `res/base/anim/rns_ios_from_{right,left}_{foreground,background}_{open,close}.xml` animations,
-// except the dim, which the legacy Android implementation did not have.
+// The travel distances are taken from the legacy implementation's
+// `res/base/anim/rns_ios_from_{right,left}_{foreground,background}_{open,close}.xml` animations;
+// the timing and the dim are not.
 
-// `@android:integer/config_shortAnimTime` (200 ms); `accelerate_decelerate` on the foreground,
-// no interpolator (the same curve, the default of a view `Animation`) on the background.
-private const val DURATION_MS = 200L
-private val EASING_ACCELERATE_DECELERATE = Easing.Named(EasingName.ACCELERATE_DECELERATE)
+// UIKit's push on iOS 18, measured on 18.6 (Apple documents neither value): 350 ms on the curve of
+// `kCAMediaTimingFunctionDefault`, which is the `ease` easing. iOS 26 moved the push to a spring,
+// which this table does not follow. Same table as `RNSStackAnimationIosPresets.mm`.
+private const val DURATION_MS = 350L
+private val EASING = Easing.Named(EasingName.EASE)
 
 // Foreground `android:fromXDelta="100%"`: the full width.
 private val DISTANCE_FULL = Length.Percent(1f)
@@ -42,7 +43,7 @@ internal fun iosFromTransition(
                 exit =
                     listOf(
                         travel(edge, DISTANCE_PARALLAX, isAppearing = false),
-                        dimTrack(0f, DIM_ALPHA, DURATION_MS, EASING_ACCELERATE_DECELERATE),
+                        dimTrack(0f, DIM_ALPHA, DURATION_MS, EASING),
                     ),
             )
         StackTransitionKind.POP ->
@@ -51,7 +52,7 @@ internal fun iosFromTransition(
                 enter =
                     listOf(
                         travel(edge, DISTANCE_PARALLAX, isAppearing = true),
-                        dimTrack(DIM_ALPHA, 0f, DURATION_MS, EASING_ACCELERATE_DECELERATE),
+                        dimTrack(DIM_ALPHA, 0f, DURATION_MS, EASING),
                     ),
                 exit = listOf(travel(edge, DISTANCE_FULL, isAppearing = false)),
             )
@@ -61,4 +62,4 @@ private fun travel(
     edge: Edge,
     distance: Length,
     isAppearing: Boolean,
-) = translationTrack(edge, distance, isAppearing, DURATION_MS, EASING_ACCELERATE_DECELERATE)
+) = translationTrack(edge, distance, isAppearing, DURATION_MS, EASING)

@@ -11,16 +11,25 @@ import java.util.EnumMap
 import com.google.android.material.R as MaterialR
 
 /**
- * Named curves come from the platform's and Material Components' interpolator resources or the
- * CSS specification's bezier constants, never transcribed by hand. The platform inflates the XML
- * on every load, so they are cached (immutable, theme-independent). Bezier easings are cheap and
- * built per request, so arbitrary curves never accumulate. Main thread only.
+ * Named curves come from the platform's and Material Components' interpolator resources or from
+ * constants of the CSS and Material 3 specifications. The platform inflates the XML on every load,
+ * so they are cached (immutable, theme-independent). Bezier easings are cheap and built per
+ * request, so arbitrary curves never accumulate. Main thread only.
  */
 internal object Interpolators {
-    // CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords.
+    // CSS Easing Functions Level 1, the `ease` / `ease-in` / `ease-out` / `ease-in-out` keywords;
+    // `ease` is also Core Animation's default timing function (`kCAMediaTimingFunctionDefault`).
+    private val CSS_EASE = Easing.Bezier(0.25f, 0.1f, 0.25f, 1f)
     private val CSS_EASE_IN = Easing.Bezier(0.42f, 0f, 1f, 1f)
     private val CSS_EASE_OUT = Easing.Bezier(0f, 0f, 0.58f, 1f)
     private val CSS_EASE_IN_OUT = Easing.Bezier(0.42f, 0f, 0.58f, 1f)
+
+    // Material 3 easing tokens: https://m3.material.io/styles/motion/easing-and-duration/tokens-specs
+    // Material Components ships (0.3, 0, 0.8, 0.2) and (0.1, 0.7, 0.1, 1) for these two tokens; the
+    // token values are the exact halves of the `emphasized` path, so they are pinned. Same values as
+    // `RNSStackAnimationEasing.mm`.
+    private val M3_EMPHASIZED_ACCELERATE = Easing.Bezier(0.3f, 0f, 0.8f, 0.15f)
+    private val M3_EMPHASIZED_DECELERATE = Easing.Bezier(0.05f, 0.7f, 0.1f, 1f)
 
     private val cache = EnumMap<EasingName, Interpolator>(EasingName::class.java)
 
@@ -40,6 +49,7 @@ internal object Interpolators {
     ): Interpolator =
         when (name) {
             EasingName.LINEAR -> context.inflate(android.R.interpolator.linear)
+            EasingName.EASE -> CSS_EASE.toInterpolator()
             EasingName.EASE_IN -> CSS_EASE_IN.toInterpolator()
             EasingName.EASE_OUT -> CSS_EASE_OUT.toInterpolator()
             EasingName.EASE_IN_OUT -> CSS_EASE_IN_OUT.toInterpolator()
@@ -48,8 +58,8 @@ internal object Interpolators {
             EasingName.STANDARD_DECELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_standard_decelerate)
             // Identical to AOSP `fast_out_extra_slow_in`, which is public only from API 28.
             EasingName.EMPHASIZED -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_emphasized)
-            EasingName.EMPHASIZED_ACCELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_emphasized_accelerate)
-            EasingName.EMPHASIZED_DECELERATE -> context.inflate(MaterialR.interpolator.m3_sys_motion_easing_emphasized_decelerate)
+            EasingName.EMPHASIZED_ACCELERATE -> M3_EMPHASIZED_ACCELERATE.toInterpolator()
+            EasingName.EMPHASIZED_DECELERATE -> M3_EMPHASIZED_DECELERATE.toInterpolator()
             EasingName.ACCELERATE_DECELERATE -> context.inflate(android.R.interpolator.accelerate_decelerate)
             EasingName.ACCELERATE_QUINT -> context.inflate(android.R.interpolator.accelerate_quint)
             EasingName.DECELERATE_QUINT -> context.inflate(android.R.interpolator.decelerate_quint)

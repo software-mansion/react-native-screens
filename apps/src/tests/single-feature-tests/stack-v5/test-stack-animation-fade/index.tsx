@@ -1,14 +1,30 @@
 import React from 'react';
-import type { StackScreenAnimation } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
-import { AnimationPresetPlayground } from '@apps/tests/shared/components/stack-v5/AnimationPresetPlayground';
+import {
+  AnimationPresetPlayground,
+  type AnimationPresetOption,
+} from '@apps/tests/shared/components/stack-v5/AnimationPresetPlayground';
 
+// 2000 ms stretches a transition far enough to judge the crossfade and the
+// curve by eye.
 const ANIMATION_OPTIONS = [
   'fade',
   'fadeFromBottom',
   'fadeFromTop',
-] as const satisfies readonly StackScreenAnimation[];
+  {
+    label: 'fade 2000 ms',
+    animation: { type: 'preset', name: 'fade', duration: 2000 },
+  },
+  {
+    label: 'fadeFromBottom 2000 ms',
+    animation: { type: 'preset', name: 'fadeFromBottom', duration: 2000 },
+  },
+  {
+    label: 'fadeFromTop 2000 ms',
+    animation: { type: 'preset', name: 'fadeFromTop', duration: 2000 },
+  },
+] satisfies readonly AnimationPresetOption[];
 
 function TestStackAnimationFade() {
   return (

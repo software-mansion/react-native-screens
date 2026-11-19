@@ -3,11 +3,10 @@
 ## Details
 
 **Description:** Verify the fade presets of the `animation` prop of
-`Stack.Screen`. Pass: `fade` crossfades the two screens without moving either
-and takes the same time in both directions; `fadeFromBottom` and `fadeFromTop`
-move the entering or leaving screen a short distance while its opacity changes
-and leave the other screen static, and their pop is shorter than their push. On
-Android all three follow the predictive back gesture; on iOS the header back
+`Stack.Screen`. Pass: `fade` crossfades the two screens without moving
+either; `fadeFromBottom` and `fadeFromTop` move the entering or leaving screen
+a short distance while its opacity changes and leave the other screen static.
+On Android all three follow the predictive back gesture; on iOS the header back
 button pops with the preset.
 
 **OS test creation version:** iOS 18.6 and 27.2, Android API Level 37.
@@ -24,10 +23,6 @@ interactive back gestures are not assertable with Detox.
 - iPhone: simulator or device.
 - Android emulator or device with gesture navigation enabled. The interactive
   predictive back gesture needs API 34 or newer.
-- Groups whose heading says "Android: 5x animation scale, iOS: normal": on
-  Android, in Developer options set "Animator duration scale" and "Transition
-  animation scale" to 5x before the first of them and back to 1x after the
-  last. On iOS they run at normal speed, like every other group.
 - Android: run the screen directly. In `apps/App.tsx` import and render
   `TestStackAnimationFade` as the root component instead of `Example`. Opened
   through the in-app menu, system back leaves the screen instead of popping the
@@ -61,43 +56,81 @@ interactive back gestures are not assertable with Detox.
 
 ---
 
-### `fade` (Android: 5x animation scale, iOS: normal)
+### `fade`
 
 1. Tap "Push Blue".
 
-   - [ ] Neither frame moves. "Blue" fades in while "Home" fades out, and
-         mid-way both cards are partly visible at once (see Note).
+   - [ ] Neither frame moves.
+   - [ ] Only "Blue" is shown at the end.
 
 2. On "Blue", tap "Pop".
 
-   - [ ] Neither frame moves. "Blue" fades out while "Home" fades in, over the
-         same time the push took.
+   - [ ] Neither frame moves.
+   - [ ] Only "Home" is shown at the end.
 
 ---
 
-### `fadeFromBottom` and `fadeFromTop` (Android: 5x animation scale, iOS: normal)
+### `fadeFromBottom` and `fadeFromTop`
 
 1. On "Home", set "next push" to `fadeFromBottom`, then tap "Push Blue".
 
    - [ ] "Blue" rises a short distance, about a twelfth of the height.
-   - [ ] "Blue" fades in while it rises and slows towards the end.
    - [ ] "Home" is static (see Note).
 
 2. On "Blue", tap "Pop".
 
-   - [ ] "Blue" sinks back the same short distance while fading out.
-   - [ ] The pop takes less time than the push.
+   - [ ] "Blue" sinks back the same short distance.
    - [ ] "Home" is static.
 
 3. On "Home", set "next push" to `fadeFromTop`, then tap "Push Blue".
 
-   - [ ] "Blue" drops in from the same short distance above while fading in.
+   - [ ] "Blue" drops in from the same short distance above.
    - [ ] "Home" is static.
 
 4. On "Blue", tap "Pop".
 
-   - [ ] "Blue" rises the same short distance while fading out.
-   - [ ] The pop takes less time than the push.
+   - [ ] "Blue" rises the same short distance.
+   - [ ] "Home" is static.
+
+---
+
+### Crossfade at 2000 ms
+
+1. On "Home", set "next push" to `fade 2000 ms`, then tap "Push Blue".
+
+   - [ ] "Blue" fades in while "Home" fades out over about 2 seconds.
+   - [ ] Mid-way both cards are partly visible at once (see Note).
+   - [ ] Neither frame moves.
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" fades out while "Home" fades in over about 2 seconds.
+   - [ ] Neither frame moves.
+
+---
+
+### `fadeFromBottom` and `fadeFromTop` at 2000 ms
+
+1. On "Home", set "next push" to `fadeFromBottom 2000 ms`, then tap "Push
+   Blue".
+
+   - [ ] "Blue" fades in while it rises over about 2 seconds.
+   - [ ] "Blue" slows down towards the end.
+   - [ ] "Home" is static.
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" fades out while it sinks.
+   - [ ] "Home" is static.
+
+3. On "Home", set "next push" to `fadeFromTop 2000 ms`, then tap "Push Blue".
+
+   - [ ] "Blue" fades in while it drops over about 2 seconds.
+   - [ ] "Home" is static.
+
+4. On "Blue", tap "Pop".
+
+   - [ ] "Blue" fades out while it rises.
    - [ ] "Home" is static.
 
 ## Steps - Android
