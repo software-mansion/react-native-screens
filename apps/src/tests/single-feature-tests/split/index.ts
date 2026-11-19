@@ -4,15 +4,16 @@ import TestSplitCommandShowColumn from './test-command-show-column';
 import TestSplitColorScheme from './test-split-color-scheme-ios';
 import TestSplitPressables from './test-split-pressables-ios';
 import TestSplitColumnVisibility from './test-split-column-visibility-ios';
+import TestSplitStackHeaderNavigation from './test-split-stack-header-navigation-ios';
+import TestSplitStackLifecycleEvents from './test-split-stack-lifecycle-events-ios';
+import TestSplitStackContentSwap from './test-split-stack-content-swap-ios';
+import TestSplitStackIntegrationDisabled from './test-split-stack-integration-disabled-ios';
 
 export { default as TestSplitTopColumnForCollapsing } from './test-top-column-for-collapsing';
 export { default as TestSplitCommandShowColumn } from './test-command-show-column';
 export { default as TestSplitColorScheme } from './test-split-color-scheme-ios';
 export { default as TestSplitPressables } from './test-split-pressables-ios';
 export { default as TestSplitColumnVisibility } from './test-split-column-visibility-ios';
-
-// The scenarios below are rendered as the root of the app, so they are exported
-// for `apps/App.tsx` only. The menu would push them onto a stack.
 export { default as TestSplitStackHeaderNavigation } from './test-split-stack-header-navigation-ios';
 export { default as TestSplitStackLifecycleEvents } from './test-split-stack-lifecycle-events-ios';
 export { default as TestSplitStackContentSwap } from './test-split-stack-content-swap-ios';
@@ -24,6 +25,10 @@ const scenarios = {
   TestSplitColorScheme,
   TestSplitPressables,
   TestSplitColumnVisibility,
+  TestSplitStackHeaderNavigation,
+  TestSplitStackLifecycleEvents,
+  TestSplitStackContentSwap,
+  TestSplitStackIntegrationDisabled,
 };
 
 const SplitScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
