@@ -32,7 +32,7 @@ class RNSSplitScreenComponentDescriptor final
       layoutableShadowNode.setSize(stateData.frameSize);
     }
 
-    splitScreenShadowNode.updateDisplayForContent();
+    splitScreenShadowNode.configureStackIntegrationIfNeeded();
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }

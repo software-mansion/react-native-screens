@@ -9,7 +9,7 @@ extern const char RNSSplitScreenComponentName[] = "RNSSplitScreen";
 void RNSSplitScreenShadowNode::appendChild(
     const std::shared_ptr<const ShadowNode> &child) {
   ConcreteViewShadowNode::appendChild(child);
-  updateDisplayForContent();
+  configureStackIntegrationIfNeeded();
 }
 
 /**
@@ -41,7 +41,7 @@ static bool hostsStack(const ShadowNode &column) {
  * way and still needs its view, so the mark is cleared after every
  * construction.
  */
-void RNSSplitScreenShadowNode::updateDisplayForContent() {
+void RNSSplitScreenShadowNode::configureStackIntegrationIfNeeded() {
   auto style = yogaNode_.style();
   auto display = hostsStack(*this) ? yoga::Display::Contents
                                    : getConcreteProps().yogaStyle.display();

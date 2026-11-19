@@ -34,7 +34,7 @@ class JSI_EXPORT RNSSplitScreenShadowNode final
     return traits;
   }
 
-  void updateDisplayForContent();
+  void configureStackIntegrationIfNeeded();
 };
 
 } // namespace facebook::react
