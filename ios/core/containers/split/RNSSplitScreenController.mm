@@ -2,7 +2,11 @@
 
 #import "RNSAssert.h"
 #import "RNSSplitHostController.h"
+#import "RNSSplitPlainColumnContentView.h"
 #import "RNSStackNavigationController.h"
+
+@interface RNSSplitScreenController () <RNSSplitPlainColumnContentViewDelegate>
+@end
 
 @implementation RNSSplitScreenController {
   RNSStackNavigationController *_Nullable _plainColumnNavigationController;
@@ -11,6 +15,9 @@
 - (instancetype)init
 {
   if (self = [super init]) {
+    _plainColumnContentView = [RNSSplitPlainColumnContentView new];
+    _plainColumnContentView.delegate = self;
+
 #if !TARGET_OS_TV
     // Navigation bar prefers large titles, so opt out unless a navigation item customizer sets a mode.
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
@@ -18,6 +25,11 @@
   }
 
   return self;
+}
+
+- (void)loadView
+{
+  self.view = _plainColumnContentView;
 }
 
 /**
@@ -81,37 +93,43 @@
 
 #pragma mark - Layout
 
-- (void)viewDidLayoutSubviews
-{
-  [super viewDidLayoutSubviews];
-  [self reportColumnFrame];
-}
-
 - (void)reportColumnFrame
 {
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
   // we're attaching our touch handler and we don't need to apply any offset corrections,
   // because it's positioned relatively to the column view
   if (![self isInSplitHostSubtree]) {
-    [_delegate splitScreenController:self didChangeColumnFrame:self.view.frame];
+    [_delegate splitScreenController:self didChangeColumnFrame:_plainColumnContentView.frame];
     return;
   }
 
   UIView *ancestorView = [self findSplitHostController].view;
   RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
-  CGRect frame = [self.view convertRect:self.view.frame toView:ancestorView];
+  CGRect frame = [_plainColumnContentView convertRect:_plainColumnContentView.frame toView:ancestorView];
   [_delegate splitScreenController:self didChangeColumnFrame:frame];
 }
 
 - (void)columnPositioningDidChange
 {
-  if (self.view.window == nil) {
-    // The column is not on screen, or it hosts a stack and its view is not in the view hierarchy.
+  if (_plainColumnContentView.window == nil) {
+    // The column is not on screen, or it hosts a stack and its content view is not in the view hierarchy.
     return;
   }
 
   [self reportColumnFrame];
+}
+
+#pragma mark - RNSSplitPlainColumnContentViewDelegate
+
+- (void)splitPlainColumnContentViewDidLayoutSubviews:(RNSSplitPlainColumnContentView *)contentView
+{
+  [self reportColumnFrame];
+}
+
+- (void)splitPlainColumnContentViewDidMoveToWindow
+{
+  [_delegate splitScreenController:self plainColumnContentViewDidMoveToWindow:_plainColumnContentView.window];
 }
 
 #pragma mark - RNSViewControllerViewLifecycleEventsObserver

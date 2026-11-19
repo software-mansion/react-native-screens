@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "RNSViewControllerViewLifecycleEventsObserver.h"
 
+@class RNSSplitPlainColumnContentView;
 @class RNSSplitScreenController;
 @class RNSStackNavigationController;
 
@@ -27,6 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)splitScreenControllerWillDisappear:(RNSSplitScreenController *)controller;
 - (void)splitScreenControllerDidDisappear:(RNSSplitScreenController *)controller;
 
+/**
+ * @brief Called when `plainColumnContentView` of the controller is added to a window or removed from it.
+ *
+ * @param window The window the view is in now, or nil when it was removed from one.
+ */
+- (void)splitScreenController:(RNSSplitScreenController *)controller
+    plainColumnContentViewDidMoveToWindow:(nullable UIWindow *)window;
+
 @end
 
 /**
@@ -42,6 +51,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSSplitScreenController : UIViewController <RNSViewControllerViewLifecycleEventsObserver>
 
 @property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
+
+#pragma mark - Content
+
+/**
+ * @brief The view the content of a plain column is added to. It is the view of this controller.
+ */
+@property (nonatomic, strong, readonly) RNSSplitPlainColumnContentView *plainColumnContentView;
 
 #pragma mark - Navigation controller
 
