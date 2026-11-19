@@ -9,7 +9,15 @@ import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
  * Accepts any {@link BlurEffect} value and `'systemDefault'`, which uses
  * UIKit's default tab bar blur effect.
  */
-export type TabsScreenBlurEffect = BlurEffect | 'systemDefault';
+export type TabsBlurEffect = BlurEffect | 'systemDefault';
+
+/**
+ * Interface style of the tab bar.
+ *
+ * @remarks
+ * Accepts any {@link UserInterfaceStyle} value.
+ */
+export type TabsUserInterfaceStyle = UserInterfaceStyle;
 
 /**
  * System role of a tab.
@@ -117,7 +125,7 @@ export interface TabsScreenAppearanceIOS {
    * @defaultValue `'systemDefault'`
    * @platform ios <= 18
    */
-  tabBarBlurEffect?: TabsScreenBlurEffect | undefined;
+  tabBarBlurEffect?: TabsBlurEffect | undefined;
   /**
    * Specifies the shadow color for the tab bar when tab screen is selected.
    *
@@ -469,5 +477,5 @@ export interface TabsScreenPropsIOS {
    * @platform ios
    * @experimental
    */
-  experimental_userInterfaceStyle?: UserInterfaceStyle | undefined;
+  experimental_userInterfaceStyle?: TabsUserInterfaceStyle | undefined;
 }
