@@ -2,6 +2,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class RNSContainedModalProviderView;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -13,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Identifies this provider (container). `nil` when unset.
 - (nullable NSString *)containerId;
 
-/// The provider's context view controller (`definesPresentationContext == YES`).
-- (nonnull UIViewController *)contextViewController;
+/// The core view that owns the presentation context to present from.
+- (nonnull RNSContainedModalProviderView *)providerView;
 
 @end
 
