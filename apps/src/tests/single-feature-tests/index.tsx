@@ -14,6 +14,7 @@ import ScrollViewMarkerScenarioGroup from './scroll-view-marker';
 import FormSheetScenarioGroup from './form-sheet';
 import PageSheetScenarioGroup from './page-sheet';
 import ContainedModalScenarioGroup from './contained-modal';
+import FullScreenModalScenarioGroup from './full-screen-modal';
 import ScrollToTopGuardScenarioGroup from './scroll-to-top-guard';
 import { ScenarioButton } from '@apps/tests/shared/ScenarioButton';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
@@ -26,6 +27,7 @@ export * from './scroll-view-marker';
 export * from './form-sheet';
 export * from './page-sheet';
 export * from './contained-modal';
+export * from './full-screen-modal';
 export * from './scroll-to-top-guard';
 
 export const COMPONENT_SCENARIOS = {
@@ -37,6 +39,7 @@ export const COMPONENT_SCENARIOS = {
   FormSheet: FormSheetScenarioGroup,
   PageSheet: PageSheetScenarioGroup,
   ContainedModal: ContainedModalScenarioGroup,
+  FullScreenModal: FullScreenModalScenarioGroup,
   ScrollToTopGuard: ScrollToTopGuardScenarioGroup,
 } as const;
 
