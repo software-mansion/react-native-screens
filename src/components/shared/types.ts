@@ -159,12 +159,15 @@ export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
 export interface PlatformIconShared {
   /**
    * Kind of the icon.
+   *
+   * @platform android, ios
    */
   type: 'imageSource';
   /**
    * Image source the icon is loaded from.
    *
    * @see {@link https://reactnative.dev/docs/image#imagesource | React Native: ImageSource}
+   * @platform android, ios
    */
   imageSource: ImageSourcePropType;
 }
@@ -179,6 +182,8 @@ export interface PlatformIconShared {
 export interface PlatformIconAndroidDrawableResource {
   /**
    * Kind of the icon.
+   *
+   * @platform android
    */
   type: 'drawableResource';
   /**
@@ -189,6 +194,7 @@ export interface PlatformIconAndroidDrawableResource {
    * ```tsx
    * { type: 'drawableResource', name: 'ic_search' }
    * ```
+   * @platform android
    */
   name: string;
 }
@@ -205,12 +211,15 @@ export interface PlatformIconAndroidDrawableResource {
 export interface PlatformIconIOSTemplate {
   /**
    * Kind of the icon.
+   *
+   * @platform ios
    */
   type: 'templateSource';
   /**
    * Image source the icon is loaded from.
    *
    * @see {@link https://reactnative.dev/docs/image#imagesource | React Native: ImageSource}
+   * @platform ios
    */
   templateSource: ImageSourcePropType;
 }
@@ -223,10 +232,14 @@ export interface PlatformIconIOSTemplate {
 export interface PlatformIconIOSSfSymbol {
   /**
    * Kind of the icon.
+   *
+   * @platform ios
    */
   type: 'sfSymbol';
   /**
    * Name of the SF Symbol, for example `'magnifyingglass'`.
+   *
+   * @platform ios
    */
   name: string;
 }
@@ -241,10 +254,14 @@ export interface PlatformIconIOSSfSymbol {
 export interface PlatformIconIOSXcasset {
   /**
    * Kind of the icon.
+   *
+   * @platform ios
    */
   type: 'xcasset';
   /**
    * Name of the image set in the asset catalog.
+   *
+   * @platform ios
    */
   name: string;
 }
