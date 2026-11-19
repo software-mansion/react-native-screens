@@ -24,7 +24,7 @@ namespace react = facebook::react;
   RNSSplitScreenShadowStateProxy *_Nonnull _shadowStateProxy;
   RCTSurfaceTouchHandler *_Nullable _touchHandler;
   NSMutableSet<UIView *> *_viewsForFrameCorrection;
-  RNSStackHostComponentView *_Nullable _stackHost;
+  __weak RNSStackHostComponentView *_Nullable _stackHost;
 }
 
 - (RNSSplitScreenController *)controller
