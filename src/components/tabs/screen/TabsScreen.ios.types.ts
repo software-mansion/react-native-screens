@@ -183,8 +183,6 @@ export interface TabsScreenItemAppearanceIOS {
    *
    * @info
    * Disabling a tab is not supported in v5, so this appearance is not shown.
-   *
-   * @platform ios
    */
   disabled?: TabsScreenItemStateAppearanceIOS | undefined;
 }
