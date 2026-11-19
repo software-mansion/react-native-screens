@@ -14,10 +14,14 @@ import type {
 export type DisplayModeWillChangeEvent = {
   /**
    * Display mode of the Split before the change.
+   *
+   * @platform ios
    */
   currentDisplayMode: SplitDisplayMode;
   /**
    * Display mode of the Split after the change.
+   *
+   * @platform ios
    */
   nextDisplayMode: SplitDisplayMode;
 };
@@ -155,6 +159,8 @@ export interface SplitColumnMetrics {
    * @remarks
    * Specifies the minimum width for the primary column in the Split layout,
    * typically representing the leftmost sidebar.
+   *
+   * @platform ios
    */
   minimumPrimaryColumnWidth?: number | undefined;
   /**
@@ -163,6 +169,8 @@ export interface SplitColumnMetrics {
    * @remarks
    * Specifies the maximum width (in points) for the primary column in the
    * Split layout, typically representing the leftmost sidebar.
+   *
+   * @platform ios
    */
   maximumPrimaryColumnWidth?: number | undefined;
   /**
@@ -172,6 +180,8 @@ export interface SplitColumnMetrics {
    * Specifies the preferred width (in points or as a fraction for percentage
    * width support) for the primary column in the Split layout, typically
    * representing the leftmost sidebar.
+   *
+   * @platform ios
    */
   preferredPrimaryColumnWidthOrFraction?: number | undefined;
   /**
@@ -180,6 +190,8 @@ export interface SplitColumnMetrics {
    * @remarks
    * Specifies the minimum width (in points) for the supplementary column in
    * the Split layout, typically representing the intermediate sidebar.
+   *
+   * @platform ios
    */
   minimumSupplementaryColumnWidth?: number | undefined;
   /**
@@ -188,6 +200,8 @@ export interface SplitColumnMetrics {
    * @remarks
    * Specifies the maximum width (in points) for the supplementary column in
    * the Split layout, typically representing the intermediate sidebar.
+   *
+   * @platform ios
    */
   maximumSupplementaryColumnWidth?: number | undefined;
   /**
@@ -197,6 +211,8 @@ export interface SplitColumnMetrics {
    * Specifies the preferred width (in points or as a fraction for percentage
    * width support) for the supplementary column in the Split layout,
    * typically representing the intermediate sidebar.
+   *
+   * @platform ios
    */
   preferredSupplementaryColumnWidthOrFraction?: number | undefined;
   /**
@@ -205,6 +221,8 @@ export interface SplitColumnMetrics {
    * @remarks
    * Specifies the minimum width (in points) for the secondary column in the
    * Split layout, typically for the view with the main content.
+   *
+   * @platform ios >= 26
    */
   minimumSecondaryColumnWidth?: number | undefined;
   /**
@@ -214,6 +232,8 @@ export interface SplitColumnMetrics {
    * Specifies the preferred width (in points or as a fraction for percentage
    * width support) for the secondary column in the Split layout, typically
    * for the view with the main content.
+   *
+   * @platform ios >= 26
    */
   preferredSecondaryColumnWidthOrFraction?: number | undefined;
   /**
@@ -223,6 +243,8 @@ export interface SplitColumnMetrics {
    * Specifies the minimum width (in points) for the inspector column in the
    * Split layout, typically the view which is providing additional data about
    * the secondary column.
+   *
+   * @platform ios >= 26
    */
   minimumInspectorColumnWidth?: number | undefined;
   /**
@@ -232,6 +254,8 @@ export interface SplitColumnMetrics {
    * Specifies the maximum width (in points) for the inspector column in the
    * Split layout, typically the view which is providing additional data about
    * the secondary column.
+   *
+   * @platform ios >= 26
    */
   maximumInspectorColumnWidth?: number | undefined;
   /**
@@ -241,6 +265,8 @@ export interface SplitColumnMetrics {
    * Specifies the preferred width (in points or as a fraction for percentage
    * width support) for the inspector column in the Split layout, typically
    * the view which is providing additional data about the secondary column.
+   *
+   * @platform ios >= 26
    */
   preferredInspectorColumnWidthOrFraction?: number | undefined;
 }
@@ -307,9 +333,6 @@ export interface SplitHostProps extends ViewProps {
    *
    * - `primary` - the leftmost sidebar
    * - `supplementary` - the intermediate sidebar
-   *
-   * On iOS 26 or higher, it also supports definitions for:
-   *
    * - `secondary` - the view with the main content
    * - `inspector` - the view which is providing additional data about the
    *   secondary column
