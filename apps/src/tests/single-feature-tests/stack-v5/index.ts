@@ -7,9 +7,9 @@ import TestStackPreventNativeDismissNestedStack from './test-stack-prevent-nativ
 import TestStackLifecycleEvents from './test-stack-lifecycle-events';
 import TestStackAnimationAndroid from './test-stack-animation-android';
 import TestStackAnimationOperationsAndroid from './test-stack-animation-operations-android';
-import TestStackAnimationUpdateAndroid from './test-stack-animation-update-android';
-import TestStackAnimationSlideAndroid from './test-stack-animation-slide-android';
-import TestStackAnimationFadeAndroid from './test-stack-animation-fade-android';
+import TestStackAnimationUpdate from './test-stack-animation-update';
+import TestStackAnimationSlide from './test-stack-animation-slide';
+import TestStackAnimationFade from './test-stack-animation-fade';
 import TestStackAnimationIOSAndroid from './test-stack-animation-ios-android';
 import TestStackAnimationNone from './test-stack-animation-none';
 import TestStackAnimationOptionsAndroid from './test-stack-animation-options-android';
@@ -58,9 +58,9 @@ export { default as TestStackPreventNativeDismissNestedStack } from './test-stac
 export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-events';
 export { default as TestStackAnimationAndroid } from './test-stack-animation-android';
 export { default as TestStackAnimationOperationsAndroid } from './test-stack-animation-operations-android';
-export { default as TestStackAnimationUpdateAndroid } from './test-stack-animation-update-android';
-export { default as TestStackAnimationSlideAndroid } from './test-stack-animation-slide-android';
-export { default as TestStackAnimationFadeAndroid } from './test-stack-animation-fade-android';
+export { default as TestStackAnimationUpdate } from './test-stack-animation-update';
+export { default as TestStackAnimationSlide } from './test-stack-animation-slide';
+export { default as TestStackAnimationFade } from './test-stack-animation-fade';
 export { default as TestStackAnimationIOSAndroid } from './test-stack-animation-ios-android';
 export { default as TestStackAnimationNone } from './test-stack-animation-none';
 export { default as TestStackAnimationOptionsAndroid } from './test-stack-animation-options-android';
@@ -108,9 +108,9 @@ const scenarios = {
   TestStackLifecycleEvents,
   TestStackAnimationAndroid,
   TestStackAnimationOperationsAndroid,
-  TestStackAnimationUpdateAndroid,
-  TestStackAnimationSlideAndroid,
-  TestStackAnimationFadeAndroid,
+  TestStackAnimationUpdate,
+  TestStackAnimationSlide,
+  TestStackAnimationFade,
   TestStackAnimationIOSAndroid,
   TestStackAnimationNone,
   TestStackAnimationOptionsAndroid,

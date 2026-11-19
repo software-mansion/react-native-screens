@@ -1,42 +1,47 @@
-# Test Scenario: Stack Animation Update (Android)
+# Test Scenario: Stack Animation Update
 
 ## Details
 
 **Description:** Verify that changing the `animation` prop of a `Stack.Screen`
 that is already on the stack takes effect. Pass: the next pop of that screen
-plays the new value, both with the "Pop" button and with the predictive back
-gesture, and a value changed on a covered screen governs only that screen's own
-pop.
+plays the new value, both with the "Pop" button and, on Android, with the
+predictive back gesture, and a value changed on a covered screen governs only
+that screen's own pop.
 
-**OS test creation version:** Android API Level 37.
+**OS test creation version:** iOS 18.6 and 27.2, Android API Level 37.
 
 ## E2E test
 
 Incomplete: no step is automated. For manual testing perform all steps.
 
-The direction a screen moves in and the interactive predictive back gesture
-are not assertable with Detox.
+The direction a screen moves in and the interactive back gestures are not
+assertable with Detox.
 
 ## Prerequisites
 
+- iPhone: simulator or device.
 - Android emulator or device with gesture navigation enabled.
-- Run the screen directly. In `apps/App.tsx` import and render
-  `TestStackAnimationUpdateAndroid` as the root component instead of `Example`.
-  Opened through the in-app menu, system back leaves the screen instead of
-  popping the stack.
-- System animations are on: "Settings → Accessibility → Color and motion →
-  Remove animations" is off.
+- Android: run the screen directly. In `apps/App.tsx` import and render
+  `TestStackAnimationUpdate` as the root component instead of `Example`. Opened
+  through the in-app menu, system back leaves the screen instead of popping the
+  stack.
+- System animations are on: on Android "Settings → Accessibility → Color and
+  motion → Remove animations" is off; on iOS "Settings → Accessibility → Motion
+  → Reduce Motion" is off.
 
 ## Note
 
 - Static: the screen does not move at all and stays fully visible for the whole
   transition.
+- **Known issue:** on iOS the back swipe plays the `default` slide, whatever
+  the `animation` of the screen (labs #2066).
 
 ## Steps
 
 ### Baseline
 
-1. Launch the screen directly (see Prerequisites).
+1. Launch the app and navigate to the **Stack Animation Update** screen (on
+   Android, launch the screen directly, see Prerequisites).
 
    - [ ] The screen is yellow, reads "Name: Home", "this screen" reads
          `slideFromRight` and "Push Blue" is the only button.
@@ -48,7 +53,9 @@ are not assertable with Detox.
 1. Tap "Push Blue", set "this screen" to `slideFromBottom`, then swipe in from
    the left screen edge and release past the middle.
 
-   - [ ] "Blue" sinks to the bottom edge and "Home" is static.
+   - [ ] Android: "Blue" sinks to the bottom edge and "Home" is static.
+   - [ ] iOS: "Blue" slides out to the right and "Home" comes in from the left
+         behind it (see Note).
 
 2. Tap "Push Blue", set "this screen" to `slideFromLeft`, then tap "Pop".
 
@@ -87,4 +94,6 @@ are not assertable with Detox.
 2. On "Blue", set "this screen" to `slideFromBottom`, then swipe in from the
    left screen edge and release past the middle.
 
-   - [ ] "Blue" sinks to the bottom edge and "Home" is static.
+   - [ ] Android: "Blue" sinks to the bottom edge and "Home" is static.
+   - [ ] iOS: "Blue" slides out to the right and "Home" comes in from the left
+         behind it (see Note).
