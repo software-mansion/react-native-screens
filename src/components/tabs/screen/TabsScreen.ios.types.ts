@@ -58,8 +58,7 @@ export type TabsScreenSystemItem =
  */
 export interface TabsScreenAppearanceIOS {
   /**
-   * Specifies the appearance of tab bar items when they are in stacked
-   * layout.
+   * Specifies the appearance of tab bar items when they are in stacked layout.
    *
    * @remarks
    * Tab bar items in stacked layout have the icon above the title.
@@ -134,6 +133,8 @@ export interface TabsScreenItemAppearanceIOS {
   /**
    * Defines appearance for all tab bar items which are in their enabled,
    * unselected and unfocused state.
+   *
+   * @remarks
    * The color scheme is determined by the configuration of the currently
    * selected tab.
    *
@@ -142,6 +143,8 @@ export interface TabsScreenItemAppearanceIOS {
   normal?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for the tab bar item that is currently active.
+   *
+   * @remarks
    * The appearance is determined by the configuration of the currently
    * selected tab itself.
    *
@@ -150,6 +153,8 @@ export interface TabsScreenItemAppearanceIOS {
   selected?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for a tab bar item when it receives focus.
+   *
+   * @remarks
    * The appearance is determined by the configuration of the currently
    * selected tab.
    *
@@ -158,6 +163,8 @@ export interface TabsScreenItemAppearanceIOS {
   focused?: TabsScreenItemStateAppearanceIOS | undefined;
   /**
    * Defines appearance for tab bar items when they are disabled.
+   *
+   * @remarks
    * The appearance is determined by the configuration of the currently
    * selected tab.
    *
@@ -244,19 +251,19 @@ export interface TabsScreenItemStateAppearanceIOS {
     | TabsScreenItemTitlePositionAdjustmentIOS
     | undefined;
   /**
-   * Specifies the icon color for each tab bar item when tab screen is
-   * selected.
+   * Specifies the icon color for each tab bar item when tab screen is selected.
    *
    * @remarks
    * This also impacts the title text color.
-   *
-   * Starting from iOS 26, it only applies to selected tab bar item. Other items
-   * adopt a dark or light appearance depending on the theme of the tab bar.
    *
    * Is overridden by
    * {@link TabsScreenItemStateAppearanceIOS.tabBarItemTitleFontColor | tabBarItemTitleFontColor}
    * (for title text color).
    * Overrides {@link TabsHostPropsIOS.tabBarTintColor | tabBarTintColor}.
+   *
+   * @info
+   * Starting from iOS 26, it only applies to selected tab bar item. Other items
+   * adopt a dark or light appearance depending on the theme of the tab bar.
    *
    * @platform ios
    */
@@ -334,8 +341,10 @@ export interface TabsScreenPropsIOS {
    *
    * @remarks
    * Supports the same values as {@link TabsScreenPropsIOS.icon | icon}
-   * property. It must use the same icon `type` as `icon`; `renderingMode` may
-   * differ.
+   * property.
+   *
+   * @warning
+   * It must use the same icon `type` as `icon`; `renderingMode` may differ.
    *
    * To use `selectedIcon`, `icon` must also be provided.
    *
@@ -356,7 +365,6 @@ export interface TabsScreenPropsIOS {
    *   <FavoritesScreen />
    * </Tabs.Screen>
    * ```
-   *
    * @platform ios
    */
   selectedIcon?: TabsScreenIconIOS | undefined;
@@ -371,6 +379,7 @@ export interface TabsScreenPropsIOS {
    * override the system icon, and the system-defined title can be overridden
    * by providing a custom {@link TabsScreenPropsBase.title | title}.
    *
+   * @info
    * On iOS 26, `systemItem: 'search'` acts as a detached tab bar item, which
    * does not display any title (system or custom). This no longer applies on
    * iOS 27; to get a similar separation use
@@ -386,19 +395,21 @@ export interface TabsScreenPropsIOS {
    *
    * @remarks
    * This prop relies on the `UITab` API. A tab screen with `role: 'search'` is
-   * backed natively by `UISearchTab`, which enables the system search
-   * behavior:
+   * backed natively by `UISearchTab`, which enables the system search behavior:
    * {@link TabsScreenPropsIOS.automaticallyActivatesSearch | automaticallyActivatesSearch}
    * and the detached trailing placement UIKit gives search tabs. Behavior
    * differs between OS versions: iOS 26.x detaches `UISearchTab`
    * unconditionally, iOS 27.0 only while `automaticallyActivatesSearch` is
-   * enabled. This prop does not affect the tab bar item's icon or title -
-   * combine it with {@link TabsScreenPropsIOS.systemItem | systemItem} set to
-   * `'search'` for the system magnifier item. On iOS 27+ the detached
-   * (prominent) placement can be given to any tab instead through
-   * {@link Tabs.Host}
+   * enabled. On iOS 27+ the detached (prominent) placement can be given to any
+   * tab instead through {@link Tabs.Host}
    * {@link TabsHostPropsIOS.prominentScreenKey | ios.prominentScreenKey}.
    *
+   * @tip
+   * This prop does not affect the tab bar item's icon or title - combine it
+   * with {@link TabsScreenPropsIOS.systemItem | systemItem} set to `'search'`
+   * for the system magnifier item.
+   *
+   * @warning
    * The native tab class cannot change during the screen's lifetime -
    * changing `role` on a mounted tab screen is not supported and triggers an
    * assertion in development builds.
@@ -412,11 +423,13 @@ export interface TabsScreenPropsIOS {
    * field.
    *
    * @remarks
+   * When enabled, selecting the search tab immediately activates the search
+   * field. Cancelling the search restores the previously selected tab.
+   *
+   * @info
    * Effective only for tab screens with {@link TabsScreenPropsIOS.role | role}
    * set to `'search'` and only when a search bar is configured in the header
-   * of the screen stack nested in this tab. When enabled, selecting the search
-   * tab immediately activates the search field. Cancelling the search restores
-   * the previously selected tab.
+   * of the screen stack nested in this tab.
    *
    * @defaultValue `false`
    * @see {@link https://developer.apple.com/documentation/uikit/uisearchtab/automaticallyactivatessearch | UISearchTab.automaticallyActivatesSearch}
@@ -425,14 +438,14 @@ export interface TabsScreenPropsIOS {
   automaticallyActivatesSearch?: boolean | undefined;
   /**
    * Specifies if `contentInsetAdjustmentBehavior` of first ScrollView in first
-   * descendant chain from tab screen should be overridden back from `never` to
-   * `automatic`.
+   * descendant chain from tab screen should be overridden back from `'never'`
+   * to `'automatic'`.
    *
    * @remarks
    * By default, `react-native`'s ScrollView has
-   * `contentInsetAdjustmentBehavior` set to `never` instead of UIKit-default
-   * (which is `automatic`). This prevents ScrollViews from respecting
-   * navigation bar insets. When this prop is set to `true`, `automatic`
+   * `contentInsetAdjustmentBehavior` set to `'never'` instead of UIKit-default
+   * (which is `'automatic'`). This prevents ScrollViews from respecting
+   * navigation bar insets. When this prop is set to `true`, `'automatic'`
    * behavior is reverted.
    *
    * Supported only on Fabric.
@@ -444,10 +457,11 @@ export interface TabsScreenPropsIOS {
   /**
    * Allows to override system appearance for the tab bar.
    *
-   * @remarks
+   * @info
    * Does not support dynamic changes to the prop value for the currently
    * visible screen.
    *
+   * @tip
    * Consider using {@link TabsHostPropsBase.colorScheme | colorScheme} on
    * {@link Tabs.Host} instead.
    *
