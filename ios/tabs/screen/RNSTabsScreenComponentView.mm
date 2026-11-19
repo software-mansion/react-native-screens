@@ -16,6 +16,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSTabsScreenComponentDescriptor.h>
 
 #if RNS_GAMMA_ENABLED
 #import "RNSScrollViewMarkerComponentView.h"
@@ -36,6 +37,8 @@ namespace react = facebook::react;
   RNSTabsHostComponentView *__weak _Nullable _reactSuperview;
 
   RNSTabsScreenEventEmitter *_Nonnull _reactEventEmitter;
+  react::RNSTabsScreenShadowNode::ConcreteState::Shared _state;
+  CGRect _lastReportedNativeFrame;
 
   // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
   // the owning `RNSTabsScreenViewController` (as `RNSContainerItem`) when resolving the content
@@ -67,6 +70,7 @@ namespace react = facebook::react;
 
   _reactSuperview = nil;
   _reactEventEmitter = [RNSTabsScreenEventEmitter new];
+  _lastReportedNativeFrame = CGRectZero;
 
   [self resetProps];
 }
@@ -408,6 +412,50 @@ RNS_IGNORE_SUPER_CALL_END
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
 }
 
+- (BOOL)shouldReportFrameToTabs:(RNSTabBarController *)tabs
+{
+  // Once a tab reports its first column, report subsequent changes, including the return to full width.
+  if (!CGRectIsEmpty(_lastReportedNativeFrame)) {
+    return YES;
+  }
+  if (self.bounds.size.width >= tabs.view.bounds.size.width) {
+    return NO;
+  }
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.0, *)) {
+    return tabs.sidebar.isAvailable;
+  }
+#endif
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (@available(iOS 18.0, *)) {
+    return UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad && tabs.mode != UITabBarControllerModeTabBar;
+  }
+#endif
+  return NO;
+}
+
+- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
+{
+  _state = std::static_pointer_cast<const react::RNSTabsScreenShadowNode::ConcreteState>(state);
+}
+
+- (void)updateBounds
+{
+  UITabBarController *owner = _controller.tabBarController;
+  RNSTabBarController *tabs = [owner isKindOfClass:RNSTabBarController.class] ? (RNSTabBarController *)owner : nil;
+  if (_state == nullptr || tabs == nil || self.window == nil ||
+      self.bounds.size.width <= 0 || self.bounds.size.height <= 0 || ![self shouldReportFrameToTabs:tabs]) {
+    return;
+  }
+  CGRect frame = {[self convertPoint:CGPointZero toView:tabs.view], self.bounds.size};
+  if (!CGRectEqualToRect(frame, _lastReportedNativeFrame)) {
+    auto nativeState = react::RNSTabsScreenState{RCTSizeFromCGSize(frame.size), RCTPointFromCGPoint(frame.origin)};
+    _lastReportedNativeFrame = frame;
+    // Queue the new size after UIKit layout instead of flushing Fabric on the UI thread.
+    _state->updateState(std::move(nativeState));
+  }
+}
+
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
 {
   [super updateEventEmitter:eventEmitter];
@@ -441,7 +489,7 @@ RNS_IGNORE_SUPER_CALL_END
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenIOSComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSTabsScreenComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled

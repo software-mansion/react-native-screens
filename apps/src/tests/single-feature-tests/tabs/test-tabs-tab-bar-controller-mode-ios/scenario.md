@@ -53,6 +53,7 @@ Not automated:
    Set tabBarControllerMode = `tabSidebar`, test on **iPad landscape** orientation
 
 - [ ] Navigation displayed as a **sidebar** on the leading edge
+- [ ] With the sidebar pinned beside Tab1, its onLayout width shrinks by the sidebar width. Close the sidebar and check that the original width returns.
 
 7. Keep tabBarControllerMode = `tabSidebar`, test on **iPad portrait**
 
