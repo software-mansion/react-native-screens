@@ -4,8 +4,9 @@
 #import "RNSDefines.h"
 #import "RNSSplitAppearanceApplicator.h"
 #import "RNSSplitAppearanceCoordinator.h"
-#import "RNSSplitNavigationController.h"
+#import "RNSSplitColumnNavigationControllerFrameObserver.h"
 #import "RNSSplitScreenController.h"
+#import "RNSStackNavigationController.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 [[maybe_unused]] static const NSInteger minNumberOfColumns = 2;
@@ -36,6 +37,14 @@
    * avoiding crashes when certain columns are collapsed or hidden.
    */
   NSMutableSet<NSNumber *> *_visibleColumns;
+
+  /**
+   * Observe the frames of the views of the navigation controllers installed for the columns.
+   *
+   * UISplitViewController moves the columns on its own, on display mode change or column resize. The columns are
+   * notified then, so that they report their new frames to their delegates.
+   */
+  NSArray<RNSSplitColumnNavigationControllerFrameObserver *> *_columnNavigationControllerFrameObservers;
 }
 
 - (instancetype)initWithNumberOfColumns:(NSInteger)numberOfColumns
@@ -108,15 +117,14 @@
   [self validateColumns:currentColumns];
   [self validateInspectors:currentInspectors];
 
-  NSMutableArray<RNSSplitNavigationController *> *currentViewControllers =
+  NSMutableArray<RNSStackNavigationController *> *currentViewControllers =
       [NSMutableArray arrayWithCapacity:currentColumns.count];
   for (RNSSplitScreenController *splitScreenController in currentColumns) {
-    RNSSplitNavigationController *navigationController = splitScreenController.columnNavigationController;
-    navigationController.frameOriginChangeDelegate = self;
-    [currentViewControllers addObject:navigationController];
+    [currentViewControllers addObject:splitScreenController.columnNavigationController];
   }
 
   self.viewControllers = currentViewControllers;
+  [self observeFramesOfColumnNavigationControllers:currentViewControllers];
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
@@ -125,6 +133,28 @@
 #endif
 
   _needsChildViewControllersUpdate = NO;
+}
+
+- (void)observeFramesOfColumnNavigationControllers:(NSArray<UINavigationController *> *)navigationControllers
+{
+  for (RNSSplitColumnNavigationControllerFrameObserver *frameObserver in _columnNavigationControllerFrameObservers) {
+    [frameObserver unregisterForViewFrameChanges];
+  }
+
+  NSMutableArray<RNSSplitColumnNavigationControllerFrameObserver *> *frameObservers =
+      [NSMutableArray arrayWithCapacity:navigationControllers.count];
+  for (UINavigationController *navigationController in navigationControllers) {
+    // The frame observer needs the view, which UIKit loads only when it is about to show the column.
+    [navigationController loadViewIfNeeded];
+
+    RNSSplitColumnNavigationControllerFrameObserver *frameObserver =
+        [[RNSSplitColumnNavigationControllerFrameObserver alloc] initWithNavigationController:navigationController
+                                                                                     delegate:self];
+    [frameObserver registerForViewFrameChanges];
+    [frameObservers addObject:frameObserver];
+  }
+
+  _columnNavigationControllerFrameObservers = frameObservers;
 }
 
 - (void)updateSplitAppearanceIfNeeded
@@ -305,15 +335,15 @@
     UIViewController *viewController = [self viewControllerForColumn:column];
     RNSAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
 
-    RNSSplitNavigationController *splitNavigationController =
-        [viewController isKindOfClass:RNSSplitNavigationController.class]
-        ? (RNSSplitNavigationController *)viewController
+    RNSStackNavigationController *navigationController =
+        [viewController isKindOfClass:RNSStackNavigationController.class]
+        ? (RNSStackNavigationController *)viewController
         : nil;
-    RNSAssert(splitNavigationController != nil,
-              @"[RNScreens] Expected RNSSplitNavigationController but got %@",
+    RNSAssert(navigationController != nil,
+              @"[RNScreens] Expected RNSStackNavigationController but got %@",
               NSStringFromClass(viewController.class));
 
-    UIViewController *maybeSplitScreenController = splitNavigationController.topViewController;
+    UIViewController *maybeSplitScreenController = navigationController.topViewController;
     RNSAssert(
         maybeSplitScreenController != nil, @"[RNScreens] RNSSplitScreenController is nil for column %ld", (long)column);
     RNSAssert([maybeSplitScreenController isKindOfClass:RNSSplitScreenController.class],
@@ -331,7 +361,7 @@
 #pragma mark - RNSViewFrameChangeDelegate
 
 /**
- * @brief Notifies that the origin of a child RNSSplitNavigationController's view frame has changed.
+ * @brief Notifies that the origin of the frame of a column's navigation controller view has changed.
  *
  * It iterates over children controllers and notifies them for the layout update.
  *
