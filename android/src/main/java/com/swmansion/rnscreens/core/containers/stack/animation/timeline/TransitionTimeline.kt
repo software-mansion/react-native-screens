@@ -10,6 +10,10 @@ import kotlin.math.roundToLong
 // it; 1 ms already avoids that, 20 keeps the legacy value.
 private const val NONE_DURATION_MS = 20L
 
+// Scaling rounds each track on its own, so a short transition can round every track to 0 ms;
+// the transition itself must stay positive, see NONE_DURATION_MS for why.
+private const val MIN_DURATION_MS = 1L
+
 /**
  * What both screens of one transition do: [enter] is the motion of the screen whose view appears,
  * [exit] of the screen whose view disappears, drawn in [exitZOrder] relative to the other.
@@ -23,7 +27,7 @@ internal data class TransitionTimeline(
         get() = maxOf(enter.durationMs, exit.durationMs)
 
     init {
-        require(durationMs > 0L) { "[RNScreens] A transition must have a positive duration." }
+        require(durationMs >= MIN_DURATION_MS) { "[RNScreens] A transition must have a positive duration." }
     }
 
     /**
@@ -33,7 +37,7 @@ internal data class TransitionTimeline(
      */
     internal fun scaled(factor: Float): TransitionTimeline =
         if (enter.tracks.isEmpty() && exit.tracks.isEmpty()) {
-            val staticDurationMs = (durationMs * factor).roundToLong().coerceAtLeast(1L)
+            val staticDurationMs = (durationMs * factor).roundToLong().coerceAtLeast(MIN_DURATION_MS)
             TransitionTimeline(MotionTimeline.static(staticDurationMs), MotionTimeline.static(staticDurationMs), exitZOrder)
         } else {
             of(enter.tracks.scaled(factor), exit.tracks.scaled(factor), exitZOrder)
@@ -77,8 +81,7 @@ internal data class TransitionTimeline(
             exitZOrder: ZOrder,
         ): TransitionTimeline {
             val tracks = enterTracks + exitTracks
-            // A rescaled motion can round every track to 0 ms; the transition must stay positive.
-            val durationMs = if (tracks.isEmpty()) NONE_DURATION_MS else tracks.endMs.coerceAtLeast(1L)
+            val durationMs = if (tracks.isEmpty()) NONE_DURATION_MS else tracks.endMs.coerceAtLeast(MIN_DURATION_MS)
             return TransitionTimeline(
                 enter = MotionTimeline.spanning(enterTracks, durationMs),
                 exit = MotionTimeline.spanning(exitTracks, durationMs),
