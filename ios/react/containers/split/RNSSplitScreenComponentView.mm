@@ -2,6 +2,7 @@
 #import <React/RCTAssert.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
+#import "RNSAssert.h"
 #import "RNSConversions-SplitView.h"
 #import "RNSNavigationItemCustomizing.h"
 #import "RNSSafeAreaViewNotifications.h"
@@ -222,7 +223,7 @@ namespace react = facebook::react;
     return;
   }
 
-  RCTAssert(_stackHost == nil, @"[RNScreens] Stack.Host that navigates a Split.Column has to be its only child");
+  RNSAssert(_stackHost == nil, @"[RNScreens] Stack.Host that navigates a Split.Column has to be its only child");
 
   [super mountChildComponentView:childComponentView index:index];
 
