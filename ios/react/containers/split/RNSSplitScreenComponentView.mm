@@ -4,7 +4,7 @@
 #import <react/renderer/components/rnscreens/RNSSplitScreenComponentDescriptor.h>
 #import "RNSAssert.h"
 #import "RNSConversions-SplitView.h"
-#import "RNSNavigationItemCustomizing.h"
+#import "RNSNavigationItemCustomizing.h" // legacy-compat: configures the header of a column with the legacy stack
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSSplitHostComponentView.h"
 #import "RNSSplitHostController.h"
