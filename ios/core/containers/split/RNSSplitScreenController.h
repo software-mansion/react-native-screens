@@ -40,15 +40,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @class RNSSplitScreenController
- * @brief A UIViewController subclass that manages a Split column in a UISplitViewController.
+ * @brief Manages a Split column in a UISplitViewController.
  *
- * It observes the column layout and lifecycle and reports them to its delegate.
+ * It is not a view controller. It owns what the Split shows for a plain column: the navigation controller, the stack
+ * screen it is rooted at and the view of that screen. It observes the column layout and lifecycle and reports them to
+ * its delegate.
  *
  * The lifecycle of the column is the one of the view of the navigation controller the Split installs for it. In a
  * column that hosts a stack it is the navigation controller of the stack, and this controller has to be set as its
  * `viewLifecycleEventsObserver`.
  */
-@interface RNSSplitScreenController : UIViewController <RNSViewControllerViewLifecycleEventsObserver>
+@interface RNSSplitScreenController : NSObject <RNSViewControllerViewLifecycleEventsObserver>
 
 @property (nonatomic, weak, nullable) id<RNSSplitScreenControllerDelegate> delegate;
 
@@ -92,8 +94,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true if inside RNSSplitHostController, false otherwise.
  */
 - (BOOL)isInSplitHostSubtree;
-
-- (void)setNeedsLifecycleStateUpdate;
 
 #pragma mark - Layout
 

@@ -87,13 +87,6 @@
   _plainColumnNavigationController = nil;
 }
 
-#pragma mark - Signals
-
-- (void)setNeedsLifecycleStateUpdate
-{
-  [[self findSplitHostController] setNeedsUpdateOfChildViewControllers];
-}
-
 #pragma mark - Layout
 
 - (void)reportColumnFrame
