@@ -246,27 +246,60 @@
     return;
   }
   [self finishRunningCustomTransition];
-  RNSStackScreenController *outgoing = _stackModel.lastObject;
-  RNSStackScreenController *incoming = target.lastObject;
+  NSArray<RNSStackScreenController *> *previous = [_stackModel copy];
+  [_stackModel setArray:target];
+  [self dumpStackModel];
+  // UIKit mishandles `setViewControllers:` during an interactive transition: a back swipe, or dragging down an
+  // `RNSSheetContentController` the stack is in or under. From 26 a swiped pop commits inside the call even if the
+  // finger cancels, below 26 the call is replayed after the swipe; the popped screen stays shown although it left the
+  // model (undocumented, 18 and 27). A sheet drag queues each call and replays them after it ends (undocumented, 27).
+  if (self.transitionCoordinator.initiallyInteractive) {
+    [self updateViewControllersWhenTransitionEnds];
+    return;
+  }
+  [self updateViewControllersTransitioningFrom:previous];
+}
+
+// Each change made during the transition registers its own completion. A pending flag would work too; this keeps the
+// controller free of extra state until the stack model refactor handles changes during transitions. The completions run
+// in order once the transition has ended, the first with no transition running (undocumented, 18 and 27). It hands the
+// model to UIKit; the later ones return because the push or pop it started is running (during a pop `viewControllers`
+// still lists the outgoing screen) or because the lists are equal. A swipe leaves its screen in `viewControllers` after
+// a cancel and removes it after a commit.
+- (void)updateViewControllersWhenTransitionEnds
+{
+  __weak auto weakSelf = self;
+  [self.transitionCoordinator
+      animateAlongsideTransition:nil
+                      completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+                        auto strongSelf = weakSelf;
+                        if (strongSelf == nil || strongSelf.transitionCoordinator != nil) {
+                          return;
+                        }
+                        NSArray<RNSStackScreenController *> *shown =
+                            static_cast<NSArray<RNSStackScreenController *> *>(strongSelf.viewControllers);
+                        if (![shown isEqualToArray:strongSelf->_stackModel]) {
+                          [strongSelf updateViewControllersTransitioningFrom:shown];
+                        }
+                      }];
+}
+
+- (void)updateViewControllersTransitioningFrom:(nonnull NSArray<RNSStackScreenController *> *)previous
+{
+  RNSStackScreenController *outgoing = previous.lastObject;
+  RNSStackScreenController *incoming = _stackModel.lastObject;
   BOOL animated = outgoing != nil;
   // A change below an unchanged top is neither a push nor a pop, so no screen's animation applies to it.
   if (animated && incoming != outgoing) {
-    RNSStackAnimationTransitionTimeline *timeline =
-        [RNSStackAnimationResolver transitionTimelineForKind:[self transitionKindTo:target]
-                                                    outgoing:outgoing
-                                                    incoming:incoming];
+    // UIKit plays `setViewControllers:` as a pop when the new top was already in the stack.
+    RNSStackAnimationTransitionKind kind =
+        [previous containsObject:incoming] ? RNSStackAnimationTransitionKindPop : RNSStackAnimationTransitionKindPush;
+    RNSStackAnimationTransitionTimeline *timeline = [RNSStackAnimationResolver transitionTimelineForKind:kind
+                                                                                                outgoing:outgoing
+                                                                                                incoming:incoming];
     animated = !timeline.isStatic;
   }
-  [_stackModel setArray:target];
-  [self setViewControllers:target animated:animated];
-  [self dumpStackModel];
-}
-
-- (RNSStackAnimationTransitionKind)transitionKindTo:(nonnull NSArray<RNSStackScreenController *> *)target
-{
-  // UIKit plays `setViewControllers:` as a pop when the new top was already in the stack.
-  return [_stackModel containsObject:target.lastObject] ? RNSStackAnimationTransitionKindPop
-                                                        : RNSStackAnimationTransitionKindPush;
+  [self setViewControllers:[_stackModel copy] animated:animated];
 }
 
 #pragma mark - Native pops
@@ -274,12 +307,14 @@
 - (nullable UIViewController *)popViewControllerAnimated:(BOOL)animated
 {
   [self finishRunningCustomTransition];
-  // The system pop recognizers call this when they begin (undocumented). The swipe can still cancel,
-  // so the screen leaves the model only when it commits, through the coordinator `super` creates.
+  // The system pop recognizers call this when they begin (undocumented). The swipe can still cancel, so the screen
+  // leaves the model only when it commits, through the coordinator `super` creates. UIKit pops its own top, which is
+  // below the model's while a change waits for a transition to end.
   if ([self isSystemPopGestureBeginning]) {
-    RNSStackScreenController *top = _stackModel.lastObject;
     UIViewController *popped = [super popViewControllerAnimated:animated];
-    [self removeFromStackModelWhenSwipeCommits:top];
+    if (popped != nil) {
+      [self removeFromStackModelWhenSwipeCommits:static_cast<RNSStackScreenController *>(popped)];
+    }
     return popped;
   }
   [self removeTopFromStackModel];
@@ -323,7 +358,7 @@
   }
 }
 
-- (void)removeFromStackModelWhenSwipeCommits:(nullable RNSStackScreenController *)screenController
+- (void)removeFromStackModelWhenSwipeCommits:(nonnull RNSStackScreenController *)screenController
 {
   __weak auto weakSelf = self;
   [self.transitionCoordinator
