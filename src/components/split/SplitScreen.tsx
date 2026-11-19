@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import warnOnce from 'warn-once';
 import SplitScreenNativeComponent from '../../fabric/split/SplitScreenNativeComponent';
 import SplitColumnMarkerContext from './SplitColumnMarkerContext';
 import type {
@@ -15,11 +16,10 @@ function Column(props: SplitColumnProps) {
   const [isStackIntegrationDisabled] = React.useState(disableStackIntegration);
 
   React.useEffect(() => {
-    if (disableStackIntegration !== isStackIntegrationDisabled) {
-      console.warn(
-        '[RNScreens] `disableStackIntegration` of Split.Column cannot be changed after the column is mounted. The change is ignored.',
-      );
-    }
+    warnOnce(
+      disableStackIntegration !== isStackIntegrationDisabled,
+      '[RNScreens] `disableStackIntegration` of Split.Column cannot be changed after the column is mounted. The change is ignored.',
+    );
   }, [disableStackIntegration, isStackIntegrationDisabled]);
 
   return (
