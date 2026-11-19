@@ -360,6 +360,7 @@ export interface TabsScreenPropsIOS {
    * ```tsx
    * <Tabs.Screen
    *   screenKey="favorites"
+   *   title="Favorites"
    *   ios={{
    *     icon: { type: 'sfSymbol', name: 'leaf' },
    *     selectedIcon: {
