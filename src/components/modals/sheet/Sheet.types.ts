@@ -133,6 +133,7 @@ export interface SheetProps {
   largestUndimmedDetentIndex?: SheetLargestUndimmedDetentIndex | undefined;
   initialDetentIndex?: SheetInitialDetentIndex | undefined;
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
+  prefersEdgeAttachedInCompactHeight?: boolean | undefined;
   preventNativeDismiss?: boolean | undefined;
   nativeContainerStyle?: StyleProp<SheetNativeContainerStyleProps> | undefined;
   backgroundEffect?: SheetBackgroundEffect | undefined;
