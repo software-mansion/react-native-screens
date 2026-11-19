@@ -3,7 +3,7 @@ import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation'
 import { describeIfIOS } from '@e2e/framework/platform';
 
 type Route = 'Home' | 'Search';
-type ActionOrigin = 'user' | 'programmatic-js';
+type ActionOrigin = 'user' | 'programmaticJs';
 
 // Several round trips - a selection dropped or reported twice on any of them
 // shows up as a provenance mismatch.
@@ -36,7 +36,7 @@ describeIfIOS('Tabs: navigation state on search tab interactions', () => {
   });
 
   it('should start with the Home tab selected', async () => {
-    await expectSelection('Home', 'programmatic-js', provenance);
+    await expectSelection('Home', 'programmaticJs', provenance);
   });
 
   it('should progress the state on every user selection of the search tab', async () => {
@@ -51,15 +51,15 @@ describeIfIOS('Tabs: navigation state on search tab interactions', () => {
 
   it('should progress the state once on programmatic selection of the search tab', async () => {
     await element(by.id('Home-select-search')).tap();
-    await expectSelection('Search', 'programmatic-js', ++provenance);
+    await expectSelection('Search', 'programmaticJs', ++provenance);
 
     await element(by.id('Search-select-home')).tap();
-    await expectSelection('Home', 'programmatic-js', ++provenance);
+    await expectSelection('Home', 'programmaticJs', ++provenance);
   });
 
   it('should progress the state on user selection after programmatic one', async () => {
     await element(by.id('Home-select-search')).tap();
-    await expectSelection('Search', 'programmatic-js', ++provenance);
+    await expectSelection('Search', 'programmaticJs', ++provenance);
 
     await element(by.id('home-tab-item')).tap();
     await expectSelection('Home', 'user', ++provenance);

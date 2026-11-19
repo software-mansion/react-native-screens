@@ -12,11 +12,18 @@ const getScrollViewSafeAreaInsetsTop = async (testID: string) => ({
     .safeAreaInsets.top,
 });
 
+// Frame components arrive as single-precision values, so an item that ends
+// exactly where the bar starts can add up a hair past it (791.00004 vs 791).
+// Far below one pixel, far above that rounding error.
+const EDGE_TOLERANCE = 0.01;
+
 function isAboveSaveAreaInset(
   itemFrame: { y: number; height: number },
   scrollViewSAVInsetTop: number,
 ): boolean {
-  return itemFrame.y + itemFrame.height <= scrollViewSAVInsetTop;
+  return (
+    itemFrame.y + itemFrame.height <= scrollViewSAVInsetTop + EDGE_TOLERANCE
+  );
 }
 
 const getTabBarFrame = () =>
@@ -27,7 +34,7 @@ function isAboveTabBar(
   itemFrame: { y: number; height: number },
   tabBarFrame: { y: number },
 ): boolean {
-  return itemFrame.y + itemFrame.height <= tabBarFrame.y;
+  return itemFrame.y + itemFrame.height <= tabBarFrame.y + EDGE_TOLERANCE;
 }
 
 async function assertLastItemAboveTabBar(tabPrefix: string, expected: boolean) {

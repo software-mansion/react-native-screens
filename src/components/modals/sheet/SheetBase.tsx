@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import FormSheetHostNativeComponent from '../../../fabric/modals/form-sheet/FormSheetHostNativeComponent';
-import FormSheetContentWrapperNativeComponent from '../../../fabric/modals/form-sheet/FormSheetContentWrapperNativeComponent';
+import SheetHostNativeComponent from '../../../fabric/modals/sheet/SheetHostNativeComponent';
+import SheetContentWrapperNativeComponent from '../../../fabric/modals/sheet/SheetContentWrapperNativeComponent';
 import type { SheetProps } from './Sheet.types';
 import {
   resolveInitialDetentIndex,
@@ -58,7 +58,7 @@ export function SheetBase(props: SheetBaseProps) {
   const isFitToContents = detents === 'fitToContents';
 
   return (
-    <FormSheetHostNativeComponent
+    <SheetHostNativeComponent
       style={styles.host}
       presentationStyle={presentationStyle}
       detents={nativeDetents}
@@ -71,14 +71,13 @@ export function SheetBase(props: SheetBaseProps) {
       {...resolveNativeBackgroundEffect(backgroundEffect)}
       {...rest}>
       {isFitToContents ? (
-        <FormSheetContentWrapperNativeComponent
-          style={styles.absoluteWithNoBottom}>
+        <SheetContentWrapperNativeComponent style={styles.absoluteWithNoBottom}>
           {children}
-        </FormSheetContentWrapperNativeComponent>
+        </SheetContentWrapperNativeComponent>
       ) : (
         children
       )}
-    </FormSheetHostNativeComponent>
+    </SheetHostNativeComponent>
   );
 }
 

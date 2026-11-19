@@ -11,7 +11,7 @@ import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import React, { useEffect } from 'react';
 import { SettingsPicker } from '@apps/shared';
-import type { TabsHostColorScheme } from 'react-native-screens';
+import type { TabsColorScheme } from 'react-native-screens';
 import {
   TabsContainerWithHostConfigContext,
   type TabRouteConfig,
@@ -61,7 +61,7 @@ function ConfigScreen() {
 
       <View style={styles.section}>
         <Text style={styles.heading}>TabsHost color scheme</Text>
-        <SettingsPicker<NonNullable<TabsHostColorScheme>>
+        <SettingsPicker<NonNullable<TabsColorScheme>>
           label={'colorScheme'}
           value={hostConfig.colorScheme ?? 'inherit'}
           onValueChange={value => updateHostConfig({ colorScheme: value })}

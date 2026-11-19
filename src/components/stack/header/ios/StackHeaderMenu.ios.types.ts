@@ -1,74 +1,85 @@
+import type { PlatformIconIOS } from '../../../shared/types';
+import type {
+  StackHeaderMenuSelectionHandler,
+  StackHeaderPressHandler,
+} from '../StackHeaderConfig.types';
+
 /**
- * @summary Represents a single actionable item inside a {@link StackHeaderMenuIOS} menu.
+ * Behavior of a menu item.
  *
- * @description
+ * @remarks
+ * The following values are available:
+ * - `'action'` — a button that fires
+ *   {@link StackHeaderMenuItemIOS.onPress | onPress} when tapped. Cannot be
+ *   used inside a {@link StackHeaderMenuIOS.singleSelection | singleSelection}
+ *   menu.
+ * - `'toggle'` — a stateful item whose on/off state is tracked automatically.
+ *   Toggle items do not fire `onPress`; instead, parent menu (or Single
+ *   Selection Root in case of
+ *   {@link StackHeaderMenuIOS.singleSelection | singleSelection}) is passed
+ *   currently selected items with
+ *   {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}.
+ * - `'automatic'` — resolved at render time: becomes `'toggle'` when the item
+ *   is under `singleSelection` hierarchy, `'action'` otherwise.
+ */
+export type StackHeaderMenuItemTypeIOS = 'action' | 'toggle' | 'automatic';
+
+/**
+ * Represents a single actionable item inside a {@link StackHeaderMenuIOS} menu.
+ *
+ * @remarks
  * A menu item is a leaf element that the user can interact with.
  * Depending on its {@link StackHeaderMenuItemIOS.itemType | itemType}, the item
  * behaves as a one-shot action or a stateful toggle.
- *
- * @platform ios
  */
-import type { PlatformIconIOS } from '../../../shared/types';
-
 export interface StackHeaderMenuItemIOS {
   /**
-   * @summary Unique identifier of the menu item.
+   * Unique identifier of the menu item.
    *
-   * @description
+   * @remarks
    * Used to locate the item inside a menu tree and to identify selected items
-   * in {@link StackHeaderMenuIOS.onSelectionChange} callback.
+   * in {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
+   * callback.
    *
    * @platform ios
    */
   id: string;
   /**
-   * @summary Marks this object as a menu item definition.
+   * Marks this object as a menu item definition.
    *
    * @platform ios
    */
   type: 'menuItem';
   /**
-   * @summary Title displayed for the menu item.
+   * Title displayed for the menu item.
    *
    * @platform ios
    */
   title?: string | undefined;
   /**
-   * @summary Determines the behavior of the menu item.
+   * Determines the behavior of the menu item.
    *
-   * @description
-   * The following values are available:
-   * - `action` - a button that fires {@link StackHeaderMenuItemIOS.onPress | onPress}
-   *   when tapped. Cannot be used inside a `singleSelection` menu.
-   * - `toggle` - a stateful item whose on/off state is tracked automatically.
-   *   Toggle items do not fire `onPress`; instead, parent menu
-   *   (or Single Selection Root in case of {@link StackHeaderMenuIOS.singleSelection | singleSelection})
-   *   is passed currently selected items with {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
-   * - `automatic` - resolved at render time: becomes `toggle` when the item is
-   *   under `singleSelection` hierarchy, `action` otherwise.
-   *
-   * @default automatic
-   *
+   * @defaultValue `'automatic'`
    * @platform ios
    */
-  itemType?: 'action' | 'toggle' | 'automatic' | undefined;
+  itemType?: StackHeaderMenuItemTypeIOS | undefined;
   /**
-   * @summary Initial on/off state of a toggle item.
+   * Initial on/off state of a toggle item.
    *
-   * @description
+   * @remarks
    * Only meaningful when {@link StackHeaderMenuItemIOS.itemType | itemType}
-   * resolves to `toggle`. Inside a `singleSelection` hierarchy, at most one
-   * item can set this to `true`.
+   * resolves to `'toggle'`. Inside a
+   * {@link StackHeaderMenuIOS.singleSelection | singleSelection} hierarchy, at
+   * most one item can set this to `true`.
    *
-   * @default false
-   *
+   * @defaultValue `false`
    * @platform ios
    */
   initialToggleState?: boolean | undefined;
   /**
-   * @summary Icon displayed for the menu item.
+   * Icon displayed for the menu item.
    *
-   * @description
+   * @remarks
    * Supports SF Symbols, xcassets, and image sources. For async image sources,
    * the menu item renders without an icon first and updates when loaded.
    *
@@ -76,58 +87,56 @@ export interface StackHeaderMenuItemIOS {
    */
   icon?: PlatformIconIOS | undefined;
   /**
-   * @summary Callback invoked when the menu item is pressed.
+   * Callback invoked when the menu item is pressed.
    *
-   * @description
-   * Fires only for items whose effective type is `action`. For toggle items,
+   * @remarks
+   * Fires only for items whose effective type is `'action'`. For toggle items,
    * this callback will not fire — use
    * {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange} on the
    * parent menu instead.
    *
    * @platform ios
    */
-  onPress?: () => void | undefined;
+  onPress?: StackHeaderPressHandler | undefined;
   /**
-   * @summary Keeps the menu presented after this item is tapped.
-   *
-   * @description
-   * When enabled, selecting this item will not dismiss the menu,
-   * allowing the user to continue interacting with other items.
+   * Keeps the menu presented after this item is tapped.
    *
    * @remarks
-   * This prop should only be used for items in top-level menus. Requires iOS 16.0 or later.
+   * When enabled, selecting this item will not dismiss the menu, allowing the
+   * user to continue interacting with other items.
    *
-   * @default false
+   * This prop should only be used for items in top-level menus.
    *
-   * @platform ios
+   * @defaultValue `false`
+   * @platform ios >= 16
    */
   keepsMenuPresented?: boolean | undefined;
 }
 
 /**
- * @summary Represents a menu (or submenu) that groups
+ * Represents a menu (or submenu) that groups
  * {@link StackHeaderMenuElementIOS} children.
  *
- * @description
+ * @remarks
  * A menu is a container that can hold both leaf items
  * ({@link StackHeaderMenuItemIOS}) and nested menus. Set
  * {@link StackHeaderMenuIOS.singleSelection | singleSelection} to `true` to
- * make the menu behave like radio group across its entire hierarchy.
+ * make the menu behave like a radio group across its entire hierarchy.
  *
- * Note: The topmost menu that enables this prop becomes Single Selection Root.
- * Only the root receives {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange}
- * event, with exactly one item id passed to the callback. Only one item may be selected,
- * across the whole hierarchy under Single Selection Root (even when mixing items and nested menus).
- * Previously selected item is deselected automatically.
- * Multiple Single Selection Roots may exist only if their hierarchy is completely separate.
- *
- * @platform ios
+ * The topmost menu that enables this prop becomes Single Selection Root. Only
+ * the root receives
+ * {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange} event, with
+ * exactly one item id passed to the callback. Only one item may be selected,
+ * across the whole hierarchy under Single Selection Root (even when mixing
+ * items and nested menus). Previously selected item is deselected
+ * automatically. Multiple Single Selection Roots may exist only if their
+ * hierarchy is completely separate.
  */
 export interface StackHeaderMenuIOS {
   /**
-   * @summary Unique identifier of the menu.
+   * Unique identifier of the menu.
    *
-   * @description
+   * @remarks
    * Used to locate the menu inside a tree and as the reference when querying or
    * manipulating menu state.
    *
@@ -135,36 +144,37 @@ export interface StackHeaderMenuIOS {
    */
   id: string;
   /**
-   * @summary Marks this object as a menu definition.
+   * Marks this object as a menu definition.
    *
    * @platform ios
    */
   type: 'menu';
   /**
-   * @summary Title displayed for the menu.
+   * Title displayed for the menu.
    *
    * @platform ios
    */
   title?: string | undefined;
   /**
-   * @summary Enables single selection mode for this menu and its descendants.
+   * Enables single selection mode for this menu and its descendants.
    *
-   * @description
-   * The topmost menu with `singleSelection` enabled becomes Single Selection Root.
-   * At most one toggle item in the entire hierarchy rooted at this
-   * menu can be selected at a time.
+   * @remarks
+   * The topmost menu with `singleSelection` enabled becomes Single Selection
+   * Root. At most one toggle item in the entire hierarchy rooted at this menu
+   * can be selected at a time.
    *
-   * Items with `itemType` set to `automatic` are resolved to `toggle` inside a
-   * `singleSelection` hierarchy. `action` items are disallowed.
+   * Items with {@link StackHeaderMenuItemIOS.itemType | itemType} set to
+   * `'automatic'` are resolved to `'toggle'` inside a `singleSelection`
+   * hierarchy. `'action'` items are disallowed.
    *
-   * @default false
+   * @defaultValue `false`
    * @platform ios
    */
   singleSelection?: boolean | undefined;
   /**
-   * @summary Icon displayed for the submenu.
+   * Icon displayed for the submenu.
    *
-   * @description
+   * @remarks
    * Supports SF Symbols, xcassets, and image sources. For async image sources,
    * the menu renders without an icon first and updates when loaded.
    *
@@ -172,37 +182,31 @@ export interface StackHeaderMenuIOS {
    */
   icon?: PlatformIconIOS | undefined;
   /**
-   * @summary Displays the menu inline with parent menu instead of as a submenu.
+   * Displays the menu inline with parent menu instead of as a submenu.
    *
-   * @description
+   * @remarks
    * A menu displayed inline is rendered directly inside its parent menu,
    * with horizontal bars separating it from the surrounding items.
    *
-   * @default false
+   * @defaultValue `false`
    * @platform ios
    */
   displayInline?: boolean | undefined;
   /**
-   * @summary Displays the menu as a row of compact items (palette).
+   * Displays the menu as a row of compact items (palette).
    *
-   * @description
+   * @remarks
    * When enabled, the menu children are rendered as a horizontal palette
    * row instead of a vertical list. Best suited for menus with icon-only items.
    *
-   * @remarks
-   * Requires iOS 17.0 or later. On older versions, this option is ignored.
-   *
-   * @default false
-   *
-   * @platform ios
-   *
-   * @supported iOS 17.0 or higher
+   * @defaultValue `false`
+   * @platform ios >= 17
    */
   displayAsPalette?: boolean | undefined;
   /**
-   * @summary Child elements of this menu.
+   * Child elements of this menu.
    *
-   * @description
+   * @remarks
    * Each child is either a {@link StackHeaderMenuItemIOS} (leaf) or another
    * {@link StackHeaderMenuIOS}, allowing arbitrarily nested menu trees.
    *
@@ -210,27 +214,26 @@ export interface StackHeaderMenuIOS {
    */
   children: StackHeaderMenuElementIOS[];
   /**
-   * @summary Callback invoked when the set of selected toggle items changes.
+   * Callback invoked when the set of selected toggle items changes.
    *
-   * @description
+   * @remarks
    * Receives an array of IDs of all currently selected toggle items in this
-   * menu's hierarchy. For Single Selection Root, always returns one item.
-   * When defined below Single Selection Root, the callback doesn't fire.
-   * In regular non-single-selection case, only changes to direct children are reflected.
+   * menu's hierarchy. For Single Selection Root, the array always has one item.
+   * When defined below Single Selection Root, the callback doesn't fire. In
+   * regular non-single-selection case, only changes to direct children are
+   * reflected.
    *
    * @platform ios
    */
-  onSelectionChange?: (selectedMenuElementIds: string[]) => void;
+  onSelectionChange?: StackHeaderMenuSelectionHandler | undefined;
 }
 
 /**
- * @summary A menu element type.
+ * A menu element type.
  *
- * @description
+ * @remarks
  * A menu element is either a {@link StackHeaderMenuIOS | menu} (container with
  * children) or a {@link StackHeaderMenuItemIOS | menu item} (actionable leaf).
- *
- * @platform ios
  */
 export type StackHeaderMenuElementIOS =
   | StackHeaderMenuIOS

@@ -1,8 +1,29 @@
-import type { Ref } from 'react';
+import type { ReactElement, Ref } from 'react';
 import type { StackHeaderConfigCommandsAndroid } from './StackHeaderConfig.android.types';
 import { StackHeaderConfigPropsAndroid } from './StackHeaderConfig.android.types';
 import type { StackHeaderConfigCommandsIOS } from './StackHeaderConfig.ios.types';
 import { StackHeaderConfigPropsIOS } from './StackHeaderConfig.ios.types';
+
+/**
+ * Function that returns the element rendered in a custom part of the header.
+ *
+ * @returns The element to render.
+ */
+export type StackHeaderElementFactory = () => ReactElement;
+
+/**
+ * Function called when a header item or a menu item is pressed.
+ */
+export type StackHeaderPressHandler = () => void;
+
+/**
+ * Function called when the selected items of a header menu change.
+ *
+ * @param selectedMenuElementIds - The IDs of the currently selected menu items.
+ */
+export type StackHeaderMenuSelectionHandler = (
+  selectedMenuElementIds: string[],
+) => void;
 
 /**
  * Cross-platform props for {@link Stack.HeaderConfig}.
@@ -17,7 +38,7 @@ export interface StackHeaderConfigPropsBase {
   /**
    * Subtitle displayed in the header.
    *
-   * @platform android, ios
+   * @platform android, ios >= 26
    */
   subtitle?: string | undefined;
   /**
@@ -34,13 +55,12 @@ export interface StackHeaderConfigPropsBase {
    * When `true`, content is rendered behind the header instead of starting
    * below it.
    *
-   * On Android:
    * - The header background color is not affected by this prop.
    * - Setting this prop to `true` is not supported when header scrolling is
    *   enabled.
    *
    * @defaultValue `false`
-   * @platform android, ios
+   * @platform android
    */
   transparent?: boolean | undefined;
   /**
@@ -51,7 +71,7 @@ export interface StackHeaderConfigPropsBase {
    * button is always hidden.
    *
    * @defaultValue `false`
-   * @platform android, ios
+   * @platform android
    */
   backButtonHidden?: boolean | undefined;
 }
