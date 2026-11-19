@@ -20,6 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) id<RNSStackHeaderEventsDelegate> eventsDelegate;
 @property (nonatomic, weak, nullable) id<RNSImageLoading> imageLoader;
 
+/**
+ * Whether the navigation bar is shown while the screen has no header configuration. Defaults to NO: a screen without
+ * a header configuration hides the navigation bar.
+ */
+@property (nonatomic) BOOL showsNavigationBarWithoutHeaderConfig;
+
 - (void)rebuild;
 
 - (void)applyConfigProperties;
