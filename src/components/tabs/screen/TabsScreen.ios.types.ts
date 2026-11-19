@@ -244,8 +244,8 @@ export interface TabsScreenPropsIOS {
    *   the rendering intent set in the asset catalog may change it. `original`
    *   shows the symbol's own color layers (Apple's "multicolor" rendering).
    *
-   * See `TabsScreenIconImageRenderingModeIOS` and
-   * `TabsScreenIconSymbolRenderingModeIOS` for the meaning of each rendering mode.
+   * See `TabsPlatformIconImageRenderingModeIOS` and
+   * `TabsPlatformIconSymbolRenderingModeIOS` for the meaning of each rendering mode.
    *
    * If no `selectedIcon` is provided, this icon will also
    * be used as the selected state icon.

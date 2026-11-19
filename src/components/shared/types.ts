@@ -279,3 +279,47 @@ export type PlatformIconIOS =
 export type PlatformIconAndroid =
   | PlatformIconAndroidDrawableResource
   | PlatformIconShared;
+
+/**
+ * How an image icon is rendered on iOS.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the default of the element that shows the icon.
+ * - `'template'` — the image is used as a template image: its shape is drawn
+ *   in the icon color of the element.
+ * - `'original'` — the image keeps its own colors.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiimage/renderingmode-swift.enum | UIImage.RenderingMode}
+ */
+export type PlatformIconImageRenderingModeIOS =
+  | 'default'
+  | 'template'
+  | 'original';
+
+/**
+ * How an SF Symbol icon is rendered on iOS.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the default of the element that shows the icon.
+ * - `'monochrome'` — the symbol is rendered in a single color, the icon color
+ *   of the element.
+ * - `'original'` — the symbol keeps its own colors (Apple's "multicolor"
+ *   rendering).
+ */
+export type PlatformIconSymbolRenderingModeIOS =
+  | 'default'
+  | 'monochrome'
+  | 'original';
+
+/**
+ * How an icon is tinted on Android.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the default of the element that shows the icon.
+ * - `'tinted'` — the icon is drawn in the icon color of the element.
+ * - `'original'` — the icon keeps its own colors.
+ */
+export type PlatformIconTintingAndroid = 'default' | 'tinted' | 'original';
