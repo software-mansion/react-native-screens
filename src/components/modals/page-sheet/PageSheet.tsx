@@ -22,5 +22,8 @@ import type { PageSheetProps } from './PageSheet.types';
  * @platform android, ios
  */
 export function PageSheet(props: PageSheetProps) {
+  // `preferredContentSize` and `widthFollowsPreferredContentSizeWhenEdgeAttached`
+  // are not part of `PageSheetProps`: UIKit page sheets ignore
+  // `preferredContentSize`, so neither has an effect.
   return <SheetBase {...props} presentationStyle="pageSheet" />;
 }

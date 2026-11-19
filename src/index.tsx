@@ -32,6 +32,7 @@ export type {
   SheetBackgroundEffectBlurStyle,
   SheetBackgroundEffectColor,
   SheetNativeContainerStyleProps,
+  SheetPreferredContentSize,
 } from './components/modals/sheet';
 export * from './components/modals/contained-modal';
 export * from './components/modals/full-screen-modal';
