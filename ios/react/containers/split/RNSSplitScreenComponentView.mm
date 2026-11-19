@@ -209,7 +209,8 @@ namespace react = facebook::react;
   [_controller.plainColumnContentView insertSubview:childComponentView atIndex:index];
 
   if ([childComponentView conformsToProtocol:@protocol(RNSNavigationItemCustomizing)]) {
-    [(id<RNSNavigationItemCustomizing>)childComponentView configureNavigationItem:_controller.navigationItem];
+    [(id<RNSNavigationItemCustomizing>)childComponentView
+        configureNavigationItem:_controller.plainColumnNavigationItem];
   }
 }
 

@@ -55,24 +55,30 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Content
 
 /**
- * @brief The view the content of a plain column is added to. It is the view of this controller.
+ * @brief The view the content of a plain column is added to. It is the view of the stack screen the navigation
+ * controller of the column is rooted at.
  */
 @property (nonatomic, strong, readonly) RNSSplitPlainColumnContentView *plainColumnContentView;
+
+/**
+ * @brief The navigation item of a plain column. It belongs to the stack screen the navigation controller of the
+ * column is rooted at.
+ */
+@property (nonatomic, strong, readonly) UINavigationItem *plainColumnNavigationItem;
 
 #pragma mark - Navigation controller
 
 /**
  * @brief The navigation controller the Split installs for a plain column, i.e. a column that does not host a stack.
- * It is rooted at this controller.
+ * It is rooted at a stack screen that shows `plainColumnContentView`. The screen has no header configuration, and the
+ * navigation bar of the column stays visible.
  *
  * Created on first access and kept until `releasePlainColumnNavigationController`.
  */
 @property (nonatomic, strong, readonly) RNSStackNavigationController *plainColumnNavigationController;
 
 /**
- * @brief Releases `plainColumnNavigationController`.
- *
- * The navigation controller retains this controller as its root, so the column has to call it before it is destroyed.
+ * @brief Releases `plainColumnNavigationController`. A new one is created on next access.
  */
 - (void)releasePlainColumnNavigationController;
 
