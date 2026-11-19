@@ -6,6 +6,7 @@ import {
   type AnimationPresetOption,
 } from '@apps/tests/shared/components/stack-v5/AnimationPresetPlayground';
 import React from 'react';
+import { Colors } from '@apps/shared/styling';
 
 // The preset's own curve is not linear, so the comparison with the tracks (which default to
 // linear) is made against the linear preset.
@@ -46,7 +47,7 @@ const ANIMATION_OPTIONS = [
     },
   },
   {
-    label: 'from 200 dp left + fade 600 ms',
+    label: 'from 200 left + fade 600 ms',
     animation: {
       type: 'custom',
       push: {
@@ -158,6 +159,25 @@ const ANIMATION_OPTIONS = [
     },
   },
   {
+    // Blue appears only after Home is gone, so the background shows in between.
+    label: 'fade out + darken 2000 ms',
+    animation: {
+      type: 'custom',
+      push: {
+        type: 'custom',
+        enter: {
+          type: 'custom',
+          opacity: { from: 0, delay: 2500, duration: 500 },
+        },
+        exit: {
+          type: 'custom',
+          opacity: { to: 0, ...SLOW },
+          dim: { to: 1, ...SLOW },
+        },
+      },
+    },
+  },
+  {
     label: 'rise 2000 ms + fade 1000 ms after 1000 ms',
     animation: {
       type: 'custom',
@@ -201,18 +221,31 @@ const ANIMATION_OPTIONS = [
       },
     } as unknown as StackScreenAnimation,
   },
+  {
+    label: 'invalid: opacity to 2',
+    // The types accept any number; the native range check falls back to `default`.
+    animation: {
+      type: 'custom',
+      push: {
+        type: 'custom',
+        enter: { type: 'custom', opacity: { to: 2, duration: 600 } },
+      },
+    },
+  },
 ] satisfies readonly AnimationPresetOption[];
 
-function TestStackAnimationCustomMotionsAndroid() {
+function TestStackAnimationCustomMotions() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
       initialAnimation="iosFromRight linear 2000 ms"
+      withHeaderPicker
+      backgroundColor={Colors.PurpleLight100}
     />
   );
 }
 
 export default createScenario(
-  TestStackAnimationCustomMotionsAndroid,
+  TestStackAnimationCustomMotions,
   scenarioDescription,
 );

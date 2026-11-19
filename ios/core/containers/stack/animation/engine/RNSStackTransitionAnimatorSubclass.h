@@ -12,6 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UIViewPropertyAnimator *)propertyAnimatorForTransition:(id<UIViewControllerContextTransitioning>)transitionContext;
 
+/**
+ * A linear animator of `transitionDuration:` that runs `animations` and lasts its whole duration even when they change
+ * nothing. Its completion runs `completion`, then calls `completeTransition:`.
+ */
+- (UIViewPropertyAnimator *)linearAnimatorForTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+                                             animations:(nullable void (^)(void))animations
+                                             completion:(nullable void (^)(void))completion;
+
 @end
 
 NS_ASSUME_NONNULL_END

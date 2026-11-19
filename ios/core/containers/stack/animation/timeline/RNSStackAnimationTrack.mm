@@ -89,6 +89,19 @@
   return [[[self class] alloc] initWithViewProperty:_viewProperty from:_from to:_to timing:timing];
 }
 
++ (CGFloat)restValueOfViewProperty:(RNSStackAnimationViewProperty)property
+{
+  switch (property) {
+    case RNSStackAnimationViewPropertyOpacity:
+    case RNSStackAnimationViewPropertyScale:
+    case RNSStackAnimationViewPropertyScaleX:
+    case RNSStackAnimationViewPropertyScaleY:
+      return 1;
+    case RNSStackAnimationViewPropertyRotate:
+      return 0;
+  }
+}
+
 @end
 
 @implementation RNSStackAnimationDimTrack

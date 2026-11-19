@@ -49,25 +49,21 @@
   // track's curve to the keyframes.
   NSInteger durationMs = _timeline.durationMs;
   NSTimeInterval duration = [self transitionDuration:transitionContext];
-  UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
-      initWithDuration:duration
-                 curve:UIViewAnimationCurveLinear
-            animations:^{
-              [UIView animateKeyframesWithDuration:duration
-                                             delay:0
-                                           options:UIViewKeyframeAnimationOptionCalculationModeLinear
-                                        animations:^{
-                                          [enterBinding addKeyframesForDurationMs:durationMs];
-                                          [exitBinding addKeyframesForDurationMs:durationMs];
-                                        }
-                                        completion:nil];
-            }];
-  [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-    [enterBinding restore];
-    [exitBinding restore];
-    [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
-  }];
-  return animator;
+  return [self linearAnimatorForTransition:transitionContext
+      animations:^{
+        [UIView animateKeyframesWithDuration:duration
+                                       delay:0
+                                     options:UIViewKeyframeAnimationOptionCalculationModeLinear
+                                  animations:^{
+                                    [enterBinding addKeyframesForDurationMs:durationMs];
+                                    [exitBinding addKeyframesForDurationMs:durationMs];
+                                  }
+                                  completion:nil];
+      }
+      completion:^{
+        [enterBinding restore];
+        [exitBinding restore];
+      }];
 }
 
 @end

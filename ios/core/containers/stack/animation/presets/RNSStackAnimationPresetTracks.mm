@@ -5,6 +5,11 @@
 
 @implementation RNSStackAnimationPresetTracks
 
++ (UIColor *)defaultDimColor
+{
+  return UIColor.blackColor;
+}
+
 + (RNSStackAnimationTranslateTrack *)translationTrackFromEdge:(RNSStackAnimationEdge)edge
                                                      distance:(RNSStackAnimationLength *)distance
                                                     appearing:(BOOL)isAppearing
@@ -63,7 +68,7 @@
                                  durationMs:(NSInteger)durationMs
                                      easing:(RNSStackAnimationEasing *)easing
 {
-  return [[RNSStackAnimationDimTrack alloc] initWithColor:UIColor.blackColor
+  return [[RNSStackAnimationDimTrack alloc] initWithColor:self.defaultDimColor
                                                      from:from
                                                        to:to
                                                    timing:[[RNSStackAnimationTiming alloc] initWithStartMs:0
