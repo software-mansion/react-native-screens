@@ -19,18 +19,20 @@ import { describeIfIOS } from '@e2e/framework/platform';
 // Toggle 1, Toggle 2, Toggle 3 and Submenu.
 const MENU_ROW_COUNT = 4;
 
-// `imageSource` and `templateSource` ids are the bundled paths of the `require`d
-// asset files — renaming or moving those assets requires updating them here.
+// `imageSource` and `templateSource` ids are the asset catalog names of the
+// `require`d asset files. Their prefix depends on the Metro config, so match
+// the end only (Detox matches the whole id, hence `.*`). Renaming or moving
+// those assets requires updating them here.
 const ICON_IDS = {
   sfSymbol: 'star.fill',
   xcasset: 'custom-icon-fill',
-  imageSource: 'assets/_apps/assets/search_black.png',
-  templateSource: 'assets/_apps/assets/variableIcons/icon@3x.png',
+  imageSource: /.*_search_black/,
+  templateSource: /.*_variableicons_icon/,
 } as const;
 
 // The icon of a single menu row, addressed by its icon id and its position in
 // the menu.
-const menuRowIconAt = (iconId: string, index: number) =>
+const menuRowIconAt = (iconId: string | RegExp, index: number) =>
   element(
     by
       .id(iconId)
@@ -39,7 +41,7 @@ const menuRowIconAt = (iconId: string, index: number) =>
 
 // Asserts that every menu row renders the icon carrying `iconId`.
 const expectAllMenuRowIconsToBeVisible = async (
-  iconId: string,
+  iconId: string | RegExp,
   rowCount: number = MENU_ROW_COUNT,
 ) => {
   for (let index = 0; index < rowCount; index++) {
@@ -52,7 +54,7 @@ const SUBMENU_ROWS = ['Sub Toggle 1', 'Sub Toggle 2', 'Sub Toggle 3'] as const;
 
 // Asserts every submenu row renders `iconId`. Addressed by title, not index:
 // the parent menu's cells stay attached while the submenu is open.
-const expectAllSubmenuRowIconsToBeVisible = async (iconId: string) => {
+const expectAllSubmenuRowIconsToBeVisible = async (iconId: string | RegExp) => {
   for (const rowTitle of SUBMENU_ROWS) {
     await expect(menuRowIcon(iconId, rowTitle)).toBeVisible();
   }

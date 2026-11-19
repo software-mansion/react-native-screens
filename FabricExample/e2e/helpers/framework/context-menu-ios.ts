@@ -84,7 +84,7 @@ export function chevronFor(title: string) {
 }
 
 /** A row's icon by id, scoped to its row: parent rows stay attached under a submenu. */
-export function menuRowIcon(iconId: string, title: string) {
+export function menuRowIcon(iconId: string | RegExp, title: string) {
   return element(
     by
       .type(CLASS_NAME_UI_IMAGE_VIEW)
