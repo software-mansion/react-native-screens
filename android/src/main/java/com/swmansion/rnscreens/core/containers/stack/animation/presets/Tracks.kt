@@ -65,9 +65,3 @@ internal fun dimTrack(
     startMs: Long = 0L,
     color: Int = Color.BLACK,
 ): Track.Dim = Track.Dim(color, from, to, Timing(startMs, durationMs, easing))
-
-private fun Length.negated(): Length =
-    when (this) {
-        is Length.Dp -> Length.Dp(-value)
-        is Length.Percent -> Length.Percent(-fraction)
-    }

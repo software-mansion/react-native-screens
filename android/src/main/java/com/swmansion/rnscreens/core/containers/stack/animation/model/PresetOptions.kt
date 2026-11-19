@@ -17,6 +17,16 @@ internal data class PresetOptions(
     val easing: Easing? = null,
     val distance: Length? = null,
 ) {
+    internal val present: Set<PresetOption>
+        get() =
+            PresetOption.entries.filterTo(mutableSetOf()) { option ->
+                when (option) {
+                    PresetOption.DURATION -> durationMs != null
+                    PresetOption.EASING -> easing != null
+                    PresetOption.DISTANCE -> distance != null
+                }
+            }
+
     companion object {
         internal val NONE = PresetOptions()
     }
