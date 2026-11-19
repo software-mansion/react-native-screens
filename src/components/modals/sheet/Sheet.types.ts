@@ -1,9 +1,5 @@
 import type { ColorValue, StyleProp, ViewProps, ViewStyle } from 'react-native';
-import type {
-  BlurEffect,
-  EmptyEventPayload,
-  NativeEventHandler,
-} from '../../shared/types';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 /**
  * Payload of the `onDetentChanged` event.
@@ -64,7 +60,27 @@ export type SheetInitialDetentIndex = number | 'last';
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */
-export type SheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
+export type SheetBackgroundEffectBlurStyle =
+  | 'extraLight'
+  | 'light'
+  | 'dark'
+  | 'regular'
+  | 'prominent'
+  | 'systemUltraThinMaterial'
+  | 'systemThinMaterial'
+  | 'systemMaterial'
+  | 'systemThickMaterial'
+  | 'systemChromeMaterial'
+  | 'systemUltraThinMaterialLight'
+  | 'systemThinMaterialLight'
+  | 'systemMaterialLight'
+  | 'systemThickMaterialLight'
+  | 'systemChromeMaterialLight'
+  | 'systemUltraThinMaterialDark'
+  | 'systemThinMaterialDark'
+  | 'systemMaterialDark'
+  | 'systemThickMaterialDark'
+  | 'systemChromeMaterialDark';
 
 /**
  * Flat fill rendered behind the sheet's content.
