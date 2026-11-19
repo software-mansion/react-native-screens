@@ -28,8 +28,7 @@ transition and the interactive back gestures are not assertable with Detox.
   animation scale" to 10x before the first of them and back to 1x after the
   last. At 1x these transitions last 200 ms and the tint cannot be compared
   against a swatch by eye. On iOS they run at normal speed (350 ms
-  transitions), like every other group; judge the tint from a screen recording
-  if needed.
+  transitions), like every other group.
 - Android: run the screen directly. In `apps/App.tsx` import and render
   `TestStackAnimationIOSFrom` as the root component instead of `Example`. Opened
   through the in-app menu, system back leaves the screen instead of popping the
@@ -231,6 +230,22 @@ transition and the interactive back gestures are not assertable with Detox.
    - [ ] "START" returns to the left of the row.
 
 ## Steps - iOS
+
+### Tint at 2000 ms
+
+1. On "Home", set "next push" to `iosFromRight 2000 ms`, then tap "Push Blue".
+
+   - [ ] "Blue" enters from the right over about 2 seconds.
+   - [ ] "Home" moves left by about a third of the width.
+   - [ ] "Home" is tinted while it moves (see Note).
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right over about 2 seconds.
+   - [ ] "Home"'s tint lifts while it returns.
+   - [ ] "Home" is untinted once the pop ends.
+
+---
 
 ### Header back button
 
