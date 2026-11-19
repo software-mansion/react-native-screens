@@ -319,23 +319,10 @@ export interface TabsScreenPropsIOS {
    * Specifies the icon for the tab bar item.
    *
    * @remarks
-   * Supported values:
-   * - `{ type: 'imageSource', imageSource, renderingMode? }`
-   *   Uses an image from the provided resource. With `renderingMode` set to
-   *   `'template'` the image is tinted with the state-dependent icon color.
-   *   With `'original'` it keeps its own colors.
-   * - `{ type: 'sfSymbol', name, renderingMode? }`
-   *   Uses an SF Symbol with the specified name. If no system symbol
-   *   matches, falls back to a custom symbol with that name from the app's
-   *   asset catalog. `renderingMode` defaults to `'default'`, the system
-   *   behavior: a single color for system symbols, while for custom symbols
-   *   the rendering intent set in the asset catalog may change it.
-   *   `'original'` shows the symbol's own color layers (Apple's "multicolor"
-   *   rendering).
-   *
-   * See {@link TabsPlatformIconImageRenderingModeIOS} and
-   * {@link TabsPlatformIconSymbolRenderingModeIOS} for the meaning of each
-   * rendering mode.
+   * The `type` field selects the kind of the icon, see
+   * {@link TabsScreenIconIOS}. For an `'sfSymbol'` icon, if no system symbol
+   * matches the name, a custom symbol with that name from the app's asset
+   * catalog is used.
    *
    * If no {@link TabsScreenPropsIOS.selectedIcon | selectedIcon} is provided,
    * this icon will also be used as the selected state icon.
