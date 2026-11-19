@@ -11,6 +11,7 @@
 #import "RNSStackOperation.h"
 #import "RNSStackPopGestureRecognizerDelegate.h"
 #import "RNSStackScreenController.h"
+#import "RNSStackScreenHeaderCoordinator.h"
 #import "RNSViewFrameChangeDelegate.h"
 
 @implementation RNSStackNavigationController {
@@ -248,7 +249,7 @@
   [self finishRunningCustomTransition];
   NSArray<RNSStackScreenController *> *previous = [_stackModel copy];
   [_stackModel setArray:target];
-  [self dumpStackModel];
+  [self stackModelDidChange];
   // UIKit mishandles `setViewControllers:` during an interactive transition: a back swipe, or dragging down an
   // `RNSSheetContentController` the stack is in or under. From 26 a swiped pop commits inside the call even if the
   // finger cancels, below 26 the call is replayed after the swipe; the popped screen stays shown although it left the
@@ -345,7 +346,7 @@
 {
   if (index + 1 < _stackModel.count) {
     [_stackModel removeObjectsInRange:NSMakeRange(index + 1, _stackModel.count - index - 1)];
-    [self dumpStackModel];
+    [self stackModelDidChange];
   }
 }
 
@@ -354,7 +355,7 @@
   // UIKit refuses to pop the root.
   if (_stackModel.count > 1) {
     [_stackModel removeLastObject];
-    [self dumpStackModel];
+    [self stackModelDidChange];
   }
 }
 
@@ -366,9 +367,17 @@
         auto strongSelf = weakSelf;
         if (strongSelf != nil && !context.isCancelled) {
           [strongSelf->_stackModel removeObject:screenController];
-          [strongSelf dumpStackModel];
+          [strongSelf stackModelDidChange];
         }
       }];
+}
+
+- (void)stackModelDidChange
+{
+  [self dumpStackModel];
+#if !TARGET_OS_TV
+  [self applyBackButtonConfigs];
+#endif // !TARGET_OS_TV
 }
 
 // UIKit queues a navigation call behind a running custom animator and a swipe's queued pop then plays without the
@@ -400,6 +409,25 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   return @[ self.interactivePopGestureRecognizer ];
+}
+#endif // !TARGET_OS_TV
+
+#pragma mark - Back button
+
+#if !TARGET_OS_TV
+- (void)applyBackButtonConfigs
+{
+  [self applyBackButtonConfigsForScreens:_stackModel];
+}
+
+// The top item keeps the config of the screen that was above it. UIKit reads it only while a screen sits above, and
+// every change that puts one there rewrites it here first; clearing it on a pop would relabel the back button of the
+// leaving screen, which iOS 18 and 26 redraw live.
+- (void)applyBackButtonConfigsForScreens:(nonnull NSArray<RNSStackScreenController *> *)screens
+{
+  for (NSUInteger index = 1; index < screens.count; index++) {
+    [screens[index].headerCoordinator applyBackButtonConfigToNavigationItem:screens[index - 1].navigationItem];
+  }
 }
 #endif // !TARGET_OS_TV
 

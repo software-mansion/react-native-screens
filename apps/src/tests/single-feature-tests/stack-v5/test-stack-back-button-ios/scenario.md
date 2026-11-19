@@ -6,6 +6,8 @@
 widths of elements in header, and toggling the long-press navigation history menu.
 Back button props are configured on the screen
 that renders the back button, but the native configuration is performed on the screen below.
+The back button and the back menu follow the stack order after a replace and a push of
+several screens.
 
 **OS test creation version:** 26.4
 
@@ -43,37 +45,37 @@ Back button menu behaves similarly on both versions.
 
 1. Launch the test screen.
 2. On the Home screen, click First.
-  - A new screen is pushed with back button configuration options
-  - "First" title is displayed in the header
-  - Back button displays as "< Home"
+   - A new screen is pushed with back button configuration options
+   - "First" title is displayed in the header
+   - Back button displays as "< Home"
 3. Under Current screen, tap `backButtonTitle` once to set "Custom title"
-  - Back button displays as "< Custom title"
+   - Back button displays as "< Custom title"
 4. Tap `displayMode` once to set "generic"
-  - Back button displays as "< Back"
+   - Back button displays as "< Back"
 5. Tap `displayMode` again to set "minimal"
-  - Back button displays as "<"
+   - Back button displays as "<"
 6. Tap `displayMode` again to go back to default. Tap `title` to set "Custom title". Tap `trailingItemsCount` 3 times to show 3 items.
-  - Back button displays as "< Back"
+   - Back button displays as "< Back"
 7. Tap `trailingItemsCount` again to collapse items. Tap `backButtonTitle` 3 times to reset "Custom title". Tap `title` to set "Longer custom title".
-  - Back button displays as "< Back"
+   - Back button displays as "< Back"
 8. Tap `trailingItemsCount` 3 times to show 3 items.
-  - This time back button displays only as "<"
+   - This time back button displays only as "<"
 9. Tap `title` and `trailingItemsCount` once to reset. Tap `Push Second`.
-  - A new screen is pushed
-  - Screen title is "Second" and back button displays as "< First"
+   - A new screen is pushed
+   - Screen title is "Second" and back button displays as "< First"
 10. Under Next screen, tap `Pop` to pop the screen. Tap `title` to set "Custom title". Tap `backButtonTitle` twice to set "Longer custom title". Tap `Push Second`.
-  - A new screen is pushed
-  - Screen title is "Custom title" and back button displays as "< Back"
+    - A new screen is pushed
+    - Screen title is "Custom title" and back button displays as "< Back"
 11. Tap the back button to pop. Under Next screen, tap `backButtonTitle` until it
     shows undefined. Tap `Push Bare (no header config)`.
-  - A new screen is pushed with the header hidden
+    - A new screen is pushed with the header hidden
 12. Tap `Push Second`.
-  - A new screen is pushed on top of Bare
-  - Back button displays as "< Back" (Bare has no title), NOT a back title
-    configured for the previously popped Second screen
+    - A new screen is pushed on top of Bare
+    - Back button displays as "< Back" (Bare has no title), NOT a back title
+      configured for the previously popped Second screen
 13. Long-press the back button to open the back menu.
-  - The entry for First displays "First", NOT the back title configured for
-    the previously popped Second screen
+    - The entry for First displays "First", NOT the back title configured for
+      the previously popped Second screen
 
 ---
 
@@ -81,34 +83,34 @@ Back button menu behaves similarly on both versions.
 
 1. Launch the test screen.
 2. On the Home screen, click First.
-  - A new screen is pushed with back button configuration options
-  - "First" title is displayed in the header
-  - Back button displays as "<"
+   - A new screen is pushed with back button configuration options
+   - "First" title is displayed in the header
+   - Back button displays as "<"
 3. Under Current screen, tap `backButtonTitle` once to set "Custom title"
-  - Back button displays as "< Custom title"
+   - Back button displays as "< Custom title"
 4. Tap `displayMode` once to set "generic"
-  - Back button displays as "<"
+   - Back button displays as "<"
 5. Tap `displayMode` again to set "minimal"
-  - Back button displays again as "<"
+   - Back button displays again as "<"
 6. Tap `displayMode` again to go back to default. Tap `title` to set "Custom title". Tap `trailingItemsCount` 3 times to show 3 items.
-  - Back button displays as "<"
+   - Back button displays as "<"
 7. Tap `trailingItemsCount` again to collapse items. Tap `title` and `backButtonTitle` to set "Longer custom title" for both.
-  - Back button displays as "<"
+   - Back button displays as "<"
 8. Tap `title` and `backButtonTitle` once to reset. Tap `Push Second`.
-  - A new screen is pushed
-  - Screen title is "Second" and back button displays as "<"
+   - A new screen is pushed
+   - Screen title is "Second" and back button displays as "<"
 9. Under Next screen, tap `Pop` to pop the screen. Tap `backButtonTitle` twice to set "Custom title". Tap `Push Second`.
-  - A new screen is pushed
-  - Back button displays as "< Custom title"
+   - A new screen is pushed
+   - Back button displays as "< Custom title"
 10. Tap the back button to pop. Under Next screen, tap `backButtonTitle` until it
     shows undefined. Tap `Push Bare (no header config)`.
-  - A new screen is pushed with the header hidden
+    - A new screen is pushed with the header hidden
 11. Tap `Push Second`.
-  - A new screen is pushed on top of Bare
-  - Back button displays as "<"
+    - A new screen is pushed on top of Bare
+    - Back button displays as "<"
 12. Long-press the back button to open the back menu.
-  - The entry for First displays "First", NOT "Custom title" configured for
-    the previously popped Second screen
+    - The entry for First displays "First", NOT "Custom title" configured for
+      the previously popped Second screen
 
 ---
 
@@ -116,10 +118,41 @@ Back button menu behaves similarly on both versions.
 
 1. Launch the test screen. Push First.
 2. Tap `backTitle` to set to "Custom title". Push Second. Long-press the back button.
-  - The navigation history menu appears with two items: "Home", "Custom title".
+   - The navigation history menu appears with two items: "Home", "Custom title".
 3. Dismiss the menu. Pop back to First. Under Current screen, tap `menuEnabled` to set "false". Long-press the back button.
-  - The navigation history menu doesn't appear.
+   - The navigation history menu doesn't appear.
 4. Tap `trailingItemsCount` once to add a menu item. Long-press the item.
-  - The item menu shows, while long-pressing the back button is blocked.
+   - The item menu shows, while long-pressing the back button is blocked.
 5. Under Next screen, tap `menuEnabled` to set false. Push Second. Long-press the back button.
-  - The navigation history menu doesn't appear.
+   - The navigation history menu doesn't appear.
+
+---
+
+### Stack order (both versions)
+
+1. Launch the test screen. Tap "Push First and Second".
+
+   - [ ] Second is shown with the title "Second"
+   - [ ] iOS 18: the back button reads "< First"
+   - [ ] iOS 26: the back button is a chevron
+
+2. Long-press the back button.
+
+   - [ ] The menu lists "First" above "Home"
+
+3. Dismiss the menu, tap the back button 2 times, then tap "Push First".
+   Under Next screen tap "backButtonTitle: undefined" once, then tap
+   "Replace with Second".
+
+   - [ ] Second slides in like a push
+   - [ ] The back button reads "< Custom title" once the animation has ended
+
+4. Drag from the left edge to about a quarter of the screen width and
+   release.
+
+   - [ ] Second slides back into place
+   - [ ] The back button reads "< Custom title"
+
+5. Tap the back button.
+
+   - [ ] Home is shown

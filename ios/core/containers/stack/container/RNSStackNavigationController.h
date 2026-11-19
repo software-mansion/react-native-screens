@@ -29,4 +29,12 @@
  */
 - (void)finishRunningCustomTransition;
 
+#if !TARGET_OS_TV
+/**
+ * Writes every screen's back-button config onto the navigation item of the screen below it, from the stack model.
+ * Runs on every model change; a screen whose header config changed calls it too.
+ */
+- (void)applyBackButtonConfigs;
+#endif // !TARGET_OS_TV
+
 @end
