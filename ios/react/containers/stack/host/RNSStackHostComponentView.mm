@@ -19,12 +19,16 @@
 namespace react = facebook::react;
 
 @interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
+
+@property (nonatomic) BOOL headlessModeEnabled;
+
 @end
 
 @implementation RNSStackHostComponentView {
   RNSStackNavigationController *_Nonnull _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
+  BOOL _didSetHeadlessModeEnabled;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -50,6 +54,10 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
+  // In headless mode the host does not show the stack itself.
+  if (_headlessModeEnabled) {
+    return;
+  }
   if (self.window != nil && _stackNavigationController.parentViewController == nil) {
     BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
                                           toViewControllerManaging:self.reactSuperview
@@ -130,6 +138,24 @@ namespace react = facebook::react;
     RNSLogD(@"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed",
             stackScreen.screenKey);
   }
+}
+
+- (void)updateProps:(const facebook::react::Props::Shared &)props
+           oldProps:(const facebook::react::Props::Shared &)oldProps
+{
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(props);
+
+  if (oldComponentProps.headlessModeEnabled != newComponentProps.headlessModeEnabled) {
+    if (_didSetHeadlessModeEnabled) {
+      RNSLogW(@"[RNScreens] Changing the headless mode of Stack.Host at runtime is not supported");
+    } else {
+      _headlessModeEnabled = newComponentProps.headlessModeEnabled;
+    }
+  }
+  _didSetHeadlessModeEnabled = YES;
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

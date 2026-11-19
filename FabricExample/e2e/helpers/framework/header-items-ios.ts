@@ -100,8 +100,8 @@ export function headerTitle(title: string): NativeMatcher {
   return by.type(CLASS_NAME_UI_LABEL).and(by.text(title));
 }
 
-/** A header item's icon, by icon id (SF Symbol name or asset path). */
-export function barButtonIcon(iconId: string) {
+/** A header item's icon, by icon id (SF Symbol name or asset name), or a regex over it. */
+export function barButtonIcon(iconId: string | RegExp) {
   return element(
     by.id(iconId).withAncestor(by.type(CLASS_NAME_UI_MODERN_BAR_BUTTON)),
   );
@@ -111,7 +111,7 @@ export function barButtonIcon(iconId: string) {
  * Asserts a header item renders the icon carrying `iconId`: `toBeVisible`, or
  * on iOS 27 (see above) only `toExist`.
  */
-export async function expectBarButtonIconShown(iconId: string) {
+export async function expectBarButtonIconShown(iconId: string | RegExp) {
   if (isIOSVersionAtLeast('27.0')) {
     await expect(barButtonIcon(iconId)).toExist();
   } else {

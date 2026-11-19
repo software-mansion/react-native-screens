@@ -1,0 +1,81 @@
+# Test Scenario: iPad Layout (PageSheet vs FormSheet)
+
+## Details
+
+**Description:** Verify what distinguishes `PageSheet` from `FormSheet`: the layout UIKit picks in a regular-width environment (iPad). The host screen owns one `PageSheet` and one `FormSheet` configured identically (detents `[0.5, 1.0]`, grabber visible). On iPad the page sheet must present as a wide, bottom-anchored card, while the form sheet presents as a narrower floating panel, centered horizontally, that grows taller at the larger detent; behind both, the host screen is only dimmed and keeps its size and position. On iPhone (compact width) both sheets must be indistinguishable.
+
+**OS test creation version:** iOS: 26.1, iPadOS: 26.1.
+
+## E2E test
+
+TBD
+
+## Prerequisites
+
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes). This is the primary target of the scenario.
+- iPhone: device or simulator, for the parity check only.
+
+## Notes
+
+- The described behavior is observed on iOS 26, use this version for testing. On iOS 27, FormSheet no longer appears centered.
+
+## Steps
+
+### Baseline
+
+1. Launch the app and navigate to the **iPad Layout (PageSheet vs FormSheet)** screen.
+
+    - [ ] The host screen shows the "Open PageSheet" and "Open FormSheet" buttons.
+
+---
+
+### iPad - portrait
+
+1. Tap "Open PageSheet".
+
+    - [ ] A wide card anchored to the bottom edge presents at half the screen height; it spans (almost) the full width of the screen.
+    - [ ] The host screen is dimmed and keeps its size and position (it is not shrunk or pushed back).
+    - [ ] The grabber is visible at the top of the card. "PageSheet content" and "Dismiss PageSheet" are centered within the card.
+
+2. Drag the card up to the largest detent.
+
+    - [ ] The card expands to full height, with its top edge just below the status bar.
+
+3. Drag the card down to the smaller detent.
+
+    - [ ] The card returns to half the screen height.
+
+4. Tap "Dismiss PageSheet", then tap "Open FormSheet".
+
+    - [ ] A short floating panel presents, centered horizontally (not bottom-anchored, not full width).
+    - [ ] The host screen is dimmed and keeps its size and position.
+    - [ ] "FormSheet content" and "Dismiss FormSheet" are centered within the panel.
+
+5. Drag the panel up to the largest detent.
+
+    - [ ] The panel grows taller; its width and bottom edge stay the same.
+
+6. Tap "Dismiss FormSheet".
+
+    - [ ] The panel dismisses and the host screen is undimmed.
+
+---
+
+### iPad - landscape
+
+1. Rotate the iPad to landscape and repeat the portrait steps.
+
+    - [ ] The page sheet is a centered card roughly as wide as the iPad is in portrait, still anchored to the bottom, with the host screen dimmed behind it.
+    - [ ] The form sheet is still a centered floating panel.
+
+---
+
+### iPhone - parity
+
+1. On an iPhone in portrait, tap "Open PageSheet", drag between the detents, swipe it down to dismiss. Then do the same with "Open FormSheet".
+
+    - [ ] Both sheets present as the same full-width bottom sheet with the same detents, grabber, dimming and dismissal behaviour. There is no visible difference between the two.
+
+2. Rotate the iPhone to landscape and open each sheet.
+
+    - [ ] Both present full screen (compact height), identically.

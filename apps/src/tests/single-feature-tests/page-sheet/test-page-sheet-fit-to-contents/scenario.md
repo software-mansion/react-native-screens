@@ -1,0 +1,84 @@
+# Test Scenario: Fit To Contents
+
+## Details
+
+**Description:** Verify `detents="fitToContents"` of the `PageSheet` component. This test ensures that the PageSheet calculates its initial height to wrap its content upon opening and follows changes of the content height and grabber visibility while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
+
+**OS test creation version:** iOS: 26.1, iPadOS: 26.1, Android: API Level 36.
+
+## E2E test
+
+TBD
+
+## Prerequisites
+
+- iPhone: device or simulator.
+- iPad: device or simulator, app in full-screen mode (regular width and regular height size classes).
+- Android: phone device or emulator.
+
+## Note
+
+- **iOS:** the sheet has extra empty space at the bottom – the native bottom inset (home indicator area) is added below the content.
+- **Android:** when content is mounted/unmounted, the sheet updates its height immediately, without animation. Animating dynamic content size changes should be investigated separately.
+- **iPad:** the sheet is a wide, bottom-anchored card; `fitToContents` applies to the card height. The card is wider than a `FormSheet` panel, so the same content wraps to fewer lines and the sheet is shorter than its `FormSheet` counterpart.
+
+## Steps
+
+### Baseline
+
+1. Launch the app and navigate to the **Fit To Contents** screen.
+
+    - [ ] The host screen shows the "Open PageSheet" button.
+
+---
+
+### Presentation
+
+1. Tap "Open PageSheet".
+
+    - [ ] The sheet presents with a height matching its content ("PageSheet content" title, description text, "Expand Content", "Show Grabber" and "Dismiss from JS" buttons). No visual jumps during the presentation animation.
+    - [ ] iPhone: the empty bottom inset area is added below the content.
+    - [ ] iPad: the sheet height matches the content exactly – there is no bottom inset area below it.
+    - [ ] Android: the sheet surface extends behind the navigation bar while the content sits above it.
+
+---
+
+### Dynamic height
+
+1. Tap "Expand Content" inside the sheet.
+
+    - [ ] The extra text box appears and the sheet grows to fully accommodate it – the whole extra text box is visible. The button now reads "Collapse Content".
+    - [ ] iOS: the height change is animated smoothly, with no visual glitches.
+    - [ ] Android: the sheet snaps to the new height immediately (no animation).
+
+2. Tap "Collapse Content".
+
+    - [ ] The extra text box disappears and the sheet shrinks back to its original height.
+    - [ ] iOS: the shrink is animated.
+    - [ ] Android: the sheet snaps back immediately (no animation).
+
+---
+
+### Grabber
+
+1. Tap "Show Grabber".
+
+    - [ ] The grabber appears at the top of the sheet and the button now reads "Hide Grabber".
+    - [ ] The whole content is visible – "Dismiss from JS" is not clipped at the bottom.
+    - [ ] Android: the sheet grows by the grabber height and "Dismiss from JS" sits fully above the navigation bar.
+
+2. Tap "Expand Content".
+
+    - [ ] The sheet grows to fit the extra text box; the grabber, the whole extra text box and "Dismiss from JS" are visible.
+
+3. Tap "Collapse Content", then tap "Hide Grabber".
+
+    - [ ] The grabber disappears and the sheet returns to the height from step 1 of **Presentation**. The button reads "Show Grabber".
+
+---
+
+### Dismissal
+
+1. Tap "Dismiss from JS" (or swipe the sheet down).
+
+    - [ ] The sheet dismisses and the host screen is undimmed; "Open PageSheet" is pressable again.
