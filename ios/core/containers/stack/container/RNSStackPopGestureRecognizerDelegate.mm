@@ -1,14 +1,15 @@
 #import "RNSStackPopGestureRecognizerDelegate.h"
+#import "RNSStackNavigationController.h"
 
 #if !TARGET_OS_TV
 
 static BOOL RNSPanWaitsForEdgeSwipe(UIGestureRecognizer *otherGestureRecognizer, UIView *containerView);
 
 @implementation RNSStackPopGestureRecognizerDelegate {
-  __weak UINavigationController *_navigationController;
+  __weak RNSStackNavigationController *_navigationController;
 }
 
-- (instancetype)initWithNavigationController:(UINavigationController *)navigationController
+- (instancetype)initWithNavigationController:(RNSStackNavigationController *)navigationController
 {
   if (self = [super init]) {
     _navigationController = navigationController;
@@ -23,7 +24,16 @@ static BOOL RNSPanWaitsForEdgeSwipe(UIGestureRecognizer *otherGestureRecognizer,
   // the recognizer would pop.
   // Unlike UIKit's own delegate, allows a swipe while the navigation bar is hidden, which it is on
   // every screen without a header.
-  return _navigationController.viewControllers.count > 1;
+  RNSStackNavigationController *navigationController = _navigationController;
+  BOOL shouldBegin = navigationController.viewControllers.count > 1;
+  // Below 26, UIKit decides when the recognizer begins whether the swipe's pop follows the finger, so the
+  // finish in `popViewControllerAnimated:` comes too late (undocumented, 18.6). From 26 it decides inside that
+  // call (27.2, 26.5 in bare UIKit), and a finish here could end our transition for a swipe that never pops.
+  if (@available(iOS 26.0, *)) {
+  } else if (shouldBegin) {
+    [navigationController finishRunningCustomTransition];
+  }
+  return shouldBegin;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer

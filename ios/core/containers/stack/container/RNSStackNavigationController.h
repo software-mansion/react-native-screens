@@ -23,4 +23,10 @@
 
 - (void)enqueuePopOperation:(nonnull RNSStackScreenController *)screenController;
 
+/**
+ * Jumps the transition animation the stack plays itself to its end before this returns, so the next navigation call
+ * applies at once. Does nothing while UIKit plays the transition or none runs.
+ */
+- (void)finishRunningCustomTransition;
+
 @end
