@@ -337,7 +337,7 @@ export interface TabsScreenPropsIOS {
    * Supports the same values as {@link TabsScreenPropsIOS.icon | icon}
    * property.
    *
-   * @warning
+   * @info
    * It must use the same icon `type` as `icon`; `renderingMode` may differ.
    *
    * To use `selectedIcon`, `icon` must also be provided.
@@ -396,8 +396,9 @@ export interface TabsScreenPropsIOS {
    * differs between OS versions: iOS 26.x detaches `UISearchTab`
    * unconditionally, iOS 27.0 only while `automaticallyActivatesSearch` is
    * enabled. On iOS 27+ the detached (prominent) placement can be given to any
-   * tab instead through {@link Tabs.Host}
-   * {@link TabsHostPropsIOS.prominentScreenKey | ios.prominentScreenKey}.
+   * tab instead through
+   * {@link TabsHostPropsIOS.prominentScreenKey | ios.prominentScreenKey} on
+   * {@link Tabs.Host}.
    *
    * @tip
    * This prop does not affect the tab bar item's icon or title - combine it
