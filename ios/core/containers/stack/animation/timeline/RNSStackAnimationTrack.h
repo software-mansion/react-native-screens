@@ -1,7 +1,6 @@
 #pragma once
 
-#import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "RNSStackAnimationAxis.h"
 #import "RNSStackAnimationViewProperty.h"
 
@@ -44,6 +43,22 @@ NS_ASSUME_NONNULL_BEGIN
                                 from:(CGFloat)from
                                   to:(CGFloat)to
                               timing:(RNSStackAnimationTiming *)timing;
+
+@end
+
+/**
+ * A scrim of `color` over the screen, its alpha interpolated from `from` to `to`.
+ */
+@interface RNSStackAnimationDimTrack : RNSStackAnimationTrack
+
+@property (nonatomic, readonly) UIColor *color;
+@property (nonatomic, readonly) CGFloat from;
+@property (nonatomic, readonly) CGFloat to;
+
+- (instancetype)initWithColor:(UIColor *)color
+                         from:(CGFloat)from
+                           to:(CGFloat)to
+                       timing:(RNSStackAnimationTiming *)timing;
 
 @end
 

@@ -45,3 +45,20 @@
 }
 
 @end
+
+@implementation RNSStackAnimationDimTrack
+
+- (instancetype)initWithColor:(UIColor *)color
+                         from:(CGFloat)from
+                           to:(CGFloat)to
+                       timing:(RNSStackAnimationTiming *)timing
+{
+  if (self = [super initWithTiming:timing]) {
+    _color = color;
+    _from = from;
+    _to = to;
+  }
+  return self;
+}
+
+@end

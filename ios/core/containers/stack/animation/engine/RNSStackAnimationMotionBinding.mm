@@ -18,18 +18,24 @@ static const double kRNSStackKeyframeStepMs = 8;
   RNSStackAnimationMotionTimeline *_motion;
   UIView *_view;
   CGSize _containerSize;
+  BOOL _isRightToLeft;
   BOOL _animatesTransform;
   BOOL _animatesAlpha;
+  // A sibling drawn directly above the screen and moved with it, so that it never becomes one of the screen view's
+  // subviews, which belong to its content.
+  UIView *_Nullable _scrim;
 }
 
 - (instancetype)initWithMotion:(RNSStackAnimationMotionTimeline *)motion
                           view:(UIView *)view
                  containerSize:(CGSize)containerSize
+               layoutDirection:(UIUserInterfaceLayoutDirection)layoutDirection
 {
   if (self = [super init]) {
     _motion = motion;
     _view = view;
     _containerSize = containerSize;
+    _isRightToLeft = layoutDirection == UIUserInterfaceLayoutDirectionRightToLeft;
     for (RNSStackAnimationTrack *track in motion.tracks) {
       if ([track isKindOfClass:RNSStackAnimationTranslateTrack.class]) {
         _animatesTransform = YES;
@@ -39,6 +45,16 @@ static const double kRNSStackKeyframeStepMs = 8;
             _animatesAlpha = YES;
             break;
         }
+      } else if ([track isKindOfClass:RNSStackAnimationDimTrack.class]) {
+        RNSAssert(_scrim == nil, @"[RNScreens] A motion can dim its screen with one track only.");
+        auto dim = static_cast<RNSStackAnimationDimTrack *>(track);
+        _scrim = [UIView new];
+        _scrim.bounds = view.bounds;
+        _scrim.center = view.center;
+        _scrim.backgroundColor = dim.color;
+        _scrim.alpha = dim.from;
+        _scrim.userInteractionEnabled = NO;
+        [view.superview insertSubview:_scrim aboveSubview:view];
       }
     }
   }
@@ -91,6 +107,7 @@ static const double kRNSStackKeyframeStepMs = 8;
   CGFloat translationX = 0;
   CGFloat translationY = 0;
   CGFloat alpha = 1;
+  CGFloat scrimAlpha = 0;
   for (RNSStackAnimationTrack *track in _motion.tracks) {
     CGFloat progress = [track.timing progressAtMs:timeMs];
     if ([track isKindOfClass:RNSStackAnimationTranslateTrack.class]) {
@@ -98,10 +115,10 @@ static const double kRNSStackKeyframeStepMs = 8;
       CGFloat from = [self pointsForLength:translate.from axis:translate.axis];
       CGFloat to = [self pointsForLength:translate.to axis:translate.axis];
       CGFloat value = from + (to - from) * progress;
-      if (translate.axis == RNSStackAnimationAxisX) {
-        translationX += value;
-      } else {
+      if (translate.axis == RNSStackAnimationAxisY) {
         translationY += value;
+      } else {
+        translationX += value;
       }
     } else if ([track isKindOfClass:RNSStackAnimationPropertyTrack.class]) {
       auto propertyTrack = static_cast<RNSStackAnimationPropertyTrack *>(track);
@@ -111,14 +128,20 @@ static const double kRNSStackKeyframeStepMs = 8;
           alpha = value;
           break;
       }
+    } else if ([track isKindOfClass:RNSStackAnimationDimTrack.class]) {
+      auto dim = static_cast<RNSStackAnimationDimTrack *>(track);
+      scrimAlpha = dim.from + (dim.to - dim.from) * progress;
     }
   }
   if (_animatesTransform) {
-    _view.transform = CGAffineTransformMakeTranslation(translationX, translationY);
+    CGAffineTransform translation = CGAffineTransformMakeTranslation(translationX, translationY);
+    _view.transform = translation;
+    _scrim.transform = translation;
   }
   if (_animatesAlpha) {
     _view.alpha = alpha;
   }
+  _scrim.alpha = scrimAlpha;
 }
 
 - (void)restore
@@ -129,14 +152,15 @@ static const double kRNSStackKeyframeStepMs = 8;
   if (_animatesAlpha) {
     _view.alpha = 1;
   }
+  [_scrim removeFromSuperview];
 }
 
 - (CGFloat)pointsForLength:(RNSStackAnimationLength *)length axis:(RNSStackAnimationAxis)axis
 {
-  if (length.unit == RNSStackAnimationLengthUnitPoints) {
-    return length.value;
-  }
-  return length.value * (axis == RNSStackAnimationAxisX ? _containerSize.width : _containerSize.height);
+  CGFloat points = length.unit == RNSStackAnimationLengthUnitPoints
+      ? length.value
+      : length.value * (axis == RNSStackAnimationAxisY ? _containerSize.height : _containerSize.width);
+  return axis == RNSStackAnimationAxisLogicalX && _isRightToLeft ? -points : points;
 }
 
 @end

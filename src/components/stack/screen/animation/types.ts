@@ -539,9 +539,11 @@ export interface StackScreenAnimationCustom {
  *
  * @remarks
  * The following values are supported:
- * - `'default'` — the platform's transition: a cross-zoom below Android 13
- *   and, from Android 13 on, the horizontal slide of Android 13, which follows
- *   the layout direction. Takes no options.
+ * - `'default'` — the platform's transition. On iOS UIKit's own push and pop
+ *   of the navigation controller, which follow the layout direction. On
+ *   Android a cross-zoom below Android 13 and, from Android 13 on, the
+ *   horizontal slide of Android 13, which follows the layout direction. Takes
+ *   no options.
  * - `'none'` — no visible transition. Takes no options.
  * - `'fade'` — the screens cross-fade.
  * - `'slideFromRight'` — the new screen slides in from the right and pushes
@@ -570,11 +572,11 @@ export interface StackScreenAnimationCustom {
  * A preset's pop transition is the push transition of the preset whose vector
  * points the other way, so `'slideFromRight'` pops to the right.
  *
- * The `*Trailing` / `*Leading` presets and, from Android 13 on, `'default'`
- * follow the container's layout direction; the `*Right` / `*Left` presets do
- * not, so in a right-to-left container on Android 13+ `'default'` and
- * `'iosFromRight'` move opposite ways. Below Android 13 `'default'` is the
- * cross-zoom, which has no horizontal direction.
+ * The `*Trailing` / `*Leading` presets and `'default'` (on Android from
+ * Android 13 on) follow the container's layout direction; the `*Right` /
+ * `*Left` presets do not, so in a right-to-left container on iOS and on
+ * Android 13+ `'default'` and `'iosFromRight'` move opposite ways. Below
+ * Android 13 `'default'` is the cross-zoom, which has no horizontal direction.
  */
 export type StackScreenAnimationPresetName =
   | StackScreenAnimationTransitionPresetName

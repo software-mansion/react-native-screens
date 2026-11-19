@@ -13,7 +13,7 @@ which the "START"/"END" row reports.
 Changing `animation` at runtime is covered by
 `test-stack-animation-update`; the other presets by
 `test-stack-animation-slide`, `test-stack-animation-fade`,
-`test-stack-animation-ios-android` and `test-stack-animation-none`.
+`test-stack-animation-ios-from` and `test-stack-animation-none`.
 
 **OS test creation version:** Android API Level 37 and API Level 30.
 

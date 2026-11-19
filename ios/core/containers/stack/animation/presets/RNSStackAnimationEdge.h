@@ -7,4 +7,6 @@ typedef NS_ENUM(NSInteger, RNSStackAnimationEdge) {
   RNSStackAnimationEdgeRight,
   RNSStackAnimationEdgeTop,
   RNSStackAnimationEdgeBottom,
+  RNSStackAnimationEdgeLeading,
+  RNSStackAnimationEdgeTrailing,
 };
