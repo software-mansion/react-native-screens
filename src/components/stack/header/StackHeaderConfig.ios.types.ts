@@ -7,6 +7,14 @@ import type {
 import type { StackHeaderMenuIOS } from './ios/StackHeaderMenu.ios.types';
 
 /**
+ * Icon of a header item or a menu element of a Stack header on iOS.
+ *
+ * @remarks
+ * Accepts any {@link PlatformIconIOS} value.
+ */
+export type StackPlatformIconIOS = PlatformIconIOS;
+
+/**
  * Options for updating a menu action (leaf item) at runtime.
  *
  * @remarks
@@ -24,7 +32,7 @@ export interface StackHeaderMenuItemOptionsIOS {
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: StackPlatformIconIOS | undefined;
   /**
    * Sets the toggle state of the menu item.
    *
@@ -56,7 +64,7 @@ export interface StackHeaderMenuOptionsIOS {
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: StackPlatformIconIOS | undefined;
 }
 
 /**
@@ -86,7 +94,7 @@ export interface StackHeaderItemBaseIOS {
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: StackPlatformIconIOS | undefined;
 }
 
 /**
