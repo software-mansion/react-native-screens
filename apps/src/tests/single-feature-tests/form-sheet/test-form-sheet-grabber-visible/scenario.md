@@ -12,7 +12,7 @@
 | Device        | Test on            | Setup                                                                    |
 | ------------- | ------------------ | ------------------------------------------------------------------------ |
 | iPhone        | iOS 18.6, iOS 26.5 | -                                                                        |
-| iPad          | iPadOS 26.5        | App in full-screen mode (regular width and regular height size classes). |
+| iPad          | iOS 26.5           | App in full-screen mode (regular width and regular height size classes). |
 | Android phone | API Level 36       | -                                                                        |
 
 **E2E coverage details:** Covers grabber visibility in all steps and the lower detent on presentation, on iPhone and Android phone. Not automated: Android content position relative to the drag handle; on iOS, the grabber hiding in "Toggling from inside the sheet" step 2 (UIKit keeps \_UIGrabber in the hierarchy at alpha 0, which Detox still reports visible).

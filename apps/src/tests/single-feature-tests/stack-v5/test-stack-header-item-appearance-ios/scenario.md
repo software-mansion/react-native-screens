@@ -9,10 +9,10 @@
 | E2E coverage | TBD                                     |
 | Smoke test   | No                                      |
 
-| Device | Test on     |
-| ------ | ----------- |
-| iPhone | iOS 26.5    |
-| iPad   | iPadOS 26.5 |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.5 |
+| iPad   | iOS 26.5 |
 
 <!-- scenario-metadata:end -->
 

@@ -9,10 +9,10 @@
 | E2E coverage | TBD                               |
 | Smoke test   | No                                |
 
-| Device | Test on     | Setup                                                                                                    |
-| ------ | ----------- | -------------------------------------------------------------------------------------------------------- |
-| iPad   | iPadOS 26.1 | App in full-screen mode (regular width and regular height size classes). Primary target of the scenario. |
-| iPhone | iOS 26.1    | Parity check only.                                                                                       |
+| Device | Test on  | Setup                                                                                                    |
+| ------ | -------- | -------------------------------------------------------------------------------------------------------- |
+| iPad   | iOS 26.1 | App in full-screen mode (regular width and regular height size classes). Primary target of the scenario. |
+| iPhone | iOS 26.1 | Parity check only.                                                                                       |
 
 <!-- scenario-metadata:end -->
 

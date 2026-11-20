@@ -9,10 +9,10 @@
 | E2E coverage | Incomplete                         |
 | Smoke test   | No                                 |
 
-| Device | Test on     | Setup                                                                             |
-| ------ | ----------- | --------------------------------------------------------------------------------- |
-| iPad   | iPadOS 26.5 | Regular horizontal size class; a compact window for Adaptation and accessibility. |
-| iPhone | iOS 26.5    | Compact width (iPhone or a compact window).                                       |
+| Device | Test on  | Setup                                                                             |
+| ------ | -------- | --------------------------------------------------------------------------------- |
+| iPad   | iOS 26.5 | Regular horizontal size class; a compact window for Adaptation and accessibility. |
+| iPhone | iOS 26.5 | Compact width (iPhone or a compact window).                                       |
 
 **E2E coverage details:** No Detox test exists for this scenario yet.
 

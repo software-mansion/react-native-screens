@@ -12,7 +12,7 @@
 | Device        | Test on            | Setup                                                                    |
 | ------------- | ------------------ | ------------------------------------------------------------------------ |
 | iPhone        | iOS 18.6, iOS 26.5 | -                                                                        |
-| iPad          | iPadOS 26.5        | App in full-screen mode (regular width and regular height size classes). |
+| iPad          | iOS 26.5           | App in full-screen mode (regular width and regular height size classes). |
 | Android phone | API Level 36       | -                                                                        |
 
 **E2E coverage details:** Covers steps 1-6 on iPhone, Android phone and iPadOS 26+ (`@ipad` suite). On iPad detents are checked relatively, by the panel's height change instead of exact detent values. Not automated: content centering and anchoring, for Android: dimming and system back in step 7.

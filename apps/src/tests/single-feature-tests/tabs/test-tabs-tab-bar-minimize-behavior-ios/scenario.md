@@ -9,10 +9,10 @@
 | E2E coverage | Incomplete                                |
 | Smoke test   | No                                        |
 
-| Device | Test on     |
-| ------ | ----------- |
-| iPhone | iOS 26.2    |
-| iPad   | iPadOS 26.2 |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.2 |
+| iPad   | iOS 26.2 |
 
 **E2E coverage details:** Not automated. Standard view-hierarchy testing is insufficient because the tab bar element persists in the hierarchy after being collapsed.
 

@@ -12,8 +12,8 @@ export const scenarioDescription: ScenarioDescription = {
   devices: ['ipad', 'iphone-duo'],
   osVersions: {
     ipad: {
-      createdOn: ['iPadOS 27.0'],
-      testOn: ['iPadOS 27.0'],
+      createdOn: ['iOS 27.0'],
+      testOn: ['iOS 27.0'],
     },
     'iphone-duo': {
       createdOn: ['iOS 27.1'],

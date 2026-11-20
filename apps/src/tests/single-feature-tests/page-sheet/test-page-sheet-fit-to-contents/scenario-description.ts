@@ -9,7 +9,7 @@ export const scenarioDescription: ScenarioDescription = {
   devices: ['iphone', 'ipad', 'android-phone'],
   osVersions: {
     iphone: { createdOn: ['iOS 26.1'], testOn: ['iOS 26.1'] },
-    ipad: { createdOn: ['iPadOS 26.1'], testOn: ['iPadOS 26.1'] },
+    ipad: { createdOn: ['iOS 26.1'], testOn: ['iOS 26.1'] },
     'android-phone': { createdOn: ['API Level 36'], testOn: ['API Level 36'] },
   },
   deviceSetup: {

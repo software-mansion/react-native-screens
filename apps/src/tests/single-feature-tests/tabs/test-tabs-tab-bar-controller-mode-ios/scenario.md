@@ -9,10 +9,10 @@
 | E2E coverage | Incomplete                              |
 | Smoke test   | No                                      |
 
-| Device | Test on                  |
-| ------ | ------------------------ |
-| iPhone | iOS 18.6, iOS 26.2       |
-| iPad   | iPadOS 18.6, iPadOS 26.2 |
+| Device | Test on            |
+| ------ | ------------------ |
+| iPhone | iOS 18.6, iOS 26.2 |
+| iPad   | iOS 18.6, iOS 26.2 |
 
 **E2E coverage details:** iPhone steps are fully automated, iPad partially: steps 1, 2, 4 and 7 of iPad. On iPad the E2E test verifies the initial automatic default state, tabBar mode keeping the floating tab bar visible without a sidebar toggle, and tabSidebar mode toggling the sidebar open/closed (via the "Toggle sidebar" button). Not automated: steps 3, 5 and 8 of iPad (Split View window resizing), step 6 of iPad (landscape orientation), step 9 of iPad (mode-cycling crash check) and step 10 of iPad (tab switching).
 

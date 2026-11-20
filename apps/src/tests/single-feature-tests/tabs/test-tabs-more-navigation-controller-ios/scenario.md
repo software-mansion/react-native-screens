@@ -9,10 +9,10 @@
 | E2E coverage | TBD                                        |
 | Smoke test   | No                                         |
 
-| Device | Test on                  |
-| ------ | ------------------------ |
-| iPhone | iOS 18.6, iOS 26.2       |
-| iPad   | iPadOS 18.6, iPadOS 26.2 |
+| Device | Test on            |
+| ------ | ------------------ |
+| iPhone | iOS 18.6, iOS 26.2 |
+| iPad   | iOS 18.6, iOS 26.2 |
 
 **E2E coverage details:** Ongoing research.
 

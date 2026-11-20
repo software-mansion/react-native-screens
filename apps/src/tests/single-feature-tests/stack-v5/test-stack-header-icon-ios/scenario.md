@@ -9,10 +9,10 @@
 | E2E coverage | Incomplete                   |
 | Smoke test   | No                           |
 
-| Device | Test on     |
-| ------ | ----------- |
-| iPhone | iOS 26.4    |
-| iPad   | iPadOS 26.4 |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.4 |
+| iPad   | iOS 26.4 |
 
 **E2E coverage details:** All steps are automated, but on iOS 27 icon visibility is not checked.
 

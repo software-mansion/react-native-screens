@@ -12,8 +12,8 @@ export const scenarioDescription: ScenarioDescription = {
       testOn: ['iOS 18.6', 'iOS 26.4'],
     },
     ipad: {
-      createdOn: ['iPadOS 18.6', 'iPadOS 26.4'],
-      testOn: ['iPadOS 18.6', 'iPadOS 26.4'],
+      createdOn: ['iOS 18.6', 'iOS 26.4'],
+      testOn: ['iOS 18.6', 'iOS 26.4'],
     },
   },
   e2eCoverage: 'tbd',

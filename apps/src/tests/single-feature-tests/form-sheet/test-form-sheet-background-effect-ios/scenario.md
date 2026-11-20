@@ -9,10 +9,10 @@
 | E2E coverage | TBD                                     |
 | Smoke test   | No                                      |
 
-| Device | Test on                  | Setup                                                                    |
-| ------ | ------------------------ | ------------------------------------------------------------------------ |
-| iPhone | iOS 26.5, iOS 27.0       | -                                                                        |
-| iPad   | iPadOS 26.5, iPadOS 27.0 | App in full-screen mode (regular width and regular height size classes). |
+| Device | Test on            | Setup                                                                    |
+| ------ | ------------------ | ------------------------------------------------------------------------ |
+| iPhone | iOS 26.5, iOS 27.0 | -                                                                        |
+| iPad   | iOS 26.5, iOS 27.0 | App in full-screen mode (regular width and regular height size classes). |
 
 <!-- scenario-metadata:end -->
 

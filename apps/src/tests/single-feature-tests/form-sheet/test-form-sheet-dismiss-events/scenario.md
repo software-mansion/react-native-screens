@@ -12,7 +12,7 @@
 | Device        | Test on            | Setup                                                                    |
 | ------------- | ------------------ | ------------------------------------------------------------------------ |
 | iPhone        | iOS 18.6, iOS 26.5 | -                                                                        |
-| iPad          | iPadOS 26.5        | App in full-screen mode (regular width and regular height size classes). |
+| iPad          | iOS 26.5           | App in full-screen mode (regular width and regular height size classes). |
 | Android phone | API Level 36       | -                                                                        |
 
 **E2E coverage details:** Covers all manual scenario steps on iPhone, iPad and Android phone. The system back step runs on Android only.

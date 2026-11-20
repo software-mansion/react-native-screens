@@ -12,7 +12,7 @@
 | Device | Test on            | Setup                                                                    |
 | ------ | ------------------ | ------------------------------------------------------------------------ |
 | iPhone | iOS 18.6, iOS 26.5 | -                                                                        |
-| iPad   | iPadOS 26.5        | App in full-screen mode (regular width and regular height size classes). |
+| iPad   | iOS 26.5           | App in full-screen mode (regular width and regular height size classes). |
 
 **E2E coverage details:** Planned, but will be implemented separately.
 

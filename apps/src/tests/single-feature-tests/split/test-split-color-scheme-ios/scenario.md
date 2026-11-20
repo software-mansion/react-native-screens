@@ -9,10 +9,10 @@
 | E2E coverage | TBD                       |
 | Smoke test   | No                        |
 
-| Device | Test on                  |
-| ------ | ------------------------ |
-| iPhone | iOS 18.6, iOS 26.3       |
-| iPad   | iPadOS 18.6, iPadOS 26.3 |
+| Device | Test on            |
+| ------ | ------------------ |
+| iPhone | iOS 18.6, iOS 26.3 |
+| iPad   | iOS 18.6, iOS 26.3 |
 
 **E2E coverage details:** Detox does not have access to native color attributes of experimental components, making it impossible to verify if the native split view color has changed in response to a style update.
 

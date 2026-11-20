@@ -12,8 +12,8 @@ export const scenarioDescription: ScenarioDescription = {
       testOn: ['iOS 18.6', 'iOS 26.2'],
     },
     ipad: {
-      createdOn: ['iPadOS 18.6', 'iPadOS 26.2'],
-      testOn: ['iPadOS 18.6', 'iPadOS 26.2'],
+      createdOn: ['iOS 18.6', 'iOS 26.2'],
+      testOn: ['iOS 18.6', 'iOS 26.2'],
     },
     'android-phone': { createdOn: ['API Level 36'], testOn: ['API Level 36'] },
   },

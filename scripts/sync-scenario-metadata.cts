@@ -79,6 +79,12 @@ const DEVICE_PLATFORMS: Record<ScenarioDevice, 'ios' | 'android'> = {
 
 const PLATFORM_LABELS = { ios: 'iOS', android: 'Android' } as const;
 
+// One OS version format per platform, also for iPad and iPhone Duo (no 'iPadOS').
+const OS_VERSION_FORMATS = {
+  ios: { pattern: /^iOS \d+(\.\d+)*$/, format: "'iOS <version>'" },
+  android: { pattern: /^API Level \d+$/, format: "'API Level <number>'" },
+} as const;
+
 const E2E_COVERAGE_LABELS = {
   full: 'Full',
   incomplete: 'Incomplete',
@@ -168,6 +174,20 @@ function validate(description: ScenarioDescription): string[] {
     for (const device of Object.keys(record ?? {})) {
       if (!devices.includes(device as ScenarioDevice)) {
         errors.push(`\`${field}\` has '${device}' which is not in \`devices\``);
+      }
+    }
+  }
+  for (const [device, versions] of Object.entries(osVersions ?? {})) {
+    const platform = DEVICE_PLATFORMS[device as ScenarioDevice];
+    if (!platform || !versions) {
+      continue;
+    }
+    const { pattern, format } = OS_VERSION_FORMATS[platform];
+    for (const version of [...versions.createdOn, ...versions.testOn]) {
+      if (!pattern.test(version)) {
+        errors.push(
+          `\`osVersions.${device}\` has '${version}', use the format ${format}`,
+        );
       }
     }
   }

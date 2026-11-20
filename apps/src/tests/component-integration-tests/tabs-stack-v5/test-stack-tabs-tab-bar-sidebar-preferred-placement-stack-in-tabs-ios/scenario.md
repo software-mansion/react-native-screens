@@ -9,10 +9,10 @@
 | E2E coverage | TBD                                                                     |
 | Smoke test   | No                                                                      |
 
-| Device | Test on     | Setup                                                                     |
-| ------ | ----------- | ------------------------------------------------------------------------- |
-| iPhone | iOS 27.0    | Plus or Max model, so that landscape has a regular horizontal size class. |
-| iPad   | iPadOS 27.0 | -                                                                         |
+| Device | Test on  | Setup                                                                     |
+| ------ | -------- | ------------------------------------------------------------------------- |
+| iPhone | iOS 27.0 | Plus or Max model, so that landscape has a regular horizontal size class. |
+| iPad   | iOS 27.0 | -                                                                         |
 
 **E2E coverage details:** Requires a regular horizontal size class on iPhone (landscape on Plus/Max models), which is not currently automated.
 

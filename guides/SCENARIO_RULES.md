@@ -95,6 +95,11 @@ back and forth.
 - `createdOn` - OS versions the scenario was written on and confirmed to work.
   It stays in `scenario-description.ts` only and is not shown in `scenario.md`.
 
+Write versions as `iOS <version>` for every iOS device, including iPad and
+iPhone Duo (`'iOS 26.5'`, not `'iPadOS 26.5'`), and as `API Level <number>`
+for Android devices (`'API Level 36'`). `yarn sync-scenario-metadata --check`
+fails on any other format.
+
 The generated table has one row per device in `devices` and no other devices,
 with columns Device, Test on (and Setup when any device has
 `deviceSetup`).

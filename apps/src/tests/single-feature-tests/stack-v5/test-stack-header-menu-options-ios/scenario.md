@@ -9,10 +9,10 @@
 | E2E coverage | Incomplete                           |
 | Smoke test   | No                                   |
 
-| Device | Test on     |
-| ------ | ----------- |
-| iPhone | iOS 26.4    |
-| iPad   | iPadOS 26.4 |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.4 |
+| iPad   | iOS 26.4 |
 
 **E2E coverage details:** Every step of both sections is automated: menu contents at each toggle combination, collapsed-vs-inlined submenus via the presence of the disclosure chevron, and the palette's vertical list vs. horizontal icon row. Not covered: the menu separators; the exact top-to-bottom ordering of inlined items; on iOS 27, whether the Options and Palette header items are visible (they are only checked to exist, and are tapped by coordinates to open their menus).
 

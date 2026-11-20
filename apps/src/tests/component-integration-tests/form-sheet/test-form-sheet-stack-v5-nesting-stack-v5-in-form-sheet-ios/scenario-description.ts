@@ -13,8 +13,8 @@ export const scenarioDescription: ScenarioDescription = {
       testOn: ['iOS 18.6', 'iOS 26.5'],
     },
     ipad: {
-      createdOn: ['iPadOS 26.5'],
-      testOn: ['iPadOS 26.5'],
+      createdOn: ['iOS 26.5'],
+      testOn: ['iOS 26.5'],
     },
   },
   deviceSetup: {

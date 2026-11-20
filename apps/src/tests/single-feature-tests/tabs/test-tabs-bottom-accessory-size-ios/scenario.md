@@ -9,10 +9,10 @@
 | E2E coverage | TBD                                   |
 | Smoke test   | No                                    |
 
-| Device     | Test on     | Setup                                               |
-| ---------- | ----------- | --------------------------------------------------- |
-| iPad       | iPadOS 27.0 | App in full screen, portrait orientation at launch. |
-| iPhone Duo | iOS 27.1    | Closed and in portrait orientation at launch.       |
+| Device     | Test on  | Setup                                               |
+| ---------- | -------- | --------------------------------------------------- |
+| iPad       | iOS 27.0 | App in full screen, portrait orientation at launch. |
+| iPhone Duo | iOS 27.1 | Closed and in portrait orientation at launch.       |
 
 <!-- scenario-metadata:end -->
 

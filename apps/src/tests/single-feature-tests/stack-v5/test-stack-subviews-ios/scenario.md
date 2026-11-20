@@ -12,7 +12,7 @@
 | Device | Test on            |
 | ------ | ------------------ |
 | iPhone | iOS 18.6, iOS 26.4 |
-| iPad   | iPadOS 26.4        |
+| iPad   | iOS 26.4           |
 
 **E2E coverage details:** Not automated. Every step is verified visually against the Dev Tools element-inspector overlay, which Detox cannot access, so the checks stay manual.
 

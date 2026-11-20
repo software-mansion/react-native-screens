@@ -9,10 +9,10 @@
 | E2E coverage | Incomplete                   |
 | Smoke test   | Yes                          |
 
-| Device | Test on     |
-| ------ | ----------- |
-| iPhone | iOS 26.4    |
-| iPad   | iPadOS 26.4 |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.4 |
+| iPad   | iOS 26.4 |
 
 **E2E coverage details:** Covers all manual scenario steps except the Menu representation section. On iOS 27 the header item "Menu 1" is only checked to exist, not to be visible.
 

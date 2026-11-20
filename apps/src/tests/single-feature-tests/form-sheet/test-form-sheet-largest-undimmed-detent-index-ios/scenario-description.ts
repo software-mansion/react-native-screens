@@ -12,7 +12,7 @@ export const scenarioDescription: ScenarioDescription = {
       createdOn: ['iOS 18.6', 'iOS 26.5'],
       testOn: ['iOS 18.6', 'iOS 26.5'],
     },
-    ipad: { createdOn: ['iPadOS 26.5'], testOn: ['iPadOS 26.5'] },
+    ipad: { createdOn: ['iOS 26.5'], testOn: ['iOS 26.5'] },
   },
   deviceSetup: {
     ipad: 'App in full-screen mode (regular width and regular height size classes).',
