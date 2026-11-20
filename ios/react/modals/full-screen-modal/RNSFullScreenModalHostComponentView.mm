@@ -166,6 +166,17 @@ namespace react = facebook::react;
         rnscreens::conversion::RNSFullScreenModalPresentationStyleFromHostProp(newComponentProps.presentationStyle);
   }
 
+  if (oldComponentProps.transition != newComponentProps.transition) {
+    _controller.transition =
+        rnscreens::conversion::RNSFullScreenModalTransitionFromHostProp(newComponentProps.transition);
+  }
+
+  if (oldComponentProps.orientation != newComponentProps.orientation) {
+    _controller.orientation =
+        rnscreens::conversion::RNSOrientationFromFullScreenModalHostOrientation(newComponentProps.orientation);
+    [_controller setNeedsOrientationUpdate];
+  }
+
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
     [_controller setNeedsPresentationUpdate];
