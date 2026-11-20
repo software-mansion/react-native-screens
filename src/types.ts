@@ -1,5 +1,6 @@
 export type {
   BlurEffect,
+  BlurEffectStyle,
   ColorScheme,
   Direction,
   InterfaceOrientation,

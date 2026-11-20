@@ -1,13 +1,11 @@
 import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
 
 /**
- * Blur effect applied to the background of a native view.
+ * Style of a UIKit blur effect.
  *
  * @remarks
- * `'none'` disables the blur effect. Every other value is the UIKit
- * `UIBlurEffect.Style` of the same name; see the UIKit documentation for how
- * each one looks. The following values are supported:
- * - `'none'`
+ * Every value is the UIKit `UIBlurEffect.Style` of the same name; see the UIKit
+ * documentation for how each one looks. The following values are supported:
  * - `'extraLight'`
  * - `'light'`
  * - `'dark'`
@@ -31,8 +29,7 @@ import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */
-export type BlurEffect =
-  | 'none'
+export type BlurEffectStyle =
   | 'extraLight'
   | 'light'
   | 'dark'
@@ -53,6 +50,19 @@ export type BlurEffect =
   | 'systemMaterialDark'
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
+
+/**
+ * Blur effect applied to the background of a native view.
+ *
+ * @remarks
+ * `'none'` disables the blur effect. Every other value is a
+ * {@link BlurEffectStyle}. The following values are supported:
+ * - `'none'`
+ * - any {@link BlurEffectStyle} value.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
+ */
+export type BlurEffect = 'none' | BlurEffectStyle;
 
 /**
  * Color scheme of a container and its child containers.
