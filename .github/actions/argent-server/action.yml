@@ -7,7 +7,7 @@ inputs:
   argent-version:
     description: Version of @swmansion/argent to install.
     required: false
-    default: '0.26.0'
+    default: '0.34.0'
   port:
     description: Port to serve the tool-server on.
     required: false
