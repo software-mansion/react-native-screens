@@ -55,10 +55,8 @@ export type BlurEffectStyle =
  * Blur effect applied to the background of a native view.
  *
  * @remarks
- * `'none'` disables the blur effect. Every other value is a
- * {@link BlurEffectStyle}. The following values are supported:
- * - `'none'`
- * - any {@link BlurEffectStyle} value.
+ * Accepts any {@link BlurEffectStyle} value, plus:
+ * - `'none'` — disables the blur effect.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */
