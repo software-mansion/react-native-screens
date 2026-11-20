@@ -60,7 +60,57 @@
       }
     }
   }
+
+  // `event` is nil when UIKit's gesture recognizers (in `-[UIGestureRecognizer _shouldBegin]`) or React Native's
+  // pointer handler (on touch moves and hovers) hit-test the overlay. Those calls must not toggle the recognizer
+  // below, which may be in the middle of recognizing; `nil.type` would also read as `UIEventTypeTouches`.
+  if (hitSubview != nil && event != nil && event.type == UIEventTypeTouches) {
+    [self excludePlatformGlassFlexFromTouch];
+  }
   return hitSubview;
+}
+
+#pragma mark - Liquid Glass press
+
+// https://github.com/software-mansion/react-native-screens/issues/5209
+//
+// Observed on iOS 27.0 (not on iOS 26.5): UIKit plays the Liquid Glass press of bar button items from a pan gesture
+// recognizer attached to the UIWindow (named `com.apple.UIKit._UIFlexInteraction.Pan`, with a
+// `UIPlatformGlassFlexInteraction` delegate). A touch is handed to the recognizers of its hit-test view and of all of
+// that view's ancestors, so a touch on the overlay, whose container is a subview of the window, reaches that
+// recognizer too. The recognizer then presses the glass item lying under the finger, e.g. a bar button covered by the
+// overlay, although the touch belongs to the overlay.
+//
+// When a touch hits the overlay, we disable that recognizer and re-enable it from the main queue. In our observations
+// UIKit collects the recognizers of a touch in the same event dispatch that hit-tests it, and the main queue block
+// can't run before that dispatch returns, so the recognizer doesn't take part in the touch. Disabling it also cancels
+// a press it is tracking for another finger at that moment, which we accept.
+//
+// Glass inside the overlay, e.g. a glass `UIButton`, is pressed by another window recognizer (with a
+// `_UIFlexInteraction` delegate), which we leave alone.
+//
+// The name and delegate filter is what limits this to the affected runtimes: on iOS 26.5, tvOS and visionOS no window
+// recognizer matches, and the loop does nothing. If UIKit renames either of them, the fix silently stops working.
+- (void)excludePlatformGlassFlexFromTouch
+{
+  if (@available(iOS 26.0, *)) {
+    NSMutableArray<UIGestureRecognizer *> *disabledRecognizers = [NSMutableArray new];
+    for (UIGestureRecognizer *recognizer in self.window.gestureRecognizers) {
+      if (recognizer.enabled && [recognizer.name hasPrefix:@"com.apple.UIKit._UIFlexInteraction"] &&
+          [NSStringFromClass([recognizer.delegate class]) containsString:@"UIPlatformGlassFlexInteraction"]) {
+        recognizer.enabled = NO;
+        [disabledRecognizers addObject:recognizer];
+      }
+    }
+
+    if (disabledRecognizers.count > 0) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+        for (UIGestureRecognizer *recognizer in disabledRecognizers) {
+          recognizer.enabled = YES;
+        }
+      });
+    }
+  }
 }
 
 @end
