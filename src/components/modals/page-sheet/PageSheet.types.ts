@@ -56,7 +56,7 @@ export type PageSheetLargestUndimmedDetentIndex =
 export type PageSheetInitialDetentIndex = SheetInitialDetentIndex;
 
 /**
- * Blur style of a {@link PageSheetBackgroundEffectBlur}.
+ * Blur style of the material rendered behind the page sheet's content.
  *
  * @remarks
  * Accepts any {@link SheetBackgroundEffectBlurStyle} value.

@@ -56,7 +56,7 @@ export type FormSheetLargestUndimmedDetentIndex =
 export type FormSheetInitialDetentIndex = SheetInitialDetentIndex;
 
 /**
- * Blur style of a {@link FormSheetBackgroundEffectBlur}.
+ * Blur style of the material rendered behind the form sheet's content.
  *
  * @remarks
  * Accepts any {@link SheetBackgroundEffectBlurStyle} value.
