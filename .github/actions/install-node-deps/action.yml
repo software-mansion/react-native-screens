@@ -1,0 +1,37 @@
+name: Install node dependencies
+description: >-
+  Sets up Node.js (version from .nvmrc) and installs the root and example app
+  node dependencies, including the react-navigation submodule.
+
+inputs:
+  working-directory:
+    description: Example app directory to install node dependencies in.
+    required: false
+    default: FabricExample
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js (version from .nvmrc)
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'yarn'
+
+    - name: Install root node dependencies
+      shell: bash
+      run: yarn install && yarn submodules:react-navigation
+
+    # A failed install is retried once.
+    - name: Install node dependencies
+      id: install_deps
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      continue-on-error: true
+      run: yarn install
+
+    - if: steps.install_deps.outcome == 'failure'
+      name: Reinstall node dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: yarn

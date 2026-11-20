@@ -1,0 +1,67 @@
+name: Start Argent tool-server
+description: >-
+  Installs the Argent CLI and starts a tool-server for later steps and
+  ARGENT_SERVER_LOG for the caller to collect on failure.
+
+inputs:
+  argent-version:
+    description: Version of @swmansion/argent to install.
+    required: false
+    default: '0.34.0'
+  port:
+    description: Port to serve the tool-server on.
+    required: false
+    default: '3001'
+  simulator-server-log:
+    description: >-
+      SIMSERVER_LOG level for the simulator-server backend the tool-server
+      spawns, e.g. `debug`. Left unset when empty.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # The CLI goes to its own npm prefix, so it can be cached apart from the
+    # runner's Node install. The key carries the Node version: the CLI ships
+    # native addons built against it.
+    - name: Prepare Argent install dir
+      id: argent-prefix
+      shell: bash
+      run: |
+        echo "dir=$HOME/.argent-cli" >> "$GITHUB_OUTPUT"
+        echo "node=$(node --version)" >> "$GITHUB_OUTPUT"
+        echo "$HOME/.argent-cli/bin" >> "$GITHUB_PATH"
+
+    - name: Argent cache
+      id: argent-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.argent-prefix.outputs.dir }}
+        key: argent-${{ inputs.argent-version }}-${{ runner.os }}-${{ runner.arch }}-node-${{ steps.argent-prefix.outputs.node }}
+
+    # Install the pinned CLI first: `npx @swmansion/argent@<v> init` only pins
+    # the installer, which then installs the latest release globally.
+    - name: Install Argent
+      if: steps.argent-cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        ARGENT_VERSION: ${{ inputs.argent-version }}
+        ARGENT_PREFIX: ${{ steps.argent-prefix.outputs.dir }}
+      run: npm install --global --prefix "$ARGENT_PREFIX" "@swmansion/argent@$ARGENT_VERSION"
+
+    - name: Initialize Argent
+      shell: bash
+      run: |
+        argent init --yes
+        argent --version
+
+    # The script exports ARGENT_SERVER_LOG and waits until the server serves.
+    - name: Start tool-server
+      shell: bash
+      env:
+        TOOL_SERVER_PORT: ${{ inputs.port }}
+        SIMULATOR_SERVER_LOG: ${{ inputs.simulator-server-log }}
+      run: |
+        "$GITHUB_WORKSPACE/scripts/e2e/start-argent-server.sh" \
+          "$TOOL_SERVER_PORT" "$SIMULATOR_SERVER_LOG"
