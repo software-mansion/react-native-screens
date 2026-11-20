@@ -20,6 +20,14 @@ class ScreenStackHeaderSubview(
 
     var type = Type.LEFT
 
+    init {
+        // Leave clipping to `overflow`, as React Native's views do. With `clipChildren` on, a
+        // header item is drawn only within its own bounds, and React Native passes it no touch
+        // outside this view's bounds, so content reaching past the item, such as a badge or a
+        // `hitSlop`, is cut off and cannot be pressed.
+        clipChildren = false
+    }
+
     /**
      * Whether this subview is currently hidden because the header's search bar action view is
      * expanded (see `SearchBarView.setToolbarElementsVisibility`). The search bar hides its
