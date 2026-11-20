@@ -7,9 +7,6 @@ export type {
   FormSheetInitialDetentIndex,
   FormSheetNativeContainerStyleProps,
   FormSheetBackgroundEffect,
-  FormSheetBackgroundEffectBlur,
-  FormSheetBackgroundEffectBlurStyle,
-  FormSheetBackgroundEffectColor,
 } from './FormSheet.types';
 
 export { FormSheet } from './FormSheet';
