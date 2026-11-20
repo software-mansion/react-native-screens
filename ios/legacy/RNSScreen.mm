@@ -641,6 +641,15 @@ RNS_IGNORE_SUPER_CALL_END
     if ([parent isKindOfClass:[RNS_EXPECTED_VIEW class]] || [parent isKindOfClass:[RNSScreenView class]]) {
       return YES;
     }
+    // React Native's `Modal` installs its surface touch handler on a plain `UIView`, not an
+    // `RCTRootComponentView`. A screen inside it must reuse that handler: attaching a second one
+    // delivers every touch twice, and the duplicate cancels presses on the screens of a native
+    // stack inside the modal.
+    for (UIGestureRecognizer *recognizer in parent.gestureRecognizers) {
+      if ([recognizer isKindOfClass:[RCTSurfaceTouchHandler class]]) {
+        return YES;
+      }
+    }
   }
   return NO;
 #undef RNS_EXPECTED_VIEW
