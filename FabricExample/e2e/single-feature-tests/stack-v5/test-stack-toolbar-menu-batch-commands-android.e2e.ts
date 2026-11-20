@@ -2,7 +2,7 @@ import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
-  rewindAndScrollUntilVisible,
+  scrollIntoViewIfNeeded,
   scrollToAndReadText,
   scrollToAndTap,
 } from '@e2e/framework/gestures';
@@ -45,7 +45,7 @@ const expectAppleInToolbarWithIcon = () =>
 const expectAppleInToolbarWithoutIcon = () => expectTextActionItem(APPLE);
 
 async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SCROLL_STEP);
+  await scrollIntoViewIfNeeded(id, SCROLLVIEW_ID, SCROLL_STEP);
 }
 
 async function tapById(id: string) {

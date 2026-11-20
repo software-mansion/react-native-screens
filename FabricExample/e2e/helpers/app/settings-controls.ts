@@ -1,7 +1,7 @@
 import { expect as jestExpect } from '@jest/globals';
 import { device, expect, element, by, waitFor } from 'detox';
 import {
-  rewindAndScrollUntilVisible,
+  scrollIntoViewIfNeeded,
   scrollToAndTap,
   tapTopmost,
   type ScrollTargetOptions,
@@ -96,7 +96,7 @@ export async function toggleSettingsSwitch(
 ) {
   if (control) {
     const { scrollViewId, ...scroll } = control;
-    await rewindAndScrollUntilVisible(switchId, scrollViewId, scroll);
+    await scrollIntoViewIfNeeded(switchId, scrollViewId, scroll);
   }
   await element(by.id(switchId)).tap();
 
