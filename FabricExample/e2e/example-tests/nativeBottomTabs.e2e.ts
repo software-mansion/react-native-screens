@@ -1,11 +1,7 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 
 describe('Native tabs', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('should select TestBottomTabs', async () => {
     await selectIssueTestScreen('TestBottomTabs');
   });

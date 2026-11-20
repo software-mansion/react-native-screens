@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { expectStillOnRoute, waitForTopmostRoute } from '@e2e/app/stack-route';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { dismissNextToast, expectNoToast } from '@e2e/app/toast';
@@ -96,7 +96,6 @@ describeIfAndroid(
     }
 
     beforeAll(async () => {
-      await device.reloadReactNative();
       await selectSingleFeatureTestsScreen(
         'Stackv5',
         'test-stack-prevent-native-dismiss-nested-stack',

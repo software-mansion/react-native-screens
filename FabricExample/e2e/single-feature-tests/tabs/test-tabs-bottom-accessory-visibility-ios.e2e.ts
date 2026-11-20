@@ -1,4 +1,4 @@
-import { device, expect, element, by, waitFor } from 'detox';
+import { expect, element, by, waitFor } from 'detox';
 import { toggleSettingsSwitch } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_RNS_TABS_BOTTOM_ACCESSORY } from '@e2e/framework/native-classes-ios';
@@ -72,7 +72,6 @@ async function expectBottomAccessoryAbsent() {
 
 describeIfIOSAtLeast('26.0')('Tabs: bottomAccessoryHidden (iOS 26+)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-bottom-accessory-visibility-ios',

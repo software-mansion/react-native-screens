@@ -8,7 +8,6 @@ import { describeIfIPad } from '@e2e/framework/platform';
 
 describe('Tab Bar Hidden', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen('Tabs', 'test-tabs-tab-bar-hidden');
   });
 

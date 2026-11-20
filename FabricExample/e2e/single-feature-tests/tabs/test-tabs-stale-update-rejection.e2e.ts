@@ -18,7 +18,6 @@ import { dismissNextToast } from '@e2e/app/toast';
 
 describe('@smoke Stale update rejection - rejectStaleNavStateUpdates:true', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-stale-update-rejection',

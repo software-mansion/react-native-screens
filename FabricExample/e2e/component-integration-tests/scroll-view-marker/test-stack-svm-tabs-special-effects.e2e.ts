@@ -7,7 +7,6 @@ import { forceSelectTabByLabel } from '@e2e/framework/tab-bar';
 
 describe('SVM in Stack & Tabs - tabs special effects — scrollToTop: no nesting', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectComponentIntegrationTestsScreen(
       'ScrollViewMarkerIntegrationTests',
       'test-stack-svm-tabs-special-effects',
