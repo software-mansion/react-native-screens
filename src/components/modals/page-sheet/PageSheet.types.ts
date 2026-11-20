@@ -2,9 +2,6 @@ import type { StyleProp, ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type {
   SheetBackgroundEffect,
-  SheetBackgroundEffectBlur,
-  SheetBackgroundEffectBlurStyle,
-  SheetBackgroundEffectColor,
   SheetDetentChangedEvent,
   SheetDetents,
   SheetInitialDetentIndex,
@@ -54,30 +51,6 @@ export type PageSheetLargestUndimmedDetentIndex =
  * Accepts any {@link SheetInitialDetentIndex} value.
  */
 export type PageSheetInitialDetentIndex = SheetInitialDetentIndex;
-
-/**
- * Blur style of the material rendered behind the page sheet's content.
- *
- * @remarks
- * Accepts any {@link SheetBackgroundEffectBlurStyle} value.
- */
-export type PageSheetBackgroundEffectBlurStyle = SheetBackgroundEffectBlurStyle;
-
-/**
- * Flat fill rendered behind the page sheet's content.
- *
- * @remarks
- * See {@link SheetBackgroundEffectColor} for its fields.
- */
-export type PageSheetBackgroundEffectColor = SheetBackgroundEffectColor;
-
-/**
- * Blur material rendered behind the page sheet's content.
- *
- * @remarks
- * See {@link SheetBackgroundEffectBlur} for its fields.
- */
-export type PageSheetBackgroundEffectBlur = SheetBackgroundEffectBlur;
 
 /**
  * Material the system renders behind the page sheet's content.
