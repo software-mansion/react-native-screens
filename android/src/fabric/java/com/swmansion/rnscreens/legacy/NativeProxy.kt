@@ -3,11 +3,17 @@ package com.swmansion.rnscreens.legacy
 import android.util.Log
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.facebook.react.bridge.UIManager
+import com.facebook.react.bridge.UIManagerListener
+import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.fabric.FabricUIManager
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
-class NativeProxy {
+@OptIn(UnstableReactNativeAPI::class)
+class NativeProxy : UIManagerListener {
     @DoNotStrip
     @Suppress("unused")
     private val mHybridData: HybridData
@@ -29,6 +35,12 @@ class NativeProxy {
         // and written to on the UI thread.
         private val viewsMap = ConcurrentHashMap<Int, WeakReference<Screen>>()
 
+        // Added by the thread that pulled the transaction removing the screen, drained on the UI
+        // thread before that transaction mounts. Shared by all proxies, because the native removal
+        // listener notifies only the most recently installed one. Never cleared: invalidating one
+        // React instance must not drop another instance's screens.
+        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<WeakReference<Screen>>()
+
         fun addScreenToMap(
             tag: Int,
             view: Screen,
@@ -45,8 +57,8 @@ class NativeProxy {
         }
     }
 
-    // Called from native. Currently this method is called from MountingCoordinator thread,
-    // which usually is not UI thread.
+    // Called from native, on the thread that pulls the mounting transaction: the JS thread in
+    // the push model, the UI thread in the pull model or when rendering synchronously.
     @DoNotStrip
     public fun notifyScreenRemoved(screenTag: Int) {
         // Since RN 0.78 the screenTag we receive as argument here might not belong to a screen
@@ -63,20 +75,31 @@ class NativeProxy {
 
         val screen = weakScreeRef.get()
         if (screen is Screen) {
-            // Fabric's mounting transaction removes the screen on a Choreographer frame callback,
-            // which can execute before `startRemovalTransition` (scheduled via `Handler.post`).
-            // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
-            // we must set this flag synchronously here.
-            screen.markAsBeingRemoved()
-            val isScheduled =
-                screen.post {
-                    screen.startRemovalTransition()
-                }
-            if (!isScheduled) {
-                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
+            // The transaction removes the screen's children before the screen, so the transition
+            // must start before the transaction mounts. A transaction pulled on the UI thread can't
+            // mount before the pull returns.
+            if (UiThreadUtil.isOnUiThread()) {
+                screen.startRemovalTransition()
+            } else {
+                screensPendingRemovalTransition.add(weakScreeRef)
             }
         } else {
             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
         }
     }
+
+    // Fabric calls it on the UI thread before each dispatch of queued mount items, after it has taken
+    // those items.
+    override fun willMountItems(uiManager: UIManager) {
+        generateSequence { screensPendingRemovalTransition.poll() }
+            .forEach { it.get()?.startRemovalTransition() }
+    }
+
+    override fun didMountItems(uiManager: UIManager) = Unit
+
+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
+
+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
+
+    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
 }
