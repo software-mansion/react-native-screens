@@ -29,16 +29,6 @@
   NSInteger _fixedColumnsCount;
 
   /**
-   * Tracks currently visible columns of the UISplitViewController.
-   *
-   * This set is kept in sync via `UISplitViewControllerDelegate` methods (`willShow` / `willHide`)
-   * to reflect which columns are currently rendered in the UI.
-   * It ensures that only visible columns are considered (e.g. for accessing topViewController),
-   * avoiding crashes when certain columns are collapsed or hidden.
-   */
-  NSMutableSet<NSNumber *> *_visibleColumns;
-
-  /**
    * Observe the frames of the views of the navigation controllers installed for the columns.
    *
    * UISplitViewController moves the columns on its own, on display mode change or column resize. The columns are
@@ -54,7 +44,6 @@
     _splitAppearanceApplicator = [RNSSplitAppearanceApplicator new];
     _fixedColumnsCount = numberOfColumns;
     _needsChildViewControllersUpdate = NO;
-    _visibleColumns = [NSMutableSet set];
 
     self.delegate = self;
   }
@@ -318,40 +307,20 @@
 }
 
 /**
- * @brief Gets the RNSSplitScreenController instances of the visible columns that do NOT host a stack.
+ * @brief Notifies the columns that the Split repositioned its columns.
  *
- * In a column that hosts a stack the navigation controller holds the screens of the stack, and the
- * RNSSplitScreenController of the column is not in the view controller hierarchy. Such a column is left out.
- *
- * @return An array of RNSSplitScreenController corresponding to the visible columns that do not host a stack.
+ * Every column is notified, and a column that is not on screen ignores it. UIKit does not tell the delegate about
+ * every column it shows or hides (e.g. not when `showColumn:` is called), so the Split does not track which columns
+ * are visible.
  */
-- (NSArray<RNSSplitScreenController *> *)visibleSplitScreenControllersWithoutStack
+- (void)notifyColumnsAboutPositioningChange
 {
-  NSMutableArray<RNSSplitScreenController *> *splitScreenControllers =
-      [NSMutableArray arrayWithCapacity:_visibleColumns.count];
-
-  for (NSNumber *columnNumber in _visibleColumns) {
-    UISplitViewControllerColumn column = (UISplitViewControllerColumn)columnNumber.integerValue;
-    UIViewController *viewController = [self viewControllerForColumn:column];
-    RNSAssert(viewController != nil, @"[RNScreens] viewController for column %ld is nil.", (long)column);
-
-    RNSStackNavigationController *navigationController =
-        [viewController isKindOfClass:RNSStackNavigationController.class]
-        ? (RNSStackNavigationController *)viewController
-        : nil;
-    RNSAssert(navigationController != nil,
-              @"[RNScreens] Expected RNSStackNavigationController but got %@",
-              NSStringFromClass(viewController.class));
-
-    UIViewController *topViewController = navigationController.topViewController;
-    if (![topViewController isKindOfClass:RNSSplitScreenController.class]) {
-      continue;
-    }
-
-    [splitScreenControllers addObject:(RNSSplitScreenController *)topViewController];
+  for (RNSSplitScreenController *controller in [self.columnsProvider columnControllers]) {
+    [controller columnPositioningDidChange];
   }
-
-  return splitScreenControllers;
+  for (RNSSplitScreenController *controller in [self.columnsProvider inspectorControllers]) {
+    [controller columnPositioningDidChange];
+  }
 }
 
 #pragma mark - RNSViewFrameChangeDelegate
@@ -365,9 +334,7 @@
  */
 - (void)viewFrameDidChange:(nonnull UIView *)view
 {
-  for (RNSSplitScreenController *controller in self.visibleSplitScreenControllersWithoutStack) {
-    [controller columnPositioningDidChangeInSplitViewController:self];
-  }
+  [self notifyColumnsAboutPositioningChange];
 }
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -425,16 +392,6 @@
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
 #pragma mark - UISplitViewControllerDelegate
-
-- (void)splitViewController:(UISplitViewController *)svc willShowColumn:(UISplitViewControllerColumn)column
-{
-  [_visibleColumns addObject:@(column)];
-}
-
-- (void)splitViewController:(UISplitViewController *)svc willHideColumn:(UISplitViewControllerColumn)column
-{
-  [_visibleColumns removeObject:@(column)];
-}
 
 - (void)splitViewControllerDidCollapse:(UISplitViewController *)svc
 {
@@ -500,9 +457,7 @@
       return;
     }
 
-    for (RNSSplitScreenController *controller in [strongSelf visibleSplitScreenControllersWithoutStack]) {
-      [controller columnPositioningDidChangeInSplitViewController:strongSelf];
-    }
+    [strongSelf notifyColumnsAboutPositioningChange];
   };
 
   id<UIViewControllerTransitionCoordinator> coordinator = svc.transitionCoordinator;

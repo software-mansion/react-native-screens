@@ -76,12 +76,11 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Layout
 
 /**
- * @brief Reports the column frame change after the Split repositioned its columns.
+ * @brief Called by the Split after it repositioned its columns.
  *
- * @param splitViewController The UISplitViewController whose layout positioning changed, represented by
- * RNSSplitHostController.
+ * Reports the column frame. A column that hosts a stack or is not on screen has no frame to report.
  */
-- (void)columnPositioningDidChangeInSplitViewController:(UISplitViewController *)splitViewController;
+- (void)columnPositioningDidChange;
 
 @end
 
