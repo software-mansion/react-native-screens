@@ -510,8 +510,7 @@ export interface SplitHostProps extends ViewProps {
    * (e.g. rotating an iPad to portrait), this prop determines which column
    * becomes the top (visible) column.
    *
-   * When not set, the system default behavior is used.
-   *
+   * @defaultValue The system default behavior is used.
    * @platform ios
    */
   topColumnForCollapsing?: SplitNavigableColumn | undefined;

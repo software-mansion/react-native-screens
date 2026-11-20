@@ -122,15 +122,16 @@ export interface PageSheetProps {
    * Defines the resting positions of the sheet.
    *
    * @remarks
-   * If the prop is not set or the array is empty, the sheet has a single
-   * large detent. On Android, at most three detents are supported.
-   * `'fitToContents'` is supported on iOS 16+.
+   * An empty array also gives the sheet a single large detent. On Android, at
+   * most three detents are supported. `'fitToContents'` is supported on
+   * iOS 16+.
    *
    * @note
    * This is an implementation detail and may change. On iOS 15,
    * `'fitToContents'` falls back to a large detent, and only the system's
    * medium and large detents are used.
    *
+   * @defaultValue The sheet has a single large detent.
    * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/detents | UISheetPresentationController.detents}
    * @platform android, ios
    */
