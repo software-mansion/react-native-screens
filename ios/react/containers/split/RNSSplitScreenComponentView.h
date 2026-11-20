@@ -6,7 +6,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RNSSplitHostComponentView;
-@class RNSSplitScreenController;
+@class RNSSplitColumnCoordinator;
 @class RNSStackNavigationController;
 
 /**
@@ -18,14 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface RNSSplitScreenComponentView : RNSReactBaseView
 
-@property (nonatomic, strong, readonly, nonnull) RNSSplitScreenController *controller;
+@property (nonatomic, strong, readonly, nonnull) RNSSplitColumnCoordinator *columnCoordinator;
 @property (nonatomic, weak, readwrite, nullable) RNSSplitHostComponentView *splitHost;
 
 /**
  * @brief The navigation controller the Split installs for the column.
  *
  * A column whose only child is a Stack.Host in headless mode provides the navigation controller of that host. Any
- * other column provides the one its controller creates.
+ * other column provides the one its coordinator creates.
  */
 @property (nonatomic, readonly) RNSStackNavigationController *columnNavigationController;
 

@@ -9,10 +9,10 @@
 #import "RNSConversions-SplitView.h"
 #import "RNSDefines.h"
 #import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
+#import "RNSSplitColumnCoordinator.h"
 #import "RNSSplitHostComponentEventEmitter.h"
 #import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
-#import "RNSSplitScreenController.h"
 
 namespace react = facebook::react;
 
@@ -421,14 +421,14 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RNSSplitHostColumnsProvider
 
-- (NSArray<RNSSplitScreenController *> *)columnControllers
+- (NSArray<RNSSplitColumnCoordinator *> *)columnCoordinators
 {
-  return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeColumn];
+  return [self coordinatorsOfColumnsWithType:RNSSplitScreenColumnTypeColumn];
 }
 
-- (NSArray<RNSSplitScreenController *> *)inspectorControllers
+- (NSArray<RNSSplitColumnCoordinator *> *)inspectorCoordinators
 {
-  return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
+  return [self coordinatorsOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
 }
 
 - (NSArray<RNSStackNavigationController *> *)columnNavigationControllers
@@ -442,15 +442,15 @@ RNS_IGNORE_SUPER_CALL_END
   return navigationControllers;
 }
 
-- (NSArray<RNSSplitScreenController *> *)controllersOfColumnsWithType:(RNSSplitScreenColumnType)columnType
+- (NSArray<RNSSplitColumnCoordinator *> *)coordinatorsOfColumnsWithType:(RNSSplitScreenColumnType)columnType
 {
-  NSMutableArray<RNSSplitScreenController *> *controllers = [NSMutableArray array];
+  NSMutableArray<RNSSplitColumnCoordinator *> *coordinators = [NSMutableArray array];
   for (RNSSplitScreenComponentView *column in _reactSubviews) {
     if (column.columnType == columnType) {
-      [controllers addObject:column.controller];
+      [coordinators addObject:column.columnCoordinator];
     }
   }
-  return controllers;
+  return coordinators;
 }
 
 #pragma mark - RNSSplitHostControllerEventsDelegate
