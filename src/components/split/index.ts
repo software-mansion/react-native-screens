@@ -17,7 +17,6 @@ export type {
 } from './SplitHost.types';
 
 export type {
-  SplitScreenColumnType,
   SplitColumnProps,
   SplitInspectorProps,
 } from './SplitScreen.types';
