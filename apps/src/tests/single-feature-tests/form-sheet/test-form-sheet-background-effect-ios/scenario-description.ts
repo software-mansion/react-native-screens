@@ -18,7 +18,6 @@ export const scenarioDescription: ScenarioDescription = {
     },
   },
   deviceSetup: {
-    iphone: 'iOS 26.1 or later.',
     ipad: 'App in full-screen mode (regular width and regular height size classes).',
   },
   e2eCoverage: 'tbd',
