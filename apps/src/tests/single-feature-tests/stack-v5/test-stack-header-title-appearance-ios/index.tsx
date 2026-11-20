@@ -40,12 +40,14 @@ const SIZE_OPTIONS = options('default', '12', '30');
 const FAMILY_OPTIONS = options('default', 'Courier New', 'Times New Roman');
 const WEIGHT_OPTIONS = options('default', '400', '700', 'bold', '900');
 const STYLE_OPTIONS = options('default', 'normal', 'italic');
+const LETTER_SPACING_OPTIONS = options('default', '0', '-0.9', '2');
 
 type ColorOption = (typeof COLOR_OPTIONS)[number];
 type SizeOption = (typeof SIZE_OPTIONS)[number];
 type FamilyOption = (typeof FAMILY_OPTIONS)[number];
 type WeightOption = (typeof WEIGHT_OPTIONS)[number];
 type StyleOption = (typeof STYLE_OPTIONS)[number];
+type LetterSpacingOption = (typeof LETTER_SPACING_OPTIONS)[number];
 
 interface SlotAppearance {
   color: ColorOption;
@@ -53,6 +55,7 @@ interface SlotAppearance {
   fontFamily: FamilyOption;
   fontWeight: WeightOption;
   fontStyle: StyleOption;
+  letterSpacing: LetterSpacingOption;
 }
 
 // Subtitle appearance covers both regular and large subtitle — UIKit
@@ -83,6 +86,7 @@ const DEFAULT_SLOT: SlotAppearance = {
   fontFamily: 'default',
   fontWeight: 'default',
   fontStyle: 'default',
+  letterSpacing: 'default',
 };
 
 function makeDefaultSlots(): Record<SlotKey, SlotAppearance> {
@@ -143,6 +147,10 @@ function resolveStyle(value: StyleOption): TextStyle['fontStyle'] {
   return value === 'default' ? undefined : value;
 }
 
+function resolveLetterSpacing(value: LetterSpacingOption): number | undefined {
+  return value === 'default' ? undefined : Number(value);
+}
+
 function resolveSlot(slot: SlotAppearance) {
   return {
     color: resolveColor(slot.color),
@@ -150,6 +158,7 @@ function resolveSlot(slot: SlotAppearance) {
     fontFamily: resolveFamily(slot.fontFamily),
     fontWeight: resolveWeight(slot.fontWeight),
     fontStyle: resolveStyle(slot.fontStyle),
+    letterSpacing: resolveLetterSpacing(slot.letterSpacing),
   };
 }
 
@@ -170,18 +179,21 @@ function buildAppearance(
     titleFontFamily: title.fontFamily,
     titleFontWeight: title.fontWeight,
     titleFontStyle: title.fontStyle,
+    titleLetterSpacing: title.letterSpacing,
 
     largeTitleFontColor: largeTitle.color,
     largeTitleFontSize: largeTitle.fontSize,
     largeTitleFontFamily: largeTitle.fontFamily,
     largeTitleFontWeight: largeTitle.fontWeight,
     largeTitleFontStyle: largeTitle.fontStyle,
+    largeTitleLetterSpacing: largeTitle.letterSpacing,
 
     subtitleFontColor: subtitle.color,
     subtitleFontSize: subtitle.fontSize,
     subtitleFontFamily: subtitle.fontFamily,
     subtitleFontWeight: subtitle.fontWeight,
     subtitleFontStyle: subtitle.fontStyle,
+    subtitleLetterSpacing: subtitle.letterSpacing,
   };
 }
 
@@ -240,6 +252,12 @@ function AppearanceControls({
         value={value.fontStyle}
         onValueChange={v => onChange({ ...value, fontStyle: v })}
         items={STYLE_OPTIONS}
+      />
+      <SettingsPicker<LetterSpacingOption>
+        label={`${label} letterSpacing`}
+        value={value.letterSpacing}
+        onValueChange={v => onChange({ ...value, letterSpacing: v })}
+        items={LETTER_SPACING_OPTIONS}
       />
     </>
   );
