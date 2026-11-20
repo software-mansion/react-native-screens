@@ -249,6 +249,9 @@
         },
         "RNSContainedModalProvider": {
           "className": "RNSContainedModalProviderComponentView"
+        },
+        "RNSFullScreenModalHost": {
+          "className": "RNSFullScreenModalHostComponentView"
         }
       }
     }

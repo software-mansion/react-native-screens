@@ -20,5 +20,6 @@ export * from './components/scroll-view-marker';
 export * from './components/modals/form-sheet';
 export * from './components/modals/page-sheet';
 export * from './components/modals/contained-modal';
+export * from './components/modals/full-screen-modal';
 
 export type * from './types';
