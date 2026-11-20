@@ -9,9 +9,9 @@
 | E2E coverage | Incomplete                               |
 | Smoke test   | No                                       |
 
-| Device | Test on |
-| ------ | ------- |
-| iPhone | iOS 26  |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.0 |
 
 <!-- scenario-metadata:end -->
 

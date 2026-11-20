@@ -9,8 +9,8 @@ export const scenarioDescription: ScenarioDescription = {
   platforms: ['ios'],
   devices: ['iphone', 'ipad'],
   osVersions: {
-    iphone: { createdOn: ['iOS 27'], testOn: ['iOS 27'] },
-    ipad: { createdOn: ['iOS 26'], testOn: ['iOS 26'] },
+    iphone: { createdOn: ['iOS 27.0'], testOn: ['iOS 27.0'] },
+    ipad: { createdOn: ['iOS 26.0'], testOn: ['iOS 26.0'] },
   },
   e2eCoverage: 'tbd',
   smokeTest: false,

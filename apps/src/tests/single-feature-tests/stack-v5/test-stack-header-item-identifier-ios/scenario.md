@@ -9,11 +9,11 @@
 | E2E coverage | Incomplete                              |
 | Smoke test   | No                                      |
 
-| Device | Test on |
-| ------ | ------- |
-| iPhone | iOS 26  |
+| Device | Test on  |
+| ------ | -------- |
+| iPhone | iOS 26.0 |
 
-**E2E coverage details:** Covers the end state after each push, not the transitions. Automated: steps 1–3 of Steps - iPhone (sfSymbols): which item shows at which trailing position (asserted via horizontal frame order), and that each expected symbol is visible (on iOS 26) or exists (on iOS 27) with no other symbol present; on iOS 26 only, steps 1–2 of Steps with separators: the same symbol and position checks, plus that each item sits in its own platter view (`_UINavigationBarPlatterView`). Not automated (any iOS version): transition quality (steps 2–4 of Steps - iPhone, step 2 of Steps with separators), i.e. flashing / blur / crossfade, because Detox samples settled state, not animation frames; step 4 of Steps - iPhone (custom views), because automating it would only check that the custom views render, not the real identifier-matching functionality; step 5 of Steps - iPhone (identifiers off), because the end state is identical and only the transition differs. On iOS 27, steps 1–2 of Steps with separators are skipped.
+**E2E coverage details:** Covers the end state after each push, not the transitions. Automated: steps 1–3 of Identifiers (sfSymbols): which item shows at which trailing position (asserted via horizontal frame order), and that each expected symbol is visible (on iOS 26) or exists (on iOS 27) with no other symbol present; on iOS 26 only, steps 1–2 of Separators: the same symbol and position checks, plus that each item sits in its own platter view (`_UINavigationBarPlatterView`). Not automated (any iOS version): transition quality (steps 2–4 of Identifiers, step 2 of Separators), i.e. flashing / blur / crossfade, because Detox samples settled state, not animation frames; step 4 of Identifiers (custom views), because automating it would only check that the custom views render, not the real identifier-matching functionality; step 5 of Identifiers (identifiers off), because the end state is identical and only the transition differs. On iOS 27, steps 1–2 of Separators are skipped.
 
 <!-- scenario-metadata:end -->
 
@@ -30,7 +30,9 @@ stay put, only changing their appearance.
 
 - LTR layout is assumed when describing position
 
-## Steps - iPhone
+## Steps
+
+### Identifiers
 
 1. Inspect the trailing header items
    - [ ] Three items are visible: "1", "fish", "carrot"
@@ -40,13 +42,15 @@ stay put, only changing their appearance.
 3. Tap "Next"
    - [ ] The numbered item swaps position with right item and now shows "3"
    - [ ] The two food items change their symbols and don't flash
-4. Go back to screen One, toggle "Custom views" to `true`, repeat steps 2–3
+4. Go back to screen One, toggle "Custom views" to `true`, repeat Identifiers steps 2–3
    - [ ] Observe the same behavior as for sfSymbols
-5. Go back to screen One, toggle "Custom views" to `false`, "Identifiers" to `false`, repeat steps 2–3
+5. Go back to screen One, toggle "Custom views" to `false`, "Identifiers" to `false`, repeat Identifiers steps 2–3
    - [ ] Without `identifier`, matching falls back to the heuristic: items crossfade /
          mis-match on transition instead of the numbered item cleanly moving
 
-## Steps with separators
+---
+
+### Separators
 
 1. Go back to screen One, toggle "Identifiers" and "Separators" to `true`
    - [ ] Each header item now sits in its own liquid-glass bubble

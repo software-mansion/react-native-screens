@@ -11,6 +11,9 @@ export const scenarioDescription: ScenarioDescription = {
     iphone: { createdOn: ['iOS 26.5'], testOn: ['iOS 26.5'] },
     ipad: { createdOn: ['iOS 26.5'], testOn: ['iOS 26.5'] },
   },
+  deviceSetup: {
+    iphone: 'A Pro Max model.',
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

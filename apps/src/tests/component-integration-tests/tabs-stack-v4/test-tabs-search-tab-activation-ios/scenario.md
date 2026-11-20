@@ -36,7 +36,7 @@ not integrate the search bar into the header yet.
 - Cancelling an automatically activated search restores the previously
   selected tab (UIKit behavior).
 
-## Steps (iOS 27)
+## Steps
 
 ### Rendering & manual activation
 

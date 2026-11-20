@@ -21,7 +21,9 @@
 
 This test focuses on the onPress callback on header items, its interaction with menus, and overflow behavior.
 
-## Steps on iPhone (iOS 18 + 26)
+## Steps
+
+### Item and menu presses
 
 1. Tap on Item 0
    - [ ] A toast "onPress Item 0" is displayed
@@ -31,7 +33,11 @@ This test focuses on the onPress callback on header items, its interaction with 
    - [ ] A menu with two items (Action 0-1, Action 0-2) is displayed
 4. Dismiss the menu
 
-## Steps on iPhone (iOS 26)
+---
+
+### Overflow menu (iOS 26)
+
+Run this subsection on iOS 26 only.
 
 1. Click "Toggle items count (2/5)" three times to reach 5 items
    - [ ] Item 0 and Menu 1 are no longer visible in the header — they have been moved to the overflow menu

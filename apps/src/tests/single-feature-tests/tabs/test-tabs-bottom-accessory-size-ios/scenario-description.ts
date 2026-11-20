@@ -22,7 +22,8 @@ export const scenarioDescription: ScenarioDescription = {
   },
   deviceSetup: {
     ipad: 'App in full screen, portrait orientation at launch.',
-    'iphone-duo': 'Closed and in portrait orientation at launch.',
+    'iphone-duo':
+      'Closed in portrait at launch. Postures: closed portrait and landscape, half-open, open portrait and landscape; unfold (closed → half-open → open) and close with the screen shown.',
   },
   e2eCoverage: 'tbd',
   smokeTest: false,

@@ -80,10 +80,30 @@ const DEVICE_PLATFORMS: Record<ScenarioDevice, 'ios' | 'android'> = {
 const PLATFORM_LABELS = { ios: 'iOS', android: 'Android' } as const;
 
 // One OS version format per platform, also for iPad and iPhone Duo (no 'iPadOS').
+// iOS always has a minor version, so 'iOS 26' and 'iOS 26.0' cannot both appear.
+// Android allows a minor API level (e.g. 36.1 since Android 16 QPR2).
 const OS_VERSION_FORMATS = {
-  ios: { pattern: /^iOS \d+(\.\d+)*$/, format: "'iOS <version>'" },
-  android: { pattern: /^API Level \d+$/, format: "'API Level <number>'" },
+  ios: {
+    pattern: /^iOS \d+\.\d+(\.\d+)?$/,
+    format: "'iOS <major>.<minor>[.<patch>]' (e.g. 'iOS 26.0')",
+  },
+  android: {
+    pattern: /^API Level \d+(\.\d+)?$/,
+    format: "'API Level <number>[.<minor>]' (e.g. 'API Level 36')",
+  },
 } as const;
+
+// The only `## Steps` headings allowed (guides/SCENARIO_RULES.md).
+const ALLOWED_STEPS_HEADINGS = new Set([
+  '## Steps',
+  '## Steps - iOS',
+  '## Steps - Android',
+  '## Steps - iPhone',
+  '## Steps - iPad',
+  '## Steps - iPhone Duo',
+  '## Steps - Android phone',
+  '## Steps - Android tablet',
+]);
 
 const E2E_COVERAGE_LABELS = {
   full: 'Full',
@@ -183,11 +203,18 @@ function validate(description: ScenarioDescription): string[] {
       continue;
     }
     const { pattern, format } = OS_VERSION_FORMATS[platform];
-    for (const version of [...versions.createdOn, ...versions.testOn]) {
-      if (!pattern.test(version)) {
-        errors.push(
-          `\`osVersions.${device}\` has '${version}', use the format ${format}`,
-        );
+    for (const list of ['createdOn', 'testOn'] as const) {
+      const listVersions: unknown = versions[list];
+      if (!Array.isArray(listVersions)) {
+        errors.push(`\`osVersions.${device}.${list}\` must be a list`);
+        continue;
+      }
+      for (const version of listVersions) {
+        if (typeof version !== 'string' || !pattern.test(version)) {
+          errors.push(
+            `\`osVersions.${device}\` has '${version}', use the format ${format}`,
+          );
+        }
       }
     }
   }
@@ -226,7 +253,7 @@ function renderMetadata(description: ScenarioDescription): string {
   for (const device of devices) {
     const cells = [
       DEVICE_LABELS[device],
-      osVersions?.[device]?.testOn.join(', ') || 'not recorded',
+      osVersions?.[device]?.testOn?.join(', ') || 'not recorded',
     ];
     if (hasSetup) {
       const setup = deviceSetup?.[device];
@@ -306,12 +333,19 @@ function main(): void {
     dirs.length > 0
       ? dirs.map(dir => path.resolve(dir))
       : findScenarioDirs(testsRoot);
+  const seenTestsDirs = new Set<string>();
   for (const dir of scenarioDirs) {
     const relativeDir = path.relative(repoRoot, dir);
+    if (!fs.existsSync(path.join(dir, 'scenario-description.ts'))) {
+      problems.push(
+        `${relativeDir}: not a scenario directory (no scenario-description.ts)`,
+      );
+      continue;
+    }
     const scenarioPath = path.join(dir, 'scenario.md');
-    const knownWithoutScenarioMd = SCENARIOS_WITHOUT_SCENARIO_MD.has(
-      path.relative(testsRoot, dir).split(path.sep).join('/'),
-    );
+    const testsDir = path.relative(testsRoot, dir).split(path.sep).join('/');
+    seenTestsDirs.add(testsDir);
+    const knownWithoutScenarioMd = SCENARIOS_WITHOUT_SCENARIO_MD.has(testsDir);
     if (!fs.existsSync(scenarioPath)) {
       if (check && !knownWithoutScenarioMd) {
         problems.push(`${relativeDir}/scenario.md: missing`);
@@ -367,6 +401,15 @@ function main(): void {
         );
       }
     }
+    for (const heading of expected.match(/^## Steps\b.*$/gm) ?? []) {
+      if (!ALLOWED_STEPS_HEADINGS.has(heading.trim())) {
+        problems.push(
+          `${relativeDir}/scenario.md: '${heading}' is not an allowed Steps heading, use one of: ${[
+            ...ALLOWED_STEPS_HEADINGS,
+          ].join(', ')}`,
+        );
+      }
+    }
 
     if (expected === markdown) {
       continue;
@@ -378,6 +421,17 @@ function main(): void {
     } else {
       fs.writeFileSync(scenarioPath, expected);
       updated += 1;
+    }
+  }
+
+  // Only a full run sees every scenario directory.
+  if (dirs.length === 0) {
+    for (const testsDir of SCENARIOS_WITHOUT_SCENARIO_MD) {
+      if (!seenTestsDirs.has(testsDir)) {
+        problems.push(
+          `apps/src/tests/${testsDir}: listed in SCENARIOS_WITHOUT_SCENARIO_MD but has no scenario-description.ts, remove the entry`,
+        );
+      }
     }
   }
 

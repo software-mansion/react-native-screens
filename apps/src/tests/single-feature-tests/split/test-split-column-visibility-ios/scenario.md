@@ -24,7 +24,7 @@ Validates the native column hiding commands (`hide('primary')`,
 `show('primary')`, `show('secondary')`) and `preferredDisplayMode` updates on
 the Split host. The goal is that UIKit owns the transitions: commands animate
 like native `UISplitViewController` calls, property updates apply immediately,
-and the `onDisplayModeChange` event never feeds back into the preference
+and the `onDisplayModeWillChange` event never feeds back into the preference
 (no extra transitions, no event loops, no reapplied preference after
 unrelated updates).
 

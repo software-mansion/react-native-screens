@@ -21,7 +21,7 @@
 
 This test verifies that updating a single header item does not cause other items to rebuild.
 
-## Steps on iPhone with iOS 26
+## Steps
 
 1. Observe two items in the trailing area: "Foo 1" and "Foo 2"
 2. Change Title picker for Item 1 from "foo" to "bar"

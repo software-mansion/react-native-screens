@@ -9,10 +9,10 @@
 | E2E coverage | TBD                                     |
 | Smoke test   | No                                      |
 
-| Device | Test on  |
-| ------ | -------- |
-| iPhone | iOS 26.5 |
-| iPad   | iOS 26.5 |
+| Device | Test on  | Setup            |
+| ------ | -------- | ---------------- |
+| iPhone | iOS 26.5 | A Pro Max model. |
+| iPad   | iOS 26.5 | -                |
 
 <!-- scenario-metadata:end -->
 
@@ -40,7 +40,7 @@ prominent button / back button text attributes configured via
 `tintColor` is an item property, not part of the appearance — it updates at
 runtime on both iOS 26 and 27.
 
-## Steps on iPhone (Pro Max versions)
+## Steps - iPhone
 
 All style presets are enabled by default, so the very first step verifies the
 whole configuration as applied at attach time (no runtime changes involved).

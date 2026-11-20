@@ -95,10 +95,11 @@ back and forth.
 - `createdOn` - OS versions the scenario was written on and confirmed to work.
   It stays in `scenario-description.ts` only and is not shown in `scenario.md`.
 
-Write versions as `iOS <version>` for every iOS device, including iPad and
-iPhone Duo (`'iOS 26.5'`, not `'iPadOS 26.5'`), and as `API Level <number>`
-for Android devices (`'API Level 36'`). `yarn sync-scenario-metadata --check`
-fails on any other format.
+Write versions as `iOS <major>.<minor>` for every iOS device, including iPad
+and iPhone Duo (`'iOS 26.5'` or `'iOS 26.0'`, not `'iOS 26'` or
+`'iPadOS 26.5'`), and as `API Level <number>` for Android devices
+(`'API Level 36'`, or `'API Level 36.1'` for a minor SDK release).
+`yarn sync-scenario-metadata --check` fails on any other format.
 
 The generated table has one row per device in `devices` and no other devices,
 with columns Device, Test on (and Setup when any device has
@@ -185,6 +186,9 @@ Keep one `scenario.md` per test. Do not create per-device files
   Add a section **only for steps whose expected result differs**. Steps that
   behave the same everywhere stay in the base `## Steps`. A step goes into
   either the platform section or the device sections, never both.
+  `yarn sync-scenario-metadata --check` fails on any other `## Steps`
+  heading; put OS versions and other qualifiers in `###` subsections or
+  checkbox prefixes instead.
 
 - **Device-only scenarios.** If no step is shared by all listed devices (e.g. a
   test run only on iPad and iPhone Duo), skip the base `## Steps` and write one
