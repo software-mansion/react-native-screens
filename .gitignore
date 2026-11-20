@@ -92,3 +92,5 @@ android/.settings
 # Generated release-test playgrounds 
 /release_tests
 
+# Argent (screen recordings, secrets, local tool state)
+.argent/
