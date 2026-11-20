@@ -15,6 +15,8 @@ export type OnDismissEventPayload = {
    * Whether the user dismissed the screen natively (`true`) or the screen was
    * popped because its {@link StackScreenProps.activityMode | activityMode}
    * became `'detached'` (`false`).
+   *
+   * @platform android, ios
    */
   isNativeDismiss: boolean;
 };

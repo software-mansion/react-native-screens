@@ -9,24 +9,28 @@ export interface ScrollViewMarkerScrollEdgeEffectsIOS {
    * Scroll edge effect at the bottom edge of the scroll view.
    *
    * @defaultValue `'automatic'`
+   * @platform ios >= 26
    */
   bottom?: ScrollEdgeEffect | undefined;
   /**
    * Scroll edge effect at the left edge of the scroll view.
    *
    * @defaultValue `'automatic'`
+   * @platform ios >= 26
    */
   left?: ScrollEdgeEffect | undefined;
   /**
    * Scroll edge effect at the right edge of the scroll view.
    *
    * @defaultValue `'automatic'`
+   * @platform ios >= 26
    */
   right?: ScrollEdgeEffect | undefined;
   /**
    * Scroll edge effect at the top edge of the scroll view.
    *
    * @defaultValue `'automatic'`
+   * @platform ios >= 26
    */
   top?: ScrollEdgeEffect | undefined;
 }
