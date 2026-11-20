@@ -30,6 +30,9 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   UINavigationControllerOperation _operation;
   NSTimeInterval _transitionDuration;
   UIViewPropertyAnimator *_Nullable _inFlightAnimator;
+  // Transition container view, kept non-interactive for the duration of a push transition.
+  // See `-animateTransition:`.
+  UIView *_Nullable _viewWithDisabledInteraction;
 }
 
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation
@@ -83,6 +86,21 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     screen = ((RNSScreen *)fromViewController).screenView;
   }
 
+  // Every animation below inserts the pushed view into the container view, and so into the window,
+  // synchronously. A view that becomes first responder as soon as it is attached to the window, e.g.
+  // `TextInput` with `autoFocus`, is focused right away. Only *after* this method returns does UIKit disable
+  // user interaction of the container view for the duration of the transition, which resigns the first
+  // responder inside it, and re-enable it when the transition ends, which focuses the view again.
+  // JS receives a spurious `onBlur` in between.
+  // Disabling interaction of the container before the pushed view is inserted makes UIKit's call a no-op,
+  // so the first responder is left alone. We restore it in `-animationEnded:`.
+  // See: https://github.com/software-mansion/react-native-screens/issues/5063
+  UIView *containerView = transitionContext.containerView;
+  if (_operation == UINavigationControllerOperationPush && containerView.userInteractionEnabled) {
+    containerView.userInteractionEnabled = NO;
+    _viewWithDisabledInteraction = containerView;
+  }
+
   if (screen != nil) {
     if ([screen.reactSuperview isKindOfClass:[RNSScreenStackView class]] &&
         ((RNSScreenStackView *)(screen.reactSuperview)).customAnimation) {
@@ -117,6 +135,8 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 - (void)animationEnded:(BOOL)transitionCompleted
 {
   _inFlightAnimator = nil;
+  _viewWithDisabledInteraction.userInteractionEnabled = YES;
+  _viewWithDisabledInteraction = nil;
 }
 
 #pragma mark - Animation implementations
