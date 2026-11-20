@@ -191,6 +191,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)tearDown;
 
+/**
+ * Keep the bottom safe area of a tab screen clear of a tab bar that is not in the window.
+ * Called by the tab screen controller when its safe area changes.
+ */
+- (void)updateBottomSafeAreaOfScreenController:(nonnull UIViewController *)screenController;
+
 #pragma mark Individual flush methods (internal)
 
 /**
