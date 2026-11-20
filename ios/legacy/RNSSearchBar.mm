@@ -17,6 +17,7 @@ namespace react = facebook::react;
 @implementation RNSSearchBar {
   UISearchController *_controller;
   UIColor *_textColor;
+  NSString *_lastKnownText;
 
   // We use those booleans to log a warning if user attempts to restore
   // default behavior after setting explicit value for the prop.
@@ -46,6 +47,8 @@ namespace react = facebook::react;
 #endif
 
   _controller.searchBar.delegate = self;
+  _controller.delegate = self;
+  _lastKnownText = @"";
 
   _isObscureBackgroundSet = NO;
   _isHideNavigationBarSet = NO;
@@ -91,6 +94,7 @@ namespace react = facebook::react;
 
 - (void)emitOnChangeTextEventWithText:(NSString *)text
 {
+  _lastKnownText = [text copy];
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onChangeText(react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
@@ -248,6 +252,19 @@ namespace react = facebook::react;
 
 #pragma mark delegate methods
 
+- (void)didDismissSearchController:(UISearchController *)searchController
+{
+  // On iOS 27, the integrated close button empties the field and dismisses search without calling
+  // any search bar delegate method. Earlier versions report it as a cancel themselves, and a tab
+  // switch there also dismisses search with an empty field, which must not clear JS's query.
+  if (@available(iOS 27.0, *)) {
+    NSString *text = searchController.searchBar.text ?: @"";
+    if (![_lastKnownText isEqualToString:text]) {
+      [self emitOnChangeTextEventWithText:text];
+    }
+  }
+}
+
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
 #if !TARGET_OS_TV
@@ -303,7 +320,7 @@ namespace react = facebook::react;
 
 - (void)clearText
 {
-  [_controller.searchBar setText:@""];
+  [self setText:@""];
 }
 
 - (void)toggleCancelButton:(BOOL)flag
@@ -316,6 +333,8 @@ namespace react = facebook::react;
 - (void)setText:(NSString *)text
 {
   [_controller.searchBar setText:text];
+  // Commands from JS already establish its known text; only sync subsequent native changes.
+  _lastKnownText = [_controller.searchBar.text ?: @"" copy];
 }
 
 - (void)cancelSearch
