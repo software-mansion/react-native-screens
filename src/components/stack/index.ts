@@ -5,7 +5,6 @@ import { StackHeaderConfig } from './header';
 export type { StackHostProps, StackColorScheme, StackDirection } from './host';
 
 export type {
-  OnDismissEventPayload,
   StackScreenActivityMode,
   StackScreenReplaceAnimation,
   StackScreenDismissHandler,
