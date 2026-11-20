@@ -201,7 +201,6 @@ export interface FormSheetProps {
    * `nativeContainerStyle.backgroundColor` covers it.
    *
    * @defaultValue `'automatic'`
-   * @see {@link FormSheetBackgroundEffect}
    * @see {@link https://developer.apple.com/documentation/uikit/uipresentationcontroller/backgroundeffect | UIPresentationController.backgroundEffect}
    * @platform ios >= 26.1
    */
