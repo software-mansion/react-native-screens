@@ -76,17 +76,9 @@ export type StackScreenAnimationLength = number | `${number}%`;
  * layouts.
  */
 export type StackScreenAnimationPresetName =
-  | 'default'
-  | 'none'
-  | 'fade'
-  | 'slideFromRight'
-  | 'slideFromLeft'
-  | 'slideFromBottom'
-  | 'slideFromTop'
-  | 'fadeFromBottom'
-  | 'fadeFromTop'
-  | 'iosFromRight'
-  | 'iosFromLeft';
+  | StackScreenAnimationUntimedPresetName
+  | StackScreenAnimationTimedPresetName
+  | StackScreenAnimationFadeFromEdgePresetName;
 
 /**
  * Options that change the timing of a preset.
