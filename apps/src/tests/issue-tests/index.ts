@@ -236,6 +236,7 @@ export { default as Test5112 } from './Test5112';
 export { default as Test5127 } from './Test5127';
 export { default as Test5143 } from './Test5143';
 export { default as Test5158 } from './Test5158';
+export { default as Test5300 } from './Test5300';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 // The following test was meant to demo the "go back" gesture using Reanimated
 // but the associated PR in react-navigation is currently put on hold
@@ -250,7 +251,6 @@ export { default as TestMemoryLeak } from './TestMemoryLeak';
 export { default as TestFormSheet } from './TestFormSheet';
 export { default as TestLabs2052 } from './TestLabs2052';
 export { default as TestAndroidTransitions } from './TestAndroidTransitions';
-export { default as TestNNNN } from './TestNNNN';
 export { default as TestAnimation } from './TestAnimation';
 export { default as TestBottomTabs } from './TestBottomTabs';
 export { default as TestBottomTabsOrientation } from './TestBottomTabsOrientation';
