@@ -20,6 +20,7 @@ import com.swmansion.rnscreens.core.common.FragmentProviding
 import com.swmansion.rnscreens.core.containers.common.Container
 import com.swmansion.rnscreens.core.containers.common.ContainerItem
 import com.swmansion.rnscreens.core.containers.common.ParentContainerItemRegistry
+import com.swmansion.rnscreens.core.utils.detachFromCurrentParent
 import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 
 open class ScreenContainer(
@@ -120,6 +121,26 @@ open class ScreenContainer(
         screenWrappers[index].screen.container = null
         screenWrappers.removeAt(index)
         onScreenChanged()
+    }
+
+    /**
+     * Takes a removed screen out of its fragment's view right away. Fabric moves a screen as a remove
+     * and an insert in one batch. Removing the fragment takes only its wrapper out of this container,
+     * and the screen stays inside the wrapper until a new fragment re-parents it in `onCreateView`.
+     * If the screen still has that parent on the insert, Fabric detaches it on its own and then
+     * ignores every later removal of that screen, so the screen never leaves the container.
+     */
+    internal fun detachRemovedScreen(screen: Screen) {
+        val wrapper = screen.parent as? View ?: return
+        // The keyboard workaround from `removeView`: the wrapper leaves this container only later,
+        // when it no longer has the focus.
+        if (wrapper === focusedChild) {
+            (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        }
+        // Not `recycle()`: a screen that a native-stack pop marked as transitioning must keep drawing
+        // as a disappearing child until the exit animation ends, so it gets no `endViewTransition`.
+        screen.detachFromCurrentParent()
     }
 
     open fun removeAllScreens() {
@@ -417,7 +438,12 @@ open class ScreenContainer(
                 val orphanedAry = orphaned.toTypedArray()
                 for (fragment in orphanedAry) {
                     if (fragment is ScreenFragment) {
-                        if (fragment.screen.container == null) {
+                        // `addScreen` gives a moved screen a new fragment, so the old one is
+                        // orphaned while its screen still belongs to a container. The fragment
+                        // manager can be shared, so only fragments of this container are removed.
+                        if (fragment.screen.container == null ||
+                            (fragment.id == id && fragment.screen.fragmentWrapper !== fragment)
+                        ) {
                             detachScreen(it, fragment)
                         }
                     }
