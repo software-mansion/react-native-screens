@@ -272,6 +272,16 @@ export interface SplitColumnMetrics {
 }
 
 /**
+ * Sidebar column of a Split.
+ *
+ * @remarks
+ * The following values are currently supported:
+ * - `'primary'` — the primary sidebar
+ * - `'supplementary'` — the supplementary sidebar
+ */
+export type SplitSidebarColumn = 'primary' | 'supplementary';
+
+/**
  * Column of a Split.
  *
  * @remarks
@@ -280,7 +290,7 @@ export interface SplitColumnMetrics {
  * - `'supplementary'` — the supplementary sidebar is shown
  * - `'secondary'` — the secondary (main content) column is shown
  */
-export type SplitNavigableColumn = 'primary' | 'supplementary' | 'secondary';
+export type SplitNavigableColumn = SplitSidebarColumn | 'secondary';
 
 /**
  * Commands of {@link Split.Host}, available through its `ref`.
@@ -302,7 +312,7 @@ export type SplitHostCommands = {
    * @see {@link https://developer.apple.com/documentation/uikit/uisplitviewcontroller/hide(_:) | UISplitViewController.hide(_:)}
    * @platform ios
    */
-  hide: (column: Exclude<SplitNavigableColumn, 'secondary'>) => void;
+  hide: (column: SplitSidebarColumn) => void;
 };
 
 /**
