@@ -40,7 +40,12 @@ namespace react = facebook::react;
 
 - (nullable UINavigationBar *)findNavigationBar
 {
-  return [[[[[self getHeaderConfig] screenView] reactViewController] navigationController] navigationBar];
+  RNSScreen *screenController = [[self getHeaderConfig] screenView].controller;
+  // With `headerMode: 'screen'` the subview is displayed by the navigation bar of the screen itself.
+  if (screenController.screenNavigationBar != nil) {
+    return screenController.screenNavigationBar;
+  }
+  return screenController.navigationController.navigationBar;
 }
 
 // We're forcing the navigation controller's view to re-layout

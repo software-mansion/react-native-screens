@@ -53,7 +53,8 @@ type Props = Omit<
    * visible header is sized to the content alone, without room for the header,
    * which overlaps the top of the content.
    *
-   * Has no effect below iOS 26 and on other platforms.
+   * Has no effect below iOS 26 (unless `headerConfig.headerMode` is
+   * `'screen'`) and on other platforms.
    *
    * Please note that this prop is marked as unstable and might be subject of
    * breaking changes, including removal.
@@ -157,7 +158,11 @@ function ScreenStackItem(
   // is inset by our `SafeAreaView`. See `getSafeAreaEdges` for the applied edges. The
   // `SafeAreaView` is rendered regardless of `unstable_safeAreaEdges` so that changing it does not
   // remount the content.
-  const shouldUseSafeAreaView = isIOS26OrHigher;
+  // With `headerMode: 'screen'` the screen renders its own navigation bar, which
+  // is a part of the screen, so the content is inset by our `SafeAreaView` on
+  // every iOS version.
+  const shouldUseSafeAreaView =
+    isIOS26OrHigher || isScreenHeaderModeOnIOS(headerConfig);
 
   const content = (
     <>
@@ -320,14 +325,15 @@ function getSafeAreaEdges(
   headerConfig: ScreenStackHeaderConfigProps | undefined,
   edgesOverride: SafeAreaViewProps['edges'],
 ): SafeAreaViewProps['edges'] {
-  if (!isIOS26OrHigher) {
+  if (!isIOS26OrHigher && !isScreenHeaderModeOnIOS(headerConfig)) {
     return {};
   }
 
   // On iOS 26+ the screen extends under the navigation bar regardless of the header configuration
   // (see `+[RNSScreenStackHeaderConfig screensExtendUnderOpaqueNavigationBar]`), so by default the
   // content is inset from the top whenever the header is visible and opaque. Translucent and hidden
-  // headers keep the content under the bar / status bar, as on other iOS versions.
+  // headers keep the content under the bar / status bar, as on other iOS versions. The same applies
+  // to the navigation bar rendered by the screen itself (`headerMode: 'screen'`) on every iOS version.
   const edges: Partial<Record<Edge, boolean>> =
     headerConfig?.translucent || headerConfig?.hidden ? {} : { top: true };
 
@@ -346,6 +352,12 @@ function getSafeAreaEdges(
 }
 
 const SAFE_AREA_EDGES: readonly Edge[] = ['top', 'right', 'bottom', 'left'];
+
+function isScreenHeaderModeOnIOS(
+  headerConfig: ScreenStackHeaderConfigProps | undefined,
+): boolean {
+  return Platform.OS === 'ios' && headerConfig?.headerMode === 'screen';
+}
 
 const styles = StyleSheet.create({
   container: {

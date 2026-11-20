@@ -55,6 +55,44 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isRemovedFromParent;
 - (void)notifyPresentedControllerDismissed;
 
+/**
+ * Whether the screen renders its own navigation bar (`headerMode: 'screen'`) instead of using the navigation bar of
+ * its navigation controller. Enabling it creates `screenNavigationBar`, disabling it removes the bar. Has no effect on
+ * tvOS.
+ */
+@property (nonatomic, getter=isScreenNavigationBarEnabled) BOOL screenNavigationBarEnabled;
+
+/**
+ * Navigation bar rendered by the screen itself, `nil` unless `screenNavigationBarEnabled`. It is a subview of the
+ * screen's view, therefore it moves together with the screen during transitions. The safe area of the screen is
+ * extended by the height of the bar, the same way as with the bar of the navigation controller.
+ */
+@property (nonatomic, readonly, nullable) UINavigationBar *screenNavigationBar;
+
+/**
+ * Item displayed below the top item of `screenNavigationBar`, it provides the back button. `nil` when the screen is
+ * the root of its stack or `screenNavigationBarEnabled` is `NO`.
+ */
+@property (nonatomic, readonly, nullable) UINavigationItem *screenNavigationBarBackItem;
+
+/**
+ * Item the header configuration should be applied to: the top item of `screenNavigationBar` when
+ * `screenNavigationBarEnabled`, `navigationItem` otherwise. `navigationItem` can not be displayed by
+ * `screenNavigationBar`, as the bar of the navigation controller keeps holding the items of all its view controllers.
+ */
+@property (nonatomic, readonly) UINavigationItem *headerNavigationItem;
+
+/**
+ * Shows or hides `screenNavigationBar` together with the safe area inset it adds.
+ */
+- (void)setScreenNavigationBarHidden:(BOOL)hidden;
+
+/**
+ * Updates the items of `screenNavigationBar` to the position of the screen in its navigation controller: back item
+ * (titled with the title of the previous screen) is present only when there is a screen to go back to.
+ */
+- (void)updateScreenNavigationBarItems;
+
 @end
 
 @class RNSScreenStackHeaderConfig;
