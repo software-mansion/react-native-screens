@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, StyleSheet, Text, View } from 'react-native';
+import { useTransitionProgress } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -19,6 +20,9 @@ import { Button } from '@apps/shared';
 // tap on "Push details" and Home in one command:
 //   adb shell "input tap <x> <y>; sleep 0.03; input keyevent KEYCODE_HOME"
 // Without the fix, such a run can show "transitionStart: waiting".
+//
+// Both screens show the last values from useTransitionProgress. After any
+// finished transition, the visible screen should show "closing: 0".
 
 type ParamList = {
   Home: undefined;
@@ -26,6 +30,31 @@ type ParamList = {
 };
 
 const Stack = createNativeStackNavigator<ParamList>();
+
+function TransitionProgressText({ name }: { name: string }) {
+  const { progress, closing } = useTransitionProgress();
+  const [values, setValues] = useState({ progress: 0, closing: 0 });
+
+  useEffect(() => {
+    const progressId = progress.addListener(({ value }) =>
+      setValues(current => ({ ...current, progress: value })),
+    );
+    const closingId = closing.addListener(({ value }) => {
+      console.log(`[Test4941] ${name} closing: ${value}`);
+      setValues(current => ({ ...current, closing: value }));
+    });
+    return () => {
+      progress.removeListener(progressId);
+      closing.removeListener(closingId);
+    };
+  }, [name, progress, closing]);
+
+  return (
+    <Text style={styles.text}>
+      progress: {values.progress.toFixed(2)}, closing: {values.closing}
+    </Text>
+  );
+}
 
 function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
   return (
@@ -38,6 +67,7 @@ function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
         title="Push details in 1s"
         onPress={() => setTimeout(() => navigation.navigate('Details'), 1000)}
       />
+      <TransitionProgressText name="Home" />
     </View>
   );
 }
@@ -99,6 +129,7 @@ function DetailsScreen({
       <Text style={styles.text}>
         Home pressed during the push: {backgroundedDuringPush ? 'yes' : 'no'}
       </Text>
+      <TransitionProgressText name="Details" />
     </View>
   );
 }
