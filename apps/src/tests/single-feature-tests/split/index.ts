@@ -4,10 +4,6 @@ import TestSplitCommandShowColumn from './test-command-show-column';
 import TestSplitColorScheme from './test-split-color-scheme-ios';
 import TestSplitPressables from './test-split-pressables-ios';
 import TestSplitColumnVisibility from './test-split-column-visibility-ios';
-import TestSplitStackHeaderNavigation from './test-split-stack-header-navigation-ios';
-import TestSplitStackLifecycleEvents from './test-split-stack-lifecycle-events-ios';
-import TestSplitStackContentSwap from './test-split-stack-content-swap-ios';
-import TestSplitStackIntegrationDisabled from './test-split-stack-integration-disabled-ios';
 import TestSplitColumnLayoutAfterCollapse from './test-split-column-layout-after-collapse-ios';
 
 export { default as TestSplitTopColumnForCollapsing } from './test-top-column-for-collapsing';
@@ -15,10 +11,6 @@ export { default as TestSplitCommandShowColumn } from './test-command-show-colum
 export { default as TestSplitColorScheme } from './test-split-color-scheme-ios';
 export { default as TestSplitPressables } from './test-split-pressables-ios';
 export { default as TestSplitColumnVisibility } from './test-split-column-visibility-ios';
-export { default as TestSplitStackHeaderNavigation } from './test-split-stack-header-navigation-ios';
-export { default as TestSplitStackLifecycleEvents } from './test-split-stack-lifecycle-events-ios';
-export { default as TestSplitStackContentSwap } from './test-split-stack-content-swap-ios';
-export { default as TestSplitStackIntegrationDisabled } from './test-split-stack-integration-disabled-ios';
 export { default as TestSplitColumnLayoutAfterCollapse } from './test-split-column-layout-after-collapse-ios';
 
 const scenarios = {
@@ -27,10 +19,6 @@ const scenarios = {
   TestSplitColorScheme,
   TestSplitPressables,
   TestSplitColumnVisibility,
-  TestSplitStackHeaderNavigation,
-  TestSplitStackLifecycleEvents,
-  TestSplitStackContentSwap,
-  TestSplitStackIntegrationDisabled,
   TestSplitColumnLayoutAfterCollapse,
 };
 
