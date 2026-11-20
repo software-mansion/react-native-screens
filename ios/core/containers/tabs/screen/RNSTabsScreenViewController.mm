@@ -43,6 +43,11 @@
 {
   [super viewWillAppear:animated];
   [_delegate viewControllerViewWillAppear:self];
+#if !TARGET_OS_TV
+  // The status bar config is looked up through the selected tab, so ask UIKit to re-read it
+  // whenever a tab appears. A tab without its own stack would otherwise keep the previous tab's style.
+  [self setNeedsStatusBarAppearanceUpdate];
+#endif // !TARGET_OS_TV
 }
 
 - (void)viewDidAppear:(BOOL)animated

@@ -132,6 +132,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, strong, nonnull) RNSTabBarItemCoordinator *tabBarItemCoordinator;
 
 /**
+ * The view controller of the selected tab, accounting for the "More" tab and the UITab API.
+ * Exposed so `RNSScreen` can look for status bar config inside the selected tab.
+ */
+- (nullable UIViewController *)effectiveSelectedViewController;
+
+/**
  * If true, the controller will reject any navigation state updates if the provenance of the
  * update is stale.
  *
