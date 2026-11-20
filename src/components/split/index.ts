@@ -12,6 +12,7 @@ export type {
   SplitColorScheme,
   SplitColumnMetrics,
   SplitNavigableColumn,
+  SplitSidebarColumn,
   SplitHostCommands,
   SplitHostProps,
 } from './SplitHost.types';
