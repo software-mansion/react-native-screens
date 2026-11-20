@@ -24,23 +24,39 @@ class TabsScreenFragment internal constructor(
     ): View = item.view
 
     override fun onStart() {
-        item.appearanceEventEmitter.emitOnWillAppear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnWillAppear() }
         super.onStart()
     }
 
     override fun onResume() {
-        item.appearanceEventEmitter.emitOnDidAppear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnDidAppear() }
         super.onResume()
     }
 
     override fun onPause() {
-        item.appearanceEventEmitter.emitOnWillDisappear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnWillDisappear() }
         super.onPause()
     }
 
     override fun onStop() {
-        item.appearanceEventEmitter.emitOnDidDisappear()
+        runInLifecycleCallback { item.appearanceEventEmitter.emitOnDidDisappear() }
         super.onStop()
+    }
+
+    /**
+     * The appearance events are emitted while the fragment manager executes a state change. Their
+     * dispatch can be synchronous and mount pending React transactions on the spot (e.g. when
+     * Reanimated handles the event), so containers must not commit to that fragment manager until
+     * the callback returns. See [TabsScreenFragmentLifecycleTracker].
+     */
+    private inline fun runInLifecycleCallback(block: () -> Unit) {
+        val fragmentManager = parentFragmentManager
+        TabsScreenFragmentLifecycleTracker.onCallbackStarted(fragmentManager)
+        try {
+            block()
+        } finally {
+            TabsScreenFragmentLifecycleTracker.onCallbackFinished(fragmentManager)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
