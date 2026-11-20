@@ -154,7 +154,6 @@ export interface TabsScreenPropsBase {
    * Specifies which special effects (also known as microinteractions) are
    * enabled for the tab screen.
    *
-   * @defaultValue All special effects are enabled by default.
    * @platform android, ios
    */
   specialEffects?: TabsScreenSpecialEffects | undefined;

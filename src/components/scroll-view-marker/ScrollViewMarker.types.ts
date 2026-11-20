@@ -72,7 +72,6 @@ export interface ScrollViewMarkerProps {
    * Configures the scroll edge effect for the _content ScrollView_ (the
    * ScrollView resolved in direct subtree of the ScrollViewMarker).
    *
-   * @defaultValue `'automatic'` for each edge.
    * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect | UIScrollEdgeEffect}
    * @platform ios >= 26
    */
