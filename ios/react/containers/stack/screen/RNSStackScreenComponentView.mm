@@ -227,6 +227,12 @@ namespace react = facebook::react;
 
   if (oldComponentProps.reportsFrameToShadowTree != newComponentProps.reportsFrameToShadowTree) {
     _reportsFrameToShadowTree = newComponentProps.reportsFrameToShadowTree;
+    // A screen that reports its frame takes the size UIKit gives it. UINavigationController gives this mask to the
+    // view it wraps the screen in. Without it that wrapper does not follow the navigation controller when it is
+    // resized off screen, as in a collapsed split view, and the screen is shown with its old size.
+    self.autoresizingMask = _reportsFrameToShadowTree
+        ? UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+        : UIViewAutoresizingNone;
   }
 
   [super updateProps:props oldProps:oldProps];

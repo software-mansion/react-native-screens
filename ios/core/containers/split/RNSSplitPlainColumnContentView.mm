@@ -3,6 +3,17 @@
 
 @implementation RNSSplitPlainColumnContentView
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    // UINavigationController gives this mask to the view it wraps the view of its view controller in. Without it
+    // that wrapper does not follow the navigation controller when it is resized off screen, as in a collapsed split
+    // view, and the content of the column is shown with its old size.
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  }
+  return self;
+}
+
 #pragma mark - Layout
 
 - (void)layoutSubviews
