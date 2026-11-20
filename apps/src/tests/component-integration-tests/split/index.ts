@@ -2,15 +2,18 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestSplitStackV5InTabs from './test-split-stack-v5-nesting-stack-v5-in-tabs-ios';
 import TestSplitStackV5InFormSheet from './test-split-stack-v5-nesting-stack-v5-in-form-sheet-ios';
 import TestSplitStackV5InContainedModal from './test-split-stack-v5-nesting-stack-v5-in-contained-modal-ios';
+import TestSplitStackColumnLayoutAfterCollapse from './test-split-stack-column-layout-after-collapse-ios';
 
 export { default as TestSplitStackV5InTabs } from './test-split-stack-v5-nesting-stack-v5-in-tabs-ios';
 export { default as TestSplitStackV5InFormSheet } from './test-split-stack-v5-nesting-stack-v5-in-form-sheet-ios';
 export { default as TestSplitStackV5InContainedModal } from './test-split-stack-v5-nesting-stack-v5-in-contained-modal-ios';
+export { default as TestSplitStackColumnLayoutAfterCollapse } from './test-split-stack-column-layout-after-collapse-ios';
 
 const scenarios = {
   TestSplitStackV5InTabs,
   TestSplitStackV5InFormSheet,
   TestSplitStackV5InContainedModal,
+  TestSplitStackColumnLayoutAfterCollapse,
 };
 
 const SplitScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {

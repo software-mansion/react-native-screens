@@ -9,7 +9,6 @@ import TestSplitStackLifecycleEvents from './test-split-stack-lifecycle-events-i
 import TestSplitStackContentSwap from './test-split-stack-content-swap-ios';
 import TestSplitStackIntegrationDisabled from './test-split-stack-integration-disabled-ios';
 import TestSplitColumnLayoutAfterCollapse from './test-split-column-layout-after-collapse-ios';
-import TestSplitStackColumnLayoutAfterCollapse from './test-split-stack-column-layout-after-collapse-ios';
 
 export { default as TestSplitTopColumnForCollapsing } from './test-top-column-for-collapsing';
 export { default as TestSplitCommandShowColumn } from './test-command-show-column';
@@ -21,7 +20,6 @@ export { default as TestSplitStackLifecycleEvents } from './test-split-stack-lif
 export { default as TestSplitStackContentSwap } from './test-split-stack-content-swap-ios';
 export { default as TestSplitStackIntegrationDisabled } from './test-split-stack-integration-disabled-ios';
 export { default as TestSplitColumnLayoutAfterCollapse } from './test-split-column-layout-after-collapse-ios';
-export { default as TestSplitStackColumnLayoutAfterCollapse } from './test-split-stack-column-layout-after-collapse-ios';
 
 const scenarios = {
   TestSplitTopColumnForCollapsing,
@@ -34,7 +32,6 @@ const scenarios = {
   TestSplitStackContentSwap,
   TestSplitStackIntegrationDisabled,
   TestSplitColumnLayoutAfterCollapse,
-  TestSplitStackColumnLayoutAfterCollapse,
 };
 
 const SplitScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
