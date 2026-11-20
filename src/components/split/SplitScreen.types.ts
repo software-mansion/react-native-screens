@@ -2,17 +2,6 @@ import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../shared/types';
 
 /**
- * Kind of a Split column.
- *
- * @remarks
- * The following values are supported:
- * - `'column'` — a column declared with {@link Split.Column}.
- * - `'inspector'` — the inspector column declared with
- *   {@link Split.Inspector}.
- */
-export type SplitScreenColumnType = 'column' | 'inspector';
-
-/**
  * Props for {@link Split.Column}.
  *
  * @experimental
