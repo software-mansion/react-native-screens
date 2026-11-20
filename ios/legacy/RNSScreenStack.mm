@@ -31,6 +31,12 @@
 
 namespace react = facebook::react;
 
+static BOOL RNSAnimatesStackTransition(UIViewController *controller)
+{
+  return !([controller isKindOfClass:[RNSScreen class]] &&
+           ((RNSScreen *)controller).screenView.stackAnimation == RNSScreenStackAnimationNone);
+}
+
 @interface RNSScreenStackView () <UINavigationControllerDelegate,
                                   UIAdaptivePresentationControllerDelegate,
                                   UIGestureRecognizerDelegate,
@@ -803,7 +809,8 @@ RNS_IGNORE_SUPER_CALL_END
         // _UIParallaxDimmingView instead). At the moment of RN 0.74 we can't queue the unmounts for such situation
         // either, so we need to turn off animations, when the view is not yet mounted, but it will appear after the
         // transition of previous replacement.
-        [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
+        [_controller setViewControllers:controllers
+                               animated:previousTop.view.window != nil && RNSAnimatesStackTransition(top)];
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
@@ -820,7 +827,7 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // !TARGET_OS_TV
 
         [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:YES];
+        [_controller popViewControllerAnimated:RNSAnimatesStackTransition(previousTop)];
       }
     } else if (![_controller.viewControllers containsObject:top]) {
       // new top controller is not on the stack
@@ -830,7 +837,7 @@ RNS_IGNORE_SUPER_CALL_END
       [newControllers removeLastObject];
 
       [_controller setViewControllers:newControllers animated:NO];
-      [_controller pushViewController:top animated:YES];
+      [_controller pushViewController:top animated:RNSAnimatesStackTransition(top)];
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
