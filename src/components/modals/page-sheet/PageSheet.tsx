@@ -13,10 +13,10 @@ import type { PageSheetProps } from './PageSheet.types';
  * them, and dismiss it natively unless
  * {@link PageSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
  *
- * On iPhone, the sheet looks the same as {@link FormSheet}: it spans the full
- * width of the screen and is anchored to its bottom. On iPad, it is a large
- * card, and the screen behind it is dimmed. On Android, it is the same bottom
- * sheet dialog as {@link FormSheet}.
+ * On iPhone, the sheet looks the same as {@link FormSheet}: in portrait, it
+ * spans the full width of the screen and is anchored to its bottom. On iPad,
+ * it is a large card, and the screen behind it is dimmed. On Android, it is
+ * the same bottom sheet dialog as {@link FormSheet}.
  *
  * @see {@link FormSheet} for a sheet that is a smaller centered panel on iPad.
  * @platform android, ios

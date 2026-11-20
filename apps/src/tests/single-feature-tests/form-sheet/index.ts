@@ -5,6 +5,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 import TestFormSheetBackgroundEffect from './test-form-sheet-background-effect-ios';
 import TestFormSheetBase from './test-form-sheet-base';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events';
+import TestFormSheetEdgeAttachedCompactHeight from './test-form-sheet-edge-attached-compact-height-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
 import TestFormSheetFitToContents from './test-form-sheet-fit-to-contents';
 import TestFormSheetFractionalDetents from './test-form-sheet-fractional-detents';
@@ -27,6 +28,7 @@ import TestFormSheetStacking from './test-form-sheet-stacking';
 export { default as TestFormSheetBackgroundEffect } from './test-form-sheet-background-effect-ios';
 export { default as TestFormSheetBase } from './test-form-sheet-base';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events';
+export { default as TestFormSheetEdgeAttachedCompactHeight } from './test-form-sheet-edge-attached-compact-height-ios';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
 export { default as TestFormSheetFitToContents } from './test-form-sheet-fit-to-contents';
 export { default as TestFormSheetFractionalDetents } from './test-form-sheet-fractional-detents';
@@ -48,6 +50,7 @@ const scenarios = {
   TestFormSheetBackgroundEffect,
   TestFormSheetBase,
   TestFormSheetDismissEvents,
+  TestFormSheetEdgeAttachedCompactHeight,
   TestFormSheetExpandScrollView,
   TestFormSheetFitToContents,
   TestFormSheetFractionalDetents,
