@@ -1,5 +1,5 @@
 import { expect as jestExpect } from '@jest/globals';
-import { device, element, by } from 'detox';
+import { device, expect, element, by } from 'detox';
 import type { IosElementAttributes, NativeMatcher } from 'detox/detox';
 import { forceTapByLabelIOS } from './gestures';
 import { getMatches } from './matchers';
@@ -15,6 +15,11 @@ export async function forceSelectTabByLabel(label: string) {
     await element(by.label(label)).tap();
   }
 }
+
+/** Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
+ * is in the tab bar. */
+export const expectTabBarItemByLabel = (label: string) =>
+  expect(element(by.label(label))).toBeVisible();
 
 /**
  * The first match — UIKit can keep more than one host view / tab bar in the
