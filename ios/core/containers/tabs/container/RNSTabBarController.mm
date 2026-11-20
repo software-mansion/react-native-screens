@@ -279,6 +279,59 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 }
 
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  for (RNSTabsScreenViewController *screenController in [self installedScreenControllers]) {
+    [self updateBottomSafeAreaOfScreenController:screenController];
+  }
+}
+
+// UIKit keeps deriving a tab's bottom safe area from `tabBar` after the bar leaves the window. On an
+// iPhone in landscape with the iOS 27 sidebar placement, the sidebar replaces the bar, and while the
+// sidebar shows (and through its transitions) the tab gets the stale height of the detached bar.
+// Without a bar or accessory on screen, the tab's bottom inset is capped at this controller's own.
+- (void)updateBottomSafeAreaOfScreenController:(nonnull UIViewController *)screenController
+{
+  if (screenController.view.window == nil) {
+    // A view outside the window reports zero insets.
+    return;
+  }
+
+  UIEdgeInsets additionalInsets = screenController.additionalSafeAreaInsets;
+  CGFloat correction = 0;
+  if (![self hasBottomBarInWindow]) {
+    const CGFloat bottomInset = screenController.view.safeAreaInsets.bottom;
+    const CGFloat expectedBottomInset = self.view.safeAreaInsets.bottom;
+    correction = additionalInsets.bottom;
+    if (bottomInset > expectedBottomInset) {
+      correction -= bottomInset - expectedBottomInset;
+    } else if (bottomInset < expectedBottomInset) {
+      // UIKit dropped the stale bar, so the correction overshoots and the inset may be clamped at zero.
+      correction = 0;
+    }
+  }
+
+  if (fabs(correction - additionalInsets.bottom) < 0.01) {
+    return;
+  }
+  additionalInsets.bottom = correction;
+  screenController.additionalSafeAreaInsets = additionalInsets;
+}
+
+- (BOOL)hasBottomBarInWindow
+{
+  if (self.tabBar.window != nil) {
+    return YES;
+  }
+#if RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+  if (@available(iOS 26.0, *)) {
+    return self.bottomAccessory.contentView.window != nil;
+  }
+#endif // RNS_TABS_BOTTOM_ACCESSORY_AVAILABLE
+  return NO;
+}
+
 #pragma mark - Signals
 
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate
