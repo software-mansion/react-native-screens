@@ -112,6 +112,11 @@ static void rns_pushViewController(__unsafe_unretained id self,
   NSString *_Nullable _prominentScreenKey;
 
   BOOL _needsUpdateOfProminentIdentifier;
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  /// See `setNeedsTabBarItemTitlesRefit`.
+  BOOL _needsTabBarItemTitlesRefit;
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 }
 
 - (instancetype)init
@@ -195,6 +200,26 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 #pragma mark - UIKit callbacks
+
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (_needsTabBarItemTitlesRefit && self.tabBar.window != nil) {
+      _needsTabBarItemTitlesRefit = NO;
+      // Lay the bar out first: re-assigning the title before its first layout causes the bug instead of fixing it.
+      [self.tabBar layoutIfNeeded];
+      for (UITabBarItem *item in self.tabBar.items) {
+        NSString *title = item.title;
+        item.title = nil;
+        item.title = title;
+      }
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
 
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
@@ -280,6 +305,23 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 #pragma mark - Signals
+
+- (void)setNeedsTabBarItemTitlesRefit
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 27.0, *)) {
+    return;
+  }
+  if (@available(iOS 26.0, *)) {
+    // iOS 26 squashes and truncates tab titles when an item changes after the tab bar enters a window but before
+    // its first layout (#5107, FB24250687). Setting the title to nil and back after the bar has been laid out makes
+    // UIKit fit it again; doing it earlier causes the bug and an equal title is ignored. Undocumented, not
+    // reproducible on iOS 27. See `viewDidLayoutSubviews`.
+    _needsTabBarItemTitlesRefit = YES;
+    [self.viewIfLoaded setNeedsLayout];
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
 
 - (void)setPendingNavigationStateUpdate:(nullable RNSTabsNavigationStateUpdateRequest *)stateUpdate
 {
@@ -837,6 +879,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
   }
 
   [self installScreenControllers:_tabScreenControllers animated:[self installedScreenControllers].count != 0];
+  [self setNeedsTabBarItemTitlesRefit];
 }
 
 - (void)updateSelectedViewControllerIfNeeded
