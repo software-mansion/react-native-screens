@@ -333,6 +333,9 @@ export interface SplitHostProps extends ViewProps {
    *
    * - `primary` - the leftmost sidebar
    * - `supplementary` - the intermediate sidebar
+   *
+   * On iOS 26 or higher, it also supports definitions for:
+   *
    * - `secondary` - the view with the main content
    * - `inspector` - the view which is providing additional data about the
    *   secondary column
