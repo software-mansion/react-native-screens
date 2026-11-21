@@ -70,11 +70,33 @@
 
 + (nullable UIImage *)handleRenderingModeForImage:(nullable UIImage *)image isTemplate:(BOOL)isTemplate
 {
-  if (isTemplate) {
-    return [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-  } else {
-    return [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+  UIImageRenderingMode mode = isTemplate ? UIImageRenderingModeAlwaysTemplate : UIImageRenderingModeAlwaysOriginal;
+  return [RNSImageLoadingHelper image:image withRenderingModePreservingVariants:mode];
+}
+
+// `-imageWithRenderingMode:` returns an image backed by a new asset that only holds the image resolved for the
+// current traits, so the light/dark variants of an asset-catalog image (`{ uri: 'name' }`) are lost. Apply the mode
+// to each variant and register them together.
++ (nullable UIImage *)image:(nullable UIImage *)image withRenderingModePreservingVariants:(UIImageRenderingMode)mode
+{
+  if (image == nil || image.imageAsset == nil) {
+    return [image imageWithRenderingMode:mode];
   }
+  // Trait collections used with `UIImageAsset` should specify the display scale as well, otherwise the variant matching
+  // is ambiguous: use the scale of the image the asset was loaded for.
+  UITraitCollection *scaleTraits = [UITraitCollection traitCollectionWithDisplayScale:image.scale];
+  UITraitCollection *lightTraits = [UITraitCollection traitCollectionWithTraitsFromCollections:@[
+    scaleTraits,
+    [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight]
+  ]];
+  UITraitCollection *darkTraits = [UITraitCollection traitCollectionWithTraitsFromCollections:@[
+    scaleTraits,
+    [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark]
+  ]];
+  UIImage *light = [[image.imageAsset imageWithTraitCollection:lightTraits] imageWithRenderingMode:mode];
+  UIImage *dark = [[image.imageAsset imageWithTraitCollection:darkTraits] imageWithRenderingMode:mode];
+  [light.imageAsset registerImage:dark withTraitCollection:darkTraits];
+  return light;
 }
 
 @end
