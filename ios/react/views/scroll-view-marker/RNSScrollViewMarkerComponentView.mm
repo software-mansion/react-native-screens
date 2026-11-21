@@ -160,6 +160,9 @@ namespace react = facebook::react;
   [super didMoveToWindow];
   if (self.window == nil) {
     _hasAttemptedRegistration = NO;
+  } else if (![RNSScrollEdgeEffectApplicator hasOnlyAutomaticEffects:self]) {
+    // An enclosing screen attached to its container re-applies its own effects to this scroll view first.
+    [self configureScrollView:[self resolveScrollViewFromChildView:self.subviews.firstObject]];
   }
 }
 
