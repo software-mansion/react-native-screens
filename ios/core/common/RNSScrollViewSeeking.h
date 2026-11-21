@@ -9,4 +9,12 @@
  */
 - (void)registerDescendantScrollView:(nonnull UIScrollView *)scrollView;
 
+@optional
+
+/**
+ *  Called when the marker that registered `scrollView` is removed. Implementations should drop the registration
+ *  only if `scrollView` is still the one they use, as another marker might have registered since.
+ */
+- (void)unregisterDescendantScrollView:(nonnull UIScrollView *)scrollView;
+
 @end
