@@ -360,21 +360,13 @@ class ScreenStackHeaderConfig(
         }
 
         // subviews
-        for (i in toolbar.childCount - 1 downTo 0) {
-            if (toolbar.getChildAt(i) is ScreenStackHeaderSubview) {
-                toolbar.removeViewAt(i)
-            }
-        }
-
         // Subviews attached or re-attached while the search bar action view is expanded must
         // respect the search-driven hidden state (SearchBarView applies it only at open/close
         // time); conversely a stale pin from a previous search session must not survive here.
         val isSearchBarExpanded = screenFragment?.searchView?.isIconified == false
 
-        var i = 0
-        val size = configSubviews.size
-        while (i < size) {
-            val view = configSubviews[i]
+        val toolbarSubviews = ArrayList<ScreenStackHeaderSubview>(configSubviews.size)
+        for (view in configSubviews) {
             val type = view.type
             if (type !== ScreenStackHeaderSubview.Type.SEARCH_BAR && view.isHiddenBySearchBar != isSearchBarExpanded) {
                 view.setHiddenBySearchBar(isSearchBarExpanded)
@@ -388,7 +380,6 @@ class ScreenStackHeaderConfig(
                             "Back button header config view should have Image as first child",
                         )
                 newActionBar.setHomeAsUpIndicator(firstChild.drawable)
-                i++
                 continue
             }
             val params = Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT)
@@ -412,12 +403,69 @@ class ScreenStackHeaderConfig(
 
                 else -> {}
             }
-            view.layoutParams = params
-            toolbar.addView(view)
-            i++
+            if (!hasSameToolbarLayoutParams(view, params)) {
+                view.layoutParams = params
+            }
+            toolbarSubviews.add(view)
         }
+        syncToolbarSubviews(toolbarSubviews)
 
         headerHeightUpdateProxy.updateHeaderHeightIfNeeded(this, screen)
+    }
+
+    /**
+     * Makes the toolbar's header subviews match [subviews], in the same order, while keeping every subview
+     * that is already in place attached. Removing and re-adding such a subview would clear the focus of any
+     * view inside it (e.g. a `TextInput` in a custom header title), so an unrelated header update, like a new
+     * icon on the other side of the header, would dismiss the keyboard.
+     */
+    private fun syncToolbarSubviews(subviews: List<ScreenStackHeaderSubview>) {
+        // Remove subviews that are no longer part of the header.
+        for (i in toolbar.childCount - 1 downTo 0) {
+            val child = toolbar.getChildAt(i)
+            if (child is ScreenStackHeaderSubview && child !in subviews) {
+                toolbar.removeViewAt(i)
+            }
+        }
+
+        // Detach subviews that are out of order, so they are re-added at the right position below.
+        // Only the views that moved are detached, the rest keeps its state.
+        var lastIndex = -1
+        for (view in subviews) {
+            val index = toolbar.indexOfChild(view)
+            if (index == -1) {
+                continue
+            }
+            if (index < lastIndex) {
+                toolbar.removeViewAt(index)
+                lastIndex--
+            } else {
+                lastIndex = index
+            }
+        }
+
+        // Attach missing subviews right before the next subview, or at the end when it's the last one,
+        // so header subviews stay above the toolbar's own views, as when they're all added at the end.
+        var nextView: ScreenStackHeaderSubview? = null
+        for (view in subviews.asReversed()) {
+            if (toolbar.indexOfChild(view) == -1) {
+                val nextIndex = nextView?.let { toolbar.indexOfChild(it) } ?: -1
+                if (nextIndex == -1) {
+                    toolbar.addView(view)
+                } else {
+                    toolbar.addView(view, nextIndex)
+                }
+            }
+            nextView = view
+        }
+    }
+
+    private fun hasSameToolbarLayoutParams(
+        view: ScreenStackHeaderSubview,
+        params: Toolbar.LayoutParams,
+    ): Boolean {
+        val current = view.layoutParams as? Toolbar.LayoutParams ?: return false
+        return current.width == params.width && current.height == params.height && current.gravity == params.gravity
     }
 
     private fun maybeUpdate() {
