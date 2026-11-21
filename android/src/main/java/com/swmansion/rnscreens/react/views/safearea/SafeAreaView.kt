@@ -48,6 +48,9 @@ class SafeAreaView(
 
     override fun onAttachedToWindow() {
         viewTreeObserver.addOnPreDrawListener(this)
+        // Android doesn't dispatch insets to a view added to an attached hierarchy,
+        // and the requests from the prop setters run before the view has a parent.
+        requestApplyInsets()
 
         val newProvider = findAncestorProvider()
         if (newProvider == null) {
