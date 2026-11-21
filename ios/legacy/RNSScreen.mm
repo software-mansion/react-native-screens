@@ -536,7 +536,9 @@ RNS_IGNORE_SUPER_CALL_END
       _sheetContentHeight = reactFrame.size.height;
       auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height +
                                                               _contentWrapperBox.contentHeightErrata] ]];
-      [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
+      // A height that lands while the sheet is being presented joins that presentation. Animating it
+      // on its own can make the dimming view grow from the top left corner, seen with the SafeAreaView inset.
+      [self setAllowedDetentsForSheet:sheetController to:detents animate:!_controller.isBeingPresented];
     }
   }
 #endif // Check for iOS >= 16 && !TARGET_OS_TV && !TARGET_OS_VISION
