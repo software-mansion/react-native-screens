@@ -13,7 +13,8 @@ import { StyleSheet } from 'react-native';
  * Component that handles the safe area.
  *
  * @remarks
- * The insets are applied as margins on the edges selected with
+ * The insets are applied as padding, or as margin with
+ * {@link SafeAreaViewProps.mode | mode}, on the edges selected with
  * {@link SafeAreaViewProps.edges | edges}. The view fills its parent
  * (`flex: 1`) unless its `style` says otherwise.
  *
