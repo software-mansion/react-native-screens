@@ -22,7 +22,8 @@ stay manual.
 ## Note
 
 - "Position of items on device matches element tree" means that the DevTools overlay the item highlight with correct position and size. Alternatively, this could be checked by pressing and moving the cursor over the button to see if the whole visible area works, not triggering onPressOut immediately
-- `hidesSharedBackground` is available in iOS 26 and above
+- `hidesSharedBackground` is available since iOS 26
+- `paddingRemoved` is available since iOS 27
 
 ### Known Issues/Important Observations
 
@@ -34,6 +35,7 @@ stay manual.
 - items are collapsed in the order: title, trailing buttons (one by one), leading buttons (all at once); this is in line with native behavior
 - on iOS 26, the title (both regular and custom) moves from center to the leading edge if trailing buttons would otherwise touch it
 - the regular title seems to take up space even if large title is enabled on iOS 18 (if set to custom view, it is still rendered)
+- on iOS 26+, the custom views may poke out of the liquid glass bubble. This is especially visible with rectangular views and `paddingRemoved`
 - the test adds an option for changing the hit slop, but this remains to be handled in the future on the native side (TODO)
 - for now, large subtitle view on iOS 26 doesn't respond to clicks (TODO)
 
@@ -106,6 +108,34 @@ stay manual.
 3. Repeat main steps 4 - 10 on iPhone.
 
   - [ ] No change in the behavior
+
+## paddingRemoved (iOS 27)
+
+1. Reload the application (dev console causes some layout-related callbacks to trigger which may hide regressions)
+
+2. Enable `paddingRemoved` with the default 2 items on both sides.
+
+  - [ ] No visible change. Each small item sits alone in a bubble of minimal size, so there is no padding to remove.
+
+3. Disable `paddingRemoved`. Click "Toggle leading/trailing items count" to get 3 on both sides.
+
+  - [ ] Two items on each side appear in shared bubble.
+
+4. Click the first leading item to enlarge it.
+
+  - [ ] Position of items on device matches element tree.
+
+5. Click the items in the shared bubbles to enlarge them. Enable `paddingRemoved`.
+
+  - [ ] Items in the shared bubble lose padding and move closer to each other.
+
+  - [ ] Bubbles wrap the enlarged items tightly; the items may poke out of the bubble's rounded corners (see Known Issues).
+
+  - [ ] Position of items on device matches element tree.
+
+6. Disable `paddingRemoved` at runtime.
+
+  - [ ] Padding is restored and position of items on device matches element tree.
 
 ## Steps on iPad
 
