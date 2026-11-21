@@ -51,7 +51,7 @@ export const ScreenStackHeaderConfig = React.forwardRef<
     props.disableTopInsetApplication ?? false,
     props.disableLeftInsetApplication ?? false,
     props.disableRightInsetApplication ?? false,
-    props.disableBottomInsetApplication ?? false,
+    props.disableBottomInsetApplication ?? true,
   );
 
   const {
