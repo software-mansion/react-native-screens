@@ -995,7 +995,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * The opt-out propagates down the subtree: once an ancestor header sets this to `true`,
    * setting it back to `false` on a descendant header does not re-enable the inset.
    *
-   * @default false
+   * The header is a top bar, so it doesn't apply the bottom inset by default. To get the
+   * previous behaviour back, set this to `false` on the header and on its ancestor headers.
+   *
+   * @default true
    *
    * @platform android
    */

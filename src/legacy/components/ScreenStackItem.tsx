@@ -90,7 +90,7 @@ function ScreenStackItem(
     headerConfig?.disableTopInsetApplication ?? false,
     headerConfig?.disableLeftInsetApplication ?? false,
     headerConfig?.disableRightInsetApplication ?? false,
-    headerConfig?.disableBottomInsetApplication ?? false,
+    headerConfig?.disableBottomInsetApplication ?? true,
   );
 
   const currentScreenRef = React.useRef<ScreenInstance | null>(null);
