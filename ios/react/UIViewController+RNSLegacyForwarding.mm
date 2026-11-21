@@ -44,6 +44,10 @@
 - (UIViewController *)findChildRNSScreensViewController
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  while ([lastViewController isMemberOfClass:[UIViewController class]]) {
+    lastViewController = [[lastViewController childViewControllers] lastObject];
+  }
+
   if ([lastViewController conformsToProtocol:@protocol(RNSViewControllerDelegate)]) {
     return lastViewController;
   }
