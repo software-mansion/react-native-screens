@@ -7,6 +7,7 @@ import {
   isSearchBarAvailableForCurrentPlatform,
 } from '../../utils';
 import { View } from 'react-native';
+import { prepareIOSIcon } from './helpers/prepareHeaderBarButtonItems';
 
 // Native components
 import SearchBarNativeComponent, {
@@ -86,10 +87,13 @@ function SearchBar(props: SearchBarProps) {
     onSearchButtonPress,
     onCancelButtonPress,
     onChangeText,
+    rightAccessory,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref,
     ...rest
   } = props;
+
+  const rightAccessoryIcon = prepareIOSIcon(rightAccessory?.icon);
 
   return (
     <SearchBarNativeComponent
@@ -110,6 +114,13 @@ function SearchBar(props: SearchBarProps) {
         onCancelButtonPress as CT.DirectEventHandler<SearchBarEvent>
       }
       onChangeText={onChangeText as CT.DirectEventHandler<ChangeTextEvent>}
+      rightAccessoryIcon={rightAccessoryIcon}
+      rightAccessoryType={rightAccessory?.type}
+      onRightAccessoryPress={
+        rightAccessory?.onPress as
+          | CT.DirectEventHandler<SearchBarEvent>
+          | undefined
+      }
     />
   );
 }
