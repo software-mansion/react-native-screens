@@ -24,6 +24,17 @@
   return [self addChildController:childViewController toParent:parentViewController containerView:containerView];
 }
 
++ (void)removeChildViewController:(nullable UIViewController *)childViewController
+{
+  if (childViewController == nil || childViewController.parentViewController == nil) {
+    return;
+  }
+
+  [childViewController willMoveToParentViewController:nil];
+  [childViewController.view removeFromSuperview];
+  [childViewController removeFromParentViewController];
+}
+
 + (nullable UIViewController *)findParentViewControllerCandidateFromView:(nullable UIView *)view
 {
   if (view == nil) {
