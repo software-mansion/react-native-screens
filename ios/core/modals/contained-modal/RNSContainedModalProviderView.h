@@ -8,7 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Owns the presentation context of a contained modal: the context controller
  * and its view, which is this view's direct, exactly-filling subview for the
- * whole lifetime. It is inserted below every other subview and never removed.
+ * whole lifetime. It is inserted below every other subview, and nothing here
+ * removes it (UIKit itself does, see below).
  *
  * UIKit attaches its presentation container to the context view's superview,
  * sized to that superview's bounds with a flexible autoresizing mask (observed,
@@ -23,7 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * The owner embeds this view filling its bounds, attaches the context
  * controller to the closest parent view controller when it enters a window
- * and detaches it when it leaves. The views stay put either way: removing the
+ * and detaches it when it leaves the parent for good. Leaving the window
+ * because a transition covers the parent is not that: the controller must stay
+ * a child, or UIKit's appearance forwarding to it - and to the modal it
+ * presents - is cut short (no `viewDidDisappear` on the way out, no
+ * `viewWillAppear` on the way back). The views stay put either way: removing the
  * context view would tear UIKit's container (and a suspended presentation
  * with it) out of the hierarchy. The one party that does take the context
  * view out is UIKit itself, for the lifetime of a replacing

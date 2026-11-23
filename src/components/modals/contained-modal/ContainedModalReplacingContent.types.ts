@@ -109,9 +109,7 @@ export interface ContainedModalReplacingContentProps {
    * pushed over the provider, or the modal's containing native sheet is
    * dismissed natively. A suspension is not a dismissal: the presentation
    * relationship is kept, `isOpen` stays `true`, and the appear events fire
-   * again on restore. Note that
-   * {@link ContainedModalReplacingContentProps.onDidDisappear | onDidDisappear} is
-   * not guaranteed to follow on the suspension path - see its remarks.
+   * again on restore.
    *
    * @platform ios
    */
@@ -122,17 +120,9 @@ export interface ContainedModalReplacingContentProps {
    *
    * @remarks
    * Fires on a programmatic dismissal ({@link ContainedModalReplacingContentProps.isOpen | isOpen}
-   * set to `false`). On a suspension it is NOT guaranteed: when a
-   * react-native-screens stack pushes over the provider, only
-   * {@link ContainedModalReplacingContentProps.onWillDisappear | onWillDisappear}
-   * fires. Don't rely on a balanced Will/Did disappear pair around
-   * suspensions - key suspension logic off `onWillDisappear` and
-   * {@link ContainedModalReplacingContentProps.onDidAppear | onDidAppear} (restore)
-   * instead.
-   *
-   * @note
-   * This is an implementation detail and may change. The stack push detaches
-   * the views before the disappearance transition completes.
+   * set to `false`), and when a suspension completes, after
+   * {@link ContainedModalReplacingContentProps.onWillDisappear | onWillDisappear} - e.g.
+   * once a stack screen pushed over the provider has finished its transition.
    *
    * @platform ios
    */

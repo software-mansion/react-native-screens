@@ -9,6 +9,23 @@
 
 namespace react = facebook::react;
 
+// Leaving the window because a transition covers (or pops) the parent is not
+// leaving the parent: the context controller stays its child, so UIKit's
+// appearance forwarding still completes the disappearance (`viewDidDisappear`)
+// and delivers the full `viewWillAppear` / `viewDidAppear` pair on a restore -
+// to the modal it presents included. Detaching here would cut both short.
+static BOOL RNSIsDisappearingInTransition(UIViewController *_Nullable viewController)
+{
+  UIViewController *fromViewController =
+      [viewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+  for (UIViewController *current = viewController; current != nil; current = current.parentViewController) {
+    if (current == fromViewController) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
 @implementation RNSContainedModalProviderComponentView {
   // The core provider view owns the presentation context (the context
   // controller and its view, see RNSContainedModalProviderView.h). It is this
@@ -33,6 +50,13 @@ namespace react = facebook::react;
   return self;
 }
 
+- (void)dealloc
+{
+  // Covers an unmount while off-window (e.g. while a stack screen covers this
+  // one), which never reaches `didMoveToWindow`.
+  [_providerView detachContextControllerFromParentViewController];
+}
+
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
@@ -42,7 +66,7 @@ namespace react = facebook::react;
     if (parentViewController != nil) {
       [_providerView attachContextControllerToParentViewController:parentViewController];
     }
-  } else {
+  } else if (!RNSIsDisappearingInTransition(_providerView.contextViewController.parentViewController)) {
     [_providerView detachContextControllerFromParentViewController];
   }
 }

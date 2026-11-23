@@ -6,6 +6,10 @@
   RNSContainedModalPresentationManager *_Nonnull _presentationManager;
 
   BOOL _needsPresentationUpdate;
+
+  // Dismissing a modal that a completed suspension already took off screen
+  // makes UIKit run the disappearance again; it is reported once.
+  BOOL _hasDisappeared;
 }
 
 - (instancetype)init
@@ -58,6 +62,7 @@
 {
   [super viewWillAppear:animated];
 
+  _hasDisappeared = NO;
   [self.delegate modalControllerViewWillAppear:self];
 }
 
@@ -78,6 +83,9 @@
 {
   [super viewWillDisappear:animated];
 
+  if (_hasDisappeared) {
+    return;
+  }
   [self.delegate modalControllerViewWillDisappear:self];
 }
 
@@ -85,6 +93,10 @@
 {
   [super viewDidDisappear:animated];
 
+  if (_hasDisappeared) {
+    return;
+  }
+  _hasDisappeared = YES;
   [self.delegate modalControllerViewDidDisappear:self];
 }
 

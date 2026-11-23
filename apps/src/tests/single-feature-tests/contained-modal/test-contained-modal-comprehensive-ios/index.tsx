@@ -344,7 +344,9 @@ const styles = StyleSheet.create({
     height: 400,
   },
   // Visible background + partial size, so "the modal covers exactly the
-  // provider region" is visually verifiable.
+  // provider region" is visually verifiable. `overflow: 'hidden'` together with
+  // `boxShadow` makes RN move the provider's subviews into a private clipping
+  // container; the modal must keep working inside it.
   provider: {
     alignSelf: 'center',
     width: '85%',
@@ -352,6 +354,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#cde3ff',
     borderRadius: 12,
     overflow: 'hidden',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)',
   },
   providerLarge: {
     height: 440,

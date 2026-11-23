@@ -47,6 +47,8 @@ TBD.
       counter" and "Open modal" is visible near the top of the scroll view; a
       tall spacer below it keeps the content scrollable.
 
+- [ ] The provider box has rounded corners and casts a shadow.
+
 ### Present at scroll offset + containment
 
 2. Scroll down slightly (so the scroll offset is non-zero but the provider box
