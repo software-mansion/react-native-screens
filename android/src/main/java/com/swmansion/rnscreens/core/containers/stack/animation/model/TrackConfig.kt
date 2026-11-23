@@ -11,7 +11,7 @@ internal data class TrackTimingConfig(
     val easing: Easing? = null,
 ) {
     init {
-        require(durationMs >= 1L) { "[RNScreens] A track duration must be at least 1 ms." }
+        require(durationMs >= 1L) { "[RNScreens] duration must be at least 1 ms." }
         require(delayMs >= 0L) { "[RNScreens] A track cannot start before the transition." }
     }
 }
