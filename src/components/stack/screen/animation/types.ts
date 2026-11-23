@@ -305,6 +305,8 @@ export interface StackScreenAnimationTrackTiming {
    * Whole milliseconds, at least 1. Every track states its own duration. The
    * transition lasts until the longest track of either screen ends, and both
    * screens stay in place that long.
+   *
+   * @platform android
    */
   duration: number;
   /**
@@ -315,6 +317,7 @@ export interface StackScreenAnimationTrackTiming {
    * delayed `opacity: { from: 0 }` keeps the screen invisible that long.
    *
    * @defaultValue `0`
+   * @platform android
    */
   delay?: number | undefined;
   /**
@@ -324,6 +327,7 @@ export interface StackScreenAnimationTrackTiming {
    * A predictive back gesture always scrubs linearly with the finger.
    *
    * @defaultValue `'linear'`
+   * @platform android
    */
   easing?: StackScreenAnimationEasing | undefined;
 }
@@ -333,18 +337,25 @@ export interface StackScreenAnimationTrackTiming {
  * `from` / `to` span.
  *
  * @remarks
- * An omitted endpoint is the property's rest value: `1` for `opacity` and the
- * scales, `0` for `rotate`. With both omitted the track holds the rest value
- * for its span, which only lengthens the transition.
+ * With both endpoints omitted the track holds the rest value for its span,
+ * which only lengthens the transition.
  */
 export interface StackScreenAnimationTrack
   extends StackScreenAnimationTrackTiming {
   /**
    * Value at the start of the track.
+   *
+   * @defaultValue The property's rest value: `1` for `opacity` and the scales,
+   * `0` for `rotate` and `dim`.
+   * @platform android
    */
   from?: number | undefined;
   /**
    * Value at the end of the track.
+   *
+   * @defaultValue The property's rest value: `1` for `opacity` and the scales,
+   * `0` for `rotate` and `dim`.
+   * @platform android
    */
   to?: number | undefined;
 }
@@ -354,17 +365,23 @@ export interface StackScreenAnimationTrack
  *
  * @remarks
  * `'N%'` is a fraction of the container's width on `translateX` and of its
- * height on `translateY`. An omitted endpoint is `0`. `translateX` is
- * physical: it does not mirror in a right-to-left container.
+ * height on `translateY`. `translateX` is physical: it does not mirror in a
+ * right-to-left container.
  */
 export interface StackScreenAnimationTranslateTrack
   extends StackScreenAnimationTrackTiming {
   /**
    * Value at the start of the track.
+   *
+   * @defaultValue `0`
+   * @platform android
    */
   from?: StackScreenAnimationLength | undefined;
   /**
    * Value at the end of the track.
+   *
+   * @defaultValue `0`
+   * @platform android
    */
   to?: StackScreenAnimationLength | undefined;
 }
@@ -375,8 +392,8 @@ export interface StackScreenAnimationTranslateTrack
  *
  * @remarks
  * The scrim covers this screen only and draws above its content, so either
- * screen of a transition can carry one. An omitted endpoint is `0`, no scrim.
- * The scrim's opacity multiplies the color's own alpha.
+ * screen of a transition can carry one. An opacity of `0` is no scrim. The
+ * scrim's opacity multiplies the color's own alpha.
  */
 export interface StackScreenAnimationDimTrack
   extends StackScreenAnimationTrack {
@@ -387,6 +404,7 @@ export interface StackScreenAnimationDimTrack
    * A color that cannot be read is the default one.
    *
    * @defaultValue `'black'`
+   * @platform android
    */
   color?: ColorValue | undefined;
 }
@@ -402,34 +420,49 @@ export interface StackScreenAnimationDimTrack
 export interface StackScreenAnimationCustomMotion {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'custom';
   /**
    * Horizontal translation.
+   *
+   * @platform android
    */
   translateX?: StackScreenAnimationTranslateTrack | undefined;
   /**
    * Vertical translation.
+   *
+   * @platform android
    */
   translateY?: StackScreenAnimationTranslateTrack | undefined;
   /**
    * Opacity of the screen, in `[0, 1]`.
+   *
+   * @platform android
    */
   opacity?: StackScreenAnimationTrack | undefined;
   /**
    * Uniform scale about the center.
    *
    * @remarks
-   * `scaleX` / `scaleY` take their axis over `scale`; an axis they leave out
-   * keeps it.
+   * {@link StackScreenAnimationCustomMotion.scaleX | scaleX} and
+   * {@link StackScreenAnimationCustomMotion.scaleY | scaleY} take their axis
+   * over `scale`; an axis they leave out keeps it.
+   *
+   * @platform android
    */
   scale?: StackScreenAnimationTrack | undefined;
   /**
    * Horizontal scale about the center.
+   *
+   * @platform android
    */
   scaleX?: StackScreenAnimationTrack | undefined;
   /**
    * Vertical scale about the center.
+   *
+   * @platform android
    */
   scaleY?: StackScreenAnimationTrack | undefined;
   /**
@@ -437,10 +470,14 @@ export interface StackScreenAnimationCustomMotion {
    *
    * @remarks
    * A number, unlike the `'45deg'` strings of `transform`.
+   *
+   * @platform android
    */
   rotate?: StackScreenAnimationTrack | undefined;
   /**
    * A scrim over this screen.
+   *
+   * @platform android
    */
   dim?: StackScreenAnimationDimTrack | undefined;
 }
