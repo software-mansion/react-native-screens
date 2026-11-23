@@ -8,11 +8,15 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
+import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 // Android only: the Argent flow (.argent/flows/test-tabs-item-title.yaml) crops
 // its snapshots on an invisible band covering the bottom third of the screen,
-// which holds the tab bar and the system navigation bar but not the tab
-// content text. On iOS the flow crops on the native UITabBar instead.
+// which holds the tab bar but not the tab content text. The band ends above
+// the system navigation bar, so emulator system UI changes (navigation mode,
+// rounded display corners) stay out of the crop. On iOS the flow crops on the
+// native UITabBar instead.
+const SYSTEM_NAVIGATION_BAR_HEIGHT = initialWindowMetrics?.insets.bottom ?? 0;
 const LONG_TITLE_TAB_BAR_BAND_TEST_ID =
   'test-tabs-item-title-long-title-tab-bar-band';
 const COLOR_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-color-tab-bar-band';
@@ -260,8 +264,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 0,
-    height: Dimensions.get('screen').height / 3,
+    bottom: SYSTEM_NAVIGATION_BAR_HEIGHT,
+    height: Dimensions.get('screen').height / 3 - SYSTEM_NAVIGATION_BAR_HEIGHT,
   },
   label: {
     fontSize: 17,

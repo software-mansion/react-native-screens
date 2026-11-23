@@ -9,8 +9,9 @@
 # a symlink into the react-native-screens-testing submodule (the workflow
 # initializes it); a missing baseline fails the flow. Record new
 # baselines with `--update-baselines` on an emulator matching this job — pixel_7
-# AVD, API 34, 3-button navigation, `-gpu swiftshader`. A local emulator with
-# gesture navigation produces differently sized crops that fail here.
+# AVD, API 34, 3-button navigation, `-gpu swiftshader`. The crops end above the
+# system navigation bar, whose height depends on the navigation mode, so a local
+# emulator with gesture navigation produces differently sized crops that fail here.
 set -euo pipefail
 
 SERIAL=$(adb devices | awk 'NR>1 && $2=="device"{print $1; exit}')
