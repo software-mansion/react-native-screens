@@ -2,9 +2,6 @@ import type { StyleProp, ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type {
   SheetBackgroundEffect,
-  SheetBackgroundEffectBlur,
-  SheetBackgroundEffectBlurStyle,
-  SheetBackgroundEffectColor,
   SheetDetentChangedEvent,
   SheetDetents,
   SheetInitialDetentIndex,
@@ -54,30 +51,6 @@ export type FormSheetLargestUndimmedDetentIndex =
  * Accepts any {@link SheetInitialDetentIndex} value.
  */
 export type FormSheetInitialDetentIndex = SheetInitialDetentIndex;
-
-/**
- * Blur style of the material rendered behind the form sheet's content.
- *
- * @remarks
- * Accepts any {@link SheetBackgroundEffectBlurStyle} value.
- */
-export type FormSheetBackgroundEffectBlurStyle = SheetBackgroundEffectBlurStyle;
-
-/**
- * Flat fill rendered behind the form sheet's content.
- *
- * @remarks
- * See {@link SheetBackgroundEffectColor} for its fields.
- */
-export type FormSheetBackgroundEffectColor = SheetBackgroundEffectColor;
-
-/**
- * Blur material rendered behind the form sheet's content.
- *
- * @remarks
- * See {@link SheetBackgroundEffectBlur} for its fields.
- */
-export type FormSheetBackgroundEffectBlur = SheetBackgroundEffectBlur;
 
 /**
  * Material the system renders behind the form sheet's content.
@@ -228,7 +201,6 @@ export interface FormSheetProps {
    * `nativeContainerStyle.backgroundColor` covers it.
    *
    * @defaultValue `'automatic'`
-   * @see {@link FormSheetBackgroundEffect}
    * @see {@link https://developer.apple.com/documentation/uikit/uipresentationcontroller/backgroundeffect | UIPresentationController.backgroundEffect}
    * @platform ios >= 26.1
    */
