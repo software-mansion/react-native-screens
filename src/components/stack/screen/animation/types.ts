@@ -51,9 +51,9 @@ export type StackScreenAnimationLength = number | `${number}%`;
  * Timing options every preset except `'default'` and `'none'` accepts.
  *
  * @remarks
- * Options apply to what they are written on: on the whole animation they rescale
- * both transitions, on a transition that transition alone, on a motion that
- * motion alone.
+ * Options apply to what they are written on: on the whole animation they
+ * rescale both transitions, on a transition that transition alone, on a motion
+ * that motion alone.
  */
 export interface StackScreenAnimationTimingOptions {
   /**
@@ -63,6 +63,9 @@ export interface StackScreenAnimationTimingOptions {
    * Replaces the reference duration of what the option is written on: the
    * longer of a preset's push and pop transition (both are rescaled by the same
    * factor), a single transition's own length, or a single motion's length.
+   *
+   * @defaultValue The preset's own duration.
+   * @platform android
    */
   duration?: number | undefined;
   /**
@@ -70,6 +73,9 @@ export interface StackScreenAnimationTimingOptions {
    *
    * @remarks
    * A predictive back gesture always scrubs linearly with the finger.
+   *
+   * @defaultValue The preset's own curves.
+   * @platform android
    */
   easing?: StackScreenAnimationEasing | undefined;
 }
@@ -123,10 +129,14 @@ export interface StackScreenAnimationSlideFromPresetConfig
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: StackScreenAnimationSlideFromPresetName;
 }
@@ -141,11 +151,12 @@ export interface StackScreenAnimationSlideFromMotionPresetConfig
    * How far the screen travels.
    *
    * @remarks
-   * Only a single motion can be shortened; the parallax recede of the `iosFrom*`
-   * presets' background is a `'30%'` slide. A whole transition keeps the full
-   * width or height.
+   * Only a single motion can be shortened; the parallax recede of the
+   * `iosFrom*` presets' background is a `'30%'` slide. A whole transition keeps
+   * the full width or height.
    *
    * @defaultValue `'100%'`
+   * @platform android
    */
   distance?: StackScreenAnimationLength | undefined;
 }
@@ -157,16 +168,21 @@ export interface StackScreenAnimationFadeFromPresetConfig
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: StackScreenAnimationFadeFromPresetName;
   /**
    * How far the moving screen rises or falls.
    *
    * @defaultValue `'8%'`
+   * @platform android
    */
   distance?: StackScreenAnimationLength | undefined;
 }
@@ -178,10 +194,14 @@ export interface StackScreenAnimationFadePresetConfig
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: 'fade';
 }
@@ -193,10 +213,14 @@ export interface StackScreenAnimationIosFromPresetConfig
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: StackScreenAnimationIosFromPresetName;
 }
@@ -207,10 +231,14 @@ export interface StackScreenAnimationIosFromPresetConfig
 export interface StackScreenAnimationNonePresetConfig {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: 'none';
 }
@@ -221,25 +249,32 @@ export interface StackScreenAnimationNonePresetConfig {
 export interface StackScreenAnimationDefaultPresetConfig {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: 'default';
 }
 
 /**
- * Preset names allowed as one screen's motion, the `enter` or `exit` value of a
+ * Preset names allowed as one screen's motion, the
+ * {@link StackScreenAnimationCustomTransition.enter | enter} or
+ * {@link StackScreenAnimationCustomTransition.exit | exit} value of a
  * {@link StackScreenAnimationCustomTransition}.
  *
  * @remarks
  * A name denotes a motion along its vector: at `enter` the screen arrives along
- * it, at `exit` the screen departs along it. `'none'` is a screen that stays
- * put for the whole transition.
+ * it, at `exit` the screen departs along it.
  *
- * Accepts `'none'`, `'fade'`, any {@link StackScreenAnimationSlideFromPresetName}
- * and any {@link StackScreenAnimationFadeFromPresetName}.
+ * Accepts any {@link StackScreenAnimationSlideFromPresetName} and any
+ * {@link StackScreenAnimationFadeFromPresetName} value, plus:
+ * - `'none'` — the screen stays put for the whole transition.
+ * - `'fade'` — the screen fades in at `enter` and out at `exit`.
  */
 export type StackScreenAnimationMotionPresetName =
   | 'none'
@@ -258,8 +293,15 @@ export type StackScreenAnimationMotionPresetConfig =
   | StackScreenAnimationNonePresetConfig;
 
 /**
- * One screen's motion during a transition: the `enter` or `exit` value of a
+ * One screen's motion during a transition: the
+ * {@link StackScreenAnimationCustomTransition.enter | enter} or
+ * {@link StackScreenAnimationCustomTransition.exit | exit} value of a
  * {@link StackScreenAnimationCustomTransition}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a {@link StackScreenAnimationMotionPresetName} — a preset by name.
+ * - a {@link StackScreenAnimationMotionPresetConfig} — a preset with options.
  */
 export type StackScreenAnimationMotion =
   | StackScreenAnimationMotionPresetName
@@ -277,26 +319,30 @@ export type StackScreenAnimationMotion =
 export interface StackScreenAnimationCustomTransition {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'custom';
   /**
    * Motion of the screen whose view appears.
    *
-   * @remarks
-   * When omitted the screen stays put for the whole transition.
+   * @defaultValue `'none'`
+   * @platform android
    */
   enter?: StackScreenAnimationMotion | undefined;
   /**
    * Motion of the screen whose view disappears.
    *
-   * @remarks
-   * When omitted the screen stays put for the whole transition.
+   * @defaultValue `'none'`
+   * @platform android
    */
   exit?: StackScreenAnimationMotion | undefined;
 }
 
 /**
- * Preset names allowed as a whole transition, the `push` or `pop` value of a
+ * Preset names allowed as a whole transition, the
+ * {@link StackScreenAnimationCustom.push | push} or
+ * {@link StackScreenAnimationCustom.pop | pop} value of a
  * {@link StackScreenAnimationCustom}.
  *
  * @remarks
@@ -309,7 +355,7 @@ export interface StackScreenAnimationCustomTransition {
  * still.
  *
  * Accepts any {@link StackScreenAnimationMotionPresetName} and any
- * {@link StackScreenAnimationIosFromPresetName}.
+ * {@link StackScreenAnimationIosFromPresetName} value.
  */
 export type StackScreenAnimationTransitionPresetName =
   | StackScreenAnimationMotionPresetName
@@ -327,8 +373,17 @@ export type StackScreenAnimationTransitionPresetConfig =
   | StackScreenAnimationNonePresetConfig;
 
 /**
- * One transition of a custom animation: the `push` or `pop` value of a
+ * One transition of a custom animation: the
+ * {@link StackScreenAnimationCustom.push | push} or
+ * {@link StackScreenAnimationCustom.pop | pop} value of a
  * {@link StackScreenAnimationCustom}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a {@link StackScreenAnimationTransitionPresetName} — a preset by name.
+ * - a {@link StackScreenAnimationTransitionPresetConfig} — a preset with
+ *   options.
+ * - a {@link StackScreenAnimationCustomTransition} — the two screens' motions.
  */
 export type StackScreenAnimationTransition =
   | StackScreenAnimationTransitionPresetName
@@ -347,24 +402,29 @@ export type StackScreenAnimationTransition =
 export interface StackScreenAnimationCustom {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'custom';
   /**
    * Transition played when the screen is pushed.
    *
    * @defaultValue `'none'`
+   * @platform android
    */
   push?: StackScreenAnimationTransition | undefined;
   /**
    * Transition played when the screen is popped.
    *
    * @defaultValue `'none'`
+   * @platform android
    */
   pop?: StackScreenAnimationTransition | undefined;
 }
 
 /**
- * Preset names allowed as the whole animation, the `animation` prop itself.
+ * Preset names allowed as the whole animation, the
+ * {@link StackScreenProps.animation | animation} prop itself.
  *
  * @remarks
  * Accepts any {@link StackScreenAnimationTransitionPresetName} value, plus:
@@ -391,8 +451,14 @@ export type StackScreenAnimationPresetConfig =
   | StackScreenAnimationDefaultPresetConfig;
 
 /**
- * Value of the `animation` prop of {@link Stack.Screen}: a preset by name, a
- * preset with options, or a custom animation.
+ * Value of the {@link StackScreenProps.animation | animation} prop of
+ * {@link Stack.Screen}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a {@link StackScreenAnimationPresetName} — a preset by name.
+ * - a {@link StackScreenAnimationPresetConfig} — a preset with options.
+ * - a {@link StackScreenAnimationCustom} — a custom animation.
  */
 export type StackScreenAnimation =
   | StackScreenAnimationPresetName
