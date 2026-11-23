@@ -34,10 +34,6 @@ batch is ever visible. Every replace here uses the default `replaceAnimation:
   says to tap during one.
 - Static: the screen does not move and stays fully visible for the whole
   transition.
-- **Known issue:** an operation dispatched while a transition is still running
-  completes that transition instantly; a screen the new batch pops is removed
-  without its pop animation, and only a newly appearing screen animates, over
-  the window background.
 
 ## Steps
 
@@ -152,33 +148,36 @@ batch is ever visible. Every replace here uses the default `replaceAnimation:
 1. Tap "Push Right 2000 ms", then tap "Push Bottom 2000 ms" on "Right 2000 ms"
    while it is still sliding in.
 
-   - [ ] The running transition jumps to its end.
-   - [ ] "Bottom 2000 ms" rises from the bottom edge above a static
+   - [ ] "Right 2000 ms" jumps to its final position.
+   - [ ] "Bottom 2000 ms" then rises from the bottom edge above a static
          "Right 2000 ms".
-   - [ ] No stale copy of another screen is left behind.
 
 2. On "Bottom 2000 ms", tap "Pop", then tap "Pop" on "Right 2000 ms" while
    "Bottom 2000 ms" is still sinking.
 
-   - [ ] "Right 2000 ms" is removed without its pop animation (see Note).
-   - [ ] "Home" slides in from the left over the window background.
-   - [ ] "Home" is the only screen left, without a crash.
+   - [ ] "Bottom 2000 ms" disappears at once.
+   - [ ] "Right 2000 ms" then slides out to the right and "Home" slides in
+         from the left.
 
 3. Tap "Push Right + Bottom + Left 2000 ms", then tap "Pop 3" on
    "Left 2000 ms" while it is still sliding in.
 
-   - [ ] "Left 2000 ms" is removed without its pop animation (see Note).
-   - [ ] "Home" is shown at once, with nothing sliding in.
+   - [ ] "Left 2000 ms" jumps to its final position.
+   - [ ] "Left 2000 ms" then slides out to the left and "Home" slides in from
+         the right; no blue and no green screen appears.
    - [ ] "Pop" is disabled on "Home".
 
 4. Tap "Push Right 2000 ms", then tap "Replace with Bottom" on "Right 2000 ms"
    while it is still sliding in.
 
-   - [ ] "Right 2000 ms" is removed at once (see Note).
-   - [ ] "Bottom" slides in from the left over the window background.
-   - [ ] "Home" does not appear.
+   - [ ] "Right 2000 ms" jumps to its final position.
+   - [ ] "Right 2000 ms" then slides out to the right and "Bottom" slides in
+         from the left beside it; "Home" is not visible.
 
-5. On "Bottom", tap "Pop".
+5. On "Bottom", tap "Pop", then tap "Push Right 2000 ms", then tap the header
+   back button on "Right 2000 ms" while it is still sliding in.
 
-   - [ ] "Bottom" sinks to the bottom edge above a static "Home".
+   - [ ] "Right 2000 ms" jumps to its final position.
+   - [ ] "Right 2000 ms" then slides out to the right and "Home" slides in
+         from the left.
    - [ ] "Pop" is disabled on "Home".
