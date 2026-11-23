@@ -8,7 +8,7 @@ lifecycle events and `onDismiss` once per open and close, reopen when requested
 during their own dismissal, let their content color the whole screen, and keep
 their content's state while closed.
 
-**OS test creation version:** iOS 26.5.
+**OS test creation version:** iOS 27.3.
 
 ## E2E test
 

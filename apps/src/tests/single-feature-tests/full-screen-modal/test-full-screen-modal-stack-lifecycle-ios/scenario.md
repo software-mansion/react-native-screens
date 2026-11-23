@@ -6,17 +6,13 @@
 receive when a `FullScreenModalReplacingContent` or a
 `FullScreenModalOverContent` opens and closes over them, when the stack is
 pushed and popped while a modal is open, and when the screen rendering the
-modal is popped: the replacing modal makes the visible screens of every stack
-level disappear and appear again and hides a push until it closes, the
-over-content modal leaves the screens untouched and shows the push underneath,
-and popping the modal's screen closes the modal without events.
+modal is popped.
 
-**OS test creation version:** iOS 26.5.
+**OS test creation version:** iOS 27.3.
 
 ## E2E test
 
-TBD: the event log is readable with Detox; automation is planned together with
-the other full-screen modal scenarios.
+TBD.
 
 ## Prerequisites
 
@@ -28,8 +24,8 @@ the other full-screen modal scenarios.
 - The event log is shown both on every stack screen and inside each modal; both
   show the same entries.
 - Entries are listed in the order they appear in the log, top to bottom.
-- "Push B in 2s" and "Pop A in 2s" act 2 seconds after the tap, so a modal
-  opened right after the tap is open when the stack changes.
+- "Push B in 2s" pushes 2 seconds after the tap, so a modal opened right after
+  the tap is open when the stack changes.
 - A modal is rendered by the screen whose "Open replacing" / "Open over" button
   was tapped; popping that screen removes the modal.
 

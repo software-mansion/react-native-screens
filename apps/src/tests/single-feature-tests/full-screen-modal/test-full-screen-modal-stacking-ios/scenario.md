@@ -8,7 +8,7 @@ full-screen modal, for every pairing of `FullScreenModalReplacingContent` and
 lower modal with its content intact, and closing the lower modal while the upper
 one is open takes both down with `onNativeDismiss` on the upper one.
 
-**OS test creation version:** iOS 17.5, 26.5 and 27.2.
+**OS test creation version:** iOS 27.3.
 
 ## E2E test
 

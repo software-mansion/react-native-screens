@@ -49,21 +49,62 @@
     return;
   }
 
+  __weak auto weakSelf = self;
+  __weak auto weakController = controller;
+  __weak auto weakProvider = provider;
+
+  // The top-most controller may be a modal on its way out, e.g. a replacing modal whose dismissal just put this host
+  // back into the window. UIKit refuses to present on it, so retry once its dismissal is over.
+  if (presentationSourceViewController.isBeingDismissed) {
+    id<UIViewControllerTransitionCoordinator> transitionCoordinator =
+        presentationSourceViewController.transitionCoordinator;
+    if (transitionCoordinator == nil) {
+      return;
+    }
+
+    [transitionCoordinator
+        animateAlongsideTransition:nil
+                        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                          auto strongSelf = weakSelf;
+                          auto strongController = weakController;
+                          auto strongProvider = weakProvider;
+                          if (strongSelf == nil || strongController == nil || strongProvider == nil) {
+                            return;
+                          }
+                          [strongSelf updatePresentationIfNeededWithProvider:strongProvider
+                                                                  controller:strongController];
+                        }];
+    return;
+  }
+
   _state = RNSFullScreenModalPresentationStatePresenting;
 
-  __weak auto weakSelf = self;
-  [presentationSourceViewController presentViewController:controller
-                                                 animated:YES
-                                               completion:^{
-                                                 auto strongSelf = weakSelf;
-                                                 if (!strongSelf) {
-                                                   return;
-                                                 }
+  [presentationSourceViewController
+      presentViewController:controller
+                   animated:YES
+                 completion:^{
+                   auto strongSelf = weakSelf;
+                   auto strongController = weakController;
+                   if (strongSelf == nil || strongController == nil) {
+                     return;
+                   }
 
-                                                 strongSelf->_state = RNSFullScreenModalPresentationStatePresented;
-                                                 [strongSelf updatePresentationIfNeededWithProvider:provider
-                                                                                         controller:controller];
-                                               }];
+                   // `viewDidAppear` may have moved the state on already.
+                   if (strongSelf->_state == RNSFullScreenModalPresentationStatePresenting) {
+                     strongSelf->_state = RNSFullScreenModalPresentationStatePresented;
+                   }
+
+                   auto strongProvider = weakProvider;
+                   if (strongProvider == nil) {
+                     return;
+                   }
+                   [strongSelf updatePresentationIfNeededWithProvider:strongProvider controller:strongController];
+                 }];
+
+  // UIKit refused the presentation (it only logs a warning) and will never call the completion.
+  if (controller.presentingViewController == nil) {
+    _state = RNSFullScreenModalPresentationStateDismissed;
+  }
 }
 
 - (void)handleDidPresent

@@ -247,12 +247,6 @@ function StackScreenContent({
             onPress={() => runLater(() => navigation.push('B'))}
             testID="A-push-b-later-button"
           />
-          <Button
-            title="Pop A in 2s"
-            color={Colors.primary}
-            onPress={() => runLater(popSelf)}
-            testID="A-pop-later-button"
-          />
         </View>
       )}
       <EventLog logs={logs} onClear={clearLogs} />
