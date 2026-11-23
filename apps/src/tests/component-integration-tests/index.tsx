@@ -14,6 +14,7 @@ import TabsInStackV5ScenarioGroup from './tabs-stack-v5';
 import TabsStackV4ScenarioGroup from './tabs-stack-v4';
 import SvmScenarioGroup from './scroll-view-marker';
 import SavScenarioGroup from './safe-area-view';
+import SplitScenarioGroup from './split';
 import ScenarioSelectionScreen from '@apps/tests/shared/ScenarioScreen';
 
 export * from './orientation';
@@ -23,6 +24,7 @@ export * from './tabs-stack-v5';
 export * from './tabs-stack-v4';
 export * from './scroll-view-marker';
 export * from './safe-area-view';
+export * from './split';
 
 export const COMPONENT_SCENARIOS = {
   Orientation: OrientationScenarioGroup,
@@ -32,6 +34,7 @@ export const COMPONENT_SCENARIOS = {
   TabsStackV4: TabsStackV4ScenarioGroup,
   ScrollViewMarker: SvmScenarioGroup,
   SafeAreaView: SavScenarioGroup,
+  Split: SplitScenarioGroup,
 } as const;
 
 type ParamsList = { [k: keyof typeof COMPONENT_SCENARIOS]: undefined } & {

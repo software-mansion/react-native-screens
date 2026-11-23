@@ -56,7 +56,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     return;
   }
 
-  BOOL hidden = _configDataProvider == nil || _configDataProvider.hidden;
+  BOOL hidden = _configDataProvider == nil ? !_showsNavigationBarWithoutHeaderConfig : _configDataProvider.hidden;
   [navController.navigationBarCoordinator setHidden:hidden forNavigationController:navController animated:animated];
 }
 

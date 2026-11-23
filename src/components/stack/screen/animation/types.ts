@@ -76,17 +76,9 @@ export type StackScreenAnimationLength = number | `${number}%`;
  * layouts.
  */
 export type StackScreenAnimationPresetName =
-  | 'default'
-  | 'none'
-  | 'fade'
-  | 'slideFromRight'
-  | 'slideFromLeft'
-  | 'slideFromBottom'
-  | 'slideFromTop'
-  | 'fadeFromBottom'
-  | 'fadeFromTop'
-  | 'iosFromRight'
-  | 'iosFromLeft';
+  | StackScreenAnimationUntimedPresetName
+  | StackScreenAnimationTimedPresetName
+  | StackScreenAnimationFadeFromEdgePresetName;
 
 /**
  * Options that change the timing of a preset.
@@ -95,11 +87,15 @@ export interface StackScreenAnimationTimingOptions {
   /**
    * Replaces the preset's reference duration (the longer of its push and pop)
    * in milliseconds; both are rescaled by the same factor.
+   *
+   * @platform android
    */
   duration?: number | undefined;
   /**
    * Replaces the curve of every animated property of the preset. A predictive
    * back gesture always scrubs linearly with the finger.
+   *
+   * @platform android
    */
   easing?: StackScreenAnimationEasing | undefined;
 }
@@ -139,16 +135,21 @@ export interface StackScreenAnimationFadeFromEdgePresetRef
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: StackScreenAnimationFadeFromEdgePresetName;
   /**
    * How far the moving screen rises or falls.
    *
    * @defaultValue `'8%'`
+   * @platform android
    */
   distance?: StackScreenAnimationLength | undefined;
 }
@@ -160,10 +161,14 @@ export interface StackScreenAnimationTimedPresetRef
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: StackScreenAnimationTimedPresetName;
 }
@@ -174,10 +179,14 @@ export interface StackScreenAnimationTimedPresetRef
 export interface StackScreenAnimationUntimedPresetRef {
   /**
    * Discriminator of the object.
+   *
+   * @platform android
    */
   type: 'preset';
   /**
    * Name of the preset.
+   *
+   * @platform android
    */
   name: StackScreenAnimationUntimedPresetName;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import StackScreenNativeComponent from '../../../fabric/stack/StackScreenNativeComponent';
 import type { NativeEventHandler } from '../../shared/types';
 import type {
@@ -7,6 +7,7 @@ import type {
   StackScreenProps,
 } from './StackScreen.types';
 import { useRenderDebugInfo } from '../../../private';
+import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 
 function StackScreen({
   children,
@@ -43,6 +44,9 @@ function StackScreen({
     React.useMemo(() => `StackScreen (${screenKey})`, [screenKey]),
   );
 
+  const isSplitColumnContent =
+    React.useContext(SplitColumnMarkerContext) && Platform.OS === 'ios';
+
   return (
     <StackScreenNativeComponent
       // @ts-ignore - debug only
@@ -61,8 +65,11 @@ function StackScreen({
       // Configuration
       preventNativeDismiss={preventNativeDismiss}
       animation={animation}
-      replaceAnimation={replaceAnimation}>
-      {children}
+      replaceAnimation={replaceAnimation}
+      reportsFrameToShadowTree={isSplitColumnContent}>
+      <SplitColumnMarkerContext.Provider value={false}>
+        {children}
+      </SplitColumnMarkerContext.Provider>
     </StackScreenNativeComponent>
   );
 }

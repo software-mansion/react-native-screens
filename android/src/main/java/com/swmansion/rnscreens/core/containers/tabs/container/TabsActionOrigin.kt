@@ -20,7 +20,7 @@ enum class TabsActionOrigin {
     override fun toString(): String =
         when (this) {
             USER -> "user"
-            PROGRAMMATIC_JS -> "programmatic-js"
-            PROGRAMMATIC_NATIVE -> "programmatic-native"
+            PROGRAMMATIC_JS -> "programmaticJs"
+            PROGRAMMATIC_NATIVE -> "programmaticNative"
         }
 }

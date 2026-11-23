@@ -12,12 +12,12 @@ export type {
   SplitColorScheme,
   SplitColumnMetrics,
   SplitNavigableColumn,
+  SplitSidebarColumn,
   SplitHostCommands,
   SplitHostProps,
 } from './SplitHost.types';
 
 export type {
-  SplitScreenColumnType,
   SplitColumnProps,
   SplitInspectorProps,
 } from './SplitScreen.types';
@@ -48,6 +48,21 @@ export const Split = {
   Host: SplitHost,
   /**
    * A column of {@link Split.Host}.
+   *
+   * @remarks
+   * A `Stack.Host` rendered as a direct child of the column is integrated with
+   * the column. The stack navigates the column, and the header of the stack is
+   * the navigation bar of the column. The host has to be the only child of the
+   * column then.
+   *
+   * The integration does not work when there is a view between the column and
+   * the host. Such a column has to opt out with
+   * {@link SplitColumnProps.disableStackIntegration | disableStackIntegration}.
+   * A stack rendered inside `Tabs`, a sheet or a contained modal is never
+   * integrated, so the column does not have to opt out for it.
+   *
+   * An integrated column and its host take no part in layout, so their
+   * `onLayout` and `measure` report an empty frame.
    *
    * @platform ios
    * @experimental

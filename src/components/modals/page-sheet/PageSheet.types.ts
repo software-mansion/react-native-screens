@@ -1,29 +1,99 @@
 import type { StyleProp, ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type {
-  SheetBackgroundEffect as PageSheetBackgroundEffect,
-  SheetDetentChangedEvent as PageSheetDetentChangedEvent,
-  SheetDetents as PageSheetDetents,
-  SheetInitialDetentIndex as PageSheetInitialDetentIndex,
-  SheetLargestUndimmedDetentIndex as PageSheetLargestUndimmedDetentIndex,
-  SheetNativeContainerStyleProps as PageSheetNativeContainerStyleProps,
-  SheetPreferredCornerRadius as PageSheetPreferredCornerRadius,
+  SheetBackgroundEffect,
+  SheetBackgroundEffectBlur,
+  SheetBackgroundEffectBlurStyle,
+  SheetBackgroundEffectColor,
+  SheetDetentChangedEvent,
+  SheetDetents,
+  SheetInitialDetentIndex,
+  SheetLargestUndimmedDetentIndex,
+  SheetNativeContainerStyleProps,
+  SheetPreferredCornerRadius,
 } from '../sheet';
 
-// Renamed re-exports keep the shared declarations' typedocs visible on the
-// consumer side.
-export type {
-  SheetDetentChangedEvent as PageSheetDetentChangedEvent,
-  SheetDetents as PageSheetDetents,
-  SheetPreferredCornerRadius as PageSheetPreferredCornerRadius,
-  SheetLargestUndimmedDetentIndex as PageSheetLargestUndimmedDetentIndex,
-  SheetInitialDetentIndex as PageSheetInitialDetentIndex,
-  SheetBackgroundEffectBlurStyle as PageSheetBackgroundEffectBlurStyle,
-  SheetBackgroundEffectColor as PageSheetBackgroundEffectColor,
-  SheetBackgroundEffectBlur as PageSheetBackgroundEffectBlur,
-  SheetBackgroundEffect as PageSheetBackgroundEffect,
-  SheetNativeContainerStyleProps as PageSheetNativeContainerStyleProps,
-} from '../sheet';
+/**
+ * Payload of the page sheet's `onDetentChanged` event.
+ *
+ * @remarks
+ * See {@link SheetDetentChangedEvent} for its fields.
+ */
+export type PageSheetDetentChangedEvent = SheetDetentChangedEvent;
+
+/**
+ * Resting positions of a page sheet.
+ *
+ * @remarks
+ * Accepts any {@link SheetDetents} value.
+ */
+export type PageSheetDetents = SheetDetents;
+
+/**
+ * Corner radius of a page sheet.
+ *
+ * @remarks
+ * Accepts any {@link SheetPreferredCornerRadius} value.
+ */
+export type PageSheetPreferredCornerRadius = SheetPreferredCornerRadius;
+
+/**
+ * Largest detent of a page sheet at which the content underneath is not
+ * dimmed.
+ *
+ * @remarks
+ * Accepts any {@link SheetLargestUndimmedDetentIndex} value.
+ */
+export type PageSheetLargestUndimmedDetentIndex =
+  SheetLargestUndimmedDetentIndex;
+
+/**
+ * Detent a page sheet opens at.
+ *
+ * @remarks
+ * Accepts any {@link SheetInitialDetentIndex} value.
+ */
+export type PageSheetInitialDetentIndex = SheetInitialDetentIndex;
+
+/**
+ * Blur style of the material rendered behind the page sheet's content.
+ *
+ * @remarks
+ * Accepts any {@link SheetBackgroundEffectBlurStyle} value.
+ */
+export type PageSheetBackgroundEffectBlurStyle = SheetBackgroundEffectBlurStyle;
+
+/**
+ * Flat fill rendered behind the page sheet's content.
+ *
+ * @remarks
+ * See {@link SheetBackgroundEffectColor} for its fields.
+ */
+export type PageSheetBackgroundEffectColor = SheetBackgroundEffectColor;
+
+/**
+ * Blur material rendered behind the page sheet's content.
+ *
+ * @remarks
+ * See {@link SheetBackgroundEffectBlur} for its fields.
+ */
+export type PageSheetBackgroundEffectBlur = SheetBackgroundEffectBlur;
+
+/**
+ * Material the system renders behind the page sheet's content.
+ *
+ * @remarks
+ * Accepts any {@link SheetBackgroundEffect} value.
+ */
+export type PageSheetBackgroundEffect = SheetBackgroundEffect;
+
+/**
+ * Style of the native container hosting a page sheet's content.
+ *
+ * @remarks
+ * See {@link SheetNativeContainerStyleProps} for its fields.
+ */
+export type PageSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
  * Props for {@link PageSheet}.
@@ -52,15 +122,16 @@ export interface PageSheetProps {
    * Defines the resting positions of the sheet.
    *
    * @remarks
-   * If the prop is not set or the array is empty, the sheet has a single
-   * large detent. On Android, at most three detents are supported.
-   * `'fitToContents'` is supported on iOS 16+.
+   * An empty array also gives the sheet a single large detent. On Android, at
+   * most three detents are supported. `'fitToContents'` is supported on
+   * iOS 16+.
    *
    * @note
    * This is an implementation detail and may change. On iOS 15,
    * `'fitToContents'` falls back to a large detent, and only the system's
    * medium and large detents are used.
    *
+   * @defaultValue The sheet has a single large detent.
    * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/detents | UISheetPresentationController.detents}
    * @platform android, ios
    */

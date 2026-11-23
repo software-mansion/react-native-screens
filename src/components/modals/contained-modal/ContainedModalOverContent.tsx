@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import ContainedModalHostNativeComponent from '../../../fabric/modals/contained-modal/ContainedModalHostNativeComponent';
+import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 import type { ContainedModalProps } from './ContainedModal.types';
 
 /**
@@ -31,7 +32,7 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @experimental
  */
 export function ContainedModalOverContent(props: ContainedModalProps) {
-  const { targetContainerId, ...rest } = props;
+  const { targetContainerId, children, ...rest } = props;
 
   // Native maps an empty string to nil, and the modal would assert (debug) or
   // silently never present (release). Fail loudly instead.
@@ -45,8 +46,11 @@ export function ContainedModalOverContent(props: ContainedModalProps) {
     <ContainedModalHostNativeComponent
       style={styles.host}
       targetContainerId={targetContainerId}
-      {...rest}
-    />
+      {...rest}>
+      <SplitColumnMarkerContext.Provider value={false}>
+        {children}
+      </SplitColumnMarkerContext.Provider>
+    </ContainedModalHostNativeComponent>
   );
 }
 

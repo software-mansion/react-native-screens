@@ -40,7 +40,9 @@ function TabsHost(props: TabsHostProps) {
       style={[styles.fillParent, { direction }]}
       navStateRequest={navStateRequest}
       onTabSelected={onTabSelectedCallback}
-      nativeContainerBackgroundColor={nativeContainerStyle?.backgroundColor}
+      nativeContainerBackgroundColor={
+        StyleSheet.flatten(nativeContainerStyle)?.backgroundColor
+      }
       // @ts-ignore suppress ref - debug only
       ref={componentNodeRef}
       {...filteredBaseProps}

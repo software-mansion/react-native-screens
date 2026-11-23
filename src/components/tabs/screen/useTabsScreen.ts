@@ -3,7 +3,7 @@ import { findNodeHandle, type NativeSyntheticEvent } from 'react-native';
 import type { NativeProps as TabsScreenAndroidNativeComponentProps } from '../../../fabric/tabs/TabsScreenAndroidNativeComponent';
 import type { NativeProps as TabsScreenIOSNativeComponentProps } from '../../../fabric/tabs/TabsScreenIOSNativeComponent';
 import { RNSLog } from '../../../private';
-import type { EmptyObject, TabsScreenEventHandler } from './TabsScreen.types';
+import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 type TabsScreenPlatformNativeComponentProps =
   | TabsScreenAndroidNativeComponentProps
@@ -11,10 +11,10 @@ type TabsScreenPlatformNativeComponentProps =
 
 interface TabsScreenConfig<T> {
   componentNodeRef: React.RefObject<React.Component<T> | null>;
-  onDidAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
-  onDidDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
-  onWillAppear?: TabsScreenEventHandler<EmptyObject> | undefined;
-  onWillDisappear?: TabsScreenEventHandler<EmptyObject> | undefined;
+  onDidAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
+  onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
+  onWillAppear?: NativeEventHandler<EmptyEventPayload> | undefined;
+  onWillDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
   screenKey: string;
 }
 
@@ -40,7 +40,7 @@ export function useTabsScreen<
   }, []);
 
   const onWillAppearCallback = React.useCallback(
-    (event: NativeSyntheticEvent<EmptyObject>) => {
+    (event: NativeSyntheticEvent<EmptyEventPayload>) => {
       RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onWillAppear received`,
       );
@@ -50,7 +50,7 @@ export function useTabsScreen<
   );
 
   const onDidAppearCallback = React.useCallback(
-    (event: NativeSyntheticEvent<EmptyObject>) => {
+    (event: NativeSyntheticEvent<EmptyEventPayload>) => {
       RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onDidAppear received`,
       );
@@ -60,7 +60,7 @@ export function useTabsScreen<
   );
 
   const onWillDisappearCallback = React.useCallback(
-    (event: NativeSyntheticEvent<EmptyObject>) => {
+    (event: NativeSyntheticEvent<EmptyEventPayload>) => {
       RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onWillDisappear received`,
       );
@@ -70,7 +70,7 @@ export function useTabsScreen<
   );
 
   const onDidDisappearCallback = React.useCallback(
-    (event: NativeSyntheticEvent<EmptyObject>) => {
+    (event: NativeSyntheticEvent<EmptyEventPayload>) => {
       RNSLog.log(
         `TabsScreen [${componentNodeHandle.current}] onDidDisappear received`,
       );

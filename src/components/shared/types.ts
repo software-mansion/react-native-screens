@@ -1,13 +1,11 @@
 import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
 
 /**
- * Blur effect applied to the background of a native view.
+ * Style of a UIKit blur effect.
  *
  * @remarks
- * `'none'` disables the blur effect. Every other value is the UIKit
- * `UIBlurEffect.Style` of the same name; see the UIKit documentation for how
- * each one looks. The following values are supported:
- * - `'none'`
+ * Every value is the UIKit `UIBlurEffect.Style` of the same name; see the UIKit
+ * documentation for how each one looks. The following values are supported:
  * - `'extraLight'`
  * - `'light'`
  * - `'dark'`
@@ -31,8 +29,7 @@ import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */
-export type BlurEffect =
-  | 'none'
+export type BlurEffectStyle =
   | 'extraLight'
   | 'light'
   | 'dark'
@@ -53,6 +50,17 @@ export type BlurEffect =
   | 'systemMaterialDark'
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
+
+/**
+ * Blur effect applied to the background of a native view.
+ *
+ * @remarks
+ * Accepts any {@link BlurEffectStyle} value, plus:
+ * - `'none'` — disables the blur effect.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
+ */
+export type BlurEffect = 'none' | BlurEffectStyle;
 
 /**
  * Color scheme of a container and its child containers.
@@ -152,17 +160,22 @@ export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
  * This is an implementation detail and may change. On iOS, the image is
  * loaded with React Native's image loader, so `headers` and the other fields
  * of the source are used. On Android, only the `uri` of the source is used:
- * its other fields are ignored and animated images are not supported.
+ * its other fields are ignored and animated images are not supported. SVG
+ * images are not supported on Android either; use a
+ * {@link PlatformIconAndroidDrawableResource | drawable resource} instead.
  */
 export interface PlatformIconShared {
   /**
    * Kind of the icon.
+   *
+   * @platform android, ios
    */
   type: 'imageSource';
   /**
    * Image source the icon is loaded from.
    *
    * @see {@link https://reactnative.dev/docs/image#imagesource | React Native: ImageSource}
+   * @platform android, ios
    */
   imageSource: ImageSourcePropType;
 }
@@ -177,6 +190,8 @@ export interface PlatformIconShared {
 export interface PlatformIconAndroidDrawableResource {
   /**
    * Kind of the icon.
+   *
+   * @platform android
    */
   type: 'drawableResource';
   /**
@@ -187,6 +202,7 @@ export interface PlatformIconAndroidDrawableResource {
    * ```tsx
    * { type: 'drawableResource', name: 'ic_search' }
    * ```
+   * @platform android
    */
   name: string;
 }
@@ -203,12 +219,15 @@ export interface PlatformIconAndroidDrawableResource {
 export interface PlatformIconIOSTemplate {
   /**
    * Kind of the icon.
+   *
+   * @platform ios
    */
   type: 'templateSource';
   /**
    * Image source the icon is loaded from.
    *
    * @see {@link https://reactnative.dev/docs/image#imagesource | React Native: ImageSource}
+   * @platform ios
    */
   templateSource: ImageSourcePropType;
 }
@@ -221,10 +240,14 @@ export interface PlatformIconIOSTemplate {
 export interface PlatformIconIOSSfSymbol {
   /**
    * Kind of the icon.
+   *
+   * @platform ios
    */
   type: 'sfSymbol';
   /**
    * Name of the SF Symbol, for example `'magnifyingglass'`.
+   *
+   * @platform ios
    */
   name: string;
 }
@@ -239,10 +262,14 @@ export interface PlatformIconIOSSfSymbol {
 export interface PlatformIconIOSXcasset {
   /**
    * Kind of the icon.
+   *
+   * @platform ios
    */
   type: 'xcasset';
   /**
    * Name of the image set in the asset catalog.
+   *
+   * @platform ios
    */
   name: string;
 }
@@ -277,3 +304,47 @@ export type PlatformIconIOS =
 export type PlatformIconAndroid =
   | PlatformIconAndroidDrawableResource
   | PlatformIconShared;
+
+/**
+ * How an image icon is rendered on iOS.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the default of the element that shows the icon.
+ * - `'template'` — the image is used as a template image: its shape is drawn
+ *   in the icon color of the element.
+ * - `'original'` — the image keeps its own colors.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiimage/renderingmode-swift.enum | UIImage.RenderingMode}
+ */
+export type PlatformIconImageRenderingModeIOS =
+  | 'default'
+  | 'template'
+  | 'original';
+
+/**
+ * How an SF Symbol icon is rendered on iOS.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the default of the element that shows the icon.
+ * - `'monochrome'` — the symbol is rendered in a single color, the icon color
+ *   of the element.
+ * - `'original'` — the symbol keeps its own colors (Apple's "multicolor"
+ *   rendering).
+ */
+export type PlatformIconSymbolRenderingModeIOS =
+  | 'default'
+  | 'monochrome'
+  | 'original';
+
+/**
+ * How an icon is tinted on Android.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the default of the element that shows the icon.
+ * - `'tinted'` — the icon is drawn in the icon color of the element.
+ * - `'original'` — the icon keeps its own colors.
+ */
+export type PlatformIconTintingAndroid = 'default' | 'tinted' | 'original';

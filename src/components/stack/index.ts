@@ -5,7 +5,6 @@ import { StackHeaderConfig } from './header';
 export type { StackHostProps, StackColorScheme, StackDirection } from './host';
 
 export type {
-  OnDismissEventPayload,
   StackScreenActivityMode,
   StackScreenReplaceAnimation,
   StackScreenDismissHandler,
@@ -34,6 +33,7 @@ export type {
   StackHeaderPressHandler,
   StackHeaderMenuSelectionHandler,
   // Android
+  StackPlatformIconAndroid,
   StackHeaderTypeAndroid,
   StackHeaderTitleHorizontalGravityAndroid,
   StackHeaderTitleVerticalGravityAndroid,
@@ -54,6 +54,7 @@ export type {
   StackHeaderToolbarMenuItemShowAsActionAndroid,
   StackHeaderToolbarMenuItemTypeAndroid,
   // iOS
+  StackPlatformIconIOS,
   StackHeaderBackButtonDisplayModeIOS,
   StackHeaderMinimizationBehaviorIOS,
   StackHeaderRestorationBehaviorIOS,
