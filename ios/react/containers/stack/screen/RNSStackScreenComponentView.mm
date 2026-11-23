@@ -105,6 +105,7 @@ namespace react = facebook::react;
   _screenKey = nil;
   _activityMode = RNSStackScreenActivityModeDetached;
   _animation = RNSStackAnimationPresetConfig.defaultConfig;
+  _replaceAnimation = RNSStackAnimationTransitionKindPop;
 }
 
 - (void)setupController
@@ -252,6 +253,11 @@ RNS_IGNORE_SUPER_CALL_END
   if (oldComponentProps.animation != newComponentProps.animation) {
     _animation = [RNSStackAnimationMapper
         animationConfigFromProp:rnscreens::conversion::RNSConvertFollyDynamicToId(newComponentProps.animation)];
+  }
+
+  if (oldComponentProps.replaceAnimation != newComponentProps.replaceAnimation) {
+    _replaceAnimation = rnscreens::conversion::RNSStackAnimationTransitionKindFromReactRNSStackScreenReplaceAnimation(
+        newComponentProps.replaceAnimation);
   }
 
   [super updateProps:props oldProps:oldProps];

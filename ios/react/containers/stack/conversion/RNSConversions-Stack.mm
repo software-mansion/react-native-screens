@@ -25,6 +25,17 @@ RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActi
   return static_cast<RNSStackScreenActivityMode>(mode);
 }
 
+RNSStackAnimationTransitionKind RNSStackAnimationTransitionKindFromReactRNSStackScreenReplaceAnimation(
+    react::RNSStackScreenReplaceAnimation replaceAnimation)
+{
+  switch (replaceAnimation) {
+    case react::RNSStackScreenReplaceAnimation::Push:
+      return RNSStackAnimationTransitionKindPush;
+    case react::RNSStackScreenReplaceAnimation::Pop:
+      return RNSStackAnimationTransitionKindPop;
+  }
+}
+
 RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
     react::RNSStackHeaderItemIOSPlacement placement)
 {

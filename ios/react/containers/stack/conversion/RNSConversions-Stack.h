@@ -7,6 +7,7 @@
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
 #import "RNSHeaderItemVisibilityPriority.h"
+#import "RNSStackAnimationTransitionKind.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace rnscreens::conversion {
@@ -20,6 +21,10 @@ UITraitEnvironmentLayoutDirectionFromReactRNSStackHostLayoutDirection(
 RNSStackScreenActivityMode
 RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
     react::RNSStackScreenActivityMode mode);
+
+RNSStackAnimationTransitionKind
+RNSStackAnimationTransitionKindFromReactRNSStackScreenReplaceAnimation(
+    react::RNSStackScreenReplaceAnimation replaceAnimation);
 
 RNSHeaderItemPlacement
 RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(

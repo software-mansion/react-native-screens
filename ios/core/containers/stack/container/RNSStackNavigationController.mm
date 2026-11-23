@@ -282,7 +282,12 @@
   // `RNSSheetContentController` the stack is in or under. From 26 a swiped pop commits inside the call even if the
   // finger cancels, below 26 the call is replayed after the swipe; the popped screen stays shown although it left the
   // model (undocumented, 18 and 27). A sheet drag queues each call and replays them after it ends (undocumented, 27).
-  if (self.transitionCoordinator.initiallyInteractive) {
+  // A replace that looks like a pop is two calls (see `updateViewControllersTransitioningFrom:`). Issued during a
+  // running transition they draw wrong frames on 26 and later, where UIKit finishes that transition inside the first
+  // call (undocumented, 27.2; a pure UIKit app does the same), and below 26 UIKit queues them. The completion plays
+  // them cleanly on every version.
+  if (self.transitionCoordinator != nil &&
+      (self.transitionCoordinator.initiallyInteractive || [self isPopLookReplaceFrom:previous])) {
     [self updateViewControllersWhenTransitionEnds];
     return;
   }
@@ -317,18 +322,61 @@
 {
   RNSStackScreenController *outgoing = previous.lastObject;
   RNSStackScreenController *incoming = _stackModel.lastObject;
-  BOOL animated = outgoing != nil;
   // A change below an unchanged top is neither a push nor a pop, so no screen's animation applies to it.
-  if (animated && incoming != outgoing) {
-    // UIKit plays `setViewControllers:` as a pop when the new top was already in the stack.
-    RNSStackAnimationTransitionKind kind =
-        [previous containsObject:incoming] ? RNSStackAnimationTransitionKindPop : RNSStackAnimationTransitionKindPush;
-    RNSStackAnimationTransitionTimeline *timeline = [RNSStackAnimationResolver transitionTimelineForKind:kind
-                                                                                                outgoing:outgoing
-                                                                                                incoming:incoming];
-    animated = !timeline.isStatic;
+  if (outgoing == nil || incoming == outgoing) {
+    [self setViewControllers:[_stackModel copy] animated:outgoing != nil];
+    return;
   }
-  [self setViewControllers:[_stackModel copy] animated:animated];
+  RNSStackAnimationTransitionKind kind = [self transitionKindFrom:previous];
+  RNSStackAnimationTransitionTimeline *timeline = [RNSStackAnimationResolver transitionTimelineForKind:kind
+                                                                                              outgoing:outgoing
+                                                                                              incoming:incoming];
+  if (timeline.isStatic) {
+    [self setViewControllers:[_stackModel copy] animated:NO];
+    return;
+  }
+  // `setViewControllers:` plays a new top as a push. A replace that looks like a pop keeps the outgoing screen on
+  // top without animation, with the new screens underneath, and pops it: UIKit then asks for that screen's pop
+  // transition or plays its own pop. Same two calls as the legacy stack.
+  if (kind == RNSStackAnimationTransitionKindPop && ![previous containsObject:incoming]) {
+    [self setViewControllers:[_stackModel arrayByAddingObject:outgoing] animated:NO];
+    // `super`: the model is already cut, and this pop is not a native one.
+    [super popViewControllerAnimated:YES];
+    return;
+  }
+  [self setViewControllers:[_stackModel copy] animated:YES];
+}
+
+// The kind of the transition from `previous` to the model, same rule as Android: a top still in the model was
+// covered, a new top that was in the stack is revealed, a replaced top plays as the incoming screen's
+// `replaceAnimation` says.
+- (RNSStackAnimationTransitionKind)transitionKindFrom:(nonnull NSArray<RNSStackScreenController *> *)previous
+{
+  RNSStackScreenController *incoming = _stackModel.lastObject;
+  if ([previous containsObject:incoming]) {
+    return RNSStackAnimationTransitionKindPop;
+  }
+  if ([_stackModel containsObject:previous.lastObject]) {
+    return RNSStackAnimationTransitionKindPush;
+  }
+  // A screen whose view is gone has no config and plays the default look.
+  id<RNSStackContainerItemConfigProviding> configProvider = incoming.configProvider;
+  return configProvider != nil ? configProvider.replaceAnimation : RNSStackAnimationTransitionKindPop;
+}
+
+// A replace that looks like a pop and animates, see `updateViewControllersTransitioningFrom:`.
+- (BOOL)isPopLookReplaceFrom:(nonnull NSArray<RNSStackScreenController *> *)previous
+{
+  RNSStackScreenController *outgoing = previous.lastObject;
+  RNSStackScreenController *incoming = _stackModel.lastObject;
+  if (outgoing == nil || [previous containsObject:incoming] ||
+      [self transitionKindFrom:previous] != RNSStackAnimationTransitionKindPop) {
+    return NO;
+  }
+  return ![RNSStackAnimationResolver transitionTimelineForKind:RNSStackAnimationTransitionKindPop
+                                                      outgoing:outgoing
+                                                      incoming:incoming]
+              .isStatic;
 }
 
 #pragma mark - Native pops
@@ -443,18 +491,13 @@
 #pragma mark - Back button
 
 #if !TARGET_OS_TV
-- (void)applyBackButtonConfigs
-{
-  [self applyBackButtonConfigsForScreens:_stackModel];
-}
-
 // The top item keeps the config of the screen that was above it. UIKit reads it only while a screen sits above, and
 // every change that puts one there rewrites it here first; clearing it on a pop would relabel the back button of the
 // leaving screen, which iOS 18 and 26 redraw live.
-- (void)applyBackButtonConfigsForScreens:(nonnull NSArray<RNSStackScreenController *> *)screens
+- (void)applyBackButtonConfigs
 {
-  for (NSUInteger index = 1; index < screens.count; index++) {
-    [screens[index].headerCoordinator applyBackButtonConfigToNavigationItem:screens[index - 1].navigationItem];
+  for (NSUInteger index = 1; index < _stackModel.count; index++) {
+    [_stackModel[index].headerCoordinator applyBackButtonConfigToNavigationItem:_stackModel[index - 1].navigationItem];
   }
 }
 #endif // !TARGET_OS_TV

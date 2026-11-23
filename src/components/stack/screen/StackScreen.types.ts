@@ -182,7 +182,7 @@ export type StackScreenProps = {
    * top of the stack.
    *
    * @defaultValue `'pop'`
-   * @platform android
+   * @platform android, ios
    */
   replaceAnimation?: StackScreenReplaceAnimation | undefined;
 };
