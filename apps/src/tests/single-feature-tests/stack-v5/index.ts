@@ -6,7 +6,7 @@ import TestStackPreventNativeDismissSingleStack from './test-stack-prevent-nativ
 import TestStackPreventNativeDismissNestedStack from './test-stack-prevent-native-dismiss-nested-stack';
 import TestStackLifecycleEvents from './test-stack-lifecycle-events';
 import TestStackAnimationAndroid from './test-stack-animation-android';
-import TestStackAnimationOperationsAndroid from './test-stack-animation-operations-android';
+import TestStackAnimationOperations from './test-stack-animation-operations';
 import TestStackAnimationUpdate from './test-stack-animation-update';
 import TestStackAnimationSlide from './test-stack-animation-slide';
 import TestStackAnimationFade from './test-stack-animation-fade';
@@ -59,7 +59,7 @@ export { default as TestStackPreventNativeDismissSingleStack } from './test-stac
 export { default as TestStackPreventNativeDismissNestedStack } from './test-stack-prevent-native-dismiss-nested-stack';
 export { default as TestStackLifecycleEvents } from './test-stack-lifecycle-events';
 export { default as TestStackAnimationAndroid } from './test-stack-animation-android';
-export { default as TestStackAnimationOperationsAndroid } from './test-stack-animation-operations-android';
+export { default as TestStackAnimationOperations } from './test-stack-animation-operations';
 export { default as TestStackAnimationUpdate } from './test-stack-animation-update';
 export { default as TestStackAnimationSlide } from './test-stack-animation-slide';
 export { default as TestStackAnimationFade } from './test-stack-animation-fade';
@@ -111,7 +111,7 @@ const scenarios = {
   TestStackPreventNativeDismissNestedStack,
   TestStackLifecycleEvents,
   TestStackAnimationAndroid,
-  TestStackAnimationOperationsAndroid,
+  TestStackAnimationOperations,
   TestStackAnimationUpdate,
   TestStackAnimationSlide,
   TestStackAnimationFade,
