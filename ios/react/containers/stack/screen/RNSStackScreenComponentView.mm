@@ -8,6 +8,7 @@
 #import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSDefines.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewSeeking.h"
 #import "RNSStackHeaderConfigComponentView.h"
@@ -201,6 +202,21 @@ namespace react = facebook::react;
 }
 
 #pragma mark - RCTComponentViewProtocol
+
+// In a Split column UIKit lays the screen out and the ShadowTree gets the frame from the screen
+// (`updateShadowStateIfNeeded`), so the frame is not written back to the view. Elsewhere Yoga lays the screen out.
+RNS_IGNORE_SUPER_CALL_BEGIN
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  if (_reportsFrameToShadowTree) {
+    _layoutMetrics = layoutMetrics;
+    return;
+  }
+
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+}
+RNS_IGNORE_SUPER_CALL_END
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
