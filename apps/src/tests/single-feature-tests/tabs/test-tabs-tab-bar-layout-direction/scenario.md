@@ -6,13 +6,13 @@
 | ------------ | ------------------------------------ |
 | Key          | `test-tabs-tab-bar-layout-direction` |
 | Platforms    | Android, iOS                         |
-| E2E coverage | Full                                 |
+| E2E coverage | Incomplete                           |
 | Smoke test   | No                                   |
 
-| Device        | Test on            | Setup                                    |
-| ------------- | ------------------ | ---------------------------------------- |
-| iPhone        | iOS 18.6, iOS 26.5 | System language set to Arabic or Hebrew. |
-| Android phone | API Level 36       | -                                        |
+| Device        | Test on            | Setup                                                                                                                                                                        |
+| ------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| iPhone        | iOS 18.6, iOS 26.5 | An RTL language (Arabic or Hebrew) available as a system language. Start with an LTR system language (e.g. English); switch to the RTL language for the System RTL sections. |
+| Android phone | API Level 36       | -                                                                                                                                                                            |
 
 **E2E coverage details:** Covers all scenarios for LTR/RTL configurations. iOS: the system RTL direction is set by the app configuration settings AppleTextDirection, NSForceRightToLeftWritingDirection and I18NIsRTL set to YES during the app launch sequence. Android: via React Native - RTL direction must be triggered using the forceRTL toggle located within the Layout Direction screen. Scenarios where RTL is enabled at the device level by setting a system-wide RTL language are NOT covered by E2E tests.
 
@@ -186,5 +186,5 @@ Both platforms validate `inherit`, `ltr`, and `rtl` prop values.
 4.  Cycle `TabsHost direction` through
     `inherit` → `rtl` → `ltr` → `rtl` → `inherit` rapidly.
 
-        - [ ] Tab bar direction updates immediately with each change with
-              result described as expected above.
+    - [ ] Tab bar direction updates immediately with each change with
+          result described as expected above.

@@ -121,6 +121,7 @@ const FORBIDDEN_MANUAL_CONTENT: { pattern: RegExp; field: string }[] = [
 
 const repoRoot = path.resolve(__dirname, '..');
 const testsRoot = path.join(repoRoot, 'apps', 'src', 'tests');
+const templateDir = path.join(testsRoot, 'template');
 
 // Test screens that do not have a scenario.md yet, relative to testsRoot.
 // Remove an entry once its scenario.md is written.
@@ -141,7 +142,15 @@ function findScenarioDirs(dir: string): string[] {
       continue;
     }
     const entryPath = path.join(dir, entry.name);
-    if (fs.existsSync(path.join(entryPath, 'scenario-description.ts'))) {
+    if (entryPath === templateDir) {
+      continue;
+    }
+    // A scenario.md without a scenario-description.ts is picked up too, so
+    // main() reports the missing description instead of skipping the dir.
+    if (
+      fs.existsSync(path.join(entryPath, 'scenario-description.ts')) ||
+      fs.existsSync(path.join(entryPath, 'scenario.md'))
+    ) {
       result.push(entryPath);
     }
     result.push(...findScenarioDirs(entryPath));
@@ -338,7 +347,9 @@ function main(): void {
     const relativeDir = path.relative(repoRoot, dir);
     if (!fs.existsSync(path.join(dir, 'scenario-description.ts'))) {
       problems.push(
-        `${relativeDir}: not a scenario directory (no scenario-description.ts)`,
+        fs.existsSync(path.join(dir, 'scenario.md'))
+          ? `${relativeDir}/scenario-description.ts: missing (the scenario.md has no metadata source)`
+          : `${relativeDir}: not a scenario directory (no scenario-description.ts)`,
       );
       continue;
     }

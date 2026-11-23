@@ -190,11 +190,11 @@ verifies that `tabBarBlurEffect` updates live without a restart.
 1.  Enable **scrollEdgeAppearance**. Scroll all the way to the **bottom** of
     Tab2 until the trees image and end of content are visible.
 
-        - [ ] The tab bar background appears as a slightly muted dark navy with a subtle
-              grayish or milky cast.
-        - [ ] At the bottom edge of the content, `scrollEdgeAppearance` activates:
-              transparent dark purple background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
-        - [ ] The final appearance is a blend of the `scrollEdgeAppearance` configuration mixed with the underlying view's green background.
+    - [ ] The tab bar background appears as a slightly muted dark navy with a subtle
+          grayish or milky cast.
+    - [ ] At the bottom edge of the content, `scrollEdgeAppearance` activates:
+          transparent dark purple background, a bright purple shadow, and the `systemChromeMaterialDark` blur effect.
+    - [ ] The final appearance is a blend of the `scrollEdgeAppearance` configuration mixed with the underlying view's green background.
 
 2.  Re-enable both toggles to restore Tab2 default state before
     proceeding.

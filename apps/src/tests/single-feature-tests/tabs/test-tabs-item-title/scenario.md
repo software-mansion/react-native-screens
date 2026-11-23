@@ -74,8 +74,8 @@ iOS Known Issues:
 2.  Android only: While **Color** tab is selected, use the Tab key on keyboard to
     switch focus to the long title tab.
 
-        - [ ] Focused tab title is yellow while selected tab title
-              remains red, and unselected tabs remain blue.
+    - [ ] Focused tab title is yellow while selected tab title
+          remains red, and unselected tabs remain blue.
 
 3.  Tap the long title tab, then tap **Color** again.
 

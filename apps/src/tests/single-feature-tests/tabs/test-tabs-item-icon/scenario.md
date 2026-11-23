@@ -151,8 +151,8 @@ iOS specific notes:
 2.  While **Image** tab is selected, use the Tab key on keyboard to
     switch focus to the **DrawableResource** tab.
 
-        - [ ] Focused tab icon is dark blue while selected tab icon
-              remains red.
+    - [ ] Focused tab icon is dark blue while selected tab icon
+          remains red.
 
 ---
 

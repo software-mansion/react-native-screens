@@ -152,12 +152,25 @@ rule (`---`). When referring to another step, always name its section and
 subsection, e.g. "Baseline step 2" or "iPhone Duo, Unfolding step 1" - a bare
 "step 2" is ambiguous.
 
-**Indentation Convention:** Expected-result checkboxes must be nested under
-their numbered step, and wrapped lines must stay inside their list item,
-following the [CommonMark list item rules](https://spec.commonmark.org/current/#list-items).
-You do not need to do this by hand: `yarn sync-scenario-metadata` formats
-`scenario.md` with Prettier, and `yarn sync-scenario-metadata --check` fails
-on wrong indentation.
+**Indentation Convention:** Write each expected-result checkbox nested under
+its numbered step, following the
+[CommonMark list item rules](https://spec.commonmark.org/current/#list-items):
+indent it to the column where the step's text starts (3 spaces under `1. Action`).
+Prettier, which `yarn sync-scenario-metadata` runs on `scenario.md`, then
+formats the indentation. It keeps the structure you wrote, so make the nesting
+right first:
+
+```text
+1. Tap the button.
+
+   - [ ] The label updates.
+```
+
+Avoid these, Prettier leaves them broken:
+
+- `- [ ]` at column 0 under a step starts a new list instead of nesting,
+- `- [ ]` indented 4 or more extra spaces after a blank line becomes a code
+  block and does not render as a checkbox.
 
 ### How to write OS and device differences
 

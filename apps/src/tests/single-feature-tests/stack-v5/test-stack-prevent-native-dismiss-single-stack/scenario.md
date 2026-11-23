@@ -175,7 +175,8 @@ directly to work around issue #1459.
 
 ### Android: prevent native dismiss mechanism keeps working after activity backgrounding
 
-1. From **Home**, tap **Push B**. On **B** tap back button.
+1. On **B**, tap the on-screen **Pop** to return to **Home**. Tap **Push B**.
+   On **B** tap back button.
 
    - [ ] A green toast appears and the app remains on **B**.
 

@@ -20,8 +20,9 @@
 
 This test scenario validates the `specialEffects.repeatedTabSelection.scrollToTop`
 property on tab routes. It verifies that re-tapping an already-active
-tab scrolls a scrollable screen back to the top when the property is enabled, and
-that there is no scroll-to-top behavior when it is disabled or absent.
+tab scrolls a scrollable screen back to the top when the property is enabled or
+absent (the default), and that there is no scroll-to-top behavior when it is
+disabled.
 
 ## Note
 

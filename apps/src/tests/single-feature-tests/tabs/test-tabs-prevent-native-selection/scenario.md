@@ -84,7 +84,7 @@ subject to prevention.
 1.  While on the **First** tab (with `preventNativeSelection: true`), tap
     **Toggle preventNativeSelection**.
 
-        - [ ] The label updates back to `preventNativeSelection: false`.
+    - [ ] The label updates back to `preventNativeSelection: false`.
 
 2.  Navigate to a different tab and then tap the **First** tab item in the tab bar.
 
@@ -110,8 +110,8 @@ subject to prevention.
 4.  Navigate to the **First** tab and confirm its `preventNativeSelection` is
     still `false`.
 
-        - [ ] First tab label shows `preventNativeSelection: false`. Tapping it
-              from another tab works normally.
+    - [ ] First tab label shows `preventNativeSelection: false`. Tapping it
+          from another tab works normally.
 
 5.  Navigate to the **Fourth** tab via the **Select Fourth** button (programmatic).
     Tap **Toggle preventNativeSelection** to disable it.
@@ -146,7 +146,7 @@ subject to prevention.
 6.  Tap **Fourth** tab and navigate to **Fifth** via **Select Fifth**, tap
     **Toggle preventNativeSelection** to disable it.
 
-        - [ ] Fifth tab label shows `preventNativeSelection: false`.
+    - [ ] Fifth tab label shows `preventNativeSelection: false`.
 
 7.  Navigate away, then tap **More**.
 
