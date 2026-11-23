@@ -6,7 +6,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class RNSSplitScreenController;
+@class RNSSplitColumnCoordinator;
+@class RNSStackNavigationController;
 
 /**
  * @brief Configuration of the UISplitViewController appearance.
@@ -55,12 +56,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- * @brief Controllers of the columns mounted in the host, in React order, split by column type.
+ * @brief Coordinators of the columns mounted in the host, in React order, split by column type.
  */
 @protocol RNSSplitHostColumnsProvider <NSObject>
 
-- (NSArray<RNSSplitScreenController *> *)columnControllers;
-- (NSArray<RNSSplitScreenController *> *)inspectorControllers;
+- (NSArray<RNSSplitColumnCoordinator *> *)columnCoordinators;
+- (NSArray<RNSSplitColumnCoordinator *> *)inspectorCoordinators;
+
+/**
+ * @brief Navigation controllers the host installs for the columns, in the order of `columnCoordinators`.
+ */
+- (NSArray<RNSStackNavigationController *> *)columnNavigationControllers;
 
 @end
 

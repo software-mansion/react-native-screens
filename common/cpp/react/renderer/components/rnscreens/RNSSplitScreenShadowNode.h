@@ -25,12 +25,16 @@ class JSI_EXPORT RNSSplitScreenShadowNode final
 
 #pragma mark - ShadowNode overrides
 
+  void appendChild(const std::shared_ptr<const ShadowNode> &child) override;
+
   Point getContentOriginOffset(bool includeTransform) const override;
   static ShadowNodeTraits BaseTraits() {
     auto traits = ConcreteViewShadowNode::BaseTraits();
     traits.set(ShadowNodeTraits::Trait::RootNodeKind);
     return traits;
   }
+
+  void configureStackIntegrationIfNeeded();
 };
 
 } // namespace facebook::react

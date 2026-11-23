@@ -19,13 +19,9 @@
 namespace react = facebook::react;
 
 @interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
-
-@property (nonatomic) BOOL headlessModeEnabled;
-
 @end
 
 @implementation RNSStackHostComponentView {
-  RNSStackNavigationController *_Nonnull _stackNavigationController;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
   BOOL _didSetHeadlessModeEnabled;
@@ -56,6 +52,12 @@ namespace react = facebook::react;
   RNSLogD(@"[RNScreens] StackHost [%ld] attached to window", self.tag);
   // In headless mode the host does not show the stack itself.
   if (_headlessModeEnabled) {
+    if (self.window != nil) {
+      RNSLogE(
+          @"[RNScreens] Stack.Host is rendered in a Split.Column, but it is not the direct and only child of the "
+          @"column, so the stack is not shown. Set disableStackIntegration on the Split.Column to nest the "
+          @"stack as plain content.");
+    }
     return;
   }
   if (self.window != nil && _stackNavigationController.parentViewController == nil) {

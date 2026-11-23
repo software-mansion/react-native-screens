@@ -1,8 +1,8 @@
-import type { PlatformIconIOS } from '../../../shared/types';
 import type {
   StackHeaderMenuSelectionHandler,
   StackHeaderPressHandler,
 } from '../StackHeaderConfig.types';
+import type { StackPlatformIconIOS } from '../StackHeaderConfig.ios.types';
 
 /**
  * Behavior of a menu item.
@@ -85,7 +85,7 @@ export interface StackHeaderMenuItemIOS {
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: StackPlatformIconIOS | undefined;
   /**
    * Callback invoked when the menu item is pressed.
    *
@@ -180,7 +180,7 @@ export interface StackHeaderMenuIOS {
    *
    * @platform ios
    */
-  icon?: PlatformIconIOS | undefined;
+  icon?: StackPlatformIconIOS | undefined;
   /**
    * Displays the menu inline with parent menu instead of as a submenu.
    *
