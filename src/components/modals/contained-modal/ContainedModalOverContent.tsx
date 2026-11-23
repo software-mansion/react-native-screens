@@ -3,16 +3,18 @@ import { ContainedModalHost } from './ContainedModalHost';
 import type { ContainedModalProps } from './ContainedModal.types';
 
 /**
- * A modal presented over the content of a `ContainedModalProvider`.
+ * A modal presented over the content of a {@link ContainedModalProvider}.
  *
  * @remarks
- * The modal is paired with the provider whose `containerId` equals its
- * `targetContainerId`; that provider must be an ancestor of the modal in the
- * React tree. The modal fills the targeted provider's bounds. The provider's
- * children stay in place underneath and keep updating; touches inside the
- * provider are captured by the open modal, content outside stays interactive.
- * The modal's children stay mounted regardless of `isOpen`, so their React
- * state survives presentations.
+ * The modal is paired with the provider whose
+ * {@link ContainedModalProviderProps.containerId | containerId} equals its
+ * {@link ContainedModalProps.targetContainerId | targetContainerId}; that
+ * provider must be an ancestor of the modal in the React tree. The modal fills
+ * the targeted provider's bounds. The provider's children stay in place
+ * underneath and keep updating; touches inside the provider are captured by the
+ * open modal, content outside stays interactive. The modal's children stay
+ * mounted regardless of {@link ContainedModalProps.isOpen | isOpen}, so their
+ * React state survives presentations.
  *
  * Modality is scoped to the provider's position in the view hierarchy, not
  * the window: a sibling that overlaps the provider and renders later in the
@@ -23,10 +25,11 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * pane-scoped dialogs in split-view / multi-column layouts, correct stacking
  * and suspend/restore alongside native presentations and navigation,
  * accessibility modality, a presentation context other native presenters can
- * target. When none of that is needed, a conditionally rendered overlay
- * `View` is also an option. See `ContainedModalReplacingContent` for the
- * variant that takes the provider's content off screen while open.
+ * target. When none of that is needed, a conditionally rendered overlay `View`
+ * is also an option.
  *
+ * @see {@link ContainedModalReplacingContent} for the variant that takes the
+ * provider's content off screen while open.
  * @platform ios
  * @experimental
  */

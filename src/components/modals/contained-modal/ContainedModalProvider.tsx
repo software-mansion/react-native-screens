@@ -6,12 +6,14 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * Defines the presentation area for contained modals.
  *
  * @remarks
- * A contained modal whose `targetContainerId` equals this provider's
- * `containerId` presents within the provider's bounds, fully covering it.
- * The provider must be an ancestor of the modal in the React tree.
+ * A contained modal whose
+ * {@link ContainedModalProps.targetContainerId | targetContainerId} equals this
+ * provider's {@link ContainedModalProviderProps.containerId | containerId}
+ * presents within the provider's bounds, fully covering it. The provider must
+ * be an ancestor of the modal in the React tree.
  *
- * Intended for region-scoped native modality; see `ContainedModalOverContent`
- * for when it is the right tool.
+ * Intended for region-scoped native modality; see
+ * {@link ContainedModalOverContent} for when it is the right tool.
  *
  * @platform ios
  * @experimental
