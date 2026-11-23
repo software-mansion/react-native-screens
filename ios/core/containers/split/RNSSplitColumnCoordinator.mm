@@ -39,16 +39,16 @@
 }
 
 /**
- * @brief Returns the SplitHost controller the plain column is installed in.
+ * @brief Returns the SplitHost controller the column is installed in.
  *
- * The navigation controller of the plain column is asked, as the coordinator is not in the view controller hierarchy.
+ * The navigation controller of the column is asked, as the coordinator is not in the view controller hierarchy.
  *
  * @return `splitViewController` of the navigation controller if it is a RNSSplitHostController, otherwise nil (e.g.
  * for the inspector presented as a modal, outside the split hierarchy).
  */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
-  UISplitViewController *splitViewController = _plainColumnNavigationController.splitViewController;
+  UISplitViewController *splitViewController = [self columnNavigationController].splitViewController;
   if ([splitViewController isKindOfClass:RNSSplitHostController.class]) {
     return (RNSSplitHostController *)splitViewController;
   }
@@ -90,17 +90,37 @@
   _plainColumnNavigationController = nil;
 }
 
+- (void)setHostedStackNavigationController:(nullable RNSStackNavigationController *)hostedStackNavigationController
+{
+  _hostedStackNavigationController.viewLifecycleEventsObserver = nil;
+  _hostedStackNavigationController.viewFrameChangeDelegate = nil;
+  _hostedStackNavigationController = hostedStackNavigationController;
+  _hostedStackNavigationController.viewLifecycleEventsObserver = self;
+  _hostedStackNavigationController.viewFrameChangeDelegate = self;
+}
+
+/**
+ * @brief Returns the navigation controller the Split installs for the column.
+ *
+ * @return The navigation controller of the stack in a column that hosts one, otherwise the one of the plain column,
+ * which is nil until it is created.
+ */
+- (nullable RNSStackNavigationController *)columnNavigationController
+{
+  return _hostedStackNavigationController != nil ? _hostedStackNavigationController : _plainColumnNavigationController;
+}
+
 #pragma mark - Layout
 
 /**
  * @brief Reports the frame of the column to the delegate.
  *
- * The frame of a column is the one of the view of its navigation controller. A column that hosts a stack or is not
- * on screen has no frame to report.
+ * The frame of a column is the one of the view of its navigation controller. A column that is not on screen has no
+ * frame to report.
  */
 - (void)reportColumnFrame
 {
-  UIView *columnView = _plainColumnNavigationController.viewIfLoaded;
+  UIView *columnView = [self columnNavigationController].viewIfLoaded;
   if (columnView.window == nil) {
     return;
   }

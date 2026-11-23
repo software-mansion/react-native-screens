@@ -95,9 +95,8 @@ namespace react = facebook::react;
 
 - (void)setStackHost:(nullable RNSStackHostComponentView *)stackHost
 {
-  _stackHost.stackNavigationController.viewLifecycleEventsObserver = nil;
   _stackHost = stackHost;
-  _stackHost.stackNavigationController.viewLifecycleEventsObserver = _columnCoordinator;
+  _columnCoordinator.hostedStackNavigationController = _stackHost.stackNavigationController;
 
   // The column provides another navigation controller now. The one its coordinator created is not used anymore, and
   // the Split has to install the one that takes its place.
