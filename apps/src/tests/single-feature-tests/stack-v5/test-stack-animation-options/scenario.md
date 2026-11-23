@@ -56,9 +56,10 @@ and `fadeFromTop` move, and an invalid value plays `default` instead.
 1. Set "next push" to `slideFromRight 2000 ms`, then tap "Push Blue".
 
    - [ ] "Blue" travels in from the right while "Home" travels out to the
-         left, together, over about 2 seconds, five times as long as a plain
-         `slideFromRight`. The motion speeds up at the start and
-         slows down at the end.
+         left, together.
+   - [ ] The transition takes about 2 seconds, five times as long as a plain
+         `slideFromRight`.
+   - [ ] The motion speeds up at the start and slows down at the end.
 
 2. On "Blue", set "this screen" to `slideFromRight 100 ms`, then tap "Pop".
 
@@ -69,13 +70,15 @@ and `fadeFromTop` move, and an invalid value plays `default` instead.
    "Push Blue".
 
    - [ ] "Blue" rises a short distance, about a twelfth of the height, while
-         fading in, and settles over about 2 seconds, slowing down strongly
-         at the end. "Home" is static (see Note).
+         fading in.
+   - [ ] "Blue" settles over about 2 seconds, slowing down strongly at the end.
+   - [ ] "Home" is static (see Note).
 
 4. On "Blue", tap "Pop".
 
-   - [ ] "Blue" sinks the same short distance while fading out, in clearly
-         less time than the push took. "Home" is static.
+   - [ ] "Blue" sinks the same short distance while fading out.
+   - [ ] The pop takes clearly less time than the push took.
+   - [ ] "Home" is static.
 
 ---
 
@@ -90,9 +93,10 @@ and `fadeFromTop` move, and an invalid value plays `default` instead.
 2. On "Blue", tap "Pop". On "Home", set "next push" to
    `slideFromRight 2000 ms overshoot`, then tap "Push Blue".
 
-   - [ ] "Blue" travels most of the way in quickly, then passes its resting
-         position by about a tenth of the width: its left frame edge leaves
-         the screen and a strip of the background shows at the right edge.
+   - [ ] "Blue" travels most of the way in quickly.
+   - [ ] "Blue" then passes its resting position by about a tenth of the
+         width: its left frame edge leaves the screen and a strip of the
+         background shows at the right edge.
    - [ ] "Blue" then slowly settles back to rest.
 
 3. On "Blue", tap "Pop". On "Home", set "next push" to
@@ -109,27 +113,30 @@ and `fadeFromTop` move, and an invalid value plays `default` instead.
 1. On "Blue", tap "Pop". On "Home", set "next push" to
    `fadeFromBottom 2000 ms 50%`, then tap "Push Blue".
 
-   - [ ] "Blue" rises a long way while fading in: it starts about half the
-         screen height lower, far below where it started in Duration step 3, and
-         slows down into place. "Home" is static.
+   - [ ] "Blue" rises from about half the screen height lower while fading in,
+         far below where it started in Duration step 3.
+   - [ ] "Blue" slows down into place.
+   - [ ] "Home" is static.
 
 2. On "Blue", tap "Pop".
 
-   - [ ] "Blue" sinks about half the screen height while fading out. "Home"
-         is static.
+   - [ ] "Blue" sinks about half the screen height while fading out.
+   - [ ] "Home" is static.
 
 3. On "Home", set "next push" to `fadeFromBottom 2000 ms 300`, then tap
    "Push Blue".
 
-   - [ ] "Blue" rises a long way while fading in, about a third of the screen
-         height on a phone and clearly further than in Duration step 3. Nothing
-         slides in sideways and "Home" is static.
+   - [ ] "Blue" rises about a third of the screen height on a phone while fading
+         in, clearly further than in Duration step 3.
+   - [ ] "Blue" moves straight up.
+   - [ ] "Home" is static.
 
 4. On "Blue", tap "Pop". On "Home", set "next push" to
    `fadeFromTop 2000 ms 50%`, then tap "Push Blue".
 
-   - [ ] Mirrored vertically: "Blue" drops in from about half the screen
-         height above while fading in. "Home" is static.
+   - [ ] "Blue" drops in from about half the screen height above while fading
+         in.
+   - [ ] "Home" is static.
 
 ---
 

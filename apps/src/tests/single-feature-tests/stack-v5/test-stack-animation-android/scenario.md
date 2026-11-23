@@ -50,10 +50,10 @@ Changing `animation` at runtime is covered by
 
 1. Launch the screen directly (see Setup).
 
-   - [ ] The screen is yellow, reads "Name: Home" and shows "Push Blue",
-         "Push Red" and "Push NestedHost" without a "Pop" button. "direction"
-         reads `ltr` with "START" on the left and "END" on the right of the
-         row below it.
+   - [ ] The screen is yellow and reads "Name: Home".
+   - [ ] "Push Blue", "Push Red" and "Push NestedHost" are the only buttons.
+   - [ ] "direction" reads `ltr`, with "START" on the left and "END" on the
+         right of the row below it.
 
 ---
 
@@ -62,16 +62,16 @@ Changing `animation` at runtime is covered by
 1. Tap "Push Blue".
 
    - [ ] "Blue" (blue) slides in from the right a short distance (see Note)
-         while fading in, and "Home" slides the same short distance to the left
-         underneath. "Blue" is drawn above "Home" and the motion decelerates
-         smoothly.
+         while fading in.
+   - [ ] "Home" slides the same short distance to the left.
+   - [ ] "Blue" is drawn above "Home".
+   - [ ] The motion slows down smoothly towards the end.
 
 2. On "Blue", tap "Pop".
 
-   - [ ] "Blue" slides the short distance to the right on top while fading out,
-         and "Home" slides back in from the left by the same distance. A narrow
-         strip of window background at the right edge late in the pop is
-         expected (see Note).
+   - [ ] "Blue" slides the short distance to the right while fading out.
+   - [ ] "Blue" is drawn above "Home".
+   - [ ] "Home" slides back in from the left by the same distance (see Note).
 
 ---
 
@@ -80,24 +80,27 @@ Changing `animation` at runtime is covered by
 1. Tap "Push Blue", then swipe in from the left screen edge and release past
    the middle.
 
-   - [ ] "Blue" tracks the finger and fades while "Home" is progressively
-         revealed; on release the motion continues from that position until only
-         "Home" is shown.
+   - [ ] While the finger moves, "Blue" shifts to the right and fades,
+         revealing "Home".
+   - [ ] On release the motion continues from that position until only "Home"
+         is shown.
 
 2. Tap "Push Blue", swipe in from the left screen edge to the middle, then
    swipe back to the edge and release.
 
-   - [ ] "Blue" returns to rest, fully opaque and with no residual offset, and
-         nothing is popped.
+   - [ ] "Blue" returns to rest with no residual offset.
+   - [ ] "Blue" is fully opaque.
 
 3. On "Blue", tap "Push Red", then swipe in from the left screen edge and
    release past the middle.
 
-   - [ ] "Red" (red) tracks the finger and is popped, leaving "Blue".
+   - [ ] "Red" (red) shifts to the right and fades with the finger.
+   - [ ] On release "Red" is popped and "Blue" is shown.
 
 4. Swipe in from the left screen edge and release past the middle again.
 
-   - [ ] "Blue" tracks the finger the same way and is popped, leaving "Home".
+   - [ ] "Blue" shifts to the right and fades with the finger.
+   - [ ] On release "Blue" is popped and "Home" is shown.
 
 ---
 
@@ -105,15 +108,15 @@ Changing `animation` at runtime is covered by
 
 1. Tap "Push Red", then tap the back arrow in the header of "Red".
 
-   - [ ] "Red" slides the short distance to the right while fading out, and
-         "Home" slides back in from the left, the same pop as in step 2 of
+   - [ ] "Red" slides the short distance to the right while fading out.
+   - [ ] "Home" slides back in from the left, the same pop as in step 2 of
          **Push and pop**.
 
 2. Tap "Push Red", then press the system back button once: on an emulator, the
    Back button in the emulator toolbar (see Setup).
 
-   - [ ] The same pop as in step 1 plays to its end without any finger input,
-         leaving "Home".
+   - [ ] The same pop as in step 1 plays to its end.
+   - [ ] "Home" is shown.
 
 ---
 
@@ -126,14 +129,16 @@ Changing `animation` at runtime is covered by
 
 2. On "NestedHome", tap "Push NestedBlue".
 
-   - [ ] "NestedBlue" slides in from the right a short distance and fades in
-         while "NestedHome" slides the same distance to the left; nothing
-         rises from the bottom edge.
+   - [ ] "NestedBlue" slides in from the right a short distance while fading
+         in.
+   - [ ] "NestedHome" slides the same distance to the left.
+   - [ ] Nothing rises from the bottom edge.
 
 3. On "NestedBlue", tap "Pop".
 
-   - [ ] "NestedBlue" slides the short distance to the right and fades out
-         while "NestedHome" slides back in from the left.
+   - [ ] "NestedBlue" slides the short distance to the right while fading
+         out.
+   - [ ] "NestedHome" slides back in from the left.
 
 4. On "NestedHome", tap "Pop".
 
@@ -145,24 +150,23 @@ Changing `animation` at runtime is covered by
 
 1. Set "direction" to `rtl`.
 
-   - [ ] "START" moves to the right of the row and "END" to the left. The
-         picker and the buttons are centred, so they stay where they are.
+   - [ ] "START" moves to the right of the row and "END" to the left.
+   - [ ] The picker and the buttons stay where they are.
 
 2. Tap "Push Blue".
 
-   - [ ] Mirrored: "Blue" slides in from the left a short distance while fading
-         in, and "Home" slides the same short distance to the right underneath.
+   - [ ] "Blue" slides in from the left a short distance while fading in.
+   - [ ] "Home" slides the same short distance to the right.
 
 3. On "Blue", tap "Pop".
 
-   - [ ] "Blue" slides the short distance to the left on top while fading out,
-         and "Home" slides back in from the right. A narrow strip of window
-         background at the left edge late in the pop is expected (see Note).
+   - [ ] "Blue" slides the short distance to the left while fading out.
+   - [ ] "Home" slides back in from the right (see Note).
 
 4. Set "direction" to `ltr`.
 
-   - [ ] "START" returns to the left of the row and "END" to the right. You end
-         on "Home" with "direction" reading `ltr`.
+   - [ ] "direction" reads `ltr`.
+   - [ ] "START" returns to the left of the row and "END" to the right.
 
 ---
 
@@ -171,16 +175,16 @@ Changing `animation` at runtime is covered by
 1. On the API 32 or older device, launch the screen directly and tap
    "Push Blue".
 
-   - [ ] Nothing slides sideways: "Blue" zooms in from 85 % of its size while
-         fading in, and "Home" grows to 115 % and dims to 40 % opacity
-         underneath.
+   - [ ] "Blue" zooms in from 85 % of its size while fading in.
+   - [ ] "Home" grows to 115 % and dims to 40 % opacity.
 
 2. On "Blue", tap "Pop".
 
-   - [ ] "Blue" shrinks to 85 % and fades out on top, while "Home" shrinks back
-         to its own size and fades in.
+   - [ ] "Blue" shrinks to 85 % and fades out.
+   - [ ] "Home" shrinks back to its own size and fades in.
 
 3. Tap "Push Blue", then swipe in from the left screen edge and release.
 
-   - [ ] Nothing moves while the finger is down; on release the pop plays the
-         same zoom as in step 2, leaving "Home".
+   - [ ] "Blue" stays in place while the finger moves.
+   - [ ] On release the pop plays the same zoom as in step 2.
+   - [ ] "Home" is shown.

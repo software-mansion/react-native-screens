@@ -35,7 +35,8 @@ RTL are covered by `test-stack-header-content-insets-android`.
 - **Known issue:** iOS: when "direction" differs from the system direction, the
   back button is on the right side, but its chevron and the order of the
   chevron and the title follow the system direction (iOS 26+: only with system
-  RTL and `ltr`).
+  RTL and `ltr`)
+  (https://github.com/software-mansion/react-native-screens-labs/issues/2074).
 - **Known issue:** Android: turning "titleCentered" on does not move `L·48`; it
   keeps the gap from the edge it had before
   (https://github.com/software-mansion/react-native-screens-labs/issues/1835).
