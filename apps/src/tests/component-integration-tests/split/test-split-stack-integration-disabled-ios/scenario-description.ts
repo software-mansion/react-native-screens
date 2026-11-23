@@ -6,6 +6,13 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'A Split column with disableStackIntegration keeps a Stack.Host nested as plain content.',
   platforms: ['ios'],
+  devices: ['ipad'],
+  osVersions: {
+    ipad: { createdOn: ['iOS 27.0'], testOn: ['iOS 27.0'] },
+  },
+  deviceSetup: {
+    ipad: 'Landscape, so that both columns are visible.',
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
