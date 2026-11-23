@@ -188,13 +188,13 @@ export interface StackScreenAnimationFadeFromPresetConfig
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'preset';
   /**
    * Name of the preset.
    *
-   * @platform android
+   * @platform android, ios
    */
   name: StackScreenAnimationFadeFromPresetName;
   /**
@@ -233,13 +233,13 @@ export interface StackScreenAnimationIosFromPresetConfig
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'preset';
   /**
    * Name of the preset.
    *
-   * @platform android
+   * @platform android, ios
    */
   name: StackScreenAnimationIosFromPresetName;
 }
