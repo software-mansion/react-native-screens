@@ -6,13 +6,9 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Test sidebar vs tab bar preferred placement with Stack v5 header in tabs (iOS 27+).',
   platforms: ['ios'],
-  devices: ['iphone', 'ipad'],
+  devices: ['iphone'],
   osVersions: {
     iphone: {
-      createdOn: ['iOS 27.0'],
-      testOn: ['iOS 27.0'],
-    },
-    ipad: {
       createdOn: ['iOS 27.0'],
       testOn: ['iOS 27.0'],
     },

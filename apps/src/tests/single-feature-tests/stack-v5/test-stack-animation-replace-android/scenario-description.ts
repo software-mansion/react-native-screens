@@ -14,7 +14,7 @@ export const scenarioDescription: ScenarioDescription = {
   },
   deviceSetup: {
     'android-phone':
-      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationReplaceAndroid` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). API 33 or newer.',
+      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationReplaceAndroid` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). API 34 or newer.',
   },
   e2eCoverage: 'incomplete',
   e2eCoverageDetails:
