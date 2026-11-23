@@ -187,7 +187,7 @@ export interface StackScreenAnimationSlideFromMotionPresetConfig
    * the full width or height.
    *
    * @defaultValue `'100%'`
-   * @platform android
+   * @platform android, ios
    */
   distance?: StackScreenAnimationLength | undefined;
 }
@@ -541,21 +541,21 @@ export interface StackScreenAnimationCustomTransition {
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'custom';
   /**
    * Motion of the screen whose view appears.
    *
    * @defaultValue `'none'`
-   * @platform android
+   * @platform android, ios
    */
   enter?: StackScreenAnimationMotion | undefined;
   /**
    * Motion of the screen whose view disappears.
    *
    * @defaultValue `'none'`
-   * @platform android
+   * @platform android, ios
    */
   exit?: StackScreenAnimationMotion | undefined;
 }
@@ -623,21 +623,21 @@ export interface StackScreenAnimationCustom {
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'custom';
   /**
    * Transition played when the screen is pushed.
    *
    * @defaultValue `'none'`
-   * @platform android
+   * @platform android, ios
    */
   push?: StackScreenAnimationTransition | undefined;
   /**
    * Transition played when the screen is popped.
    *
    * @defaultValue `'none'`
-   * @platform android
+   * @platform android, ios
    */
   pop?: StackScreenAnimationTransition | undefined;
 }
