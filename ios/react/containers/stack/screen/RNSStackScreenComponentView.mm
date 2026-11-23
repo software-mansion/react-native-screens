@@ -69,7 +69,6 @@ namespace react = facebook::react;
 
 /**
  * UIKit calls this when the screen has to lay out its subviews, which happens whenever its size changes.
- * We assume a size change is the only frame change that needs no other trigger.
  */
 - (void)layoutSubviews
 {
@@ -80,8 +79,8 @@ namespace react = facebook::react;
 /**
  * Integration with Split. `reportsFrameToShadowTree` is set when the stack is nested in a Split column. The column
  * and the stack host are out of layout then and the screen's shadow node spans the split host, so the screen sends
- * the size UIKit gave it and its origin in the split host through the shadow state. Without the prop nothing is
- * sent; Yoga sizes the screen through the host, as in a regular stack.
+ * the frame UIKit gave it through the shadow state. Without the prop nothing is sent; Yoga sizes the screen through
+ * the host, as in a regular stack.
  */
 - (void)updateShadowStateIfNeeded
 {
@@ -89,13 +88,8 @@ namespace react = facebook::react;
     return;
   }
 
-  UIView *splitView = _controller.splitViewController.view;
-  if (splitView == nil) {
-    return;
-  }
-
-  CGRect frame = {[self convertPoint:CGPointZero toView:splitView], self.bounds.size};
-  [_shadowStateProxy updateShadowStateWithFrame:frame];
+  // The frame of the screen in its column, which the screen fills. The column carries its position in the Split.
+  [_shadowStateProxy updateShadowStateWithFrame:self.bounds];
 }
 
 - (void)resetProps
