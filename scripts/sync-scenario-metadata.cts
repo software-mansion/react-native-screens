@@ -357,18 +357,6 @@ function main(): void {
     const testsDir = path.relative(testsRoot, dir).split(path.sep).join('/');
     seenTestsDirs.add(testsDir);
     const knownWithoutScenarioMd = SCENARIOS_WITHOUT_SCENARIO_MD.has(testsDir);
-    if (!fs.existsSync(scenarioPath)) {
-      if (check && !knownWithoutScenarioMd) {
-        problems.push(`${relativeDir}/scenario.md: missing`);
-      }
-      continue;
-    }
-    if (knownWithoutScenarioMd) {
-      problems.push(
-        `${relativeDir}: has a scenario.md, remove it from SCENARIOS_WITHOUT_SCENARIO_MD`,
-      );
-    }
-
     let description: ScenarioDescription;
     try {
       description = loadScenarioDescription(
@@ -387,6 +375,20 @@ function main(): void {
         problems.push(`${relativeDir}/scenario-description.ts: ${error}`);
       }
       continue;
+    }
+
+    // Checked after validating the description, so the exemption covers only
+    // the missing document, not the metadata.
+    if (!fs.existsSync(scenarioPath)) {
+      if (check && !knownWithoutScenarioMd) {
+        problems.push(`${relativeDir}/scenario.md: missing`);
+      }
+      continue;
+    }
+    if (knownWithoutScenarioMd) {
+      problems.push(
+        `${relativeDir}: has a scenario.md, remove it from SCENARIOS_WITHOUT_SCENARIO_MD`,
+      );
     }
 
     const markdown = fs.readFileSync(scenarioPath, 'utf8');
