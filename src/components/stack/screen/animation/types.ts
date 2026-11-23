@@ -68,7 +68,7 @@ export interface StackScreenAnimationTimingOptions {
    * factor), a single transition's own length, or a single motion's length.
    *
    * @defaultValue The preset's own duration.
-   * @platform android
+   * @platform android, ios
    */
   duration?: number | undefined;
   /**
@@ -78,7 +78,7 @@ export interface StackScreenAnimationTimingOptions {
    * A predictive back gesture always scrubs linearly with the finger.
    *
    * @defaultValue The preset's own curves.
-   * @platform android
+   * @platform android, ios
    */
   easing?: StackScreenAnimationEasing | undefined;
 }
@@ -202,7 +202,7 @@ export interface StackScreenAnimationFadeFromPresetConfig
    * How far the moving screen rises or falls.
    *
    * @defaultValue `'8%'`
-   * @platform android
+   * @platform android, ios
    */
   distance?: StackScreenAnimationLength | undefined;
 }
