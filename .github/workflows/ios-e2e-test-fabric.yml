@@ -46,6 +46,39 @@ concurrency:
   group: ios-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
   cancel-in-progress: true
 jobs:
+  changes:
+    # Path filters only the PR leg of the workflow uses: a PR that touches
+    # only Argent flows or baselines skips the Detox suites, and one that
+    # touches only Detox skips Argent (#5067: a PR runs a suite only when that
+    # suite changes). Pushes to main and manual runs ignore these outputs.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      detox: ${{ steps.filter.outputs.detox }}
+      argent: ${{ steps.filter.outputs.argent }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            detox:
+              - '.github/workflows/ios-e2e-test-fabric.yml'
+              - '.github/actions/install-node-deps/**'
+              - 'FabricExample/.detoxrc.js'
+              - 'FabricExample/e2e/**'
+              - 'scripts/e2e/*.js'
+              - 'scripts/e2e/*.cjs'
+              - 'scripts/e2e/test-e2e-*.sh'
+            argent:
+              - '.github/workflows/ios-e2e-test-fabric.yml'
+              - '.github/actions/install-node-deps/**'
+              - '.github/actions/argent-server/**'
+              - '.argent/**'
+              - 'react-native-screens-testing'
+              - 'scripts/e2e/*argent*'
+
   build:
     runs-on: xcode-27-xlarge
     timeout-minutes: 90
@@ -90,8 +123,10 @@ jobs:
   test:
     # iPhone and iPad suites run in parallel on separate machines, both on the
     # app built once above. fail-fast off, so one failing does not cancel the other.
-    needs: build
-    if: ${{ !inputs.argent-only }}
+    needs: [changes, build]
+    if: >-
+      !inputs.argent-only &&
+      (github.event_name != 'pull_request' || needs.changes.outputs.detox == 'true')
     runs-on: xcode-27-xlarge
     timeout-minutes: 90
     strategy:
@@ -140,8 +175,11 @@ jobs:
   argent:
     # Argent flows on the same release build, in parallel with the Detox
     # suites: own time budget and a freshly created simulator.
-    needs: build
-    runs-on: xcode-27-xlarge
+    needs: [changes, build]
+    if: github.event_name != 'pull_request' || needs.changes.outputs.argent == 'true'
+    # Standard runner: the job compiles nothing, it only drives one simulator
+    # with the app the build job made.
+    runs-on: xcode-27
     timeout-minutes: 30
     env:
       # Same Xcode as the build, so the simulator runtime matches the SDK.

@@ -47,6 +47,41 @@ concurrency:
   group: android-e2e-fabric-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
   cancel-in-progress: true
 jobs:
+  changes:
+    # Path filters only the PR leg of the workflow uses: a PR that touches
+    # only Argent flows or baselines skips the Detox suites, and one that
+    # touches only Detox skips Argent (#5067: a PR runs a suite only when that
+    # suite changes). Pushes to main and manual runs ignore these outputs.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      detox: ${{ steps.filter.outputs.detox }}
+      argent: ${{ steps.filter.outputs.argent }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            detox:
+              - '.github/workflows/android-e2e-test-fabric.yml'
+              - '.github/actions/install-node-deps/**'
+              - '.github/actions/setup-android-avd/**'
+              - 'FabricExample/.detoxrc.js'
+              - 'FabricExample/e2e/**'
+              - 'scripts/e2e/*.js'
+              - 'scripts/e2e/*.cjs'
+              - 'scripts/e2e/test-e2e-*.sh'
+            argent:
+              - '.github/workflows/android-e2e-test-fabric.yml'
+              - '.github/actions/install-node-deps/**'
+              - '.github/actions/argent-server/**'
+              - '.github/actions/setup-android-avd/**'
+              - '.argent/**'
+              - 'react-native-screens-testing'
+              - 'scripts/e2e/*argent*'
+
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -98,8 +133,10 @@ jobs:
   test:
     # Detox and Argent run in parallel on separate machines, both on the app
     # built once above.
-    needs: build
-    if: ${{ !inputs.argent-only }}
+    needs: [changes, build]
+    if: >-
+      !inputs.argent-only &&
+      (github.event_name != 'pull_request' || needs.changes.outputs.detox == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -158,7 +195,8 @@ jobs:
   argent:
     # Argent flows on the same release build, in parallel with Detox: own time
     # budget and a fresh emulator.
-    needs: build
+    needs: [changes, build]
+    if: github.event_name != 'pull_request' || needs.changes.outputs.argent == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
