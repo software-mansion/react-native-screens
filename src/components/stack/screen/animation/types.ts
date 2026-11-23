@@ -335,7 +335,7 @@ export interface StackScreenAnimationTrackTiming {
    * transition lasts until the longest track of either screen ends, and both
    * screens stay in place that long.
    *
-   * @platform android
+   * @platform android, ios
    */
   duration: number;
   /**
@@ -346,7 +346,7 @@ export interface StackScreenAnimationTrackTiming {
    * delayed `opacity: { from: 0 }` keeps the screen invisible that long.
    *
    * @defaultValue `0`
-   * @platform android
+   * @platform android, ios
    */
   delay?: number | undefined;
   /**
@@ -356,7 +356,7 @@ export interface StackScreenAnimationTrackTiming {
    * A predictive back gesture always scrubs linearly with the finger.
    *
    * @defaultValue `'linear'`
-   * @platform android
+   * @platform android, ios
    */
   easing?: StackScreenAnimationEasing | undefined;
 }
@@ -376,7 +376,7 @@ export interface StackScreenAnimationTrack
    *
    * @defaultValue The property's rest value: `1` for `opacity` and the scales,
    * `0` for `rotate` and `dim`.
-   * @platform android
+   * @platform android, ios
    */
   from?: number | undefined;
   /**
@@ -384,7 +384,7 @@ export interface StackScreenAnimationTrack
    *
    * @defaultValue The property's rest value: `1` for `opacity` and the scales,
    * `0` for `rotate` and `dim`.
-   * @platform android
+   * @platform android, ios
    */
   to?: number | undefined;
 }
@@ -403,14 +403,14 @@ export interface StackScreenAnimationTranslateTrack
    * Value at the start of the track.
    *
    * @defaultValue `0`
-   * @platform android
+   * @platform android, ios
    */
   from?: StackScreenAnimationLength | undefined;
   /**
    * Value at the end of the track.
    *
    * @defaultValue `0`
-   * @platform android
+   * @platform android, ios
    */
   to?: StackScreenAnimationLength | undefined;
 }
@@ -433,7 +433,7 @@ export interface StackScreenAnimationDimTrack
    * A color that cannot be read is the default one.
    *
    * @defaultValue `'black'`
-   * @platform android
+   * @platform android, ios
    */
   color?: ColorValue | undefined;
 }
@@ -451,25 +451,25 @@ export interface StackScreenAnimationCustomMotion {
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'custom';
   /**
    * Horizontal translation.
    *
-   * @platform android
+   * @platform android, ios
    */
   translateX?: StackScreenAnimationTranslateTrack | undefined;
   /**
    * Vertical translation.
    *
-   * @platform android
+   * @platform android, ios
    */
   translateY?: StackScreenAnimationTranslateTrack | undefined;
   /**
    * Opacity of the screen, in `[0, 1]`.
    *
-   * @platform android
+   * @platform android, ios
    */
   opacity?: StackScreenAnimationTrack | undefined;
   /**
@@ -480,19 +480,19 @@ export interface StackScreenAnimationCustomMotion {
    * {@link StackScreenAnimationCustomMotion.scaleY | scaleY} take their axis
    * over `scale`; an axis they leave out keeps it.
    *
-   * @platform android
+   * @platform android, ios
    */
   scale?: StackScreenAnimationTrack | undefined;
   /**
    * Horizontal scale about the center.
    *
-   * @platform android
+   * @platform android, ios
    */
   scaleX?: StackScreenAnimationTrack | undefined;
   /**
    * Vertical scale about the center.
    *
-   * @platform android
+   * @platform android, ios
    */
   scaleY?: StackScreenAnimationTrack | undefined;
   /**
@@ -501,13 +501,13 @@ export interface StackScreenAnimationCustomMotion {
    * @remarks
    * A number, unlike the `'45deg'` strings of `transform`.
    *
-   * @platform android
+   * @platform android, ios
    */
   rotate?: StackScreenAnimationTrack | undefined;
   /**
    * A scrim over this screen.
    *
-   * @platform android
+   * @platform android, ios
    */
   dim?: StackScreenAnimationDimTrack | undefined;
 }
