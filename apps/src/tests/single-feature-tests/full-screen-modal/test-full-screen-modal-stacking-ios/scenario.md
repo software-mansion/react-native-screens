@@ -27,6 +27,8 @@ the other full-screen modal scenarios.
 - "Lower: Replacing" / "Lower: Over" and "Upper: Replacing" / "Upper: Over"
   toggle the variant of the respective modal; switching a variant closes an
   open modal of that level without events.
+- The lower modal's counter carries over to the next section unless the
+  lower variant changes.
 
 ## Steps
 
@@ -76,7 +78,7 @@ the other full-screen modal scenarios.
 
 2. Tap "Clear log", then tap "Close upper".
 
-   - [ ] The "Lower (Replacing)" card is shown with "Counter: 2".
+   - [ ] The "Lower (Replacing)" card is shown with "Counter: 4".
    - [ ] The log shows exactly `Upper: onWillDisappear`,
          `Upper: onDidDisappear`, `Upper: onDismiss`.
 
@@ -128,7 +130,7 @@ the other full-screen modal scenarios.
 
 2. Tap "Clear log", then tap "Close upper".
 
-   - [ ] The "Lower (Over)" card is shown with "Counter: 2".
+   - [ ] The "Lower (Over)" card is shown with "Counter: 4".
    - [ ] The log shows exactly `Upper: onWillDisappear`,
          `Upper: onDidDisappear`, `Upper: onDismiss`.
 

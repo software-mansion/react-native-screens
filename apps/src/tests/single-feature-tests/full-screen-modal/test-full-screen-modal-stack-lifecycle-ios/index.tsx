@@ -30,10 +30,10 @@ const TIMER_DELAY_MS = 2000;
 // modals themselves are rendered inside the screen that opened them (the
 // host), so popping that screen removes them.
 interface LifecycleStateContextValue {
-  hostName: string | null;
+  hostRouteKey: string | null;
   isReplacingOpen: boolean;
   isOverOpen: boolean;
-  openModal: (variant: Variant, hostName: string) => void;
+  openModal: (variant: Variant, hostRouteKey: string) => void;
   setIsReplacingOpen: (value: boolean) => void;
   setIsOverOpen: (value: boolean) => void;
   logs: string[];
@@ -54,7 +54,7 @@ function useLifecycleStateContext(): LifecycleStateContextValue {
 }
 
 function TestFullScreenModalStackLifecycle() {
-  const [hostName, setHostName] = useState<string | null>(null);
+  const [hostRouteKey, setHostRouteKey] = useState<string | null>(null);
   const [isReplacingOpen, setIsReplacingOpen] = useState(false);
   const [isOverOpen, setIsOverOpen] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
@@ -63,18 +63,17 @@ function TestFullScreenModalStackLifecycle() {
     setLogs(prev => [...prev, entry]);
   }, []);
   const clearLogs = useCallback(() => setLogs([]), []);
-  const openModal = useCallback((variant: Variant, name: string) => {
-    setHostName(name);
-    if (variant === 'Replacing') {
-      setIsReplacingOpen(true);
-    } else {
-      setIsOverOpen(true);
-    }
+  // Requests only the given variant; a variant left open by "Pop host" must not
+  // come along to the new host.
+  const openModal = useCallback((variant: Variant, routeKey: string) => {
+    setHostRouteKey(routeKey);
+    setIsReplacingOpen(variant === 'Replacing');
+    setIsOverOpen(variant === 'Over');
   }, []);
 
   const state = useMemo<LifecycleStateContextValue>(
     () => ({
-      hostName,
+      hostRouteKey,
       isReplacingOpen,
       isOverOpen,
       openModal,
@@ -84,7 +83,15 @@ function TestFullScreenModalStackLifecycle() {
       addLog,
       clearLogs,
     }),
-    [hostName, isReplacingOpen, isOverOpen, openModal, logs, addLog, clearLogs],
+    [
+      hostRouteKey,
+      isReplacingOpen,
+      isOverOpen,
+      openModal,
+      logs,
+      addLog,
+      clearLogs,
+    ],
   );
 
   const screenCallbacks = (screenName: string) => ({
@@ -167,7 +174,7 @@ function StackScreenContent({
 }) {
   const navigation = useStackNavigationContext();
   const {
-    hostName,
+    hostRouteKey,
     isReplacingOpen,
     isOverOpen,
     openModal,
@@ -194,7 +201,8 @@ function StackScreenContent({
   };
 
   const popSelf = () => navigation.pop(navigation.routeKey);
-  const hostsModals = hostName === name;
+  // Route names repeat when A pushes A, route keys do not.
+  const hostsModals = hostRouteKey === navigation.routeKey;
   const replacingCallbacks = useModalCallbacks('Replacing', setIsReplacingOpen);
   const overCallbacks = useModalCallbacks('Over', setIsOverOpen);
 
@@ -205,13 +213,13 @@ function StackScreenContent({
         <Button
           title="Open replacing"
           color={Colors.primary}
-          onPress={() => openModal('Replacing', name)}
+          onPress={() => openModal('Replacing', navigation.routeKey)}
           testID={`${name}-open-replacing-button`}
         />
         <Button
           title="Open over"
           color={Colors.primary}
-          onPress={() => openModal('Over', name)}
+          onPress={() => openModal('Over', navigation.routeKey)}
           testID={`${name}-open-over-button`}
         />
       </View>
