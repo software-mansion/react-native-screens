@@ -13,7 +13,7 @@ import TestStackAnimationFade from './test-stack-animation-fade';
 import TestStackAnimationIOSFrom from './test-stack-animation-ios-from';
 import TestStackAnimationNone from './test-stack-animation-none';
 import TestStackAnimationOptions from './test-stack-animation-options';
-import TestStackAnimationReplaceAndroid from './test-stack-animation-replace-android';
+import TestStackAnimationReplace from './test-stack-animation-replace';
 import TestStackAnimationPresetComposition from './test-stack-animation-preset-composition';
 import TestStackAnimationCustomMotions from './test-stack-animation-custom-motions';
 import TestStackAnimationSwipeDuringTransitionIOS from './test-stack-animation-swipe-during-transition-ios';
@@ -66,7 +66,7 @@ export { default as TestStackAnimationFade } from './test-stack-animation-fade';
 export { default as TestStackAnimationIOSFrom } from './test-stack-animation-ios-from';
 export { default as TestStackAnimationNone } from './test-stack-animation-none';
 export { default as TestStackAnimationOptions } from './test-stack-animation-options';
-export { default as TestStackAnimationReplaceAndroid } from './test-stack-animation-replace-android';
+export { default as TestStackAnimationReplace } from './test-stack-animation-replace';
 export { default as TestStackAnimationPresetComposition } from './test-stack-animation-preset-composition';
 export { default as TestStackAnimationCustomMotions } from './test-stack-animation-custom-motions';
 export { default as TestStackAnimationSwipeDuringTransitionIOS } from './test-stack-animation-swipe-during-transition-ios';
@@ -118,7 +118,7 @@ const scenarios = {
   TestStackAnimationIOSFrom,
   TestStackAnimationNone,
   TestStackAnimationOptions,
-  TestStackAnimationReplaceAndroid,
+  TestStackAnimationReplace,
   TestStackAnimationPresetComposition,
   TestStackAnimationCustomMotions,
   TestStackAnimationSwipeDuringTransitionIOS,
