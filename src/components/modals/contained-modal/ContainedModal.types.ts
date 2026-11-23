@@ -2,7 +2,8 @@ import type { ViewProps, StyleProp, ViewStyle } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 /**
- * Props for {@link ContainedModalOverContent}.
+ * Props for {@link ContainedModalOverContent} and
+ * {@link ContainedModalReplacingContent}.
  *
  * @experimental
  */
