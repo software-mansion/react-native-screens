@@ -1,4 +1,5 @@
 #import "RNSContainedModalHostComponentView.h"
+#import "RNSAssert.h"
 #import "RNSContainedModalContainmentProviding.h"
 #import "RNSContainedModalContentController.h"
 #import "RNSContainedModalContentView.h"
@@ -7,7 +8,6 @@
 #import "RNSContainedModalProviders.h"
 #import "RNSConversions-ContainedModal.h"
 
-#import <React/RCTAssert.h>
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -99,7 +99,7 @@ namespace react = facebook::react;
   }
 
   if (_targetContainerId == nil) {
-    RCTAssert(NO, @"[RNScreens] ContainedModal has a nil targetContainerId; cannot resolve a provider to present in.");
+    RNSAssert(NO, @"[RNScreens] ContainedModal has a nil targetContainerId; cannot resolve a provider to present in.");
     return nil;
   }
 
@@ -108,7 +108,7 @@ namespace react = facebook::react;
   // Off-window the superview chain may legitimately be cut (a replacing
   // presentation detaches the provider's context view), so a miss there is not
   // a misconfiguration.
-  RCTAssert(_cachedProviderView != nil || self.window == nil,
+  RNSAssert(_cachedProviderView != nil || self.window == nil,
             @"[RNScreens] No ContainedModalProvider found matching targetContainerId '%@'.",
             _targetContainerId);
   return _cachedProviderView;
