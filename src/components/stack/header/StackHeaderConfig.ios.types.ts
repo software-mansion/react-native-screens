@@ -600,6 +600,18 @@ export interface StackHeaderAppearanceIOS {
    */
   titleFontColor?: TextStyle['color'] | undefined;
   /**
+   * Specifies the letter spacing, in points, used for the title of the header.
+   *
+   * @remarks
+   * Maps to the attributed-string kern (`NSKernAttributeName`), which is added
+   * on top of the font's own kerning. An explicit `0` turns the font's kerning
+   * off, so it differs from leaving the value undefined, which keeps the
+   * default spacing.
+   *
+   * @platform ios
+   */
+  titleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
+  /**
    * Specifies the font family used for the large title of the header.
    *
    * @platform ios
@@ -629,6 +641,18 @@ export interface StackHeaderAppearanceIOS {
    * @platform ios
    */
   largeTitleFontColor?: TextStyle['color'] | undefined;
+  /**
+   * Specifies the letter spacing, in points, used for the large title of the header.
+   *
+   * @remarks
+   * Maps to the attributed-string kern (`NSKernAttributeName`), which is added
+   * on top of the font's own kerning. An explicit `0` turns the font's kerning
+   * off, so it differs from leaving the value undefined, which keeps the
+   * default spacing.
+   *
+   * @platform ios
+   */
+  largeTitleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
   /**
    * Specifies the font family used for the subtitle of the header.
    *
@@ -674,6 +698,20 @@ export interface StackHeaderAppearanceIOS {
    * @platform ios >= 26
    */
   subtitleFontColor?: TextStyle['color'] | undefined;
+  /**
+   * Specifies the letter spacing, in points, used for the subtitle of the header.
+   *
+   * @remarks
+   * Maps to the attributed-string kern (`NSKernAttributeName`), which is added
+   * on top of the font's own kerning. An explicit `0` turns the font's kerning
+   * off, so it differs from leaving the value undefined, which keeps the
+   * default spacing.
+   *
+   * Applies to both the regular and the large subtitle.
+   *
+   * @platform ios >= 26
+   */
+  subtitleLetterSpacing?: TextStyle['letterSpacing'] | undefined;
   /**
    * Appearance of plain header items.
    *
