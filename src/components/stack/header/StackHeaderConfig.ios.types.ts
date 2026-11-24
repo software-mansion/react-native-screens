@@ -68,7 +68,9 @@ export interface StackHeaderMenuOptionsIOS {
 }
 
 /**
- * Identifier, title and icon of a header item.
+ * Field shared by every item that can be placed in
+ * {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
+ * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}.
  */
 export interface StackHeaderItemBaseIOS {
   /**
@@ -77,24 +79,6 @@ export interface StackHeaderItemBaseIOS {
    * @platform ios
    */
   id: string;
-  /**
-   * A title for the item that is displayed in the header.
-   *
-   * @platform ios
-   */
-  title?: string | undefined;
-  /**
-   * Icon displayed for the header item.
-   *
-   * @remarks
-   * Supports SF Symbols, xcassets, and image sources. For async image sources,
-   * the item renders without an icon first and updates when loaded. Ignored
-   * when custom view ({@link StackHeaderInlineCustomItemIOS.render | render})
-   * is set.
-   *
-   * @platform ios
-   */
-  icon?: StackPlatformIconIOS | undefined;
 }
 
 /**
@@ -113,7 +97,7 @@ export interface StackHeaderSupportsMenuIOS {
    * @remarks
    * When the system moves the item into a menu (e.g. the navigation bar
    * overflow menu), this menu is displayed in its place. Useful for custom
-   * items ({@link StackHeaderInlineCustomItemIOS.render | render}), which iOS
+   * items ({@link StackHeaderCustomItemIOS.render | render}), which iOS
    * doesn't display in the overflow menu otherwise. The `id`s used in the menu
    * are expected to be unique across every
    * {@link StackHeaderSupportsMenuIOS.menu | menu} and `menuRepresentation`.
@@ -174,8 +158,8 @@ export interface StackHeaderSupportsVisibilityPriorityIOS {
    * When the item is placed in an implicit group of items, the group
    * inherits this priority.
    *
-   * A custom item ({@link StackHeaderInlineCustomItemIOS.render | render})
-   * moved into the overflow menu has no content to show there.
+   * A custom item ({@link StackHeaderCustomItemIOS.render | render}) moved
+   * into the overflow menu has no content to show there.
    *
    * @defaultValue `'standard'`
    * @platform ios >= 27
@@ -219,18 +203,34 @@ export type StackHeaderItemVariantIOS = 'plain' | 'prominent';
 /**
  * Native header item with a title or an icon.
  */
-export interface StackHeaderInlineItemIOS
+export interface StackHeaderButtonItemIOS
   extends StackHeaderItemBaseIOS,
     StackHeaderSupportsMenuIOS,
     StackHeaderSupportsIdentifierIOS,
     StackHeaderSupportsInlineVisualModificationsIOS,
     StackHeaderSupportsVisibilityPriorityIOS {
   /**
-   * Marks this object as a header item definition.
+   * Marks this object as a button item definition.
    *
    * @platform ios
    */
-  type: 'item';
+  type: 'button';
+  /**
+   * A title for the item that is displayed in the header.
+   *
+   * @platform ios
+   */
+  title?: string | undefined;
+  /**
+   * Icon displayed for the header item.
+   *
+   * @remarks
+   * Supports SF Symbols, xcassets, and image sources. For async image sources,
+   * the item renders without an icon first and updates when loaded.
+   *
+   * @platform ios
+   */
+  icon?: StackPlatformIconIOS | undefined;
   /**
    * Visual variant (style) of the item.
    *
@@ -254,7 +254,7 @@ export interface StackHeaderInlineItemIOS
    *
    * @remarks
    * A disabled item is grayed out and does not respond to user interaction:
-   * neither {@link StackHeaderInlineItemIOS.onPress | onPress} nor
+   * neither {@link StackHeaderButtonItemIOS.onPress | onPress} nor
    * {@link StackHeaderSupportsMenuIOS.menu | menu} is triggered.
    *
    * @defaultValue `false`
@@ -277,23 +277,18 @@ export interface StackHeaderInlineItemIOS
 /**
  * Header item with custom view.
  */
-export interface StackHeaderInlineCustomItemIOS
-  extends StackHeaderSupportsMenuIOS,
+export interface StackHeaderCustomItemIOS
+  extends StackHeaderItemBaseIOS,
+    StackHeaderSupportsMenuIOS,
     StackHeaderSupportsIdentifierIOS,
     StackHeaderSupportsInlineVisualModificationsIOS,
     StackHeaderSupportsVisibilityPriorityIOS {
   /**
-   * A unique identifier within the screen header.
+   * Marks this object as a custom item definition.
    *
    * @platform ios
    */
-  id: string;
-  /**
-   * Marks this object as a header item definition.
-   *
-   * @platform ios
-   */
-  type: 'item';
+  type: 'custom';
   /**
    * A function that renders the custom view.
    *
@@ -317,13 +312,7 @@ export interface StackHeaderInlineCustomItemIOS
  * size spacing works for iOS 18 and below, for iOS 26 it only splits liquid
  * glass bubble for two adjacent items.
  */
-export interface StackHeaderFixedSpacerItemIOS {
-  /**
-   * A unique identifier within the screen header.
-   *
-   * @platform ios
-   */
-  id: string;
+export interface StackHeaderFixedSpacerItemIOS extends StackHeaderItemBaseIOS {
   /**
    * Marks this object as a spacer definition.
    *
@@ -353,13 +342,8 @@ export interface StackHeaderFixedSpacerItemIOS {
  * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}. For iOS 26
  * it splits liquid glass bubble for two adjacent items.
  */
-export interface StackHeaderFlexibleSpacerItemIOS {
-  /**
-   * A unique identifier within the screen header.
-   *
-   * @platform ios
-   */
-  id: string;
+export interface StackHeaderFlexibleSpacerItemIOS
+  extends StackHeaderItemBaseIOS {
   /**
    * Marks this object as a spacer definition.
    *
@@ -385,10 +369,18 @@ export type StackHeaderSpacerItemIOS =
  * Item that can be placed in
  * {@link StackHeaderConfigPropsIOS.leadingItems | leadingItems} and
  * {@link StackHeaderConfigPropsIOS.trailingItems | trailingItems}.
+ *
+ * @remarks
+ * The kind of the item, and with it the set of supported props, is selected
+ * with `type`:
+ * - `'button'` — {@link StackHeaderButtonItemIOS},
+ * - `'custom'` — {@link StackHeaderCustomItemIOS},
+ * - `'spacer'` — {@link StackHeaderSpacerItemIOS}, further distinguished by
+ *   `sizing`.
  */
 export type StackHeaderItemIOS =
-  | StackHeaderInlineItemIOS
-  | StackHeaderInlineCustomItemIOS
+  | StackHeaderButtonItemIOS
+  | StackHeaderCustomItemIOS
   | StackHeaderSpacerItemIOS;
 
 /**

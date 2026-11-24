@@ -17,7 +17,6 @@ import StackHeaderConfigIOSNativeComponent, {
   NativeMenuElementOptionsIOS,
 } from '../../../fabric/stack/StackHeaderConfigIOSNativeComponent';
 import type { StackHeaderItemPlacement } from './ios/StackHeaderItem.ios.types';
-import { StackHeaderItemSpacerPlacement } from './ios/StackHeaderItemSpacer.ios.types';
 import StackHeaderItemSpacer from './ios/StackHeaderItemSpacer.ios';
 import StackHeaderItem from './ios/StackHeaderItem.ios';
 import {
@@ -30,15 +29,22 @@ import type {
   StackHeaderAppearanceIOS,
   StackHeaderButtonAppearanceIOS,
   StackHeaderButtonStateAppearanceIOS,
-  StackHeaderInlineCustomItemIOS,
-  StackHeaderInlineItemIOS,
+  StackHeaderItemIOS,
   StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
-  StackHeaderSpacerItemIOS,
   StackHeaderTitleCustomItemIOS,
 } from './StackHeaderConfig.ios.types';
 import { findMenuElementByIdInMenus, validateMenuCallbacks } from './utils';
 import { resolveIconAssetSources, resolveMenuIcons } from './ios/iconUtils.ios';
+
+// Placements of the items from `leadingItems` and `trailingItems`.
+type BarItemPlacement = Extract<
+  StackHeaderItemPlacement,
+  'leading' | 'trailing'
+>;
+
+// Placements of `titleItem`, `subtitleItem` and `largeSubtitleItem`.
+type TitleItemPlacement = Exclude<StackHeaderItemPlacement, BarItemPlacement>;
 
 function StackHeaderConfig(props: StackHeaderConfigProps) {
   // android props are safely dropped
@@ -109,12 +115,9 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
   const allMenus = useMemo(
     () =>
       [
-        ...(leadingItems ?? [])
-          .filter(it => it && it.type === 'item')
-          .flatMap(it => [it.menu, it.menuRepresentation]),
-        ...(trailingItems ?? [])
-          .filter(it => it && it.type === 'item')
-          .flatMap(it => [it.menu, it.menuRepresentation]),
+        ...[...(leadingItems ?? []), ...(trailingItems ?? [])].flatMap(it =>
+          it && it.type !== 'spacer' ? [it.menu, it.menuRepresentation] : [],
+        ),
         titleMenu,
       ].filter(it => !!it),
     [leadingItems, trailingItems, titleMenu],
@@ -177,10 +180,10 @@ function StackHeaderConfig(props: StackHeaderConfigProps) {
       onMenuItemPress={handleMenuItemPress}
       onMenuSelectionChange={handleSelectionChange}>
       {leadingItems?.map(item => makeItemViewFromItem(item, 'leading'))}
-      {titleItem && makeItemViewFromItem(titleItem, 'title')}
-      {subtitleItem && makeItemViewFromItem(subtitleItem, 'subtitle')}
+      {titleItem && makeItemViewFromTitleItem(titleItem, 'title')}
+      {subtitleItem && makeItemViewFromTitleItem(subtitleItem, 'subtitle')}
       {largeSubtitleItem &&
-        makeItemViewFromItem(largeSubtitleItem, 'largeSubtitle')}
+        makeItemViewFromTitleItem(largeSubtitleItem, 'largeSubtitle')}
       {trailingItems?.map(item => makeItemViewFromItem(item, 'trailing'))}
     </StackHeaderConfigIOSNativeComponent>
   );
@@ -312,32 +315,30 @@ function mapAppearanceToNativeProp(
 }
 
 function makeItemViewFromItem(
-  item:
-    | StackHeaderInlineItemIOS
-    | StackHeaderInlineCustomItemIOS
-    | StackHeaderTitleCustomItemIOS
-    | StackHeaderSpacerItemIOS,
-  placement: StackHeaderItemPlacement,
+  item: StackHeaderItemIOS,
+  placement: BarItemPlacement,
 ) {
-  if ('type' in item && item.type === 'spacer') {
-    const { id, ...rest } = item;
+  if (item.type === 'spacer') {
+    // `type` only selects the item kind in JS, it is not a native prop.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, type, ...rest } = item;
 
-    if (!(placement === 'leading' || placement === 'trailing')) {
-      console.warn(
-        `[Stack] Invalid placement for spacer: "${placement}", defaulting to "trailing"`,
-      );
-      placement = 'trailing';
-    }
-
-    return (
-      <StackHeaderItemSpacer
-        key={id}
-        placement={placement as StackHeaderItemSpacerPlacement}
-        {...rest}
-      />
-    );
+    return <StackHeaderItemSpacer key={id} placement={placement} {...rest} />;
   }
 
+  // `type` only selects the item kind in JS, it is not a native prop.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id, type, ...rest } = item;
+
+  return (
+    <StackHeaderItem key={id} itemId={id} placement={placement} {...rest} />
+  );
+}
+
+function makeItemViewFromTitleItem(
+  item: StackHeaderTitleCustomItemIOS,
+  placement: TitleItemPlacement,
+) {
   const { id, ...rest } = item;
 
   return (

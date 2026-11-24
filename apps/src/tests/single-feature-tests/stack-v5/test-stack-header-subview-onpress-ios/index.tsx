@@ -4,7 +4,10 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
+import type {
+  StackHeaderButtonItemIOS,
+  StackHeaderConfigProps,
+} from 'react-native-screens/components/stack/header';
 import { Button, ScrollView } from 'react-native';
 import LongText from '@apps/shared/LongText';
 import { scenarioDescription } from './scenario-description';
@@ -34,32 +37,34 @@ function buildHeaderConfig(
 ): StackHeaderConfigProps {
   const trailingItems: NonNullable<
     StackHeaderConfigProps['ios']
-  >['trailingItems'] = Array.from({ length: itemsCount }).map((_, i) => ({
-    type: 'item',
-    id: `item-${i}`,
-    title: i % 2 == 0 ? `Item ${i}` : `Menu ${i}`,
-    ...(i % 2 == 0 && { onPress: () => showToast(`onPress Item ${i}`) }),
-    menu: {
-      type: 'menu',
-      id: `menu-${i}`,
-      children: [
-        {
-          id: `action-${i}-1`,
-          type: 'menuItem',
-          itemType: 'action',
-          title: `Action ${i}-1`,
-          onPress: () => showToast(`Action ${i}-1`),
-        },
-        {
-          id: `action-${i}-2`,
-          type: 'menuItem',
-          itemType: 'action',
-          title: `Action ${i}-2`,
-          onPress: () => showToast(`Action ${i}-2`),
-        },
-      ],
-    },
-  }));
+  >['trailingItems'] = Array.from({ length: itemsCount }).map(
+    (_, i): StackHeaderButtonItemIOS => ({
+      type: 'button',
+      id: `item-${i}`,
+      title: i % 2 == 0 ? `Item ${i}` : `Menu ${i}`,
+      ...(i % 2 == 0 && { onPress: () => showToast(`onPress Item ${i}`) }),
+      menu: {
+        type: 'menu',
+        id: `menu-${i}`,
+        children: [
+          {
+            id: `action-${i}-1`,
+            type: 'menuItem',
+            itemType: 'action',
+            title: `Action ${i}-1`,
+            onPress: () => showToast(`Action ${i}-1`),
+          },
+          {
+            id: `action-${i}-2`,
+            type: 'menuItem',
+            itemType: 'action',
+            title: `Action ${i}-2`,
+            onPress: () => showToast(`Action ${i}-2`),
+          },
+        ],
+      },
+    }),
+  );
 
   return {
     title: 'Header onPress',

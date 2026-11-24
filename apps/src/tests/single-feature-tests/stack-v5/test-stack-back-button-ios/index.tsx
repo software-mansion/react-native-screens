@@ -11,6 +11,7 @@ import { Colors } from '@apps/shared/styling';
 import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
 import type {
   StackHeaderBackButtonDisplayModeIOS,
+  StackHeaderButtonItemIOS,
   StackHeaderConfigProps,
 } from 'react-native-screens';
 
@@ -69,8 +70,8 @@ function buildHeaderConfig(
       backButtonMenuEnabled: config.backButtonMenuEnabled,
       trailingItems: Array.from(
         { length: config.trailingItemsCount },
-        (_, index) => ({
-          type: 'item' as const,
+        (_, index): StackHeaderButtonItemIOS => ({
+          type: 'button',
           id: `trailing-item-${index}`,
           title: `Item ${index + 1}`,
           onPress: () => {

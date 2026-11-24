@@ -42,14 +42,14 @@ function buildHeaderConfig(title: string): StackHeaderConfigProps {
     title,
     ios: {
       leadingItems: [
-        { type: 'item', id: 'leading-0', render: () => <ResizingItem /> },
+        { type: 'custom', id: 'leading-0', render: () => <ResizingItem /> },
         { type: 'spacer', id: 'spacer-leading-1', sizing: 'fixed', width: 100 },
-        { type: 'item', id: 'leading-1', render: () => <ResizingItem /> },
+        { type: 'custom', id: 'leading-1', render: () => <ResizingItem /> },
       ],
       trailingItems: [
-        { type: 'item', id: 'trailing-0', render: () => <ResizingItem /> },
+        { type: 'custom', id: 'trailing-0', render: () => <ResizingItem /> },
         { type: 'spacer', id: 'spacer-trailing-1', sizing: 'flexible' },
-        { type: 'item', id: 'trailing-1', render: () => <ResizingItem /> },
+        { type: 'custom', id: 'trailing-1', render: () => <ResizingItem /> },
       ],
     },
   };

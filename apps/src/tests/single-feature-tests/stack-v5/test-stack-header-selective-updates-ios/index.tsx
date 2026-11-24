@@ -100,7 +100,7 @@ function buildHeaderConfig(
 
     if (item.customView) {
       outItems.push({
-        type: 'item',
+        type: 'custom',
         id: `trailing-${i}`,
         render: () => (
           <PressableWithFeedback
@@ -112,7 +112,7 @@ function buildHeaderConfig(
       });
     } else {
       outItems.push({
-        type: 'item',
+        type: 'button',
         id: `trailing-${i}`,
         title: itemTitle(i, item.titleVariant),
         onPress: () => showToast(`Pressed Item ${i + 1}`),

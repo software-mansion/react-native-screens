@@ -101,14 +101,14 @@ function Screen1() {
         },
         leadingItems: [
           {
-            type: 'item',
+            type: 'custom',
             id: 'left',
             render: () => renderSubview('Left', left),
           },
         ],
         trailingItems: [
           {
-            type: 'item',
+            type: 'custom',
             id: 'right',
             render: () => renderSubview('Right', right),
           },
