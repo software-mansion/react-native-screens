@@ -25,7 +25,6 @@ import type { ContainedModalReplacingContentProps } from './ContainedModalReplac
  * content in place instead.
  *
  * @platform ios
- * @since 5.0
  * @experimental
  */
 export function ContainedModalReplacingContent(
