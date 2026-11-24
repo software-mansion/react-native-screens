@@ -1,6 +1,6 @@
 import React from 'react';
 import { ContainedModalHost } from './ContainedModalHost';
-import type { ContainedModalProps } from './ContainedModal.types';
+import type { ContainedModalOverContentProps } from './ContainedModalOverContent.types';
 
 /**
  * A modal presented over the content of a `ContainedModalProvider`.
@@ -30,6 +30,8 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * @platform ios
  * @experimental
  */
-export function ContainedModalOverContent(props: ContainedModalProps) {
+export function ContainedModalOverContent(
+  props: ContainedModalOverContentProps,
+) {
   return <ContainedModalHost {...props} presentationStyle="overContent" />;
 }
