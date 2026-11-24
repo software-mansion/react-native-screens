@@ -1,8 +1,6 @@
 import type { ViewProps, StyleProp, ViewStyle } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
-// Props of `ContainedModalHost`. Internal: each contained modal component
-// declares and documents its own props.
 export interface ContainedModalProps {
   children?: ViewProps['children'] | undefined;
   isOpen: boolean;
