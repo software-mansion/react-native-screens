@@ -46,10 +46,12 @@ unknown one):
 grep -ohE '@[a-zA-Z]+' <files> | sort | uniq -c
 ```
 
-Allowed: `@remarks`, `@note`, `@tip`, `@info`, `@warning`, `@danger`,
-`@defaultValue`, `@typeParam`, `@param`, `@returns`, `@example`, `@see`,
-`@namespace`, `@platform`, `@experimental`, `@deprecated`, `@link`. Anything
-else in the output is either code (decorators, `@` in strings) or a tag to fix.
+Allowed in public API doc comments: `@remarks`, `@note`, `@tip`, `@info`,
+`@warning`, `@danger`, `@defaultValue`, `@typeParam`, `@param`, `@returns`,
+`@example`, `@see`, `@namespace`, `@platform`, `@experimental`, `@deprecated`,
+`@link`. Anything else in the output is code (decorators, `@ts-expect-error`,
+`@` in strings), a tag on an internal declaration (such as `@internal`), which
+this check leaves alone, or a tag to fix.
 
 Nothing in the repository checks where a `{@link}` points either. List the
 targets:
