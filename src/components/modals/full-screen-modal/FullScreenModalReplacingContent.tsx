@@ -1,6 +1,6 @@
 import React from 'react';
 import { FullScreenModalBase } from './FullScreenModalBase';
-import type { FullScreenModalReplacingContentProps } from './FullScreenModal.types';
+import type { FullScreenModalReplacingContentProps } from './FullScreenModalReplacingContent.types';
 
 /**
  * A modal covering the whole window that replaces the content underneath.

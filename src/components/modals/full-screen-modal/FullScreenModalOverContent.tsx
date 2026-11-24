@@ -1,6 +1,6 @@
 import React from 'react';
 import { FullScreenModalBase } from './FullScreenModalBase';
-import type { FullScreenModalOverContentProps } from './FullScreenModal.types';
+import type { FullScreenModalOverContentProps } from './FullScreenModalOverContent.types';
 
 /**
  * A modal covering the whole window, presented over the content underneath.
