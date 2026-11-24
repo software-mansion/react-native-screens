@@ -58,12 +58,8 @@ void RNSSplitScreenShadowNode::configureStackIntegrationIfNeeded() {
 
 Point RNSSplitScreenShadowNode::getContentOriginOffset(
     bool /*includeTransform*/) const {
-  // Out of layout the column has no frame of its own. The offset reported
-  // while it was a plain column must not shift the screens of the stack, which
-  // carry their own.
-  if (yogaNode_.style().display() == yoga::Display::Contents) {
-    return {};
-  }
+  // The offset applies also while the column is out of layout. The screens of
+  // the stack it hosts take their position from it then.
   auto stateData = getStateData();
   return stateData.contentOffset;
 }
