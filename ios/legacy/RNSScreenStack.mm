@@ -1600,6 +1600,10 @@ RNS_IGNORE_SUPER_CALL_END
   [_controller willMoveToParentViewController:nil];
   [_controller.view removeFromSuperview];
   [_controller removeFromParentViewController];
+#if !TARGET_OS_TV
+  // UINavigationController hides its toolbar by default. Restore that state before reuse.
+  [_controller setToolbarHidden:YES animated:NO];
+#endif // !TARGET_OS_TV
   [_controller setViewControllers:@[ [UIViewController new] ]];
 }
 
