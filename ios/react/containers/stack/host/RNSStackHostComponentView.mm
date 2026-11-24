@@ -2,6 +2,7 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
+#import <React/RCTSurfaceTouchHandler.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -15,11 +16,12 @@
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
+#import "RNSStackPopGestureObserver.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace react = facebook::react;
 
-@interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackHostComponentView () <RCTMountingTransactionObserving, RNSStackPopGestureObserver>
 @end
 
 @implementation RNSStackHostComponentView {
@@ -43,6 +45,7 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _stackNavigationController = [RNSStackNavigationController new];
+  _stackNavigationController.popGestureObserver = self;
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
   _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
@@ -225,6 +228,27 @@ namespace react = facebook::react;
   [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
                                            withRenderedScreens:_renderedScreens];
   [_stackNavigationController commitTransaction];
+}
+
+#pragma mark - RNSStackPopGestureObserver
+
+// `RCTSurfaceTouchHandler` yields only to recognizers outside its view (`canBePreventedByGestureRecognizer:`), and the
+// pop recognizers sit inside it, so a press under a beginning swipe would complete on release. The `enabled` toggle is
+// RN's own `_cancelTouches`. The walk checks every ancestor's recognizers instead of a known view class, because a
+// sheet or modal may own the handler.
+- (void)stackNavigationControllerPopGestureDidBegin:(RNSStackNavigationController *)navigationController
+{
+  // A host that navigates a Split column is not in the view hierarchy, so the walk starts at the view of its navigation
+  // controller.
+  for (UIView *view = navigationController.view; view != nil; view = view.superview) {
+    for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
+      if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
+        recognizer.enabled = NO;
+        recognizer.enabled = YES;
+        return;
+      }
+    }
+  }
 }
 
 #pragma mark - Dynamic frameworks support

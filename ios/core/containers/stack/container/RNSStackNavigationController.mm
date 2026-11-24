@@ -9,6 +9,7 @@
 #import "RNSStackNavigationBar.h"
 #import "RNSStackNavigationControllerDelegate.h"
 #import "RNSStackOperation.h"
+#import "RNSStackPopGestureObserver.h"
 #import "RNSStackPopGestureRecognizerDelegate.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
@@ -74,6 +75,7 @@
   // UIKit creates the system pop recognizers with the view.
   for (UIGestureRecognizer *recognizer in [self systemPopGestureRecognizers]) {
     recognizer.delegate = _popGestureRecognizerDelegate;
+    [recognizer addTarget:self action:@selector(observePopGesture:)];
   }
 #endif // !TARGET_OS_TV
   [self updateViewSemanticContentAttribute];
@@ -485,6 +487,13 @@
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   return @[ self.interactivePopGestureRecognizer ];
+}
+
+- (void)observePopGesture:(nonnull UIGestureRecognizer *)recognizer
+{
+  if (recognizer.state == UIGestureRecognizerStateBegan) {
+    [_popGestureObserver stackNavigationControllerPopGestureDidBegin:self];
+  }
 }
 #endif // !TARGET_OS_TV
 
