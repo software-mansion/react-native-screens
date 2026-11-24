@@ -1,6 +1,6 @@
 import type { ColorValue, StyleProp, ViewProps, ViewStyle } from 'react-native';
 import type {
-  BlurEffect,
+  BlurEffectStyle,
   EmptyEventPayload,
   NativeEventHandler,
 } from '../../shared/types';
@@ -11,6 +11,8 @@ import type {
 export interface SheetDetentChangedEvent {
   /**
    * Zero-based index of the detent the sheet settled at, in `detents`.
+   *
+   * @platform android, ios
    */
   index: number;
 }
@@ -62,9 +64,12 @@ export type SheetInitialDetentIndex = number | 'last';
 /**
  * Blur style of a {@link SheetBackgroundEffectBlur}.
  *
+ * @remarks
+ * Accepts any {@link BlurEffectStyle} value.
+ *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */
-export type SheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
+export type SheetBackgroundEffectBlurStyle = BlurEffectStyle;
 
 /**
  * Flat fill rendered behind the sheet's content.
@@ -72,10 +77,14 @@ export type SheetBackgroundEffectBlurStyle = Exclude<BlurEffect, 'none'>;
 export interface SheetBackgroundEffectColor {
   /**
    * Discriminator of the effect.
+   *
+   * @platform ios >= 26.1
    */
   type: 'color';
   /**
    * Color of the fill.
+   *
+   * @platform ios >= 26.1
    */
   color: ColorValue;
 }
@@ -86,10 +95,14 @@ export interface SheetBackgroundEffectColor {
 export interface SheetBackgroundEffectBlur {
   /**
    * Discriminator of the effect.
+   *
+   * @platform ios >= 26.1
    */
   type: 'blur';
   /**
    * Blur style of the material.
+   *
+   * @platform ios >= 26.1
    */
   style: SheetBackgroundEffectBlurStyle;
 }
@@ -118,6 +131,8 @@ export type SheetNativeContainerStyleProps = {
   /**
    * Specifies the background color of the native container hosting the sheet
    * content.
+   *
+   * @platform android, ios, tvos >= 26
    */
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };

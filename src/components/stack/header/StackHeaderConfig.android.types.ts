@@ -7,6 +7,15 @@ import type {
 } from './StackHeaderConfig.types';
 
 /**
+ * Icon of a toolbar menu element, the back button or the overflow menu button
+ * of a Stack header on Android.
+ *
+ * @remarks
+ * Accepts any {@link PlatformIconAndroid} value.
+ */
+export type StackPlatformIconAndroid = PlatformIconAndroid;
+
+/**
  * Type of the Material 3 app bar used as the header.
  *
  * @remarks
@@ -254,7 +263,7 @@ export interface StackHeaderToolbarMenuItemBaseAndroid {
    *
    * @platform android
    */
-  icon?: PlatformIconAndroid | undefined;
+  icon?: StackPlatformIconAndroid | undefined;
   /**
    * Specifies the tint color to apply to the menu element icon.
    *
@@ -701,7 +710,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @defaultValue The native back arrow (`homeAsUpIndicator`) is used.
    * @platform android
    */
-  backButtonIcon?: PlatformIconAndroid | undefined;
+  backButtonIcon?: StackPlatformIconAndroid | undefined;
   /**
    * Custom icon for the overflow menu button (the three-dots button that opens
    * the toolbar menu's overflow popup).
@@ -709,7 +718,7 @@ export interface StackHeaderConfigPropsAndroid {
    * @defaultValue The Material 3 Expressive default overflow icon is used.
    * @platform android
    */
-  overflowIcon?: PlatformIconAndroid | undefined;
+  overflowIcon?: StackPlatformIconAndroid | undefined;
   /**
    * Tint color applied to the overflow menu icon in its normal state.
    *
@@ -755,8 +764,8 @@ export interface StackHeaderConfigPropsAndroid {
    * header stays collapsed, unless the new flags do not allow collapsing at
    * all - then it expands.
    *
-   * @defaultValue `false` for the `'small'` header and `true` for the
-   * `'medium'` and `'large'` headers.
+   * @defaultValue The `'small'` header uses `false`, and the `'medium'` and
+   * `'large'` headers use `true`.
    * @platform android
    */
   scrollFlagScroll?: boolean | undefined;
@@ -805,8 +814,8 @@ export interface StackHeaderConfigPropsAndroid {
    * Even when this flag is disabled, a strip with the height of the system top
    * inset (status bar and display cutout) remains visible at the top.
    *
-   * @defaultValue `false` for the `'small'` header and `true` for the
-   * `'medium'` and `'large'` headers.
+   * @defaultValue The `'small'` header uses `false`, and the `'medium'` and
+   * `'large'` headers use `true`.
    * @platform android
    */
   scrollFlagExitUntilCollapsed?: boolean | undefined;
@@ -820,8 +829,8 @@ export interface StackHeaderConfigPropsAndroid {
    * Requires
    * {@link StackHeaderConfigPropsAndroid.scrollFlagScroll | scrollFlagScroll}.
    *
-   * @defaultValue `false` for the `'small'` header and `true` for the
-   * `'medium'` and `'large'` headers.
+   * @defaultValue The `'small'` header uses `false`, and the `'medium'` and
+   * `'large'` headers use `true`.
    * @platform android
    */
   scrollFlagSnap?: boolean | undefined;
@@ -893,16 +902,11 @@ export interface StackHeaderConfigPropsAndroid {
    *
    * @remarks
    * For the `'small'` header, the scrim is a constant strip pinned to the top
-   * of the window, drawn above the toolbar content. When not provided, the
-   * strip follows the header's effective background color:
-   * {@link StackHeaderConfigPropsAndroid.backgroundColor | backgroundColor} at
-   * rest, animating together with the lift-on-scroll transition towards
-   * {@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor}.
-   * An explicit color is applied statically, without tracking.
+   * of the window, drawn above the toolbar content. An explicit color is
+   * applied statically and does not follow the header's background color.
    *
    * For `'medium'` / `'large'` headers, the scrim fades in and out together
-   * with the content scrim as the header collapses. When not provided, it
-   * matches the content scrim color (`scrolledBackgroundColor`).
+   * with the content scrim as the header collapses.
    *
    * Set to `'transparent'` to disable the scrim entirely.
    *
@@ -913,6 +917,13 @@ export interface StackHeaderConfigPropsAndroid {
    * is excluded from that area while a scrim is installed, so the two scrims
    * never stack).
    *
+   * @defaultValue For the `'small'` header, the scrim follows the header's
+   * effective background color:
+   * {@link StackHeaderConfigPropsAndroid.backgroundColor | backgroundColor} at
+   * rest, animating together with the lift-on-scroll transition towards
+   * {@link StackHeaderConfigPropsAndroid.scrolledBackgroundColor | scrolledBackgroundColor};
+   * for `'medium'` / `'large'` headers, it matches the content scrim color
+   * (`scrolledBackgroundColor`).
    * @platform android
    */
   statusBarScrimColor?: ColorValue | undefined;

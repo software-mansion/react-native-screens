@@ -5,7 +5,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackNavigationController;
+
 @interface RNSStackHostComponentView : RNSReactBaseView
+
+@property (nonatomic, readonly) BOOL headlessModeEnabled;
+
+/**
+ * The navigation controller of the stack. A host in headless mode does not add it to the view controller hierarchy,
+ * so the component the host is rendered in has to do it.
+ */
+@property (nonatomic, readonly) RNSStackNavigationController *stackNavigationController;
 
 @end
 

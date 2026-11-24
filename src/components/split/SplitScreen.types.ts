@@ -2,17 +2,6 @@ import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../shared/types';
 
 /**
- * Kind of a Split column.
- *
- * @remarks
- * The following values are supported:
- * - `'column'` — a column declared with {@link Split.Column}.
- * - `'inspector'` — the inspector column declared with
- *   {@link Split.Inspector}.
- */
-export type SplitScreenColumnType = 'column' | 'inspector';
-
-/**
  * Props for {@link Split.Column}.
  *
  * @experimental
@@ -24,6 +13,29 @@ export interface SplitColumnProps extends ViewProps {
    * @platform ios
    */
   children?: React.ReactNode | undefined;
+  /**
+   * Keeps the column a plain one even when its content is a `Stack.Host`.
+   *
+   * @remarks
+   * By default a `Stack.Host` rendered as a direct child of the column is
+   * integrated with the column. The stack navigates the column, and the header
+   * of the stack is the navigation bar of the column. The host has to be the
+   * only child of the column then.
+   *
+   * With this prop the stack is nested in the column like any other content.
+   * Set it when there is a view between the column and the `Stack.Host`, as
+   * the integration does not work then. A stack rendered inside `Tabs`, a
+   * sheet or a contained modal is never integrated, so it does not need the
+   * prop.
+   *
+   * The value is read when the column is mounted. Changing it later has no
+   * effect.
+   *
+   * @defaultValue `false`
+   *
+   * @platform ios
+   */
+  disableStackIntegration?: boolean | undefined;
   /**
    * A callback that gets invoked when the current `Split.Column` did appear.
    *

@@ -8,6 +8,7 @@
 #import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
 #import "RNSConversions-Stack.h"
+#import "RNSDefines.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewSeeking.h"
 #import "RNSStackHeaderConfigComponentView.h"
@@ -69,7 +70,6 @@ namespace react = facebook::react;
 
 /**
  * UIKit calls this when the screen has to lay out its subviews, which happens whenever its size changes.
- * We assume a size change is the only frame change that needs no other trigger.
  */
 - (void)layoutSubviews
 {
@@ -80,8 +80,8 @@ namespace react = facebook::react;
 /**
  * Integration with Split. `reportsFrameToShadowTree` is set when the stack is nested in a Split column. The column
  * and the stack host are out of layout then and the screen's shadow node spans the split host, so the screen sends
- * the size UIKit gave it and its origin in the split host through the shadow state. Without the prop nothing is
- * sent; Yoga sizes the screen through the host, as in a regular stack.
+ * the frame UIKit gave it through the shadow state. Without the prop nothing is sent; Yoga sizes the screen through
+ * the host, as in a regular stack.
  */
 - (void)updateShadowStateIfNeeded
 {
@@ -89,13 +89,8 @@ namespace react = facebook::react;
     return;
   }
 
-  UIView *splitView = _controller.splitViewController.view;
-  if (splitView == nil) {
-    return;
-  }
-
-  CGRect frame = {[self convertPoint:CGPointZero toView:splitView], self.bounds.size};
-  [_shadowStateProxy updateShadowStateWithFrame:frame];
+  // The frame of the screen in its column, which the screen fills. The column carries its position in the Split.
+  [_shadowStateProxy updateShadowStateWithFrame:self.bounds];
 }
 
 - (void)resetProps
@@ -208,6 +203,21 @@ namespace react = facebook::react;
 
 #pragma mark - RCTComponentViewProtocol
 
+// In a Split column UIKit lays the screen out and the ShadowTree gets the frame from the screen
+// (`updateShadowStateIfNeeded`), so the frame is not written back to the view. Elsewhere Yoga lays the screen out.
+RNS_IGNORE_SUPER_CALL_BEGIN
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  if (_reportsFrameToShadowTree) {
+    _layoutMetrics = layoutMetrics;
+    return;
+  }
+
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+}
+RNS_IGNORE_SUPER_CALL_END
+
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
@@ -227,6 +237,12 @@ namespace react = facebook::react;
 
   if (oldComponentProps.reportsFrameToShadowTree != newComponentProps.reportsFrameToShadowTree) {
     _reportsFrameToShadowTree = newComponentProps.reportsFrameToShadowTree;
+    // A screen that reports its frame takes the size UIKit gives it. UINavigationController gives this mask to the
+    // view it wraps the screen in. Without it that wrapper does not follow the navigation controller when it is
+    // resized off screen, as in a collapsed split view, and the screen is shown with its old size.
+    self.autoresizingMask = _reportsFrameToShadowTree
+        ? UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight
+        : UIViewAutoresizingNone;
   }
 
   [super updateProps:props oldProps:oldProps];

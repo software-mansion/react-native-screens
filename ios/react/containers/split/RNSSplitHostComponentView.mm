@@ -9,10 +9,10 @@
 #import "RNSConversions-SplitView.h"
 #import "RNSDefines.h"
 #import "RNSScreenWindowTraits.h" // legacy-compat: v5 has no orientation system of its own yet (D5a)
+#import "RNSSplitColumnCoordinator.h"
 #import "RNSSplitHostComponentEventEmitter.h"
 #import "RNSSplitHostController.h"
 #import "RNSSplitScreenComponentView.h"
-#import "RNSSplitScreenController.h"
 
 namespace react = facebook::react;
 
@@ -421,25 +421,36 @@ RNS_IGNORE_SUPER_CALL_END
 
 #pragma mark - RNSSplitHostColumnsProvider
 
-- (NSArray<RNSSplitScreenController *> *)columnControllers
+- (NSArray<RNSSplitColumnCoordinator *> *)columnCoordinators
 {
-  return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeColumn];
+  return [self coordinatorsOfColumnsWithType:RNSSplitScreenColumnTypeColumn];
 }
 
-- (NSArray<RNSSplitScreenController *> *)inspectorControllers
+- (NSArray<RNSSplitColumnCoordinator *> *)inspectorCoordinators
 {
-  return [self controllersOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
+  return [self coordinatorsOfColumnsWithType:RNSSplitScreenColumnTypeInspector];
 }
 
-- (NSArray<RNSSplitScreenController *> *)controllersOfColumnsWithType:(RNSSplitScreenColumnType)columnType
+- (NSArray<RNSStackNavigationController *> *)columnNavigationControllers
 {
-  NSMutableArray<RNSSplitScreenController *> *controllers = [NSMutableArray array];
+  NSMutableArray<RNSStackNavigationController *> *navigationControllers = [NSMutableArray array];
   for (RNSSplitScreenComponentView *column in _reactSubviews) {
-    if (column.columnType == columnType) {
-      [controllers addObject:column.controller];
+    if (column.columnType == RNSSplitScreenColumnTypeColumn) {
+      [navigationControllers addObject:column.columnNavigationController];
     }
   }
-  return controllers;
+  return navigationControllers;
+}
+
+- (NSArray<RNSSplitColumnCoordinator *> *)coordinatorsOfColumnsWithType:(RNSSplitScreenColumnType)columnType
+{
+  NSMutableArray<RNSSplitColumnCoordinator *> *coordinators = [NSMutableArray array];
+  for (RNSSplitScreenComponentView *column in _reactSubviews) {
+    if (column.columnType == columnType) {
+      [coordinators addObject:column.columnCoordinator];
+    }
+  }
+  return coordinators;
 }
 
 #pragma mark - RNSSplitHostControllerEventsDelegate

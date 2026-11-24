@@ -25,26 +25,34 @@ export type {
 } from './host';
 
 export type {
-  TabsScreenEventHandler,
-  TabsScreenOrientation,
+  TabsOrientation,
+  TabsScreenStyleProps,
+  TabsScreenSpecialEffects,
+  TabsScreenRepeatedTabSelectionEffects,
   TabsScreenPropsBase,
   TabsScreenProps,
   // Android
   TabsScreenIconAndroid,
-  TabsScreenIconTintingAndroid,
+  TabsScreenIconDrawableResourceAndroid,
+  TabsScreenIconImageSourceAndroid,
+  TabsPlatformIconTintingAndroid,
   TabBarItemLabelVisibilityMode,
   TabsScreenItemStateAppearanceAndroid,
   TabsScreenAppearanceAndroid,
   TabsScreenPropsAndroid,
   // iOS
   TabsScreenIconIOS,
-  TabsScreenIconImageRenderingModeIOS,
-  TabsScreenIconSymbolRenderingModeIOS,
-  TabsScreenBlurEffect,
+  TabsScreenIconSfSymbolIOS,
+  TabsScreenIconImageSourceIOS,
+  TabsPlatformIconImageRenderingModeIOS,
+  TabsPlatformIconSymbolRenderingModeIOS,
+  TabsBlurEffect,
+  TabsUserInterfaceStyle,
   TabsScreenRole,
   TabsScreenSystemItem,
   TabsScreenAppearanceIOS,
   TabsScreenItemAppearanceIOS,
+  TabsScreenItemTitlePositionAdjustmentIOS,
   TabsScreenItemStateAppearanceIOS,
   TabsScreenPropsIOS,
 } from './screen';
@@ -69,5 +77,11 @@ export const Tabs = {
    * @platform android, ios
    */
   Host: TabsHost,
+  /**
+   * A single tab of {@link Tabs.Host}: its tab bar item and the content shown
+   * when the tab is selected.
+   *
+   * @platform android, ios
+   */
   Screen: TabsScreen,
 };

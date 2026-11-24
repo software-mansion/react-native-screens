@@ -10,6 +10,7 @@ import { RNSLog } from '../../../private';
 import TabsBottomAccessory from '../bottom-accessory/TabsBottomAccessory';
 import TabsBottomAccessoryContent from '../bottom-accessory/TabsBottomAccessoryContent';
 import { isIOS26OrHigher } from '../../helpers/PlatformUtils';
+import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 import { useTabsHost } from './useTabsHost';
 
 function TabsHost(props: TabsHostProps) {
@@ -58,17 +59,19 @@ function TabsHost(props: TabsHostProps) {
       bottomAccessoryHidden={ios?.bottomAccessoryHidden}
       prominentScreenKey={ios?.prominentScreenKey}
       onMoreTabSelected={ios?.onMoreTabSelected}>
-      {children}
-      {ios?.bottomAccessory && isIOS26OrHigher && (
-        <TabsBottomAccessory>
-          <TabsBottomAccessoryContent environment="regular">
-            {ios.bottomAccessory('regular')}
-          </TabsBottomAccessoryContent>
-          <TabsBottomAccessoryContent environment="inline">
-            {ios.bottomAccessory('inline')}
-          </TabsBottomAccessoryContent>
-        </TabsBottomAccessory>
-      )}
+      <SplitColumnMarkerContext.Provider value={false}>
+        {children}
+        {ios?.bottomAccessory && isIOS26OrHigher && (
+          <TabsBottomAccessory>
+            <TabsBottomAccessoryContent environment="regular">
+              {ios.bottomAccessory('regular')}
+            </TabsBottomAccessoryContent>
+            <TabsBottomAccessoryContent environment="inline">
+              {ios.bottomAccessory('inline')}
+            </TabsBottomAccessoryContent>
+          </TabsBottomAccessory>
+        )}
+      </SplitColumnMarkerContext.Provider>
     </TabsHostIOSNativeComponent>
   );
 }

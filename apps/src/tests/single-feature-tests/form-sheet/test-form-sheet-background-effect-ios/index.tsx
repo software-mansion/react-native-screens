@@ -3,7 +3,7 @@ import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   FormSheet,
   type FormSheetBackgroundEffect,
-  type FormSheetBackgroundEffectBlurStyle,
+  type SheetBackgroundEffectBlurStyle,
 } from 'react-native-screens';
 import { SettingsPicker } from '@apps/shared';
 import { scenarioDescription } from './scenario-description';
@@ -24,7 +24,7 @@ const CONTAINER_COLORS: ContainerColor[] = [
   'navy',
   'translucent',
 ];
-const BLUR_STYLES: FormSheetBackgroundEffectBlurStyle[] = [
+const BLUR_STYLES: SheetBackgroundEffectBlurStyle[] = [
   'extraLight',
   'light',
   'dark',
@@ -65,7 +65,7 @@ const STRIPES = [
 type Config = {
   kind: EffectKind;
   fillColor: FillColor;
-  blurStyle: FormSheetBackgroundEffectBlurStyle;
+  blurStyle: SheetBackgroundEffectBlurStyle;
 };
 
 function buildEffect(config: Config): FormSheetBackgroundEffect {
