@@ -4,14 +4,14 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Stack Header Selective Updates (iOS)',
   key: 'test-stack-header-selective-updates-ios',
   details:
-    'Tests that header item updates are scoped — only the changed item rebuilds. On iOS 26+, item rebuild causes a visible flash/blur on the affected bar button.',
+    'Changing, adding, removing, reordering or resizing one header item leaves the other items in place without a flash, and custom items keep reacting to touches where they are drawn.',
   platforms: ['ios'],
   devices: ['iphone'],
   osVersions: {
-    iphone: { createdOn: ['iOS 26.4'], testOn: ['iOS 26.4'] },
+    iphone: { createdOn: ['iOS 26.5'], testOn: ['iOS 26.5'] },
   },
   e2eCoverage: 'incomplete',
   e2eCoverageDetails:
-    'The E2E test covers all steps, but not in full scope. It asserts the observable state changes — header titles, attached menus, selection checkmarks/toasts, custom-view swaps, and item count. It cannot assert the transient iOS 26+ rebuild flash/blur (whether an affected item does or does not visually flash), which has no JS-side signal and requires manual verification on iOS 26+.',
+    'The Custom items after layout changes and Navigation sections are not automated. For manual testing perform Baseline, Update one item steps 1 and 6, and all steps of Add and remove an item, Custom items after layout changes and Navigation. Flashes, blurs and the color of a pressed custom item are not assertable with Detox.',
   smokeTest: false,
 };

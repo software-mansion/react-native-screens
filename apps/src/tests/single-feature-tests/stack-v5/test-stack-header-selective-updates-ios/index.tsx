@@ -1,4 +1,11 @@
-import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
   StackContainer,
@@ -16,12 +23,16 @@ import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
 import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
+import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
 const MENU_MODES = ['none', 'single', 'multi'] as const;
 type MenuMode = (typeof MENU_MODES)[number];
 
+const TITLE_VARIANTS = ['foo', 'bar', 'long'] as const;
+type TitleVariant = (typeof TITLE_VARIANTS)[number];
+
 interface ItemConfig {
-  titleVariant: 'foo' | 'bar';
+  titleVariant: TitleVariant;
   customView: boolean;
   menuMode: MenuMode;
 }
@@ -37,8 +48,35 @@ const THIRD_ITEM_DEFAULT: ItemConfig = {
   menuMode: 'none',
 };
 
-function itemTitle(index: number, variant: 'foo' | 'bar'): string {
-  return variant === 'foo' ? `Foo ${index + 1}` : `Bar ${index + 1}`;
+const CUSTOM_VIEW_SIZE = 30;
+const LARGE_CUSTOM_VIEW_WIDTH = 60;
+
+interface HeaderLayout {
+  reversed: boolean;
+  largeCustomViews: boolean;
+  firstItemLeading: boolean;
+}
+
+// The third item is toggled from both screens of the stack, so its state lives above them.
+const ThirdItemContext = createContext<{
+  showThirdItem: boolean;
+  toggleThirdItem: () => void;
+  addThirdItem: () => void;
+}>({
+  showThirdItem: false,
+  toggleThirdItem: () => {},
+  addThirdItem: () => {},
+});
+
+function itemTitle(index: number, variant: TitleVariant): string {
+  switch (variant) {
+    case 'foo':
+      return `Foo ${index + 1}`;
+    case 'bar':
+      return `Bar ${index + 1}`;
+    case 'long':
+      return `Longer title ${index + 1}`;
+  }
 }
 
 function buildMenu(
@@ -88,9 +126,10 @@ type StackHeaderItems = NonNullable<
 
 function buildHeaderConfig(
   items: ItemConfig[],
+  layout: HeaderLayout,
   showToast: (text: string) => void,
 ): StackHeaderConfigProps {
-  const trailingItems: StackHeaderItems = items.flatMap((item, i) => {
+  const itemGroups: StackHeaderItems[] = items.map((item, i) => {
     const menu =
       item.menuMode !== 'none'
         ? buildMenu(i, item.menuMode, showToast)
@@ -105,7 +144,12 @@ function buildHeaderConfig(
         render: () => (
           <PressableWithFeedback
             testID={`custom-item-${i}`}
-            style={{ width: 30, height: 30 }}
+            style={{
+              width: layout.largeCustomViews
+                ? LARGE_CUSTOM_VIEW_WIDTH
+                : CUSTOM_VIEW_SIZE,
+              height: CUSTOM_VIEW_SIZE,
+            }}
           />
         ),
         menu,
@@ -125,26 +169,76 @@ function buildHeaderConfig(
     return outItems;
   });
 
+  const leadingItems = layout.firstItemLeading ? itemGroups[0] : [];
+  const trailingGroups = layout.firstItemLeading
+    ? itemGroups.slice(1)
+    : itemGroups;
+  if (layout.reversed) {
+    trailingGroups.reverse();
+  }
+
   return {
     title: 'Selective Updates',
     ios: {
-      trailingItems,
+      leadingItems,
+      trailingItems: trailingGroups.flat(),
     },
   };
 }
 
 export function TestStackHeaderSelectiveUpdatesIOS() {
+  const [showThirdItem, setShowThirdItem] = useState(false);
+  const thirdItemContext = useMemo(
+    () => ({
+      showThirdItem,
+      toggleThirdItem: () => setShowThirdItem(prev => !prev),
+      addThirdItem: () => setShowThirdItem(true),
+    }),
+    [showThirdItem],
+  );
+
   return (
     <ToastProvider>
-      <StackContainer
-        routeConfigs={[
-          {
-            name: 'Home',
-            element: <ConfigScreen />,
-          },
-        ]}
-      />
+      <ThirdItemContext.Provider value={thirdItemContext}>
+        <StackContainer
+          routeConfigs={[
+            {
+              name: 'Home',
+              element: <ConfigScreen />,
+            },
+            {
+              name: 'Details',
+              element: <DetailsScreen />,
+              options: {
+                headerConfig: {
+                  title: 'Details',
+                },
+              },
+            },
+          ]}
+        />
+      </ThirdItemContext.Provider>
     </ToastProvider>
+  );
+}
+
+function ThirdItemButton() {
+  const { showThirdItem, toggleThirdItem } = useContext(ThirdItemContext);
+  return (
+    <Button
+      testID="toggle-item-3-button"
+      title={showThirdItem ? 'Remove Item 3' : 'Add Item 3'}
+      onPress={toggleThirdItem}
+    />
+  );
+}
+
+function DetailsScreen() {
+  return (
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <ThirdItemButton />
+      <StackNavigationButtons routeNames={[]} isPopEnabled />
+    </ScrollView>
   );
 }
 
@@ -152,7 +246,10 @@ function ConfigScreen() {
   const navigation = useStackNavigationContext();
   const toast = useToast();
   const [items, setItems] = useState<ItemConfig[]>(DEFAULT_ITEMS);
-  const [showThirdItem, setShowThirdItem] = useState(false);
+  const { showThirdItem, addThirdItem } = useContext(ThirdItemContext);
+  const [reversed, setReversed] = useState(false);
+  const [largeCustomViews, setLargeCustomViews] = useState(false);
+  const [firstItemLeading, setFirstItemLeading] = useState(false);
   const [thirdItemConfig, setThirdItemConfig] =
     useState<ItemConfig>(THIRD_ITEM_DEFAULT);
 
@@ -183,8 +280,13 @@ function ConfigScreen() {
 
   const { setRouteOptions, routeKey } = navigation;
   const headerConfig = useMemo(
-    () => buildHeaderConfig(allItems, showToast),
-    [allItems, showToast],
+    () =>
+      buildHeaderConfig(
+        allItems,
+        { reversed, largeCustomViews, firstItemLeading },
+        showToast,
+      ),
+    [allItems, reversed, largeCustomViews, firstItemLeading, showToast],
   );
 
   useLayoutEffect(() => {
@@ -198,21 +300,15 @@ function ConfigScreen() {
       style={styles.scroll}
       contentContainerStyle={styles.content}
       contentInsetAdjustmentBehavior="automatic">
-      <Text>
-        On iOS 26 and above, item update is visible as visual flash / blur.
-        Updating single item should NOT make other items flash. Updating the
-        menu should NOT make any item flash. Updating the title when custom item
-        is set should NOT make it flash.
-      </Text>
       {allItems.map((item, i) => (
         <View key={i} style={styles.itemSection}>
           <Text style={styles.heading}>Item {i + 1}</Text>
-          <SettingsPicker<'foo' | 'bar'>
+          <SettingsPicker<TitleVariant>
             testID={`title-picker-${i}`}
             label="Title"
             value={item.titleVariant}
             onValueChange={v => updateItem(i, { titleVariant: v })}
-            items={['foo', 'bar']}
+            items={[...TITLE_VARIANTS]}
           />
           <SettingsSwitch
             testID={`custom-view-switch-${i}`}
@@ -229,11 +325,35 @@ function ConfigScreen() {
           />
         </View>
       ))}
+      <ThirdItemButton />
       <Button
-        testID="toggle-item-3-button"
-        title={showThirdItem ? 'Remove Item 3' : 'Add Item 3'}
-        onPress={() => setShowThirdItem(prev => !prev)}
+        testID="lengthen-and-add-button"
+        title="Lengthen Item 1 title and add Item 3"
+        onPress={() => {
+          // Both changes land in one header update.
+          updateItem(0, { titleVariant: 'long' });
+          addThirdItem();
+        }}
       />
+      <SettingsSwitch
+        testID="reversed-switch"
+        label="Reversed order"
+        value={reversed}
+        onValueChange={setReversed}
+      />
+      <SettingsSwitch
+        testID="large-custom-views-switch"
+        label="Large custom views"
+        value={largeCustomViews}
+        onValueChange={setLargeCustomViews}
+      />
+      <SettingsSwitch
+        testID="first-item-leading-switch"
+        label="Item 1 on the leading side"
+        value={firstItemLeading}
+        onValueChange={setFirstItemLeading}
+      />
+      <StackNavigationButtons routeNames={['Details']} isPopEnabled={false} />
     </ScrollView>
   );
 }

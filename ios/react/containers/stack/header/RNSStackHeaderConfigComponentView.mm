@@ -17,6 +17,7 @@
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
+#import <React/RCTMountingTransactionObserving.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSStackHeaderConfigComponentDescriptor.h>
@@ -34,7 +35,8 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
             RNSStackHeaderItemSpacerComponentView.class);
 }
 
-@interface RNSStackHeaderConfigComponentView () <RCTRNSStackHeaderConfigIOSViewProtocol>
+@interface RNSStackHeaderConfigComponentView () <RCTRNSStackHeaderConfigIOSViewProtocol,
+                                                 RCTMountingTransactionObserving>
 @end
 
 @implementation RNSStackHeaderConfigComponentView {
@@ -42,6 +44,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderConfigShadowStateProxy *_Nonnull _shadowStateProxy;
   RNSStackHeaderConfigEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<id> *_children;
+
+  // Whether a child was added, removed, moved or changed in the current mounting transaction. The header items are
+  // updated once, when the transaction ends, so that the navigation bar never shows a state from the middle of it.
+  BOOL _needsHeaderItemsUpdate;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -110,7 +116,12 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 {
   if (self.window != nil) {
     [[self requireNavigationController] setNavigationBarFrameChangeDelegate:self];
-    [self.headerCoordinator rebuild];
+    // The config properties are applied here, because this is the first moment the header coordinator is available
+    // after the first mount, and because the back button configuration depends on the position in the stack. The
+    // items go through the same update as after a mounting transaction: when the view comes back to the window
+    // (pop to this screen, tab switch) and nothing changed in the meantime, the bar button items stay as they are.
+    _needsHeaderItemsUpdate = NO;
+    [self.headerCoordinator applyHeaderConfiguration];
   }
   [super didMoveToWindow];
 }
@@ -122,7 +133,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSAssertIsValidHeaderChild(childComponentView);
 
   // Do NOT call super — children are not added to the view hierarchy.
-  // They are tracked here and read by the coordinator during rebuild.
+  // They are tracked here and read by the coordinator when it updates the header items.
   [_children insertObject:childComponentView atIndex:index];
 
   if ([childComponentView isKindOfClass:RNSStackHeaderItemComponentView.class]) {
@@ -131,7 +142,7 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     ((RNSStackHeaderItemSpacerComponentView *)childComponentView).invalidationDelegate = self;
   }
 
-  [self.headerCoordinator rebuild];
+  [self setNeedsHeaderItemsUpdate];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -145,48 +156,63 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   }
 
   [_children removeObjectAtIndex:index];
-  [self.headerCoordinator rebuild];
+  [self setNeedsHeaderItemsUpdate];
+}
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  [self updateHeaderItemsIfNeeded];
+}
+
+#pragma mark - Header items update
+
+/**
+ * Header items are only updated through mounting transactions (`setNativeProps` commits to the shadow tree as well),
+ * so the end of the transaction is the only place where the items are brought up to date.
+ */
+- (void)setNeedsHeaderItemsUpdate
+{
+  _needsHeaderItemsUpdate = YES;
+}
+
+- (void)updateHeaderItemsIfNeeded
+{
+  if (_needsHeaderItemsUpdate) {
+    _needsHeaderItemsUpdate = NO;
+    [self.headerCoordinator updateItems];
+  }
 }
 
 #pragma mark - RNSStackHeaderItemInvalidationDelegate
 
-- (void)headerItemDidInvalidateWithId:(NSString *)itemId
+- (void)headerItemDidInvalidate:(UIView *)headerItem
 {
-  if (itemId == nil) {
-    RCTLogWarn(@"[RNScreens] headerItemDidInvalidateWithId called with nil id, will run full header rebuild");
-    [self.headerCoordinator rebuild];
-    return;
-  }
-  [self.headerCoordinator rebuildItemWithId:itemId];
+  [self.headerCoordinator setNeedsUpdateForChild:headerItem];
+  [self setNeedsHeaderItemsUpdate];
 }
 
-- (void)headerItemMenuDidChangeWithId:(NSString *)itemId
+- (void)headerItemMenuDidChange:(UIView *)headerItem
 {
-  if (itemId == nil) {
-    RCTLogWarn(@"[RNScreens] headerItemMenuDidChangeWithId called with nil id, will run full header rebuild");
-    [self.headerCoordinator rebuild];
-    return;
-  }
-  [self.headerCoordinator reapplyMenuForItemWithId:itemId];
+  [self.headerCoordinator setNeedsMenuUpdateForItem:(RNSStackHeaderItemComponentView *)headerItem];
+  [self setNeedsHeaderItemsUpdate];
 }
 
 /**
- * Same as headerItemMenuDidChangeWithId, but for view commands, which keep the toggle state of the item
+ * A view command is not a part of a mounting transaction, so the menu is applied right away. The toggle state of the
+ * item is kept.
  */
-- (void)headerItemMenuDidUpdateFromCommandWithId:(NSString *)itemId
+- (void)headerItemMenuDidUpdateFromCommand:(UIView *)headerItem
 {
-  if (itemId == nil) {
-    RCTLogWarn(
-        @"[RNScreens] headerItemMenuDidUpdateFromCommandWithId called with nil id, will run full header rebuild");
-    [self.headerCoordinator rebuild];
-    return;
-  }
-  [self.headerCoordinator reapplyMenuForItemWithId:itemId];
+  [self.headerCoordinator reapplyMenuForItem:(RNSStackHeaderItemComponentView *)headerItem];
 }
 
-- (void)headerItemSpacerDidInvalidate
+- (void)headerItemSpacerDidInvalidate:(UIView *)headerItemSpacer
 {
-  [self.headerCoordinator rebuild];
+  [self.headerCoordinator setNeedsUpdateForChild:headerItemSpacer];
+  [self setNeedsHeaderItemsUpdate];
 }
 
 #pragma mark - RNSStackHeaderEventsDelegate
@@ -201,17 +227,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   [_reactEventEmitter emitOnMenuSelectionChange:menuId selectedMenuItemIds:selectedIds];
 }
 
-- (void)didPressHeaderItem:(NSString *)itemId
+- (void)didPressHeaderItem:(id<RNSStackHeaderItemDataProviding>)headerItem
 {
-  for (UIView *child in _children) {
-    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class]) {
-      RNSStackHeaderItemComponentView *item = (RNSStackHeaderItemComponentView *)child;
-      if ([item.itemId isEqualToString:itemId]) {
-        [item emitOnPress];
-        return;
-      }
-    }
-  }
+  RCTAssert([headerItem isKindOfClass:RNSStackHeaderItemComponentView.class],
+            @"[RNScreens] headerItem is expected to be of type RNSStackHeaderItemComponentView");
+  [static_cast<RNSStackHeaderItemComponentView *>(headerItem) emitOnPress];
 }
 
 #pragma mark - RNSViewFrameChangeDelegate

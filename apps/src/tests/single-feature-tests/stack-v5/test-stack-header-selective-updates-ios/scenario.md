@@ -11,40 +11,165 @@
 
 | Device | Test on  |
 | ------ | -------- |
-| iPhone | iOS 26.4 |
+| iPhone | iOS 26.5 |
 
-**E2E coverage details:** The E2E test covers all steps, but not in full scope. It asserts the observable state changes — header titles, attached menus, selection checkmarks/toasts, custom-view swaps, and item count. It cannot assert the transient iOS 26+ rebuild flash/blur (whether an affected item does or does not visually flash), which has no JS-side signal and requires manual verification on iOS 26+.
+**E2E coverage details:** The Custom items after layout changes and Navigation sections are not automated. For manual testing perform Baseline, Update one item steps 1 and 6, and all steps of Add and remove an item, Custom items after layout changes and Navigation. Flashes, blurs and the color of a pressed custom item are not assertable with Detox.
 
 <!-- scenario-metadata:end -->
 
 ## Description
 
-This test verifies that updating a single header item does not cause other items to rebuild.
+Verifies that a change to the header items affects only the items
+it concerns. An item that is not changed never disappears and reappears when
+another item is changed, added, removed, reordered or resized, and custom items
+keep reacting to touches where they are drawn after every such change.
+
+## Note
+
+- Wait for every animation to finish before the next tap.
+- Flash: an item disappears and fades back in.
+- Blur: an item goes out of focus for a moment and stays visible. iOS blurs the
+  items next to an item that is added, removed or moved; this is not a flash.
+- Header items are placed from the right: Item 1 is the rightmost one.
+- A custom item is purple until it is pressed and blue while a finger is on it.
+  After a press held for 1 second it is yellow.
+- Press a custom item no sooner than 1 second after the header items changed;
+  before that it may not react where it is drawn.
 
 ## Steps
 
-1. Observe two items in the trailing area: "Foo 1" and "Foo 2"
-2. Change Title picker for Item 1 from "foo" to "bar"
-   - [ ] Item 1 flashes and changes to "Bar 1"
-   - [ ] Item 2 does NOT flash
-3. Change Menu picker for Item 1 to "single"
-   - [ ] Neither items flash
-4. Open Item 1 menu by long press and select Option-0-B
-   - [ ] A toast `Item 1 [single]: "Option-0-B"` selected appears
-   - [ ] When opened again, only Option-0-B is checked
-5. Change Menu picker for Item 1 to "multi"
-   - [ ] Menu can be opened and the default first option is selected
-6. Select Option-0-B in Item 1 menu
-   - [ ] A toast `Item 1 \[multi]: "Option-0-A", "Option-0-B"` appears
-   - [ ] When opened again, both Option-0-A and Option-0-B are checked
-7. Enable "Custom view" for Item 1
-   - [ ] Item 1 flashes and shows a purple pressable square
-   - [ ] Item 2 aligns with new width and does not flash
-8. Change Title picker for Item 1 while custom view is enabled
-   - [ ] Neither items flash
-9. Press "Add Item 3"
-   - [ ] A third item appears
-   - [ ] All items flash
-10. Press "Remove Item 3"
-    - [ ] All items flash
-    - [ ] Item 3 disappears under Item 2
+### Baseline
+
+1. Launch the app and navigate to the **Stack Header Selective Updates (iOS)**
+   screen.
+
+   - [ ] The header shows the title "Selective Updates" and the items "Foo 2" and
+         "Foo 1".
+
+---
+
+### Update one item
+
+1. Set "Title" of Item 1 to `bar`.
+
+   - [ ] Item 1 reads "Bar 1" at once, without a flash or a blur.
+   - [ ] "Foo 2" does not flash.
+
+2. Set "Menu" of Item 1 to `single`.
+
+   - [ ] Neither item flashes or blurs.
+
+3. Long press "Bar 1", then tap "Option-0-B".
+
+   - [ ] The menu closes and a toast `Item 1 [single]: "Option-0-B"` is displayed.
+
+4. Tap the toast, then long press "Bar 1".
+
+   - [ ] Only "Option-0-B" has a checkmark.
+
+5. Tap outside the menu, set "Menu" of Item 1 to `multi`, long press "Bar 1",
+   then tap "Option-0-B".
+
+   - [ ] The menu closes and a toast `Item 1 [multi]: "Option-0-A", "Option-0-B"`
+         is displayed.
+
+6. Tap the toast, then toggle "Custom view" of Item 1 on.
+
+   - [ ] Item 1 is a purple square.
+   - [ ] "Foo 2" moves next to the square and does not flash.
+
+7. Set "Title" of Item 1 to `foo`.
+
+   - [ ] The header does not change.
+
+---
+
+### Add and remove an item
+
+1. Tap "Add Item 3".
+
+   - [ ] "Foo 3" appears to the left of "Foo 2".
+   - [ ] The purple square does not flash and does not blur.
+   - [ ] "Foo 2" blurs while "Foo 3" appears and does not flash (see Note).
+
+2. Tap "Remove Item 3".
+
+   - [ ] "Foo 3" disappears.
+   - [ ] The purple square does not flash and does not blur.
+
+---
+
+### Custom items after layout changes
+
+1. Press the purple square and hold for 1 second, moving the finger inside the
+   square, then lift the finger.
+
+   - [ ] The square is blue for as long as the finger is on it and yellow after
+         the finger is lifted.
+
+2. Toggle "Custom view" of Item 2 on.
+
+   - [ ] A purple square replaces "Foo 2", to the left of the yellow square.
+   - [ ] The yellow square does not flash.
+
+3. Toggle "Custom view" of Item 1 off, then tap "Lengthen Item 1 title and add
+   Item 3".
+
+   - [ ] The header shows, from the right: "Longer title 1", the purple square
+         and "Foo 3".
+
+4. Press the purple square and hold for 1 second, moving the finger inside the
+   square, then lift the finger.
+
+   - [ ] The square is blue for as long as the finger is on it, also while the
+         finger moves, and yellow after the finger is lifted.
+
+5. Tap "Remove Item 3", set "Title" of Item 1 to `foo`, toggle "Custom view" of
+   Item 1 on, then toggle "Reversed order" on.
+
+   - [ ] The header shows two squares: the yellow one is the rightmost item and
+         the purple one is to its left.
+
+6. Press the purple square and hold for 1 second, moving the finger inside the
+   square, then lift the finger.
+
+   - [ ] The square is blue for as long as the finger is on it and yellow after
+         the finger is lifted.
+
+7. Toggle "Large custom views" on, wait 1 second, then press and hold the left
+   rectangle close to its right edge.
+
+   - [ ] While the finger is down, both custom items are rectangles twice as wide
+         as before and the pressed one is blue.
+
+8. Toggle "Item 1 on the leading side" on.
+
+   - [ ] Item 1 is a purple rectangle on the left side of the header, before the
+         title.
+
+9. Press the rectangle on the left side of the header and hold for 1 second,
+   then lift the finger.
+
+   - [ ] The rectangle is blue for as long as the finger is on it and yellow after
+         the finger is lifted.
+
+---
+
+### Navigation
+
+1. Tap "Push Details", tap "Pop", then press and hold the rectangle on the right
+   side of the header.
+
+   - [ ] While the finger is down, the header shows the two rectangles in the
+         same places as before the push: the left one is yellow and the pressed
+         right one is blue.
+
+2. Tap "Push Details", tap "Add Item 3", then tap "Pop".
+
+   - [ ] "Foo 3" is the rightmost header item and the yellow rectangle is
+         directly to its left.
+
+3. Tap "Remove Item 3", toggle "Item 1 on the leading side", "Large custom views"
+   and "Reversed order" off, then toggle "Custom view" of Item 1 and Item 2 off.
+
+   - [ ] The header shows the items "Foo 2" and "Foo 1".
