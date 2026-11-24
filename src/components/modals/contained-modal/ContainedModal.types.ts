@@ -23,7 +23,7 @@ export interface ContainedModalProps {
  */
 export interface ContainedModalProviderProps {
   /**
-   * Content the matched contained modals are presented over.
+   * Content the matched contained modals present over or in place of.
    *
    * @platform ios
    */

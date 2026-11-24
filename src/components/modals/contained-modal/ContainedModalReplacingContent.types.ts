@@ -10,6 +10,10 @@ export interface ContainedModalReplacingContentProps {
   /**
    * Content of the modal.
    *
+   * @remarks
+   * Rendered in place of the targeted provider's content, which is removed
+   * from the screen while the modal is open and comes back on dismissal.
+   *
    * @platform ios
    */
   children?: ViewProps['children'] | undefined;

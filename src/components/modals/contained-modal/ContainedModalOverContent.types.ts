@@ -10,6 +10,10 @@ export interface ContainedModalOverContentProps {
   /**
    * Content of the modal.
    *
+   * @remarks
+   * Rendered over the targeted provider's content, which stays on screen
+   * underneath while the modal is open.
+   *
    * @platform ios
    */
   children?: ViewProps['children'] | undefined;
