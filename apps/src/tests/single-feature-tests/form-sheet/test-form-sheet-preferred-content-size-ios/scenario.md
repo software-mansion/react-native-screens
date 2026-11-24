@@ -9,7 +9,7 @@ is open. On iPhone in landscape, where the sheet stays attached to the bottom
 edge (`prefersEdgeAttachedInCompactHeight` is on), the sheet takes the
 preferred width only when "Width follows" is on.
 
-**OS test creation version:** iOS: 26.1, iPadOS: 26.1.
+**OS test creation version:** iOS: 27.3, iPadOS: 27.3.
 
 ## E2E test
 
@@ -19,11 +19,6 @@ TBD: Planned, but will be implemented separately.
 
 - iPad: device or simulator, app in full-screen mode.
 - iPhone: device or simulator, with rotation not locked.
-
-## Note
-
-- Wait for every animation to finish before the next tap.
-- "Sheet size" shows the width and height of the sheet's content in points.
 
 ## Steps
 

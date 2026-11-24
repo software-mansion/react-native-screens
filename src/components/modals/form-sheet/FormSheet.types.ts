@@ -7,7 +7,6 @@ import type {
   SheetInitialDetentIndex,
   SheetLargestUndimmedDetentIndex,
   SheetNativeContainerStyleProps,
-  SheetPreferredContentSize,
   SheetPreferredCornerRadius,
 } from '../sheet';
 
@@ -70,12 +69,22 @@ export type FormSheetBackgroundEffect = SheetBackgroundEffect;
 export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
- * Preferred size of a form sheet.
- *
- * @remarks
- * See {@link SheetPreferredContentSize} for its fields.
+ * Preferred size of a form sheet, in density-independent pixels.
  */
-export type FormSheetPreferredContentSize = SheetPreferredContentSize;
+export interface FormSheetPreferredContentSize {
+  /**
+   * Preferred width of the sheet.
+   *
+   * @platform ios
+   */
+  width: number;
+  /**
+   * Preferred height of the sheet.
+   *
+   * @platform ios
+   */
+  height: number;
+}
 
 /**
  * Props for {@link FormSheet}.
