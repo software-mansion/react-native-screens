@@ -17,6 +17,8 @@
 
     _presentationStyle = RNSFullScreenModalPresentationStyleReplacingContent;
     [self applyPresentationStyle];
+
+    self.animation = RNSFullScreenModalAnimationDefault;
   }
   return self;
 }
@@ -52,6 +54,38 @@
       break;
   }
   [self applyBackgroundColor];
+}
+
+- (void)setAnimation:(RNSFullScreenModalAnimation)animation
+{
+  _animation = animation;
+
+  switch (animation) {
+    case RNSFullScreenModalAnimationDefault:
+    case RNSFullScreenModalAnimationCoverVertical:
+      self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+      break;
+    case RNSFullScreenModalAnimationNone:
+      // Not animated (see `isAnimated`), so UIKit never plays the style; reset it to the UIKit default instead of
+      // keeping the previous value.
+      self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+      break;
+    case RNSFullScreenModalAnimationCrossDissolve:
+      self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+      break;
+    case RNSFullScreenModalAnimationFlipHorizontal:
+#if TARGET_OS_TV
+      self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+#else
+      self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+#endif // TARGET_OS_TV
+      break;
+  }
+}
+
+- (BOOL)isAnimated
+{
+  return _animation != RNSFullScreenModalAnimationNone;
 }
 
 - (void)applyBackgroundColor

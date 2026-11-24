@@ -1,6 +1,7 @@
 #pragma once
 
 #import <UIKit/UIKit.h>
+#import "RNSFullScreenModalAnimation.h"
 #import "RNSFullScreenModalPresentationStyle.h"
 #import "RNSFullScreenModalProviders.h"
 
@@ -40,6 +41,12 @@ NS_ASSUME_NONNULL_BEGIN
  * changing `modalPresentationStyle` of a presented controller.
  */
 @property (nonatomic) RNSFullScreenModalPresentationStyle presentationStyle;
+
+/// Sets `modalTransitionStyle`. UIKit reads it at both presentation and dismissal.
+@property (nonatomic) RNSFullScreenModalAnimation animation;
+
+/// Whether presentation and dismissal are animated: `NO` for `RNSFullScreenModalAnimationNone`.
+@property (nonatomic, readonly) BOOL isAnimated;
 
 #pragma mark - Signals
 

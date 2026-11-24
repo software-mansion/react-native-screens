@@ -2,6 +2,27 @@ import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 /**
+ * Animation a {@link FullScreenModalReplacingContent} opens and closes with.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the UIKit default, `'coverVertical'`.
+ * - `'none'` — the modal opens and closes without an animation.
+ * - `'coverVertical'` — the content slides up from the bottom of the screen
+ *   and slides back down on close.
+ * - `'crossDissolve'` — the content cross-dissolves.
+ * - `'flipHorizontal'` — the window flips horizontally to reveal the content.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uimodaltransitionstyle | UIModalTransitionStyle}
+ */
+export type FullScreenModalReplacingContentAnimation =
+  | 'default'
+  | 'none'
+  | 'coverVertical'
+  | 'crossDissolve'
+  | 'flipHorizontal';
+
+/**
  * Props for {@link FullScreenModalReplacingContent}.
  */
 export interface FullScreenModalReplacingContentProps {
@@ -32,6 +53,14 @@ export interface FullScreenModalReplacingContentProps {
    * @platform ios
    */
   isOpen: boolean;
+
+  /**
+   * Animation the modal opens and closes with.
+   *
+   * @defaultValue `'default'`
+   * @platform ios
+   */
+  animation?: FullScreenModalReplacingContentAnimation | undefined;
 
   /**
    * Called when the modal's view is about to appear.

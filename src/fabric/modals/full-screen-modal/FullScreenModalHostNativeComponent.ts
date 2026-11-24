@@ -15,9 +15,17 @@ type GenericEmptyEvent = Readonly<{}>;
 // it is not part of their public props.
 type PresentationStyle = 'replacingContent' | 'overContent';
 
+type Animation =
+  | 'default'
+  | 'none'
+  | 'coverVertical'
+  | 'crossDissolve'
+  | 'flipHorizontal';
+
 interface NativeProps extends ViewProps {
   presentationStyle?: CT.WithDefault<PresentationStyle, 'replacingContent'>;
   isOpen?: CT.WithDefault<boolean, false>;
+  animation?: CT.WithDefault<Animation, 'default'>;
   // Events
   onWillAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;

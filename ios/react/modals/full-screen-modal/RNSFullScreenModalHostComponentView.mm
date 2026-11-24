@@ -166,6 +166,10 @@ namespace react = facebook::react;
         rnscreens::conversion::RNSFullScreenModalPresentationStyleFromHostProp(newComponentProps.presentationStyle);
   }
 
+  if (oldComponentProps.animation != newComponentProps.animation) {
+    _controller.animation = rnscreens::conversion::RNSFullScreenModalAnimationFromHostProp(newComponentProps.animation);
+  }
+
   if (oldComponentProps.isOpen != newComponentProps.isOpen) {
     _isOpen = static_cast<BOOL>(newComponentProps.isOpen);
     [_controller setNeedsPresentationUpdate];
