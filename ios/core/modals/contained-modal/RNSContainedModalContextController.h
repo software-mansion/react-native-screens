@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  * modals are presented from. Its view, an `RNSContainedModalContextView`, holds
  * the provider's React children; `definesPresentationContext == YES` makes
  * UIKit anchor contained presentations here instead of walking further up.
- * Owned by `RNSContainedModalProviderView`, which keeps this controller's view
+ * Owned by `RNSContainedModalContextWrapperView`, which keeps this controller's view
  * as its direct, exactly-filling subview; see that class for why the attach
  * point matters.
  */

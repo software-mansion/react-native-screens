@@ -1,8 +1,8 @@
-#import "RNSContainedModalProviderView.h"
+#import "RNSContainedModalContextWrapperView.h"
 #import "RNSContainedModalContextController.h"
 #import "RNSLog.h"
 
-@implementation RNSContainedModalProviderView
+@implementation RNSContainedModalContextWrapperView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

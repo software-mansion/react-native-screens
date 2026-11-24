@@ -1,6 +1,6 @@
 #import "RNSContainedModalProviderComponentView.h"
 #import "RNSContainedModalContextController.h"
-#import "RNSContainedModalProviderView.h"
+#import "RNSContainedModalContextWrapperView.h"
 
 #import <React/RCTConversions.h>
 #import <React/UIView+React.h>
@@ -10,14 +10,14 @@
 namespace react = facebook::react;
 
 @implementation RNSContainedModalProviderComponentView {
-  // The core provider view owns the presentation context (the context
-  // controller and its view, see RNSContainedModalProviderView.h). It is this
+  // The context wrapper view owns the presentation context (the context
+  // controller and its view, see RNSContainedModalContextWrapperView.h). It is this
   // component view's only direct subview, added once and never removed, so the
   // context view's superview is always the core view no matter how
   // RCTViewComponentView arranges its own subviews (it may move them into a
   // private container for `overflow: hidden` with `boxShadow` or `outline`).
   // React children mount into the context view.
-  RNSContainedModalProviderView *_Nonnull _providerView;
+  RNSContainedModalContextWrapperView *_Nonnull _contextWrapperView;
   NSString *_Nullable _containerId;
 }
 
@@ -27,8 +27,8 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSContainedModalProviderProps>();
     _props = defaultProps;
 
-    _providerView = [[RNSContainedModalProviderView alloc] initWithFrame:self.bounds];
-    [self addSubview:_providerView];
+    _contextWrapperView = [[RNSContainedModalContextWrapperView alloc] initWithFrame:self.bounds];
+    [self addSubview:_contextWrapperView];
   }
   return self;
 }
@@ -37,7 +37,7 @@ namespace react = facebook::react;
 // the Stack and Tabs hosts do: a window exit is usually the parent going off
 // screen (a covering push, a tab switch, a dismissed sheet), and only a child
 // that stays attached gets UIKit's appearance forwarding - and with it the
-// modal it presents. The core provider view detaches when it is deallocated.
+// modal it presents. The context wrapper view detaches when it is deallocated.
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
@@ -47,7 +47,7 @@ namespace react = facebook::react;
   }
   UIViewController *parentViewController = [self closestParentViewController];
   if (parentViewController != nil) {
-    [_providerView attachContextControllerToParentViewController:parentViewController];
+    [_contextWrapperView attachContextControllerToParentViewController:parentViewController];
   }
 }
 
@@ -70,9 +70,9 @@ namespace react = facebook::react;
   return _containerId;
 }
 
-- (nonnull RNSContainedModalProviderView *)providerView
+- (nonnull RNSContainedModalContextWrapperView *)contextWrapperView
 {
-  return _providerView;
+  return _contextWrapperView;
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -89,7 +89,7 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_providerView.contextViewController.view insertSubview:childComponentView atIndex:index];
+  [_contextWrapperView.contextViewController.view insertSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -115,7 +115,7 @@ namespace react = facebook::react;
   [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   // The superview is this view or RCTViewComponentView's private container;
   // both are sized to this view's bounds.
-  _providerView.frame = _providerView.superview.bounds;
+  _contextWrapperView.frame = _contextWrapperView.superview.bounds;
 }
 
 #pragma mark - Dynamic frameworks support

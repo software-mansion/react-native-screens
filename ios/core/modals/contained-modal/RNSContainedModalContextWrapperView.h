@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  * it puts the view back on dismissal, and nothing here may re-insert it
  * earlier.
  */
-@interface RNSContainedModalProviderView : UIView
+@interface RNSContainedModalContextWrapperView : UIView
 
 /// The context controller (`definesPresentationContext == YES`) to present from.
 @property (nonatomic, strong, readonly) RNSContainedModalContextController *contextViewController;

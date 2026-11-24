@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The matched provider's context view controller to present from (see
- * `RNSContainedModalProviderView.contextViewController`). Matching a modal to
+ * `RNSContainedModalContextWrapperView.contextViewController`). Matching a modal to
  * its provider is the host's concern; core only receives the resolved
  * controller through this accessor.
  */

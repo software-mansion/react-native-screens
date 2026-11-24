@@ -2,7 +2,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class RNSContainedModalProviderView;
+@class RNSContainedModalContextWrapperView;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSString *)containerId;
 
 /// The core view that owns the presentation context to present from.
-- (nonnull RNSContainedModalProviderView *)providerView;
+- (nonnull RNSContainedModalContextWrapperView *)contextWrapperView;
 
 @end
 
