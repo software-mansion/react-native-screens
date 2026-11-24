@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Switch, Text, View } from 'react-native';
-import { FormSheet, PageSheet } from 'react-native-screens';
+import { FormSheet } from 'react-native-screens';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
-
-type SheetKind = 'formSheet' | 'pageSheet';
 
 function EdgeAttachedSwitch({
   value,
@@ -26,36 +24,11 @@ function EdgeAttachedSwitch({
   );
 }
 
-function SheetContent({
-  label,
-  edgeAttached,
-  onEdgeAttachedChange,
-  onDismiss,
-}: {
-  label: string;
-  edgeAttached: boolean;
-  onEdgeAttachedChange: (value: boolean) => void;
-  onDismiss: () => void;
-}) {
-  return (
-    <View style={styles.sheetContent}>
-      <Text style={styles.sheetTitle}>{label} content</Text>
-      <EdgeAttachedSwitch
-        value={edgeAttached}
-        onValueChange={onEdgeAttachedChange}
-        testID="sheet-edge-attached-switch"
-      />
-      <View style={styles.spacing} />
-      <Button title="Dismiss" color={Colors.primary} onPress={onDismiss} />
-    </View>
-  );
-}
-
 function TestFormSheetEdgeAttachedCompactHeight() {
-  const [openSheet, setOpenSheet] = useState<SheetKind | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [edgeAttached, setEdgeAttached] = useState(false);
 
-  const close = () => setOpenSheet(null);
+  const close = () => setIsOpen(false);
 
   return (
     <View style={styles.container}>
@@ -68,40 +41,25 @@ function TestFormSheetEdgeAttachedCompactHeight() {
       <Button
         title="Open FormSheet"
         color={Colors.primary}
-        onPress={() => setOpenSheet('formSheet')}
+        onPress={() => setIsOpen(true)}
         testID="open-formsheet-button"
       />
-      <View style={styles.spacing} />
-      <Button
-        title="Open PageSheet"
-        color={Colors.primary}
-        onPress={() => setOpenSheet('pageSheet')}
-        testID="open-pagesheet-button"
-      />
       <FormSheet
-        isOpen={openSheet === 'formSheet'}
+        isOpen={isOpen}
         onNativeDismiss={close}
         prefersGrabberVisible
         prefersEdgeAttachedInCompactHeight={edgeAttached}>
-        <SheetContent
-          label="FormSheet"
-          edgeAttached={edgeAttached}
-          onEdgeAttachedChange={setEdgeAttached}
-          onDismiss={close}
-        />
+        <View style={styles.sheetContent}>
+          <Text style={styles.sheetTitle}>FormSheet content</Text>
+          <EdgeAttachedSwitch
+            value={edgeAttached}
+            onValueChange={setEdgeAttached}
+            testID="sheet-edge-attached-switch"
+          />
+          <View style={styles.spacing} />
+          <Button title="Dismiss" color={Colors.primary} onPress={close} />
+        </View>
       </FormSheet>
-      <PageSheet
-        isOpen={openSheet === 'pageSheet'}
-        onNativeDismiss={close}
-        prefersGrabberVisible
-        prefersEdgeAttachedInCompactHeight={edgeAttached}>
-        <SheetContent
-          label="PageSheet"
-          edgeAttached={edgeAttached}
-          onEdgeAttachedChange={setEdgeAttached}
-          onDismiss={close}
-        />
-      </PageSheet>
     </View>
   );
 }
