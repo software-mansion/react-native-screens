@@ -1,8 +1,8 @@
 #import "RNSContainedModalHostComponentView.h"
 #import "RNSAssert.h"
-#import "RNSContainedModalContainmentProviding.h"
 #import "RNSContainedModalContentController.h"
 #import "RNSContainedModalContentView.h"
+#import "RNSContainedModalContextProviding.h"
 #import "RNSContainedModalHostEventEmitter.h"
 #import "RNSContainedModalHostShadowStateProxy.h"
 #import "RNSContainedModalProviders.h"
@@ -29,7 +29,7 @@ namespace react = facebook::react;
 
   RNSContainedModalContentController *_Nullable _controller;
 
-  __weak UIView<RNSContainedModalContainmentProviding> *_cachedProviderView;
+  __weak UIView<RNSContainedModalContextProviding> *_cachedProviderView;
 
   // Props
   BOOL _isOpen;
@@ -92,7 +92,7 @@ namespace react = facebook::react;
 // `targetContainerId`. Cached after the first walk: the provider is an
 // ancestor in the React tree, so it cannot unmount without also unmounting the
 // modal; only a retarget (`updateProps`) invalidates the cache.
-- (nullable UIView<RNSContainedModalContainmentProviding> *)resolveProviderView
+- (nullable UIView<RNSContainedModalContextProviding> *)resolveProviderView
 {
   if (_cachedProviderView != nil) {
     return _cachedProviderView;
@@ -114,12 +114,12 @@ namespace react = facebook::react;
   return _cachedProviderView;
 }
 
-- (nullable UIView<RNSContainedModalContainmentProviding> *)findProviderView
+- (nullable UIView<RNSContainedModalContextProviding> *)findProviderView
 {
   UIView *currentView = self.superview;
   while (currentView != nil) {
-    if ([currentView conformsToProtocol:@protocol(RNSContainedModalContainmentProviding)]) {
-      auto *providerView = (UIView<RNSContainedModalContainmentProviding> *)currentView;
+    if ([currentView conformsToProtocol:@protocol(RNSContainedModalContextProviding)]) {
+      auto *providerView = (UIView<RNSContainedModalContextProviding> *)currentView;
 
       if ([_targetContainerId isEqualToString:providerView.containerId]) {
         return providerView;

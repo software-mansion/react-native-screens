@@ -1,5 +1,5 @@
 #import "RNSContainedModalProviderComponentView.h"
-#import "RNSContainedModalProviderController.h"
+#import "RNSContainedModalContextController.h"
 
 #import <React/RCTConversions.h>
 #import <React/UIView+React.h>
@@ -10,9 +10,10 @@ namespace react = facebook::react;
 
 @implementation RNSContainedModalProviderComponentView {
   // The provider is double-wrapped: this component view (outer) tightly wraps
-  // the controller's view (inner), which carries the presentation context and
-  // the provider's React children (see RNSContainedModalProviderController.h).
-  RNSContainedModalProviderController *_Nonnull _wrappedContextViewController;
+  // the context controller's view (inner), which carries the presentation
+  // context and the provider's React children (see
+  // RNSContainedModalContextController.h).
+  RNSContainedModalContextController *_Nonnull _contextController;
   NSString *_Nullable _containerId;
 }
 
@@ -22,7 +23,7 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSContainedModalProviderProps>();
     _props = defaultProps;
 
-    _wrappedContextViewController = [[RNSContainedModalProviderController alloc] init];
+    _contextController = [[RNSContainedModalContextController alloc] init];
   }
   return self;
 }
@@ -30,7 +31,7 @@ namespace react = facebook::react;
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-  _wrappedContextViewController.view.frame = self.bounds;
+  _contextController.view.frame = self.bounds;
 }
 
 - (void)didMoveToWindow
@@ -38,9 +39,9 @@ namespace react = facebook::react;
   [super didMoveToWindow];
 
   if (self.window != nil) {
-    [self reactAddControllerToClosestParent:_wrappedContextViewController];
+    [self reactAddControllerToClosestParent:_contextController];
   } else {
-    [self reactRemoveControllerFromParent:_wrappedContextViewController];
+    [self reactRemoveControllerFromParent:_contextController];
   }
 }
 
@@ -54,7 +55,7 @@ namespace react = facebook::react;
   while (parentView != nil) {
     if (parentView.reactViewController != nil) {
       [parentView.reactViewController addChildViewController:controller];
-      // Wrapper invariant (RNSContainedModalProviderController.h): the context
+      // Wrapper invariant (RNSContainedModalContextController.h): the context
       // view must be a direct, exactly-filling subview. Insert at the BOTTOM -
       // during a suspension UIKit's container stays behind as a wrapper
       // subview, and re-attaching this transparent full-bounds view above it
@@ -94,7 +95,7 @@ namespace react = facebook::react;
   [controller removeFromParentViewController];
 }
 
-#pragma mark - RNSContainedModalContainmentProviding
+#pragma mark - RNSContainedModalContextProviding
 
 - (nullable NSString *)containerId
 {
@@ -103,7 +104,7 @@ namespace react = facebook::react;
 
 - (nonnull UIViewController *)contextViewController
 {
-  return _wrappedContextViewController;
+  return _contextController;
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -120,7 +121,7 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_wrappedContextViewController.view insertSubview:childComponentView atIndex:index];
+  [_contextController.view insertSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
