@@ -98,7 +98,7 @@ namespace react = facebook::react;
 
 - (void)resetProps
 {
-  static const auto defaultProps = std::make_shared<const react::RNSStackScreenProps>();
+  static const auto defaultProps = std::make_shared<const react::RNSStackScreenIOSProps>();
   _props = defaultProps;
 
   // container state
@@ -226,11 +226,11 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)updateProps:(const facebook::react::Props::Shared &)props
            oldProps:(const facebook::react::Props::Shared &)oldProps
 {
-  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(_props);
-  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
+  const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenIOSProps>(_props);
+  const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenIOSProps>(props);
 
   if (oldComponentProps.activityMode != newComponentProps.activityMode) {
-    _activityMode = rnscreens::conversion::RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
+    _activityMode = rnscreens::conversion::RNSStackScreenActivityModeFromReactRNSStackScreenIOSActivityMode(
         newComponentProps.activityMode);
     _hasUpdatedActivityMode = YES;
   }
@@ -256,8 +256,9 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   if (oldComponentProps.replaceAnimation != newComponentProps.replaceAnimation) {
-    _replaceAnimation = rnscreens::conversion::RNSStackAnimationTransitionKindFromReactRNSStackScreenReplaceAnimation(
-        newComponentProps.replaceAnimation);
+    _replaceAnimation =
+        rnscreens::conversion::RNSStackAnimationTransitionKindFromReactRNSStackScreenIOSReplaceAnimation(
+            newComponentProps.replaceAnimation);
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -308,7 +309,7 @@ RNS_IGNORE_SUPER_CALL_END
 {
   [super updateEventEmitter:eventEmitter];
   [_reactEventEmitter
-      updateEventEmitter:std::static_pointer_cast<const react::RNSStackScreenEventEmitter>(eventEmitter)];
+      updateEventEmitter:std::static_pointer_cast<const react::RNSStackScreenIOSEventEmitter>(eventEmitter)];
 }
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider

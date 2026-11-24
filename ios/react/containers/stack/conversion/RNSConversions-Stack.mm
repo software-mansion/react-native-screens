@@ -19,19 +19,19 @@ UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromReactRNSS
   }
 }
 
-RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
-    react::RNSStackScreenActivityMode mode)
+RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenIOSActivityMode(
+    react::RNSStackScreenIOSActivityMode mode)
 {
   return static_cast<RNSStackScreenActivityMode>(mode);
 }
 
-RNSStackAnimationTransitionKind RNSStackAnimationTransitionKindFromReactRNSStackScreenReplaceAnimation(
-    react::RNSStackScreenReplaceAnimation replaceAnimation)
+RNSStackAnimationTransitionKind RNSStackAnimationTransitionKindFromReactRNSStackScreenIOSReplaceAnimation(
+    react::RNSStackScreenIOSReplaceAnimation replaceAnimation)
 {
   switch (replaceAnimation) {
-    case react::RNSStackScreenReplaceAnimation::Push:
+    case react::RNSStackScreenIOSReplaceAnimation::Push:
       return RNSStackAnimationTransitionKindPush;
-    case react::RNSStackScreenReplaceAnimation::Pop:
+    case react::RNSStackScreenIOSReplaceAnimation::Pop:
       return RNSStackAnimationTransitionKindPop;
   }
 }

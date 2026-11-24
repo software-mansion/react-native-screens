@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSStackScreenComponentEventEmitter ()
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSStackScreenEventEmitter> &)emitter;
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSStackScreenIOSEventEmitter> &)emitter;
 
 @end
 

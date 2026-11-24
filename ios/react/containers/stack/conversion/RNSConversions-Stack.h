@@ -19,12 +19,12 @@ UITraitEnvironmentLayoutDirectionFromReactRNSStackHostLayoutDirection(
     react::RNSStackHostLayoutDirection layoutDirection);
 
 RNSStackScreenActivityMode
-RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
-    react::RNSStackScreenActivityMode mode);
+RNSStackScreenActivityModeFromReactRNSStackScreenIOSActivityMode(
+    react::RNSStackScreenIOSActivityMode mode);
 
 RNSStackAnimationTransitionKind
-RNSStackAnimationTransitionKindFromReactRNSStackScreenReplaceAnimation(
-    react::RNSStackScreenReplaceAnimation replaceAnimation);
+RNSStackAnimationTransitionKindFromReactRNSStackScreenIOSReplaceAnimation(
+    react::RNSStackScreenIOSReplaceAnimation replaceAnimation);
 
 RNSHeaderItemPlacement
 RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(

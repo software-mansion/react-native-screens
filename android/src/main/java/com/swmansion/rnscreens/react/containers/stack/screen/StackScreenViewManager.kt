@@ -11,8 +11,8 @@ import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.viewmanagers.RNSStackScreenManagerDelegate
-import com.facebook.react.viewmanagers.RNSStackScreenManagerInterface
+import com.facebook.react.viewmanagers.RNSStackScreenAndroidManagerDelegate
+import com.facebook.react.viewmanagers.RNSStackScreenAndroidManagerInterface
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackAnimationConfig
 import com.swmansion.rnscreens.core.containers.stack.animation.model.StackTransitionKind
 import com.swmansion.rnscreens.react.containers.stack.animation.parseStackAnimationConfig
@@ -28,8 +28,8 @@ import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
 @ReactModule(name = StackScreenViewManager.REACT_CLASS)
 internal class StackScreenViewManager :
     ViewGroupManager<StackScreen>(),
-    RNSStackScreenManagerInterface<StackScreen> {
-    private val delegate: ViewManagerDelegate<StackScreen> = RNSStackScreenManagerDelegate<StackScreen, StackScreenViewManager>(this)
+    RNSStackScreenAndroidManagerInterface<StackScreen> {
+    private val delegate: ViewManagerDelegate<StackScreen> = RNSStackScreenAndroidManagerDelegate<StackScreen, StackScreenViewManager>(this)
 
     override fun getName() = REACT_CLASS
 
@@ -179,15 +179,8 @@ internal class StackScreenViewManager :
             }
     }
 
-    override fun setReportsFrameToShadowTree(
-        view: StackScreen,
-        value: Boolean,
-    ) {
-        // iOS only.
-    }
-
     companion object {
-        const val REACT_CLASS = "RNSStackScreen"
+        const val REACT_CLASS = "RNSStackScreenAndroid"
         private const val TAG = "StackScreenViewManager"
     }
 }
