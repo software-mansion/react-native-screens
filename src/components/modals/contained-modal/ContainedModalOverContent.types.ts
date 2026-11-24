@@ -109,7 +109,8 @@ export interface ContainedModalOverContentProps {
    * pushed over the provider, or the modal's containing native sheet is
    * dismissed natively. A suspension is not a dismissal: the presentation
    * relationship is kept, `isOpen` stays `true`, and the appear events fire
-   * again on restore.
+   * again on restore. Dismissing a suspended modal fires no disappear
+   * events: its disappearance was already reported when the suspension began.
    *
    * @platform ios
    */
@@ -123,6 +124,8 @@ export interface ContainedModalOverContentProps {
    * set to `false`), and when a suspension completes, after
    * {@link ContainedModalOverContentProps.onWillDisappear | onWillDisappear} - e.g.
    * once a stack screen pushed over the provider has finished its transition.
+   * Dismissing a suspended modal does not fire it again; see
+   * {@link ContainedModalOverContentProps.onWillDisappear | onWillDisappear}.
    *
    * @platform ios
    */

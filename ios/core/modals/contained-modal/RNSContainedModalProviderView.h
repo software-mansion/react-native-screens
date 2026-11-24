@@ -22,16 +22,15 @@ NS_ASSUME_NONNULL_BEGIN
  *  - tracks scroll, resize, rotation and transforms with no layout-pass
  *    dependence.
  *
- * The owner embeds this view filling its bounds, attaches the context
+ * The owner embeds this view filling its bounds and attaches the context
  * controller to the closest parent view controller when it enters a window
- * and detaches it when it leaves the parent for good. Leaving the window
- * because a transition covers the parent is not that: the controller must stay
- * a child, or UIKit's appearance forwarding to it - and to the modal it
- * presents - is cut short (no `viewDidDisappear` on the way out, no
- * `viewWillAppear` on the way back). The views stay put either way: removing the
- * context view would tear UIKit's container (and a suspended presentation
- * with it) out of the hierarchy. The one party that does take the context
- * view out is UIKit itself, for the lifetime of a replacing
+ * (re-parenting if that changed). It does not detach on a window exit: that is
+ * usually the parent going off screen, and only an attached child gets UIKit's
+ * appearance forwarding - and with it the modal it presents. This view
+ * detaches the controller when it is deallocated. The views stay put either
+ * way: removing the context view would tear UIKit's container (and a suspended
+ * presentation with it) out of the hierarchy. The one party that does take the
+ * context view out is UIKit itself, for the lifetime of a replacing
  * (`UIModalPresentationCurrentContext`) presentation, suspensions included;
  * it puts the view back on dismissal, and nothing here may re-insert it
  * earlier.

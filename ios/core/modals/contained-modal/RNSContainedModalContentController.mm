@@ -8,7 +8,9 @@
   BOOL _needsPresentationUpdate;
 
   // Dismissing a modal that a completed suspension already took off screen
-  // makes UIKit run the disappearance again; it is reported once.
+  // makes UIKit run the disappearance again; it is reported once. Cleared by
+  // either appearance callback, so a restore that delivers only one of them
+  // does not swallow the next dismissal.
   BOOL _hasDisappeared;
 }
 
@@ -73,6 +75,7 @@
   // Appearance is the ground truth for the present side of the state machine
   // (see `handleDidPresent`); the follow-up update dismisses right away if
   // `isOpen` flipped back while the presentation was landing.
+  _hasDisappeared = NO;
   [_presentationManager handleDidPresent];
   [self updatePresentationState];
 

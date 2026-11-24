@@ -19,6 +19,14 @@
   return self;
 }
 
+- (void)dealloc
+{
+  // The parent keeps its children alive; without this an unmounted provider's
+  // context controller (and any modal it presents) would stay in the parent
+  // until the parent itself goes away.
+  [self detachContextControllerFromParentViewController];
+}
+
 - (void)layoutSubviews
 {
   [super layoutSubviews];

@@ -9,23 +9,6 @@
 
 namespace react = facebook::react;
 
-// Leaving the window because a transition covers (or pops) the parent is not
-// leaving the parent: the context controller stays its child, so UIKit's
-// appearance forwarding still completes the disappearance (`viewDidDisappear`)
-// and delivers the full `viewWillAppear` / `viewDidAppear` pair on a restore -
-// to the modal it presents included. Detaching here would cut both short.
-static BOOL RNSIsDisappearingInTransition(UIViewController *_Nullable viewController)
-{
-  UIViewController *fromViewController =
-      [viewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
-  for (UIViewController *current = viewController; current != nil; current = current.parentViewController) {
-    if (current == fromViewController) {
-      return YES;
-    }
-  }
-  return NO;
-}
-
 @implementation RNSContainedModalProviderComponentView {
   // The core provider view owns the presentation context (the context
   // controller and its view, see RNSContainedModalProviderView.h). It is this
@@ -50,24 +33,21 @@ static BOOL RNSIsDisappearingInTransition(UIViewController *_Nullable viewContro
   return self;
 }
 
-- (void)dealloc
-{
-  // Covers an unmount while off-window (e.g. while a stack screen covers this
-  // one), which never reaches `didMoveToWindow`.
-  [_providerView detachContextControllerFromParentViewController];
-}
-
+// Attach (or re-parent) on window entry and never detach on window exit, as
+// the Stack and Tabs hosts do: a window exit is usually the parent going off
+// screen (a covering push, a tab switch, a dismissed sheet), and only a child
+// that stays attached gets UIKit's appearance forwarding - and with it the
+// modal it presents. The core provider view detaches when it is deallocated.
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
 
-  if (self.window != nil) {
-    UIViewController *parentViewController = [self closestParentViewController];
-    if (parentViewController != nil) {
-      [_providerView attachContextControllerToParentViewController:parentViewController];
-    }
-  } else if (!RNSIsDisappearingInTransition(_providerView.contextViewController.parentViewController)) {
-    [_providerView detachContextControllerFromParentViewController];
+  if (self.window == nil) {
+    return;
+  }
+  UIViewController *parentViewController = [self closestParentViewController];
+  if (parentViewController != nil) {
+    [_providerView attachContextControllerToParentViewController:parentViewController];
   }
 }
 
