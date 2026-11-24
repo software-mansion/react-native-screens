@@ -18,6 +18,7 @@ import TestStackAnimationPresetComposition from './test-stack-animation-preset-c
 import TestStackAnimationCustomMotions from './test-stack-animation-custom-motions';
 import TestStackAnimationSwipeDuringTransitionIOS from './test-stack-animation-swipe-during-transition-ios';
 import TestStackChangeDuringSwipeIOS from './test-stack-change-during-swipe-ios';
+import TestStackBackGestureIOS from './test-stack-back-gesture-ios';
 import TestStackSimpleNav from './test-stack-simple-nav';
 import TestStackSubviewsAndroid from './test-stack-subviews-android';
 import TestStackLiftOnScrollAndroid from './test-stack-lift-on-scroll-android';
@@ -71,6 +72,7 @@ export { default as TestStackAnimationPresetComposition } from './test-stack-ani
 export { default as TestStackAnimationCustomMotions } from './test-stack-animation-custom-motions';
 export { default as TestStackAnimationSwipeDuringTransitionIOS } from './test-stack-animation-swipe-during-transition-ios';
 export { default as TestStackChangeDuringSwipeIOS } from './test-stack-change-during-swipe-ios';
+export { default as TestStackBackGestureIOS } from './test-stack-back-gesture-ios';
 export { default as TestStackSimpleNav } from './test-stack-simple-nav';
 export { default as TestStackSubviewsAndroid } from './test-stack-subviews-android';
 export { default as TestStackLiftOnScrollAndroid } from './test-stack-lift-on-scroll-android';
@@ -123,6 +125,7 @@ const scenarios = {
   TestStackAnimationCustomMotions,
   TestStackAnimationSwipeDuringTransitionIOS,
   TestStackChangeDuringSwipeIOS,
+  TestStackBackGestureIOS,
   TestStackSimpleNav,
   TestStackSubviewsAndroid,
   TestStackLiftOnScrollAndroid,
