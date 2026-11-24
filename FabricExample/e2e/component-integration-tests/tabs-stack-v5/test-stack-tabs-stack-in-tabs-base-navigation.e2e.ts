@@ -113,4 +113,9 @@ describe('Stack in Tabs: basic navigation', () => {
       await expectStillOnRoute('Third', thirdKey);
     }
   });
+
+  it('should reveal the same Second underneath when Third is popped', async () => {
+    await tapTopmostButton(renderedButtonText('Pop'));
+    await expectStillOnRoute('Second', secondKey);
+  });
 });
