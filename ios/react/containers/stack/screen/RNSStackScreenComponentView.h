@@ -33,6 +33,8 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 @property (nonatomic, readonly) RNSStackScreenActivityMode activityMode;
 @property (nonatomic, strong, readonly, nonnull) id<RNSStackAnimationConfig> animation;
 @property (nonatomic, readonly) RNSStackAnimationTransitionKind replaceAnimation;
+@property (nonatomic, readonly) BOOL backGestureEnabled;
+@property (nonatomic, readonly) BOOL fullScreenBackGestureEnabled;
 
 @end
 

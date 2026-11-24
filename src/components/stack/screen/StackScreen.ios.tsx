@@ -22,6 +22,8 @@ function StackScreen({
   preventNativeDismiss,
   animation,
   replaceAnimation,
+  // Platform-specific
+  ios,
 }: StackScreenProps) {
   const { componentRef, onDismissWrapper, nativeAnimation } = useStackScreen({
     screenKey,
@@ -51,6 +53,9 @@ function StackScreen({
       preventNativeDismiss={preventNativeDismiss}
       animation={nativeAnimation}
       replaceAnimation={replaceAnimation}
+      // Platform-specific
+      backGestureEnabled={ios?.backGestureEnabled}
+      fullScreenBackGestureEnabled={ios?.fullScreenBackGestureEnabled}
       reportsFrameToShadowTree={isSplitColumnContent}>
       <SplitColumnMarkerContext.Provider value={false}>
         {children}

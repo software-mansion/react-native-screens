@@ -9,6 +9,7 @@ export type {
   StackScreenReplaceAnimation,
   StackScreenDismissHandler,
   StackScreenProps,
+  StackScreenPropsIOS,
   StackScreenAnimation,
   StackScreenAnimationPresetName,
   StackScreenAnimationPresetConfig,

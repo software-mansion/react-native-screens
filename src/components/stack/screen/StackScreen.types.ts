@@ -1,6 +1,7 @@
 import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type { StackScreenAnimation } from './animation';
+import type { StackScreenPropsIOS } from './StackScreen.ios.types';
 
 /**
  * Payload of the native dismiss event.
@@ -185,4 +186,12 @@ export type StackScreenProps = {
    * @platform android, ios
    */
   replaceAnimation?: StackScreenReplaceAnimation | undefined;
+
+  // Platform-specific
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
+  ios?: StackScreenPropsIOS | undefined;
 };

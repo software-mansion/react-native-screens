@@ -106,6 +106,8 @@ namespace react = facebook::react;
   _activityMode = RNSStackScreenActivityModeDetached;
   _animation = RNSStackAnimationPresetConfig.defaultConfig;
   _replaceAnimation = RNSStackAnimationTransitionKindPop;
+  _backGestureEnabled = YES;
+  _fullScreenBackGestureEnabled = YES;
 }
 
 - (void)setupController
@@ -259,6 +261,14 @@ RNS_IGNORE_SUPER_CALL_END
     _replaceAnimation =
         rnscreens::conversion::RNSStackAnimationTransitionKindFromReactRNSStackScreenIOSReplaceAnimation(
             newComponentProps.replaceAnimation);
+  }
+
+  if (oldComponentProps.backGestureEnabled != newComponentProps.backGestureEnabled) {
+    _backGestureEnabled = newComponentProps.backGestureEnabled;
+  }
+
+  if (oldComponentProps.fullScreenBackGestureEnabled != newComponentProps.fullScreenBackGestureEnabled) {
+    _fullScreenBackGestureEnabled = newComponentProps.fullScreenBackGestureEnabled;
   }
 
   [super updateProps:props oldProps:oldProps];
