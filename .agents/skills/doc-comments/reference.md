@@ -164,6 +164,11 @@ accepts it:
  * most three detents are supported. `'fitToContents'` is supported on
  * iOS 16+.
  *
+ * @note
+ * This is an implementation detail and may change. On iOS 15,
+ * `'fitToContents'` falls back to a large detent, and only the system's
+ * medium and large detents are used.
+ *
  * @platform android, ios
  */
 detents?: FormSheetDetents | undefined;

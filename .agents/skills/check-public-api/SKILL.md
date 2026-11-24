@@ -15,8 +15,10 @@ yarn format-js
 
 `check-types` must pass. `lint-js` (`eslint --fix`) and `format-js`
 (`prettier --write` over `src`, `FabricExample` and `apps`) fix what they can
-and rewrite files instead of failing, so run `git diff` afterwards: `lint-js`
-must report no errors, and every rewrite belongs in the change or is reverted.
+and rewrite files instead of failing, so run `git status` and `git diff`
+afterwards (a rewrite of a new, untracked file shows only in `git status`):
+`lint-js` must report no errors, and every rewrite belongs in the change or is
+reverted.
 
 ## 2. Mechanical checks
 
