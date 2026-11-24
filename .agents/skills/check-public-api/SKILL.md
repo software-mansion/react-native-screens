@@ -51,6 +51,22 @@ Allowed: `@remarks`, `@note`, `@tip`, `@info`, `@warning`, `@danger`,
 `@namespace`, `@platform`, `@experimental`, `@deprecated`, `@link`. Anything
 else in the output is either code (decorators, `@` in strings) or a tag to fix.
 
+Nothing in the repository checks where a `{@link}` points either. List the
+targets:
+
+```bash
+grep -ohE '\{@link [^}| ]+' <files> | sort -u
+```
+
+For each target:
+
+- `X` or `X.y`: `X` is a type listed in a family barrel's
+  `export type { … }` or in `src/types.ts`, or a component users write
+  (`FormSheet`, `Tabs.Host`). `y` is declared in `X` itself under exactly that
+  name, not only inherited from a base; otherwise link through the type that
+  declares it.
+- A URL: it opens, and the page is the one the text describes.
+
 ## 3. Declarations
 
 Go through each section of the `public-api-types` skill for every type, prop
@@ -81,6 +97,7 @@ changes. The items most often missed:
 - [ ] `{@link}` for the first mention of a library component, prop or type
       within one comment (one type, prop, field, component or command); never
       to the prop itself or its own type.
+- [ ] Every link target exists and is exported, and every URL opens (step 2).
 - [ ] A prop does not repeat its type's values, fields or behaviour.
 - [ ] Comment text wraps at 80 columns.
 
