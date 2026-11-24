@@ -1,0 +1,109 @@
+# Test Scenario: Full Screen Modal Animation
+
+## Details
+
+**Description:** Verify the `animation` prop of
+`FullScreenModalReplacingContent` and `FullScreenModalOverContent`: each value
+animates both the opening and the closing, and a value changed while the modal
+is open applies to its closing.
+
+**OS test creation version:** iOS 27.3.
+
+## E2E test
+
+Incomplete: all steps are not automated. For manual testing perform all steps.
+
+Animations are not assertable with Detox.
+
+## Prerequisites
+
+- iPhone: device or simulator.
+
+## Note
+
+- Wait for every animation to finish before the next tap.
+- Slide up: the modal moves in from the bottom edge and moves out the same way.
+- To pick a value, tap the picker and then the value.
+
+## Steps
+
+### Baseline
+
+1. Launch the app and navigate to the **Full Screen Modal Animation** screen.
+
+   - [ ] "Presenter screen" is shown with "Replacing animation: default" and
+         "Over animation: default".
+
+---
+
+### Replacing modal
+
+1. Tap "Open replacing", then tap "Close".
+
+   - [ ] "Replacing modal" slides up on open and slides down on close.
+
+2. Set "Replacing animation" to `coverVertical`, tap "Open replacing", then
+   tap "Close".
+
+   - [ ] The modal slides up on open and slides down on close, as with
+         `default`.
+
+3. Set "Replacing animation" to `crossDissolve`, tap "Open replacing", then
+   tap "Close".
+
+   - [ ] The modal cross-fades in and out, without moving; the presenter shows
+         through while the modal fades in.
+
+4. Set "Replacing animation" to `flipHorizontal`, tap "Open replacing", then
+   tap "Close".
+
+   - [ ] The screen flips horizontally around its vertical axis to show the
+         modal, and flips back on close; the background behind the flip is
+         black.
+
+5. Set "Replacing animation" to `none`, tap "Open replacing", then tap
+   "Close".
+
+   - [ ] The modal appears and disappears at once, without an animation.
+
+---
+
+### Over modal
+
+1. Tap "Open over", then tap "Close".
+
+   - [ ] "Over modal" slides up on open and slides down on close; "Presenter
+         screen" stays visible behind it.
+
+2. Set "Over animation" to `coverVertical`, tap "Open over", then tap "Close".
+
+   - [ ] The modal slides up on open and slides down on close, as with
+         `default`.
+
+3. Set "Over animation" to `crossDissolve`, tap "Open over", then tap "Close".
+
+   - [ ] The modal cross-fades in and out, without moving.
+
+4. Set "Over animation" to `none`, tap "Open over", then tap "Close".
+
+   - [ ] The modal appears and disappears at once, without an animation.
+
+5. Tap "Over animation".
+
+   - [ ] The values are `default`, `none`, `coverVertical` and
+         `crossDissolve`; `flipHorizontal` is not offered.
+
+---
+
+### Change while open
+
+1. Set "Replacing animation" to `default`, then tap "Open replacing".
+   Inside "Replacing modal", set "Replacing animation" to `crossDissolve`,
+   then tap "Close".
+
+   - [ ] The modal slid up on open and cross-fades out on close.
+
+2. Tap "Open replacing". Inside "Replacing modal", set "Replacing animation"
+   to `none`, then tap "Close".
+
+   - [ ] The modal cross-faded in on open and disappears at once on close.
