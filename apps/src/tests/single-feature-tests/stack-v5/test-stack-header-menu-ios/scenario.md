@@ -14,20 +14,23 @@
 | iPhone | iOS 26.4 |
 | iPad   | iOS 26.4 |
 
-**E2E coverage details:** Covers all manual scenario steps except the Menu representation section. On iOS 27 the header item "Menu 1" is only checked to exist, not to be visible.
+**E2E coverage details:** Covers all manual scenario steps except the Toggle state retention and Menu representation (iOS 26) sections, which are not automated. On iOS 27 the header item "Menu 1" is only checked to exist, not to be visible.
 
 <!-- scenario-metadata:end -->
 
 ## Description
 
 This test focuses on handling menus attached to items in the header on iOS.
+The on/off state of menu items is kept while the menu stays configured: it survives
+navigation and adding, removing or reordering other header items, and goes back to the
+initial state only when the menu itself changes or its header item is removed.
 
 ## Note
 
 - For now, menus don't appear on items with custom views
 - Menu representation section requires iOS >= 16
-- There is a bug present when you send change item command, and change the number of items
-  before displaying the menu, then the checkmark doesn't change despite the toast showing.
+- **Toggle state retention**: tap a toast to dismiss it, and dismiss every toast
+  before the next step. Close an open menu by tapping outside of it.
 
 ## Steps
 
@@ -60,8 +63,8 @@ This test focuses on handling menus attached to items in the header on iOS.
    - [ ] When Menu 1 > Submenu with Radio is reopened, Radio 1-1 is no longer checked
    - [ ] When Menu 1 > Submenu with Radio > SubSubmenu with Radio is reopened, Radio 1-2 is checked
 10. Click on screen title
-    - [ ] The title should transform into a menu with two actions
-    - [ ] Clicking either actions should display a toast
+    - [ ] The title should transform into a menu with two actions and "Title Toggle"
+    - [ ] Clicking either action should display a toast
 
 ---
 
@@ -90,6 +93,80 @@ This test focuses on handling menus attached to items in the header on iOS.
    - [ ] When Menu 1 is opened, the submenu is named "New Title"
 3. Close the menu. Select `title` to be "no change", `icon` to be "bell.fill" and click `Send setMenuOptions`
    - [ ] When Menu 1 is opened, the submenu is still named "New Title" and has bell icon
+
+---
+
+### Toggle state retention
+
+1. Relaunch the app and navigate to the **Stack Header Menu (iOS)** screen. Open
+   "Menu 1" and tap "Toggle 1-2".
+
+   - [ ] The menu closes and a toast `Selected "toggle-1-2"` is displayed.
+
+2. Open "Menu 1", tap "Submenu with Radio", tap "SubSubMenu with Radio", then tap
+   "Radio 1-2".
+
+   - [ ] The menu closes and a toast `Selected unique "radio-1-2"` is displayed.
+
+3. Tap the header title "Header Menu", then tap "Title Toggle".
+
+   - [ ] The menu closes and a toast `Title selected "title-toggle"` is displayed.
+
+4. Tap "Push Details", tap "Pop", then open "Menu 1".
+
+   - [ ] "Toggle 1-2" has a checkmark.
+   - [ ] No toast is displayed.
+
+5. Tap "Submenu with Radio", then tap "SubSubMenu with Radio".
+
+   - [ ] "Radio 1-2" has a checkmark and "Radio 1-1" has none.
+
+6. Close the menu, then tap the header title "Header Menu".
+
+   - [ ] "Title Toggle" has a checkmark.
+
+7. Close the menu, tap "trailingItemsReversed: false", then open "Menu 1".
+
+   - [ ] "Menu 1" is the last header item, after the square item, and the
+         button reads "trailingItemsReversed: true".
+   - [ ] "Toggle 1-2" has a checkmark.
+   - [ ] No toast is displayed.
+
+8. Close the menu, tap "trailingItemsReversed: true", then open "Menu 1".
+
+   - [ ] "Menu 1" is before the square item again.
+   - [ ] "Toggle 1-2" has a checkmark.
+   - [ ] No toast is displayed.
+
+9. Close the menu, tap "Toggle trailing items count (2/4)" once, then open
+   "Menu 1".
+
+   - [ ] The header shows a third item and the button reads "Toggle trailing
+         items count (3/4)".
+   - [ ] "Toggle 1-2" has a checkmark.
+   - [ ] No toast is displayed.
+
+10. Close the menu, tap "Toggle trailing items count (3/4)" 4 times, then open
+    "Menu 1".
+
+    - [ ] The button reads "Toggle trailing items count (2/4)".
+    - [ ] None of "Toggle 1-1", "Toggle 1-2", "Toggle 1-3" has a checkmark.
+    - [ ] No toast is displayed.
+
+11. Tap "Submenu with Radio".
+
+    - [ ] "Radio 1-1" has a checkmark.
+
+12. Close the menu, then tap the header title "Header Menu".
+
+    - [ ] "Title Toggle" has a checkmark.
+
+13. Close the menu, open "Menu 1", tap "Toggle 1-3", tap the toast, tap
+    "keepsMenuPresented: false", then open "Menu 1".
+
+    - [ ] The button reads "keepsMenuPresented: true".
+    - [ ] "Toggle 1-3" has no checkmark.
+    - [ ] No toast is displayed.
 
 ---
 

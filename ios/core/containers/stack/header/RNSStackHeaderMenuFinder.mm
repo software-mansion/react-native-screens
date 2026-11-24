@@ -24,7 +24,6 @@
                             position:(RNSMenuElementPosition)position
                           headerItem:(nullable id<RNSStackHeaderItemDataProviding>)headerItem
                             rootMenu:(nullable RNSStackHeaderMenuData *)rootMenu
-                       trackerItemId:(nullable NSString *)trackerItemId
                 inMenuRepresentation:(BOOL)inMenuRepresentation
 {
   if (self = [super init]) {
@@ -32,7 +31,6 @@
     _position = position;
     _headerItem = headerItem;
     _rootMenu = rootMenu;
-    _trackerItemId = [trackerItemId copy];
     _inMenuRepresentation = inMenuRepresentation;
   }
   return self;
@@ -59,7 +57,6 @@
                                                           position:RNSMenuElementPositionItem
                                                         headerItem:item
                                                           rootMenu:item.menu
-                                                     trackerItemId:item.itemId
                                               inMenuRepresentation:NO];
       }
     }
@@ -70,7 +67,6 @@
                                                           position:RNSMenuElementPositionItem
                                                         headerItem:item
                                                           rootMenu:item.menuRepresentation
-                                                     trackerItemId:item.itemId
                                               inMenuRepresentation:YES];
       }
     }
@@ -83,7 +79,6 @@
                                                         position:RNSMenuElementPositionTitle
                                                       headerItem:nil
                                                         rootMenu:titleMenu
-                                                   trackerItemId:RNSTitleMenuTrackerItemId
                                             inMenuRepresentation:NO];
     }
   }

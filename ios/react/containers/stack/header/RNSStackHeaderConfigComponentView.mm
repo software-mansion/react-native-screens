@@ -167,12 +167,11 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
     [self.headerCoordinator rebuild];
     return;
   }
-  [self.headerCoordinator resetTrackerForItemWithId:itemId];
   [self.headerCoordinator reapplyMenuForItemWithId:itemId];
 }
 
 /**
- * Same as headerItemDidInvalidateWithId, but handles view commands and doesn't reset the tracker
+ * Same as headerItemMenuDidChangeWithId, but for view commands, which keep the toggle state of the item
  */
 - (void)headerItemMenuDidUpdateFromCommandWithId:(NSString *)itemId
 {
@@ -266,16 +265,29 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
   RNSStackHeaderMenuItemData *newItemData = [RNSMenuItemUpdateOptions applyOptions:updateOptions
                                                                         toMenuItem:oldItemData];
 
-  if (updateOptions.hasToggleState && locator.rootMenu != nil && locator.trackerItemId != nil) {
+  if (updateOptions.hasToggleState && locator.rootMenu != nil) {
     BOOL isToggle = oldItemData.itemType == RNSMenuItemTypeToggle ||
         (oldItemData.itemType == RNSMenuItemTypeAutomatic &&
          [RNSStackHeaderMenuFinder singleSelectionRootForElementWithId:menuItemId inMenu:locator.rootMenu] != nil);
     if (isToggle) {
-      [self.headerCoordinator setToggleState:updateOptions.toggleState
-                            forMenuElementId:menuItemId
-                               trackerItemId:locator.trackerItemId
-                                    rootMenu:locator.rootMenu
-                                  parentMenu:locator.searchResult.parentMenu];
+      switch (locator.position) {
+        case RNSMenuElementPositionItem:
+          [self.headerCoordinator setToggleState:updateOptions.toggleState
+                                forMenuElementId:menuItemId
+                                    inHeaderItem:locator.headerItem
+                                        rootMenu:locator.rootMenu
+                                      parentMenu:locator.searchResult.parentMenu];
+          break;
+        case RNSMenuElementPositionTitle:
+          [self.headerCoordinator setTitleMenuToggleState:updateOptions.toggleState
+                                         forMenuElementId:menuItemId
+                                                 rootMenu:locator.rootMenu
+                                               parentMenu:locator.searchResult.parentMenu];
+          break;
+        case RNSMenuElementPositionOverflow:
+          // TODO: handle overflow menu
+          break;
+      }
     }
   }
 

@@ -8,6 +8,7 @@
 #import "RNSStackHeaderMenuCoordinator.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSStackHeaderMenuMapper.h"
+#import "RNSStackHeaderMenuToggleStateTracker.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTLog.h>
@@ -30,6 +31,7 @@ namespace react = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSStackHeaderItemIOSProps>();
     _props = defaultProps;
+    _menuToggleStateTracker = [RNSStackHeaderMenuToggleStateTracker new];
     [self resetProps];
     _shadowStateProxy = [[RNSStackHeaderItemShadowStateProxy alloc] initWithHeaderItemView:self];
     _headerItemEventEmitter = [RNSStackHeaderItemEventEmitter new];
@@ -300,8 +302,20 @@ RNS_IGNORE_SUPER_CALL_END
 
   [super updateProps:props oldProps:oldProps];
 
+  if (menuDidChange) {
+    // The toggle state belongs to the menu configuration: a new menu or menu representation starts from
+    // the initial state. The tracker is replaced here, not by the delegate, so that the reset also happens
+    // while the item is detached from the header.
+    _menuToggleStateTracker = [RNSStackHeaderMenuToggleStateTracker new];
+
+    // Both menus share the tracker, so both go back to their props: what view commands changed in the menu
+    // whose prop stayed the same is discarded together with its toggle state.
+    _menu = _menuProp;
+    _menuRepresentation = _menuRepresentationProp;
+  }
+
   if (needsUpdate) {
-    // rebuilds the item; needs to rebuilds the menu, but keeps its state
+    // rebuilds the item together with its menu; the menu state is kept unless the menu changed as well
     [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
   }
 

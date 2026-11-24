@@ -4,6 +4,7 @@
 #import "RNSImageLoading.h"
 #import "RNSStackHeaderConfigDataProviding.h"
 #import "RNSStackHeaderEventsDelegate.h"
+#import "RNSStackHeaderItemDataProviding.h"
 #import "RNSStackHeaderMenuData.h"
 #import "RNSViewFrameChangeDelegate.h"
 
@@ -34,17 +35,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)reapplyMenuForItemWithId:(nullable NSString *)itemId;
 
-- (void)resetTrackerForItemWithId:(nullable NSString *)itemId;
-
 - (void)reapplyTitleMenu;
 
 - (void)resetTitleMenuTracker;
 
+/**
+ * Sets the toggle state of an element of the menu or the menu representation of `headerItem`.
+ */
 - (void)setToggleState:(BOOL)state
       forMenuElementId:(NSString *)elementId
-         trackerItemId:(NSString *)trackerItemId
+          inHeaderItem:(id<RNSStackHeaderItemDataProviding>)headerItem
               rootMenu:(RNSStackHeaderMenuData *)rootMenu
             parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu;
+
+/**
+ * Sets the toggle state of an element of the title menu.
+ */
+- (void)setTitleMenuToggleState:(BOOL)state
+               forMenuElementId:(NSString *)elementId
+                       rootMenu:(RNSStackHeaderMenuData *)rootMenu
+                     parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu;
 
 - (void)clearHeaderConfiguration;
 

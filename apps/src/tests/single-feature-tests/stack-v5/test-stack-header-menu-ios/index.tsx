@@ -24,6 +24,7 @@ import { scenarioDescription } from './scenario-description';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { SettingsPicker, ToastProvider, useToast } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
+import { StackNavigationButtons } from '@apps/tests/shared/components/stack-v5/StackNavigationButtons';
 
 const ACTION_IDS = [
   'subitem-1-1',
@@ -38,6 +39,7 @@ const ACTION_IDS = [
   'repr-radio-0-3',
   'title-action-1',
   'title-action-2',
+  'title-toggle',
 ] as const;
 type ActionId = (typeof ACTION_IDS)[number];
 
@@ -104,6 +106,15 @@ function TestStackHeaderMenuIOS() {
             name: 'Home',
             element: <ConfigScreen />,
           },
+          {
+            name: 'Details',
+            element: <DetailsScreen />,
+            options: {
+              headerConfig: {
+                title: 'Details',
+              },
+            },
+          },
         ]}
       />
     </ToastProvider>
@@ -147,6 +158,7 @@ function buildHeaderConfig(
   showToast: (text: string) => void,
   keepsMenuPresented: boolean,
   representationEnabled: boolean,
+  trailingItemsReversed: boolean,
 ): StackHeaderConfigProps {
   const trailingItems: NonNullable<
     StackHeaderConfigProps['ios']
@@ -241,6 +253,10 @@ function buildHeaderConfig(
     }),
   );
 
+  if (trailingItemsReversed) {
+    trailingItems.reverse();
+  }
+
   return {
     title: 'Header Menu',
     ios: {
@@ -248,6 +264,8 @@ function buildHeaderConfig(
       titleMenu: {
         type: 'menu',
         id: 'title-menu',
+        onSelectionChange: selection =>
+          showToast('Title selected "' + selection.join('", "') + '"'),
         children: [
           {
             id: 'title-action-1',
@@ -263,6 +281,12 @@ function buildHeaderConfig(
             title: 'Title Action 2',
             onPress: () => showToast('Clicked "Title Action 2"'),
           },
+          {
+            id: 'title-toggle',
+            type: 'menuItem',
+            itemType: 'toggle',
+            title: 'Title Toggle',
+          },
         ],
       },
     },
@@ -277,6 +301,7 @@ function ConfigScreen() {
   );
   const [keepsMenuPresented, setKeepsMenuPresented] = useState(false);
   const [representationEnabled, setRepresentationEnabled] = useState(false);
+  const [trailingItemsReversed, setTrailingItemsReversed] = useState(false);
 
   const showToast = useCallback(
     (text: string) => {
@@ -295,8 +320,15 @@ function ConfigScreen() {
         showToast,
         keepsMenuPresented,
         representationEnabled,
+        trailingItemsReversed,
       ),
-    [trailingItemsCount, showToast, keepsMenuPresented, representationEnabled],
+    [
+      trailingItemsCount,
+      showToast,
+      keepsMenuPresented,
+      representationEnabled,
+      trailingItemsReversed,
+    ],
   );
 
   useLayoutEffect(() => {
@@ -343,9 +375,14 @@ function ConfigScreen() {
     <ScrollView
       testID="header-menu-scrollview"
       contentInsetAdjustmentBehavior="automatic">
+      <StackNavigationButtons routeNames={['Details']} isPopEnabled={false} />
       <Button
         title={`Toggle trailing items count (${trailingItemsCount}/4)`}
         onPress={() => setTrailingItemsCount(count => (count + 1) % 5)}
+      />
+      <Button
+        title={`trailingItemsReversed: ${trailingItemsReversed}`}
+        onPress={() => setTrailingItemsReversed(prev => !prev)}
       />
       <Button
         title={`keepsMenuPresented: ${keepsMenuPresented}`}
@@ -420,6 +457,14 @@ function ConfigScreen() {
       />
 
       <LongText />
+    </ScrollView>
+  );
+}
+
+function DetailsScreen() {
+  return (
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <StackNavigationButtons routeNames={[]} isPopEnabled />
     </ScrollView>
   );
 }
