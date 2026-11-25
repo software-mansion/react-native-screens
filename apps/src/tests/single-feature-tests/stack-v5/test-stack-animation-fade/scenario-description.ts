@@ -8,6 +8,19 @@ export const scenarioDescription: ScenarioDescription = {
     'Android and iOS, while on Android fadeFromBottom and fadeFromTop move ' +
     'and fade one screen and pop over less time than they push',
   platforms: ['android', 'ios'],
+  devices: ['iphone', 'android-phone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 18.6', 'iOS 27.2'], testOn: ['iOS 27.2'] },
+    'android-phone': { createdOn: ['API Level 37'], testOn: ['API Level 37'] },
+  },
+  deviceSetup: {
+    iphone:
+      'System animations on (Settings → Accessibility → Motion → Reduce Motion is off). Every group runs at real speed.',
+    'android-phone':
+      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationFade` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). The interactive predictive back gesture needs API 34 or newer. For the groups whose heading says "extended animation duration scale" only: in Developer options set "Animator duration scale" and "Transition animation scale" to 5x before the first of them and back to 1x after the last.',
+  },
   e2eCoverage: 'incomplete',
+  e2eCoverageDetails:
+    'No step is automated. For manual testing perform all steps. Opacity, the short travel distance, the header during the transition and the interactive back gestures are not assertable with Detox.',
   smokeTest: false,
 };
