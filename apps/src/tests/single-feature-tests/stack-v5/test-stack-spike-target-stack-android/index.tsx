@@ -1,6 +1,7 @@
 // SPIKE (labs #2127 / #2128). Throwaway: drives the prototype target-stack
 // props of `Stack.Host` directly. Every screen is rendered all the time with
 // `activityMode: 'detached'`, and the stack is whatever the last request says.
+// Native [spike] logs need a build with `-PrnsDebugLogsEnabled=true`.
 import React from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack } from 'react-native-screens';
@@ -117,8 +118,8 @@ function TestStackSpikeTargetStackAndroid() {
             activityMode="detached"
             onDismiss={onDismiss}
             onNativeDismiss={onDismiss}>
-            <Stack.HeaderConfig title={`Screen ${key}`} />
             <SpikeScreen screenKey={key} color={COLORS[index % COLORS.length]} />
+            <Stack.HeaderConfig title={`Screen ${key}`} />
           </Stack.Screen>
         ))}
       </Stack.Host>
