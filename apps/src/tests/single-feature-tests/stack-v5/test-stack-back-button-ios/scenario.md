@@ -149,7 +149,8 @@ Back button menu behaves similarly on both versions.
    Under Next screen tap "backButtonTitle: undefined" once, then tap
    "Replace with Second".
 
-   - [ ] Second slides in like a push
+   - [ ] First slides out to the right on top of Second, which slides in from
+         the left
    - [ ] The back button reads "< Custom title" once the animation has ended
 
 4. Drag from the left edge to about a quarter of the screen width and
