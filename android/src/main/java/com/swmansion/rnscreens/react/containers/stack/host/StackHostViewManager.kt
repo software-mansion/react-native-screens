@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.react.containers.stack.host
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -90,6 +91,32 @@ internal class StackHostViewManager :
     ) {
         // iOS only.
     }
+
+    // region SPIKE (labs #2127 / #2128)
+
+    override fun setPrototypeRequestId(
+        view: StackHost,
+        value: Int,
+    ) {
+        view.prototypeRequestId = value
+    }
+
+    override fun setPrototypeStack(
+        view: StackHost,
+        value: ReadableArray?,
+    ) {
+        view.prototypeStack =
+            value?.let { array -> (0 until array.size()).map { checkNotNull(array.getString(it)) } } ?: emptyList()
+    }
+
+    override fun setPrototypeHeldBackMode(
+        view: StackHost,
+        value: String?,
+    ) {
+        view.prototypeHeldBackMode = value ?: "cancel-post"
+    }
+
+    // endregion
 
     companion object {
         const val REACT_CLASS = "RNSStackHost"

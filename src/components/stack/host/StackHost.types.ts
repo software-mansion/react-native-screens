@@ -73,4 +73,10 @@ export type StackHostProps = {
    * @platform android
    */
   colorScheme?: StackColorScheme | undefined;
+  /** @internal SPIKE (labs #2127 / #2128), Android only. */
+  prototypeRequestId?: number | undefined;
+  /** @internal SPIKE (labs #2127 / #2128), Android only. */
+  prototypeStack?: readonly string[] | undefined;
+  /** @internal SPIKE (labs #2128), Android only. */
+  prototypeHeldBackMode?: 'none' | 'cancel-post' | 'cancel-delay' | undefined;
 };

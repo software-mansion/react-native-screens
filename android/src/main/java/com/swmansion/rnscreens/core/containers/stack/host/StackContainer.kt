@@ -7,6 +7,10 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.BackEventCompat
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.transition.Transition
@@ -184,8 +188,245 @@ internal class StackContainer(
         if (hasPendingOperations) {
             performOperations(requireFragmentManager())
         }
+        pendingTargetStack?.let { (items, mode) ->
+            pendingTargetStack = null
+            applyTargetStackHandlingHeldBack(items, mode)
+        }
         stackModel.forEach { it.flushPendingHeaderUpdates() }
     }
+
+    // region SPIKE (labs #2127 / #2128): target stacks and held predictive back
+
+    internal enum class HeldBackMode {
+        /** Leave the held gesture to FragmentManager (today's behaviour, for comparison). */
+        NONE,
+
+        /** Cancel the gesture through the dispatcher, apply on the next main-loop turn. */
+        CANCEL_POST,
+
+        /** Cancel the gesture through the dispatcher, apply after the cancel animation (approximated). */
+        CANCEL_DELAY,
+        ;
+
+        companion object {
+            fun fromString(value: String): HeldBackMode =
+                when (value) {
+                    "none" -> NONE
+                    "cancel-delay" -> CANCEL_DELAY
+                    else -> CANCEL_POST
+                }
+        }
+    }
+
+    private var pendingTargetStack: Pair<List<StackContainerItem>, HeldBackMode>? = null
+
+    /**
+     * True between FragmentManager's `onBackStackChangeStarted` for a pop of one of our fragments and
+     * the matching `onBackStackChangeCommitted` / `onBackStackChangeCancelled`. A non-predictive pop
+     * gets both callbacks back to back, so this stays true only while a predictive back gesture is
+     * held (finger down).
+     */
+    private var isPredictiveBackHeld = false
+
+    private var heldBackReleaseSwallower: HeldBackReleaseSwallower? = null
+
+    /**
+     * Stores the request; it is applied on the next container update (end of the mount batch, or
+     * on attach).
+     */
+    internal fun requestTargetStack(
+        items: List<StackContainerItem>,
+        mode: HeldBackMode,
+    ) {
+        pendingTargetStack = items to mode
+    }
+
+    private fun applyTargetStackHandlingHeldBack(
+        items: List<StackContainerItem>,
+        mode: HeldBackMode,
+    ) {
+        if (!isPredictiveBackHeld || mode == HeldBackMode.NONE) {
+            RNSLog.d(TAG, "[spike] apply, predictive back held: $isPredictiveBackHeld, mode $mode")
+            applyTargetStack(items)
+            return
+        }
+        if (!cancelHeldPredictiveBack()) {
+            applyTargetStack(items)
+            return
+        }
+        when (mode) {
+            HeldBackMode.CANCEL_DELAY -> postDelayed({ applyTargetStack(items) }, HELD_BACK_CANCEL_DELAY_MS)
+            else -> post { applyTargetStack(items) }
+        }
+    }
+
+    /**
+     * Cancels a held predictive back gesture from code. The dispatcher sends `handleOnBackCancelled`
+     * to the callback the gesture runs on (FragmentManager's), which reverses the back stack record
+     * it was seeking. The system still considers the gesture in progress, so the release that comes
+     * when the finger lifts is swallowed by a one-shot callback; otherwise FragmentManager would
+     * pop again on release.
+     */
+    private fun cancelHeldPredictiveBack(): Boolean {
+        val dispatcher = onBackPressedDispatcherOrNull()
+        if (dispatcher == null) {
+            RNSLog.w(TAG, "[spike] no OnBackPressedDispatcher to cancel the held gesture with")
+            return false
+        }
+        RNSLog.d(TAG, "[spike] cancelling held predictive back")
+        @Suppress("VisibleForTests")
+        dispatcher.dispatchOnBackCancelled()
+        isPredictiveBackHeld = false
+        installHeldBackReleaseSwallower(dispatcher)
+        return true
+    }
+
+    private fun onBackPressedDispatcherOrNull(): OnBackPressedDispatcher? =
+        (stackModel.lastOrNull()?.activity as? ComponentActivity)?.onBackPressedDispatcher
+
+    private fun installHeldBackReleaseSwallower(dispatcher: OnBackPressedDispatcher) {
+        heldBackReleaseSwallower?.remove()
+        // Added last, so it is the first enabled callback the release reaches.
+        heldBackReleaseSwallower = HeldBackReleaseSwallower().also { dispatcher.addCallback(it) }
+    }
+
+    /**
+     * Callbacks registered after the swallower (e.g. `PreventNativeDismissCallback` of a fragment
+     * created by the request) take precedence; move the swallower back on top.
+     */
+    private fun reinstallHeldBackReleaseSwallowerIfNeeded() {
+        if (heldBackReleaseSwallower == null) return
+        onBackPressedDispatcherOrNull()?.let { installHeldBackReleaseSwallower(it) }
+    }
+
+    private inner class HeldBackReleaseSwallower : OnBackPressedCallback(true) {
+        override fun handleOnBackStarted(backEvent: BackEventCompat) {
+            // A new gesture started before the release of the cancelled one was seen. The spike
+            // logs it: this one would be swallowed as a whole.
+            RNSLog.w(TAG, "[spike] swallower got handleOnBackStarted, swallowing a new gesture")
+        }
+
+        override fun handleOnBackProgressed(backEvent: BackEventCompat) = Unit
+
+        override fun handleOnBackPressed() {
+            RNSLog.d(TAG, "[spike] swallowed the release (committed) of the cancelled gesture")
+            dispose()
+        }
+
+        override fun handleOnBackCancelled() {
+            RNSLog.d(TAG, "[spike] swallowed the release (cancelled) of the cancelled gesture")
+            dispose()
+        }
+
+        private fun dispose() {
+            remove()
+            if (heldBackReleaseSwallower === this) heldBackReleaseSwallower = null
+        }
+    }
+
+    /**
+     * Diffs the model against [items] and applies the change as one FragmentManager batch, keeping
+     * the invariant "back stack records == model[1..], root not on the back stack":
+     * 1. pop the records above the longest common prefix (one `popBackStack(name, INCLUSIVE)`);
+     *    if the root changes too, remove it with a plain transaction;
+     * 2. add the target's remaining screens, each as its own record that detaches the one below.
+     * Fragments of screens that stay in the stack are re-added as the same instances: with
+     * reordering allowed, a remove and an add of the same fragment in one batch cancel out, so its
+     * view and state survive.
+     */
+    private fun applyTargetStack(items: List<StackContainerItem>) {
+        if (!isAttachedToWindow) {
+            pendingTargetStack = items to HeldBackMode.NONE
+            return
+        }
+        val fragmentManager = requireFragmentManager()
+        val current = stackModel.toList()
+        val currentItems = current.map { it.item }
+
+        if (currentItems == items) {
+            RNSLog.d(TAG, "[spike] repeated request, nothing to do")
+            return
+        }
+        // RFC-1941 valid target rule 5: kept screens keep their relative order.
+        if (items.filter { it in currentItems } != currentItems.filter { it in items }) {
+            RNSLog.w(TAG, "[spike] invalid request, it reorders kept screens")
+            return
+        }
+
+        var prefix = 0
+        while (prefix < current.size && prefix < items.size && current[prefix].item === items[prefix]) {
+            prefix++
+        }
+
+        val fragmentsByItem = current.associateBy { it.item }
+        val target =
+            items.mapIndexed { index, item ->
+                fragmentsByItem[item]?.also {
+                    if (it.canNavigateBack != (index > 0)) {
+                        RNSLog.w(TAG, "[spike] ${item.itemKey} changes canNavigateBack, not updated by the spike (A3)")
+                    }
+                } ?: createFragmentForItem(item, canNavigateBack = index > 0)
+            }
+
+        fragmentOps.clear()
+        fragmentOps.add(
+            OnCommitCallbackOp(
+                {
+                    updateTopFragment()
+                    reinstallHeldBackReleaseSwallowerIfNeeded()
+                    RNSLog.d(TAG, "[spike] batch executed, back stack: ${backStackNames()}")
+                },
+                allowStateLoss = true,
+                flushSync = false,
+            ),
+        )
+        if (prefix < current.size) {
+            if (prefix >= 1) {
+                fragmentOps.add(PopBackStackOp(current[prefix]))
+            } else {
+                if (current.size > 1) {
+                    fragmentOps.add(PopBackStackOp(current[1]))
+                }
+                fragmentOps.add(RemoveOp(current[0]))
+            }
+        }
+        for (index in prefix until target.size) {
+            fragmentOps.add(
+                AddAndSetAsPrimaryOp(
+                    target[index],
+                    containerViewId = this.id,
+                    addToBackStack = index > 0,
+                    coveredFragment = target.getOrNull(index - 1),
+                ),
+            )
+        }
+
+        // RFC-1941 top-of-stack rule.
+        val outgoing = transitionContext?.outgoing ?: current.lastOrNull()
+        val incoming = target.last()
+        val kind =
+            when {
+                outgoing == null || outgoing === incoming -> null
+                incoming.item in currentItems -> StackTransitionKind.POP
+                outgoing in target -> StackTransitionKind.PUSH
+                else -> StackTransitionKind.REPLACE
+            }
+        transitionContext = kind?.let { StackTransitionContext(it, checkNotNull(outgoing), incoming) }
+        RNSLog.d(
+            TAG,
+            "[spike] ${currentItems.map { it.itemKey }} -> ${items.map { it.itemKey }}, prefix $prefix, kind $kind, " +
+                "ops ${fragmentOps.map { it.javaClass.simpleName }}",
+        )
+
+        stackModel.clear()
+        stackModel.addAll(target)
+        fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
+    }
+
+    private fun backStackNames(): List<String?> =
+        fragmentManager?.let { fm -> (0 until fm.backStackEntryCount).map { fm.getBackStackEntryAt(it).name } } ?: emptyList()
+
+    // endregion
 
     internal fun enqueuePushOperation(item: StackContainerItem) {
         pendingPushOperations.add(PushOperation(item))
@@ -403,6 +644,10 @@ internal class StackContainer(
             return
         }
 
+        if (pop) {
+            isPredictiveBackHeld = true
+        }
+
         // A pop FragmentManager starts itself (header back, system back, predictive back) has no
         // context yet. The model changes only in `onBackStackChangeCommitted`, so its top is still
         // the popped fragment.
@@ -418,6 +663,10 @@ internal class StackContainer(
         }
     }
 
+    override fun onBackStackChangeCancelled() {
+        isPredictiveBackHeld = false
+    }
+
     // This is called before the special effects (animations) are dispatched, however mid transaction!
     // Therefore make sure to not execute any action that might cause synchronous transaction synchronously
     // from this callback.
@@ -429,6 +678,8 @@ internal class StackContainer(
             Log.w(TAG, "[RNScreens] Unexpected type of fragment: ${fragment.javaClass.simpleName}")
             return
         }
+
+        isPredictiveBackHeld = false
 
         // This callback is called for every fragment involved in the back stack change, even
         // if its not added or removed, but e.g. set as a primary navigation fragment, hence
@@ -531,5 +782,6 @@ internal class StackContainer(
 
     companion object {
         const val TAG = "StackContainer"
+        private const val HELD_BACK_CANCEL_DELAY_MS = 450L
     }
 }

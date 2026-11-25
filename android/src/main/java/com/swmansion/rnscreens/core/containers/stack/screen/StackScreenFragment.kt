@@ -17,7 +17,7 @@ import java.lang.ref.WeakReference
 
 internal class StackScreenFragment(
     internal val item: StackContainerItem,
-    private val canNavigateBack: Boolean,
+    internal val canNavigateBack: Boolean,
     private val delegate: WeakReference<StackScreenFragmentDelegate>,
     private val backPressHandler: WeakReference<StackHeaderBackPressHandler>,
     private val updateBatchStateProvider: WeakReference<StackUpdateBatchStateProviding>,

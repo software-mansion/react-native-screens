@@ -49,6 +49,7 @@ import TestStackColorScheme from './test-stack-color-scheme';
 import TestStackHeaderHiddenRestore from './test-stack-header-hidden-restore-android';
 import TestStackLayoutDirection from './test-stack-layout-direction-android';
 import TestStackToolbarMenuState from './test-stack-toolbar-menu-state-android';
+import TestStackSpikeTargetStackAndroid from './test-stack-spike-target-stack-android';
 // Scenario entry-point components — each scenario's default export re-exported
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestStackPreventNativeDismissSingleStack } from './test-stack-prevent-native-dismiss-single-stack';
@@ -98,6 +99,7 @@ export { default as TestStackColorScheme } from './test-stack-color-scheme';
 export { default as TestStackHeaderHiddenRestore } from './test-stack-header-hidden-restore-android';
 export { default as TestStackLayoutDirection } from './test-stack-layout-direction-android';
 export { default as TestStackToolbarMenuState } from './test-stack-toolbar-menu-state-android';
+export { default as TestStackSpikeTargetStackAndroid } from './test-stack-spike-target-stack-android';
 const scenarios = {
   TestStackPreventNativeDismissSingleStack,
   TestStackPreventNativeDismissNestedStack,
@@ -140,6 +142,7 @@ const scenarios = {
   TestStackHeaderTitleAppearanceAndroid,
   TestStackHeaderTitleAppearanceIOS,
   TestStackToolbarMenuState,
+  TestStackSpikeTargetStackAndroid,
   TestStackHeaderContentInsets,
   TestStackHeaderBackground,
   TestStackHeaderStatusBarScrim,

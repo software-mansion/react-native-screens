@@ -183,8 +183,44 @@ internal class StackHost(
 
     override fun didMountItems(uiManager: UIManager) {
         containerUpdateCoordinator.enqueuePendingOperations(container, renderedScreens)
+        applyPrototypeRequestIfNeeded()
         container.endUpdateBatch()
     }
+
+    // region SPIKE (labs #2127 / #2128): target stack requests
+
+    internal var prototypeRequestId: Int = 0
+    internal var prototypeStack: List<String> = emptyList()
+    internal var prototypeHeldBackMode: String = "cancel-post"
+    private var lastAppliedPrototypeRequestId: Int = 0
+
+    /**
+     * Evaluated once per mount batch, after the children of the batch are mounted (RFC-1941
+     * "Request application timing"). Validation is minimal: the spike only needs to reject what
+     * would corrupt the container.
+     */
+    private fun applyPrototypeRequestIfNeeded() {
+        if (prototypeRequestId == 0 || prototypeRequestId == lastAppliedPrototypeRequestId) {
+            return
+        }
+        lastAppliedPrototypeRequestId = prototypeRequestId
+        val keys = prototypeStack
+        val items =
+            keys.map { key ->
+                renderedScreens.find { it.screenKey == key } ?: run {
+                    RNSLog.w(TAG, "[RNScreens][spike] invalid request $prototypeRequestId: key $key is not rendered")
+                    return
+                }
+            }
+        if (items.isEmpty() || items.toSet().size != items.size) {
+            RNSLog.w(TAG, "[RNScreens][spike] invalid request $prototypeRequestId: empty or duplicate keys $keys")
+            return
+        }
+        RNSLog.d(TAG, "[RNScreens][spike] request $prototypeRequestId -> $keys")
+        container.requestTargetStack(items, StackContainer.HeldBackMode.fromString(prototypeHeldBackMode))
+    }
+
+    // endregion
 
     override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
 
