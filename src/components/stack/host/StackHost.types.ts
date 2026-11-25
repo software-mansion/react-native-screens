@@ -87,6 +87,11 @@ export type StackHostProps = {
    * {@link ContainedModalProvider | ContainedModalProviders} on a modal's
    * ancestor chain. An empty string is treated as not set.
    *
+   * @note
+   * A modal that targets a stack shown by a `Split.Column` does not follow
+   * the Split between its collapsed and expanded layouts yet: after such a
+   * change the modal may be hidden or cover another column.
+   *
    * @platform ios
    */
   modalProviderContainerId?: string | undefined;

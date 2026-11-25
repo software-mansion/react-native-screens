@@ -108,7 +108,7 @@ namespace react = facebook::react;
   // presentation detaches the provider's context view), so a miss there is not
   // a misconfiguration.
   RNSAssert(_cachedProviderView != nil || self.window == nil,
-            @"[RNScreens] No ContainedModalProvider found matching targetContainerId '%@'.",
+            @"[RNScreens] No ContainedModalProvider or Stack.Host found matching targetContainerId '%@'.",
             _targetContainerId);
   return _cachedProviderView;
 }

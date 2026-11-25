@@ -37,7 +37,9 @@ export interface ContainedModalOverContentProps {
 
   /**
    * The `containerId` of the {@link ContainedModalProvider} this modal is
-   * presented in.
+   * presented in, or the
+   * {@link StackHostProps.modalProviderContainerId | modalProviderContainerId}
+   * of a {@link Stack.Host} that takes the role of the provider.
    *
    * @remarks
    * The targeted provider must be an ancestor of the modal in the React tree;

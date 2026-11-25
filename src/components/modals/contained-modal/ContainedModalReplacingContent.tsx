@@ -13,6 +13,9 @@ import type { ContainedModalReplacingContentProps } from './ContainedModalReplac
  * keep their React state and keep receiving updates, and come back exactly
  * as they were once the modal is dismissed.
  *
+ * A `Stack.Host` with `modalProviderContainerId` takes the role of the
+ * provider: the modal then fills the stack, its header included.
+ *
  * Modality is scoped to the provider's position in the view hierarchy, not
  * the window: a sibling that overlaps the provider and renders later in the
  * React tree draws above the open modal and receives touches in the overlap,

@@ -10,6 +10,11 @@ import type { ContainedModalProviderProps } from './ContainedModal.types';
  * `containerId` presents within the provider's bounds, fully covering it.
  * The provider must be an ancestor of the modal in the React tree.
  *
+ * A `Stack.Host` can take the role of the provider itself, through its
+ * `modalProviderContainerId`. That is the way to scope a modal to a stack
+ * shown by a `Split.Column`, where nothing can be rendered between the column
+ * and the stack.
+ *
  * Intended for region-scoped native modality; see `ContainedModalOverContent`
  * for when it is the right tool.
  *
