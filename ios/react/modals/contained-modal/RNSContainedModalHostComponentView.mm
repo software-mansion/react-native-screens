@@ -145,7 +145,10 @@ namespace react = facebook::react;
   if (_controller == nil || _controller.presentingViewController == nil) {
     return;
   }
-  [_cachedProviderView validateContainmentOfPresentedView:_controller.viewIfLoaded];
+  UIView<RNSContainedModalContextProviding> *providerView = _cachedProviderView;
+  if ([providerView respondsToSelector:@selector(validateContainmentOfPresentedView:)]) {
+    [providerView validateContainmentOfPresentedView:_controller.viewIfLoaded];
+  }
 }
 #endif
 

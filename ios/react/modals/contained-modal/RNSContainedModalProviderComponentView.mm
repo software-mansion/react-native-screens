@@ -70,7 +70,7 @@ namespace react = facebook::react;
   return _containerId;
 }
 
-- (nonnull UIViewController *)contextViewController
+- (nullable UIViewController *)contextViewController
 {
   return _contextWrapperView.contextViewController;
 }
