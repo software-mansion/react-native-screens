@@ -19,12 +19,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark - Communication with StackScreen
-
-@interface RNSStackHostComponentView ()
-
-- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen;
-
-@end
-
 NS_ASSUME_NONNULL_END

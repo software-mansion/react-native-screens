@@ -11,12 +11,6 @@ import type { UnsafeMixed } from '../codegenUtils';
 // eslint-disable-next-line @typescript-eslint/ban-types
 type GenericEmptyEvent = Readonly<{}>;
 
-type OnDismissEventPayload = Readonly<{
-  isNativeDismiss: boolean;
-}>;
-
-type ActivityMode = 'detached' | 'attached';
-
 type StackScreenReplaceAnimation = 'push' | 'pop';
 
 type StackScreenAnimationBezier = [number, number, number, number];
@@ -82,9 +76,6 @@ type StackScreenAnimation =
 
 export interface NativeProps extends ViewProps {
   // Control
-
-  // Codegen does not currently support non-optional enum.
-  activityMode?: CT.WithDefault<ActivityMode, 'detached'>;
   screenKey: string;
 
   // Events
@@ -93,12 +84,6 @@ export interface NativeProps extends ViewProps {
   onDidAppear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onWillDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
   onDidDisappear?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
-
-  onDismiss?: CT.DirectEventHandler<OnDismissEventPayload> | undefined;
-
-  onNativeDismissPrevented?:
-    | CT.DirectEventHandler<GenericEmptyEvent>
-    | undefined;
 
   // Configuration
 

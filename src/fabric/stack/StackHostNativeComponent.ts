@@ -9,7 +9,51 @@ import { codegenNativeComponent } from 'react-native';
 
 type StackHostColorScheme = 'inherit' | 'light' | 'dark';
 
+type NavigationStateRequest = Readonly<{
+  requestId: CT.Int32;
+  stack: readonly string[];
+  baseProvenance: CT.Int32;
+}>;
+
+type NavStateChangedEvent = Readonly<{
+  stack: string[];
+  provenance: CT.Int32;
+  actionOrigin: 'user' | 'programmaticJs' | 'programmaticNative' | 'implicit';
+}>;
+
+type NavStateRequestRejectedEvent = Readonly<{
+  stack: string[];
+  provenance: CT.Int32;
+  rejectedStack: string[];
+  rejectedBaseProvenance: CT.Int32;
+  rejectionReason: 'stale' | 'repeated' | 'invalid';
+}>;
+
+type ScreensReleasedEvent = Readonly<{
+  screenKeys: string[];
+}>;
+
+type NativeDismissPreventedEvent = Readonly<{
+  stack: string[];
+  provenance: CT.Int32;
+  preventedScreenKeys: string[];
+}>;
+
 export interface NativeProps extends ViewProps {
+  // Control
+  navStateRequest: NavigationStateRequest;
+  rejectStaleNavStateUpdates?: CT.WithDefault<boolean, true>;
+
+  // Events
+  onNavStateChanged?: CT.DirectEventHandler<NavStateChangedEvent> | undefined;
+  onNavStateRequestRejected?:
+    | CT.DirectEventHandler<NavStateRequestRejectedEvent>
+    | undefined;
+  onScreensReleased?: CT.DirectEventHandler<ScreensReleasedEvent> | undefined;
+  onNativeDismissPrevented?:
+    | CT.DirectEventHandler<NativeDismissPreventedEvent>
+    | undefined;
+
   // General
   colorScheme?: CT.WithDefault<StackHostColorScheme, 'inherit'>;
 

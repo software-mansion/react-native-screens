@@ -31,7 +31,6 @@ internal class StackHost(
     StackContainerParent {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this), ViewIdGenerator)
-    private val containerUpdateCoordinator = StackContainerUpdateCoordinator()
     private var isLayoutEnqueued = false
 
     internal var colorScheme: ColorScheme by container::colorScheme
@@ -57,54 +56,23 @@ internal class StackHost(
     ) {
         renderedScreens.add(index, stackScreen)
         stackScreen.stackHost = WeakReference(this)
-        addPushOperationIfNeeded(stackScreen)
     }
 
     internal fun unmountReactSubviewAt(index: Int) {
-        val removedScreen = renderedScreens.removeAt(index)
-        addPopOperationIfNeeded(removedScreen)
+        renderedScreens.removeAt(index)
     }
 
     internal fun unmountReactSubview(reactSubview: StackScreen) {
         renderedScreens.remove(reactSubview)
-        addPopOperationIfNeeded(reactSubview)
     }
 
     internal fun unmountAllReactSubviews() {
-        renderedScreens.asReversed().forEach {
-            addPopOperationIfNeeded(it)
-        }
         renderedScreens.clear()
-    }
-
-    private fun addPushOperationIfNeeded(stackScreen: StackScreen) {
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            containerUpdateCoordinator.addPushOperation(stackScreen)
-        }
-    }
-
-    private fun addPopOperationIfNeeded(stackScreen: StackScreen) {
-        if (stackScreen.activityMode == StackScreen.ActivityMode.ATTACHED && !stackScreen.isNativelyDismissed) {
-            // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
-            containerUpdateCoordinator.addPopOperation(stackScreen)
-        } else {
-            RNSLog.d(TAG, "Ignoring pop operation of ${stackScreen.screenKey}, already not attached or natively dismissed")
-        }
-    }
-
-    internal fun stackScreenChangedActivityMode(stackScreen: StackScreen) {
-        when (stackScreen.activityMode) {
-            StackScreen.ActivityMode.DETACHED -> containerUpdateCoordinator.addPopOperation(stackScreen)
-            StackScreen.ActivityMode.ATTACHED -> containerUpdateCoordinator.addPushOperation(stackScreen)
-        }
     }
 
     override fun onItemDismissCommitted(item: StackContainerItem) {
         check(item is StackScreen) {
             "[RNScreens] Unexpected stack item type: ${item.javaClass.simpleName}"
-        }
-        if (item.activityMode == StackScreen.ActivityMode.ATTACHED) {
-            item.isNativelyDismissed = true
         }
     }
 
@@ -182,7 +150,6 @@ internal class StackHost(
     }
 
     override fun didMountItems(uiManager: UIManager) {
-        containerUpdateCoordinator.enqueuePendingOperations(container, renderedScreens)
         container.endUpdateBatch()
     }
 

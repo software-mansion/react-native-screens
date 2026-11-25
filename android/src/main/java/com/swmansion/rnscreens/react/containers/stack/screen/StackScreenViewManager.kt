@@ -19,8 +19,6 @@ import com.swmansion.rnscreens.react.containers.stack.animation.parseStackAnimat
 import com.swmansion.rnscreens.react.containers.stack.header.config.StackHeaderConfig
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidDisappearEvent
-import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDismissEvent
-import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenNativeDismissPreventedEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWillAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWillDisappearEvent
 import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
@@ -109,8 +107,6 @@ internal class StackScreenViewManager :
             makeEventRegistrationInfo(StackScreenWillDisappearEvent),
             makeEventRegistrationInfo(StackScreenDidAppearEvent),
             makeEventRegistrationInfo(StackScreenDidDisappearEvent),
-            makeEventRegistrationInfo(StackScreenDismissEvent),
-            makeEventRegistrationInfo(StackScreenNativeDismissPreventedEvent),
         )
 
     override fun updateState(
@@ -120,17 +116,6 @@ internal class StackScreenViewManager :
     ): Any? {
         view.stateWrapper = stateWrapper
         return super.updateState(view, props, stateWrapper)
-    }
-
-    override fun setActivityMode(
-        view: StackScreen,
-        value: String?,
-    ) {
-        when (value) {
-            "attached" -> view.activityMode = StackScreen.ActivityMode.ATTACHED
-            "detached" -> view.activityMode = StackScreen.ActivityMode.DETACHED
-            else -> throw JSApplicationIllegalArgumentException("[RNScreens] Invalid activity mode: $value.")
-        }
     }
 
     override fun setScreenKey(

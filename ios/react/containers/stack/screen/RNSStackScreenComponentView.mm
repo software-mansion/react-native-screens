@@ -7,7 +7,6 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
-#import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
 #import "RNSSafeAreaViewNotifications.h"
 #import "RNSScrollViewSeeking.h"
@@ -40,7 +39,6 @@ namespace react = facebook::react;
   __weak UIScrollView *_Nullable _contentScrollView;
 
   // Flags
-  BOOL _hasUpdatedActivityMode;
   BOOL _reportsFrameToShadowTree;
 }
 
@@ -61,9 +59,7 @@ namespace react = facebook::react;
   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
   _shadowStateProxy = [RNSStackScreenShadowStateProxy new];
 
-  _hasUpdatedActivityMode = NO;
   _reportsFrameToShadowTree = NO;
-  _isNativelyDismissed = NO;
 }
 
 #pragma mark - Shadow state
@@ -100,7 +96,6 @@ namespace react = facebook::react;
 
   // container state
   _screenKey = nil;
-  _activityMode = RNSStackScreenActivityModeDetached;
 }
 
 - (void)setupController
@@ -170,13 +165,7 @@ namespace react = facebook::react;
 
 - (void)stackScreenControllerDidLeaveStack:(RNSStackScreenController *)controller
 {
-  // A detached screen was popped on request; otherwise UIKit removed it (e.g. the back gesture).
-  if (_activityMode == RNSStackScreenActivityModeDetached) {
-    [self.reactEventEmitter emitOnDismiss];
-  } else {
-    _isNativelyDismissed = YES;
-    [self.reactEventEmitter emitOnNativeDismiss];
-  }
+  // Leaving the stack is reported by the stack host (`onNavStateChanged`, `onScreensReleased`), not by the screen.
 }
 
 #pragma mark - RNSSafeAreaProviding
@@ -224,12 +213,6 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackScreenProps>(props);
 
-  if (oldComponentProps.activityMode != newComponentProps.activityMode) {
-    _activityMode = rnscreens::conversion::RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
-        newComponentProps.activityMode);
-    _hasUpdatedActivityMode = YES;
-  }
-
   if (oldComponentProps.screenKey != newComponentProps.screenKey) {
     RCTAssert(_screenKey == nil, @"[RNScreens] ScreenController cannot change its screenKey");
     _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
@@ -275,16 +258,6 @@ RNS_IGNORE_SUPER_CALL_END
     _headerConfig = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];
-}
-
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
-{
-  if (_hasUpdatedActivityMode) {
-    _hasUpdatedActivityMode = NO;
-    [self.stackHost stackScreenChangedActivityMode:self];
-  }
-
-  [super finalizeUpdates:updateMask];
 }
 
 - (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter

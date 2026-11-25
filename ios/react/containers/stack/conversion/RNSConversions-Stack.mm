@@ -5,12 +5,6 @@ namespace rnscreens::conversion {
 
 namespace react = facebook::react;
 
-RNSStackScreenActivityMode RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
-    react::RNSStackScreenActivityMode mode)
-{
-  return static_cast<RNSStackScreenActivityMode>(mode);
-}
-
 RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
     react::RNSStackHeaderItemIOSPlacement placement)
 {

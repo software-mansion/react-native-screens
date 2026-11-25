@@ -32,11 +32,6 @@ internal class StackScreen(
     FragmentProviding,
     ScrollViewSeeking,
     StackContainerItem {
-    enum class ActivityMode {
-        DETACHED,
-        ATTACHED,
-    }
-
     private val containerItemSupport = ContainerItemSupport()
 
     override var isPreventNativeDismissEnabled: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
@@ -45,20 +40,7 @@ internal class StackScreen(
         }
     }
 
-    internal var isNativelyDismissed = false
-        set(value) {
-            require(value) {
-                "[RNScreens] Natively dismissed StackScreen must remain dismissed."
-            }
-            field = true
-        }
     internal var stackHost: WeakReference<StackHost?> = WeakReference(null)
-
-    var activityMode: ActivityMode by Delegates.observable(ActivityMode.DETACHED) { _, oldValue, newValue ->
-        if (oldValue != newValue) {
-            stackHost.get()?.stackScreenChangedActivityMode(this)
-        }
-    }
 
     /**
      * Read whenever FragmentManager asks for a transition, so a change applies to the next
@@ -163,16 +145,11 @@ internal class StackScreen(
     override val appearanceEventEmitter: ViewAppearanceEventEmitter
         get() = eventEmitter
 
-    override fun onDismiss() {
-        if (activityMode == ActivityMode.ATTACHED) {
-            isNativelyDismissed = true
-        }
-        eventEmitter.emitOnDismiss(isNativelyDismissed)
-    }
+    // Leaving the stack is reported by the stack host (`onNavStateChanged`, `onScreensReleased`), not by the screen.
+    override fun onDismiss() = Unit
 
-    override fun onNativeDismissPrevented() {
-        eventEmitter.emitOnNativeDismissPrevented()
-    }
+    // A prevented dismissal is reported by the stack host (`onNativeDismissPrevented`), not by the screen.
+    override fun onNativeDismissPrevented() = Unit
 
     override val view: View
         get() = this

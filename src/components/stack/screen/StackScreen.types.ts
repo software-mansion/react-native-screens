@@ -3,36 +3,6 @@ import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type { StackScreenAnimation } from './animation';
 
 /**
- * Payload of the native dismiss event.
- *
- * @note
- * This is an implementation detail and may change. {@link Stack.Screen} turns
- * this event into a call of {@link StackScreenProps.onDismiss | onDismiss} or
- * {@link StackScreenProps.onNativeDismiss | onNativeDismiss}.
- */
-export type OnDismissEventPayload = {
-  /**
-   * Whether the user dismissed the screen natively (`true`) or the screen was
-   * popped because its {@link StackScreenProps.activityMode | activityMode}
-   * became `'detached'` (`false`).
-   *
-   * @platform android, ios
-   */
-  isNativeDismiss: boolean;
-};
-
-/**
- * Whether a screen is on the native stack.
- *
- * @remarks
- * The following values are supported:
- * - `'attached'` — the screen is on the native stack.
- * - `'detached'` — the screen stays mounted, but it is not on the native
- *   stack.
- */
-export type StackScreenActivityMode = 'detached' | 'attached';
-
-/**
  * Animation a replace plays.
  *
  * @remarks
@@ -44,14 +14,6 @@ export type StackScreenActivityMode = 'detached' | 'attached';
  *   covers the outgoing one, as if it had been pushed.
  */
 export type StackScreenReplaceAnimation = 'push' | 'pop';
-
-/**
- * Function called when a {@link Stack.Screen} is dismissed.
- *
- * @param screenKey - The {@link StackScreenProps.screenKey | screenKey} of the
- *   dismissed screen.
- */
-export type StackScreenDismissHandler = (screenKey: string) => void;
 
 /**
  * Props for {@link Stack.Screen}.
@@ -66,21 +28,12 @@ export type StackScreenProps = {
 
   // Control
   /**
-   * Whether the screen is on the native stack.
-   *
-   * @remarks
-   * Changing it to `'attached'` pushes the screen and changing it to
-   * `'detached'` pops it. Only the topmost attached screen can be popped,
-   * and at least one screen must stay attached.
-   *
-   * @platform android, ios
-   */
-  activityMode: StackScreenActivityMode;
-  /**
    * Key that identifies the screen.
    *
    * @remarks
    * It must be unique within the stack and must not change.
+   * {@link StackHostProps.navStateRequest | navStateRequest} and the events
+   * of {@link Stack.Host} refer to the screen by this key.
    *
    * @platform android, ios
    */
@@ -111,38 +64,16 @@ export type StackScreenProps = {
    * @platform android, ios
    */
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
-  /**
-   * Called when the screen was popped because its
-   * {@link StackScreenProps.activityMode | activityMode} became `'detached'`.
-   *
-   * @platform android, ios
-   */
-  onDismiss?: StackScreenDismissHandler | undefined;
-  /**
-   * Called when the user dismissed the screen natively, such as with the back
-   * button or the back gesture, while it was still `'attached'`.
-   *
-   * @remarks
-   * The screen is no longer on the native stack: remove it from your state
-   * instead of changing its
-   * {@link StackScreenProps.activityMode | activityMode} to `'detached'`.
-   *
-   * @platform android, ios
-   */
-  onNativeDismiss?: StackScreenDismissHandler | undefined;
-  /**
-   * Called when the user tries to dismiss the screen natively, but
-   * {@link StackScreenProps.preventNativeDismiss | preventNativeDismiss} stops
-   * it.
-   *
-   * @platform android
-   */
-  onNativeDismissPrevented?: NativeEventHandler<EmptyEventPayload> | undefined;
 
   // Configuration
   /**
    * Prevents the user from dismissing the screen natively with the header
    * back button or the system back.
+   *
+   * @remarks
+   * A prevented dismissal calls
+   * {@link StackHostProps.onNativeDismissPrevented | onNativeDismissPrevented}
+   * of the {@link Stack.Host}.
    *
    * @defaultValue `false`
    * @platform android
