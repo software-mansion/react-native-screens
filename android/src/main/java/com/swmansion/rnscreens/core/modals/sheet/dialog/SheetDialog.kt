@@ -3,7 +3,6 @@ package com.swmansion.rnscreens.core.modals.sheet.dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -22,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 internal class SheetDialog(
     context: Context,
 ) : BottomSheetDialog(context) {
-    internal interface NativeDismissInterceptor {
+    internal fun interface CancelRequestInterceptor {
         /**
          * Invoked in place of the dialog's default cancellation whenever an interceptor is attached.
          *
@@ -31,16 +30,9 @@ internal class SheetDialog(
          * [BottomSheetDialog.cancel], which would tear the window down synchronously.
          */
         fun handleCancelRequest()
-
-        /**
-         * Wraps the dispatch of touch events that can end a drag (`ACTION_UP` / `ACTION_POINTER_UP` / `ACTION_CANCEL`).
-         * The sheet's behavior decides whether a released sheet hides while handling these events, so the
-         * interceptor can adjust that decision before calling [dispatchGestureCompleted].
-         */
-        fun handleGestureEnd(dispatchGestureCompleted: () -> Boolean): Boolean
     }
 
-    internal var nativeDismissInterceptor: NativeDismissInterceptor? = null
+    internal var cancelRequestInterceptor: CancelRequestInterceptor? = null
 
     /**
      * Installed next to Material's content once the dialog is created. Reports the height the sheet
@@ -64,21 +56,8 @@ internal class SheetDialog(
         forceEdgeToEdge()
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        val interceptor = nativeDismissInterceptor
-        val isGestureEnd =
-            ev.actionMasked == MotionEvent.ACTION_UP ||
-                ev.actionMasked == MotionEvent.ACTION_POINTER_UP ||
-                ev.actionMasked == MotionEvent.ACTION_CANCEL
-        if (interceptor == null || !isGestureEnd) {
-            return super.dispatchTouchEvent(ev)
-        }
-
-        return interceptor.handleGestureEnd { super.dispatchTouchEvent(ev) }
-    }
-
     override fun cancel() {
-        val interceptor = nativeDismissInterceptor
+        val interceptor = cancelRequestInterceptor
         if (interceptor == null) {
             super.cancel()
             return

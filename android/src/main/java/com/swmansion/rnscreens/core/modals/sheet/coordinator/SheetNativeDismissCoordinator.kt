@@ -8,7 +8,7 @@ internal class SheetNativeDismissCoordinator(
     private val behaviorController: SheetBehaviorController?,
     private val onDismissAllowed: () -> Unit,
     private val onDismissPrevented: () -> Unit,
-) : SheetDialog.NativeDismissInterceptor {
+) : SheetDialog.CancelRequestInterceptor {
     private val preventNativeDismissBackPressCallback =
         object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
@@ -23,12 +23,19 @@ internal class SheetNativeDismissCoordinator(
         }
 
     internal fun setup() {
-        dialog.nativeDismissInterceptor = this
+        dialog.cancelRequestInterceptor = this
         dialog.onBackPressedDispatcher.addCallback(preventNativeDismissBackPressCallback)
+        behaviorController?.onHideAttempt = {
+            if (shouldPreventDismiss) {
+                onDismissPrevented()
+            }
+            shouldPreventDismiss
+        }
     }
 
     internal fun destroy() {
-        dialog.nativeDismissInterceptor = null
+        dialog.cancelRequestInterceptor = null
+        behaviorController?.onHideAttempt = null
         preventNativeDismissBackPressCallback.remove()
     }
 
@@ -40,23 +47,5 @@ internal class SheetNativeDismissCoordinator(
         }
 
         onDismissAllowed()
-    }
-
-    override fun handleGestureEnd(dispatchGestureCompleted: () -> Boolean): Boolean {
-        val controller = behaviorController
-        if (!shouldPreventDismiss || controller == null) {
-            return dispatchGestureCompleted()
-        }
-
-        // Releasing the drag with hiding disabled makes the sheet snap back right away, instead of sliding
-        // off screen first and being restored after the cancel request.
-        val wasDraggedBelowLowestDetent = controller.isDraggedBelowLowestDetent
-        val handled = controller.withHidingDisabled(dispatchGestureCompleted)
-        // A lifted pointer doesn't release the sheet while another one keeps dragging it.
-        if (wasDraggedBelowLowestDetent && !controller.isDragging) {
-            controller.settleAtLastStableState()
-            onDismissPrevented()
-        }
-        return handled
     }
 }

@@ -16,14 +16,11 @@ internal class SheetBehaviorController(
     private var lastStableState: Int = BottomSheetBehavior.STATE_COLLAPSED
     private var lastSlideOffset: Float = 0f
 
-    internal val isDragging: Boolean
-        get() = behavior.state == BottomSheetBehavior.STATE_DRAGGING
-
     /**
-     * Whether the user is dragging the sheet below its lowest detent, i.e. towards dismissal.
+     * Invoked once Material starts sliding the sheet below its lowest detent to hide it, e.g. after a swipe down.
+     * Return `true` to cancel hiding - the sheet settles back at its last stable detent.
      */
-    internal val isDraggedBelowLowestDetent: Boolean
-        get() = isDragging && lastSlideOffset < 0f
+    internal var onHideAttempt: (() -> Boolean)? = null
 
     private val bottomSheetCallback =
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -44,7 +41,17 @@ internal class SheetBehaviorController(
                 bottomSheet: View,
                 slideOffset: Float,
             ) {
+                // Only hiding settles the sheet downwards below its lowest detent. Material doesn't expose
+                // the state it settles to, and it reports STATE_HIDDEN only after the sheet left the screen.
+                val isHiding =
+                    behavior.state == BottomSheetBehavior.STATE_SETTLING &&
+                        slideOffset < lastSlideOffset &&
+                        (behavior.skipCollapsed || slideOffset < 0f)
                 lastSlideOffset = slideOffset
+
+                if (isHiding && onHideAttempt?.invoke() == true) {
+                    behavior.state = lastStableState
+                }
             }
         }
 
@@ -66,23 +73,7 @@ internal class SheetBehaviorController(
             return
         }
 
-        settleAtLastStableState()
-    }
-
-    internal fun settleAtLastStableState() {
         behavior.state = lastStableState
-    }
-
-    /**
-     * Runs [block] with hiding disabled, so releasing a drag inside [block] doesn't slide the sheet off screen.
-     */
-    internal fun <T> withHidingDisabled(block: () -> T): T {
-        behavior.isHideable = false
-        try {
-            return block()
-        } finally {
-            behavior.isHideable = true
-        }
     }
 
     private fun rememberStateIfStable(state: Int) {
@@ -181,8 +172,6 @@ internal class SheetBehaviorController(
         skipCollapsed = true
         isFitToContents = true
         maxHeight = detents.maxAllowedHeightForFitToContents(sheetAvailableSpace, contentHeight, bottomInset, keyboardLift)
-        // The collapsed offset must match the sole detent, so that the sheet doesn't rest anywhere else.
-        peekHeight = maxHeight
         state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -194,8 +183,6 @@ internal class SheetBehaviorController(
         skipCollapsed = true
         isFitToContents = true
         maxHeight = detents.maxAllowedHeight(sheetAvailableSpace, keyboardLift)
-        // The collapsed offset must match the sole detent, so that the sheet doesn't rest anywhere else.
-        peekHeight = maxHeight
         state = BottomSheetBehavior.STATE_EXPANDED
     }
 

@@ -32,7 +32,7 @@ internal class SheetPresentation(
         SheetDialog(themedContext).apply {
             setContentView(container)
             // Backdrop taps are handled by Material's `touch_outside` view, which calls `cancel()`,
-            // intercepted by SheetDialog.nativeDismissInterceptor, that's responsible for
+            // intercepted by SheetDialog.cancelRequestInterceptor, that's responsible for
             // preventNativeDismiss handling.
             setCanceledOnTouchOutside(true)
         }
