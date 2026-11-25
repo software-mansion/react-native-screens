@@ -7,11 +7,13 @@ import type { PageSheetProps } from './PageSheet.types';
  * {@link FormSheet}.
  *
  * @remarks
- * The sheet is presented when {@link PageSheetProps.isOpen | isOpen} becomes
- * `true` and dismissed when it becomes `false`. It rests at the heights given
- * by {@link PageSheetProps.detents | detents}; the user can drag it between
+ * The sheet is presented when
+ * {@link PageSheetPropsBase.isOpen | isOpen} becomes `true` and dismissed
+ * when it becomes `false`. It rests at the heights given by
+ * {@link PageSheetPropsBase.detents | detents}; the user can drag it between
  * them, and dismiss it natively unless
- * {@link PageSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
+ * {@link PageSheetPropsBase.preventNativeDismiss | preventNativeDismiss} is
+ * set.
  *
  * On iPhone, the sheet looks the same as {@link FormSheet}: it spans the full
  * width of the screen and is anchored to its bottom. On iPad, it is a large

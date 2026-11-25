@@ -36,7 +36,7 @@ export function SheetBase(props: SheetBaseProps) {
     largestUndimmedDetentIndex,
     preferredCornerRadius,
     nativeContainerStyle,
-    backgroundEffect,
+    ios,
     presentationStyle,
     ...rest
   } = props;
@@ -69,7 +69,7 @@ export function SheetBase(props: SheetBaseProps) {
       nativeContainerBackgroundColor={
         StyleSheet.flatten(nativeContainerStyle)?.backgroundColor
       }
-      {...resolveNativeBackgroundEffect(backgroundEffect)}
+      {...resolveNativeBackgroundEffect(ios?.backgroundEffect)}
       {...rest}>
       <SplitColumnMarkerContext.Provider value={false}>
         {isFitToContents ? (

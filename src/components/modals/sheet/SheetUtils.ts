@@ -1,4 +1,5 @@
 import type {
+  SheetBackgroundEffect,
   SheetBackgroundEffectBlurStyle,
   SheetDetents,
   SheetPreferredCornerRadius,
@@ -128,7 +129,7 @@ export type NativeBackgroundEffectProps = {
 };
 
 export function resolveNativeBackgroundEffect(
-  effect: SheetProps['backgroundEffect'],
+  effect?: SheetBackgroundEffect,
 ): NativeBackgroundEffectProps | undefined {
   if (effect === undefined) {
     return undefined;
@@ -148,7 +149,7 @@ export function resolveNativeBackgroundEffect(
       };
     default:
       console.error(
-        "[RNScreens] Invalid value provided for 'backgroundEffect'. Falling back to 'automatic'.",
+        "[RNScreens] Invalid value provided for 'ios.backgroundEffect'. Falling back to 'automatic'.",
       );
       return { backgroundEffect: 'automatic' };
   }
