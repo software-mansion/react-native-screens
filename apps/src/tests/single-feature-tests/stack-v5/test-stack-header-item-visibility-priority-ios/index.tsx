@@ -41,20 +41,20 @@ function buildHeaderConfig(
     ios: {
       trailingItems: [
         {
-          type: 'item',
+          type: 'custom',
           id: 'square',
           visibilityPriority: squareVisibilityPriority,
           render: () => <SquareItem />,
         },
         {
-          type: 'item',
+          type: 'button',
           id: 'video',
           title: 'Video',
           icon: { type: 'sfSymbol', name: 'video' },
           visibilityPriority: videoVisibilityPriority,
         },
         {
-          type: 'item',
+          type: 'button',
           id: 'search',
           title: 'Search',
           icon: { type: 'sfSymbol', name: 'magnifyingglass' },

@@ -58,7 +58,7 @@ function buildHeaderConfig(
     ios: {
       trailingItems: [
         {
-          type: 'item',
+          type: 'button',
           id: 'icon-item',
           title: 'Actions',
           icon: itemIcon,

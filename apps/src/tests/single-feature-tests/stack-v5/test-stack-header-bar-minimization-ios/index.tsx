@@ -57,7 +57,7 @@ function buildHeaderConfig(config: MinimizationConfig): StackHeaderConfigProps {
       restorationBehavior: config.restorationBehavior,
       leadingItems: [
         {
-          type: 'item',
+          type: 'custom',
           id: 'leading-0',
           render: () => <ResizingItem />,
         },
@@ -68,14 +68,14 @@ function buildHeaderConfig(config: MinimizationConfig): StackHeaderConfigProps {
           width: 100,
         },
         {
-          type: 'item',
+          type: 'custom',
           id: 'leading-1',
           render: () => <ResizingItem />,
         },
       ],
       trailingItems: [
         {
-          type: 'item',
+          type: 'custom',
           id: 'trailing-0',
           render: () => <ResizingItem />,
         },
@@ -85,7 +85,7 @@ function buildHeaderConfig(config: MinimizationConfig): StackHeaderConfigProps {
           sizing: 'flexible',
         },
         {
-          type: 'item',
+          type: 'custom',
           id: 'trailing-1',
           render: () => <ResizingItem />,
         },

@@ -12,7 +12,10 @@ import {
   StackContainer,
   useStackNavigationContext,
 } from '@apps/shared/containers/stack';
-import { StackHeaderConfigProps } from 'react-native-screens/components/stack/header';
+import type {
+  StackHeaderConfigProps,
+  StackHeaderCustomItemIOS,
+} from 'react-native-screens/components/stack/header';
 import PressableWithFeedback from '@apps/shared/PressableWithFeedback';
 import { Button, ScrollView, StyleSheet } from 'react-native';
 import { SettingsSwitch } from '@apps/shared/SettingsSwitch';
@@ -176,13 +179,15 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   let leadingItems: NonNullable<StackHeaderConfigProps['ios']>['leadingItems'] =
     Array.from({
       length: config.leadingItemsCount,
-    }).map((_, i) => ({
-      type: 'item',
-      id: `leading-${i}`,
-      hidesSharedBackground: config.hidesSharedBackground,
-      paddingRemoved: config.paddingRemoved,
-      render: () => <ResizingItem />,
-    }));
+    }).map(
+      (_, i): StackHeaderCustomItemIOS => ({
+        type: 'custom',
+        id: `leading-${i}`,
+        hidesSharedBackground: config.hidesSharedBackground,
+        paddingRemoved: config.paddingRemoved,
+        render: () => <ResizingItem />,
+      }),
+    );
   if (leadingItems.length > 1) {
     leadingItems.splice(1, 0, {
       type: 'spacer',
@@ -195,8 +200,8 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps | undefined {
   let trailingItems: NonNullable<
     StackHeaderConfigProps['ios']
   >['trailingItems'] = Array.from({ length: config.trailingItemsCount }).map(
-    (_, i) => ({
-      type: 'item',
+    (_, i): StackHeaderCustomItemIOS => ({
+      type: 'custom',
       id: `trailing-${i}`,
       hidesSharedBackground: config.hidesSharedBackground,
       paddingRemoved: config.paddingRemoved,

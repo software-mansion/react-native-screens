@@ -13,6 +13,7 @@ import {
 import { StackHeaderConfigProps } from 'react-native-screens';
 import type {
   StackHeaderConfigRef,
+  StackHeaderItemIOS,
   StackHeaderMenuIOS,
   StackHeaderMenuItemOptionsIOS,
   StackHeaderMenuOptionsIOS,
@@ -150,16 +151,20 @@ function buildHeaderConfig(
   const trailingItems: NonNullable<
     StackHeaderConfigProps['ios']
   >['trailingItems'] = Array.from({ length: trailingItemsCount }).map(
-    (_, i) => ({
-      type: 'item',
+    (_, i): StackHeaderItemIOS => ({
       id: `trailing-${i}`,
-      title: `Menu ${i}`,
       // every second item is custom
-      ...(i % 2 === 0 && {
-        render: () => (
-          <PressableWithFeedback style={{ width: 30, height: 30 }} />
-        ),
-      }),
+      ...(i % 2 === 0
+        ? {
+            type: 'custom',
+            render: () => (
+              <PressableWithFeedback style={{ width: 30, height: 30 }} />
+            ),
+          }
+        : {
+            type: 'button',
+            title: `Menu ${i}`,
+          }),
       ...(representationEnabled && {
         menuRepresentation: buildMenuRepresentation(i, showToast),
       }),

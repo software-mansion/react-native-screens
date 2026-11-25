@@ -43,13 +43,13 @@ function ColumnStack({ name, color }: { name: string; color: string }) {
               ios: {
                 trailingItems: [
                   {
-                    type: 'item',
+                    type: 'button',
                     id: 'item',
                     title: 'Item',
                     onPress: () => showToast(`${name} item`),
                   },
                   {
-                    type: 'item',
+                    type: 'custom',
                     id: 'custom',
                     render: () => (
                       <PressableWithFeedback

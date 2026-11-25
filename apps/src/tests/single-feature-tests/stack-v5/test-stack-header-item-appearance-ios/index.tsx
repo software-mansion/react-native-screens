@@ -203,7 +203,7 @@ const buildHeaderConfig = (
       ...buildAppearances(config),
       trailingItems: [
         {
-          type: 'item',
+          type: 'button',
           id: 'prominent-disabled-item',
           ...itemContent('dd', 'Prominent Disabled', '4.circle'),
           variant: 'prominent',
@@ -217,7 +217,7 @@ const buildHeaderConfig = (
           sizing: 'flexible',
         },
         {
-          type: 'item',
+          type: 'button',
           id: 'prominent-item',
           ...itemContent('cc', 'Prominent', '3.circle'),
           variant: 'prominent',
@@ -230,7 +230,7 @@ const buildHeaderConfig = (
           sizing: 'flexible',
         },
         {
-          type: 'item',
+          type: 'button',
           id: 'disabled-item',
           ...itemContent('bb', 'Disabled', '2.circle'),
           tintColor,
@@ -243,7 +243,7 @@ const buildHeaderConfig = (
           sizing: 'flexible',
         },
         {
-          type: 'item',
+          type: 'button',
           id: 'regular-item',
           ...itemContent('aa', 'Regular', '1.circle'),
           tintColor,
@@ -252,7 +252,7 @@ const buildHeaderConfig = (
         ...(config.overflow
           ? [
               {
-                type: 'item',
+                type: 'custom',
                 id: 'wide-custom-item',
                 render: () => <View style={styles.wideCustomItem} />,
               } as const,

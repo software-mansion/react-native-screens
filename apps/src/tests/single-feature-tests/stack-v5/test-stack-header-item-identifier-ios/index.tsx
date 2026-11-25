@@ -16,8 +16,8 @@ import { SettingsSwitch } from '@apps/shared';
 import { Colors } from '@apps/shared/styling';
 import type {
   StackHeaderConfigProps,
-  StackHeaderInlineCustomItemIOS,
-  StackHeaderInlineItemIOS,
+  StackHeaderButtonItemIOS,
+  StackHeaderCustomItemIOS,
   StackHeaderSpacerItemIOS,
 } from 'react-native-screens/components/stack/header';
 import type { PlatformIconIOS } from 'react-native-screens';
@@ -72,7 +72,7 @@ const ToggleContext = createContext<Toggles>({
   setCustomViewsEnabled: () => {},
 });
 
-type HeaderItem = StackHeaderInlineItemIOS | StackHeaderInlineCustomItemIOS;
+type HeaderItem = StackHeaderButtonItemIOS | StackHeaderCustomItemIOS;
 
 function makeItem(
   id: ItemId,
@@ -84,7 +84,7 @@ function makeItem(
   if (withCustomView) {
     const color = colorForItem(id, screenIndex);
     return {
-      type: 'item',
+      type: 'custom',
       id,
       render: () => (
         <View style={[styles.customItem, { backgroundColor: color }]} />
@@ -93,7 +93,7 @@ function makeItem(
     };
   }
   return {
-    type: 'item',
+    type: 'button',
     id,
     icon: iconForItem(id, screenIndex),
     ...identifierProp,

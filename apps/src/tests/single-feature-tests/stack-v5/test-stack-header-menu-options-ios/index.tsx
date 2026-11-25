@@ -33,7 +33,7 @@ function buildHeaderConfig(
     ios: {
       trailingItems: [
         {
-          type: 'item',
+          type: 'button',
           id: 'menu-button',
           title: 'Options',
           icon: { type: 'sfSymbol', name: 'ellipsis' },
@@ -134,7 +134,7 @@ function buildHeaderConfig(
           sizing: 'flexible',
         },
         {
-          type: 'item',
+          type: 'button',
           id: 'palette-button',
           title: 'Palette',
           icon: { type: 'sfSymbol', name: 'paintpalette' },
