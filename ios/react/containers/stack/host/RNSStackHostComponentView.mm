@@ -61,12 +61,21 @@ namespace react = facebook::react;
     return;
   }
   if (self.window != nil && _stackNavigationController.parentViewController == nil) {
-    BOOL mountResult = [RNSContainerHelpers addChildViewController:_stackNavigationController
-                                          toViewControllerManaging:self.reactSuperview
-                                                 withContainerView:self];
-    if (mountResult) {
-      [self setupViewConstraintsForController:_stackNavigationController];
-    }
+    // The constraints of the navigation controller's view are set in `didAddSubview:`.
+    [RNSContainerHelpers addChildViewController:_stackNavigationController
+                       toViewControllerManaging:self.reactSuperview
+                              withContainerView:self];
+  }
+}
+
+// UIKit takes the view of the navigation controller out of the hierarchy while a presentation that replaces it
+// (`UIModalPresentationCurrentContext`) is on screen, and puts it back afterwards. A view that is removed loses its
+// constraints, so they are set every time the view is added.
+- (void)didAddSubview:(UIView *)subview
+{
+  [super didAddSubview:subview];
+  if (subview == _stackNavigationController.viewIfLoaded) {
+    [self setupViewConstraintsForController:_stackNavigationController];
   }
 }
 
