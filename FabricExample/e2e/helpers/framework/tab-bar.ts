@@ -28,11 +28,6 @@ export async function forceSelectTabByLabel(label: string) {
   }
 }
 
-/** Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
- * is in the tab bar. */
-export const expectTabBarItemByLabel = (label: string) =>
-  expect(element(by.label(label))).toBeVisible();
-
 /**
  * Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
  * is in the tab bar. Existence only on iOS: the selected button fails Detox's
