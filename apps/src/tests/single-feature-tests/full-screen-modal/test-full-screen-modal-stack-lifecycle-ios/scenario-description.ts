@@ -6,6 +6,10 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Lifecycle events of the stack screens underneath FullScreenModalReplacingContent and FullScreenModalOverContent: single and nested stack, push and pop while a modal is open, and popping the screen that renders the modal.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27.3'], testOn: ['iOS 27.3'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

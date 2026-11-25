@@ -6,6 +6,10 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Opening and closing both FullScreenModal variants, reopening during a dismissal, a content background, and the children state surviving a close.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27.3'], testOn: ['iOS 27.3'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
