@@ -166,6 +166,10 @@ namespace react = facebook::react;
   }
   _didSetHeadlessModeEnabled = YES;
 
+  if (oldComponentProps.modalProviderContainerId != newComponentProps.modalProviderContainerId) {
+    _modalProviderContainerId = RCTNSStringFromStringNilIfEmpty(newComponentProps.modalProviderContainerId);
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
