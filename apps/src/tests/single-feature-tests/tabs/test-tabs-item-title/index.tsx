@@ -13,7 +13,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-// Android only: the Argent flow (.argent/flows/test-tabs-item-title.yaml) crops
+// Android only: the Argent flow (FabricExample/e2e/argent/test-tabs-item-title.yaml) crops
 // its snapshots on an invisible band covering the bottom third of the screen,
 // which holds the tab bar but not the tab content text. The band ends above
 // the system navigation bar, so emulator system UI changes (navigation mode,

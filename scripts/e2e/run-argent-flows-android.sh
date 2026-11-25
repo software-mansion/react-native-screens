@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Runs the Argent flows from .argent/flows against the booted Android emulator.
+# Runs the Argent flows from FabricExample/e2e/argent against the booted Android emulator.
 # Meant to be the `script:` of reactivecircus/android-emulator-runner in CI, run
 # from the repository root, after the APK from the build job was downloaded to
 # FabricExample/android/app/build/outputs/apk and after the Argent tool-server
 # was started (.github/actions/argent-server).
 #
-# Snapshots are always diffed against the baselines in .argent/flows/__baselines__,
+# Snapshots are always diffed against the baselines in FabricExample/e2e/argent/__baselines__,
 # a symlink into the react-native-screens-testing submodule (the workflow
 # initializes it); a missing baseline fails the flow. Record new
 # baselines with `--update-baselines` on an emulator matching this job — pixel_7
@@ -36,7 +36,7 @@ adb -s "$SERIAL" shell settings put global animator_duration_scale 0.0
 OUT="${RUNNER_TEMP:-/tmp}/argent-out"
 mkdir -p "$OUT"
 set +e
-argent flow run ./.argent/flows --device "$SERIAL" \
+argent e2e run ./FabricExample/e2e/argent --device "$SERIAL" \
   --output "$OUT/snapshots" 2>&1 | tee "$OUT/argent-flows.log"
 RC=${PIPESTATUS[0]}
 set -e

@@ -15,7 +15,6 @@ on:
       - '.github/actions/argent-server/**'
       - '.github/actions/install-node-deps/**'
       - '.github/actions/setup-android-avd/**'
-      - '.argent/**'
       - 'react-native-screens-testing'
   push:
     branches:
@@ -25,7 +24,7 @@ on:
       - '.github/actions/argent-server/**'
       - '.github/actions/install-node-deps/**'
       - '.github/actions/setup-android-avd/**'
-      - '.argent/**'
+      - 'FabricExample/e2e/argent/**'
       - 'react-native-screens-testing'
       - 'package.json'
       - 'android/**'
@@ -72,7 +71,9 @@ jobs:
               - '.github/actions/install-node-deps/**'
               - '.github/actions/setup-android-avd/**'
               - 'FabricExample/.detoxrc.js'
-              - 'FabricExample/e2e/**'
+              # Everything under e2e/ except the Argent tests in e2e/argent/.
+              - 'FabricExample/e2e/*'
+              - 'FabricExample/e2e/!(argent)/**'
               - 'scripts/e2e/*.js'
               - 'scripts/e2e/*.cjs'
               - 'scripts/e2e/test-e2e-*.sh'
@@ -81,7 +82,7 @@ jobs:
               - '.github/actions/install-node-deps/**'
               - '.github/actions/argent-server/**'
               - '.github/actions/setup-android-avd/**'
-              - '.argent/**'
+              - 'FabricExample/e2e/argent/**'
               - 'react-native-screens-testing'
               - 'scripts/e2e/*argent*'
 
@@ -215,7 +216,7 @@ jobs:
         uses: actions/checkout@v4
 
       # Baselines live in the react-native-screens-testing submodule
-      # (.argent/flows/__baselines__ is a symlink into it).
+      # (FabricExample/e2e/argent/__baselines__ is a symlink into it).
       - name: Fetch Argent baselines
         run: git submodule update --init --depth 1 react-native-screens-testing
 

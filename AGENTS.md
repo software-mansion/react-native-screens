@@ -27,6 +27,9 @@ such as stack, tabs, split.
   subdirectories (`cpp/legacy/`, `common/cpp/.../rnscreens/legacy/`).
 - `./FabricExample/` - contains an example application, we use it to showcase the library
   capabilities and test the library. It is not published as part of the package.
+  - `./FabricExample/e2e/` - Detox specs (`*.e2e.ts`); Argent tests live flat in
+    `./FabricExample/e2e/argent/`. Record Argent tests with `project_root` set to
+    `FabricExample` — its `.argent/e2e` is a symlink to `e2e/argent`.
 
 - `./TVOSExample/` - tvOS example application, used to exercise the library on
   Apple TV. Like `FabricExample`, it consumes the shared sources from `./apps/`
@@ -51,7 +54,7 @@ such as stack, tabs, split.
   downstream library.
 - `yarn submodules:testing` — initializes the `react-native-screens-testing`
   git submodule, which holds the Argent screenshot baselines
-  (`.argent/flows/__baselines__` is a symlink into it). Only needed to run
+  (`FabricExample/e2e/argent/__baselines__` is a symlink into it). Only needed to run
   Argent flows.
 
 ### Build the library

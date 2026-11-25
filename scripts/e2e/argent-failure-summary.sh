@@ -4,7 +4,7 @@
 #
 #   scripts/e2e/argent-failure-summary.sh <platform> <argent-out dir>
 #
-# Expects <argent-out dir>/argent-flows.log (the `argent flow run` output) and,
+# Expects <argent-out dir>/argent-flows.log (the `argent e2e run` output) and,
 # when present, lists the images the failure artifact carries.
 set -uo pipefail
 

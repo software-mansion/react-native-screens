@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Installs the app on the booted iOS simulator and runs the Argent flows from
-# .argent/flows against it. Run from the repository root in CI, after
+# FabricExample/e2e/argent against it. Run from the repository root in CI, after
 # scripts/e2e/boot-argent-ios-simulator.sh and after the Argent tool-server was
 # started (.github/actions/argent-server).
 #
 #   scripts/e2e/run-argent-flows-ios.sh <simulator UDID> <path to .app>
 #
-# Snapshots are always diffed against the baselines in .argent/flows/__baselines__,
+# Snapshots are always diffed against the baselines in FabricExample/e2e/argent/__baselines__,
 # a symlink into the react-native-screens-testing submodule (the workflow
 # initializes it); a missing baseline fails the flow. Record new baselines with
 # `--update-baselines` on a simulator matching this job - iPhone 17 on the
@@ -24,7 +24,7 @@ xcrun simctl install "$UDID" "$APP_PATH"
 OUT="${RUNNER_TEMP:-/tmp}/argent-out"
 mkdir -p "$OUT"
 set +e
-argent flow run ./.argent/flows --device "$UDID" \
+argent e2e run ./FabricExample/e2e/argent --device "$UDID" \
   --output "$OUT/snapshots" 2>&1 | tee "$OUT/argent-flows.log"
 RC=${PIPESTATUS[0]}
 set -e
