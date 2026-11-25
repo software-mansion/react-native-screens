@@ -13,6 +13,9 @@ export {
 // Flags
 export { compatibilityFlags, featureFlags } from './flags';
 
+// Navigation state
+export { Provenance } from './components/shared/provenance';
+
 export * from './components/tabs';
 export * from './components/stack';
 export * from './components/split';
