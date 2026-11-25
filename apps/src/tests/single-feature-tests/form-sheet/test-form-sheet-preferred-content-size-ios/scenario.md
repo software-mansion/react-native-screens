@@ -13,7 +13,7 @@ preferred width only when "Width follows" is on.
 
 ## E2E test
 
-TBD: Planned, but will be implemented separately.
+TBD
 
 ## Prerequisites
 
@@ -72,3 +72,8 @@ TBD: Planned, but will be implemented separately.
 
    - [ ] The open sheet widens to its width from step 1, then narrows back to
          about `400`; "Sheet size" follows each change.
+
+4. With "Width follows" on, toggle the "Custom size" switch in the sheet off.
+
+   - [ ] The open sheet widens to the system's default form sheet width:
+         wider than `400`, but narrower than in step 1 (`540` on iPhone 17).
