@@ -25,8 +25,6 @@ internal class ShadowStateProxy(
         frameHeight: Int? = null,
         contentOffsetX: Int? = null,
         contentOffsetY: Int? = null,
-        // When set, the shadow tree is committed and mounted before this call returns, so the
-        // call must come from the UI thread.
         immediate: Boolean = false,
     ) {
         val widthInDp = frameWidth?.let { pxToDp(it.toFloat(), density) } ?: lastFrameWidthInDp
