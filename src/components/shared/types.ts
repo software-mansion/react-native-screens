@@ -5,27 +5,7 @@ import type { ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
  *
  * @remarks
  * Every value is the UIKit `UIBlurEffect.Style` of the same name; see the UIKit
- * documentation for how each one looks. The following values are supported:
- * - `'extraLight'`
- * - `'light'`
- * - `'dark'`
- * - `'regular'`
- * - `'prominent'`
- * - `'systemUltraThinMaterial'`
- * - `'systemThinMaterial'`
- * - `'systemMaterial'`
- * - `'systemThickMaterial'`
- * - `'systemChromeMaterial'`
- * - `'systemUltraThinMaterialLight'`
- * - `'systemThinMaterialLight'`
- * - `'systemMaterialLight'`
- * - `'systemThickMaterialLight'`
- * - `'systemChromeMaterialLight'`
- * - `'systemUltraThinMaterialDark'`
- * - `'systemThinMaterialDark'`
- * - `'systemMaterialDark'`
- * - `'systemThickMaterialDark'`
- * - `'systemChromeMaterialDark'`
+ * documentation for how each one looks.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
  */

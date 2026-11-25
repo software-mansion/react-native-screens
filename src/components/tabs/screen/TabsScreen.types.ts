@@ -15,27 +15,9 @@ import type {
  * Interface orientations a tab screen supports.
  *
  * @remarks
- * The following values are currently supported:
+ * Accepts any {@link InterfaceOrientation} value, plus:
  * - `'inherit'` — tab screen supports the same orientations as parent
- *   component,
- * - `'all'` — tab screen supports all orientations,
- * - `'allButUpsideDown'` — tab screen supports all but the upside-down
- *   portrait interface orientation,
- * - `'portrait'` — tab screen supports both portrait-up and portrait-down
- *   interface orientations,
- * - `'portraitUp'` — tab screen supports a portrait-up interface
- *   orientation,
- * - `'portraitDown'` — tab screen supports a portrait-down interface
- *   orientation,
- * - `'landscape'` — tab screen supports both landscape-left and
- *   landscape-right interface orientations,
- * - `'landscapeLeft'` — tab screen supports landscape-left interface
- *   orientation,
- * - `'landscapeRight'` — tab screen supports landscape-right interface
- *   orientation.
- *
- * The supported values (apart from `'inherit'`, `'portrait'`, `'portraitUp'`,
- * `'portraitDown'`) correspond to the official UIKit documentation.
+ *   component.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
  */

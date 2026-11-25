@@ -156,12 +156,6 @@ export interface StackHeaderSupportsInlineVisualModificationsIOS {
 /**
  * Priority used when the header has to decide which items to keep.
  *
- * @remarks
- * The following values are supported:
- * - `'low'`
- * - `'standard'`
- * - `'high'`
- *
  * @see {@link https://developer.apple.com/documentation/uikit/uibarbuttonitemvisibilitypriority | UIBarButtonItemVisibilityPriority}
  */
 export type StackHeaderItemVisibilityPriorityIOS = 'low' | 'standard' | 'high';

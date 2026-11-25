@@ -46,12 +46,6 @@ export type StackHeaderTitleHorizontalGravityAndroid =
 /**
  * Vertical alignment of the title and the subtitle of a `'medium'` or
  * `'large'` header.
- *
- * @remarks
- * The following values are supported:
- * - `'top'`
- * - `'center'`
- * - `'bottom'`
  */
 export type StackHeaderTitleVerticalGravityAndroid =
   | 'top'
