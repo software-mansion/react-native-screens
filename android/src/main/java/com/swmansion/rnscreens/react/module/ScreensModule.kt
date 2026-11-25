@@ -10,6 +10,7 @@ import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
+import com.facebook.soloader.SoLoader
 import com.swmansion.rnscreens.NativeScreensModuleSpec
 import com.swmansion.rnscreens.legacy.NativeProxy // legacy-compat: v4 stack mounting listener (Fabric)
 import com.swmansion.rnscreens.legacy.ScreenFragment // legacy-compat: v4 manual transition progress
@@ -28,16 +29,11 @@ class ScreensModule(
     private var proxy: NativeProxy? = null
 
     init {
-        try {
-            System.loadLibrary("rnscreens")
-            val jsContext = reactApplicationContext.javaScriptContextHolder
-            if (jsContext != null) {
-                nativeInstall(jsContext.get())
-            } else {
-                Log.e("[RNScreens]", "Could not install JSI bindings.")
-            }
-        } catch (exception: UnsatisfiedLinkError) {
-            Log.w("[RNScreens]", "Could not load RNScreens module.")
+        val jsContext = reactApplicationContext.javaScriptContextHolder
+        if (jsContext != null) {
+            nativeInstall(jsContext.get())
+        } else {
+            Log.e("[RNScreens]", "Could not install JSI bindings.")
         }
     }
 
@@ -165,5 +161,12 @@ class ScreensModule(
 
     companion object {
         const val NAME = "RNSModule"
+
+        init {
+            // Not System.loadLibrary: it can resolve to an install directory that a split install
+            // has replaced and deleted without killing the process. SoLoader recovers from that.
+            // See https://github.com/software-mansion/react-native-screens/issues/5117
+            SoLoader.loadLibrary("rnscreens")
+        }
     }
 }
