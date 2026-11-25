@@ -8,6 +8,15 @@ export const scenarioDescription: ScenarioDescription = {
     'dragging back and releasing fires no press, and presses work again ' +
     'afterwards',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: {
+      createdOn: ['iOS 18.6', 'iOS 27.2'],
+      testOn: ['iOS 18.6', 'iOS 27.2'],
+    },
+  },
   e2eCoverage: 'incomplete',
+  e2eCoverageDetails:
+    'No step is automated. For manual testing perform all steps. The edge swipe is not available in Detox.',
   smokeTest: false,
 };
