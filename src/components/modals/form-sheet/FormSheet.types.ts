@@ -209,11 +209,11 @@ export interface FormSheetProps {
    * @remarks
    * On iPad, it sets the size of the centered panel the sheet presents as. On
    * iOS 26 and later, the system may make the panel slightly taller than
-   * requested. While the sheet is attached to the bottom edge (in compact width, or in
-   * compact height with `prefersEdgeAttachedInCompactHeight`), its height
-   * comes from `detents`, and its width follows this size only when
-   * `widthFollowsPreferredContentSizeWhenEdgeAttached` is `true`. If not set,
-   * the system's default size is used.
+   * requested. While the sheet is attached to the bottom edge (in compact
+   * width, or in compact height with `prefersEdgeAttachedInCompactHeight`),
+   * its height comes from `detents`, and its width follows this size only
+   * when `widthFollowsPreferredContentSizeWhenEdgeAttached` is `true`. If not
+   * set, the system's default size is used.
    *
    * @see {@link https://developer.apple.com/documentation/uikit/uiviewcontroller/preferredcontentsize | UIViewController.preferredContentSize}
    * @platform ios
