@@ -6,6 +6,12 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Every `animation` value of both FullScreenModal variants on open and close, and a change taking effect on the close of an open modal.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27.3'], testOn: ['iOS 27.3'] },
+  },
   e2eCoverage: 'incomplete',
+  e2eCoverageDetails:
+    'No steps are automated. Animations are not assertable with Detox.',
   smokeTest: false,
 };
