@@ -60,7 +60,10 @@ jobs:
       detox: ${{ steps.filter.outputs.detox }}
       argent: ${{ steps.filter.outputs.argent }}
     steps:
+      # paths-filter reads a PR's changed files from the API, but on other
+      # events it diffs with local git, which this job has no checkout for.
       - uses: dorny/paths-filter@v3
+        if: github.event_name == 'pull_request'
         id: filter
         with:
           filters: |
