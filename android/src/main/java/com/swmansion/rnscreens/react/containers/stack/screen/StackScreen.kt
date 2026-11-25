@@ -96,10 +96,14 @@ internal class StackScreen(
         r: Int,
         b: Int,
     ) {
+        // The frame comes from the native layout (it depends on the header), so until it is
+        // applied the children are laid out for the frame of the host. Applying it before this
+        // call returns keeps that layout from being drawn.
         shadowStateProxy.updateStateIfNeeded(
             density = resources.displayMetrics.density,
             frameWidth = r - l,
             frameHeight = b - t,
+            immediate = true,
         )
     }
 
