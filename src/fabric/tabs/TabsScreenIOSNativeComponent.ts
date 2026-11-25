@@ -186,5 +186,6 @@ export interface NativeProps extends ViewProps {
 }
 
 export default codegenNativeComponent<NativeProps>('RNSTabsScreenIOS', {
+  interfaceOnly: true,
   excludedPlatforms: ['android'],
 }) as HostComponent<NativeProps>;

@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) RNSTabsHostComponentView *reactSuperview;
 
+// Synchronizes the UIKit content frame with Fabric's descendant layout.
+- (void)updateBounds;
+
 @end
 
 #pragma mark - Props

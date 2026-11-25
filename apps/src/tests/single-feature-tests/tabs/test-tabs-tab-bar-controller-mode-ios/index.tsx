@@ -13,8 +13,12 @@ import { TabBarControllerMode } from 'react-native-screens';
 
 function ConfigScreen() {
   const { hostConfig, updateHostConfig } = useTabsHostConfig();
+  const [width, setWidth] = React.useState(0);
   return (
-    <ScrollView style={{ padding: 40 }}>
+    <ScrollView
+      style={{ padding: 40 }}
+      onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+      <Text>React onLayout · {width} pt</Text>
       <View>
         <Text style={styles.description}>
           Controls whether the tab bar is displayed as a bar or sidebar.{'\n'}

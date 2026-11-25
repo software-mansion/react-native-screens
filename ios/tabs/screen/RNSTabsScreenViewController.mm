@@ -50,6 +50,12 @@
   [self.tabScreenComponentView.reactEventEmitter emitOnDidAppear];
 }
 
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  [self.tabScreenComponentView updateBounds];
+}
+
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
