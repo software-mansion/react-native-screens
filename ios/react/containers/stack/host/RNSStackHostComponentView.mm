@@ -83,7 +83,7 @@ namespace react = facebook::react;
 // cannot be clicked, so we check it by ourselves
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-  if (CGRectContainsPoint(_stackNavigationController.navigationBar.frame, point)) {
+  if (![self isCoveredByPresentation] && CGRectContainsPoint(_stackNavigationController.navigationBar.frame, point)) {
     RNSStackHeaderConfigComponentView *headerConfig = [self requireTopScreenHeaderConfig];
     CGPoint convertedPoint = [self convertPoint:point toView:headerConfig];
     UIView *headerHitTestResult = [headerConfig hitTest:convertedPoint withEvent:event];
@@ -200,6 +200,15 @@ namespace react = facebook::react;
     [controller.view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
     [controller.view.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
   ]];
+}
+
+// Whether a view controller is presented in the context of the stack. UIKit shows it above the view of the navigation
+// controller, the navigation bar included.
+- (BOOL)isCoveredByPresentation
+{
+  UIViewController *presentedViewController = _stackNavigationController.presentedViewController;
+  return presentedViewController != nil &&
+      presentedViewController.presentingViewController == _stackNavigationController;
 }
 
 - (RNSStackHeaderConfigComponentView *)requireTopScreenHeaderConfig
