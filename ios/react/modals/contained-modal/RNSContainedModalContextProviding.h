@@ -2,8 +2,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class RNSContainedModalContextWrapperView;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -15,8 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// Identifies this provider (container). `nil` when unset.
 - (nullable NSString *)containerId;
 
-/// The core view that owns the presentation context to present from.
-- (nonnull RNSContainedModalContextWrapperView *)contextWrapperView;
+/// The provider's context controller (`definesPresentationContext == YES`).
+- (nonnull UIViewController *)contextViewController;
+
+#if DEBUG
+/// Warns when the presentation container of `presentedView` (a content
+/// controller's view) is not where the provider keeps it.
+- (void)validateContainmentOfPresentedView:(nullable UIView *)presentedView;
+#endif
 
 @end
 

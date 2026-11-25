@@ -3,7 +3,6 @@
 #import "RNSContainedModalContentController.h"
 #import "RNSContainedModalContentView.h"
 #import "RNSContainedModalContextProviding.h"
-#import "RNSContainedModalContextWrapperView.h"
 #import "RNSContainedModalHostEventEmitter.h"
 #import "RNSContainedModalHostShadowStateProxy.h"
 #import "RNSContainedModalProviders.h"
@@ -146,7 +145,7 @@ namespace react = facebook::react;
   if (_controller == nil || _controller.presentingViewController == nil) {
     return;
   }
-  [_cachedProviderView.contextWrapperView validateContainmentOfPresentedView:_controller.viewIfLoaded];
+  [_cachedProviderView validateContainmentOfPresentedView:_controller.viewIfLoaded];
 }
 #endif
 
@@ -194,7 +193,7 @@ namespace react = facebook::react;
 
 - (nullable UIViewController *)presentationSourceViewController
 {
-  return [self resolveProviderView].contextWrapperView.contextViewController;
+  return [self resolveProviderView].contextViewController;
 }
 
 #pragma mark - RCTComponentViewProtocol

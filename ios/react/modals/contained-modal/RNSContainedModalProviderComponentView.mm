@@ -70,10 +70,17 @@ namespace react = facebook::react;
   return _containerId;
 }
 
-- (nonnull RNSContainedModalContextWrapperView *)contextWrapperView
+- (nonnull UIViewController *)contextViewController
 {
-  return _contextWrapperView;
+  return _contextWrapperView.contextViewController;
 }
+
+#if DEBUG
+- (void)validateContainmentOfPresentedView:(nullable UIView *)presentedView
+{
+  [_contextWrapperView validateContainmentOfPresentedView:presentedView];
+}
+#endif
 
 #pragma mark - RCTComponentViewProtocol
 
