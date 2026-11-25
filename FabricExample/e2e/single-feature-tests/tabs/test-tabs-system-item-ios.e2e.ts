@@ -7,10 +7,9 @@ import { getMatches } from '@e2e/framework/matchers';
 import {
   CLASS_NAME_UI_TAB_BAR,
   CLASS_NAME_UI_TAB_BAR_BUTTON_LABEL,
-  CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26,
-  CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY,
 } from '@e2e/framework/native-classes-ios';
 import { describeIfIOS, isIOSVersionAtLeast } from '@e2e/framework/platform';
+import { tabBarButtonIOS } from '@e2e/framework/tab-bar';
 async function tapOptionButton(optionText: string) {
   await element(by.text(optionText)).tap();
 }
@@ -42,10 +41,6 @@ async function tapSystemTitleOption() {
 async function tapSystemIconOption() {
   await element(by.text('system')).atIndex(1).tap();
 }
-
-const tabBarButtonType = isIOSVersionAtLeast('26.0')
-  ? CLASS_NAME_UI_TAB_BAR_BUTTON_IOS26
-  : CLASS_NAME_UI_TAB_BAR_BUTTON_LEGACY;
 
 // Throughout iOS 26.x UIKit gives a tab whose `UITabBarItem` uses the `search` system item the
 // separate platter view and a runtime switch to/from `search` moves the item. Starting with
@@ -139,9 +134,7 @@ describeIfIOS('Tab Bar System Item', () => {
         ),
       ).toExist();
 
-      await expect(
-        element(by.label('History').and(by.type(tabBarButtonType))).atIndex(0),
-      ).toExist();
+      await expect(element(tabBarButtonIOS('History')).atIndex(0)).toExist();
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).toExist();
@@ -168,9 +161,7 @@ describeIfIOS('Tab Bar System Item', () => {
       ).not.toExist();
 
       if (!isIOSVersionAtLeast(`26.0`)) {
-        await expect(
-          element(by.label('Search').and(by.type(tabBarButtonType))),
-        ).toBeVisible();
+        await expect(element(tabBarButtonIOS('Search'))).toBeVisible();
       }
 
       const frameXAfterSearch = await getTabBarItemFrameX('Search');
@@ -223,15 +214,11 @@ describeIfIOS('Tab Bar System Item', () => {
       ).toBeVisible();
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        await expect(
-          element(by.label('Custom').and(by.type(tabBarButtonType))),
-        ).toExist();
-        await expect(
-          element(by.label('Favorites').and(by.type(tabBarButtonType))),
-        ).not.toExist();
+        await expect(element(tabBarButtonIOS('Custom'))).toExist();
+        await expect(element(tabBarButtonIOS('Favorites'))).not.toExist();
       } else {
         await expect(
-          element(by.label('Custom').and(by.type(tabBarButtonType))).atIndex(0),
+          element(tabBarButtonIOS('Custom')).atIndex(0),
         ).toBeVisible();
       }
 
@@ -246,14 +233,10 @@ describeIfIOS('Tab Bar System Item', () => {
         element(by.id('config-title').and(by.label("title: '' (hidden)"))),
       ).toBeVisible();
 
-      await expect(
-        element(by.label('Custom').and(by.type(tabBarButtonType))),
-      ).not.toExist();
+      await expect(element(tabBarButtonIOS('Custom'))).not.toExist();
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        await expect(
-          element(by.label('favorite').and(by.type(tabBarButtonType))),
-        ).toExist();
+        await expect(element(tabBarButtonIOS('favorite'))).toExist();
       } else {
         await expect(
           element(
@@ -275,14 +258,10 @@ describeIfIOS('Tab Bar System Item', () => {
         ),
       ).toBeVisible();
       if (isIOSVersionAtLeast(`26.0`)) {
-        await expect(
-          element(by.label('Favorites').and(by.type(tabBarButtonType))),
-        ).toExist();
+        await expect(element(tabBarButtonIOS('Favorites'))).toExist();
       } else {
         await expect(
-          element(by.label('Favorites').and(by.type(tabBarButtonType))).atIndex(
-            0,
-          ),
+          element(tabBarButtonIOS('Favorites')).atIndex(0),
         ).toBeVisible();
       }
 
@@ -378,9 +357,7 @@ describeIfIOS('Tab Bar System Item', () => {
       ).toBeVisible();
 
       await expect(element(by.label('Search'))).not.toExist();
-      await expect(
-        element(by.label('Custom').and(by.type(tabBarButtonType))),
-      ).toExist();
+      await expect(element(tabBarButtonIOS('Custom'))).toExist();
       await expect(
         element(by.id('heart').and(by.label('love'))).atIndex(0),
       ).toExist();
@@ -436,13 +413,9 @@ describeIfIOS('Tab Bar System Item', () => {
         element(by.id('config-icon').and(by.label("icon: custom 'heart'"))),
       ).toBeVisible();
 
-      await expect(
-        element(by.label('Custom').and(by.type(tabBarButtonType))),
-      ).toExist();
+      await expect(element(tabBarButtonIOS('Custom'))).toExist();
 
-      await expect(
-        element(by.label('History').and(by.type(tabBarButtonType))),
-      ).not.toExist();
+      await expect(element(tabBarButtonIOS('History'))).not.toExist();
 
       await expect(
         element(by.id('heart').and(by.label('love'))).atIndex(0),
@@ -478,9 +451,7 @@ describeIfIOS('Tab Bar System Item', () => {
       ).toBeVisible();
 
       await expect(element(by.label('History'))).not.toExist();
-      await expect(
-        element(by.label('Custom').and(by.type(tabBarButtonType))),
-      ).toExist();
+      await expect(element(tabBarButtonIOS('Custom'))).toExist();
 
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
@@ -508,9 +479,7 @@ describeIfIOS('Tab Bar System Item', () => {
       ).toBeVisible();
 
       if (isIOSVersionAtLeast(`26.0`)) {
-        await expect(
-          element(by.label('History').and(by.type(tabBarButtonType))),
-        ).not.toExist();
+        await expect(element(tabBarButtonIOS('History'))).not.toExist();
       } else {
         await expect(
           element(
@@ -522,9 +491,7 @@ describeIfIOS('Tab Bar System Item', () => {
       await expect(
         element(by.id('clock.fill').and(by.label('clock'))).atIndex(0),
       ).toExist();
-      await expect(
-        element(by.label('Custom').and(by.type(tabBarButtonType))),
-      ).not.toExist();
+      await expect(element(tabBarButtonIOS('Custom'))).not.toExist();
     });
 
     it('should restore the system localized title when switching title to system', async () => {
