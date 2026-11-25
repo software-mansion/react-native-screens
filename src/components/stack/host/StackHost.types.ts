@@ -73,4 +73,26 @@ export type StackHostProps = {
    * @platform android
    */
   colorScheme?: StackColorScheme | undefined;
+  /**
+   * Makes the stack a provider for contained modals and identifies it; a
+   * modal targets the stack through `targetContainerId`.
+   *
+   * @remarks
+   * The stack takes the role of a {@link ContainedModalProvider} and this is
+   * its `containerId`. A contained modal that targets the stack is presented
+   * within the bounds of the stack and covers its header. The modal has to be
+   * rendered in a screen of the stack.
+   *
+   * Must be unique among the stacks and the
+   * {@link ContainedModalProvider | ContainedModalProviders} on a modal's
+   * ancestor chain. An empty string is treated as not set.
+   *
+   * @note
+   * A modal that targets a stack shown by a `Split.Column` does not follow
+   * the Split between its collapsed and expanded layouts yet: after such a
+   * change the modal may be hidden or cover another column.
+   *
+   * @platform ios
+   */
+  modalProviderContainerId?: string | undefined;
 };

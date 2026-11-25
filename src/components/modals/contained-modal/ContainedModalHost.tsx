@@ -32,7 +32,7 @@ export function ContainedModalHost(props: ContainedModalHostProps) {
   // silently never present (release). Fail loudly instead.
   if (targetContainerId === '') {
     throw new Error(
-      '[RNScreens] A contained modal requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider.',
+      '[RNScreens] A contained modal requires a non-empty targetContainerId matching the containerId of an ancestor ContainedModalProvider or the modalProviderContainerId of an ancestor Stack.Host.',
     );
   }
 

@@ -7,6 +7,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h>
 
+#import "RNSContainedModalContextProviding.h"
 #import "RNSConversions-Stack.h"
 #import "RNSDefines.h"
 #import "RNSSafeAreaViewNotifications.h"
@@ -22,6 +23,7 @@
 namespace react = facebook::react;
 
 @interface RNSStackScreenComponentView () <RCTMountingTransactionObserving,
+                                           RNSContainedModalContextProviding,
                                            RNSScrollViewSeeking,
                                            RNSStackScreenControllerDelegate,
                                            RNSStackContainerItemConfigProviding>
@@ -177,6 +179,20 @@ namespace react = facebook::react;
     _isNativelyDismissed = YES;
     [self.reactEventEmitter emitOnNativeDismiss];
   }
+}
+
+#pragma mark - RNSContainedModalContextProviding
+
+// A contained modal looks for its provider among its superviews. The view of the stack host is not always one of
+// them (a host in headless mode is not in the view hierarchy), so the screen answers for the stack it belongs to.
+- (nullable NSString *)containerId
+{
+  return self.stackHost.modalProviderContainerId;
+}
+
+- (nullable UIViewController *)contextViewController
+{
+  return self.stackHost.stackNavigationController;
 }
 
 #pragma mark - RNSSafeAreaProviding

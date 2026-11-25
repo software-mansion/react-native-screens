@@ -14,10 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable UIWindow *)hostWindow;
 
 /**
- * The matched provider's context view controller to present from (see
- * `RNSContainedModalContextWrapperView.contextViewController`). Matching a modal to
- * its provider is the host's concern; core only receives the resolved
- * controller through this accessor.
+ * The context view controller of the matched provider to present from: the
+ * one `RNSContainedModalContextWrapperView` owns, or the navigation controller
+ * of a stack the modal targets. Matching a modal to its provider is the host's
+ * concern; core only receives the resolved controller through this accessor.
  */
 - (nullable UIViewController *)presentationSourceViewController;
 

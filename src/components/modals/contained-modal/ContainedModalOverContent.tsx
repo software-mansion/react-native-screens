@@ -14,6 +14,9 @@ import type { ContainedModalOverContentProps } from './ContainedModalOverContent
  * The modal's children stay mounted regardless of `isOpen`, so their React
  * state survives presentations.
  *
+ * A `Stack.Host` with `modalProviderContainerId` takes the role of the
+ * provider: the modal then fills the stack, its header included.
+ *
  * Modality is scoped to the provider's position in the view hierarchy, not
  * the window: a sibling that overlaps the provider and renders later in the
  * React tree draws above the open modal and receives touches in the overlap,

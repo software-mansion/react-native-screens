@@ -17,6 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) RNSStackNavigationController *stackNavigationController;
 
+/**
+ * Identifies the stack as a provider of the presentation context of contained modals. Nil when not set.
+ */
+@property (nonatomic, readonly, nullable) NSString *modalProviderContainerId;
+
 @end
 
 #pragma mark - Communication with StackScreen

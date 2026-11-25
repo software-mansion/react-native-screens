@@ -91,6 +91,13 @@ internal class StackHostViewManager :
         // iOS only.
     }
 
+    override fun setModalProviderContainerId(
+        view: StackHost,
+        value: String?,
+    ) {
+        // iOS only.
+    }
+
     companion object {
         const val REACT_CLASS = "RNSStackHost"
     }

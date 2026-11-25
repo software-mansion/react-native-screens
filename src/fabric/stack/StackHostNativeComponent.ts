@@ -18,6 +18,10 @@ export interface NativeProps extends ViewProps {
   // host in headless mode has to be rendered with `display: 'contents'`, so
   // that it takes no part in layout. Can be set once.
   headlessModeEnabled?: CT.WithDefault<boolean, false>;
+
+  // iOS. Identifies the stack as a provider of the presentation context of
+  // contained modals.
+  modalProviderContainerId?: CT.WithDefault<string, ''>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSStackHost', {

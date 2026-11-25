@@ -2,21 +2,31 @@
 
 #import <UIKit/UIKit.h>
 
-@class RNSContainedModalContextWrapperView;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Implemented by the provider component view. Lets the host component view
- * match a modal to its target provider by walking the superview chain.
+ * Implemented by the views that provide a presentation context to contained
+ * modals: the provider component view and the screen of a stack, which answers
+ * for its stack. Lets the host component view match a modal to its target
+ * provider by walking the superview chain.
  */
 @protocol RNSContainedModalContextProviding <NSObject>
 
 /// Identifies this provider (container). `nil` when unset.
 - (nullable NSString *)containerId;
 
-/// The core view that owns the presentation context to present from.
-- (nonnull RNSContainedModalContextWrapperView *)contextWrapperView;
+/// The provider's context controller (`definesPresentationContext == YES`).
+/// `nil` when the provider has none to present from.
+- (nullable UIViewController *)contextViewController;
+
+@optional
+
+#if DEBUG
+/// Warns when the presentation container of `presentedView` (a content
+/// controller's view) is not where the provider keeps it. Implemented by a
+/// provider that owns the view the container is attached to.
+- (void)validateContainmentOfPresentedView:(nullable UIView *)presentedView;
+#endif
 
 @end
 
