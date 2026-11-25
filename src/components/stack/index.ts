@@ -8,6 +8,7 @@ export type {
   StackScreenActivityMode,
   StackScreenReplaceAnimation,
   StackScreenDismissHandler,
+  StackScreenPropsBase,
   StackScreenProps,
   StackScreenPropsIOS,
   StackScreenAnimation,
