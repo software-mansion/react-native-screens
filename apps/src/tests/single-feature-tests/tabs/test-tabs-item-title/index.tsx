@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Platform, StyleSheet, Text, View } from 'react-native';
 import { scenarioDescription } from './scenario-description';
 import { createScenario } from '@apps/tests/shared/helpers';
 import {
@@ -8,6 +8,33 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
+import { initialWindowMetrics } from 'react-native-safe-area-context';
+
+// Android only: the Argent flow (.argent/flows/test-tabs-item-title.yaml) crops
+// its snapshots on an invisible band covering the bottom third of the screen,
+// which holds the tab bar but not the tab content text. The band ends above
+// the system navigation bar, so emulator system UI changes (navigation mode,
+// rounded display corners) stay out of the crop. On iOS the flow crops on the
+// native UITabBar instead.
+const SYSTEM_NAVIGATION_BAR_HEIGHT = initialWindowMetrics?.insets.bottom ?? 0;
+const LONG_TITLE_TAB_BAR_BAND_TEST_ID =
+  'test-tabs-item-title-long-title-tab-bar-band';
+const COLOR_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-color-tab-bar-band';
+const FONT_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-font-tab-bar-band';
+
+function TabBarBand({ testID }: { testID: string }) {
+  if (Platform.OS !== 'android') {
+    return null;
+  }
+  return (
+    <View
+      testID={testID}
+      pointerEvents="none"
+      collapsable={false}
+      style={styles.tabBarBand}
+    />
+  );
+}
 
 function ColorTab() {
   return (
@@ -54,6 +81,7 @@ function ColorTab() {
           </Text>
         </>
       )}
+      <TabBarBand testID={COLOR_TAB_BAR_BAND_TEST_ID} />
     </View>
   );
 }
@@ -87,7 +115,9 @@ function FontTab() {
         </>
       ) : (
         <>
-          <Text style={styles.label}>Font</Text>
+          {/* "Font Config" (not "Font") so the tab bar item titled "Font" is
+            the only exact text match for e2e taps. */}
+          <Text style={styles.label}>Font Config</Text>
           <Text style={styles.hint}>
             `tabBarItemTitleFontFamily`: &quot;monospace&quot;{'\n'}
             `tabBarItemTitleSmallLabelFontSize`: 8{'\n'}
@@ -108,6 +138,7 @@ function FontTab() {
           </Text>
         </>
       )}
+      <TabBarBand testID={FONT_TAB_BAR_BAND_TEST_ID} />
     </View>
   );
 }
@@ -123,6 +154,7 @@ function LongTitleTab() {
         truncated by the system tab bar with an ellipsis rather than wrapping or
         overflowing.
       </Text>
+      <TabBarBand testID={LONG_TITLE_TAB_BAR_BAND_TEST_ID} />
     </View>
   );
 }
@@ -227,6 +259,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
     gap: 12,
+  },
+  tabBarBand: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: SYSTEM_NAVIGATION_BAR_HEIGHT,
+    height: Dimensions.get('screen').height / 3 - SYSTEM_NAVIGATION_BAR_HEIGHT,
   },
   label: {
     fontSize: 17,
