@@ -248,9 +248,9 @@ the values have descriptions:
 export type ColorScheme = 'light' | 'dark';
 ```
 
-A type that extends another union describes only what it adds —
-`Accepts any {@link BlurEffectStyle} value, plus:` — except a short union of
-well-known values (`ColorScheme`, `Direction`), which may be listed in full:
+A type that extends another union and has at most three values in total, the
+inherited ones included, lists all of them, also the ones without a
+description, so the reader does not follow a link to a list that short:
 
 ```ts
 /**
@@ -264,6 +264,26 @@ well-known values (`ColorScheme`, `Direction`), which may be listed in full:
  */
 export type TabsColorScheme = ColorScheme | 'inherit';
 ```
+
+A type with more values does not list the ones it inherits. It links to the
+extended union and lists only the added values that have descriptions:
+
+```ts
+/**
+ * Blur effect applied to the background of a native view.
+ *
+ * @remarks
+ * Accepts any {@link BlurEffectStyle} value, plus:
+ * - `'none'` — disables the blur effect.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uiblureffect/style | UIBlurEffect.Style}
+ */
+export type BlurEffect = 'none' | BlurEffectStyle;
+```
+
+When none of the added values has a description, the sentence points to the
+declaration instead:
+`Accepts any {@link BlurEffectStyle} value, plus the ones in the declaration.`
 
 ## What the type says
 

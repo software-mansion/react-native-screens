@@ -103,6 +103,11 @@ changes. The items most often missed:
       to the prop itself or its own type.
 - [ ] Every link target exists and is exported, and every URL opens (step 2).
 - [ ] A prop does not repeat its type's values, fields or behaviour.
+- [ ] A union lists its values only when they have descriptions. A union that
+      extends another lists all of them when it has at most three in total;
+      with more, it has `Accepts any {@link X} value, plus:` and only the
+      described added values, or `…, plus the ones in the declaration.` when
+      none is described.
 - [ ] Comment text wraps at 80 columns.
 
 ## 5. Scope

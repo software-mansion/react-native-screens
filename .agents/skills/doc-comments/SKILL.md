@@ -117,6 +117,10 @@ tabBarControllerMode?: TabBarControllerMode | undefined;
   type is used. That goes on the type.
 - The values of a union are listed on the type, in its `@remarks`, after a
   sentence that introduces them — only when the values have descriptions.
+  A union that extends another one lists all its values, described or not,
+  when it has at most three in total; with more, it links to the extended
+  union and lists only the added values that have descriptions (reference.md,
+  "Value lists").
 - A family alias of a common type says what it is for, then points at the
   common type: `Accepts any {@link SheetDetents} value.` for a union,
   `See {@link SheetNativeContainerStyleProps} for its fields.` for an object
