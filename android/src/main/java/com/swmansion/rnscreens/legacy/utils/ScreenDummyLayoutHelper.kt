@@ -12,6 +12,7 @@ import com.facebook.jni.annotations.DoNotStrip
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.soloader.SoLoader
 import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.legacy.ScreenStackHeaderConfig
 import java.lang.ref.WeakReference
@@ -52,7 +53,7 @@ internal class ScreenDummyLayoutHelper(
         // Basically we leak this object to C++, as its lifecycle should span throughout whole application
         // lifecycle anyway.
         try {
-            System.loadLibrary(LIBRARY_NAME)
+            SoLoader.loadLibrary(LIBRARY_NAME)
         } catch (e: UnsatisfiedLinkError) {
             Log.w(TAG, "[RNScreens] Failed to load $LIBRARY_NAME library.")
         }
