@@ -14,7 +14,10 @@ export const scenarioDescription: ScenarioDescription = {
       testOn: ['API Level 37'],
     },
   },
-  e2eCoverage: 'tbd',
-  e2eCoverageDetails: 'Planned, but will be implemented separately.',
+  e2eCoverage: 'incomplete',
+  e2eCoverageDetails:
+    'Check manually: step 1: the subtitle "Tab persistence" is shown; ' +
+    'step 3: the subtitle "Tab persistence" is still shown; ' +
+    'step 3: no flash of a re-built header when "Stack" comes back.',
   smokeTest: false,
 };

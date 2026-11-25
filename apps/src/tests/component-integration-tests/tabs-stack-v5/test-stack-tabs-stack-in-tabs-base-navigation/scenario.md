@@ -6,15 +6,13 @@
 | ------------ | ----------------------------------------------- |
 | Key          | `test-stack-tabs-stack-in-tabs-base-navigation` |
 | Platforms    | Android, iOS                                    |
-| E2E coverage | TBD                                             |
+| E2E coverage | Full                                            |
 | Smoke test   | No                                              |
 
 | Device        | Test on      |
 | ------------- | ------------ |
 | iPhone        | iOS 26.5     |
 | Android phone | API Level 36 |
-
-**E2E coverage details:** Planned, but will be implemented separately.
 
 <!-- scenario-metadata:end -->
 

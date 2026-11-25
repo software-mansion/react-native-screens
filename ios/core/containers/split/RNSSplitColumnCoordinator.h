@@ -45,9 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
  * It owns what the Split shows for a plain column: the navigation controller, the stack screen it is rooted at and
  * the view of that screen. It observes the column layout and lifecycle and reports them to its delegate.
  *
- * The lifecycle of the column is the one of the view of the navigation controller the Split installs for it. In a
- * column that hosts a stack it is the navigation controller of the stack, and this coordinator has to be set as its
- * `viewLifecycleEventsObserver`.
+ * The frame and the lifecycle of the column are the ones of the view of the navigation controller the Split installs
+ * for it. In a column that hosts a stack it is the navigation controller of the stack, which the coordinator has to
+ * be given as `hostedStackNavigationController`.
  */
 @interface RNSSplitColumnCoordinator : NSObject <RNSViewControllerViewLifecycleEventsObserver>
 
@@ -83,6 +83,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)releasePlainColumnNavigationController;
 
+/**
+ * @brief The navigation controller of the stack the column hosts, nil in a plain column.
+ *
+ * The Split installs it for the column in place of `plainColumnNavigationController`.
+ */
+@property (nonatomic, weak, nullable) RNSStackNavigationController *hostedStackNavigationController;
+
 #pragma mark - Signals
 
 /**
@@ -99,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @brief Called by the Split after it repositioned its columns.
  *
- * Reports the column frame. A column that hosts a stack or is not on screen has no frame to report.
+ * Reports the column frame. A column that is not on screen has no frame to report.
  */
 - (void)columnPositioningDidChange;
 

@@ -74,7 +74,7 @@ export type {
   StackHeaderFixedSpacerItemIOS,
   StackHeaderFlexibleSpacerItemIOS,
   StackHeaderSupportsMenuIOS,
-  StackHeaderSupportsSharedBackgroundIOS,
+  StackHeaderSupportsInlineVisualModificationsIOS,
   StackHeaderSupportsVisibilityPriorityIOS,
   StackHeaderSupportsIdentifierIOS,
   StackHeaderConfigCommandsIOS,

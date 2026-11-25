@@ -14,13 +14,7 @@
   return self;
 }
 
-#pragma mark - Layout
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-  [_delegate splitPlainColumnContentViewDidLayoutSubviews:self];
-}
+#pragma mark - Window
 
 - (void)didMoveToWindow
 {

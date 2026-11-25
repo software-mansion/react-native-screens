@@ -6,14 +6,14 @@
 | ------------ | -------------------------------------------------- |
 | Key          | `test-stack-tabs-stack-in-tabs-header-persistence` |
 | Platforms    | Android                                            |
-| E2E coverage | TBD                                                |
+| E2E coverage | Incomplete                                         |
 | Smoke test   | No                                                 |
 
 | Device        | Test on      |
 | ------------- | ------------ |
 | Android phone | API Level 37 |
 
-**E2E coverage details:** Planned, but will be implemented separately.
+**E2E coverage details:** Check manually: step 1: the subtitle "Tab persistence" is shown; step 3: the subtitle "Tab persistence" is still shown; step 3: no flash of a re-built header when "Stack" comes back.
 
 <!-- scenario-metadata:end -->
 

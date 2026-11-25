@@ -1,6 +1,6 @@
 import React from 'react';
 import { ContainedModalHost } from './ContainedModalHost';
-import type { ContainedModalProps } from './ContainedModal.types';
+import type { ContainedModalReplacingContentProps } from './ContainedModalReplacingContent.types';
 
 /**
  * A modal presented in place of the content of a `ContainedModalProvider`.
@@ -25,9 +25,10 @@ import type { ContainedModalProps } from './ContainedModal.types';
  * content in place instead.
  *
  * @platform ios
- * @since 5.0
  * @experimental
  */
-export function ContainedModalReplacingContent(props: ContainedModalProps) {
+export function ContainedModalReplacingContent(
+  props: ContainedModalReplacingContentProps,
+) {
   return <ContainedModalHost {...props} presentationStyle="replacingContent" />;
 }

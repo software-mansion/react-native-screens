@@ -9,11 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @protocol RNSSplitPlainColumnContentViewDelegate
- * @brief Receives the layout and window changes of the content view of a plain Split column.
+ * @brief Receives the window changes of the content view of a plain Split column.
  */
 @protocol RNSSplitPlainColumnContentViewDelegate <NSObject>
 
-- (void)splitPlainColumnContentViewDidLayoutSubviews:(RNSSplitPlainColumnContentView *)contentView;
 - (void)splitPlainColumnContentViewDidMoveToWindow;
 
 @end

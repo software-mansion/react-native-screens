@@ -16,7 +16,6 @@ export const scenarioDescription: ScenarioDescription = {
       testOn: ['API Level 36'],
     },
   },
-  e2eCoverage: 'tbd',
-  e2eCoverageDetails: 'Planned, but will be implemented separately.',
+  e2eCoverage: 'full',
   smokeTest: false,
 };

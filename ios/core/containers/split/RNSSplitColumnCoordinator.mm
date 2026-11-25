@@ -6,8 +6,9 @@
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
 #import "RNSStackScreenHeaderCoordinator.h"
+#import "RNSViewFrameChangeDelegate.h"
 
-@interface RNSSplitColumnCoordinator () <RNSSplitPlainColumnContentViewDelegate>
+@interface RNSSplitColumnCoordinator () <RNSSplitPlainColumnContentViewDelegate, RNSViewFrameChangeDelegate>
 @end
 
 @implementation RNSSplitColumnCoordinator {
@@ -38,16 +39,16 @@
 }
 
 /**
- * @brief Returns the SplitHost controller the plain column is installed in.
+ * @brief Returns the SplitHost controller the column is installed in.
  *
- * The navigation controller of the plain column is asked, as the coordinator is not in the view controller hierarchy.
+ * The navigation controller of the column is asked, as the coordinator is not in the view controller hierarchy.
  *
  * @return `splitViewController` of the navigation controller if it is a RNSSplitHostController, otherwise nil (e.g.
  * for the inspector presented as a modal, outside the split hierarchy).
  */
 - (nullable RNSSplitHostController *)findSplitHostController
 {
-  UISplitViewController *splitViewController = _plainColumnNavigationController.splitViewController;
+  UISplitViewController *splitViewController = [self columnNavigationController].splitViewController;
   if ([splitViewController isKindOfClass:RNSSplitHostController.class]) {
     return (RNSSplitHostController *)splitViewController;
   }
@@ -77,6 +78,7 @@
     _plainColumnNavigationController = [RNSStackNavigationController new];
     _plainColumnNavigationController.viewControllers = @[ _plainColumnScreenController ];
     _plainColumnNavigationController.viewLifecycleEventsObserver = self;
+    _plainColumnNavigationController.viewFrameChangeDelegate = self;
   }
   return _plainColumnNavigationController;
 }
@@ -84,44 +86,66 @@
 - (void)releasePlainColumnNavigationController
 {
   _plainColumnNavigationController.viewLifecycleEventsObserver = nil;
+  _plainColumnNavigationController.viewFrameChangeDelegate = nil;
   _plainColumnNavigationController = nil;
+}
+
+- (void)setHostedStackNavigationController:(nullable RNSStackNavigationController *)hostedStackNavigationController
+{
+  _hostedStackNavigationController.viewLifecycleEventsObserver = nil;
+  _hostedStackNavigationController.viewFrameChangeDelegate = nil;
+  _hostedStackNavigationController = hostedStackNavigationController;
+  _hostedStackNavigationController.viewLifecycleEventsObserver = self;
+  _hostedStackNavigationController.viewFrameChangeDelegate = self;
+}
+
+/**
+ * @brief Returns the navigation controller the Split installs for the column.
+ *
+ * @return The navigation controller of the stack in a column that hosts one, otherwise the one of the plain column,
+ * which is nil until it is created.
+ */
+- (nullable RNSStackNavigationController *)columnNavigationController
+{
+  return _hostedStackNavigationController != nil ? _hostedStackNavigationController : _plainColumnNavigationController;
 }
 
 #pragma mark - Layout
 
+/**
+ * @brief Reports the frame of the column to the delegate.
+ *
+ * The frame of a column is the one of the view of its navigation controller. A column that is not on screen has no
+ * frame to report.
+ */
 - (void)reportColumnFrame
 {
+  UIView *columnView = [self columnNavigationController].viewIfLoaded;
+  if (columnView.window == nil) {
+    return;
+  }
+
   // For modals, which are presented outside the SplitHost subtree (and RN hierarchy),
   // we're attaching our touch handler and we don't need to apply any offset corrections,
   // because it's positioned relatively to the column view
   if (![self isInSplitHostSubtree]) {
-    [_delegate splitColumnCoordinator:self didChangeColumnFrame:_plainColumnContentView.frame];
+    [_delegate splitColumnCoordinator:self didChangeColumnFrame:columnView.bounds];
     return;
   }
 
   UIView *ancestorView = [self findSplitHostController].view;
   RNSAssert(ancestorView != nil, @"[RNScreens] Expected to find RNSSplitHost component for RNSSplitScreen component");
 
-  CGRect frame = [_plainColumnContentView convertRect:_plainColumnContentView.frame toView:ancestorView];
+  CGRect frame = [columnView convertRect:columnView.bounds toView:ancestorView];
   [_delegate splitColumnCoordinator:self didChangeColumnFrame:frame];
 }
 
 - (void)columnPositioningDidChange
 {
-  if (_plainColumnContentView.window == nil) {
-    // The column is not on screen, or it hosts a stack and its content view is not in the view hierarchy.
-    return;
-  }
-
   [self reportColumnFrame];
 }
 
 #pragma mark - RNSSplitPlainColumnContentViewDelegate
-
-- (void)splitPlainColumnContentViewDidLayoutSubviews:(RNSSplitPlainColumnContentView *)contentView
-{
-  [self reportColumnFrame];
-}
 
 - (void)splitPlainColumnContentViewDidMoveToWindow
 {
@@ -148,6 +172,16 @@
 - (void)viewControllerViewDidDisappear:(UIViewController *)viewController
 {
   [_delegate splitColumnDidDisappear:self];
+}
+
+#pragma mark - RNSViewFrameChangeDelegate
+
+/**
+ * Called when the navigation controller of the column lays out its view.
+ */
+- (void)viewFrameDidChange:(UIView *)view
+{
+  [self reportColumnFrame];
 }
 
 @end
