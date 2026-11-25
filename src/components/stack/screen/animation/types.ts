@@ -50,30 +50,9 @@ export type StackScreenAnimationLength = number | `${number}%`;
  * Name of a transition preset.
  *
  * @remarks
- * The following values are supported:
- * - `'default'` — a cross-zoom below API 33 and, from API 33 on, the
- *   horizontal slide of Android 13, which follows the layout direction.
- * - `'none'` — no visible animation.
- * - `'fade'` — the screens cross-fade.
- * - `'slideFromRight'` — the new screen slides in from the right and pushes
- *   the previous one out to the left; a pop reverses it.
- * - `'slideFromLeft'` — the new screen slides in from the left and pushes the
- *   previous one out to the right; a pop reverses it.
- * - `'slideFromBottom'` — the new screen slides up from the bottom over the
- *   previous one; a pop slides it back down.
- * - `'slideFromTop'` — the new screen slides down from the top over the
- *   previous one; a pop slides it back up.
- * - `'fadeFromBottom'` — the new screen fades in while rising from slightly
- *   below; a pop fades it out while it falls.
- * - `'fadeFromTop'` — the new screen fades in while falling from slightly
- *   above; a pop fades it out while it rises.
- * - `'iosFromRight'` — the new screen slides in from the right while the
- *   previous one moves partly to the left and dims; a pop reverses it.
- * - `'iosFromLeft'` — the new screen slides in from the left while the
- *   previous one moves partly to the right and dims; a pop reverses it.
- *
- * The edges in the names are physical: they are not mirrored in right-to-left
- * layouts.
+ * Accepts any {@link StackScreenAnimationUntimedPresetName},
+ * {@link StackScreenAnimationTimedPresetName} or
+ * {@link StackScreenAnimationFadeFromEdgePresetName} value.
  */
 export type StackScreenAnimationPresetName =
   | StackScreenAnimationUntimedPresetName
@@ -104,6 +83,13 @@ export interface StackScreenAnimationTimingOptions {
  * Names of the {@link StackScreenAnimationPresetName | presets} that accept
  * {@link StackScreenAnimationFadeFromEdgePresetRef.distance | distance} and the
  * timing options.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'fadeFromBottom'` — the new screen fades in while rising from slightly
+ *   below; a pop fades it out while it falls.
+ * - `'fadeFromTop'` — the new screen fades in while falling from slightly
+ *   above; a pop fades it out while it rises.
  */
 export type StackScreenAnimationFadeFromEdgePresetName =
   | 'fadeFromBottom'
@@ -112,6 +98,25 @@ export type StackScreenAnimationFadeFromEdgePresetName =
 /**
  * Names of the {@link StackScreenAnimationPresetName | presets} that accept
  * the timing options.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'fade'` — the screens cross-fade.
+ * - `'slideFromRight'` — the new screen slides in from the right and pushes
+ *   the previous one out to the left; a pop reverses it.
+ * - `'slideFromLeft'` — the new screen slides in from the left and pushes the
+ *   previous one out to the right; a pop reverses it.
+ * - `'slideFromBottom'` — the new screen slides up from the bottom over the
+ *   previous one; a pop slides it back down.
+ * - `'slideFromTop'` — the new screen slides down from the top over the
+ *   previous one; a pop slides it back up.
+ * - `'iosFromRight'` — the new screen slides in from the right while the
+ *   previous one moves partly to the left and dims; a pop reverses it.
+ * - `'iosFromLeft'` — the new screen slides in from the left while the
+ *   previous one moves partly to the right and dims; a pop reverses it.
+ *
+ * The edges in the names are physical: they are not mirrored in right-to-left
+ * layouts.
  */
 export type StackScreenAnimationTimedPresetName =
   | 'slideFromRight'
@@ -125,6 +130,12 @@ export type StackScreenAnimationTimedPresetName =
 /**
  * Names of the {@link StackScreenAnimationPresetName | presets} that accept no
  * options.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — a cross-zoom below API 33 and, from API 33 on, the
+ *   horizontal slide of Android 13, which follows the layout direction.
+ * - `'none'` — no visible animation.
  */
 export type StackScreenAnimationUntimedPresetName = 'default' | 'none';
 

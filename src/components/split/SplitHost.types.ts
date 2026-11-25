@@ -119,20 +119,8 @@ export type SplitDisplayMode =
  * Supported orientations of a Split.
  *
  * @remarks
- * The following values are currently supported:
- * - `'inherit'` — Split supports the same orientations as parent component,
- * - `'all'` — Split supports all orientations,
- * - `'allButUpsideDown'` — Split supports all but the upside-down portrait
- *   interface orientation,
- * - `'portrait'` — Split supports both portrait-up and portrait-down
- *   interface orientations,
- * - `'portraitUp'` — Split supports a portrait-up interface orientation,
- * - `'portraitDown'` — Split supports a portrait-down interface orientation,
- * - `'landscape'` — Split supports both landscape-left and landscape-right
- *   interface orientations,
- * - `'landscapeLeft'` — Split supports landscape-left interface orientation,
- * - `'landscapeRight'` — Split supports landscape-right interface
- *   orientation.
+ * Accepts any {@link InterfaceOrientation} value, plus:
+ * - `'inherit'` — Split supports the same orientations as parent component.
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask | UIInterfaceOrientationMask}
  */

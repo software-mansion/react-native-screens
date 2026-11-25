@@ -6,8 +6,8 @@ import type { TabsScreenIconIOS } from './TabsScreenIcon.types';
  * Blur effect applied to the tab bar.
  *
  * @remarks
- * Accepts any {@link BlurEffect} value and `'systemDefault'`, which uses
- * UIKit's default tab bar blur effect.
+ * Accepts any {@link BlurEffect} value, plus:
+ * - `'systemDefault'` — uses UIKit's default tab bar blur effect.
  */
 export type TabsBlurEffect = BlurEffect | 'systemDefault';
 
@@ -29,21 +29,6 @@ export type TabsScreenRole = 'search';
 
 /**
  * System-provided tab bar item with a predefined icon and title.
- *
- * @remarks
- * The following values are supported:
- * - `'bookmarks'`
- * - `'contacts'`
- * - `'downloads'`
- * - `'favorites'`
- * - `'featured'`
- * - `'history'`
- * - `'more'`
- * - `'mostRecent'`
- * - `'mostViewed'`
- * - `'recents'`
- * - `'search'`
- * - `'topRated'`
  *
  * @see {@link https://developer.apple.com/documentation/uikit/uitabbaritem/systemitem | UITabBarItem.SystemItem}
  */

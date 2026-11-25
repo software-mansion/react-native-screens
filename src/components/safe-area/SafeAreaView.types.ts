@@ -4,13 +4,6 @@ import { ViewProps } from 'react-native';
 
 /**
  * Edge of a view.
- *
- * @remarks
- * The following values are supported:
- * - `'top'`
- * - `'right'`
- * - `'bottom'`
- * - `'left'`
  */
 export type Edge = 'top' | 'right' | 'bottom' | 'left';
 
