@@ -9,6 +9,14 @@ export const scenarioDescription: ScenarioDescription = {
     '(tonal/elevation) state stays stable — does not flash — while scrolling, ' +
     'because the marker lets the app bar resolve the correct scroll view.',
   platforms: ['android'],
+  devices: ['android-phone'],
+  osVersions: {
+    'android-phone': {
+      createdOn: ['API Level 36'],
+      testOn: ['API Level 36'],
+    },
+  },
   e2eCoverage: 'incomplete',
+  e2eCoverageDetails: "We can't detect color flash with Detox.",
   smokeTest: false,
 };

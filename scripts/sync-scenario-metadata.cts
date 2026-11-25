@@ -11,9 +11,15 @@
 // The block is placed between SCENARIO_METADATA_START and SCENARIO_METADATA_END
 // markers. If a scenario.md has no block yet, it is inserted below the title.
 //
+// The whole scenario.md is then formatted with Prettier, which also owns the
+// list indentation of steps and expected-result checkboxes.
+//
 // Usage:
-//   node scripts/sync-scenario-metadata.cts           # write blocks
-//   node scripts/sync-scenario-metadata.cts --check   # fail if any block is outdated (CI)
+//   node scripts/sync-scenario-metadata.cts [dir...]           # write blocks
+//   node scripts/sync-scenario-metadata.cts --check [dir...]   # fail if any block
+//                                                              # or formatting is
+//                                                              # outdated (CI)
+// Without dirs, every scenario under apps/src/tests is processed.
 
 // Node's strip-only TypeScript support erases types without rewriting syntax, so
 // this CommonJS script must use `require` rather than `import`/`import =`.
@@ -21,6 +27,11 @@ const fs = require('node:fs') as typeof import('node:fs');
 const path = require('node:path') as typeof import('node:path');
 const vm = require('node:vm') as typeof import('node:vm');
 const ts = require('typescript') as typeof import('typescript');
+// Prettier 2 ships without type declarations.
+const prettier = require('prettier') as {
+  format: (source: string, options: object) => string;
+  resolveConfig: { sync: (file: string) => object | null };
+};
 
 type ScenarioDevice =
   | 'iphone'
@@ -35,7 +46,7 @@ interface ScenarioDescription {
   key: string;
   details?: string;
   platforms?: ('android' | 'ios')[];
-  devices?: ScenarioDevice[];
+  devices: ScenarioDevice[];
   osVersions?: Partial<
     Record<ScenarioDevice, { createdOn: string[]; testOn: string[] }>
   >;
@@ -68,6 +79,32 @@ const DEVICE_PLATFORMS: Record<ScenarioDevice, 'ios' | 'android'> = {
 
 const PLATFORM_LABELS = { ios: 'iOS', android: 'Android' } as const;
 
+// One OS version format per platform, also for iPad and iPhone Duo (no 'iPadOS').
+// iOS always has a minor version, so 'iOS 26' and 'iOS 26.0' cannot both appear.
+// Android allows a minor API level (e.g. 36.1 since Android 16 QPR2).
+const OS_VERSION_FORMATS = {
+  ios: {
+    pattern: /^iOS \d+\.\d+(\.\d+)?$/,
+    format: "'iOS <major>.<minor>[.<patch>]' (e.g. 'iOS 26.0')",
+  },
+  android: {
+    pattern: /^API Level \d+(\.\d+)?$/,
+    format: "'API Level <number>[.<minor>]' (e.g. 'API Level 36')",
+  },
+} as const;
+
+// The only `## Steps` headings allowed (guides/SCENARIO_RULES.md).
+const ALLOWED_STEPS_HEADINGS = new Set([
+  '## Steps',
+  '## Steps - iOS',
+  '## Steps - Android',
+  '## Steps - iPhone',
+  '## Steps - iPad',
+  '## Steps - iPhone Duo',
+  '## Steps - Android phone',
+  '## Steps - Android tablet',
+]);
+
 const E2E_COVERAGE_LABELS = {
   full: 'Full',
   incomplete: 'Incomplete',
@@ -84,6 +121,19 @@ const FORBIDDEN_MANUAL_CONTENT: { pattern: RegExp; field: string }[] = [
 
 const repoRoot = path.resolve(__dirname, '..');
 const testsRoot = path.join(repoRoot, 'apps', 'src', 'tests');
+const templateDir = path.join(testsRoot, 'template');
+
+// Test screens that do not have a scenario.md yet, relative to testsRoot.
+// Remove an entry once its scenario.md is written.
+const SCENARIOS_WITHOUT_SCENARIO_MD = new Set([
+  'component-integration-tests/orientation/orientation-stack-in-tabs',
+  'component-integration-tests/orientation/orientation-tabs-in-stack',
+  'single-feature-tests/split/test-command-show-column',
+  'single-feature-tests/split/test-top-column-for-collapsing',
+  'single-feature-tests/stack-v4/stack-v4-header-bar-minimization',
+  'single-feature-tests/stack-v4/stack-v4-header-bar-safe-area-adjustment',
+  'single-feature-tests/stack-v4/stack-v4-orientation',
+]);
 
 function findScenarioDirs(dir: string): string[] {
   const result: string[] = [];
@@ -92,7 +142,15 @@ function findScenarioDirs(dir: string): string[] {
       continue;
     }
     const entryPath = path.join(dir, entry.name);
-    if (fs.existsSync(path.join(entryPath, 'scenario-description.ts'))) {
+    if (entryPath === templateDir) {
+      continue;
+    }
+    // A scenario.md without a scenario-description.ts is picked up too, so
+    // main() reports the missing description instead of skipping the dir.
+    if (
+      fs.existsSync(path.join(entryPath, 'scenario-description.ts')) ||
+      fs.existsSync(path.join(entryPath, 'scenario.md'))
+    ) {
       result.push(entryPath);
     }
     result.push(...findScenarioDirs(entryPath));
@@ -148,6 +206,27 @@ function validate(description: ScenarioDescription): string[] {
       }
     }
   }
+  for (const [device, versions] of Object.entries(osVersions ?? {})) {
+    const platform = DEVICE_PLATFORMS[device as ScenarioDevice];
+    if (!platform || !versions) {
+      continue;
+    }
+    const { pattern, format } = OS_VERSION_FORMATS[platform];
+    for (const list of ['createdOn', 'testOn'] as const) {
+      const listVersions: unknown = versions[list];
+      if (!Array.isArray(listVersions)) {
+        errors.push(`\`osVersions.${device}.${list}\` must be a list`);
+        continue;
+      }
+      for (const version of listVersions) {
+        if (typeof version !== 'string' || !pattern.test(version)) {
+          errors.push(
+            `\`osVersions.${device}\` has '${version}', use the format ${format}`,
+          );
+        }
+      }
+    }
+  }
   return errors;
 }
 
@@ -183,7 +262,7 @@ function renderMetadata(description: ScenarioDescription): string {
   for (const device of devices) {
     const cells = [
       DEVICE_LABELS[device],
-      osVersions?.[device]?.testOn.join(', ') || 'not recorded',
+      osVersions?.[device]?.testOn?.join(', ') || 'not recorded',
     ];
     if (hasSetup) {
       const setup = deviceSetup?.[device];
@@ -202,6 +281,23 @@ function renderMetadata(description: ScenarioDescription): string {
 
   lines.push(SCENARIO_METADATA_END);
   return lines.join('\n');
+}
+
+// Prettier's Markdown output is not always stable after one pass (nested list
+// indentation can shift again), so format until the output stops changing.
+function formatMarkdown(markdown: string, file: string): string {
+  const options = { ...prettier.resolveConfig.sync(file), filepath: file };
+  let formatted = markdown;
+  for (let pass = 0; pass < 5; pass += 1) {
+    const next = prettier.format(formatted, options);
+    if (next === formatted) {
+      return formatted;
+    }
+    formatted = next;
+  }
+  throw new Error(
+    `${file}: Prettier output does not stabilize, fix the list indentation by hand`,
+  );
 }
 
 // Returns scenario.md content with the metadata block replaced or inserted.
@@ -237,20 +333,30 @@ function applyMetadata(markdown: string, block: string): string {
 function main(): void {
   const args = process.argv.slice(2);
   const check = args.includes('--check');
+  const dirs = args.filter(arg => !arg.startsWith('--'));
 
   const problems: string[] = [];
   let updated = 0;
 
-  for (const dir of findScenarioDirs(testsRoot)) {
+  const scenarioDirs =
+    dirs.length > 0
+      ? dirs.map(dir => path.resolve(dir))
+      : findScenarioDirs(testsRoot);
+  const seenTestsDirs = new Set<string>();
+  for (const dir of scenarioDirs) {
     const relativeDir = path.relative(repoRoot, dir);
-    const scenarioPath = path.join(dir, 'scenario.md');
-    if (!fs.existsSync(scenarioPath)) {
-      if (check) {
-        problems.push(`${relativeDir}/scenario.md: missing`);
-      }
+    if (!fs.existsSync(path.join(dir, 'scenario-description.ts'))) {
+      problems.push(
+        fs.existsSync(path.join(dir, 'scenario.md'))
+          ? `${relativeDir}/scenario-description.ts: missing (the scenario.md has no metadata source)`
+          : `${relativeDir}: not a scenario directory (no scenario-description.ts)`,
+      );
       continue;
     }
-
+    const scenarioPath = path.join(dir, 'scenario.md');
+    const testsDir = path.relative(testsRoot, dir).split(path.sep).join('/');
+    seenTestsDirs.add(testsDir);
+    const knownWithoutScenarioMd = SCENARIOS_WITHOUT_SCENARIO_MD.has(testsDir);
     let description: ScenarioDescription;
     try {
       description = loadScenarioDescription(
@@ -263,12 +369,6 @@ function main(): void {
       continue;
     }
 
-    // Scenarios without `devices` are not migrated yet; leave them alone in
-    // write mode, but keep --check strict.
-    if (!check && description.devices === undefined) {
-      continue;
-    }
-
     const errors = validate(description);
     if (errors.length > 0) {
       for (const error of errors) {
@@ -277,10 +377,27 @@ function main(): void {
       continue;
     }
 
+    // Checked after validating the description, so the exemption covers only
+    // the missing document, not the metadata.
+    if (!fs.existsSync(scenarioPath)) {
+      if (check && !knownWithoutScenarioMd) {
+        problems.push(`${relativeDir}/scenario.md: missing`);
+      }
+      continue;
+    }
+    if (knownWithoutScenarioMd) {
+      problems.push(
+        `${relativeDir}: has a scenario.md, remove it from SCENARIOS_WITHOUT_SCENARIO_MD`,
+      );
+    }
+
     const markdown = fs.readFileSync(scenarioPath, 'utf8');
     let expected: string;
     try {
-      expected = applyMetadata(markdown, renderMetadata(description));
+      expected = formatMarkdown(
+        applyMetadata(markdown, renderMetadata(description)),
+        scenarioPath,
+      );
     } catch (error) {
       problems.push(`${relativeDir}/scenario.md: ${(error as Error).message}`);
       continue;
@@ -297,17 +414,37 @@ function main(): void {
         );
       }
     }
+    for (const heading of expected.match(/^## Steps\b.*$/gm) ?? []) {
+      if (!ALLOWED_STEPS_HEADINGS.has(heading.trim())) {
+        problems.push(
+          `${relativeDir}/scenario.md: '${heading}' is not an allowed Steps heading, use one of: ${[
+            ...ALLOWED_STEPS_HEADINGS,
+          ].join(', ')}`,
+        );
+      }
+    }
 
     if (expected === markdown) {
       continue;
     }
     if (check) {
       problems.push(
-        `${relativeDir}/scenario.md: metadata block is missing or outdated`,
+        `${relativeDir}/scenario.md: metadata block or formatting is missing or outdated`,
       );
     } else {
       fs.writeFileSync(scenarioPath, expected);
       updated += 1;
+    }
+  }
+
+  // Only a full run sees every scenario directory.
+  if (dirs.length === 0) {
+    for (const testsDir of SCENARIOS_WITHOUT_SCENARIO_MD) {
+      if (!seenTestsDirs.has(testsDir)) {
+        problems.push(
+          `apps/src/tests/${testsDir}: listed in SCENARIOS_WITHOUT_SCENARIO_MD but has no scenario-description.ts, remove the entry`,
+        );
+      }
     }
   }
 
@@ -333,9 +470,12 @@ function writeScenarioMetadata(dir: string): void {
   );
   fs.writeFileSync(
     scenarioPath,
-    applyMetadata(
-      fs.readFileSync(scenarioPath, 'utf8'),
-      renderMetadata(description),
+    formatMarkdown(
+      applyMetadata(
+        fs.readFileSync(scenarioPath, 'utf8'),
+        renderMetadata(description),
+      ),
+      scenarioPath,
     ),
   );
 }

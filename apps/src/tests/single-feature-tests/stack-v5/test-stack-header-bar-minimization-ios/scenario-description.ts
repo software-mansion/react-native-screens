@@ -8,6 +8,10 @@ export const scenarioDescription: ScenarioDescription = {
     'restorationBehavior. A single stack screen hosts a long scroll view with both ' +
     'pickers at its top.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 27.0'], testOn: ['iOS 27.0'] },
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

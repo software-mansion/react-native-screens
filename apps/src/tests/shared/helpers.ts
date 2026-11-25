@@ -44,7 +44,7 @@ export interface ScenarioDescription {
    * - 'android-phone': Android phone.
    * - 'android-tablet': Android tablet or foldable.
    */
-  devices?: ScenarioDevice[];
+  devices: ScenarioDevice[];
   /**
    * OS versions per device. Keys must be listed in `devices`.
    * - `createdOn`: versions the scenario was written on and confirmed to work.

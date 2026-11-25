@@ -6,6 +6,13 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Header items and push/pop of a Stack.Host that navigates a Split column.',
   platforms: ['ios'],
+  devices: ['ipad'],
+  osVersions: {
+    ipad: { createdOn: ['iOS 27.0'], testOn: ['iOS 27.0'] },
+  },
+  deviceSetup: {
+    ipad: 'Landscape, so that both columns are visible.',
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };

@@ -10,6 +10,25 @@ export const scenarioDescription: ScenarioDescription = {
     ' `tabBarItemIconSize` and active indicator size; iOS custom SF' +
     ' Symbols from the asset catalog.',
   platforms: ['ios', 'android'],
+  devices: ['iphone', 'android-phone'],
+  osVersions: {
+    iphone: {
+      createdOn: ['iOS 18.6', 'iOS 26.5'],
+      testOn: ['iOS 18.6', 'iOS 26.5'],
+    },
+    'android-phone': {
+      createdOn: ['API Level 36'],
+      testOn: ['API Level 36'],
+    },
+  },
+  deviceSetup: {
+    iphone:
+      'Portrait orientation; it is the primary verification surface (stacked layout).',
+    'android-phone':
+      'Portrait orientation; it is the primary verification surface (stacked layout).',
+  },
   e2eCoverage: 'incomplete',
+  e2eCoverageDetails:
+    'Not automated. All observable outcomes are purely visual (icon color, icon size, active indicator size). Detox does not expose tint color, rendered image attributes or drawable bounds of native tab bar items, so automated assertion is not feasible.',
   smokeTest: false,
 };

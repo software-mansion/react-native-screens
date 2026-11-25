@@ -8,16 +8,16 @@ Rules for writing `scenario.md` files. Start from the template in
 `scenario-description.ts` is the only place for the scenario's metadata. Do not
 write it by hand in `scenario.md`:
 
-| Information | `scenario-description.ts` field |
-| ----------- | ------------------------------- |
-| Short description shown in the example app | `details` |
-| Platforms | `platforms` |
-| Devices the scenario must run on | `devices` |
+| Information                                                                    | `scenario-description.ts` field      |
+| ------------------------------------------------------------------------------ | ------------------------------------ |
+| Short description shown in the example app                                     | `details`                            |
+| Platforms                                                                      | `platforms`                          |
+| Devices the scenario must run on                                               | `devices`                            |
 | OS versions to test on and OS versions the scenario was created on, per device | `osVersions` (`testOn`, `createdOn`) |
-| Setup a device needs (orientation, window size, size class, posture set) | `deviceSetup` |
-| E2E coverage status | `e2eCoverage` |
-| What the E2E test covers and why the rest is not automated | `e2eCoverageDetails` |
-| Smoke test | `smokeTest` |
+| Setup a device needs (orientation, window size, size class, posture set)       | `deviceSetup`                        |
+| E2E coverage status                                                            | `e2eCoverage`                        |
+| What the E2E test covers and why the rest is not automated                     | `e2eCoverageDetails`                 |
+| Smoke test                                                                     | `smokeTest`                          |
 
 `scenario.md` holds only:
 
@@ -41,11 +41,19 @@ The block between `<!-- scenario-metadata:start ... -->` and
 yarn sync-scenario-metadata
 ```
 
-`yarn sync-scenario-metadata --check` fails when a block is missing or
-does not match `scenario-description.ts`, when `scenario.md` has a hand-written
+Pass one or more test directories to update only those scenarios, e.g.
+`yarn sync-scenario-metadata apps/src/tests/single-feature-tests/tabs/test-tabs-item-badge`.
+The script also formats the whole `scenario.md` with Prettier.
+
+CI (Lint workflow) runs `yarn sync-scenario-metadata --check`. It fails when a block
+is missing or does not match `scenario-description.ts`, when `scenario.md` is
+not formatted with Prettier, when `scenario.md` has a hand-written
 `## Details`, `## E2E test`, `## Prerequisites` or `**OS test creation
 version:**`, or when the metadata is inconsistent (e.g. an `osVersions` key not
-in `devices`, an iOS device without `'ios'` in `platforms`).
+in `devices`, an iOS device without `'ios'` in `platforms`). A few older test
+screens have no `scenario.md` yet; they are listed in
+`SCENARIOS_WITHOUT_SCENARIO_MD` in `scripts/sync-scenario-metadata.cts`. Do not
+add new entries; remove an entry when you write its `scenario.md`.
 
 ### Example
 
@@ -86,6 +94,12 @@ back and forth.
   and iOS 26 when the expected results differ between them).
 - `createdOn` - OS versions the scenario was written on and confirmed to work.
   It stays in `scenario-description.ts` only and is not shown in `scenario.md`.
+
+Write versions as `iOS <major>.<minor>` for every iOS device, including iPad
+and iPhone Duo (`'iOS 26.5'` or `'iOS 26.0'`, not `'iOS 26'` or
+`'iPadOS 26.5'`), and as `API Level <number>` for Android devices
+(`'API Level 36'`, or `'API Level 36.1'` for a minor SDK release).
+`yarn sync-scenario-metadata --check` fails on any other format.
 
 The generated table has one row per device in `devices` and no other devices,
 with columns Device, Test on (and Setup when any device has
@@ -138,9 +152,25 @@ rule (`---`). When referring to another step, always name its section and
 subsection, e.g. "Baseline step 2" or "iPhone Duo, Unfolding step 1" - a bare
 "step 2" is ambiguous.
 
-**Indentation Convention:** Expected-result checkboxes must be nested under
-their numbered step, and wrapped lines must stay inside their list item,
-following the [CommonMark list item rules](https://spec.commonmark.org/current/#list-items).
+**Indentation Convention:** Write each expected-result checkbox nested under
+its numbered step, following the
+[CommonMark list item rules](https://spec.commonmark.org/current/#list-items):
+indent it to the column where the step's text starts (3 spaces under `1. Action`).
+Prettier, which `yarn sync-scenario-metadata` runs on `scenario.md`, then
+formats the indentation. It keeps the structure you wrote, so make the nesting
+right first:
+
+```text
+1. Tap the button.
+
+   - [ ] The label updates.
+```
+
+Avoid these, Prettier leaves them broken:
+
+- `- [ ]` at column 0 under a step starts a new list instead of nesting,
+- `- [ ]` indented 4 or more extra spaces after a blank line becomes a code
+  block and does not render as a checkbox.
 
 ### How to write OS and device differences
 
@@ -159,6 +189,7 @@ Keep one `scenario.md` per test. Do not create per-device files
   ```
 
 - **Platform and device sections** use exactly one of these headings:
+
   - platform: `## Steps - iOS`, `## Steps - Android` - for steps whose
     expected result is shared by every listed device of that platform,
   - device: `## Steps - iPhone`, `## Steps - iPad`, `## Steps - iPhone Duo`,
@@ -168,6 +199,10 @@ Keep one `scenario.md` per test. Do not create per-device files
   Add a section **only for steps whose expected result differs**. Steps that
   behave the same everywhere stay in the base `## Steps`. A step goes into
   either the platform section or the device sections, never both.
+  `yarn sync-scenario-metadata --check` fails on any other `## Steps`
+  heading; put OS versions and other qualifiers in `###` subsections or
+  checkbox prefixes instead.
+
 - **Device-only scenarios.** If no step is shared by all listed devices (e.g. a
   test run only on iPad and iPhone Duo), skip the base `## Steps` and write one
   `## Steps - <device>` section per device.
@@ -178,13 +213,13 @@ Keep one `scenario.md` per test. Do not create per-device files
 
 ### Where device-specific bugs and tests go
 
-| Case | Example | How to handle it |
-| ---- | ------- | ---------------- |
-| Generic feature, bug found only on one device | blinking back button on Duo | Add the step that caught the bug to the `## Steps - <device>` section of the **generic** test's `scenario.md`, with the posture/setup where it reproduces. Add the device to that test's `devices`. The issue test (`issue-tests/TestXXXX`) stays only for reproducing and fixing the bug - it has no `scenario-description.ts`, so it does not carry `devices` and is not on the release list. |
-| Shared feature that looks or behaves differently on a device | vertical tab bar on Duo, sidebar on iPad | Same `scenario.md`, plus a `## Steps - <device>` section only for the differing steps; posture set / setup in `deviceSetup`. |
-| Device-only feature, same screen works for it | a Duo-only prop | Normal test dir with the platform suffix (`-ios`) and `devices: ['iphone-duo']`; the whole `scenario.md` is the device scenario with its own posture set. |
-| Same feature, but the device needs a **different `index.tsx`** (different layout) | a generic `test-tabs-foo-ios` exists, Duo needs its own screen | Create a separate test dir named after the generic one with the device suffix instead of the platform suffix: `test-tabs-foo-duo` (`-ipad` for iPad). `devices` lists only that device. The generic test does not list the device. |
-| Native platform bug, not fixable in the library | UIKit layout bug on fold | Record it in `## Note` as a Known issue with a link, not as a failing step. |
+| Case                                                                              | Example                                                        | How to handle it                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Generic feature, bug found only on one device                                     | blinking back button on Duo                                    | Add the step that caught the bug to the `## Steps - <device>` section of the **generic** test's `scenario.md`, with the posture/setup where it reproduces. Add the device to that test's `devices`. The issue test (`issue-tests/TestXXXX`) stays only for reproducing and fixing the bug - it has no `scenario-description.ts`, so it does not carry `devices` and is not on the release list. |
+| Shared feature that looks or behaves differently on a device                      | vertical tab bar on Duo, sidebar on iPad                       | Same `scenario.md`, plus a `## Steps - <device>` section only for the differing steps; posture set / setup in `deviceSetup`.                                                                                                                                                                                                                                                                    |
+| Device-only feature, same screen works for it                                     | a Duo-only prop                                                | Normal test dir with the platform suffix (`-ios`) and `devices: ['iphone-duo']`; the whole `scenario.md` is the device scenario with its own posture set.                                                                                                                                                                                                                                       |
+| Same feature, but the device needs a **different `index.tsx`** (different layout) | a generic `test-tabs-foo-ios` exists, Duo needs its own screen | Create a separate test dir named after the generic one with the device suffix instead of the platform suffix: `test-tabs-foo-duo` (`-ipad` for iPad). `devices` lists only that device. The generic test does not list the device.                                                                                                                                                              |
+| Native platform bug, not fixable in the library                                   | UIKit layout bug on fold                                       | Record it in `## Note` as a Known issue with a link, not as a failing step.                                                                                                                                                                                                                                                                                                                     |
 
 ### Steps example
 

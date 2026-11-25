@@ -148,9 +148,7 @@ function main(): void {
   console.log(
     '  - scenario.md (from template, metadata block generated from scenario-description.ts)',
   );
-  console.log(
-    'Before writing the scenario, read guides/SCENARIO_RULES.md',
-  );
+  console.log('Before writing the scenario, read guides/SCENARIO_RULES.md');
   console.log(
     'After editing scenario-description.ts, run `yarn sync-scenario-metadata` to update scenario.md',
   );

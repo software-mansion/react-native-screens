@@ -6,6 +6,13 @@ export const scenarioDescription: ScenarioDescription = {
   details:
     'Tests header item appearance: regular, disabled, prominent and prominent disabled items, moving items to the overflow menu, item tint color, and button / prominent button / back button text attributes configured via header appearance.',
   platforms: ['ios'],
+  devices: ['iphone'],
+  osVersions: {
+    iphone: { createdOn: ['iOS 26.5'], testOn: ['iOS 26.5'] },
+  },
+  deviceSetup: {
+    iphone: 'A Pro Max model.',
+  },
   e2eCoverage: 'tbd',
   smokeTest: false,
 };
