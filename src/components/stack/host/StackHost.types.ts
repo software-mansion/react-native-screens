@@ -3,6 +3,7 @@ import type { HostInstance, ViewProps } from 'react-native';
 import type {
   ColorScheme,
   Direction,
+  NativeEventHandler,
   NavStateActionOrigin,
 } from '../../shared/types';
 
@@ -14,27 +15,8 @@ import type {
  *
  * @remarks
  * The request describes the whole stack JS wants, not an operation. The native
- * side compares it with the stack it holds and applies the difference as a
- * single transition. The top of the stack decides the kind of that transition:
- * - the top stays the same — the change is applied without animation, such as
- *   a removal from the middle of the stack;
- * - the new top is in the current stack — a pop, such as a pop, a multi-pop
- *   or a pop-to;
- * - the new top is not in the current stack and the current top stays in the
- *   stack — a push, such as a push or a multi-push;
- * - the new top is not in the current stack and the current top leaves it — a
- *   replace, such as a replace or a reset.
- *
- * How the transition looks is decided by the {@link Stack.Screen} components
- * involved.
- *
- * The request is rejected and
- * {@link StackHostProps.onNavStateRequestRejected | onNavStateRequestRejected}
- * is called when the target is not valid (`'invalid'`), when it equals the
- * current stack (`'repeated'`), or when it is based on an outdated state
- * (`'stale'`, see
- * {@link StackHostProps.rejectStaleNavStateUpdates | rejectStaleNavStateUpdates}).
- * The reasons are checked in this order.
+ * side may reject it, see
+ * {@link StackHostProps.onNavStateRequestRejected | onNavStateRequestRejected}.
  */
 export type StackNavStateRequest = {
   /**
@@ -50,15 +32,9 @@ export type StackNavStateRequest = {
    * example a counter. It must fit in a signed 32-bit integer, so `Date.now()`
    * cannot be used.
    *
-   * A new `requestId` lets JS send the same `stack` again, for example to
-   * retry a request rejected as `'invalid'` once the missing screen is
-   * rendered.
-   *
    * Changing `stack` or `baseProvenance` while keeping the `requestId` is a
    * programmer error: the native side ignores the change and warns in
    * development builds.
-   *
-   * @platform android, ios
    */
   requestId: number;
   /**
@@ -77,8 +53,6 @@ export type StackNavStateRequest = {
    * - keeps the relative order of the screens that stay in the stack.
    *
    * Screens can be inserted and removed at any position.
-   *
-   * @platform android, ios
    */
   stack: readonly string[];
   /**
@@ -93,8 +67,6 @@ export type StackNavStateRequest = {
    *
    * A base that is neither {@link Provenance.INITIAL} nor a provenance this
    * {@link Stack.Host} has reported makes the request `'invalid'`.
-   *
-   * @platform android, ios
    */
   baseProvenance: number;
 };
@@ -107,9 +79,7 @@ export type StackNavStateRequest = {
  * - `'user'` — a native UI action, such as the back button, the back gesture,
  *   the back-button menu on iOS, or the system back on Android.
  * - `'programmaticJs'` — a change requested from JS through
- *   {@link StackHostProps.navStateRequest | navStateRequest}, or the removal
- *   of a screen that was in the stack when its {@link Stack.Screen} was
- *   unmounted.
+ *   {@link StackHostProps.navStateRequest | navStateRequest}.
  * - `'programmaticNative'` — a change requested by native code that
  *   integrates directly with the native container, such as a pop to the root
  *   when the tab that hosts the stack is selected again.
@@ -142,8 +112,6 @@ export type StackNavStateRejectionReason = 'stale' | 'repeated' | 'invalid';
 export type StackNavStateChangedEvent = {
   /**
    * Screen keys of the stack after the change, from the bottom to the top.
-   *
-   * @platform android, ios
    */
   stack: string[];
   /**
@@ -152,14 +120,10 @@ export type StackNavStateChangedEvent = {
    * @remarks
    * Pass it as {@link StackNavStateRequest.baseProvenance | baseProvenance}
    * of the next request.
-   *
-   * @platform android, ios
    */
   provenance: number;
   /**
    * Origin (actor) of the change.
-   *
-   * @platform android, ios
    */
   actionOrigin: StackActionOrigin;
 };
@@ -175,33 +139,23 @@ export type StackNavStateChangedEvent = {
 export type StackNavStateRequestRejectedEvent = {
   /**
    * Screen keys of the current (unchanged) stack, from the bottom to the top.
-   *
-   * @platform android, ios
    */
   stack: string[];
   /**
    * Provenance of the current stack state.
-   *
-   * @platform android, ios
    */
   provenance: number;
   /**
    * {@link StackNavStateRequest.stack | stack} of the rejected request.
-   *
-   * @platform android, ios
    */
   rejectedStack: string[];
   /**
    * {@link StackNavStateRequest.baseProvenance | baseProvenance} of the
    * rejected request.
-   *
-   * @platform android, ios
    */
   rejectedBaseProvenance: number;
   /**
    * Reason the request was rejected.
-   *
-   * @platform android, ios
    */
   rejectionReason: StackNavStateRejectionReason;
 };
@@ -212,8 +166,6 @@ export type StackNavStateRequestRejectedEvent = {
 export type StackScreensReleasedEvent = {
   /**
    * Keys of the screens the native side no longer holds.
-   *
-   * @platform android, ios
    */
   screenKeys: string[];
 };
@@ -225,14 +177,10 @@ export type StackScreensReleasedEvent = {
 export type StackNativeDismissPreventedEvent = {
   /**
    * Screen keys of the current (unchanged) stack, from the bottom to the top.
-   *
-   * @platform android
    */
   stack: string[];
   /**
    * Provenance of the current stack state.
-   *
-   * @platform android
    */
   provenance: number;
   /**
@@ -243,8 +191,6 @@ export type StackNativeDismissPreventedEvent = {
    * @remarks
    * A dismissal of several screens at once is prevented as a whole if any of
    * them prevents it.
-   *
-   * @platform android
    */
   preventedScreenKeys: string[];
 };
@@ -302,9 +248,6 @@ export type StackHostProps = {
    * animation, and its {@link StackNavStateRequest.baseProvenance | baseProvenance}
    * should be {@link Provenance.INITIAL}.
    *
-   * Unmounting a {@link Stack.Screen} whose key is in the stack removes it from
-   * the stack, as a change with the `'programmaticJs'` origin.
-   *
    * @see {@link StackNavStateRequest} for the request fields and the rules a
    *   request must follow.
    * @platform android, ios
@@ -342,7 +285,7 @@ export type StackHostProps = {
    *
    * @platform android, ios
    */
-  onNavStateChanged?: ((event: StackNavStateChangedEvent) => void) | undefined;
+  onNavStateChanged?: NativeEventHandler<StackNavStateChangedEvent> | undefined;
   /**
    * Called when the native side rejects a
    * {@link StackHostProps.navStateRequest | navStateRequest}.
@@ -351,7 +294,7 @@ export type StackHostProps = {
    * @platform android, ios
    */
   onNavStateRequestRejected?:
-    | ((event: StackNavStateRequestRejectedEvent) => void)
+    | NativeEventHandler<StackNavStateRequestRejectedEvent>
     | undefined;
   /**
    * Called when screens removed from the stack are no longer needed by the
@@ -369,7 +312,7 @@ export type StackHostProps = {
    *
    * @platform android, ios
    */
-  onScreensReleased?: ((event: StackScreensReleasedEvent) => void) | undefined;
+  onScreensReleased?: NativeEventHandler<StackScreensReleasedEvent> | undefined;
   /**
    * Called when the user tries to dismiss screens natively, but a screen with
    * {@link StackScreenProps.preventNativeDismiss | preventNativeDismiss}
@@ -378,7 +321,7 @@ export type StackHostProps = {
    * @platform android
    */
   onNativeDismissPrevented?:
-    | ((event: StackNativeDismissPreventedEvent) => void)
+    | NativeEventHandler<StackNativeDismissPreventedEvent>
     | undefined;
 
   // General

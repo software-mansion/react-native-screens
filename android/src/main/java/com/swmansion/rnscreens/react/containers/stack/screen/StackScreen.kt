@@ -145,10 +145,8 @@ internal class StackScreen(
     override val appearanceEventEmitter: ViewAppearanceEventEmitter
         get() = eventEmitter
 
-    // Leaving the stack is reported by the stack host (`onNavStateChanged`, `onScreensReleased`), not by the screen.
-    override fun onDismiss() = Unit
-
-    // A prevented dismissal is reported by the stack host (`onNativeDismissPrevented`), not by the screen.
+    // The veto logic reports a prevented dismissal here. The stack host emits it as `onNativeDismissPrevented`;
+    // forwarding it to the host is not wired yet.
     override fun onNativeDismissPrevented() = Unit
 
     override val view: View

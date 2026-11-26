@@ -163,11 +163,6 @@ namespace react = facebook::react;
   [self.reactEventEmitter emitOnDidDisappear];
 }
 
-- (void)stackScreenControllerDidLeaveStack:(RNSStackScreenController *)controller
-{
-  // Leaving the stack is reported by the stack host (`onNavStateChanged`, `onScreensReleased`), not by the screen.
-}
-
 #pragma mark - RNSSafeAreaProviding
 
 - (UIEdgeInsets)providerSafeAreaInsets

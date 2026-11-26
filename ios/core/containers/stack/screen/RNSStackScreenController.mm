@@ -83,8 +83,6 @@
     // so this runs before a queued push applies its own config.
     [_headerCoordinator clearAppliedBackButtonConfig];
 #endif // !TARGET_OS_TV
-
-    [_delegate stackScreenControllerDidLeaveStack:self];
   }
 }
 
