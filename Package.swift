@@ -77,6 +77,7 @@ let excludedPaths: [String] = [
     "lib",
     "node_modules",
     "private",
+    "react-native-screens-testing",
     "react-navigation",
     "reanimated",
     "release_tests",
