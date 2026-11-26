@@ -1,0 +1,44 @@
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import FullScreenModalHostNativeComponent from '../../../fabric/modals/full-screen-modal/FullScreenModalHostNativeComponent';
+import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
+import type { FullScreenModalProps } from './FullScreenModal.types';
+
+/**
+ * UIKit `modalPresentationStyle` the full-screen modal host presents with.
+ * Pinned by each public component; never exposed on their props.
+ */
+export type FullScreenModalPresentationStyle =
+  | 'replacingContent'
+  | 'overContent';
+
+export interface FullScreenModalBaseProps extends FullScreenModalProps {
+  presentationStyle: FullScreenModalPresentationStyle;
+}
+
+/**
+ * Shared implementation of `FullScreenModalReplacingContent` and
+ * `FullScreenModalOverContent`. Mounts the shared native host.
+ */
+export function FullScreenModalBase({
+  children,
+  ...rest
+}: FullScreenModalBaseProps) {
+  return (
+    <FullScreenModalHostNativeComponent style={styles.host} {...rest}>
+      <SplitColumnMarkerContext.Provider value={false}>
+        {children}
+      </SplitColumnMarkerContext.Provider>
+    </FullScreenModalHostNativeComponent>
+  );
+}
+
+const styles = StyleSheet.create({
+  // Absolute: the host is an empty anchor and must not take part in sibling
+  // layout. top/left pin it to a predictable origin.
+  host: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+});
