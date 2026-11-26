@@ -29,6 +29,8 @@ export interface SheetBaseProps extends SheetProps {
  * shared native host.
  */
 export function SheetBase(props: SheetBaseProps) {
+  const { ios, ...baseProps } = props;
+
   const {
     children,
     detents,
@@ -36,10 +38,9 @@ export function SheetBase(props: SheetBaseProps) {
     largestUndimmedDetentIndex,
     preferredCornerRadius,
     nativeContainerStyle,
-    ios,
     presentationStyle,
-    ...rest
-  } = props;
+    ...filteredBaseProps
+  } = baseProps;
 
   const nativeCornerRadius = resolveNativeCornerRadius(preferredCornerRadius);
   const nativeDetents = resolveNativeDetents(detents);
@@ -70,7 +71,7 @@ export function SheetBase(props: SheetBaseProps) {
         StyleSheet.flatten(nativeContainerStyle)?.backgroundColor
       }
       {...resolveNativeBackgroundEffect(ios?.backgroundEffect)}
-      {...rest}>
+      {...filteredBaseProps}>
       <SplitColumnMarkerContext.Provider value={false}>
         {isFitToContents ? (
           <SheetContentWrapperNativeComponent

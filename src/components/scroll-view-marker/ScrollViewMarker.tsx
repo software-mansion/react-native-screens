@@ -13,7 +13,7 @@ import type { ScrollViewMarkerProps } from './ScrollViewMarker.types';
  * @platform android, ios
  */
 export function ScrollViewMarker(props: ScrollViewMarkerProps) {
-  const { ios, ...rest } = props;
+  const { ios, ...baseProps } = props;
   const scrollEdgeEffects = ios?.scrollEdgeEffects;
 
   return (
@@ -22,7 +22,7 @@ export function ScrollViewMarker(props: ScrollViewMarkerProps) {
       topScrollEdgeEffect={scrollEdgeEffects?.top}
       rightScrollEdgeEffect={scrollEdgeEffects?.right}
       bottomScrollEdgeEffect={scrollEdgeEffects?.bottom}
-      {...rest}
+      {...baseProps}
     />
   );
 }
