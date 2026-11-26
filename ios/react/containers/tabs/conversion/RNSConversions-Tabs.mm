@@ -338,6 +338,21 @@ RNSTabsScreenSystemItem RNSTabsScreenSystemItemFromReactRNSTabsScreenSystemItem(
   }
 }
 
+RNSTabsScreenAnimation RNSTabsScreenAnimationFromRNSTabsScreenIOSAnimation(react::RNSTabsScreenIOSAnimation animation)
+{
+  using enum facebook::react::RNSTabsScreenIOSAnimation;
+
+  switch (animation) {
+    case Default:
+      return RNSTabsScreenAnimationDefault;
+    case None:
+      return RNSTabsScreenAnimationNone;
+    default:
+      RCTLogError(@"[RNScreens] unsupported tabs screen animation");
+      return RNSTabsScreenAnimationDefault;
+  }
+}
+
 RNSTabsScreenTabRole RNSTabsScreenTabRoleFromReactRNSTabsScreenTabRole(react::RNSTabsScreenIOSTabRole tabRole)
 {
   using enum facebook::react::RNSTabsScreenIOSTabRole;

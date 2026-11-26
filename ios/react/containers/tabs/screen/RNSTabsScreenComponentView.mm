@@ -74,6 +74,7 @@ namespace react = facebook::react;
   _title = nil;
   _isTitleUndefined = YES;
   _orientation = RNSOrientationInherit;
+  _animation = RNSTabsScreenAnimationDefault;
 
   _standardAppearance = [UITabBarAppearance new];
   _scrollEdgeAppearance = nil;
@@ -236,6 +237,12 @@ RNS_IGNORE_SUPER_CALL_END
   if (newComponentProps.orientation != oldComponentProps.orientation) {
     _orientation = rnscreens::conversion::RNSOrientationFromRNSTabsScreenOrientation(newComponentProps.orientation);
     tabScreenOrientationNeedsUpdate = YES;
+  }
+
+  if (newComponentProps.animation != oldComponentProps.animation) {
+    // Read by the tab bar controller when the transition to this screen starts, no invalidation needed.
+    _animation =
+        rnscreens::conversion::RNSTabsScreenAnimationFromRNSTabsScreenIOSAnimation(newComponentProps.animation);
   }
 
   if (newComponentProps.screenKey != oldComponentProps.screenKey) {

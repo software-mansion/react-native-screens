@@ -65,6 +65,37 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 #endif // RNS_MORE_NAVIGATION_CONTROLLER_AVAILABLE
 
+/**
+ * Switches tabs without any visible animation. Returned from
+ * `tabBarController:animationControllerForTransitionFromViewController:toViewController:` for screens with
+ * `animation: 'none'`. Returning nil there would keep UIKit's default transition (a cross-fade on iOS 18 and 26), so an
+ * explicit zero-duration animator is needed.
+ */
+@interface RNSTabsInstantTransitionAnimator : NSObject <UIViewControllerAnimatedTransitioning>
+@end
+
+@implementation RNSTabsInstantTransitionAnimator
+
+- (NSTimeInterval)transitionDuration:(nullable id<UIViewControllerContextTransitioning>)transitionContext
+{
+  return 0;
+}
+
+- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+  UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+  UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey] ?: toViewController.view;
+  UIView *_Nullable fromView = [transitionContext viewForKey:UITransitionContextFromViewKey];
+
+  toView.frame = [transitionContext finalFrameForViewController:toViewController];
+  [transitionContext.containerView addSubview:toView];
+  [fromView removeFromSuperview];
+
+  [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
+}
+
+@end
+
 @implementation RNSTabBarController {
   NSArray<RNSTabsScreenViewController *> *_Nullable _tabScreenControllers;
 
@@ -527,6 +558,21 @@ static void rns_pushViewController(__unsafe_unretained id self,
 
   [self userDidSelectViewController:viewController];
   _isHandlingExplicitSelectionUpdate = NO;
+}
+
+- (nullable id<UIViewControllerAnimatedTransitioning>)tabBarController:(UITabBarController *)tabBarController
+                    animationControllerForTransitionFromViewController:(UIViewController *)fromVC
+                                                      toViewController:(UIViewController *)toVC
+{
+  // The destination screen decides. `toVC` is `moreNavigationController` when the More tab gets selected - there is
+  // no screen to ask, so the system transition is kept.
+  if ([toVC isKindOfClass:RNSTabsScreenViewController.class] &&
+      static_cast<RNSTabsScreenViewController *>(toVC).configProvider.animation == RNSTabsScreenAnimationNone) {
+    return [RNSTabsInstantTransitionAnimator new];
+  }
+
+  // nil -> UIKit's default transition.
+  return nil;
 }
 
 #if RNS_UITAB_API_SDK_AVAILABLE
