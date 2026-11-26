@@ -16,6 +16,10 @@ internal class SheetBehaviorController(
     private var lastStableState: Int = BottomSheetBehavior.STATE_COLLAPSED
     private var lastSlideOffset: Float = 0f
 
+    // `onSlide` reads a downward frame of a settle as Material hiding the sheet. That no longer holds
+    // once we cancel a hide or the detents change mid-settle, so detection stays off until the settle ends.
+    private var isSettleOwnedByController: Boolean = false
+
     /**
      * Invoked once Material starts sliding the sheet below its lowest detent to hide it, e.g. after a swipe down.
      * Return `true` to cancel hiding - the sheet settles back at its last stable detent.
@@ -28,6 +32,9 @@ internal class SheetBehaviorController(
                 bottomSheet: View,
                 newState: Int,
             ) {
+                if (newState != BottomSheetBehavior.STATE_SETTLING) {
+                    isSettleOwnedByController = false
+                }
                 rememberStateIfStable(newState)
 
                 val index = mapStateToDetentIndex(newState)
@@ -45,11 +52,13 @@ internal class SheetBehaviorController(
                 // the state it settles to, and it reports STATE_HIDDEN only after the sheet left the screen.
                 val isHiding =
                     behavior.state == BottomSheetBehavior.STATE_SETTLING &&
+                        !isSettleOwnedByController &&
                         slideOffset < lastSlideOffset &&
                         (behavior.skipCollapsed || slideOffset < 0f)
                 lastSlideOffset = slideOffset
 
                 if (isHiding && onHideAttempt?.invoke() == true) {
+                    isSettleOwnedByController = true
                     behavior.state = lastStableState
                 }
             }
@@ -121,6 +130,10 @@ internal class SheetBehaviorController(
 
         if (sheetAvailableSpace <= 0) {
             return
+        }
+
+        if (behavior.state == BottomSheetBehavior.STATE_SETTLING) {
+            isSettleOwnedByController = true
         }
 
         if (detents.isFitToContents) {
