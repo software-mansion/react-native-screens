@@ -115,6 +115,9 @@ class Screen(
      */
     var shouldTriggerPostponedTransitionAfterLayout = false
 
+    // Set on attach until the next layout lays out the content attached with the screen.
+    private var isContentLayoutPending = false
+
     var footer: ScreenFooter? = null
         set(value) {
             if (value == null && field != null) {
@@ -246,6 +249,33 @@ class Screen(
             val height = b - t
 
             updateShadowNodeScreenSize(width, height, t)
+        }
+
+        if (isContentLayoutPending) {
+            isContentLayoutPending = false
+            layoutDescendantsNotLaidOut(this)
+        }
+    }
+
+    /**
+     * Attaching a view to a window clears its laid-out state (View.isLaidOut), and React Native lays a view
+     * out again only when its frame changes, so the content laid out before the screen was attached stays
+     * not laid out. Android's autofill skips such views: a focused text field starts no autofill session.
+     * A nested container lays out its own screens, and each of them its own content, so the walk stops there.
+     */
+    private fun layoutDescendantsNotLaidOut(group: ViewGroup) {
+        for (child in group.children) {
+            if (child is Container) {
+                continue
+            }
+
+            if (!child.isLaidOut) {
+                child.layout(child.left, child.top, child.right, child.bottom)
+            }
+
+            if (child is ViewGroup) {
+                layoutDescendantsNotLaidOut(child)
+            }
         }
     }
 
@@ -581,6 +611,7 @@ class Screen(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        isContentLayoutPending = true
 
         // Insets handler for formSheet is added onResume but it is often too late if we use input
         // with autofocus - onResume is called after finishing animator animation.
