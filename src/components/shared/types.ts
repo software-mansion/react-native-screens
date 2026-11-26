@@ -150,6 +150,18 @@ export type EmptyEventPayload = Record<string, never>;
 export type NativeEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
 
 /**
+ * Handler of a native event that receives the payload of the event.
+ *
+ * @remarks
+ * Unlike {@link NativeEventHandler}, the handler gets the payload itself, not
+ * the native event that wraps it.
+ *
+ * @typeParam T - Payload the native event carries.
+ * @param event - The payload of the native event.
+ */
+export type NativeEventPayloadHandler<T> = (event: T) => void;
+
+/**
  * Icon loaded from an image source.
  *
  * @remarks
