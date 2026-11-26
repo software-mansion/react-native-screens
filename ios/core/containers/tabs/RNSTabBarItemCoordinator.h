@@ -12,6 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable UITabBarItem *)tabBarItemWithSystemItem:(RNSTabsScreenSystemItem)systemItem;
 
+/**
+ * Title the tab of the given screen should display: the screen's own title, or the system item's default one.
+ */
+- (nullable NSString *)titleForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl;
+
 - (void)createTabBarItemsForTabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls;
 
 - (void)updateTabBarItemsForTabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls;
