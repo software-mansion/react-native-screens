@@ -100,7 +100,7 @@ internal class StackScreen(
             density = resources.displayMetrics.density,
             frameWidth = r - l,
             frameHeight = b - t,
-            immediate = true,
+            immediate = !shadowStateProxy.hasReportedFrame,
         )
     }
 
