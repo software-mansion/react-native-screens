@@ -18,6 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // !TARGET_OS_TV
                                                              >
 
+#if !TARGET_OS_TV
+/**
+ * Applies the user interface style overridden on the navigation bar (`experimental_userInterfaceStyle`) to the
+ * vertical bar (iOS 27.1+, e.g. iPhone Duo), where UIKit places the bar items when the vertical bar is shown.
+ */
+- (void)updateVerticalBarUserInterfaceStyle;
+#endif // !TARGET_OS_TV
+
 @end
 
 @interface RNSScreenStackView : RNSReactBaseView <RNSScreenContainerDelegate>
