@@ -45,6 +45,7 @@ namespace react = facebook::react;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
   BOOL _prefersEdgeAttachedInCompactHeight;
   BOOL _preventNativeDismiss;
+  BOOL _defaultResizeAnimationEnabled;
   UIColor *_Nullable _nativeContainerBackgroundColor;
   UIVisualEffect *_Nullable _backgroundEffect;
 
@@ -82,6 +83,7 @@ namespace react = facebook::react;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
   _prefersEdgeAttachedInCompactHeight = NO;
   _preventNativeDismiss = NO;
+  _defaultResizeAnimationEnabled = YES;
   _nativeContainerBackgroundColor = nil;
   _backgroundEffect = nil;
 
@@ -288,6 +290,10 @@ namespace react = facebook::react;
   if (oldComponentProps.preventNativeDismiss != newComponentProps.preventNativeDismiss) {
     _preventNativeDismiss = static_cast<BOOL>(newComponentProps.preventNativeDismiss);
     [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.defaultResizeAnimationEnabled != newComponentProps.defaultResizeAnimationEnabled) {
+    _defaultResizeAnimationEnabled = static_cast<BOOL>(newComponentProps.defaultResizeAnimationEnabled);
   }
 
   if (oldComponentProps.prefersGrabberVisible != newComponentProps.prefersGrabberVisible) {

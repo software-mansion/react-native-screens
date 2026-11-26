@@ -20,12 +20,16 @@
 
   BOOL shouldSelectInitialDetent = [coordinator needsAny:RNSSheetUpdateFlagsInitialDetent];
 
+  BOOL shouldAnimate =
+      behaviorProvider.defaultResizeAnimationEnabled || ![coordinator needsAny:RNSSheetUpdateFlagsContentsHeight];
+
   [coordinator updateIfAnyNeeded:configFlags
                performOperations:^{
                  [self applyConfigurationWithAppearanceProvider:appearanceProvider
                                                behaviorProvider:behaviorProvider
                                                      controller:controller
-                                            selectInitialDetent:shouldSelectInitialDetent];
+                                            selectInitialDetent:shouldSelectInitialDetent
+                                                       animated:shouldAnimate];
                }];
 }
 
@@ -35,6 +39,7 @@
                                 behaviorProvider:(id<RNSSheetBehaviorProvider>)behaviorProvider
                                       controller:(RNSSheetContentController *)controller
                              selectInitialDetent:(BOOL)selectInitialDetent
+                                        animated:(BOOL)animated
 {
 #if !TARGET_OS_TV
   UISheetPresentationController *sheet = controller.sheetPresentationController;
@@ -67,7 +72,7 @@
                                                        atRequestedIndex:appearanceProvider.largestUndimmedDetentIndex];
 
   // Sheet updates
-  [sheet animateChanges:^{
+  void (^updateSheet)(void) = ^{
     // Behavior updates
     sheet.detents = nativeDetents;
     sheet.prefersScrollingExpandsWhenScrolledToEdge = prefersScrollingExpands;
@@ -85,7 +90,13 @@
       sheet.backgroundEffect = appearanceProvider.backgroundEffect;
     }
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION && RNS_IPHONE_OS_VERSION_AVAILABLE(26_1)
-  }];
+  };
+
+  if (animated) {
+    [sheet animateChanges:updateSheet];
+  } else {
+    updateSheet();
+  }
 #endif // !TARGET_OS_TV
 
   controller.view.backgroundColor = appearanceProvider.nativeContainerBackgroundColor ?: UIColor.clearColor;

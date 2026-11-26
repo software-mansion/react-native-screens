@@ -126,6 +126,7 @@ internal class SheetPresentation(
         appearanceCoordinator.updateCornerRadius(config.preferredCornerRadius)
         appearanceCoordinator.updateBackgroundColor(config.nativeContainerBackgroundColor)
         nativeDismissCoordinator.shouldPreventDismiss = config.shouldPreventNativeDismiss
+        contentResizeAnimator?.isAnimationEnabled = config.defaultResizeAnimationEnabled
     }
 
     internal fun applyConfigUpdate(
@@ -154,6 +155,10 @@ internal class SheetPresentation(
 
         if (oldConfig.shouldPreventNativeDismiss != newConfig.shouldPreventNativeDismiss) {
             nativeDismissCoordinator.shouldPreventDismiss = newConfig.shouldPreventNativeDismiss
+        }
+
+        if (oldConfig.defaultResizeAnimationEnabled != newConfig.defaultResizeAnimationEnabled) {
+            contentResizeAnimator?.isAnimationEnabled = newConfig.defaultResizeAnimationEnabled
         }
     }
 

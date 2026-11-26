@@ -27,6 +27,8 @@ class SheetHost(
 
     internal var preventNativeDismiss = false
 
+    internal var defaultResizeAnimationEnabled = true
+
     internal var nativeContainerBackgroundColor: Int? = null
 
     internal var detents: List<Double> = emptyList()
@@ -101,6 +103,7 @@ class SheetHost(
                 initialDetentIndex = this.initialDetentIndex,
                 preferredCornerRadius = this.preferredCornerRadius,
                 preventNativeDismiss = this.preventNativeDismiss,
+                defaultResizeAnimationEnabled = this.defaultResizeAnimationEnabled,
                 nativeContainerBackgroundColor = this.nativeContainerBackgroundColor,
             )
         dialogManager.applyConfig(config)

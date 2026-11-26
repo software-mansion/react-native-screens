@@ -19,6 +19,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 internal class SheetContentResizeAnimator(
     private val bottomSheetView: FrameLayout,
 ) {
+    internal var isAnimationEnabled: Boolean = true
+
     internal var isSheetPresented: Boolean = false
         set(value) {
             field = value
@@ -44,7 +46,7 @@ internal class SheetContentResizeAnimator(
         sheetHeightChange: Int,
         applyNewSheetHeight: () -> Unit,
     ) {
-        if (!isSheetPresented || isKeyboardAnimationInProgress || !isSheetExpanded) {
+        if (!isAnimationEnabled || !isSheetPresented || isKeyboardAnimationInProgress || !isSheetExpanded) {
             resizeWithoutAnimation(applyNewSheetHeight)
             return
         }

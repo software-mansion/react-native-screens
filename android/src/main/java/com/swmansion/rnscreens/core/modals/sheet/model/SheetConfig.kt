@@ -7,6 +7,7 @@ internal data class SheetConfig(
     val initialDetentIndex: Int = 0,
     val preferredCornerRadius: Float = SYSTEM_DEFAULT_CORNER_RADIUS,
     val preventNativeDismiss: Boolean = false,
+    val defaultResizeAnimationEnabled: Boolean = true,
     val nativeContainerBackgroundColor: Int? = null,
 ) {
     val shouldPreventNativeDismiss: Boolean
