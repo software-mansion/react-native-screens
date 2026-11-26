@@ -21,12 +21,12 @@
 
 ## Description
 
-Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height and grabber visibility while presented. On iOS the height change is animated; on Android the sheet snaps to the new height immediately.
+Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures that the FormSheet calculates its initial height to wrap its content upon opening and follows changes of the content height and grabber visibility while presented. A change of the content height is animated.
 
 ## Note
 
 - **iOS:** the sheet has extra empty space at the bottom – the native bottom inset (home indicator area) is added below the content.
-- **Android:** when content is mounted/unmounted, the sheet updates its height immediately, without animation. Animating dynamic content size changes should be investigated separately.
+- **Android:** showing or hiding the grabber changes the sheet height immediately, without animation. Only a change of the content height is animated.
 - **iPad:** the sheet is presented as a centered floating panel with a fixed width; `fitToContents` applies to the panel height.
 
 ## Steps
@@ -55,14 +55,12 @@ Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures
 1. Tap "Expand Content" inside the sheet.
 
    - [ ] The extra text box appears and the sheet grows to fully accommodate it – the whole extra text box is visible. The button now reads "Collapse Content".
-   - [ ] iOS: the height change is animated smoothly, with no visual glitches.
-   - [ ] Android: the sheet snaps to the new height immediately (no animation).
+   - [ ] The height change is animated smoothly, with no visual glitches.
 
 2. Tap "Collapse Content".
 
    - [ ] The extra text box disappears and the sheet shrinks back to its original height.
-   - [ ] iOS: the shrink is animated.
-   - [ ] Android: the sheet snaps back immediately (no animation).
+   - [ ] The shrink is animated smoothly, with no gap below the sheet.
 
 ---
 
