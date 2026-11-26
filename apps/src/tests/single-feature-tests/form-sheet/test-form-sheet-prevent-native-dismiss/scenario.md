@@ -21,7 +21,7 @@
 
 ## Description
 
-Verify the `preventNativeDismiss` property and the `onNativeDismissPrevented` event of the `FormSheet` component with detents `[0.5, 1.0]`. When the property is `true`, the sheet cannot be dismissed natively (swipe down, backdrop tap, and on Android the system back gesture); each attempt fires `onNativeDismissPrevented`, which the scenario surfaces as a "Dismissal Prevented" alert. Dragging between detents and dismissing from JS still work. When the property is `false`, native dismissal works and no event is fired.
+Verify the `preventNativeDismiss` property and the `onNativeDismissPrevented` event of the `FormSheet` component with detents `[0.5, 1.0]`, `[1.0]` and `fitToContents`. When the property is `true`, the sheet cannot be dismissed natively (swipe down, backdrop tap, and on Android the system back gesture); each attempt fires `onNativeDismissPrevented`, which the scenario surfaces as a "Dismissal Prevented" alert and counts in the sheet. Dragging between detents and dismissing from JS still work. When the property is `false`, native dismissal works and no event is fired.
 
 ## Note
 
@@ -34,7 +34,7 @@ Verify the `preventNativeDismiss` property and the `onNativeDismissPrevented` ev
 
 1. Launch the app and navigate to the **Prevent Native Dismiss** screen.
 
-   - [ ] The host screen shows "Prevent Native Dismiss: ON", a switch (on) and the "Open FormSheet" button.
+   - [ ] The host screen shows "Prevent Native Dismiss: ON", a switch (on), "detents: [0.5, 1.0]" and the "Open FormSheet" button.
 
 ---
 
@@ -51,10 +51,11 @@ Verify the `preventNativeDismiss` property and the `onNativeDismissPrevented` ev
 3. Swipe the sheet down past the lower detent.
 
    - [ ] The sheet does **not** dismiss – it bounces back to 0.5 and a "Dismissal Prevented" alert appears.
+   - [ ] Android: the sheet stays on screen while it returns to 0.5 – it does not disappear and slide in again.
 
 4. Tap "OK" on the alert.
 
-   - [ ] The alert closes; the sheet is still presented.
+   - [ ] The alert closes; the sheet is still presented and shows "Dismissals prevented: 1".
 
 5. Tap the backdrop (the dimmed area outside the sheet).
 
@@ -63,6 +64,31 @@ Verify the `preventNativeDismiss` property and the `onNativeDismissPrevented` ev
 6. Tap "OK", then tap "Dismiss from JS".
 
    - [ ] The sheet dismisses – programmatic dismissal is not affected.
+
+---
+
+### Single detent and fitToContents
+
+1. Set "detents" to `[1.0]`, tap "Open FormSheet", then swipe the sheet down to the bottom of the screen.
+
+   - [ ] The sheet does **not** dismiss – it returns to full height and a "Dismissal Prevented" alert appears.
+   - [ ] Android: the sheet stays on screen while it returns – it does not disappear and slide in again.
+
+2. Tap "OK".
+
+   - [ ] The sheet is still presented at full height and shows "Dismissals prevented: 1".
+
+3. Tap "Dismiss from JS", set "detents" to `fitToContents`, tap "Open FormSheet", then swipe the sheet down to the bottom of the screen.
+
+   - [ ] The sheet does **not** dismiss – it returns to the height of its content and a "Dismissal Prevented" alert appears.
+
+4. Tap "OK".
+
+   - [ ] The sheet is still presented and shows "Dismissals prevented: 1".
+
+5. Tap "Dismiss from JS", then set "detents" to `[0.5, 1.0]`.
+
+   - [ ] The sheet dismisses; the host screen shows "detents: [0.5, 1.0]".
 
 ---
 
