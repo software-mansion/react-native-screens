@@ -110,6 +110,7 @@ internal class SheetPresentationManager(
 
         state = SheetPresentationState.DISMISSING
         currentPresentation?.setKeyboardTrackingEnabled(false)
+        currentPresentation?.setContentResizeAnimationEnabled(false)
         dismissSheetsAbove()
         // Leaving the stack immediately is deliberate, if another sheet is presented during this exit animation,
         // it must stack on a "stable" sheet - the one we don't intend to dismiss. This window is about to be
@@ -248,6 +249,7 @@ internal class SheetPresentationManager(
         if (state == SheetPresentationState.PRESENTING) {
             state = SheetPresentationState.PRESENTED
             currentPresentation?.setKeyboardTrackingEnabled(true)
+            currentPresentation?.setContentResizeAnimationEnabled(true)
             appearanceEventEmitter?.emitOnDidAppear()
             // ensure state hasn't updated during presentation
             resolvePresentationState()

@@ -5,9 +5,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
+import kotlin.math.roundToInt
 
 internal class SheetKeyboardCoordinator(
     private val bottomSheetView: FrameLayout,
+    private val contentResizeAnimator: SheetContentResizeAnimator?,
 ) {
     /**
      * Whether the sheet should track the keyboard animation. Kept `false` while an enter / exit
@@ -52,8 +54,11 @@ internal class SheetKeyboardCoordinator(
                 return
             }
 
-            // Saving sheet's position before applying keyboard insets.
-            startTop = bottomSheetView.top
+            contentResizeAnimator?.onKeyboardAnimationPrepare()
+
+            // Saving the position the sheet is drawn at before applying keyboard insets. It is translated
+            // when this animation takes over from a content resize animation.
+            startTop = bottomSheetView.top + bottomSheetView.translationY.roundToInt()
             isTracking = true
         }
 
@@ -94,6 +99,7 @@ internal class SheetKeyboardCoordinator(
                 bottomSheetView.translationY = 0f
             }
             isTracking = false
+            contentResizeAnimator?.onKeyboardAnimationEnd()
         }
 
         private fun WindowInsetsAnimationCompat.isKeyboardAnimation(): Boolean = typeMask and WindowInsetsCompat.Type.ime() != 0
