@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewTreeObserver
-import com.facebook.react.bridge.UIManager
-import com.facebook.react.bridge.UIManagerListener
 import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.config.ReactFeatureFlags
 import com.facebook.react.uimanager.JSPointerDispatcher
@@ -19,7 +16,6 @@ import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.view.ReactViewGroup
 import com.swmansion.rnscreens.core.modals.sheet.interfaces.SheetContentSizeChangeDelegate
 import com.swmansion.rnscreens.core.modals.sheet.interfaces.SheetContentSizeChangeProvider
-import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
 
 @OptIn(UnstableReactNativeAPI::class)
 @SuppressLint("ViewConstructor")
@@ -27,9 +23,7 @@ class SheetContentView(
     context: Context,
     private val onSizeChangedCallback: (width: Int, height: Int) -> Unit,
 ) : ReactViewGroup(context),
-    RootView,
-    UIManagerListener,
-    ViewTreeObserver.OnPreDrawListener {
+    RootView {
     internal var contentSizeChangeDelegate: SheetContentSizeChangeDelegate? = null
 
     private val themedReactContext: ThemedReactContext
@@ -40,31 +34,9 @@ class SheetContentView(
     private val eventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcher(themedReactContext, UIManagerType.FABRIC)
 
-    private var isWaitingForFabricMount = false
-
     init {
         if (ReactFeatureFlags.dispatchPointerEvents) {
             jsPointerDispatcher = JSPointerDispatcher(this)
-        }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        viewTreeObserver.addOnPreDrawListener(this)
-        themedReactContext.let { themedContext ->
-            UIManagerHelper
-                .getFabricUIManagerNotNull(themedContext)
-                .addUIManagerEventListener(this)
-        }
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        viewTreeObserver.removeOnPreDrawListener(this)
-        themedReactContext.let { themedContext ->
-            UIManagerHelper
-                .getFabricUIManagerNotNull(themedContext)
-                .removeUIManagerEventListener(this)
         }
     }
 
@@ -86,28 +58,9 @@ class SheetContentView(
     ) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (w != oldw || h != oldh) {
-            isWaitingForFabricMount = true
             onSizeChangedCallback(w, h)
         }
     }
-
-    override fun onPreDraw(): Boolean {
-        // If we're waiting for Fabric to update the recalculated layout for views, we prevent drawing.
-        // This cancels the current drawing pass to prevent drawing the screen with stale React children frames.
-        return !isWaitingForFabricMount
-    }
-
-    override fun didDispatchMountItems(uiManager: UIManager) {
-        isWaitingForFabricMount = false
-    }
-
-    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
-
-    override fun willMountItems(uiManager: UIManager) = Unit
-
-    override fun didMountItems(uiManager: UIManager) = Unit
-
-    override fun didScheduleMountItems(uiManager: UIManager) = Unit
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         eventDispatcher?.let { eventDispatcher ->

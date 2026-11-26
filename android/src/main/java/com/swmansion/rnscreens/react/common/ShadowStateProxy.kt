@@ -1,10 +1,12 @@
 package com.swmansion.rnscreens.react.common
 
 import com.facebook.react.bridge.WritableNativeMap
+import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.StateWrapper
 import com.swmansion.rnscreens.core.utils.pxToDp
 import kotlin.math.abs
 
+@OptIn(UnstableReactNativeAPI::class)
 internal class ShadowStateProxy(
     private val includesFrameSize: Boolean = true,
 ) {
@@ -23,6 +25,7 @@ internal class ShadowStateProxy(
         frameHeight: Int? = null,
         contentOffsetX: Int? = null,
         contentOffsetY: Int? = null,
+        immediate: Boolean = false,
     ) {
         val widthInDp = frameWidth?.let { pxToDp(it.toFloat(), density) } ?: lastFrameWidthInDp
         val heightInDp = frameHeight?.let { pxToDp(it.toFloat(), density) } ?: lastFrameHeightInDp
@@ -52,7 +55,10 @@ internal class ShadowStateProxy(
                 putDouble("contentOffsetX", offsetXInDp.toDouble())
                 putDouble("contentOffsetY", offsetYInDp.toDouble())
             }
-        stateWrapper?.updateState(map)
+        stateWrapper?.updateState(
+            map,
+            if (immediate) StateWrapper.UpdateMode.unstable_Immediate else StateWrapper.UpdateMode.Asynchronous,
+        )
     }
 
     companion object {

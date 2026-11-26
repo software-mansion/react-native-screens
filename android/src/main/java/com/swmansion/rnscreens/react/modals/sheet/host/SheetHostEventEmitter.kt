@@ -9,7 +9,6 @@ import com.swmansion.rnscreens.react.modals.sheet.event.SheetDidDisappearEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetDismissEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissPreventedEvent
-import com.swmansion.rnscreens.react.modals.sheet.event.SheetSyncFlushEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillAppearEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillDisappearEvent
 
@@ -27,12 +26,6 @@ internal class SheetHostEventEmitter(
     override fun emitOnNativeDismissEvent() {
         reactEventDispatcher.dispatchEvent(
             SheetNativeDismissEvent(surfaceId, viewTag),
-        )
-    }
-
-    fun emitOnSyncFlushEvent() {
-        reactEventDispatcher.dispatchEvent(
-            SheetSyncFlushEvent(surfaceId, viewTag),
         )
     }
 
