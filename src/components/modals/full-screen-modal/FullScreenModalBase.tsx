@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import FullScreenModalHostNativeComponent from '../../../fabric/modals/full-screen-modal/FullScreenModalHostNativeComponent';
+import SplitColumnMarkerContext from '../../split/SplitColumnMarkerContext';
 import type { FullScreenModalProps } from './FullScreenModal.types';
 
 /**
@@ -19,8 +20,17 @@ export interface FullScreenModalBaseProps extends FullScreenModalProps {
  * Shared implementation of `FullScreenModalReplacingContent` and
  * `FullScreenModalOverContent`. Mounts the shared native host.
  */
-export function FullScreenModalBase(props: FullScreenModalBaseProps) {
-  return <FullScreenModalHostNativeComponent style={styles.host} {...props} />;
+export function FullScreenModalBase({
+  children,
+  ...rest
+}: FullScreenModalBaseProps) {
+  return (
+    <FullScreenModalHostNativeComponent style={styles.host} {...rest}>
+      <SplitColumnMarkerContext.Provider value={false}>
+        {children}
+      </SplitColumnMarkerContext.Provider>
+    </FullScreenModalHostNativeComponent>
+  );
 }
 
 const styles = StyleSheet.create({

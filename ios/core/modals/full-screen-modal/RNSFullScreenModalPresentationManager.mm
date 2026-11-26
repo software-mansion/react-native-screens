@@ -53,9 +53,10 @@
   __weak auto weakController = controller;
   __weak auto weakProvider = provider;
 
-  // The top-most controller may be a modal on its way out, e.g. a replacing modal whose dismissal just put this host
-  // back into the window. UIKit refuses to present on it, so retry once its dismissal is over.
-  if (presentationSourceViewController.isBeingDismissed) {
+  // The top-most controller may be a modal in transition: on its way out, e.g. a replacing modal whose dismissal just
+  // put this host back into the window, or on its way in, e.g. the modal this host is nested in, opened in the same
+  // update. UIKit refuses or defers a presentation on it, so retry once its transition is over.
+  if (presentationSourceViewController.isBeingDismissed || presentationSourceViewController.isBeingPresented) {
     id<UIViewControllerTransitionCoordinator> transitionCoordinator =
         presentationSourceViewController.transitionCoordinator;
     if (transitionCoordinator == nil) {

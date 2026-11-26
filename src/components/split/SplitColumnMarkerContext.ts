@@ -6,8 +6,8 @@ import React from 'react';
  *
  * `Split.Column` provides `true`, unless it has `disableStackIntegration`.
  * Components that render their children in a native container of their own
- * reset it to `false`: `Stack.Screen`, `Tabs.Host`, the sheets and
- * contained modals.
+ * reset it to `false`: `Stack.Screen`, `Tabs.Host`, the sheets, contained modals
+ * and full-screen modals.
  */
 const SplitColumnMarkerContext = React.createContext<boolean>(false);
 

@@ -190,13 +190,11 @@ when the screen rendering the modal is popped.
 
 2. Tap "Clear log", then tap "Push A".
 
-   - [ ] The "Replacing modal" card is shown again.
+   - [ ] "Screen A" slides in under the "A" header; no modal is shown.
    - [ ] The log shows exactly `Home: onWillDisappear`, `A: onWillAppear`,
-         `Replacing: onWillAppear`, `Home: onDidDisappear`,
-         `Replacing: onDidAppear`, `A: onDidDisappear`.
+         `Home: onDidDisappear`, `A: onDidAppear`. No `Replacing` entry.
 
-3. Tap "Close", tap "Clear log", tap "Open over", then tap "Pop host" inside
-   the modal.
+3. Tap "Clear log", tap "Open over", then tap "Pop host" inside the modal.
 
    - [ ] The modal disappears at once and "Screen Home" slides in.
    - [ ] The log shows exactly `Over: onWillAppear`, `Over: onDidAppear`,
@@ -205,11 +203,10 @@ when the screen rendering the modal is popped.
 
 4. Tap "Clear log", then tap "Push A".
 
-   - [ ] The "Over modal" card is shown again above "Screen A".
+   - [ ] "Screen A" slides in under the "A" header; no modal is shown.
    - [ ] The log shows exactly `Home: onWillDisappear`, `A: onWillAppear`,
-         `Over: onWillAppear`, `Home: onDidDisappear`, `A: onDidAppear`,
-         `Over: onDidAppear`.
+         `Home: onDidDisappear`, `A: onDidAppear`. No `Over` entry.
 
-5. Tap "Close", tap "Pop", then tap "Clear log".
+5. Tap "Pop", then tap "Clear log".
 
    - [ ] "Screen Home" is shown under the "Home" header and the log is empty.

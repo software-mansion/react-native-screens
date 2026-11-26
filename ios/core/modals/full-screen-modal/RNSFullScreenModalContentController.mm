@@ -110,8 +110,8 @@
   [_presentationManager handleDidPresent];
   [self.delegate modalControllerViewDidAppear:self];
 
-  // A dismissal requested here would be refused, as UIKit still runs the presentation; if `isOpen` flipped back
-  // while the presentation was landing, the present completion dismisses the modal.
+  // No presentation update here: the present completion runs right after and handles an `isOpen` that flipped back
+  // while the modal was animating in.
 }
 
 - (void)viewWillDisappear:(BOOL)animated
