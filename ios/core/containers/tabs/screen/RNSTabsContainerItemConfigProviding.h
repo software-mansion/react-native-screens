@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  * screen's value decides.
  */
 @property (nonatomic, readonly) RNSTabsScreenAnimation animation;
+
 @property (nonatomic, readonly) BOOL preventNativeSelection;
 @property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;

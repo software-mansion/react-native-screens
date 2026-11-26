@@ -47,6 +47,8 @@ The destination screen's `animation` decides the transition. Initially, every ta
 
    - [ ] `First` is shown instantly.
 
+---
+
 ### Dynamic change
 
 1. On `Third`, tap `Set animation: none`, then select `First` and go back to `Third` using the tab bar.
@@ -57,11 +59,15 @@ The destination screen's `animation` decides the transition. Initially, every ta
 
    - [ ] The system transition is played when going to `First`.
 
+---
+
 ### Programmatic selection
 
 1. Use the buttons on the card to select other tabs.
 
    - [ ] The transition follows the destination tab's `animation`, the same as with native selection.
+
+---
 
 ### More navigation controller
 

@@ -185,7 +185,7 @@ export interface TabsScreenPropsBase {
    * bar can display) always uses the system transition, as does pushing a
    * tab screen from the "More" list.
    *
-   * @info
+   * @tip
    * Useful e.g. when tab screens are transparent and share a background
    * rendered behind {@link Tabs.Host}: with the system cross-fade, both
    * screens are visible at the same time during the transition.
