@@ -150,6 +150,7 @@ export interface SheetProps {
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
   prefersEdgeAttachedInCompactHeight?: boolean | undefined;
   preventNativeDismiss?: boolean | undefined;
+  defaultResizeAnimationEnabled?: boolean | undefined;
   nativeContainerStyle?: StyleProp<SheetNativeContainerStyleProps> | undefined;
   backgroundEffect?: SheetBackgroundEffect | undefined;
 
