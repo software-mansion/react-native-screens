@@ -15,8 +15,8 @@
                                               controller:(RNSSheetContentController *)controller
                                              coordinator:(RNSSheetUpdateCoordinator *)coordinator
 {
-  RNSSheetUpdateFlags configFlags =
-      RNSSheetUpdateFlagsAppearance | RNSSheetUpdateFlagsBehavior | RNSSheetUpdateFlagsInitialDetent;
+  RNSSheetUpdateFlags configFlags = RNSSheetUpdateFlagsAppearance | RNSSheetUpdateFlagsBehavior |
+      RNSSheetUpdateFlagsInitialDetent | RNSSheetUpdateFlagsContentsHeight;
 
   BOOL shouldSelectInitialDetent = [coordinator needsAny:RNSSheetUpdateFlagsInitialDetent];
 

@@ -134,7 +134,7 @@ namespace react = facebook::react;
 {
   if (_reactContentsHeight != reactContentsHeight) {
     _reactContentsHeight = reactContentsHeight;
-    [_controller setNeedsBehaviorUpdate];
+    [_controller setNeedsContentsHeightUpdate];
   }
 }
 

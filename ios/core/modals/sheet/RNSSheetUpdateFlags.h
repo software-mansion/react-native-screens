@@ -13,4 +13,6 @@ typedef NS_OPTIONS(NSUInteger, RNSSheetUpdateFlags) {
   // The sheet's selected detent needs to be (re)set to the configured `initialDetentIndex`.
   // Requested once per presentation cycle, since UIKit recreates the presentation controller on every present.
   RNSSheetUpdateFlagsInitialDetent = 1 << 3,
+  // The height of the sheet's contents has changed, so the detents need to be resolved again.
+  RNSSheetUpdateFlagsContentsHeight = 1 << 4,
 };
