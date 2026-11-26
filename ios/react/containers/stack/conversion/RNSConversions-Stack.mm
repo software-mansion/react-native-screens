@@ -1,9 +1,58 @@
 #import "RNSConversions-Stack.h"
+#import <React/RCTConversions.h>
+#import <React/RCTLog.h>
 #import "RNSDefines.h"
 
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
+
+std::vector<std::string> RNSStdStringVectorFromNSStringArray(NSArray<NSString *> *strings)
+{
+  std::vector<std::string> result;
+  result.reserve(strings.count);
+  for (NSString *string in strings) {
+    result.push_back(RCTStringFromNSString(string));
+  }
+  return result;
+}
+
+react::RNSStackHostEventEmitter::OnNavStateChangedActionOrigin RNSOnNavStateChangedActionOriginFromRNSStackActionOrigin(
+    RNSStackActionOrigin actionOrigin)
+{
+  using enum react::RNSStackHostEventEmitter::OnNavStateChangedActionOrigin;
+  switch (actionOrigin) {
+    case RNSStackActionOriginUser:
+      return User;
+    case RNSStackActionOriginProgrammaticJs:
+      return ProgrammaticJs;
+    case RNSStackActionOriginProgrammaticNative:
+      return ProgrammaticNative;
+    case RNSStackActionOriginImplicit:
+      return Implicit;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected actionOrigin: %ld", static_cast<long>(actionOrigin));
+      return User;
+  }
+}
+
+react::RNSStackHostEventEmitter::OnNavStateRequestRejectedRejectionReason
+RNSOnNavStateRequestRejectedRejectionReasonFromRNSStackNavigationStateRejectionReason(
+    RNSStackNavigationStateRejectionReason reason)
+{
+  using enum react::RNSStackHostEventEmitter::OnNavStateRequestRejectedRejectionReason;
+  switch (reason) {
+    case RNSStackNavigationStateRejectionReasonStale:
+      return Stale;
+    case RNSStackNavigationStateRejectionReasonRepeated:
+      return Repeated;
+    case RNSStackNavigationStateRejectionReasonInvalid:
+      return Invalid;
+    default:
+      RCTLogError(@"[RNScreens] Unexpected rejectionReason: %ld", static_cast<long>(reason));
+      return Invalid;
+  }
+}
 
 RNSHeaderItemPlacement RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
     react::RNSStackHeaderItemIOSPlacement placement)
