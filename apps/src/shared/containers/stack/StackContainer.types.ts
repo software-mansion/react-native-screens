@@ -4,6 +4,11 @@ import {
   StackHeaderConfigProps,
   StackHeaderConfigRef,
   StackHostProps,
+  StackNavStateChangedEvent,
+  StackNavStateRejectionReason,
+  StackNavStateRequest,
+  StackNavStateRequestRejectedEvent,
+  StackScreensReleasedEvent,
 } from 'react-native-screens';
 import type { RouteNameFromConfigs } from '../shared/route-name';
 
@@ -11,7 +16,7 @@ import type { RouteNameFromConfigs } from '../shared/route-name';
 
 export type StackRouteOptions = Omit<
   StackScreenProps,
-  'children' | 'activityMode' | 'screenKey'
+  'children' | 'screenKey'
 > & {
   headerConfig?: StackHeaderConfigProps | undefined;
   headerConfigRef?: React.Ref<StackHeaderConfigRef> | undefined;
@@ -26,22 +31,33 @@ export type StackRouteConfig = {
   options?: StackRouteOptions;
 };
 
+/**
+ * A route instance, rendered as one `Stack.Screen` child of the host.
+ *
+ * Being rendered and being in the stack are two different things: the host
+ * holds the stack, and the routes are only the pool of screens it picks from
+ * by key (`routeKey` is passed as the screen's `screenKey`).
+ */
 export type StackRoute = Omit<StackRouteConfig, 'element'> & {
-  activityMode: StackScreenProps['activityMode'];
   routeKey: StackScreenProps['screenKey'];
-  isMarkedForDismissal: boolean; // whether this route is during or after dismissal process
+  /**
+   * Whether the route was preloaded and has not been pushed since. Such a
+   * route is rendered, but it is not in the stack, and `push` of a route with
+   * the same name reuses it instead of creating a new one.
+   */
+  isPreloaded: boolean;
 };
 
 /// StackContainer props
 
 export type StackContainerProps<
   TRouteConfigs extends readonly StackRouteConfig[] = StackRouteConfig[],
-> = Omit<StackHostProps, 'children' | 'ref'> & {
+> = Omit<StackHostProps, 'children' | 'ref' | 'navStateRequest'> & {
   routeConfigs: TRouteConfigs;
   /**
    * @summary
-   * Names of the routes that should be pushed onto the stack initially.
-   * They are pushed from left to right, so the last one ends up on top.
+   * Names of the routes that make up the initial stack, from the bottom to
+   * the top, so the last one ends up on top.
    *
    * Every name must match one of the `routeConfigs` names. Unlike
    * `routeConfigs` names, the entries here do not have to be unique —
@@ -57,8 +73,6 @@ export type StackContainerProps<
 
 export type PushActionMethod = (routeName: string) => void;
 export type PopActionMethod = (routeKey: string) => void;
-export type PopCompletedActionMethod = (routeKey: string) => void;
-export type PopNativeActionMethod = (routeKey: string) => void;
 export type PreloadActionMethod = (routeName: string) => void;
 export type BatchActionMethod = (actions: BatchableNavigationAction[]) => void;
 export type SetRouteOptionsActionMethod = (
@@ -70,8 +84,6 @@ export type ClearEffectsActionMethod = () => void;
 export type NavigationActionMethods = {
   pushAction: PushActionMethod;
   popAction: PopActionMethod;
-  popCompletedAction: PopCompletedActionMethod;
-  popNativeAction: PopNativeActionMethod;
   preloadAction: PreloadActionMethod;
   batchAction: BatchActionMethod;
   clearEffectsAction: ClearEffectsActionMethod;
@@ -83,10 +95,84 @@ export type NavigationActionMethods = {
   setRouteOptions: SetRouteOptionsActionMethod;
 };
 
-export type StackState = StackRoute[];
+/// Navigation state
 
+/**
+ * Stack state reported by the host, through `onNavStateChanged` or
+ * `onNavStateRequestRejected`.
+ */
+export type StackConfirmedState = {
+  /** Route keys from the bottom to the top of the stack. */
+  stack: readonly string[];
+  /** Opaque, passed back as the base of the next request. */
+  provenance: number;
+};
+
+/**
+ * A change of the stack JS wants, kept until the host confirms it, so that it
+ * can be applied again on top of a newer state after a `'stale'` rejection.
+ *
+ * Steps refer to route instances by key: re-applying a push never creates a
+ * new route.
+ */
+export type StackIntentStep =
+  | { type: 'push'; routeKey: string }
+  | { type: 'pop'; routeKey: string };
+
+/**
+ * Last rejection of a request of this navigator, kept for debugging and for
+ * test screens.
+ */
+export type StackLastRejection = {
+  reason: StackNavStateRejectionReason;
+  rejectedStack: readonly string[];
+  rejectedBaseProvenance: number;
+};
+
+/**
+ * State of the reference stack navigator.
+ *
+ * It follows the lazy flow (RFC-1028, RFC-1941): the navigator keeps the
+ * state last confirmed by the host and the request it sent, and treats a
+ * change as done only once the host confirms it. It never sends a confirmed
+ * state back as a request.
+ */
 export type StackNavigationState = {
-  stack: StackState;
+  /**
+   * Pool of rendered routes, in the order they were created. The children of
+   * the host are rendered in this order, so no child ever moves.
+   */
+  routes: StackRoute[];
+  /**
+   * Last state reported by the host. Before the first report it is an empty
+   * stack with `Provenance.INITIAL`.
+   */
+  confirmedState: StackConfirmedState;
+  /**
+   * Changes JS made since the last state that fully matched its request, in
+   * order. The desired stack is the confirmed stack with these steps applied.
+   * Empty once the host confirmed the request.
+   */
+  intent: StackIntentStep[];
+  /**
+   * Request passed to the host. A new `requestId` is the only thing that
+   * makes the host handle it, so the object is replaced only when JS wants a
+   * new stack.
+   */
+  request: StackNavStateRequest;
+  /**
+   * Whether the host has not yet answered `request`, with either a matching
+   * `onNavStateChanged` or a rejection.
+   */
+  isRequestInFlight: boolean;
+  /**
+   * Keys that left the confirmed stack and have not been released by the
+   * host yet. Their routes stay rendered so their content is visible during
+   * the exit transition, and they cannot be pushed again (RFC-1941 valid
+   * target rule 4).
+   */
+  retiringKeys: readonly string[];
+  lastRejection: StackLastRejection | null;
   effects: StackNavigationEffect[];
 };
 
@@ -96,39 +182,39 @@ type PopContainerStackNavigationEffect = {
   type: 'pop-container';
 };
 
+/// Actions
+
 export type NavigationActionPush = {
   type: 'push';
   routeName: string;
   ctx: NavigationActionContext;
 };
 
+/**
+ * Removes the route from the desired stack. Popping the top is a regular pop,
+ * popping a route below it removes it without a transition.
+ */
 export type NavigationActionPop = {
   type: 'pop';
   routeKey: string;
   ctx: NavigationActionContext;
 };
 
-export type NavigationActionPopCompleted = {
-  type: 'pop-completed';
-  routeKey: string;
-  ctx: NavigationActionContext;
-};
-
-export type NavigationActionNativePop = {
-  type: 'pop-native';
-  routeKey: string;
-  ctx: NavigationActionContext;
-};
-
+/**
+ * Renders a route without adding it to the stack.
+ */
 export type NavigationActionPreload = {
   type: 'preload';
   routeName: string;
   ctx: NavigationActionContext;
 };
 
+/**
+ * Applies all actions and sends the result as a single request.
+ */
 export type NavigationActionBatch = {
   type: 'batch';
-  actions: Exclude<NavigationAction, NavigationActionBatch>[];
+  actions: BatchedNavigationAction[];
 };
 
 // TODO: We need to separate navigation actions exposed to user from internal
@@ -145,6 +231,23 @@ export type NavigationActionSetRouteOptions = {
   ctx: NavigationActionContext;
 };
 
+/// Host events, dispatched as actions
+
+export type NavigationActionNavStateChanged = {
+  type: 'nav-state-changed';
+  event: StackNavStateChangedEvent;
+};
+
+export type NavigationActionNavStateRequestRejected = {
+  type: 'nav-state-request-rejected';
+  event: StackNavStateRequestRejectedEvent;
+};
+
+export type NavigationActionScreensReleased = {
+  type: 'screens-released';
+  event: StackScreensReleasedEvent;
+};
+
 export type NavigationActionContext = {
   routeConfigs: readonly StackRouteConfig[];
 };
@@ -155,12 +258,16 @@ export type BatchableNavigationAction =
   | Omit<NavigationActionPreload, 'ctx'>
   | Omit<NavigationActionSetRouteOptions, 'ctx'>;
 
-export type NavigationAction =
+export type BatchedNavigationAction =
   | NavigationActionPush
   | NavigationActionPop
-  | NavigationActionPopCompleted
-  | NavigationActionNativePop
   | NavigationActionPreload
+  | NavigationActionSetRouteOptions;
+
+export type NavigationAction =
+  | BatchedNavigationAction
+  | NavigationActionBatch
   | NavigationActionClearEffects
-  | NavigationActionSetRouteOptions
-  | NavigationActionBatch;
+  | NavigationActionNavStateChanged
+  | NavigationActionNavStateRequestRejected
+  | NavigationActionScreensReleased;

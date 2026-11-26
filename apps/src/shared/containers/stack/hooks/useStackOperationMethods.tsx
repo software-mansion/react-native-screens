@@ -7,8 +7,6 @@ import {
   NavigationActionContext,
   NavigationActionMethods,
   PopActionMethod,
-  PopCompletedActionMethod,
-  PopNativeActionMethod,
   PreloadActionMethod,
   PushActionMethod,
   SetRouteOptionsActionMethod as SetRouteOptionsActionMethod,
@@ -36,24 +34,6 @@ export function useStackOperationMethods(
   const popAction: PopActionMethod = React.useCallback(
     (routeKey: string) => {
       dispatch({ type: 'pop', routeKey, ctx: actionContext });
-    },
-    [dispatch, actionContext],
-  );
-
-  const popCompletedAction: PopCompletedActionMethod = React.useCallback(
-    (routeKey: string) => {
-      dispatch({
-        type: 'pop-completed',
-        routeKey,
-        ctx: actionContext,
-      });
-    },
-    [dispatch, actionContext],
-  );
-
-  const popNativeAction: PopNativeActionMethod = React.useCallback(
-    (routeKey: string) => {
-      dispatch({ type: 'pop-native', routeKey, ctx: actionContext });
     },
     [dispatch, actionContext],
   );
@@ -92,8 +72,6 @@ export function useStackOperationMethods(
     return {
       pushAction,
       popAction,
-      popCompletedAction,
-      popNativeAction,
       preloadAction,
       batchAction,
       clearEffectsAction,
@@ -102,8 +80,6 @@ export function useStackOperationMethods(
   }, [
     pushAction,
     popAction,
-    popCompletedAction,
-    popNativeAction,
     preloadAction,
     batchAction,
     clearEffectsAction,
