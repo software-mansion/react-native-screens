@@ -43,6 +43,7 @@ namespace react = facebook::react;
   NSInteger _largestUndimmedDetentIndex;
   NSInteger _initialDetentIndex;
   BOOL _prefersScrollingExpandsWhenScrolledToEdge;
+  BOOL _prefersEdgeAttachedInCompactHeight;
   BOOL _preventNativeDismiss;
   UIColor *_Nullable _nativeContainerBackgroundColor;
   UIVisualEffect *_Nullable _backgroundEffect;
@@ -79,6 +80,7 @@ namespace react = facebook::react;
   _largestUndimmedDetentIndex = kRNSSheetAlwaysDimmed;
   _initialDetentIndex = 0;
   _prefersScrollingExpandsWhenScrolledToEdge = YES;
+  _prefersEdgeAttachedInCompactHeight = NO;
   _preventNativeDismiss = NO;
   _nativeContainerBackgroundColor = nil;
   _backgroundEffect = nil;
@@ -275,6 +277,11 @@ namespace react = facebook::react;
       newComponentProps.prefersScrollingExpandsWhenScrolledToEdge) {
     _prefersScrollingExpandsWhenScrolledToEdge =
         static_cast<BOOL>(newComponentProps.prefersScrollingExpandsWhenScrolledToEdge);
+    [_controller setNeedsBehaviorUpdate];
+  }
+
+  if (oldComponentProps.prefersEdgeAttachedInCompactHeight != newComponentProps.prefersEdgeAttachedInCompactHeight) {
+    _prefersEdgeAttachedInCompactHeight = static_cast<BOOL>(newComponentProps.prefersEdgeAttachedInCompactHeight);
     [_controller setNeedsBehaviorUpdate];
   }
 

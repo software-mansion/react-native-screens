@@ -53,6 +53,7 @@ interface NativeProps extends ViewProps {
   largestUndimmedDetentIndex?: CT.WithDefault<CT.Int32, -1>;
   initialDetentIndex?: CT.WithDefault<CT.Int32, 0>;
   prefersScrollingExpandsWhenScrolledToEdge?: CT.WithDefault<boolean, true>;
+  prefersEdgeAttachedInCompactHeight?: CT.WithDefault<boolean, false>;
   preventNativeDismiss?: CT.WithDefault<boolean, false>;
   nativeContainerBackgroundColor?: ColorValue | undefined;
   backgroundEffect?: CT.WithDefault<BackgroundEffect, 'automatic'>;
