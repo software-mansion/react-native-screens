@@ -3,7 +3,7 @@ import type { HostInstance, ViewProps } from 'react-native';
 import type {
   ColorScheme,
   Direction,
-  NativeEventPayloadHandler,
+  NativeEventHandler,
   NavStateActionOrigin,
 } from '../../shared/types';
 
@@ -285,9 +285,7 @@ export type StackHostProps = {
    *
    * @platform android, ios
    */
-  onNavStateChanged?:
-    | NativeEventPayloadHandler<StackNavStateChangedEvent>
-    | undefined;
+  onNavStateChanged?: NativeEventHandler<StackNavStateChangedEvent> | undefined;
   /**
    * Called when the native side rejects a
    * {@link StackHostProps.navStateRequest | navStateRequest}.
@@ -296,7 +294,7 @@ export type StackHostProps = {
    * @platform android, ios
    */
   onNavStateRequestRejected?:
-    | NativeEventPayloadHandler<StackNavStateRequestRejectedEvent>
+    | NativeEventHandler<StackNavStateRequestRejectedEvent>
     | undefined;
   /**
    * Called when screens removed from the stack are no longer needed by the
@@ -314,9 +312,7 @@ export type StackHostProps = {
    *
    * @platform android, ios
    */
-  onScreensReleased?:
-    | NativeEventPayloadHandler<StackScreensReleasedEvent>
-    | undefined;
+  onScreensReleased?: NativeEventHandler<StackScreensReleasedEvent> | undefined;
   /**
    * Called when the user tries to dismiss screens natively, but a screen with
    * {@link StackScreenProps.preventNativeDismiss | preventNativeDismiss}
@@ -325,7 +321,7 @@ export type StackHostProps = {
    * @platform android
    */
   onNativeDismissPrevented?:
-    | NativeEventPayloadHandler<StackNativeDismissPreventedEvent>
+    | NativeEventHandler<StackNativeDismissPreventedEvent>
     | undefined;
 
   // General

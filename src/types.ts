@@ -9,7 +9,6 @@ export type {
   NavStateActionOrigin,
   EmptyEventPayload,
   NativeEventHandler,
-  NativeEventPayloadHandler,
   PlatformIconShared,
   PlatformIconAndroidDrawableResource,
   PlatformIconIOSTemplate,
