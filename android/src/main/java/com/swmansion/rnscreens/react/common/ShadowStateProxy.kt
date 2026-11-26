@@ -18,7 +18,7 @@ internal class ShadowStateProxy(
     private var lastContentOffsetYInDp: Float = 0f
 
     internal val hasReportedFrame: Boolean
-        get() = lastFrameWidthInDp != 0f || lastFrameHeightInDp != 0f
+        get() = lastFrameWidthInDp != 0f && lastFrameHeightInDp != 0f
 
     fun updateStateIfNeeded(
         // The display density is supplied per call (not captured once) so it stays correct
