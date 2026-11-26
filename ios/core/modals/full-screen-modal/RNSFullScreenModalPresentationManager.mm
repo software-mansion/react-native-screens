@@ -82,7 +82,7 @@
 
   [presentationSourceViewController
       presentViewController:controller
-                   animated:YES
+                   animated:controller.isAnimated
                  completion:^{
                    auto strongSelf = weakSelf;
                    auto strongController = weakController;
@@ -133,7 +133,7 @@
   __weak auto weakSelf = self;
   __weak auto weakController = controller;
   __weak auto weakProvider = provider;
-  [presentingViewController dismissViewControllerAnimated:YES
+  [presentingViewController dismissViewControllerAnimated:controller.isAnimated
                                                completion:^{
                                                  auto strongSelf = weakSelf;
                                                  auto strongController = weakController;

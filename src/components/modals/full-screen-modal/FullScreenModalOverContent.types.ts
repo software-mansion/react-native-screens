@@ -2,6 +2,25 @@ import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 
 /**
+ * Animation a {@link FullScreenModalOverContent} opens and closes with.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the UIKit default, `'coverVertical'`.
+ * - `'none'` — the modal opens and closes without an animation.
+ * - `'coverVertical'` — the content slides up from the bottom of the screen
+ *   and slides back down on close.
+ * - `'crossDissolve'` — the content cross-dissolves.
+ *
+ * @see {@link https://developer.apple.com/documentation/uikit/uimodaltransitionstyle | UIModalTransitionStyle}
+ */
+export type FullScreenModalOverContentAnimation =
+  | 'default'
+  | 'none'
+  | 'coverVertical'
+  | 'crossDissolve';
+
+/**
  * Props for {@link FullScreenModalOverContent}.
  */
 export interface FullScreenModalOverContentProps {
@@ -32,6 +51,14 @@ export interface FullScreenModalOverContentProps {
    * @platform ios
    */
   isOpen: boolean;
+
+  /**
+   * Animation the modal opens and closes with.
+   *
+   * @defaultValue `'default'`
+   * @platform ios
+   */
+  animation?: FullScreenModalOverContentAnimation | undefined;
 
   /**
    * Called when the modal's view is about to appear.

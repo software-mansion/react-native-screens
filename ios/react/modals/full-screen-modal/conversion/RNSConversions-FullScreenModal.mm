@@ -19,4 +19,24 @@ RNSFullScreenModalPresentationStyle RNSFullScreenModalPresentationStyleFromHostP
   }
 }
 
+RNSFullScreenModalAnimation RNSFullScreenModalAnimationFromHostProp(react::RNSFullScreenModalHostAnimation animation)
+{
+  switch (animation) {
+    using enum react::RNSFullScreenModalHostAnimation;
+    case Default:
+      return RNSFullScreenModalAnimationDefault;
+    case None:
+      return RNSFullScreenModalAnimationNone;
+    case CoverVertical:
+      return RNSFullScreenModalAnimationCoverVertical;
+    case CrossDissolve:
+      return RNSFullScreenModalAnimationCrossDissolve;
+    case FlipHorizontal:
+      return RNSFullScreenModalAnimationFlipHorizontal;
+    default:
+      RCTLogError(@"[RNScreens] Unsupported animation value, falling back to default.");
+      return RNSFullScreenModalAnimationDefault;
+  }
+}
+
 }; // namespace rnscreens::conversion
