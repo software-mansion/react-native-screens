@@ -9,9 +9,14 @@ import com.facebook.react.common.annotations.UnstableReactNativeAPI
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.containers.stack.host.StackActionOrigin
 import com.swmansion.rnscreens.core.containers.stack.host.StackContainer
 import com.swmansion.rnscreens.core.containers.stack.host.StackContainerDelegate
 import com.swmansion.rnscreens.core.containers.stack.host.StackContainerParent
+import com.swmansion.rnscreens.core.containers.stack.host.StackNavigationState
+import com.swmansion.rnscreens.core.containers.stack.host.StackNavigationStateObserver
+import com.swmansion.rnscreens.core.containers.stack.host.StackNavigationStateRejectionReason
+import com.swmansion.rnscreens.core.containers.stack.host.StackNavigationStateRequest
 import com.swmansion.rnscreens.core.containers.stack.screen.StackContainerItem
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.react.containers.stack.screen.StackScreen
@@ -28,15 +33,23 @@ internal class StackHost(
 ) : ViewGroup(reactContext),
     UIManagerListener,
     StackContainerDelegate,
-    StackContainerParent {
+    StackContainerParent,
+    StackNavigationStateObserver {
     internal val renderedScreens: ArrayList<StackScreen> = arrayListOf()
     private val container = StackContainer(reactContext, WeakReference(this), ViewIdGenerator)
     private var isLayoutEnqueued = false
 
     internal var colorScheme: ColorScheme by container::colorScheme
 
+    internal var rejectStaleNavigationStateUpdates: Boolean by container::rejectStaleNavigationStateUpdates
+
+    internal lateinit var eventEmitter: StackHostEventEmitter
+
     init {
         addView(container)
+        check(container.addNavigationStateObserver(this)) {
+            "[RNScreens] Failed to register StackHost as navigation state observer"
+        }
 
         // We're adding ourselves during a batch, therefore we expect to receive its finalization callbacks
         UIManagerHelper
@@ -69,6 +82,46 @@ internal class StackHost(
     internal fun unmountAllReactSubviews() {
         renderedScreens.clear()
     }
+
+    internal fun updateJSNavigationStateRequest(request: StackNavigationStateRequest) {
+        container.setPendingNavigationStateRequest(request)
+    }
+
+    internal fun onViewManagerAddEventEmitters() {
+        // When this is called from the view manager, the view tag is already set.
+        check(id != NO_ID) { "[RNScreens] StackHost must have its tag set when registering event emitters" }
+        eventEmitter = StackHostEventEmitter(reactContext, id)
+    }
+
+    // region StackNavigationStateObserver
+
+    override fun onNavigationStateUpdate(
+        navState: StackNavigationState,
+        actionOrigin: StackActionOrigin,
+    ) {
+        eventEmitter.emitOnNavStateChanged(navState, actionOrigin)
+    }
+
+    override fun onNavigationStateUpdateRejected(
+        currentNavState: StackNavigationState,
+        rejectedRequest: StackNavigationStateRequest,
+        reason: StackNavigationStateRejectionReason,
+    ) {
+        eventEmitter.emitOnNavStateRequestRejected(currentNavState, rejectedRequest, reason)
+    }
+
+    override fun onScreensReleased(screenKeys: List<String>) {
+        eventEmitter.emitOnScreensReleased(screenKeys)
+    }
+
+    override fun onNativeDismissPrevented(
+        currentNavState: StackNavigationState,
+        preventedScreenKeys: List<String>,
+    ) {
+        eventEmitter.emitOnNativeDismissPrevented(currentNavState, preventedScreenKeys)
+    }
+
+    // endregion
 
     override fun onItemDismissCommitted(item: StackContainerItem) {
         check(item is StackScreen) {
@@ -160,6 +213,8 @@ internal class StackHost(
     override fun didScheduleMountItems(uiManager: UIManager) = Unit
 
     internal fun tearDown() {
+        // A host that goes away emits no events.
+        container.removeNavigationStateObserver(this)
         UIManagerHelper
             .getFabricUIManagerNotNull(reactContext)
             .removeUIManagerEventListener(this)
