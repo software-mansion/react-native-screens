@@ -9,6 +9,9 @@ function TestFormSheetFitToContents() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGrabberVisible, setIsGrabberVisible] = useState(false);
+  const [isFixedHeightSheetOpen, setIsFixedHeightSheetOpen] = useState(false);
+  const [isFixedHeightSheetFitToContents, setIsFixedHeightSheetFitToContents] =
+    useState(true);
 
   const handleDismiss = () => {
     setIsOpen(false);
@@ -21,6 +24,12 @@ function TestFormSheetFitToContents() {
         title="Open FormSheet"
         color={Colors.primary}
         onPress={() => setIsOpen(true)}
+      />
+      <View style={styles.spacing} />
+      <Button
+        title="Open FormSheet (fixed-height content)"
+        color={Colors.primary}
+        onPress={() => setIsFixedHeightSheetOpen(true)}
       />
       <FormSheet
         isOpen={isOpen}
@@ -69,6 +78,34 @@ function TestFormSheetFitToContents() {
           />
         </View>
       </FormSheet>
+      <FormSheet
+        isOpen={isFixedHeightSheetOpen}
+        onNativeDismiss={() => setIsFixedHeightSheetOpen(false)}
+        detents={isFixedHeightSheetFitToContents ? 'fitToContents' : [0.6]}>
+        <View style={styles.fixedHeightSheetContent}>
+          <Text style={styles.sheetTitle}>Fixed-height content</Text>
+
+          <Button
+            title={
+              isFixedHeightSheetFitToContents
+                ? 'Use 0.6 Detent'
+                : 'Use fitToContents'
+            }
+            color={Colors.primary}
+            onPress={() =>
+              setIsFixedHeightSheetFitToContents(
+                !isFixedHeightSheetFitToContents,
+              )
+            }
+          />
+
+          <Button
+            title="Dismiss from JS"
+            color={Colors.primary}
+            onPress={() => setIsFixedHeightSheetOpen(false)}
+          />
+        </View>
+      </FormSheet>
     </View>
   );
 }
@@ -90,6 +127,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     padding: 24,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fixedHeightSheetContent: {
+    height: 240,
+    backgroundColor: Colors.background,
+    padding: 24,
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   sheetTitle: {

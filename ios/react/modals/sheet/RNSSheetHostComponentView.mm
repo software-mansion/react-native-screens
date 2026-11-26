@@ -222,7 +222,10 @@ namespace react = facebook::react;
   // Assuming that for `fitToContents` the RNSSheetContentWrapperComponentView will be a direct child of
   // RNSSheetHostComponentView.
   if ([childComponentView isKindOfClass:[RNSSheetContentWrapperComponentView class]]) {
-    ((RNSSheetContentWrapperComponentView *)childComponentView).delegate = self;
+    RNSSheetContentWrapperComponentView *contentWrapper = (RNSSheetContentWrapperComponentView *)childComponentView;
+    contentWrapper.delegate = self;
+    // Fabric lays the wrapper out before mounting it here, so its first height was reported while it had no delegate.
+    [contentWrapper triggerDelegateUpdate];
   }
 }
 

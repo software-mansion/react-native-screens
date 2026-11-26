@@ -9,6 +9,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) id<RNSSheetContentWrapperDelegate> delegate;
 
+/**
+ * Call this method to notify the delegate with the most recent contents height set by React.
+ */
+- (void)triggerDelegateUpdate;
+
 @end
 
 NS_ASSUME_NONNULL_END

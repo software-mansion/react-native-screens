@@ -35,7 +35,7 @@ Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures
 
 1. Launch the app and navigate to the **Fit To Contents** screen.
 
-   - [ ] The host screen shows the "Open FormSheet" button.
+   - [ ] The host screen shows the "Open FormSheet" and "Open FormSheet (fixed-height content)" buttons.
 
 ---
 
@@ -89,3 +89,27 @@ Verify `detents="fitToContents"` of the `FormSheet` component. This test ensures
 1. Tap "Dismiss from JS" (or swipe the sheet down).
 
    - [ ] The sheet dismisses and the host screen is undimmed; "Open FormSheet" is pressable again.
+
+---
+
+### Fixed-height content
+
+1. Tap "Open FormSheet (fixed-height content)".
+
+   - [ ] The sheet presents with a height matching its content: the "Fixed-height content" title is at the top of the sheet and "Dismiss from JS" at the bottom of its content. The sheet does not open at its maximum height.
+
+2. Tap "Use 0.6 Detent".
+
+   - [ ] The sheet grows to 0.6 of the available height. The content stays at the top of the sheet and the button now reads "Use fitToContents".
+
+3. Tap "Use fitToContents".
+
+   - [ ] The sheet shrinks back to the height of its content. The button reads "Use 0.6 Detent".
+
+4. Tap "Dismiss from JS", then tap "Open FormSheet (fixed-height content)" again.
+
+   - [ ] The sheet presents with a height matching its content again.
+
+5. Tap "Dismiss from JS".
+
+   - [ ] The sheet dismisses and the host screen is undimmed.
