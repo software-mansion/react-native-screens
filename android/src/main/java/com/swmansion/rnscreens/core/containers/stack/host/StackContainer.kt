@@ -59,11 +59,78 @@ internal class StackContainer(
     private val parentContainerRegistry = ParentContainerItemRegistry()
 
     /**
-     * Describes most up-to-date view of the stack. It might be different from
-     * state kept by FragmentManager as this data structure is updated immediately,
-     * while operations on fragment manager are scheduled.
+     * The stack K of the navigation state (RFC-1941): the fragments of the screens in the stack, from the bottom
+     * (the root) to the top. It is the most up-to-date view of the stack and might be different from the state
+     * kept by FragmentManager, as it is updated immediately, while operations on FragmentManager are scheduled.
+     *
+     * Every change of it is a transition, committed with [commitTransition].
      */
     private val stackModel: MutableList<StackScreenFragment> = arrayListOf()
+
+    // region Navigation state
+
+    /**
+     * The last committed navigation state: the keys of [stackModel] and the provenance of the last transition.
+     * [StackNavigationState.EMPTY] until the first transition.
+     */
+    private var navState: StackNavigationState = StackNavigationState.EMPTY
+
+    /**
+     * Provenance of the last transition whose origin is not [StackActionOrigin.PROGRAMMATIC_JS], or `null` if
+     * there was none. A JS request based on an older state is stale.
+     */
+    private var lastNonJsTransitionProvenance: Int? = null
+
+    /**
+     * Whether requests based on an invalidated state are rejected as stale.
+     */
+    internal var rejectStaleNavigationStateUpdates: Boolean = true
+
+    /**
+     * The last request handed to the container that was not handled yet. Not evaluated yet: the container
+     * does not apply requests so far.
+     */
+    private var pendingNavigationStateRequest: StackNavigationStateRequest? = null
+
+    private val observerRegistry = StackNavigationStateObserverRegistry()
+
+    /**
+     * Current navigation state of the container.
+     * Returns [StackNavigationState.EMPTY] before the first transition.
+     */
+    val navigationState: StackNavigationState
+        get() = navState
+
+    fun addNavigationStateObserver(observer: StackNavigationStateObserver): Boolean = observerRegistry.add(observer)
+
+    fun removeNavigationStateObserver(observer: StackNavigationStateObserver): Boolean = observerRegistry.remove(observer)
+
+    /**
+     * Hands a navigation state request to the container. A newer request supersedes one that was not handled yet.
+     */
+    internal fun setPendingNavigationStateRequest(request: StackNavigationStateRequest) {
+        pendingNavigationStateRequest = request
+    }
+
+    /**
+     * Commits the current [stackModel] as a new navigation state, labelled with [actionOrigin], and notifies the
+     * observers. Must be called exactly once per transition, after [stackModel] was updated.
+     */
+    private fun commitTransition(actionOrigin: StackActionOrigin) {
+        val provenance = if (navState.isEmpty()) FIRST_PROVENANCE else navState.provenance + 1
+        navState =
+            StackNavigationState(
+                stackModel.map { checkNotNull(it.item.itemKey) { "[RNScreens] Screen key is required" } },
+                provenance,
+            )
+        if (actionOrigin != StackActionOrigin.PROGRAMMATIC_JS) {
+            lastNonJsTransitionProvenance = provenance
+        }
+        RNSLog.d(TAG, "StackContainer [$id] transition ($actionOrigin): $navState")
+        observerRegistry.emitOnNavigationStateUpdate(navState, actionOrigin)
+    }
+
+    // endregion
 
     private val pendingPopOperations: MutableList<PopOperation> = arrayListOf()
     private val pendingPushOperations: MutableList<PushOperation> = arrayListOf()
@@ -267,6 +334,7 @@ internal class StackContainer(
 
         if (hasPendingOperations) {
             writeTransitionContext(modelBeforeBatch)
+            commitTransition(StackActionOrigin.PROGRAMMATIC_JS)
         }
 
         pendingPopOperations.clear()
@@ -327,6 +395,9 @@ internal class StackContainer(
             "[RNScreens] Primary navigation fragment not updated by native pop"
         }
         updateTopFragment()
+
+        // Header back, system back and a committed predictive back gesture are all user actions.
+        commitTransition(StackActionOrigin.USER)
     }
 
     private fun dumpStackModel() {
@@ -531,5 +602,10 @@ internal class StackContainer(
 
     companion object {
         const val TAG = "StackContainer"
+
+        /**
+         * Provenance of the first state of a container. An implementation detail: JS must not assume it.
+         */
+        private const val FIRST_PROVENANCE = 0
     }
 }
