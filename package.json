@@ -23,6 +23,7 @@
     "lint-ios": "yarn check-ios-layers",
     "check-ios-layers": "node ./scripts/check-ios-layers.js",
     "generate-spm-header-paths": "node ./scripts/generate-spm-header-paths.js",
+    "generate-spm-excluded-paths": "node ./scripts/generate-spm-excluded-paths.js",
     "sync-scenario-metadata": "node ./scripts/sync-scenario-metadata.cts",
     "sync-agent-skills": "node ./scripts/sync-agent-skills.js",
     "check-agent-config": "node ./scripts/sync-agent-skills.js --check",

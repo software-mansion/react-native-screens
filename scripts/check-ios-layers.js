@@ -28,6 +28,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { checkExcludedPaths } = require('./generate-spm-excluded-paths');
 const { checkHeaderSearchPaths } = require('./generate-spm-header-paths');
 
 const ROOT = path.join(__dirname, '..');
@@ -152,12 +153,13 @@ const violations = [
   ...duplicateBasenames,
   ...coreViolations,
   ...checkHeaderSearchPaths(),
+  ...checkExcludedPaths(),
 ];
 
 if (violations.length > 0) {
   console.error(violations.join('\n'));
   console.error(
-    `\n${violations.length} layer violation(s). See RFC-1823: \`ios/core\` must not depend on React Native, \`react\` or \`legacy\`; its headers must be plain Objective-C; header basenames must be unique under \`ios/\`; \`Package.swift\` must list every header directory (\`yarn generate-spm-header-paths\`).`,
+    `\n${violations.length} layer violation(s). See RFC-1823: \`ios/core\` must not depend on React Native, \`react\` or \`legacy\`; its headers must be plain Objective-C; header basenames must be unique under \`ios/\`; \`Package.swift\` must list every header directory (\`yarn generate-spm-header-paths\`) and exclude every non-source top-level directory (\`yarn generate-spm-excluded-paths\`).`,
   );
   process.exit(1);
 }
