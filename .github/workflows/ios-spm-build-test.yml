@@ -59,6 +59,20 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: rm -rf FabricExample.xcworkspace
 
+      - name: Runner hardware
+        run: |
+          sysctl -n machdep.cpu.brand_string hw.model hw.ncpu hw.memsize || true
+          uptime || true
+          memory_pressure | tail -1 || true
+          sysctl vm.swapusage || true
+
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-ios --no-packager --simulator="iPhone 17"
+        run: npx react-native run-ios --no-packager --simulator="iPhone 17" --extra-params "WARNING_CFLAGS=-Wno-nonportable-include-path"
+
+      - name: Runner load after build
+        if: always()
+        run: |
+          uptime || true
+          memory_pressure | tail -1 || true
+          sysctl vm.swapusage || true
