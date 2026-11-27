@@ -34,115 +34,98 @@ export type StackScreenAnimationEasingName =
   | 'emphasizedDecelerate';
 
 /**
- * A named curve or a cubic bezier.
+ * Easing curve: a {@link StackScreenAnimationEasingName} or a
+ * {@link StackScreenAnimationBezier}.
  */
 export type StackScreenAnimationEasing =
   | StackScreenAnimationEasingName
   | StackScreenAnimationBezier;
 
 /**
- * A number is density-independent pixels, `'N%'` is a fraction of the
- * container.
+ * Distance on the screen: a number is density-independent pixels, `'N%'` is a
+ * fraction of the container's width or height.
  */
 export type StackScreenAnimationLength = number | `${number}%`;
 
 /**
- * Name of a transition preset.
+ * Timing options every preset except `'default'` and `'none'` accepts.
  *
  * @remarks
- * Accepts any {@link StackScreenAnimationUntimedPresetName},
- * {@link StackScreenAnimationTimedPresetName} or
- * {@link StackScreenAnimationFadeFromEdgePresetName} value.
- */
-export type StackScreenAnimationPresetName =
-  | StackScreenAnimationUntimedPresetName
-  | StackScreenAnimationTimedPresetName
-  | StackScreenAnimationFadeFromEdgePresetName;
-
-/**
- * Options that change the timing of a preset.
+ * Options apply to what they are written on: on the whole animation they
+ * rescale both transitions, on a transition that transition alone, on a motion
+ * that motion alone.
  */
 export interface StackScreenAnimationTimingOptions {
   /**
-   * Replaces the preset's reference duration (the longer of its push and pop)
-   * in milliseconds; both are rescaled by the same factor.
+   * Duration in milliseconds.
    *
+   * @remarks
+   * Replaces the reference duration of what the option is written on: the
+   * longer of a preset's push and pop transition (both are rescaled by the same
+   * factor), a single transition's own length, or a single motion's length.
+   *
+   * @defaultValue The preset's own duration.
    * @platform android
    */
   duration?: number | undefined;
   /**
-   * Replaces the curve of every animated property of the preset. A predictive
-   * back gesture always scrubs linearly with the finger.
+   * Curve of every animated property of what the option is written on.
    *
+   * @remarks
+   * A predictive back gesture always scrubs linearly with the finger.
+   *
+   * @defaultValue The preset's own curves.
    * @platform android
    */
   easing?: StackScreenAnimationEasing | undefined;
 }
 
 /**
- * Names of the {@link StackScreenAnimationPresetName | presets} that accept
- * {@link StackScreenAnimationFadeFromEdgePresetRef.distance | distance} and the
- * timing options.
+ * Presets that slide a screen over the full width or height of the container.
  *
  * @remarks
  * The following values are supported:
- * - `'fadeFromBottom'` — the new screen fades in while rising from slightly
- *   below; a pop fades it out while it falls.
- * - `'fadeFromTop'` — the new screen fades in while falling from slightly
- *   above; a pop fades it out while it rises.
+ * - `'slideFromRight'`, `'slideFromLeft'` — a horizontal slide from the right
+ *   or left edge of the container; both screens move together.
+ * - `'slideFromBottom'`, `'slideFromTop'` — a vertical slide from the bottom or
+ *   top edge of the container; the other screen stays put.
  */
-export type StackScreenAnimationFadeFromEdgePresetName =
+export type StackScreenAnimationSlideFromPresetName =
+  | 'slideFromRight'
+  | 'slideFromLeft'
+  | 'slideFromBottom'
+  | 'slideFromTop';
+
+/**
+ * Presets that fade a screen while it travels a short distance; the other
+ * screen stays put.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'fadeFromBottom'` — the screen rises while fading in.
+ * - `'fadeFromTop'` — the screen sinks while fading in.
+ */
+export type StackScreenAnimationFadeFromPresetName =
   | 'fadeFromBottom'
   | 'fadeFromTop';
 
 /**
- * Names of the {@link StackScreenAnimationPresetName | presets} that accept
- * the timing options.
+ * Presets with the iOS look: the pushed or popped screen travels the full width
+ * over a background that moves 30 % with it and is darkened while covered.
  *
  * @remarks
  * The following values are supported:
- * - `'fade'` — the screens cross-fade.
- * - `'slideFromRight'` — the new screen slides in from the right and pushes
- *   the previous one out to the left; a pop reverses it.
- * - `'slideFromLeft'` — the new screen slides in from the left and pushes the
- *   previous one out to the right; a pop reverses it.
- * - `'slideFromBottom'` — the new screen slides up from the bottom over the
- *   previous one; a pop slides it back down.
- * - `'slideFromTop'` — the new screen slides down from the top over the
- *   previous one; a pop slides it back up.
- * - `'iosFromRight'` — the new screen slides in from the right while the
- *   previous one moves partly to the left and dims; a pop reverses it.
- * - `'iosFromLeft'` — the new screen slides in from the left while the
- *   previous one moves partly to the right and dims; a pop reverses it.
- *
- * The edges in the names are physical: they are not mirrored in right-to-left
- * layouts.
+ * - `'iosFromRight'` — the pushed screen arrives from the right.
+ * - `'iosFromLeft'` — the pushed screen arrives from the left.
  */
-export type StackScreenAnimationTimedPresetName =
-  | 'slideFromRight'
-  | 'slideFromLeft'
-  | 'slideFromBottom'
-  | 'slideFromTop'
-  | 'fade'
+export type StackScreenAnimationIosFromPresetName =
   | 'iosFromRight'
   | 'iosFromLeft';
 
 /**
- * Names of the {@link StackScreenAnimationPresetName | presets} that accept no
- * options.
- *
- * @remarks
- * The following values are supported:
- * - `'default'` — a cross-zoom below API 33 and, from API 33 on, the
- *   horizontal slide of Android 13, which follows the layout direction.
- * - `'none'` — no visible animation.
+ * Object form of a {@link StackScreenAnimationSlideFromPresetName} preset.
  */
-export type StackScreenAnimationUntimedPresetName = 'default' | 'none';
-
-/**
- * A `fadeFromBottom` or `fadeFromTop` preset with options.
- */
-export interface StackScreenAnimationFadeFromEdgePresetRef
+export interface StackScreenAnimationSlideFromPresetConfig
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
@@ -155,7 +138,46 @@ export interface StackScreenAnimationFadeFromEdgePresetRef
    *
    * @platform android
    */
-  name: StackScreenAnimationFadeFromEdgePresetName;
+  name: StackScreenAnimationSlideFromPresetName;
+}
+
+/**
+ * Object form of a {@link StackScreenAnimationSlideFromPresetName} preset
+ * written as one screen's motion.
+ */
+export interface StackScreenAnimationSlideFromMotionPresetConfig
+  extends StackScreenAnimationSlideFromPresetConfig {
+  /**
+   * How far the screen travels.
+   *
+   * @remarks
+   * Only a single motion can be shortened; the parallax recede of the
+   * `iosFrom*` presets' background is a `'30%'` slide. A whole transition keeps
+   * the full width or height.
+   *
+   * @defaultValue `'100%'`
+   * @platform android
+   */
+  distance?: StackScreenAnimationLength | undefined;
+}
+
+/**
+ * Object form of a {@link StackScreenAnimationFadeFromPresetName} preset.
+ */
+export interface StackScreenAnimationFadeFromPresetConfig
+  extends StackScreenAnimationTimingOptions {
+  /**
+   * Discriminator of the object.
+   *
+   * @platform android
+   */
+  type: 'preset';
+  /**
+   * Name of the preset.
+   *
+   * @platform android
+   */
+  name: StackScreenAnimationFadeFromPresetName;
   /**
    * How far the moving screen rises or falls.
    *
@@ -166,9 +188,9 @@ export interface StackScreenAnimationFadeFromEdgePresetRef
 }
 
 /**
- * A preset with the timing options.
+ * Object form of the `'fade'` preset.
  */
-export interface StackScreenAnimationTimedPresetRef
+export interface StackScreenAnimationFadePresetConfig
   extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
@@ -181,13 +203,14 @@ export interface StackScreenAnimationTimedPresetRef
    *
    * @platform android
    */
-  name: StackScreenAnimationTimedPresetName;
+  name: 'fade';
 }
 
 /**
- * A `default` or `none` preset written as an object.
+ * Object form of a {@link StackScreenAnimationIosFromPresetName} preset.
  */
-export interface StackScreenAnimationUntimedPresetRef {
+export interface StackScreenAnimationIosFromPresetConfig
+  extends StackScreenAnimationTimingOptions {
   /**
    * Discriminator of the object.
    *
@@ -199,26 +222,245 @@ export interface StackScreenAnimationUntimedPresetRef {
    *
    * @platform android
    */
-  name: StackScreenAnimationUntimedPresetName;
+  name: StackScreenAnimationIosFromPresetName;
 }
 
 /**
- * A preset written as an object, with the options it accepts.
+ * Object form of the `'none'` preset; it takes no options.
  */
-export type StackScreenAnimationPresetRef =
-  | StackScreenAnimationFadeFromEdgePresetRef
-  | StackScreenAnimationTimedPresetRef
-  | StackScreenAnimationUntimedPresetRef;
+export interface StackScreenAnimationNonePresetConfig {
+  /**
+   * Discriminator of the object.
+   *
+   * @platform android
+   */
+  type: 'preset';
+  /**
+   * Name of the preset.
+   *
+   * @platform android
+   */
+  name: 'none';
+}
 
 /**
- * Transition of a {@link Stack.Screen}.
+ * Object form of the `'default'` preset; it takes no options.
+ */
+export interface StackScreenAnimationDefaultPresetConfig {
+  /**
+   * Discriminator of the object.
+   *
+   * @platform android
+   */
+  type: 'preset';
+  /**
+   * Name of the preset.
+   *
+   * @platform android
+   */
+  name: 'default';
+}
+
+/**
+ * Preset names allowed as one screen's motion, the
+ * {@link StackScreenAnimationCustomTransition.enter | enter} or
+ * {@link StackScreenAnimationCustomTransition.exit | exit} value of a
+ * {@link StackScreenAnimationCustomTransition}.
+ *
+ * @remarks
+ * A name denotes a motion along its vector: at `enter` the screen arrives along
+ * it, at `exit` the screen departs along it.
+ *
+ * Accepts any {@link StackScreenAnimationSlideFromPresetName} and any
+ * {@link StackScreenAnimationFadeFromPresetName} value, plus:
+ * - `'none'` — the screen stays put for the whole transition.
+ * - `'fade'` — the screen fades in at `enter` and out at `exit`.
+ */
+export type StackScreenAnimationMotionPresetName =
+  | 'none'
+  | 'fade'
+  | StackScreenAnimationSlideFromPresetName
+  | StackScreenAnimationFadeFromPresetName;
+
+/**
+ * Object form of a {@link StackScreenAnimationMotionPresetName} preset, with
+ * its options.
+ */
+export type StackScreenAnimationMotionPresetConfig =
+  | StackScreenAnimationSlideFromMotionPresetConfig
+  | StackScreenAnimationFadeFromPresetConfig
+  | StackScreenAnimationFadePresetConfig
+  | StackScreenAnimationNonePresetConfig;
+
+/**
+ * One screen's motion during a transition: the
+ * {@link StackScreenAnimationCustomTransition.enter | enter} or
+ * {@link StackScreenAnimationCustomTransition.exit | exit} value of a
+ * {@link StackScreenAnimationCustomTransition}.
  *
  * @remarks
  * The following values are supported:
- * - a {@link StackScreenAnimationPresetName} — the preset with its own
- *   timing.
- * - a {@link StackScreenAnimationPresetRef} — the preset with options.
+ * - a {@link StackScreenAnimationMotionPresetName} — a preset by name.
+ * - a {@link StackScreenAnimationMotionPresetConfig} — a preset with options.
+ */
+export type StackScreenAnimationMotion =
+  | StackScreenAnimationMotionPresetName
+  | StackScreenAnimationMotionPresetConfig;
+
+/**
+ * Transition built from the two screens' motions.
+ *
+ * @remarks
+ * Both omitted equals `'none'`. The draw order is the transition's: on a push
+ * the entering screen is drawn over the exiting one, on a pop the exiting
+ * screen stays on top. A motion written only on the screen underneath an
+ * opaque, still one is not visible.
+ */
+export interface StackScreenAnimationCustomTransition {
+  /**
+   * Discriminator of the object.
+   *
+   * @platform android
+   */
+  type: 'custom';
+  /**
+   * Motion of the screen whose view appears.
+   *
+   * @defaultValue `'none'`
+   * @platform android
+   */
+  enter?: StackScreenAnimationMotion | undefined;
+  /**
+   * Motion of the screen whose view disappears.
+   *
+   * @defaultValue `'none'`
+   * @platform android
+   */
+  exit?: StackScreenAnimationMotion | undefined;
+}
+
+/**
+ * Preset names allowed as a whole transition, the
+ * {@link StackScreenAnimationCustom.push | push} or
+ * {@link StackScreenAnimationCustom.pop | pop} value of a
+ * {@link StackScreenAnimationCustom}.
+ *
+ * @remarks
+ * A name denotes a motion along its vector: the pushed or popped screen moves
+ * along it. The position decides the role, so `pop: 'slideFromLeft'` is the
+ * pop transition of the `'slideFromRight'` preset, and `pop: 'slideFromRight'`
+ * keeps both screens moving left. The other screen is animated too by
+ * `'fade'` (a cross-fade), `'slideFromRight'`, `'slideFromLeft'` and the
+ * `iosFrom*` presets; the vertical slides and the `fadeFrom*` presets leave it
+ * still.
+ *
+ * Accepts any {@link StackScreenAnimationMotionPresetName} and any
+ * {@link StackScreenAnimationIosFromPresetName} value.
+ */
+export type StackScreenAnimationTransitionPresetName =
+  | StackScreenAnimationMotionPresetName
+  | StackScreenAnimationIosFromPresetName;
+
+/**
+ * Object form of a {@link StackScreenAnimationTransitionPresetName} preset,
+ * with its options.
+ */
+export type StackScreenAnimationTransitionPresetConfig =
+  | StackScreenAnimationSlideFromPresetConfig
+  | StackScreenAnimationFadeFromPresetConfig
+  | StackScreenAnimationFadePresetConfig
+  | StackScreenAnimationIosFromPresetConfig
+  | StackScreenAnimationNonePresetConfig;
+
+/**
+ * One transition of a custom animation: the
+ * {@link StackScreenAnimationCustom.push | push} or
+ * {@link StackScreenAnimationCustom.pop | pop} value of a
+ * {@link StackScreenAnimationCustom}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a {@link StackScreenAnimationTransitionPresetName} — a preset by name.
+ * - a {@link StackScreenAnimationTransitionPresetConfig} — a preset with
+ *   options.
+ * - a {@link StackScreenAnimationCustomTransition} — the two screens' motions.
+ */
+export type StackScreenAnimationTransition =
+  | StackScreenAnimationTransitionPresetName
+  | StackScreenAnimationTransitionPresetConfig
+  | StackScreenAnimationCustomTransition;
+
+/**
+ * Animation whose push and pop transitions are named separately.
+ *
+ * @remarks
+ * Every preset but `'default'` is `{ push: name, pop: <the name whose vector
+ * points the other way> }`, so
+ * `{ type: 'custom', push: 'slideFromRight', pop: 'slideFromLeft' }` is
+ * `'slideFromRight'` spelled out.
+ */
+export interface StackScreenAnimationCustom {
+  /**
+   * Discriminator of the object.
+   *
+   * @platform android
+   */
+  type: 'custom';
+  /**
+   * Transition played when the screen is pushed.
+   *
+   * @defaultValue `'none'`
+   * @platform android
+   */
+  push?: StackScreenAnimationTransition | undefined;
+  /**
+   * Transition played when the screen is popped.
+   *
+   * @defaultValue `'none'`
+   * @platform android
+   */
+  pop?: StackScreenAnimationTransition | undefined;
+}
+
+/**
+ * Preset names allowed as the whole animation, the
+ * {@link StackScreenProps.animation | animation} prop itself.
+ *
+ * @remarks
+ * Accepts any {@link StackScreenAnimationTransitionPresetName} value, plus:
+ * - `'default'` — the platform's transition: a cross-zoom below Android 13
+ *   and, from Android 13 on, the horizontal slide of Android 13, which follows
+ *   the layout direction. Takes no options.
+ *
+ * A preset's pop transition is the push transition of the preset whose vector
+ * points the other way, so `'slideFromRight'` pops to the right.
+ *
+ * The edges in the names are physical: they are not mirrored in right-to-left
+ * layouts.
+ */
+export type StackScreenAnimationPresetName =
+  | StackScreenAnimationTransitionPresetName
+  | 'default';
+
+/**
+ * Object form of a {@link StackScreenAnimationPresetName} preset, with its
+ * options.
+ */
+export type StackScreenAnimationPresetConfig =
+  | StackScreenAnimationTransitionPresetConfig
+  | StackScreenAnimationDefaultPresetConfig;
+
+/**
+ * Value of the {@link StackScreenProps.animation | animation} prop of
+ * {@link Stack.Screen}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a {@link StackScreenAnimationPresetName} — a preset by name.
+ * - a {@link StackScreenAnimationPresetConfig} — a preset with options.
+ * - a {@link StackScreenAnimationCustom} — a custom animation.
  */
 export type StackScreenAnimation =
   | StackScreenAnimationPresetName
-  | StackScreenAnimationPresetRef;
+  | StackScreenAnimationPresetConfig
+  | StackScreenAnimationCustom;
