@@ -37,6 +37,15 @@ const ANIMATION_OPTIONS = [
     },
   },
   {
+    label: 'slideFromRight 2000 ms decelerateQuint',
+    animation: {
+      type: 'preset',
+      name: 'slideFromRight',
+      duration: 2000,
+      easing: 'decelerateQuint',
+    },
+  },
+  {
     label: 'fadeFromBottom 2000 ms',
     animation: { type: 'preset', name: 'fadeFromBottom', duration: 2000 },
   },

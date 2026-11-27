@@ -15,9 +15,9 @@ export const scenarioDescription: ScenarioDescription = {
   },
   deviceSetup: {
     iphone:
-      'System animations on (Settings → Accessibility → Motion → Reduce Motion is off). Every group runs at normal speed (350 ms transitions).',
+      'System animations on (Settings → Accessibility → Motion → Reduce Motion is off).',
     'android-phone':
-      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationIOSFrom` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). The interactive predictive back gesture needs API 34 or newer. For the groups whose heading says "Android: 10x animation scale, iOS: normal" only: in Developer options set "Animator duration scale" and "Transition animation scale" to 10x before the first of them and back to 1x after the last (at 1x these transitions last 200 ms and the tint cannot be compared against a swatch by eye).',
+      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationIOSFrom` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). The interactive predictive back gesture needs API 34 or newer.',
   },
   e2eCoverage: 'incomplete',
   e2eCoverageDetails:

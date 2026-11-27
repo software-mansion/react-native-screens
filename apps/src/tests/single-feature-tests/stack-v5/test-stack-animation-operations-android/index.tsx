@@ -11,12 +11,42 @@ import { CenteredLayoutView } from '@apps/shared/CenteredLayoutView';
 import { Colors } from '@apps/shared/styling';
 import { StackRouteInformation } from '@apps/tests/shared/components/stack-v5/StackRouteInformation';
 
+// Slow enough to tap while the transition is still running.
+const SLOW_DURATION_MS = 2000;
+
 const ROUTES = [
   { name: 'Home', animation: undefined, color: Colors.YellowLight100 },
   { name: 'Right', animation: 'slideFromRight', color: Colors.BlueLight100 },
   { name: 'Left', animation: 'slideFromLeft', color: Colors.RedLight100 },
   { name: 'Bottom', animation: 'slideFromBottom', color: Colors.GreenLight100 },
   { name: 'Top', animation: 'slideFromTop', color: Colors.PurpleLight100 },
+  {
+    name: 'Right 2000 ms',
+    animation: {
+      type: 'preset',
+      name: 'slideFromRight',
+      duration: SLOW_DURATION_MS,
+    },
+    color: Colors.BlueLight100,
+  },
+  {
+    name: 'Left 2000 ms',
+    animation: {
+      type: 'preset',
+      name: 'slideFromLeft',
+      duration: SLOW_DURATION_MS,
+    },
+    color: Colors.RedLight100,
+  },
+  {
+    name: 'Bottom 2000 ms',
+    animation: {
+      type: 'preset',
+      name: 'slideFromBottom',
+      duration: SLOW_DURATION_MS,
+    },
+    color: Colors.GreenLight100,
+  },
 ] as const satisfies readonly {
   name: string;
   animation: StackScreenAnimation | undefined;
@@ -30,7 +60,11 @@ const ROUTE_CONFIGS = ROUTES.map(route => ({
   options: {
     animation: route.animation,
     headerConfig: {
-      title: `${route.name} · ${route.animation ?? 'default'}`,
+      title: `${route.name} · ${
+        typeof route.animation === 'object'
+          ? route.animation.name
+          : route.animation ?? 'default'
+      }`,
     },
   },
 }));
@@ -140,6 +174,20 @@ function OperationButtons() {
       <Button
         title="Push Right + Bottom + Left"
         onPress={() => pushMultiple(['Right', 'Bottom', 'Left'])}
+      />
+      <Button
+        title="Push Right 2000 ms"
+        onPress={() => push('Right 2000 ms')}
+      />
+      <Button
+        title="Push Bottom 2000 ms"
+        onPress={() => push('Bottom 2000 ms')}
+      />
+      <Button
+        title="Push Right + Bottom + Left 2000 ms"
+        onPress={() =>
+          pushMultiple(['Right 2000 ms', 'Bottom 2000 ms', 'Left 2000 ms'])
+        }
       />
       <Button
         title="Pop"

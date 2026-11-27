@@ -25,6 +25,7 @@ static const struct {
   const char *string;
 } kRNSStackAnimationEasingNames[] = {
     {RNSStackAnimationEasingNameLinear, "linear"},
+    {RNSStackAnimationEasingNameEase, "ease"},
     {RNSStackAnimationEasingNameEaseIn, "easeIn"},
     {RNSStackAnimationEasingNameEaseOut, "easeOut"},
     {RNSStackAnimationEasingNameEaseInOut, "easeInOut"},
@@ -34,10 +35,16 @@ static const struct {
     {RNSStackAnimationEasingNameEmphasized, "emphasized"},
     {RNSStackAnimationEasingNameEmphasizedAccelerate, "emphasizedAccelerate"},
     {RNSStackAnimationEasingNameEmphasizedDecelerate, "emphasizedDecelerate"},
+    {RNSStackAnimationEasingNameAccelerateDecelerate, "accelerateDecelerate"},
+    {RNSStackAnimationEasingNameAccelerateQuint, "accelerateQuint"},
+    {RNSStackAnimationEasingNameDecelerateQuint, "decelerateQuint"},
 };
 
-// CSS Easing Functions Level 1, the `ease-in` / `ease-out` / `ease-in-out` keywords:
+// CSS Easing Functions Level 1, the `ease` / `ease-in` / `ease-out` / `ease-in-out` keywords:
 // https://www.w3.org/TR/css-easing-1/#cubic-bezier-easing-functions
+// `ease` is also `kCAMediaTimingFunctionDefault`, whose control points
+// `-[CAMediaTimingFunction getControlPointAtIndex:values:]` returns as (0.25, 0.1) and (0.25, 1).
+static const RNSStackAnimationControlPoints kRNSEase = {0.25, 0.1, 0.25, 1};
 static const RNSStackAnimationControlPoints kRNSEaseIn = {0.42, 0, 1, 1};
 static const RNSStackAnimationControlPoints kRNSEaseOut = {0, 0, 0.58, 1};
 static const RNSStackAnimationControlPoints kRNSEaseInOut = {0.42, 0, 0.58, 1};
@@ -96,6 +103,8 @@ static const CGPoint kRNSEmphasizedJoin = {1.0 / 6, 0.4};
   switch (_name) {
     case RNSStackAnimationEasingNameLinear:
       return progress;
+    case RNSStackAnimationEasingNameEase:
+      return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEase];
     case RNSStackAnimationEasingNameEaseIn:
       return [RNSStackAnimationBezierEasing valueAt:progress controlPoints:kRNSEaseIn];
     case RNSStackAnimationEasingNameEaseOut:

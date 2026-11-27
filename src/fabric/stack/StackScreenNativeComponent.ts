@@ -24,6 +24,7 @@ type StackScreenAnimationBezier = [number, number, number, number];
 
 type StackScreenAnimationEasingName =
   | 'linear'
+  | 'ease'
   | 'easeIn'
   | 'easeOut'
   | 'easeInOut'
@@ -32,7 +33,10 @@ type StackScreenAnimationEasingName =
   | 'standardDecelerate'
   | 'emphasized'
   | 'emphasizedAccelerate'
-  | 'emphasizedDecelerate';
+  | 'emphasizedDecelerate'
+  | 'accelerateDecelerate'
+  | 'accelerateQuint'
+  | 'decelerateQuint';
 
 type StackScreenAnimationEasing =
   | StackScreenAnimationEasingName

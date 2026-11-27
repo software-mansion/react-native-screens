@@ -1,13 +1,11 @@
 package com.swmansion.rnscreens.core.containers.stack.animation.model
 
 internal enum class EasingName(
-    /**
-     * The value accepted by the `easing` option of the `animation` prop; `null` for the legacy
-     * platform curves only the preset tables use.
-     */
-    internal val stringName: String?,
+    /** The value accepted by the `easing` option of the `animation` prop. */
+    internal val stringName: String,
 ) {
     LINEAR("linear"),
+    EASE("ease"),
     EASE_IN("easeIn"),
     EASE_OUT("easeOut"),
     EASE_IN_OUT("easeInOut"),
@@ -17,9 +15,9 @@ internal enum class EasingName(
     EMPHASIZED("emphasized"),
     EMPHASIZED_ACCELERATE("emphasizedAccelerate"),
     EMPHASIZED_DECELERATE("emphasizedDecelerate"),
-    ACCELERATE_DECELERATE(null),
-    ACCELERATE_QUINT(null),
-    DECELERATE_QUINT(null),
+    ACCELERATE_DECELERATE("accelerateDecelerate"),
+    ACCELERATE_QUINT("accelerateQuint"),
+    DECELERATE_QUINT("decelerateQuint"),
     ;
 
     companion object {
