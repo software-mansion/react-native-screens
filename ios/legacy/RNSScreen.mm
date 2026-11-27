@@ -2029,6 +2029,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
+  BOOL isStatusBarTrait =
+      trait == RNSWindowTraitStyle || trait == RNSWindowTraitHidden || trait == RNSWindowTraitAnimation;
+  if (isStatusBarTrait && [lastViewController isKindOfClass:RNSTabBarController.class]) {
+    // The tab bar controller isn't one of this library's containers, so the search used to stop here
+    // and screens inside a tab could never set the status bar. Continue into the selected tab's
+    // content (its ScreenStack or ScreenContainer), as UIKit's UITabBarController does. Orientation
+    // is left alone: tabs resolve it through `evaluateOrientation`.
+    UIViewController *selectedTab = [(RNSTabBarController *)lastViewController effectiveSelectedViewController];
+    lastViewController = [[selectedTab childViewControllers] lastObject];
+  }
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
