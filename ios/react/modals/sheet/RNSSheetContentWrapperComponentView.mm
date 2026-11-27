@@ -38,6 +38,11 @@ namespace react = facebook::react;
   }
 }
 
+- (void)triggerDelegateUpdate
+{
+  [_delegate contentWrapper:self didChangeReactContentsHeight:self.frame.size.height];
+}
+
 + (BOOL)shouldBeRecycled
 {
   return NO;
