@@ -1005,10 +1005,9 @@ RNS_IGNORE_SUPER_CALL_END
   if (customAnimationOnSwipePropSetAndSelectedAnimationIsCustom) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       UIRectEdge edges = ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges;
-      BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+      BOOL isRTL = RNSNavigationControllerIsRTL(_controller);
       BOOL isSlideFromLeft = topScreen.stackAnimation == RNSScreenStackAnimationSlideFromLeft;
-      // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
-      // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
+      // If no explicit semantic fallback is set, the navigation controller's trait collection determines direction.
       BOOL isCorrectEdge = (isRTL && edges == UIRectEdgeRight) ||
           (!isRTL && isSlideFromLeft && edges == UIRectEdgeRight) ||
           (isRTL && isSlideFromLeft && edges == UIRectEdgeLeft) || (!isRTL && edges == UIRectEdgeLeft);
@@ -1079,7 +1078,7 @@ RNS_IGNORE_SUPER_CALL_END
     translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
     velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;
     distance = gestureRecognizer.view.bounds.size.width;
-    BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+    BOOL isRTL = RNSNavigationControllerIsRTL(_controller);
     if (isRTL) {
       translation = -translation;
       velocity = -velocity;
@@ -1223,7 +1222,7 @@ RNS_IGNORE_SUPER_CALL_END
   NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
   float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
   float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
-  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+  BOOL isRTL = RNSNavigationControllerIsRTL(_controller);
   if (isRTL) {
     x = _controller.view.frame.size.width - x;
   }
