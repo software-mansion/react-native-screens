@@ -11,6 +11,7 @@
 #import "RNSLog.h"
 
 #import "RNSContainerHelpers.h"
+#import "RNSConversions-Stack.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackOperationCoordinator.h"
@@ -25,6 +26,7 @@ namespace react = facebook::react;
   RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
   BOOL _didSetHeadlessModeEnabled;
+  UITraitEnvironmentLayoutDirection _layoutDirection;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -43,6 +45,7 @@ namespace react = facebook::react;
   _stackNavigationController = [RNSStackNavigationController new];
   _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
+  _layoutDirection = UITraitEnvironmentLayoutDirectionUnspecified;
 }
 
 #pragma mark - UIKit Callbacks
@@ -147,6 +150,12 @@ namespace react = facebook::react;
 {
   const auto &oldComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(_props);
   const auto &newComponentProps = *std::static_pointer_cast<const react::RNSStackHostProps>(props);
+
+  if (newComponentProps.layoutDirection != oldComponentProps.layoutDirection) {
+    _layoutDirection = rnscreens::conversion::UITraitEnvironmentLayoutDirectionFromReactRNSStackHostLayoutDirection(
+        newComponentProps.layoutDirection);
+    _stackNavigationController.layoutDirection = _layoutDirection;
+  }
 
   if (oldComponentProps.headlessModeEnabled != newComponentProps.headlessModeEnabled) {
     if (_didSetHeadlessModeEnabled) {

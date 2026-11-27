@@ -8,6 +8,7 @@ import React, {
 import {
   Button,
   I18nManager,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,6 +39,7 @@ const PROBE_WIDTH = 48;
 const PROBE_HEIGHT = 32;
 
 const PUSH_LABEL = 'Push screen (adds a back button)';
+const PUSH_NESTED_LABEL = 'Push nested stack';
 
 // Each picker's options are the single source of truth; the option union type is
 // derived from the array so the two can never drift apart.
@@ -56,7 +58,8 @@ const HORIZONTAL_GRAVITY_OPTIONS: StackHeaderTitleHorizontalGravityAndroid[] = [
 export type MenuOption = (typeof MENU_OPTIONS)[number];
 
 interface Config {
-  direction: StackDirection;
+  // Omitted keeps the StackContainer default, which follows I18nManager.isRTL.
+  direction?: StackDirection;
   type: StackHeaderTypeAndroid;
   centerSubview: boolean;
   titleCentered: boolean;
@@ -67,7 +70,6 @@ interface Config {
 }
 
 const DEFAULT_CONFIG: Config = {
-  direction: 'inherit',
   type: 'small',
   centerSubview: false,
   titleCentered: false,
@@ -139,6 +141,12 @@ function buildHeaderConfig(config: Config): StackHeaderConfigProps {
       // Keeps the collapsed state of the large header reachable from any offset.
       scrollFlagEnterAlways: isSmall ? undefined : true,
     },
+    ios: {
+      leadingItems: [{ type: 'item', id: 'leading-probe', ...makeProbe('L') }],
+      trailingItems: [
+        { type: 'item', id: 'trailing-probe', ...makeProbe('T') },
+      ],
+    },
   };
 }
 
@@ -155,10 +163,17 @@ function TestStackLayoutDirection() {
   return (
     <ConfigContext.Provider value={{ config, updateConfig, setConfig }}>
       <StackContainer
-        direction={config.direction}
+        {...(config.direction !== undefined && {
+          direction: config.direction,
+        })}
         routeConfigs={[
           { name: 'Root', element: <ConfigScreen /> },
           { name: 'Pushed', element: <ConfigScreen /> },
+          {
+            name: 'Nested',
+            element: <NestedStackScreen />,
+            options: { headerConfig: { title: 'Outer' } },
+          },
         ]}
       />
     </ConfigContext.Provider>
@@ -167,12 +182,21 @@ function TestStackLayoutDirection() {
 
 function ConfigControls() {
   const { config, updateConfig, setConfig } = useContext(ConfigContext);
+  // React Native stores both values across launches but exposes neither, so
+  // the switches start from `isRTL` and React Native's default and write only
+  // when toggled.
   const [forceRtl, setForceRtl] = useState(I18nManager.isRTL);
-  const isSmall = config.type === 'small';
+  const [allowRtl, setAllowRtl] = useState(true);
 
-  useEffect(() => {
-    I18nManager.forceRTL(forceRtl);
-  }, [forceRtl]);
+  const onForceRtlChange = (value: boolean) => {
+    setForceRtl(value);
+    I18nManager.forceRTL(value);
+  };
+
+  const onAllowRtlChange = (value: boolean) => {
+    setAllowRtl(value);
+    I18nManager.allowRTL(value);
+  };
 
   return (
     <>
@@ -184,18 +208,36 @@ function ConfigControls() {
         testID="layout-direction-force-rtl-switch"
         label="forceRTL"
         value={forceRtl}
-        onValueChange={setForceRtl}
+        onValueChange={onForceRtlChange}
+      />
+      <SettingsSwitch
+        testID="layout-direction-allow-rtl-switch"
+        label="allowRTL"
+        value={allowRtl}
+        onValueChange={onAllowRtlChange}
       />
 
       <Text style={styles.heading}>StackHost</Text>
       <SettingsPicker<StackDirection>
         testID="direction-picker"
         label="direction"
-        value={config.direction}
+        value={config.direction ?? (I18nManager.isRTL ? 'rtl' : 'ltr')}
         onValueChange={v => updateConfig('direction', v)}
         items={DIRECTIONS}
       />
 
+      {Platform.OS === 'android' ? <AndroidHeaderControls /> : null}
+      <Button title="Reset" onPress={() => setConfig(DEFAULT_CONFIG)} />
+    </>
+  );
+}
+
+function AndroidHeaderControls() {
+  const { config, updateConfig } = useContext(ConfigContext);
+  const isSmall = config.type === 'small';
+
+  return (
+    <>
       <Text style={styles.heading}>Header</Text>
       <SettingsPicker<StackHeaderTypeAndroid>
         testID="header-type-picker"
@@ -254,7 +296,6 @@ function ConfigControls() {
           />
         </>
       )}
-      <Button title="Reset" onPress={() => setConfig(DEFAULT_CONFIG)} />
     </>
   );
 }
@@ -288,6 +329,7 @@ function ConfigScreen() {
     <ScrollViewMarker style={styles.scrollViewMarker}>
       <ScrollView
         nestedScrollEnabled={true}
+        contentInsetAdjustmentBehavior="automatic"
         style={styles.scroll}
         contentContainerStyle={styles.content}
         // The controls stick below the header so they stay reachable at any
@@ -297,11 +339,67 @@ function ConfigScreen() {
         <ConfigControls />
         <Text style={styles.heading}>Navigation</Text>
         <Button title={PUSH_LABEL} onPress={() => push('Pushed')} />
+        <Button title={PUSH_NESTED_LABEL} onPress={() => push('Nested')} />
         <LongText size="lg" />
         {/* Bottom sentinel: lets e2e assert the content actually scrolled. */}
         <Text testID="layout-direction-bottom-marker">End of content</Text>
       </ScrollView>
     </ScrollViewMarker>
+  );
+}
+
+// A stack inside a screen of the outer stack, with its own direction: it shows
+// whether `inherit` follows the outer stack.
+function NestedStackScreen() {
+  const [direction, setDirection] = useState<StackDirection | undefined>(
+    undefined,
+  );
+
+  return (
+    <NestedDirectionContext.Provider value={{ direction, setDirection }}>
+      <StackContainer
+        {...(direction !== undefined && { direction })}
+        routeConfigs={[{ name: 'NestedRoot', element: <NestedScreen /> }]}
+      />
+    </NestedDirectionContext.Provider>
+  );
+}
+
+const NestedDirectionContext = React.createContext<{
+  direction: StackDirection | undefined;
+  setDirection: (direction: StackDirection) => void;
+}>({ direction: undefined, setDirection: () => {} });
+
+const NESTED_HEADER_CONFIG: StackHeaderConfigProps = {
+  title: 'Nested',
+  ios: {
+    leadingItems: [{ type: 'item', id: 'nested-probe', ...makeProbe('L') }],
+  },
+  android: { leadingSubview: makeProbe('L') },
+};
+
+function NestedScreen() {
+  const { direction, setDirection } = useContext(NestedDirectionContext);
+  const { setRouteOptions, routeKey } = useStackNavigationContext();
+
+  useEffect(() => {
+    setRouteOptions(routeKey, { headerConfig: NESTED_HEADER_CONFIG });
+  }, [setRouteOptions, routeKey]);
+
+  return (
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={styles.scroll}
+      contentContainerStyle={styles.content}>
+      <ContentDirectionMarker />
+      <SettingsPicker<StackDirection>
+        testID="nested-direction-picker"
+        label="nested direction"
+        value={direction ?? (I18nManager.isRTL ? 'rtl' : 'ltr')}
+        onValueChange={setDirection}
+        items={DIRECTIONS}
+      />
+    </ScrollView>
   );
 }
 

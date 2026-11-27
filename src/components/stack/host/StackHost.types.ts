@@ -52,8 +52,23 @@ export type StackHostProps = {
    * `layoutDirection` View property). It is propagated via the view hierarchy,
    * so `inherit` falls back to the direction set on one of the parent views.
    *
+   * On iOS, this property sets the `layoutDirection` trait override for the
+   * native navigation controller, so the navigation bar, the side of the back
+   * button, the system transitions and the edge swipe follow it. The back
+   * button's chevron and the order of the chevron and its title can follow the
+   * direction of the native app instead (a UIKit bug: on iOS 18 whenever the
+   * two differ, on iOS 26+ with a right-to-left app and `'ltr'`). Traits
+   * propagate down the native hierarchy, so `'inherit'` falls back to the
+   * enclosing container or, at the top, to the direction of the **native** app
+   * (`userInterfaceLayoutDirection`), which ignores `react-native`'s override
+   * (e.g. `forceRTL`).
+   *
+   * @tip
+   * To keep the stack on iOS in sync with `react-native`'s direction, pass
+   * `'ltr'` or `'rtl'` depending on `I18nManager.isRTL`.
+   *
    * @defaultValue `'inherit'`
-   * @platform android
+   * @platform android, ios
    */
   direction?: StackDirection | undefined;
   /**
