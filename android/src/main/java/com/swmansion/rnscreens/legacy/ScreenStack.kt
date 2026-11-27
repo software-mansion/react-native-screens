@@ -286,6 +286,14 @@ class ScreenStack(
                     // dismissed screens are already removed above & preloaded ones must stay detached
                     .filter { !dismissedWrappers.contains(it) && it.screen.activityState !== Screen.ActivityState.INACTIVE }
                     .forEach { wrapper ->
+                        // A screen above visibleBottom may still be attached, e.g. when the screen
+                        // under a transparent modal changes. Adding it again throws "Fragment
+                        // already added", and skipping it leaves it below the screens added here.
+                        // Removing it first lets it be re-added in stack order; within a single
+                        // transaction its view is kept, not recreated.
+                        if (wrapper.fragment.isAdded) {
+                            transaction.remove(wrapper.fragment)
+                        }
                         // TODO: It should be enough to dispatch this on commit action once.
                         transaction.add(id, wrapper.fragment).runOnCommit {
                             top?.screen?.bringToFront()
