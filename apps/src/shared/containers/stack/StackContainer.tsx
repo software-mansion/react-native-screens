@@ -1,5 +1,11 @@
 import React from 'react';
-import { Stack } from 'react-native-screens';
+import type { NativeSyntheticEvent } from 'react-native';
+import {
+  Stack,
+  type StackNavStateChangedEvent,
+  type StackNavStateRequestRejectedEvent,
+  type StackScreensReleasedEvent,
+} from 'react-native-screens';
 import type {
   NavigationAction,
   StackContainerProps,
@@ -26,7 +32,14 @@ import { useElementsByName } from '../shared/use-elements-by-name';
 export function StackContainer<
   const TRouteConfigs extends readonly StackRouteConfig[],
 >(props: StackContainerProps<TRouteConfigs>) {
-  const { routeConfigs, initialRouteNames, ...restProps } = props;
+  const {
+    routeConfigs,
+    initialRouteNames,
+    onNavStateChanged,
+    onNavStateRequestRejected,
+    onScreensReleased,
+    ...restProps
+  } = props;
   useSanitizeRouteConfigs(routeConfigs);
 
   const elementsByName = useElementsByName(routeConfigs);
@@ -49,28 +62,64 @@ export function StackContainer<
   const hostRef =
     useRenderDebugInfo<NativeComponentGenericRef>('StackContainer');
 
-  const onScreenDismissed = React.useCallback(
-    (screenKey: string) => {
-      RNSLog.log(`onScreenDismissed for ${screenKey}`);
-      navMethods.popCompletedAction(screenKey);
+  const onNavStateChangedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<StackNavStateChangedEvent>) => {
+      onNavStateChanged?.(event);
+      RNSLog.log(
+        `[Stack] onNavStateChanged: ${JSON.stringify(event.nativeEvent)}`,
+      );
+      navActionDispatch({
+        type: 'nav-state-changed',
+        event: event.nativeEvent,
+      });
     },
-    [navMethods],
+    [onNavStateChanged],
   );
 
-  const onScreenNativelyDismissed = React.useCallback(
-    (screenKey: string) => {
-      RNSLog.log(`onScreenNativelyDismissed for ${screenKey}`);
-      navMethods.popNativeAction(screenKey);
+  const onNavStateRequestRejectedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<StackNavStateRequestRejectedEvent>) => {
+      onNavStateRequestRejected?.(event);
+      RNSLog.log(
+        `[Stack] onNavStateRequestRejected: ${JSON.stringify(
+          event.nativeEvent,
+        )}`,
+      );
+      navActionDispatch({
+        type: 'nav-state-request-rejected',
+        event: event.nativeEvent,
+      });
     },
-    [navMethods],
+    [onNavStateRequestRejected],
   );
 
+  const onScreensReleasedCallback = React.useCallback(
+    (event: NativeSyntheticEvent<StackScreensReleasedEvent>) => {
+      onScreensReleased?.(event);
+      RNSLog.log(
+        `[Stack] onScreensReleased: ${JSON.stringify(event.nativeEvent)}`,
+      );
+      navActionDispatch({
+        type: 'screens-released',
+        event: event.nativeEvent,
+      });
+    },
+    [onScreensReleased],
+  );
+
+  // Children are a pool of screens: whether a screen is in the stack is
+  // decided by the request only. They are rendered in the order the routes
+  // were created, so no child ever moves; their order carries no meaning.
   return (
-    <Stack.Host ref={hostRef} {...restProps}>
-      {stackNavState.stack.map(
+    <Stack.Host
+      ref={hostRef}
+      {...restProps}
+      navStateRequest={stackNavState.request}
+      onNavStateChanged={onNavStateChangedCallback}
+      onNavStateRequestRejected={onNavStateRequestRejectedCallback}
+      onScreensReleased={onScreensReleasedCallback}>
+      {stackNavState.routes.map(
         ({
           options: { headerConfig, headerConfigRef, ...options } = {},
-          activityMode,
           routeKey,
           name,
         }) => {
@@ -92,13 +141,7 @@ export function StackContainer<
           }
 
           return (
-            <Stack.Screen
-              key={routeKey}
-              {...options}
-              activityMode={activityMode}
-              screenKey={routeKey}
-              onDismiss={onScreenDismissed}
-              onNativeDismiss={onScreenNativelyDismissed}>
+            <Stack.Screen key={routeKey} {...options} screenKey={routeKey}>
               <StackNavigationContext.Provider value={stackNavigationContext}>
                 {element}
                 {headerConfig !== undefined && (
