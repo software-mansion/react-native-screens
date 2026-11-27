@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @brief The navigation controller the Split installs for the column.
  *
- * A column whose only child is a Stack.Host in headless mode provides the navigation controller of that host. Any
+ * A column with a Stack.Host in headless mode as its child provides the navigation controller of that host. Any
  * other column provides the one its coordinator creates.
  */
 @property (nonatomic, readonly) RNSStackNavigationController *columnNavigationController;

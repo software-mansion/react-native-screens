@@ -85,12 +85,8 @@ namespace react = facebook::react;
 
 - (BOOL)isStackHostOfColumn:(UIView<RCTComponentViewProtocol> *)childComponentView
 {
-  // The stack host is an only child of the column.
-  BOOL hasOtherChildren = _stackHost != nil || _columnCoordinator.plainColumnContentView.subviews.count > 0;
-  if (hasOtherChildren || ![childComponentView isKindOfClass:RNSStackHostComponentView.class]) {
-    return NO;
-  }
-  return static_cast<RNSStackHostComponentView *>(childComponentView).headlessModeEnabled;
+  return [childComponentView isKindOfClass:RNSStackHostComponentView.class] &&
+      static_cast<RNSStackHostComponentView *>(childComponentView).headlessModeEnabled;
 }
 
 - (void)setStackHost:(nullable RNSStackHostComponentView *)stackHost
