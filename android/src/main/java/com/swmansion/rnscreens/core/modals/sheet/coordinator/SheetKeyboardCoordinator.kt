@@ -5,6 +5,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 internal class SheetKeyboardCoordinator(
@@ -39,7 +41,8 @@ internal class SheetKeyboardCoordinator(
     }
 
     private inner class KeyboardInsetsAnimationCallback : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-        private var startTop = 0
+        private var drawnTop = 0
+        private var topAfterContentResize = 0
         private var startTranslationY = 0f
 
         // Decided once per keyboard animation, in `onPrepare`. Tracking can't be picked up mid-animation
@@ -54,11 +57,11 @@ internal class SheetKeyboardCoordinator(
                 return
             }
 
+            // Where the sheet is drawn before the keyboard insets are applied, and where it rests once a content
+            // resize animation in progress is finished.
+            drawnTop = bottomSheetView.top + bottomSheetView.translationY.roundToInt()
             contentResizeAnimator?.onKeyboardAnimationPrepare()
-
-            // Saving the position the sheet is drawn at before applying keyboard insets. It is translated
-            // when this animation takes over from a content resize animation.
-            startTop = bottomSheetView.top + bottomSheetView.translationY.roundToInt()
+            topAfterContentResize = bottomSheetView.top + bottomSheetView.translationY.roundToInt()
             isTracking = true
         }
 
@@ -72,6 +75,7 @@ internal class SheetKeyboardCoordinator(
 
             // The end sheet position is known - move the sheet and let the animation progress
             // bring it to the new position.
+            val startTop = max(drawnTop, min(topAfterContentResize, bottomSheetView.top))
             startTranslationY = (startTop - bottomSheetView.top).toFloat()
             bottomSheetView.translationY = startTranslationY
             return bounds
