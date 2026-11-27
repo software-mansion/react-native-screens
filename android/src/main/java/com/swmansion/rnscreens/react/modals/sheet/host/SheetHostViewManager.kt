@@ -16,7 +16,6 @@ import com.swmansion.rnscreens.react.modals.sheet.event.SheetDidDisappearEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetDismissEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissPreventedEvent
-import com.swmansion.rnscreens.react.modals.sheet.event.SheetSyncFlushEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillAppearEvent
 import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillDisappearEvent
 import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
@@ -172,7 +171,6 @@ class SheetHostViewManager :
         mutableMapOf(
             makeEventRegistrationInfo(SheetDismissEvent),
             makeEventRegistrationInfo(SheetNativeDismissEvent),
-            makeEventRegistrationInfo(SheetSyncFlushEvent),
             makeEventRegistrationInfo(SheetWillAppearEvent),
             makeEventRegistrationInfo(SheetDidAppearEvent),
             makeEventRegistrationInfo(SheetWillDisappearEvent),

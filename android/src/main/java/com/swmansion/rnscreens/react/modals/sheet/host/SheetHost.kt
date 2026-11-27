@@ -114,18 +114,8 @@ class SheetHost(
             density = resources.displayMetrics.density,
             frameWidth = width,
             frameHeight = height,
+            immediate = true,
         )
-        flushPendingStateUpdates()
-    }
-
-    // We trigger a synchronous flush event to force the layout recalculation.
-    // However, while the calculation is synchronous, the actual UI mounting in Android isn't.
-    // The synchronous flush makes a request to the EventBeat. Because EventBeat is controlled
-    // by a frame callback on the Choreographer, if we are currently inside the
-    // traversal phase, the actual mounting callback will be executed on the next frame.
-    // To prevent drawing a stale layout, we block drawing the frame in `SheetContentView`.
-    private fun flushPendingStateUpdates() {
-        eventEmitter.emitOnSyncFlushEvent()
     }
 
     internal fun destroy() {
