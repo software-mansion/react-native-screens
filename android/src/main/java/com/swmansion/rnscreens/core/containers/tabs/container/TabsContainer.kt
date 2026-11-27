@@ -38,6 +38,7 @@ import com.swmansion.rnscreens.core.containers.tabs.item.TabsContainerItemDelega
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsItemInvalidationFlags
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragment
 import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragmentDelegate
+import com.swmansion.rnscreens.core.containers.tabs.item.TabsScreenFragmentLifecycleTracker
 import com.swmansion.rnscreens.core.utils.RNSLog
 import com.swmansion.rnscreens.core.utils.ViewIdProviding
 import com.swmansion.rnscreens.core.utils.createTransactionWithReordering
@@ -558,19 +559,40 @@ class TabsContainer internal constructor(
     }
 
     private fun performSelectedTabUpdateIfNeeded() {
-        if (invalidationFlags.isSelectedTabInvalidated) {
-            invalidationFlags.isSelectedTabInvalidated = false
-            performSelectedTabUpdate()
+        if (!invalidationFlags.isSelectedTabInvalidated) {
+            return
         }
+
+        // Selecting a tab commits a fragment transaction right away. While a tab fragment of the same
+        // fragment manager runs a lifecycle callback, that commit would throw "FragmentManager is
+        // already executing transactions": this happens when an appearance event emitted from the
+        // callback is dispatched synchronously and mounts a pending React transaction carrying a
+        // tab change, e.g. one made while the activity was paused. Keep the selection invalidated
+        // and select the tab in the next scheduled update instead. The other update steps don't
+        // commit transactions and still run now.
+        if (isFragmentManagerRunningTabsScreenFragmentCallback()) {
+            updateScheduler.requestUpdate()
+            return
+        }
+
+        invalidationFlags.isSelectedTabInvalidated = false
+        performSelectedTabUpdate()
     }
 
+    private fun isFragmentManagerRunningTabsScreenFragmentCallback(): Boolean =
+        fragmentManager?.let { TabsScreenFragmentLifecycleTracker.isRunningCallback(it) } ?: false
+
     private fun updateBottomNavigationViewAppearanceIfNeeded() {
-        if (invalidationFlags.isNavigationMenuAppearanceInvalidated) {
-            invalidationFlags.isNavigationMenuAppearanceInvalidated = false
-            // Accessibility is re-applied to every tab together with the bar's appearance.
-            bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ACCESSIBILITY)
-            updateBottomNavigationViewAppearance()
+        // Nothing is selected yet (e.g. the first selection is postponed, see
+        // [performSelectedTabUpdateIfNeeded]); the appearance update that follows the first
+        // selection applies it.
+        if (!invalidationFlags.isNavigationMenuAppearanceInvalidated || navState.isEmpty()) {
+            return
         }
+        invalidationFlags.isNavigationMenuAppearanceInvalidated = false
+        // Accessibility is re-applied to every tab together with the bar's appearance.
+        bottomNavigationView.invalidateAllMenuItems(TabsItemInvalidationFlags.ACCESSIBILITY)
+        updateBottomNavigationViewAppearance()
     }
 
     private fun performSelectedTabUpdate() {
@@ -584,8 +606,21 @@ class TabsContainer internal constructor(
 
         val stateUpdateRequest = requirePendingStateUpdateRequest()
 
+        // A postponed selection (see [performSelectedTabUpdateIfNeeded]) can outlive its tab: drop the
+        // request if the tab was removed in the meantime.
+        val nextSelectedFragment = getFragmentForScreenKey(stateUpdateRequest.selectedScreenKey)
+        if (nextSelectedFragment == null) {
+            RNSLog.w(
+                TAG,
+                "TabsContainer::performSelectedTabUpdate requested tab ${stateUpdateRequest.selectedScreenKey} " +
+                    "no longer exists; skipping update",
+            )
+            pendingStateUpdateRequest = null
+            return
+        }
+
         val nextSelectedMenuItemId =
-            checkNotNull(getMenuItemIdForFragment(requireFragmentForScreenKey(stateUpdateRequest.selectedScreenKey))) {
+            checkNotNull(getMenuItemIdForFragment(nextSelectedFragment)) {
                 "[RNScreens] Failed to find Menu Item for screenKey: ${stateUpdateRequest.selectedScreenKey}"
             }
 
@@ -613,7 +648,11 @@ class TabsContainer internal constructor(
             )
         }
 
-        pendingStateUpdateRequest = null
+        // Selecting the tab runs fragment lifecycle callbacks, during which a newer request can be
+        // submitted, its selection being postponed (see [performSelectedTabUpdateIfNeeded]). Keep it.
+        if (pendingStateUpdateRequest === stateUpdateRequest) {
+            pendingStateUpdateRequest = null
+        }
     }
 
     private fun updateNavigationMenuStructure() {
@@ -868,11 +907,6 @@ class TabsContainer internal constructor(
             ?.let { fragment -> bottomNavigationView.findMenuItem(fragment.menuItemId) }
 
     private fun getFragmentForScreenKey(screenKey: String): TabsScreenFragment? = tabsModel.find { it.requireItemKey == screenKey }
-
-    private fun requireFragmentForScreenKey(screenKey: String): TabsScreenFragment =
-        checkNotNull(getFragmentForScreenKey(screenKey)) {
-            "[RNScreens] Requested fragment for key: $screenKey does not exist"
-        }
 
     // A hidden tab bar is `GONE`, so `bottomNavigationView.height` keeps the last laid out value.
     private fun currentTabBarHeight(newHeight: Int? = null): Int = if (tabBarHidden) 0 else (newHeight ?: bottomNavigationView.height)
