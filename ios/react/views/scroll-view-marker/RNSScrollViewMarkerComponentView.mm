@@ -126,20 +126,24 @@ namespace react = facebook::react;
 /**
  * Tries to resolve UIScrollView from the passed childView.
  *
- * Currently it supports only direct `UIScrollView` or react-native's `<ScrollView />` component.
+ * Supports a `UIScrollView` or react-native's `<ScrollView />` component, either as the direct child or wrapped by
+ * views that each have a single subview (e.g. react-native-gesture-handler's `ScrollView`, which renders its detector
+ * view around the scroll view). A view with several subviews ends the search, as there is no way to tell which one is
+ * the content.
  */
 - (nullable UIScrollView *)resolveScrollViewFromChildView:(nullable UIView *)childView
 {
-  if (childView == nil) {
-    return nil;
-  }
+  UIView *_Nullable view = childView;
+  while (view != nil) {
+    if ([view isKindOfClass:UIScrollView.class]) {
+      return static_cast<UIScrollView *>(view);
+    }
 
-  if ([childView isKindOfClass:UIScrollView.class]) {
-    return static_cast<UIScrollView *>(childView);
-  }
+    if ([view isKindOfClass:RCTScrollViewComponentView.class]) {
+      return static_cast<RCTScrollViewComponentView *>(view).scrollView;
+    }
 
-  if ([childView isKindOfClass:RCTScrollViewComponentView.class]) {
-    return static_cast<RCTScrollViewComponentView *>(childView).scrollView;
+    view = view.subviews.count == 1 ? view.subviews.firstObject : nil;
   }
 
   return nil;
