@@ -7,7 +7,7 @@
   if (self = [super initWithFrame:frame]) {
     // Transparent, so the mounted children own the background.
     self.backgroundColor = [UIColor clearColor];
-    // Keep filling the provider component view (the wrapper).
+    // Keep filling the owning context wrapper view.
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   }
   return self;

@@ -3,6 +3,7 @@
 #import "RNSContainedModalContentController.h"
 #import "RNSContainedModalContentView.h"
 #import "RNSContainedModalContextProviding.h"
+#import "RNSContainedModalContextWrapperView.h"
 #import "RNSContainedModalHostEventEmitter.h"
 #import "RNSContainedModalHostShadowStateProxy.h"
 #import "RNSContainedModalProviders.h"
@@ -14,7 +15,6 @@
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RNSContainedModalHostComponentDescriptor.h>
-#import <react/utils/FloatComparison.h>
 
 namespace react = facebook::react;
 
@@ -141,42 +141,12 @@ namespace react = facebook::react;
 }
 
 #if DEBUG
-static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale)
-{
-  const CGFloat tolerance = 1.0 / MAX(screenScale, 1.0);
-  return react::floatEquality(lhs.origin.x, rhs.origin.x, tolerance) &&
-      react::floatEquality(lhs.origin.y, rhs.origin.y, tolerance) &&
-      react::floatEquality(lhs.size.width, rhs.size.width, tolerance) &&
-      react::floatEquality(lhs.size.height, rhs.size.height, tolerance);
-}
-
-// The attach point is observed, not documented, UIKit behavior, and the
-// container's bounds are the modal's touch-blocking area - an escaped
-// container means dead touch zones, not just a misplaced view. Detection
-// only, but loud: this is never a valid state.
 - (void)validateContainmentIntegrity
 {
-  if (_controller == nil || _controller.presentingViewController == nil || _controller.viewIfLoaded.window == nil) {
+  if (_controller == nil || _controller.presentingViewController == nil) {
     return;
   }
-
-  UIView *containerView = _controller.viewIfLoaded.superview;
-  UIView *providerView = _cachedProviderView;
-  if (containerView == nil || providerView == nil || providerView.window == nil) {
-    return;
-  }
-
-  // The wrapper's bounds come from Fabric's float layout metrics while UIKit
-  // autoresizes the container in double precision, so after a rotation the two
-  // can differ by a sub-pixel fraction. Compare on the pixel grid.
-  if (containerView.superview != providerView ||
-      !RNSRectsEqualWithinPixel(containerView.frame, providerView.bounds, providerView.window.screen.scale)) {
-    RCTLogError(
-        @"[RNScreens] ContainedModal presentation container escaped its provider (container: %@ in %@, provider bounds: %@). UIKit's context attach-point contract may have changed on this OS version.",
-        NSStringFromCGRect(containerView.frame),
-        NSStringFromClass([containerView.superview class]),
-        NSStringFromCGRect(providerView.bounds));
-  }
+  [_cachedProviderView.contextWrapperView validateContainmentOfPresentedView:_controller.viewIfLoaded];
 }
 #endif
 
@@ -224,7 +194,7 @@ static BOOL RNSRectsEqualWithinPixel(CGRect lhs, CGRect rhs, CGFloat screenScale
 
 - (nullable UIViewController *)presentationSourceViewController
 {
-  return [self resolveProviderView].contextViewController;
+  return [self resolveProviderView].contextWrapperView.contextViewController;
 }
 
 #pragma mark - RCTComponentViewProtocol

@@ -1,5 +1,6 @@
 #import "RNSContainedModalProviderComponentView.h"
 #import "RNSContainedModalContextController.h"
+#import "RNSContainedModalContextWrapperView.h"
 
 #import <React/RCTConversions.h>
 #import <React/UIView+React.h>
@@ -9,11 +10,14 @@
 namespace react = facebook::react;
 
 @implementation RNSContainedModalProviderComponentView {
-  // The provider is double-wrapped: this component view (outer) tightly wraps
-  // the context controller's view (inner), which carries the presentation
-  // context and the provider's React children (see
-  // RNSContainedModalContextController.h).
-  RNSContainedModalContextController *_Nonnull _contextController;
+  // The context wrapper view owns the presentation context (the context
+  // controller and its view, see RNSContainedModalContextWrapperView.h). It is this
+  // component view's only direct subview, added once and never removed, so the
+  // context view's superview is always the core view no matter how
+  // RCTViewComponentView arranges its own subviews (it may move them into a
+  // private container for `overflow: hidden` with `boxShadow` or `outline`).
+  // React children mount into the context view.
+  RNSContainedModalContextWrapperView *_Nonnull _contextWrapperView;
   NSString *_Nullable _containerId;
 }
 
@@ -23,76 +27,40 @@ namespace react = facebook::react;
     static const auto defaultProps = std::make_shared<const react::RNSContainedModalProviderProps>();
     _props = defaultProps;
 
-    _contextController = [[RNSContainedModalContextController alloc] init];
+    _contextWrapperView = [[RNSContainedModalContextWrapperView alloc] initWithFrame:self.bounds];
+    [self addSubview:_contextWrapperView];
   }
   return self;
 }
 
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-  _contextController.view.frame = self.bounds;
-}
-
+// Attach (or re-parent) on window entry and never detach on window exit, as
+// the Stack and Tabs hosts do: a window exit is usually the parent going off
+// screen (a covering push, a tab switch, a dismissed sheet), and only a child
+// that stays attached gets UIKit's appearance forwarding - and with it the
+// modal it presents. The context wrapper view detaches when it is deallocated.
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
 
-  if (self.window != nil) {
-    [self reactAddControllerToClosestParent:_contextController];
-  } else {
-    [self reactRemoveControllerFromParent:_contextController];
+  if (self.window == nil) {
+    return;
+  }
+  UIViewController *parentViewController = [self closestParentViewController];
+  if (parentViewController != nil) {
+    [_contextWrapperView attachContextControllerToParentViewController:parentViewController];
   }
 }
 
-- (void)reactAddControllerToClosestParent:(UIViewController *)controller
+- (nullable UIViewController *)closestParentViewController
 {
-  if (controller.parentViewController != nil) {
-    return;
-  }
-
   UIView *parentView = (UIView *)self.reactSuperview;
   while (parentView != nil) {
     if (parentView.reactViewController != nil) {
-      [parentView.reactViewController addChildViewController:controller];
-      // Wrapper invariant (RNSContainedModalContextController.h): the context
-      // view must be a direct, exactly-filling subview. Insert at the BOTTOM -
-      // during a suspension UIKit's container stays behind as a wrapper
-      // subview, and re-attaching this transparent full-bounds view above it
-      // would swallow every touch meant for the restored modal.
-      if (![self isContextViewRemovedByReplacingPresentation:controller]) {
-        controller.view.frame = self.bounds;
-        [self insertSubview:controller.view atIndex:0];
-      }
-      [controller didMoveToParentViewController:parentView.reactViewController];
-      break;
+      return parentView.reactViewController;
     }
     parentView = (UIView *)parentView.reactSuperview;
   }
-}
-
-// A replacing presentation (`UIModalPresentationCurrentContext`) takes the
-// context view out of the hierarchy for the presentation's whole lifetime,
-// suspensions included, and puts it back itself when the modal is dismissed.
-// Re-inserting the view on a window re-entry (a restore after a covering
-// stack screen was popped) would show the replaced content under the modal
-// again.
-- (BOOL)isContextViewRemovedByReplacingPresentation:(UIViewController *)controller
-{
-  UIViewController *presentedViewController = controller.presentedViewController;
-  return presentedViewController != nil && presentedViewController.presentingViewController == controller &&
-      presentedViewController.modalPresentationStyle == UIModalPresentationCurrentContext;
-}
-
-- (void)reactRemoveControllerFromParent:(UIViewController *)controller
-{
-  if (controller.parentViewController == nil) {
-    return;
-  }
-
-  [controller willMoveToParentViewController:nil];
-  [controller.view removeFromSuperview];
-  [controller removeFromParentViewController];
+  return nil;
 }
 
 #pragma mark - RNSContainedModalContextProviding
@@ -102,9 +70,9 @@ namespace react = facebook::react;
   return _containerId;
 }
 
-- (nonnull UIViewController *)contextViewController
+- (nonnull RNSContainedModalContextWrapperView *)contextWrapperView
 {
-  return _contextController;
+  return _contextWrapperView;
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -121,7 +89,7 @@ namespace react = facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_contextController.view insertSubview:childComponentView atIndex:index];
+  [_contextWrapperView.contextViewController.view insertSubview:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -139,6 +107,15 @@ namespace react = facebook::react;
   }
 
   [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
+{
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  // The superview is this view or RCTViewComponentView's private container;
+  // both are sized to this view's bounds.
+  _contextWrapperView.frame = _contextWrapperView.superview.bounds;
 }
 
 #pragma mark - Dynamic frameworks support

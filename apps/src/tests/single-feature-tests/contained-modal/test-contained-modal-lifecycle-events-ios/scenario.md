@@ -20,8 +20,9 @@
 Verify the lifecycle events of a contained modal:
 `onWillAppear` and `onDidAppear` must fire (in that order) when the modal is
 presented, and `onWillDisappear` and `onDidDisappear` must fire when it is
-dismissed programmatically. Also verify the suspension semantics of a stack
-screen pushed over the open modal, and that opening a modal while another one
+dismissed programmatically. Also verify that pushing a stack screen over the
+open modal and popping it produces both full pairs, and that opening a modal
+while another one
 occupies the shared provider is rejected (`onPresentationRejected`) at once,
 for both the over-content and the replacing-content variant.
 
@@ -29,8 +30,6 @@ for both the over-content and the replacing-content variant.
 
 - The modal presents and dismisses with a cross-dissolve; wait for the animation
   to finish before reading the log.
-- **Known issue:** when the modal is suspended (another screen is pushed on top
-  of the screen hosting the modal), `onDidDisappear` is not called.
 
 ## Steps
 
@@ -56,8 +55,9 @@ for both the over-content and the replacing-content variant.
 
    - [ ] After popping, the modal is still presented over the provider box.
 
-   - [ ] The log shows `onWillDisappear` for the push and no `onDidDisappear`
-         (see Note), then `onWillAppear` and `onDidAppear` for the restore.
+   - [ ] The log shows exactly four new entries, in order: `onWillDisappear`,
+         `onDidDisappear` for the push, then `onWillAppear`, `onDidAppear` for
+         the pop.
 
 ---
 
@@ -122,7 +122,11 @@ for both the over-content and the replacing-content variant.
 
 3. Tap "Push screen over", tap "Pop", then tap "Open second modal".
 
-   - [ ] After popping, the modal is still presented over the provider box.
+   - [ ] After popping, the modal is still presented over the provider box and
+         "Provider area" is not visible through it.
+
+   - [ ] For the push and the pop the log shows, in order: `onWillDisappear`,
+         `onDidDisappear`, `onWillAppear`, `onDidAppear`.
 
    - [ ] A new `onPresentationRejected (second modal)` entry appears right
          after the tap; the dark-red modal does NOT appear.
