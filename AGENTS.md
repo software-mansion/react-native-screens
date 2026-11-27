@@ -86,6 +86,11 @@ Runs `tsc --noEmit` against the root `tsconfig.json` (covers `./src/`).
 > `package.json` files. This will be documented once the underlying issues
 > are resolved and a single entry point exists.
 
+### Example app
+
+Setup, iOS / Android builds, Metro and picking a test screen for `FabricExample`:
+see [`FabricExample/AGENTS.md`](FabricExample/AGENTS.md).
+
 ## Code conventions
 
 - TypeScript-first. Always prefer TypeScript over JavaScript unless explicitly working in a JS-only context.
