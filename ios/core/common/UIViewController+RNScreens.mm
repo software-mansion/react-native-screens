@@ -57,6 +57,10 @@ static UIInterfaceOrientationMask RNSInterfaceOrientationMaskFromOrientation(RNS
 - (id<RNSOrientationProviding>)findChildRNSOrientationProvidingViewController
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  while ([lastViewController isMemberOfClass:[UIViewController class]]) {
+    lastViewController = [[lastViewController childViewControllers] lastObject];
+  }
+
   if ([lastViewController respondsToSelector:@selector(evaluateOrientation)]) {
     return static_cast<id<RNSOrientationProviding>>(lastViewController);
   }

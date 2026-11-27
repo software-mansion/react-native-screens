@@ -2002,6 +2002,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  while ([lastViewController isMemberOfClass:[UIViewController class]]) {
+    lastViewController = [[lastViewController childViewControllers] lastObject];
+  }
+
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
 
@@ -2208,8 +2212,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (RNSOrientation)evaluateOrientation
 {
-  if ([self.childViewControllers.lastObject respondsToSelector:@selector(evaluateOrientation)]) {
-    id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(self.childViewControllers.lastObject);
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  while ([lastViewController isMemberOfClass:[UIViewController class]]) {
+    lastViewController = [[lastViewController childViewControllers] lastObject];
+  }
+
+  if ([lastViewController respondsToSelector:@selector(evaluateOrientation)]) {
+    id<RNSOrientationProviding> child = static_cast<id<RNSOrientationProviding>>(lastViewController);
     RNSOrientation childOrientation = [child evaluateOrientation];
 
     if (childOrientation != RNSOrientationInherit) {
