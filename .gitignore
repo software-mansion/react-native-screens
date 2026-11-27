@@ -85,6 +85,9 @@ android/.settings
 # Shared agents (`!/.claude/agents/<name>.md`) and skills
 # (`!/.agents/skills/<name>/`) go below.
 !/.agents/skills/add-shared-agent-tooling/
+!/.agents/skills/check-public-api/
+!/.agents/skills/doc-comments/
+!/.agents/skills/public-api-types/
 
 # General rule for files explicitly marked as local
 *.local.*
