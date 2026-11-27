@@ -26,7 +26,7 @@ is still running. Every route carries a different preset, so exactly one
 direction is correct for each operation. Pass: only the screen that ends on top
 (push) or that was on top (pop, replace) moves, and no other screen in the
 batch is ever visible. Every replace here uses the default `replaceAnimation:
-'pop'`; the `push` value is covered by `test-stack-animation-replace-android`.
+'pop'`; the `push` value is covered by `test-stack-animation-replace`.
 
 ## Note
 

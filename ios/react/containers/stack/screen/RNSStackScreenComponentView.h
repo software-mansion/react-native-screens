@@ -2,6 +2,7 @@
 
 #import "RNSReactBaseView.h"
 #import "RNSSafeAreaProviding.h"
+#import "RNSStackAnimationTransitionKind.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,6 +32,7 @@ typedef NS_ENUM(int, RNSStackScreenActivityMode) {
 @property (nonatomic, strong, readonly, nullable) NSString *screenKey;
 @property (nonatomic, readonly) RNSStackScreenActivityMode activityMode;
 @property (nonatomic, strong, readonly, nonnull) id<RNSStackAnimationConfig> animation;
+@property (nonatomic, readonly) RNSStackAnimationTransitionKind replaceAnimation;
 
 @end
 

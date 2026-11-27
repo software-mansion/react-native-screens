@@ -2,6 +2,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RNSContainerItem.h"
+#import "RNSStackAnimationTransitionKind.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -47,6 +48,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSString *screenKey;
 
 @property (nonatomic, readonly, nonnull) id<RNSStackAnimationConfig> animation;
+
+/**
+ * The transition a replace plays when this screen is the one replacing the top: its own push transition, or the
+ * pop transition of the screen it replaces.
+ */
+@property (nonatomic, readonly) RNSStackAnimationTransitionKind replaceAnimation;
 
 /**
  * Content scroll view registered within the screen, or nil if none has been registered.
