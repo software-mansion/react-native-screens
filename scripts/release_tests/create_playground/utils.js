@@ -5,7 +5,6 @@ const { execFileSync } = require('child_process');
 const logger = require('./logger');
 
 const CAPTURE_MAX_BUFFER = 64 * 1024 * 1024;
-const METRO_PORT = 8081;
 
 function fatal(message) {
   console.error(`\n❌ FATAL ERROR: ${message}\n`);
@@ -101,25 +100,42 @@ function runTask(taskName, logFile, executeFn) {
   }
 }
 
-function isMetroRespondingOnPort(port) {
+function getMetroProjectRoot(port) {
   try {
     const response = execFileSync(
       'curl',
-      ['-s', '--max-time', '2', `http://localhost:${port}/status`],
+      ['-s', '-i', '--max-time', '2', `http://localhost:${port}/status`],
       { encoding: 'utf8' },
     );
-    return response.includes('packager-status:running');
+    if (!response.includes('packager-status:running')) {
+      return null;
+    }
+    const rootHeader = response.match(
+      /^x-react-native-project-root:[ \t]*(.*?)\r?$/im,
+    );
+    return rootHeader?.[1] ?? '';
   } catch (error) {
     if (error?.code === 'ENOENT') {
       throw new Error(
         `Cannot check Metro status on port ${port}: 'curl' is not installed.`,
       );
     }
-    return false;
+    return null;
   }
 }
 
-function freePort(port = METRO_PORT) {
+function isSameDir(a, b) {
+  const normalize = dir => {
+    try {
+      return fs.realpathSync(dir);
+    } catch {
+      return path.resolve(dir);
+    }
+  };
+  return normalize(a) === normalize(b);
+}
+
+function freePort(port, appPath) {
   let pids;
   try {
     pids = execFileSync('lsof', [`-tiTCP:${port}`, '-sTCP:LISTEN'], {
@@ -154,9 +170,18 @@ function freePort(port = METRO_PORT) {
       `Port ${port} is held by multiple processes (PIDs: ${pids.join(', ')}).`,
     );
   }
-  if (!isMetroRespondingOnPort(port)) {
+  const metroRoot = getMetroProjectRoot(port);
+  if (metroRoot === null) {
     throw new Error(
       `Port ${port} is held by PID ${pids[0]}, which does not respond like Metro.`,
+    );
+  }
+  if (!metroRoot || !isSameDir(metroRoot, appPath)) {
+    throw new Error(
+      `Port ${port} is used by Metro serving '${
+        metroRoot || 'an unknown project'
+      }' (PID ${pids[0]}). ` +
+        `Stop it (kill ${pids[0]}) or pass another --metro-port.`,
     );
   }
   terminateProcess(Number(pids[0]));
@@ -203,5 +228,4 @@ module.exports = {
   runTask,
   withTempDir,
   freePort,
-  METRO_PORT,
 };
