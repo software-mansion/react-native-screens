@@ -127,6 +127,20 @@ function Tab3Screen() {
           </Text>
           {'\n'}
           {'\n'}
+          selected: `tabBarItemBadgeTextColor`:{' '}
+          <Text style={{ color: Colors.YellowDark100, fontWeight: 'bold' }}>
+            YELLOW
+          </Text>
+          , `tabBarItemBadgeFontSize`: 14, `tabBarItemBadgeFontWeight`: "800"
+          {'\n'}
+          {'\n'}
+          normal: `tabBarItemBadgeTextColor`:{' '}
+          <Text style={{ color: Colors.NavyLight100, fontWeight: 'bold' }}>
+            NAVY
+          </Text>
+          , `tabBarItemBadgeFontFamily`: "Courier"
+          {'\n'}
+          {'\n'}
         </Text>
       ) : (
         <Text style={styles.hint}>
@@ -242,8 +256,17 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
         ...DEFAULT_TAB_ROUTE_OPTIONS.ios,
         standardAppearance: {
           stacked: {
-            normal: { tabBarItemBadgeBackgroundColor: Colors.PurpleDark100 },
-            selected: { tabBarItemBadgeBackgroundColor: Colors.BlueDark100 },
+            normal: {
+              tabBarItemBadgeBackgroundColor: Colors.PurpleDark100,
+              tabBarItemBadgeTextColor: Colors.NavyLight100,
+              tabBarItemBadgeFontFamily: 'Courier',
+            },
+            selected: {
+              tabBarItemBadgeBackgroundColor: Colors.BlueDark100,
+              tabBarItemBadgeTextColor: Colors.YellowDark100,
+              tabBarItemBadgeFontSize: 14,
+              tabBarItemBadgeFontWeight: '800',
+            },
           },
         },
       },

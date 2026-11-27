@@ -14,14 +14,15 @@
 | iPhone        | iOS 18.6, iOS 26.5 |
 | Android phone | API Level 36       |
 
-**E2E coverage details:** Only Baseline step 1 on iOS is automated: the E2E test asserts the badge text values for all four tabs. Below iOS 27 the badge view is nested in its tab bar item and its text is checked there; the badge view class name resolves per version (\_UIBadgeView on iOS 18 and lower, \_UIBarBadgeView on iOS 26). From iOS 27 the badge is detached from the item, so a separate suite checks the badge in the item accessibility value and the text of the badge view label. Not covered: all Android steps and the remaining iOS steps; badge background and text colors, because Detox does not expose color attributes of native tab bar badge views and screenshot diffs are not implemented yet.
+**E2E coverage details:** Only Baseline step 1 on iOS is automated: the E2E test asserts the badge text values for all four tabs. Below iOS 27 the badge view is nested in its tab bar item and its text is checked there; the badge view class name resolves per version (\_UIBadgeView on iOS 18 and lower, \_UIBarBadgeView on iOS 26). From iOS 27 the badge is detached from the item, so a separate suite checks the badge in the item accessibility value and the text of the badge view label. Not covered: all Android steps and the remaining iOS steps; badge colors and font, because Detox does not expose these attributes of native tab bar badge views and screenshot diffs are not implemented yet.
 
 <!-- scenario-metadata:end -->
 
 ## Description
 
 Validates the `badgeValue` prop on `TabsScreen` and the
-badge appearance props (`tabBarItemBadgeBackgroundColor` and Android only: `tabBarItemBadgeTextColor`). The scenario covers
+badge appearance props (`tabBarItemBadgeBackgroundColor`, `tabBarItemBadgeTextColor` and iOS only:
+`tabBarItemBadgeFontFamily`, `tabBarItemBadgeFontSize`, `tabBarItemBadgeFontWeight`). The scenario covers
 four badge cases: a badge with default system appearance, a
 long numeric string that overflows the max display width, a custom string
 badge, and an emoji badge. For iOS, it also exercises
@@ -111,6 +112,9 @@ customisation is driven by `standardAppearance`.
 
    - [ ] Tab3 is selected. The badge in the tab bar reads **NEW!**.
    - [ ] The selected tab badge pill is blue, other tabs badges pills are purple.
+   - [ ] On iOS 18 the selected tab badge text is yellow, bold and larger than the default (14pt).
+   - [ ] Badges of the other (unselected) tabs use the normal state defined by
+         Tab3: navy text in the Courier font.
    - [ ] On iOS 26 selected badge pill color is divided into selected (blue) and
          normal (purple), also Tab2 badge is affected and its badge color is partially blue
          (see KI from Note section)

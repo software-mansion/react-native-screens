@@ -132,6 +132,8 @@ function mapItemStateAppearanceToNativeProp(
     tabBarItemTitleFontColor,
     tabBarItemIconColor,
     tabBarItemBadgeBackgroundColor,
+    tabBarItemBadgeTextColor,
+    tabBarItemBadgeFontWeight,
     tabBarItemTitleFontWeight,
   } = itemStateAppearance;
 
@@ -142,6 +144,11 @@ function mapItemStateAppearanceToNativeProp(
     tabBarItemBadgeBackgroundColor: processColor(
       tabBarItemBadgeBackgroundColor,
     ),
+    tabBarItemBadgeTextColor: processColor(tabBarItemBadgeTextColor),
+    tabBarItemBadgeFontWeight:
+      tabBarItemBadgeFontWeight !== undefined
+        ? String(tabBarItemBadgeFontWeight)
+        : undefined,
     tabBarItemTitleFontWeight:
       tabBarItemTitleFontWeight !== undefined
         ? String(tabBarItemTitleFontWeight)
