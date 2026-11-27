@@ -5,8 +5,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * The presentation context for contained modals. Its view fills the provider
- * component view's bounds; `definesPresentationContext == YES` makes UIKit
+ * The presentation context for contained modals: the controller contained
+ * modals are presented from. Its view, an `RNSContainedModalContextView`,
+ * fills the provider component view's bounds and holds the provider's React
+ * children; `definesPresentationContext == YES` makes UIKit
  * anchor contained presentations here instead of walking further up.
  *
  * INVARIANT: this controller's view's direct superview must always be the
@@ -22,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *    dependence.
  * A view injected between the two breaks all three.
  */
-@interface RNSContainedModalProviderController : UIViewController
+@interface RNSContainedModalContextController : UIViewController
 
 @end
 
