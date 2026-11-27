@@ -24,12 +24,11 @@ static bool isStackHostOfColumn(const ShadowNode &node) {
 }
 
 /**
- * True when the only direct child of the column is such a `Stack.Host`. A view
- * in between, or another child next to it, leaves the column a plain one.
+ * True when the child of the column is such a `Stack.Host`.
  */
 static bool hostsStack(const ShadowNode &column) {
   const auto &children = column.getChildren();
-  return children.size() == 1 && isStackHostOfColumn(*children[0]);
+  return !children.empty() && isStackHostOfColumn(*children.front());
 }
 
 /**
