@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.core.modals.sheet.coordinator.SheetAppearanceCoordinator
 import com.swmansion.rnscreens.core.modals.sheet.coordinator.SheetBehaviorController
+import com.swmansion.rnscreens.core.modals.sheet.coordinator.SheetContentResizeAnimator
 import com.swmansion.rnscreens.core.modals.sheet.coordinator.SheetDimensionsCoordinator
 import com.swmansion.rnscreens.core.modals.sheet.coordinator.SheetKeyboardCoordinator
 import com.swmansion.rnscreens.core.modals.sheet.coordinator.SheetNativeDismissCoordinator
@@ -52,16 +53,25 @@ internal class SheetPresentation(
             bottomSheetView = bottomSheetView,
         )
 
+    private val contentResizeAnimator =
+        bottomSheetView?.let {
+            SheetContentResizeAnimator(bottomSheetView = it)
+        }
+
     private val dimensionsCoordinator =
         SheetDimensionsCoordinator(
             dialog = dialog,
             container = container,
             behaviorController = behaviorController,
+            contentResizeAnimator = contentResizeAnimator,
         )
 
     private val keyboardCoordinator =
         bottomSheetView?.let {
-            SheetKeyboardCoordinator(bottomSheetView = it)
+            SheetKeyboardCoordinator(
+                bottomSheetView = it,
+                contentResizeAnimator = contentResizeAnimator,
+            )
         }
 
     private val nativeDismissCoordinator =
@@ -89,6 +99,14 @@ internal class SheetPresentation(
         keyboardCoordinator?.isTrackingEnabled = enabled
     }
 
+    /**
+     * Enables animating the height changes that follow the content. Expected to be on only while the sheet rests
+     * in the PRESENTED state. Otherwise, the enter/exit animator takes an ownership over `translationY`.
+     */
+    internal fun setContentResizeAnimationEnabled(enabled: Boolean) {
+        contentResizeAnimator?.isSheetPresented = enabled
+    }
+
     internal fun onContentHeightChanged(height: Int) {
         dimensionsCoordinator.onContentHeightChanged(height)
     }
@@ -108,6 +126,7 @@ internal class SheetPresentation(
         appearanceCoordinator.updateCornerRadius(config.preferredCornerRadius)
         appearanceCoordinator.updateBackgroundColor(config.nativeContainerBackgroundColor)
         nativeDismissCoordinator.shouldPreventDismiss = config.shouldPreventNativeDismiss
+        contentResizeAnimator?.isAnimationEnabled = config.defaultResizeAnimationEnabled
     }
 
     internal fun applyConfigUpdate(
@@ -137,12 +156,17 @@ internal class SheetPresentation(
         if (oldConfig.shouldPreventNativeDismiss != newConfig.shouldPreventNativeDismiss) {
             nativeDismissCoordinator.shouldPreventDismiss = newConfig.shouldPreventNativeDismiss
         }
+
+        if (oldConfig.defaultResizeAnimationEnabled != newConfig.defaultResizeAnimationEnabled) {
+            contentResizeAnimator?.isAnimationEnabled = newConfig.defaultResizeAnimationEnabled
+        }
     }
 
     internal fun destroy() {
         behaviorController?.destroy()
         nativeDismissCoordinator.destroy()
         dimensionsCoordinator.destroy()
+        contentResizeAnimator?.destroy()
         keyboardCoordinator?.destroy()
 
         dialog.setOnShowListener(null)

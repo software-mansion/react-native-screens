@@ -4,6 +4,7 @@ import type { ScenarioGroup } from '@apps/tests/shared/helpers';
 // scenario group consumed by the selection menu.
 import TestFormSheetBackgroundEffect from './test-form-sheet-background-effect-ios';
 import TestFormSheetBase from './test-form-sheet-base';
+import TestFormSheetDefaultResizeAnimation from './test-form-sheet-default-resize-animation';
 import TestFormSheetDismissEvents from './test-form-sheet-dismiss-events';
 import TestFormSheetEdgeAttachedCompactHeight from './test-form-sheet-edge-attached-compact-height-ios';
 import TestFormSheetExpandScrollView from './test-form-sheet-expand-scroll-view-ios';
@@ -27,6 +28,7 @@ import TestFormSheetStacking from './test-form-sheet-stacking';
 // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
 export { default as TestFormSheetBackgroundEffect } from './test-form-sheet-background-effect-ios';
 export { default as TestFormSheetBase } from './test-form-sheet-base';
+export { default as TestFormSheetDefaultResizeAnimation } from './test-form-sheet-default-resize-animation';
 export { default as TestFormSheetDismissEvents } from './test-form-sheet-dismiss-events';
 export { default as TestFormSheetEdgeAttachedCompactHeight } from './test-form-sheet-edge-attached-compact-height-ios';
 export { default as TestFormSheetExpandScrollView } from './test-form-sheet-expand-scroll-view-ios';
@@ -49,6 +51,7 @@ export { default as TestFormSheetStacking } from './test-form-sheet-stacking';
 const scenarios = {
   TestFormSheetBackgroundEffect,
   TestFormSheetBase,
+  TestFormSheetDefaultResizeAnimation,
   TestFormSheetDismissEvents,
   TestFormSheetEdgeAttachedCompactHeight,
   TestFormSheetExpandScrollView,

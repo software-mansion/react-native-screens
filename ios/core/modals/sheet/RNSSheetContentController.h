@@ -58,6 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setNeedsBehaviorUpdate;
 - (void)setNeedsAppearanceUpdate;
 - (void)setNeedsInitialDetentUpdate;
+- (void)setNeedsContentsHeightUpdate;
 
 #pragma mark - Updates
 

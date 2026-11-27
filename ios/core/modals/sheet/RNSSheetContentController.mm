@@ -240,6 +240,11 @@
   [_updateCoordinator setNeeds:RNSSheetUpdateFlagsInitialDetent];
 }
 
+- (void)setNeedsContentsHeightUpdate
+{
+  [_updateCoordinator setNeeds:RNSSheetUpdateFlagsContentsHeight];
+}
+
 #pragma mark - Updates
 
 - (void)flushPendingUpdates

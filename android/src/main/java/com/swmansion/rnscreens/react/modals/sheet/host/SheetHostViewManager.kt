@@ -139,6 +139,13 @@ class SheetHostViewManager :
         view.preventNativeDismiss = value
     }
 
+    override fun setDefaultResizeAnimationEnabled(
+        view: SheetHost,
+        value: Boolean,
+    ) {
+        view.defaultResizeAnimationEnabled = value
+    }
+
     override fun setNativeContainerBackgroundColor(
         view: SheetHost,
         value: Int?,

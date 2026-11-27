@@ -38,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
  * content has not been laid out yet; the detent then falls back to the maximum detent height.
  */
 - (CGFloat)contentsHeight;
+/**
+ * Whether a change of `contentsHeight` is applied with an animation.
+ */
+- (BOOL)defaultResizeAnimationEnabled;
 
 @end
 

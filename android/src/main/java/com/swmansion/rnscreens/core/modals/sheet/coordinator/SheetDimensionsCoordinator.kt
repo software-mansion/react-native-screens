@@ -14,6 +14,7 @@ internal class SheetDimensionsCoordinator(
     private val dialog: SheetDialog,
     private val container: SheetContainer,
     private val behaviorController: SheetBehaviorController?,
+    private val contentResizeAnimator: SheetContentResizeAnimator?,
 ) : SheetContentSizeChangeDelegate,
     SheetAvailableHeightProvider.OnAvailableHeightMeasuredListener {
     private var lastTopInset = 0
@@ -51,8 +52,19 @@ internal class SheetDimensionsCoordinator(
     }
 
     override fun onContentHeightChanged(newHeight: Int) {
-        if (currentContentHeight != newHeight) {
-            currentContentHeight = newHeight
+        if (contentResizeAnimator == null) {
+            applyContentHeight(newHeight)
+            return
+        }
+
+        contentResizeAnimator.resizeSheet(sheetHeightChangeForFitToContents(newHeight)) {
+            applyContentHeight(newHeight)
+        }
+    }
+
+    private fun applyContentHeight(contentHeight: Int) {
+        if (currentContentHeight != contentHeight) {
+            currentContentHeight = contentHeight
             invalidateGeometry()
         }
     }
@@ -101,10 +113,7 @@ internal class SheetDimensionsCoordinator(
      * our container are measured, so the values applied here are picked up by the very same traversal.
      */
     private fun resolveGeometry(sheetAvailableSpace: Int) {
-        // The grabber sits above the React content in the container, so the container has to fit both.
-        // A non-positive content height means "not measured yet" and is passed through as is.
-        val fitToContentsHeight =
-            if (currentContentHeight > 0) currentContentHeight + container.measureGrabberHeight() else currentContentHeight
+        val fitToContentsHeight = contentHeightWithGrabber(currentContentHeight)
 
         currentDetents?.let { detents ->
             behaviorController?.updateSheetBehavior(
@@ -138,6 +147,29 @@ internal class SheetDimensionsCoordinator(
             container.layoutParams = layoutParams
         }
     }
+
+    private fun sheetHeightChangeForFitToContents(contentHeight: Int): Int {
+        val detents = currentDetents?.takeIf { it.isFitToContents } ?: return 0
+        return sheetHeightForFitToContents(detents, contentHeight) - sheetHeightForFitToContents(detents, currentContentHeight)
+    }
+
+    // The sheet matches its parent, so it is exactly as high as the `maxHeight` the behavior gets from
+    // `SheetBehaviorController`.
+    private fun sheetHeightForFitToContents(
+        detents: SheetDetents,
+        contentHeight: Int,
+    ): Int =
+        detents.maxAllowedHeightForFitToContents(
+            resolvedAvailableSpace,
+            contentHeightWithGrabber(contentHeight),
+            lastBottomInset,
+            keyboardLift,
+        )
+
+    // The grabber sits above the React content in the container, so the container has to fit both.
+    // A non-positive content height means "not measured yet" and is passed through as is.
+    private fun contentHeightWithGrabber(contentHeight: Int): Int =
+        if (contentHeight > 0) contentHeight + container.measureGrabberHeight() else contentHeight
 
     /**
      * The part of the keyboard inset that sticks out above the bottom system inset. Material pads the sheet by

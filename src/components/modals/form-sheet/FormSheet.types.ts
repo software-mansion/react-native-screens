@@ -200,6 +200,20 @@ export interface FormSheetProps {
   preventNativeDismiss?: boolean | undefined;
 
   /**
+   * Determines whether the sheet animates to its new height when the height of
+   * its content changes.
+   *
+   * @remarks
+   * Applies only when `detents` is `'fitToContents'`. Set it to `false` when
+   * the height of the content is animated from JavaScript, so that the sheet
+   * follows it without an animation of its own.
+   *
+   * @defaultValue `true`
+   * @platform android, ios
+   */
+  defaultResizeAnimationEnabled?: boolean | undefined;
+
+  /**
    * Style applied to the native container hosting the sheet content.
    *
    * @platform android, ios, tvos >= 26
