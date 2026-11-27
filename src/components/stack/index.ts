@@ -2,12 +2,21 @@ import { StackHost } from './host';
 import { StackScreen } from './screen';
 import { StackHeaderConfig } from './header';
 
-export type { StackHostProps, StackColorScheme, StackDirection } from './host';
+export type {
+  StackHostProps,
+  StackColorScheme,
+  StackDirection,
+  StackNavStateRequest,
+  StackActionOrigin,
+  StackNavStateRejectionReason,
+  StackNavStateChangedEvent,
+  StackNavStateRequestRejectedEvent,
+  StackScreensReleasedEvent,
+  StackNativeDismissPreventedEvent,
+} from './host';
 
 export type {
-  StackScreenActivityMode,
   StackScreenReplaceAnimation,
-  StackScreenDismissHandler,
   StackScreenProps,
   StackScreenAnimation,
   StackScreenAnimationPresetName,

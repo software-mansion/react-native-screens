@@ -5,8 +5,6 @@ import com.swmansion.rnscreens.core.common.event.ViewAppearanceEventEmitter
 import com.swmansion.rnscreens.react.common.event.BaseEventEmitter
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDidDisappearEvent
-import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenDismissEvent
-import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenNativeDismissPreventedEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWillAppearEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.event.StackScreenWillDisappearEvent
 
@@ -29,25 +27,6 @@ internal class StackScreenEventEmitter(
 
     override fun emitOnDidDisappear() {
         reactEventDispatcher.dispatchEvent(StackScreenDidDisappearEvent(surfaceId, viewTag))
-    }
-
-    internal fun emitOnDismiss(isNativeDismiss: Boolean) {
-        reactEventDispatcher.dispatchEvent(
-            StackScreenDismissEvent(
-                surfaceId,
-                viewTag,
-                isNativeDismiss,
-            ),
-        )
-    }
-
-    internal fun emitOnNativeDismissPrevented() {
-        reactEventDispatcher.dispatchEvent(
-            StackScreenNativeDismissPreventedEvent(
-                surfaceId,
-                viewTag,
-            ),
-        )
     }
 
     companion object {

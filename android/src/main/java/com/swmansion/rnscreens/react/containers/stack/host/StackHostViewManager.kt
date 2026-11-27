@@ -2,6 +2,7 @@ package com.swmansion.rnscreens.react.containers.stack.host
 
 import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
@@ -71,6 +72,20 @@ internal class StackHostViewManager :
      * native layout traversal will remeasure the view and apply correct layout.
      */
     override fun needsCustomLayoutForChildren() = true
+
+    override fun setNavStateRequest(
+        view: StackHost,
+        value: ReadableMap?,
+    ) {
+        // Not applied yet: the stack does not hold a navigation state on Android so far.
+    }
+
+    override fun setRejectStaleNavStateUpdates(
+        view: StackHost,
+        value: Boolean,
+    ) {
+        // Not applied yet: the stack does not hold a navigation state on Android so far.
+    }
 
     override fun setColorScheme(
         view: StackHost,

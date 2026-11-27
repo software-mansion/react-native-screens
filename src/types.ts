@@ -6,6 +6,7 @@ export type {
   InterfaceOrientation,
   ScrollEdgeEffect,
   UserInterfaceStyle,
+  NavStateActionOrigin,
   EmptyEventPayload,
   NativeEventHandler,
   PlatformIconShared,

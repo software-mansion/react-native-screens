@@ -29,13 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)viewControllerViewWillDisappear:(RNSStackScreenController *)controller;
 - (void)viewControllerViewDidDisappear:(RNSStackScreenController *)controller;
 
-/**
- * Called when the controller has been removed from its navigation controller, after the pop transition completed.
- * The removal may have been requested by the owner of the screen or made by UIKit (e.g. the back gesture); the
- * delegate tells them apart.
- */
-- (void)stackScreenControllerDidLeaveStack:(RNSStackScreenController *)controller;
-
 @end
 
 /**

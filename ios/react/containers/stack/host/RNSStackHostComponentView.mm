@@ -13,7 +13,6 @@
 #import "RNSContainerHelpers.h"
 #import "RNSStackHeaderConfigComponentView.h"
 #import "RNSStackNavigationController.h"
-#import "RNSStackOperationCoordinator.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace react = facebook::react;
@@ -22,7 +21,6 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSStackHostComponentView {
-  RNSStackOperationCoordinator *_Nonnull _stackOperationCoordinator;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
   BOOL _didSetHeadlessModeEnabled;
 }
@@ -41,7 +39,6 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _stackNavigationController = [RNSStackNavigationController new];
-  _stackOperationCoordinator = [RNSStackOperationCoordinator new];
   _renderedScreens = [NSMutableArray new];
 }
 
@@ -85,24 +82,6 @@ namespace react = facebook::react;
   return [super hitTest:point withEvent:event];
 }
 
-#pragma mark - Communication with StackScreen
-
-- (void)stackScreenChangedActivityMode:(nonnull RNSStackScreenComponentView *)stackScreen
-{
-  RCTAssert(stackScreen != nil, @"[RNScreens] Expected non nill stackScreen");
-  switch (stackScreen.activityMode) {
-    case RNSStackScreenActivityModeAttached:
-      [_stackOperationCoordinator addPushOperation:stackScreen];
-      break;
-    case RNSStackScreenActivityModeDetached:
-      [_stackOperationCoordinator addPopOperation:stackScreen];
-      break;
-    default:
-      RCTAssert(NO, @"[RNScreens] Unexpected value of activityMode: %d", stackScreen.activityMode);
-      return;
-  }
-}
-
 #pragma mark - RCTComponentViewProtocol
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -115,7 +94,6 @@ namespace react = facebook::react;
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   childScreen.stackHost = self;
   [_renderedScreens insertObject:childScreen atIndex:index];
-  [self addPushOperationIfNeeded:childScreen];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -128,18 +106,6 @@ namespace react = facebook::react;
   auto *childScreen = static_cast<RNSStackScreenComponentView *>(childComponentView);
   [_renderedScreens removeObject:childScreen];
   childScreen.stackHost = nil;
-  [self addPopOperationIfNeeded:childScreen];
-}
-
-- (void)addPopOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
-{
-  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached && !stackScreen.isNativelyDismissed) {
-    // This shouldn't happen in typical scenarios but it can happen with fast-refresh.
-    [_stackOperationCoordinator addPopOperation:stackScreen];
-  } else {
-    RNSLogD(@"[RNScreens] ignoring pop operation of %@, already not attached or natively dismissed",
-            stackScreen.screenKey);
-  }
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props
@@ -174,13 +140,6 @@ namespace react = facebook::react;
 
 #pragma mark - Utils
 
-- (void)addPushOperationIfNeeded:(nonnull RNSStackScreenComponentView *)stackScreen
-{
-  if (stackScreen.activityMode == RNSStackScreenActivityModeAttached) {
-    [_stackOperationCoordinator addPushOperation:stackScreen];
-  }
-}
-
 - (void)setupViewConstraintsForController:(nonnull UIViewController *)controller
 {
   // Enable auto-layout to ensure valid size of stack controller view.
@@ -213,8 +172,6 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  [_stackOperationCoordinator enqueuePendingOperationsIfNeeded:_stackNavigationController
-                                           withRenderedScreens:_renderedScreens];
   [_stackNavigationController commitTransaction];
 }
 

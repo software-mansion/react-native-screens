@@ -118,6 +118,25 @@ export type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 export type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
 /**
+ * Origin (actor) of a change of a container's navigation state.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'user'` — a native UI action, such as a tap on a back button or a back
+ *   gesture.
+ * - `'programmaticJs'` — a change requested from JS through the container's
+ *   navigation state request.
+ * - `'programmaticNative'` — a change requested by native code that
+ *   integrates directly with the native container.
+ * - `'implicit'` — a platform side effect that no explicit actor asked for.
+ */
+export type NavStateActionOrigin =
+  | 'user'
+  | 'programmaticJs'
+  | 'programmaticNative'
+  | 'implicit';
+
+/**
  * Payload of a native event that carries no data.
  */
 export type EmptyEventPayload = Record<string, never>;

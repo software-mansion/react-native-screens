@@ -2,20 +2,16 @@
 
 #if defined(__cplusplus)
 
+#import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSDefines.h"
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
 #import "RNSHeaderItemVisibilityPriority.h"
-#import "RNSStackScreenComponentView.h"
 
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
-
-RNSStackScreenActivityMode
-RNSStackScreenActivityModeFromReactRNSStackScreenActivityMode(
-    react::RNSStackScreenActivityMode mode);
 
 RNSHeaderItemPlacement
 RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(

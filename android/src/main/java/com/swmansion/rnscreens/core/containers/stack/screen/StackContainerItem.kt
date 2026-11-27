@@ -36,8 +36,6 @@ internal interface StackContainerItem : ContainerItem {
 
     fun onContentYOriginChanged(y: Int)
 
-    fun onDismiss()
-
     fun onNativeDismissPrevented()
 
     fun registerHeaderConfigAttachListener(listener: OnHeaderConfigurationAttachListener)
