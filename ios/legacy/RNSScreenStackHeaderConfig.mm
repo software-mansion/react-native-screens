@@ -22,6 +22,7 @@
 #import "RNSConvert.h"
 #import "RNSDefines.h"
 #import "RNSScreen.h"
+#import "RNSScreenStack.h"
 #import "RNSSearchBar.h"
 #import "UINavigationBar+RNSUtility.h"
 
@@ -667,6 +668,11 @@ RNS_IGNORE_SUPER_CALL_END
   }
 
   navctr.navigationBar.overrideUserInterfaceStyle = config.userInterfaceStyle;
+#if !TARGET_OS_TV
+  if ([navctr isKindOfClass:RNSNavigationController.class]) {
+    [static_cast<RNSNavigationController *>(navctr) updateVerticalBarUserInterfaceStyle];
+  }
+#endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
   if (@available(iOS 27.0, *)) {

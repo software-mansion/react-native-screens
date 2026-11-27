@@ -103,7 +103,50 @@ namespace react = facebook::react;
     [self notifyHeaderHeightChangeToScreen:screenController];
     [self maybeUpdateHeaderLayoutInfoInShadowTree:screenController];
   }
+
+  // UIKit can add the view of the vertical bar in a layout pass that follows the header config update, e.g. when the
+  // stack first appears, so the style is applied here too.
+  [self updateVerticalBarUserInterfaceStyle];
 }
+
+- (void)updateVerticalBarUserInterfaceStyle
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_1)
+  if (@available(iOS 27.1, *)) {
+    // When the system uses a vertical bar (e.g. iPhone Duo), UIKit moves the bar items of the navigation bar there.
+    // The vertical bar is drawn by a container view that is a sibling of the navigation bar, so it doesn't inherit the
+    // style overridden on the bar and follows the trait collection of this controller instead. We apply the style to
+    // the container only: overriding it on the controller would also change the screens' content, the keyboard and
+    // the modals presented from the stack, which `experimental_userInterfaceStyle` is not meant to affect.
+    // Where the system never places a vertical bar, we leave the container to UIKit.
+    UIView *verticalBarContainerView = [self rnscreens_findFloatingBarContainerView];
+    if (verticalBarContainerView == nil) {
+      return;
+    }
+    BOOL usesVerticalBar = self.traitCollection.verticalBarEdge != UIVerticalBarEdgeUnspecified;
+    verticalBarContainerView.overrideUserInterfaceStyle =
+        usesVerticalBar ? self.navigationBar.overrideUserInterfaceStyle : UIUserInterfaceStyleUnspecified;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_1)
+}
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_1)
+- (nullable UIView *)rnscreens_findFloatingBarContainerView API_AVAILABLE(ios(27.1))
+{
+  static Class FloatingBarContainerViewClass =
+      NSClassFromString(@"_UIFloatingBarContainerView"); // Sampled from iOS 27.1 (iPhone Duo)
+  if (FloatingBarContainerViewClass == nil) {
+    return nil;
+  }
+
+  for (UIView *subview in self.viewIfLoaded.subviews) {
+    if ([subview isKindOfClass:FloatingBarContainerViewClass]) {
+      return subview;
+    }
+  }
+  return nil;
+}
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_1)
 
 - (void)notifyHeaderHeightChangeToScreen:(RNSScreen *)screenController
 {
