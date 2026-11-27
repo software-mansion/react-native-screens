@@ -251,13 +251,13 @@ export interface StackScreenAnimationNonePresetConfig {
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'preset';
   /**
    * Name of the preset.
    *
-   * @platform android
+   * @platform android, ios
    */
   name: 'none';
 }
@@ -269,13 +269,13 @@ export interface StackScreenAnimationDefaultPresetConfig {
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'preset';
   /**
    * Name of the preset.
    *
-   * @platform android
+   * @platform android, ios
    */
   name: 'default';
 }
