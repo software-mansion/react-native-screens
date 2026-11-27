@@ -89,20 +89,10 @@ static void RNSAssertIsValidHeaderChild(UIView *child)
 
 #pragma mark - UIView
 
+// The view is laid out over the navigation bar, so that the header items are positioned in the shadow tree, but it
+// shows nothing. It must not take a touch that the navigation bar lets through to the content of the screen.
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-  for (UIView *child in [_children reverseObjectEnumerator]) {
-    if ([child isKindOfClass:RNSStackHeaderItemComponentView.class] && child.window != nil) {
-      for (UIView *hitableView in [child.subviews reverseObjectEnumerator]) {
-        CGPoint convertedPoint = [self convertPoint:point toView:hitableView];
-        UIView *hitTestResult = [hitableView hitTest:convertedPoint withEvent:event];
-
-        if (hitTestResult != nil) {
-          return hitTestResult;
-        }
-      }
-    }
-  }
   return nil;
 }
 
