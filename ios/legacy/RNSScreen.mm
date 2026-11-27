@@ -1949,7 +1949,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [[context containerView] addSubview:self->_fakeView];
       self->_fakeView.alpha = 1.0;
       self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+      // An interactive dismissal can be driven by a scroll view's pan, which keeps the run loop in
+      // UITrackingRunLoopMode. Common modes keep progress updating while UIKit tracks the gesture.
+      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     };
 
     BOOL notifyDismissWhenTransitionEnds = _closing;
