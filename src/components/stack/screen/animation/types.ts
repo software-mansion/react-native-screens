@@ -86,7 +86,8 @@ export interface StackScreenAnimationTimingOptions {
    * Curve of every animated property of what the option is written on.
    *
    * @remarks
-   * A predictive back gesture always scrubs linearly with the finger.
+   * On Android, a predictive back gesture always scrubs linearly with the
+   * finger.
    *
    * @defaultValue The preset's own curves.
    * @platform android, ios
@@ -353,7 +354,8 @@ export interface StackScreenAnimationTrackTiming {
    * Curve of the track.
    *
    * @remarks
-   * A predictive back gesture always scrubs linearly with the finger.
+   * On Android, a predictive back gesture always scrubs linearly with the
+   * finger.
    *
    * @defaultValue `'linear'`
    * @platform android, ios

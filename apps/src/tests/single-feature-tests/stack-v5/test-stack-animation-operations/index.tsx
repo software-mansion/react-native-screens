@@ -69,7 +69,7 @@ const ROUTE_CONFIGS = ROUTES.map(route => ({
   },
 }));
 
-function TestStackAnimationOperationsAndroid() {
+function TestStackAnimationOperations() {
   return (
     <RouteKeysLedger>
       <StackContainer routeConfigs={ROUTE_CONFIGS} />
@@ -231,6 +231,6 @@ const styles = StyleSheet.create({
 });
 
 export default createScenario(
-  TestStackAnimationOperationsAndroid,
+  TestStackAnimationOperations,
   scenarioDescription,
 );

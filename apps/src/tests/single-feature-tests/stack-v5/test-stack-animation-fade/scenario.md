@@ -36,7 +36,7 @@ button pops with the preset.
   faintly: on Android the window background, on iOS the app's background behind
   the stack (in this example app: white in light mode, black in dark mode).
 - **Known issue:** on iOS the back swipe plays the `default` slide, whatever the
-  preset (labs #2066).
+  preset (https://github.com/software-mansion/react-native-screens-labs/issues/2066).
 
 ## Steps
 
@@ -45,10 +45,12 @@ button pops with the preset.
 1. Launch the app and navigate to the **Stack Animation Fade Presets** screen
    (on Android, launch the screen directly, see Setup).
 
-   - [ ] "Home" is yellow with a dark frame at the screen edge, no visible
-         header and the title "Home". "next push" and "this screen" both read
-         `fade`, "next push header hidden" reads `true`, and "Push Blue" and
-         "Push Red" are the only buttons: there is no "Pop" button.
+   - [ ] "Home" is yellow with a dark frame at the screen edge and the title
+         "Home".
+   - [ ] No header is visible.
+   - [ ] "next push" and "this screen" both read `fade`.
+   - [ ] "next push header hidden" reads `true`.
+   - [ ] "Push Blue" and "Push Red" are the only buttons.
 
 ---
 
