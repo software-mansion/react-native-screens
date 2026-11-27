@@ -3,6 +3,7 @@ package com.swmansion.rnscreens.legacy
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.animation.Animation
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -40,7 +42,25 @@ import com.swmansion.rnscreens.legacy.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.legacy.stack.views.ScreensCoordinatorLayout
 import com.swmansion.rnscreens.legacy.utils.DeviceUtils
 import com.swmansion.rnscreens.legacy.utils.resolveBackgroundColor
+import kotlin.math.ceil
 import kotlin.math.max
+
+private object FormSheetOutlineProvider : ViewOutlineProvider() {
+    override fun getOutline(
+        view: View,
+        outline: Outline,
+    ) {
+        val shape = view.background as? MaterialShapeDrawable
+        val radius = shape?.let { it.topLeftCornerResolvedSize * it.interpolation } ?: 0f
+        if (radius <= 0f || view.width < radius * 2 || view.height < radius) {
+            BACKGROUND.getOutline(view, outline)
+            return
+        }
+
+        // The coordinator clips to the view bounds, so the lower arcs stay outside the sheet.
+        outline.setRoundRect(0, 0, view.width, view.height + ceil(radius).toInt(), radius)
+    }
+}
 
 sealed class KeyboardState
 
@@ -436,6 +456,9 @@ class ScreenStackFragment :
         val backgroundColor = resolveBackgroundColor(screen)
         shape.setTint(backgroundColor ?: Color.TRANSPARENT)
         screen.background = shape
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            screen.outlineProvider = FormSheetOutlineProvider
+        }
     }
 
     override fun onStart() {
