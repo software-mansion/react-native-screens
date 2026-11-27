@@ -12,15 +12,18 @@
 
 #import "RNSContainerHelpers.h"
 #import "RNSStackHeaderConfigComponentView.h"
+#import "RNSStackHostEventEmitter.h"
 #import "RNSStackNavigationController.h"
+#import "RNSStackNavigationState.h"
 #import "RNSStackScreenComponentView.h"
 
 namespace react = facebook::react;
 
-@interface RNSStackHostComponentView () <RCTMountingTransactionObserving>
+@interface RNSStackHostComponentView () <RCTMountingTransactionObserving, RNSStackNavigationStateObserver>
 @end
 
 @implementation RNSStackHostComponentView {
+  RNSStackHostEventEmitter *_Nonnull _reactEventEmitter;
   NSMutableArray<RNSStackScreenComponentView *> *_Nonnull _renderedScreens;
   BOOL _didSetHeadlessModeEnabled;
 }
@@ -39,7 +42,18 @@ namespace react = facebook::react;
   _props = defaultProps;
 
   _stackNavigationController = [RNSStackNavigationController new];
+  [[maybe_unused]] BOOL didRegisterObserver = [_stackNavigationController addNavigationStateObserver:self];
+  RCTAssert(didRegisterObserver,
+            @"[RNScreens] Failed to register RNSStackHostComponentView as navigation state observer");
+
+  _reactEventEmitter = [RNSStackHostEventEmitter new];
   _renderedScreens = [NSMutableArray new];
+}
+
+- (nonnull RNSStackHostEventEmitter *)reactEventEmitter
+{
+  RCTAssert(_reactEventEmitter != nil, @"[RNScreens] Attempt to access uninitialized _reactEventEmitter");
+  return _reactEventEmitter;
 }
 
 #pragma mark - UIKit Callbacks
@@ -126,6 +140,26 @@ namespace react = facebook::react;
   [super updateProps:props oldProps:oldProps];
 }
 
+- (void)updateEventEmitter:(const facebook::react::EventEmitter::Shared &)eventEmitter
+{
+  [super updateEventEmitter:eventEmitter];
+
+  const auto &castedEventEmitter = std::static_pointer_cast<const react::RNSStackHostEventEmitter>(eventEmitter);
+  [_reactEventEmitter updateEventEmitter:castedEventEmitter];
+}
+
+- (void)invalidate
+{
+  // Runs after the container updates of the current run loop turn (transitions etc.) were started.
+  __weak auto weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    auto strongSelf = weakSelf;
+    if (strongSelf) {
+      [strongSelf->_stackNavigationController tearDown];
+    }
+  });
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSStackHostComponentDescriptor>();
@@ -173,6 +207,31 @@ namespace react = facebook::react;
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   [_stackNavigationController commitTransaction];
+}
+
+#pragma mark - RNSStackNavigationStateObserver
+
+- (void)stackContainer:(nonnull RNSStackNavigationController *)stackContainer
+      didUpdateStateTo:(nonnull RNSStackNavigationState *)navState
+           withContext:(nonnull RNSStackNavigationStateUpdateContext *)context
+{
+  [self.reactEventEmitter emitOnNavStateChanged:{.navState = navState, .actionOrigin = context.actionOrigin}];
+}
+
+- (void)stackContainer:(nonnull RNSStackNavigationController *)stackContainer
+    rejectedStateUpdate:(nonnull RNSStackNavigationStateUpdateRequest *)rejectedRequest
+           currentState:(nonnull RNSStackNavigationState *)currentNavState
+             withReason:(RNSStackNavigationStateRejectionReason)reason
+{
+  [self.reactEventEmitter emitOnNavStateRequestRejected:{.currentNavState = currentNavState,
+                                                         .rejectedRequest = rejectedRequest,
+                                                         .rejectionReason = reason}];
+}
+
+- (void)stackContainer:(nonnull RNSStackNavigationController *)stackContainer
+    didReleaseScreensWithKeys:(nonnull NSArray<NSString *> *)screenKeys
+{
+  [self.reactEventEmitter emitOnScreensReleased:{.screenKeys = screenKeys}];
 }
 
 #pragma mark - Dynamic frameworks support

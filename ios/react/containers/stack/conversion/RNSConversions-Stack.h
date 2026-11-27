@@ -3,15 +3,29 @@
 #if defined(__cplusplus)
 
 #import <UIKit/UIKit.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import <string>
+#import <vector>
 #import "RNSDefines.h"
 #import "RNSHeaderItemPlacement.h"
 #import "RNSHeaderItemSpacerPlacement.h"
 #import "RNSHeaderItemVisibilityPriority.h"
+#import "RNSStackNavigationState.h"
 
 namespace rnscreens::conversion {
 
 namespace react = facebook::react;
+
+std::vector<std::string> RNSStdStringVectorFromNSStringArray(NSArray<NSString *> *strings);
+
+react::RNSStackHostEventEmitter::OnNavStateChangedActionOrigin
+RNSOnNavStateChangedActionOriginFromRNSStackActionOrigin(
+    RNSStackActionOrigin actionOrigin);
+
+react::RNSStackHostEventEmitter::OnNavStateRequestRejectedRejectionReason
+RNSOnNavStateRequestRejectedRejectionReasonFromRNSStackNavigationStateRejectionReason(
+    RNSStackNavigationStateRejectionReason reason);
 
 RNSHeaderItemPlacement
 RNSHeaderItemPlacementFromReactRNSStackHeaderItemIOSPlacement(
