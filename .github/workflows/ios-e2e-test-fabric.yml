@@ -14,7 +14,6 @@ on:
       - 'scripts/e2e/**'
       - '.github/actions/argent-server/**'
       - '.github/actions/install-node-deps/**'
-      - '.argent/**'
       - 'react-native-screens-testing'
   push:
     branches:
@@ -23,7 +22,7 @@ on:
       - '.github/workflows/ios-e2e-test-fabric.yml'
       - '.github/actions/argent-server/**'
       - '.github/actions/install-node-deps/**'
-      - '.argent/**'
+      - 'FabricExample/e2e/argent/**'
       - 'react-native-screens-testing'
       - 'RNScreens.podspec'
       - 'package.json'
@@ -70,7 +69,12 @@ jobs:
               - '.github/workflows/ios-e2e-test-fabric.yml'
               - '.github/actions/install-node-deps/**'
               - 'FabricExample/.detoxrc.js'
-              - 'FabricExample/e2e/**'
+              # Everything under e2e/ except the Argent tests in e2e/argent/.
+              # !(argent) also skips any directory whose name starts with
+              # "argent" (e.g. argent-regressions/), so add those back.
+              - 'FabricExample/e2e/*'
+              - 'FabricExample/e2e/!(argent)/**'
+              - 'FabricExample/e2e/argent?*/**'
               - 'scripts/e2e/*.js'
               - 'scripts/e2e/*.cjs'
               - 'scripts/e2e/test-e2e-*.sh'
@@ -78,7 +82,7 @@ jobs:
               - '.github/workflows/ios-e2e-test-fabric.yml'
               - '.github/actions/install-node-deps/**'
               - '.github/actions/argent-server/**'
-              - '.argent/**'
+              - 'FabricExample/e2e/argent/**'
               - 'react-native-screens-testing'
               - 'scripts/e2e/*argent*'
 
@@ -191,7 +195,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       # Baselines live in the react-native-screens-testing submodule
-      # (.argent/flows/__baselines__ is a symlink into it).
+      # (FabricExample/e2e/argent/__baselines__ is a symlink into it).
       - name: Fetch Argent baselines
         run: git submodule update --init --depth 1 react-native-screens-testing
       # Only needed to run the Argent CLI — the app is downloaded, not built.

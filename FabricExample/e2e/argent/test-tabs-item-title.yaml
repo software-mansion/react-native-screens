@@ -35,8 +35,8 @@
 # The next action always gates on the destination tab's content text, and each snapshot sits behind
 # a 700 ms `wait`.
 #
-# Runner:  argent flow run test-tabs-item-title --platform ios        # or --platform android
-#          (run `yarn submodules:testing` first to fetch the baselines)
+# Runner:  argent e2e run FabricExample/e2e/argent/test-tabs-item-title.yaml --platform ios   # or android
+#          (from the repository root; run `yarn submodules:testing` first to fetch the baselines)
 #
 # Baselines are keyed by platform and screen size and must come from a device matching CI:
 #   - iOS: iPhone 17 simulator, iOS 27.0 (1206x2622).
