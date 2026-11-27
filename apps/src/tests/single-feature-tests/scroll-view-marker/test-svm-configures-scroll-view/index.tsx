@@ -45,7 +45,7 @@ function ContentScreen() {
       <Text>Interrupt "first descendant chain" heuristic</Text>
       <ScrollViewMarker
         style={[styles.fillParent]}
-        scrollEdgeEffects={{ top: topEdgeEffect }}>
+        ios={{ scrollEdgeEffects: { top: topEdgeEffect } }}>
         <ScrollView
           style={[styles.fillParent]}
           contentInsetAdjustmentBehavior="automatic">

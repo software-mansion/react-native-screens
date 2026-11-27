@@ -1,7 +1,6 @@
 import type { StyleProp, ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type {
-  SheetBackgroundEffect,
   SheetDetentChangedEvent,
   SheetDetents,
   SheetInitialDetentIndex,
@@ -9,6 +8,7 @@ import type {
   SheetNativeContainerStyleProps,
   SheetPreferredCornerRadius,
 } from '../sheet';
+import type { PageSheetPropsIOS } from './PageSheet.ios.types';
 
 /**
  * Payload of the page sheet's `onDetentChanged` event.
@@ -53,14 +53,6 @@ export type PageSheetLargestUndimmedDetentIndex =
 export type PageSheetInitialDetentIndex = SheetInitialDetentIndex;
 
 /**
- * Material the system renders behind the page sheet's content.
- *
- * @remarks
- * Accepts any {@link SheetBackgroundEffect} value.
- */
-export type PageSheetBackgroundEffect = SheetBackgroundEffect;
-
-/**
  * Style of the native container hosting a page sheet's content.
  *
  * @remarks
@@ -69,9 +61,9 @@ export type PageSheetBackgroundEffect = SheetBackgroundEffect;
 export type PageSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
- * Props for {@link PageSheet}.
+ * Cross-platform props for {@link PageSheet}.
  */
-export interface PageSheetProps {
+export interface PageSheetPropsBase {
   /**
    * Content of the sheet.
    *
@@ -208,19 +200,6 @@ export interface PageSheetProps {
     | StyleProp<PageSheetNativeContainerStyleProps>
     | undefined;
 
-  /**
-   * Material the system renders behind the sheet's content.
-   *
-   * @remarks
-   * The material is drawn behind the native container, so an opaque
-   * `nativeContainerStyle.backgroundColor` covers it.
-   *
-   * @defaultValue `'automatic'`
-   * @see {@link https://developer.apple.com/documentation/uikit/uipresentationcontroller/backgroundeffect | UIPresentationController.backgroundEffect}
-   * @platform ios >= 26.1
-   */
-  backgroundEffect?: PageSheetBackgroundEffect | undefined;
-
   // Events
 
   /**
@@ -307,4 +286,16 @@ export interface PageSheetProps {
    * @platform android, ios
    */
   onNativeDismissPrevented?: NativeEventHandler<EmptyEventPayload> | undefined;
+}
+
+/**
+ * Props for {@link PageSheet}.
+ */
+export interface PageSheetProps extends PageSheetPropsBase {
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
+  ios?: PageSheetPropsIOS | undefined;
 }

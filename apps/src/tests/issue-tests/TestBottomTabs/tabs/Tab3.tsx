@@ -7,7 +7,7 @@ export function Tab3() {
   return (
     <ScrollViewMarker
       style={{ flex: 1 }}
-      scrollEdgeEffects={{ bottom: 'hard' }}>
+      ios={{ scrollEdgeEffects: { bottom: 'hard' } }}>
       <ScrollView
         contentContainerStyle={{
           width: '100%',

@@ -1,7 +1,13 @@
 export type {
+  ScrollViewMarkerPropsBase,
   ScrollViewMarkerProps,
+} from './ScrollViewMarker.types';
+
+export type {
+  // iOS
   ScrollViewMarkerScrollEdgeEffect,
   ScrollViewMarkerScrollEdgeEffectsIOS,
-} from './ScrollViewMarker.types';
+  ScrollViewMarkerPropsIOS,
+} from './ScrollViewMarker.ios.types';
 
 export { ScrollViewMarker } from './ScrollViewMarker';

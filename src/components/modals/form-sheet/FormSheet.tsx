@@ -6,11 +6,13 @@ import type { FormSheetProps } from './FormSheet.types';
  * Presents its children in a native sheet.
  *
  * @remarks
- * The sheet is presented when {@link FormSheetProps.isOpen | isOpen} becomes
- * `true` and dismissed when it becomes `false`. It rests at the heights given
- * by {@link FormSheetProps.detents | detents}; the user can drag it between
+ * The sheet is presented when
+ * {@link FormSheetPropsBase.isOpen | isOpen} becomes `true` and dismissed
+ * when it becomes `false`. It rests at the heights given by
+ * {@link FormSheetPropsBase.detents | detents}; the user can drag it between
  * them, and dismiss it natively unless
- * {@link FormSheetProps.preventNativeDismiss | preventNativeDismiss} is set.
+ * {@link FormSheetPropsBase.preventNativeDismiss | preventNativeDismiss} is
+ * set.
  *
  * On iPhone in portrait, the sheet spans the full width of the screen and is
  * anchored to its bottom. On iPad, it is a centered floating panel of a fixed

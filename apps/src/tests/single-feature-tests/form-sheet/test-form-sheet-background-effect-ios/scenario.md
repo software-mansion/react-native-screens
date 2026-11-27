@@ -18,12 +18,12 @@
 
 ## Description
 
-Verify the `backgroundEffect` property of the `FormSheet` component with detents `[0.35, 0.7, 1.0]`. The host screen lets you pick the material (`automatic`, `none`, `color`, `blur`) with its options (fill color, blur style), and set `nativeContainerStyle.backgroundColor` to see how an opaque container covers the material. The effect can also be changed from inside the presented sheet.
+Verify the `ios.backgroundEffect` property of the `FormSheet` component with detents `[0.35, 0.7, 1.0]`. The host screen lets you pick the material (`automatic`, `none`, `color`, `blur`) with its options (fill color, blur style), and set `nativeContainerStyle.backgroundColor` to see how an opaque container covers the material. The effect can also be changed from inside the presented sheet.
 
 ## Note
 
 - iOS only. Android ignores the property.
-- `backgroundEffect` maps to `UISheetPresentationController.backgroundEffect` (iOS 26.1+). On earlier iOS versions the property is ignored and the system material is used.
+- `ios.backgroundEffect` maps to `UISheetPresentationController.backgroundEffect` (iOS 26.1+). On earlier iOS versions the property is ignored and the system material is used.
 - The sheet content has no background of its own; what you see behind the text is the sheet material.
 - `none` is a `UIColorEffect` with a clear color, which UIKit renders as no material at all: the sheet is transparent and only its content is drawn.
 

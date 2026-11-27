@@ -1,53 +1,10 @@
 import type { ViewProps } from 'react-native';
-import type { ScrollEdgeEffect } from '../shared/types';
+import type { ScrollViewMarkerPropsIOS } from './ScrollViewMarker.ios.types';
 
 /**
- * Effect applied to the scrolling content at an edge of the scroll view
- * marked by {@link ScrollViewMarker}.
- *
- * @remarks
- * Accepts any {@link ScrollEdgeEffect} value.
+ * Cross-platform props for {@link ScrollViewMarker}.
  */
-export type ScrollViewMarkerScrollEdgeEffect = ScrollEdgeEffect;
-
-/**
- * Scroll edge effects of a scroll view, set for each edge separately.
- */
-export interface ScrollViewMarkerScrollEdgeEffectsIOS {
-  /**
-   * Scroll edge effect at the bottom edge of the scroll view.
-   *
-   * @defaultValue `'automatic'`
-   * @platform ios >= 26
-   */
-  bottom?: ScrollViewMarkerScrollEdgeEffect | undefined;
-  /**
-   * Scroll edge effect at the left edge of the scroll view.
-   *
-   * @defaultValue `'automatic'`
-   * @platform ios >= 26
-   */
-  left?: ScrollViewMarkerScrollEdgeEffect | undefined;
-  /**
-   * Scroll edge effect at the right edge of the scroll view.
-   *
-   * @defaultValue `'automatic'`
-   * @platform ios >= 26
-   */
-  right?: ScrollViewMarkerScrollEdgeEffect | undefined;
-  /**
-   * Scroll edge effect at the top edge of the scroll view.
-   *
-   * @defaultValue `'automatic'`
-   * @platform ios >= 26
-   */
-  top?: ScrollViewMarkerScrollEdgeEffect | undefined;
-}
-
-/**
- * Props for {@link ScrollViewMarker}.
- */
-export interface ScrollViewMarkerProps {
+export interface ScrollViewMarkerPropsBase {
   /**
    * Content of the marker, with the scroll view to mark as its child.
    *
@@ -67,13 +24,16 @@ export interface ScrollViewMarkerProps {
    * @platform android, ios
    */
   style?: ViewProps['style'] | undefined;
+}
 
+/**
+ * Props for {@link ScrollViewMarker}.
+ */
+export interface ScrollViewMarkerProps extends ScrollViewMarkerPropsBase {
   /**
-   * Configures the scroll edge effect for the _content ScrollView_ (the
-   * ScrollView resolved in direct subtree of the ScrollViewMarker).
+   * iOS-specific props.
    *
-   * @see {@link https://developer.apple.com/documentation/uikit/uiscrolledgeeffect | UIScrollEdgeEffect}
-   * @platform ios >= 26
+   * @platform ios
    */
-  scrollEdgeEffects?: ScrollViewMarkerScrollEdgeEffectsIOS | undefined;
+  ios?: ScrollViewMarkerPropsIOS | undefined;
 }

@@ -4,7 +4,7 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Background Effect (iOS)',
   key: 'test-form-sheet-background-effect-ios',
   details:
-    'backgroundEffect: automatic, none, color and blur materials, changed before and while presented.',
+    'ios.backgroundEffect: automatic, none, color and blur materials, changed before and while presented.',
   platforms: ['ios'],
   devices: ['iphone', 'ipad'],
   osVersions: {
