@@ -16,7 +16,7 @@ function ConfigComponent() {
   const { config } = useScrollEdgeEffectsConfigContext();
 
   return (
-    <ScrollViewMarker style={{ flex: 1 }} scrollEdgeEffects={config}>
+    <ScrollViewMarker style={{ flex: 1 }} ios={{ scrollEdgeEffects: config }}>
       {/* Add ScrollView for automatic insets which are missing in TabsScreen */}
       <ScrollView>
         <Config title="Outer Tabs / scrollEdgeEffects:" />

@@ -44,7 +44,7 @@ manual scenario covers iOS only.
 - The scroll edge effect only appears while there is content scrolled
   past the edge. With the content resting at the very top, no top
   effect is drawn for any value.
-- `scrollEdgeEffects` is a no-op on iOS versions older than 26.
+- `ios.scrollEdgeEffects` is a no-op on iOS versions older than 26.
 
 ### How each top edge effect should look (iOS 26+)
 

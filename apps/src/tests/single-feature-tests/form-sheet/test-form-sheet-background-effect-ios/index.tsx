@@ -162,7 +162,7 @@ function TestFormSheetBackgroundEffect() {
         detents={DETENTS}
         prefersGrabberVisible
         nativeContainerStyle={nativeContainerStyle}
-        backgroundEffect={effect}>
+        ios={{ backgroundEffect: effect }}>
         <View style={styles.sheetContent}>
           <Text style={[styles.sheetText, darkSurface && styles.onDarkSurface]}>
             {describeEffect(effect)}

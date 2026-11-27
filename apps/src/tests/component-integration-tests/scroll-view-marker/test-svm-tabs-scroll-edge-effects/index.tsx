@@ -45,7 +45,7 @@ function TabContents() {
       <HeuristicBreakingView />
       <ScrollViewMarker
         style={styles.fillParent}
-        scrollEdgeEffects={{ top: 'hidden', bottom: edgeEffectStyle }}>
+        ios={{ scrollEdgeEffects: { top: 'hidden', bottom: edgeEffectStyle } }}>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.fillParent}>

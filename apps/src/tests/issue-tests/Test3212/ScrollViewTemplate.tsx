@@ -8,7 +8,7 @@ export function ScrollViewTemplate() {
   const { config, setConfig } = useScrollEdgeEffectsConfigContext();
 
   return (
-    <ScrollViewMarker style={{ flex: 1 }} scrollEdgeEffects={config}>
+    <ScrollViewMarker style={{ flex: 1 }} ios={{ scrollEdgeEffects: config }}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <Button
           title="Set effects to hidden"

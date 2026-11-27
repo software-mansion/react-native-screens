@@ -1,6 +1,13 @@
 import { device, expect, element, by } from 'detox';
 import { tapBarBackButton } from '@e2e/framework/back-button';
 
+// Skipped on Android until software-mansion/react-freeze#44 is fixed: with two
+// frozen screens (the one under the focused screen of a stack and a blurred
+// tab), react-freeze on React 19 makes React re-render and commit in a loop,
+// so the JS thread never goes idle and Detox times out. It shows up on slow
+// (CI) emulators only.
+const itUnlessAndroid = device.getPlatform() === 'android' ? it.skip : it;
+
 describe('Bottom tabs and native stack', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -69,7 +76,7 @@ describe('Bottom tabs and native stack', () => {
     ).toHaveLabel('More details 0');
   });
 
-  it('should keep stack state on tab change', async () => {
+  itUnlessAndroid('should keep stack state on tab change', async () => {
     await element(by.id('root-screen-example-BottomTabsAndStack')).tap();
 
     await element(by.id('bottom-tabs-A-more-details-button')).tap();
