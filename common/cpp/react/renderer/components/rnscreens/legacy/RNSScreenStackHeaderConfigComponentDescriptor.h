@@ -36,7 +36,8 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
 
 #ifdef ANDROID
     if (stateData.frameSize.width != 0) {
-      layoutableShadowNode.setSize({stateData.frameSize.width, YGUndefined});
+      configShadowNode.setSizeIfChanged(
+          {stateData.frameSize.width, YGUndefined});
       layoutableShadowNode.setPadding({
           stateData.paddingStart,
           0,
@@ -46,10 +47,14 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(stateData.frameSize);
+      configShadowNode.setSizeIfChanged(stateData.frameSize);
       layoutableShadowNode.setPadding(stateData.edgeInsets);
     }
 #endif // ANDROID
+
+    // `layout()` takes the frame origin from state (on Android, the Y origin
+    // from the toolbar height), so re-run it when that origin changes.
+    rnscreens::dirtyLayoutIfFrameOriginStale(configShadowNode);
 
     ConcreteComponentDescriptor::adopt(shadowNode);
 #if !defined(ANDROID)

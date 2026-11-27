@@ -5,18 +5,20 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include "RNSSheetHostState.h"
+#include "utils/LayoutFromState.h"
 
 namespace facebook::react {
 
 JSI_EXPORT extern const char RNSSheetHostComponentName[];
 
-class JSI_EXPORT RNSSheetHostShadowNode final : public ConcreteViewShadowNode<
-                                                    RNSSheetHostComponentName,
-                                                    RNSSheetHostProps,
-                                                    RNSSheetHostEventEmitter,
-                                                    RNSSheetHostState> {
+class JSI_EXPORT RNSSheetHostShadowNode final
+    : public rnscreens::SizeFromStateShadowNode<ConcreteViewShadowNode<
+          RNSSheetHostComponentName,
+          RNSSheetHostProps,
+          RNSSheetHostEventEmitter,
+          RNSSheetHostState>> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
 
   static ShadowNodeTraits BaseTraits() {
     auto traits = ConcreteViewShadowNode::BaseTraits();

@@ -9,12 +9,13 @@ void RNSStackHeaderItemShadowNode::layout(LayoutContext layoutContext) {
   applyFrameCorrections();
 }
 
+Point RNSStackHeaderItemShadowNode::correctFrameOrigin(Point /*origin*/) const {
+  return getStateData().contentOffset;
+}
+
 void RNSStackHeaderItemShadowNode::applyFrameCorrections() {
   ensureUnsealed();
-
-  const auto &stateData = getStateData();
-  layoutMetrics_.frame.origin.x = stateData.contentOffset.x;
-  layoutMetrics_.frame.origin.y = stateData.contentOffset.y;
+  layoutMetrics_.frame.origin = correctFrameOrigin(layoutMetrics_.frame.origin);
 }
 
 } // namespace facebook::react

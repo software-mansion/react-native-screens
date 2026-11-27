@@ -6,6 +6,7 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "../FrameCorrectionModes.h"
+#include "../utils/LayoutFromState.h"
 #include "RNSScreenStackHeaderConfigState.h"
 
 namespace facebook::react {
@@ -15,19 +16,25 @@ using namespace rnscreens;
 JSI_EXPORT extern const char RNSScreenStackHeaderConfigComponentName[];
 
 class JSI_EXPORT RNSScreenStackHeaderConfigShadowNode final
-    : public ConcreteViewShadowNode<
+    : public rnscreens::SizeFromStateShadowNode<ConcreteViewShadowNode<
           RNSScreenStackHeaderConfigComponentName,
           RNSScreenStackHeaderConfigProps,
           RNSScreenStackHeaderConfigEventEmitter,
-          RNSScreenStackHeaderConfigState> {
+          RNSScreenStackHeaderConfigState>> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #pragma mark - ShadowNode overrides
   void layout(LayoutContext layoutContext) override;
 
 #pragma mark - Custom interface
+
+  /**
+   * The frame origin `layout()` sets, given the one computed by Yoga. The
+   * component descriptor compares it with the current layout metrics.
+   */
+  Point correctFrameOrigin(Point origin) const;
 
 #if !defined(ANDROID)
   void setImageLoader(std::weak_ptr<void> imageLoader);

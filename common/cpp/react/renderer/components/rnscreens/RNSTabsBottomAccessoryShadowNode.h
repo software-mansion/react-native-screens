@@ -6,19 +6,20 @@
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
 #include "RNSTabsBottomAccessoryState.h"
+#include "utils/LayoutFromState.h"
 
 namespace facebook::react {
 
 JSI_EXPORT extern const char RNSTabsBottomAccessoryComponentName[];
 
 class JSI_EXPORT RNSTabsBottomAccessoryShadowNode final
-    : public ConcreteViewShadowNode<
+    : public rnscreens::SizeFromStateShadowNode<ConcreteViewShadowNode<
           RNSTabsBottomAccessoryComponentName,
           RNSTabsBottomAccessoryProps,
           RNSTabsBottomAccessoryEventEmitter,
-          RNSTabsBottomAccessoryState> {
+          RNSTabsBottomAccessoryState>> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
   using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #pragma mark - ShadowNode overrides

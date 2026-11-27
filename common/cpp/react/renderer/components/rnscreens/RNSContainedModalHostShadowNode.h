@@ -7,19 +7,20 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include "RNSContainedModalHostState.h"
+#include "utils/LayoutFromState.h"
 
 namespace facebook::react {
 
 JSI_EXPORT extern const char RNSContainedModalHostComponentName[];
 
 class JSI_EXPORT RNSContainedModalHostShadowNode final
-    : public ConcreteViewShadowNode<
+    : public rnscreens::SizeFromStateShadowNode<ConcreteViewShadowNode<
           RNSContainedModalHostComponentName,
           RNSContainedModalHostProps,
           RNSContainedModalHostEventEmitter,
-          RNSContainedModalHostState> {
+          RNSContainedModalHostState>> {
  public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using SizeFromStateShadowNode::SizeFromStateShadowNode;
 
   Point getContentOriginOffset(bool includeTransform) const override;
 
