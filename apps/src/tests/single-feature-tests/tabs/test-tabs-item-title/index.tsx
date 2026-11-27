@@ -8,7 +8,10 @@ import {
   DEFAULT_TAB_ROUTE_OPTIONS,
 } from '@apps/shared/containers/tabs';
 import { Colors } from '@apps/shared/styling';
-import { initialWindowMetrics } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 // Android only: the Argent flow (.argent/flows/test-tabs-item-title.yaml) crops
 // its snapshots on an invisible band covering the bottom third of the screen,
@@ -16,13 +19,18 @@ import { initialWindowMetrics } from 'react-native-safe-area-context';
 // the system navigation bar, so emulator system UI changes (navigation mode,
 // rounded display corners) stay out of the crop. On iOS the flow crops on the
 // native UITabBar instead.
-const SYSTEM_NAVIGATION_BAR_HEIGHT = initialWindowMetrics?.insets.bottom ?? 0;
+//
+// The navigation bar height is the screen's live bottom inset. A value read
+// once at app start (initialWindowMetrics) can be 0 on a freshly booted
+// emulator, which stretched the band over the navigation bar and failed the
+// snapshots on their size.
 const LONG_TITLE_TAB_BAR_BAND_TEST_ID =
   'test-tabs-item-title-long-title-tab-bar-band';
 const COLOR_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-color-tab-bar-band';
 const FONT_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-font-tab-bar-band';
 
 function TabBarBand({ testID }: { testID: string }) {
+  const { bottom: systemNavigationBarHeight } = useSafeAreaInsets();
   if (Platform.OS !== 'android') {
     return null;
   }
@@ -31,7 +39,14 @@ function TabBarBand({ testID }: { testID: string }) {
       testID={testID}
       pointerEvents="none"
       collapsable={false}
-      style={styles.tabBarBand}
+      style={[
+        styles.tabBarBand,
+        {
+          bottom: systemNavigationBarHeight,
+          height:
+            Dimensions.get('screen').height / 3 - systemNavigationBarHeight,
+        },
+      ]}
     />
   );
 }
@@ -244,11 +259,16 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
 ];
 
 function TestTabsItemTitle() {
+  // The provider measures the insets of this screen's own view and updates
+  // them whenever they change, so the band follows the navigation bar height
+  // the system reports, not the one captured at app start.
   return (
-    <TabsContainerWithHostConfigContext
-      routeConfigs={ROUTE_CONFIGS}
-      ios={{ tabBarTintColor: Colors.GreenDark100 }}
-    />
+    <SafeAreaProvider>
+      <TabsContainerWithHostConfigContext
+        routeConfigs={ROUTE_CONFIGS}
+        ios={{ tabBarTintColor: Colors.GreenDark100 }}
+      />
+    </SafeAreaProvider>
   );
 }
 
@@ -264,8 +284,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: SYSTEM_NAVIGATION_BAR_HEIGHT,
-    height: Dimensions.get('screen').height / 3 - SYSTEM_NAVIGATION_BAR_HEIGHT,
   },
   label: {
     fontSize: 17,
