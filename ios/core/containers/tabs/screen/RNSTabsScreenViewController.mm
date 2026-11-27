@@ -39,6 +39,12 @@
   [[self findTabBarController] setNeedsOrientationUpdate:true];
 }
 
+- (void)viewSafeAreaInsetsDidChange
+{
+  [super viewSafeAreaInsetsDidChange];
+  [[self findTabBarController] updateBottomSafeAreaOfScreenController:self];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
