@@ -114,6 +114,23 @@ multi-replace, are covered by `test-stack-animation-operations-android`.
    - [ ] "Home" is shown with the title "Home · default" and
          "replaceAnimation" reads `push`.
 
+---
+
+### Replace during a push
+
+1. Set "replaceAnimation" to `pop`, tap "Push Fade", then tap
+   "Push Right 2000 ms + replace in 1 s" on "Fade".
+
+   - [ ] "Right 2000 ms" (blue) slides in from the right on top of "Fade", then
+         jumps to its final position about halfway in.
+   - [ ] "Right 2000 ms" then slides out to the right while "Bottom" slides in
+         from the left beside it; "Fade" is not visible.
+
+2. On "Bottom", tap "Pop" twice.
+
+   - [ ] "Home" is shown with the title "Home · default" and
+         "replaceAnimation" reads `pop`.
+
 ## Steps - Android
 
 ### Predictive back after a replace
@@ -151,18 +168,6 @@ multi-replace, are covered by `test-stack-animation-operations-android`.
    - [ ] "Ios" slides out to the right on top of "Fade", which slides in from
          the left by about a third of the width and brightens.
 
----
+3. On "Fade", tap "Pop".
 
-### Replace during a push
-
-1. On "Fade", tap "Push Right 2000 ms + replace in 1 s".
-
-   - [ ] "Right 2000 ms" (blue) slides in from the right on top of "Fade", then
-         jumps to its final position about halfway in.
-   - [ ] "Right 2000 ms" then slides out to the right while "Bottom" slides in
-         from the left beside it; "Fade" is not visible.
-
-2. On "Bottom", tap "Pop" twice.
-
-   - [ ] "Home" is shown with the title "Home · default" and
-         "replaceAnimation" reads `pop`.
+   - [ ] "Home" is shown with the title "Home · default".

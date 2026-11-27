@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Platform, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 import type {
   StackScreenAnimation,
   StackScreenReplaceAnimation,
@@ -162,17 +162,13 @@ function OperationButtons({ isRoot }: { isRoot: boolean }) {
           onPress={() => push(routeName)}
         />
       ))}
-      {/* Android covers this case in test-stack-animation-operations-android,
-          see https://github.com/software-mansion/react-native-screens-labs/issues/1824. */}
-      {Platform.OS === 'ios' && (
-        <Button
-          title="Push Right 2000 ms + replace in 1 s"
-          onPress={() => {
-            replacesDuringPush.current = true;
-            push('Right 2000 ms');
-          }}
-        />
-      )}
+      <Button
+        title="Push Right 2000 ms + replace in 1 s"
+        onPress={() => {
+          replacesDuringPush.current = true;
+          push('Right 2000 ms');
+        }}
+      />
       <Button title="Pop" disabled={isRoot} onPress={() => pop(routeKey)} />
       {REPLACEMENT_ROUTE_NAMES.map(routeName => (
         <Button

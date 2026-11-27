@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeCoordinator
 import com.swmansion.rnscreens.core.common.colorscheme.ColorSchemeListener
@@ -196,6 +197,12 @@ internal class StackContainer(
     }
 
     private fun performOperations(fragmentManager: FragmentManager) {
+        // A batch committed while a transition runs merges into the interrupted screen's running
+        // operation, which FragmentManager then cancels: the screen leaves without its transition
+        // (undocumented, fragment 1.8.9). Ending the transition first completes its operations, so
+        // the batch gets fresh ones. FragmentManager does the same before it starts a predictive
+        // back gesture.
+        TransitionManager.endTransitions(this)
         applyOperationsAndComputeFragmentManagerOperations()
         fragmentOpExecutor.executeOperations(fragmentManager, fragmentOps, flushSync = false)
 
@@ -516,6 +523,8 @@ internal class StackContainer(
             return
         }
 
+        // See `performOperations`: a pop during a running transition would merge into it.
+        TransitionManager.endTransitions(this)
         // Mirrors FragmentManager's internal OnBackPressedCallback, which also runs
         // popBackStackImmediate. The synchronous pop makes the top-screen guard above
         // reliable against double taps: onBackStackChangeCommitted -> onNativeFragmentPop
