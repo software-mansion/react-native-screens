@@ -72,8 +72,11 @@ jobs:
               - '.github/actions/setup-android-avd/**'
               - 'FabricExample/.detoxrc.js'
               # Everything under e2e/ except the Argent tests in e2e/argent/.
+              # !(argent) also skips any directory whose name starts with
+              # "argent" (e.g. argent-regressions/), so add those back.
               - 'FabricExample/e2e/*'
               - 'FabricExample/e2e/!(argent)/**'
+              - 'FabricExample/e2e/argent?*/**'
               - 'scripts/e2e/*.js'
               - 'scripts/e2e/*.cjs'
               - 'scripts/e2e/test-e2e-*.sh'
