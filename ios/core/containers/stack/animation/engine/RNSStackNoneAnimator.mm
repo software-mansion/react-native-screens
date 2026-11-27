@@ -18,22 +18,9 @@
   [transitionContext.containerView addSubview:toView];
 
   // On iOS 18 UIKit animates the navigation bar items right after `animateTransition:`, with its own 0.35 s slide when
-  // the transition has already completed (undocumented, measured on 18.6). Animating a hidden view keeps the
-  // transition open without changing anything on screen.
-  UIView *hiddenView = [UIView new];
-  hiddenView.hidden = YES;
-  [transitionContext.containerView addSubview:hiddenView];
-  UIViewPropertyAnimator *animator =
-      [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
-                                                 curve:UIViewAnimationCurveLinear
-                                            animations:^{
-                                              hiddenView.alpha = 0;
-                                            }];
-  [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-    [hiddenView removeFromSuperview];
-    [transitionContext completeTransition:!transitionContext.transitionWasCancelled];
-  }];
-  return animator;
+  // the transition has already completed (undocumented, measured on 18.6), so the animator must stay open for its
+  // duration although nothing on screen changes.
+  return [self linearAnimatorForTransition:transitionContext animations:nil completion:nil];
 }
 
 @end

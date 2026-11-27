@@ -8,8 +8,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * One screen's motion bound to its view: resolves the lengths against the container and its layout direction, composes
- * the tracks into the view's transform and alpha and a dim scrim's alpha, adds the keyframes, restores the rest
- * values. Only the properties a track animates are written, and the view's frame never changes.
+ * the tracks into the view's transform (scale, rotation, translation) and alpha and a dim scrim's alpha, adds the
+ * keyframes, restores the rest values. Only the properties a track animates are written, and the view's frame never
+ * changes.
  */
 @interface RNSStackAnimationMotionBinding : NSObject
 
@@ -29,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addKeyframesForDurationMs:(NSInteger)durationMs;
 
 /**
- * Returns the animated properties to their rest values: no translation, alpha 1, no scrim.
+ * Returns the animated properties to their rest values: identity transform, alpha 1, no scrim.
  */
 - (void)restore;
 

@@ -5,6 +5,7 @@
 #import "RNSStackAnimationEasing.h"
 #import "RNSStackAnimationLength.h"
 #import "RNSStackAnimationPresetConfig.h"
+#import "RNSStackAnimationTrackConfigMapper.h"
 
 static NSString *const kTypeKey = @"type";
 static NSString *const kNameKey = @"name";
@@ -74,7 +75,7 @@ static NSString *const kPercentSuffix = @"%";
       return exit == nil ? nil : [[RNSStackAnimationCustomTransitionConfig alloc] initWithEnter:enter exit:exit];
     }
     case RNSStackAnimationPresetLevelMotion:
-      return [self rejectWithReason:@"[RNScreens] A motion written as tracks is not supported on iOS."];
+      return [RNSStackAnimationTrackConfigMapper customMotionConfigFromDictionary:map];
   }
 }
 

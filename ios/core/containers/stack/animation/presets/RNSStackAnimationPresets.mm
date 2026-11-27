@@ -1,5 +1,7 @@
 #import "RNSStackAnimationPresets.h"
 #import "RNSStackAnimationCustomConfig.h"
+#import "RNSStackAnimationCustomMotion.h"
+#import "RNSStackAnimationCustomMotionConfig.h"
 #import "RNSStackAnimationCustomTransitionConfig.h"
 #import "RNSStackAnimationFadePresets.h"
 #import "RNSStackAnimationIosPresets.h"
@@ -77,10 +79,13 @@
   return transition;
 }
 
-// The motion written at an enter or exit position: the options apply to it alone.
+// The motion written at an enter or exit position: its tracks, or a preset whose options apply to it alone.
 + (NSArray<RNSStackAnimationTrack *> *)motionTracksForMotionConfig:(id<RNSStackAnimationMotionConfig>)config
                                                          appearing:(BOOL)isAppearing
 {
+  if ([config isKindOfClass:RNSStackAnimationCustomMotionConfig.class]) {
+    return [RNSStackAnimationCustomMotion tracksForConfig:static_cast<RNSStackAnimationCustomMotionConfig *>(config)];
+  }
   RNSStackAnimationPresetConfig *preset = static_cast<RNSStackAnimationPresetConfig *>(config);
   RNSStackAnimationPresetOptions *options = preset.options;
   NSArray<RNSStackAnimationTrack *> *tracks = [self motionTracksForName:preset.name
