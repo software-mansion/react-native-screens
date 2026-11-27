@@ -13,6 +13,9 @@ on:
       - 'common/**'
       - 'cpp/**'
       - 'src/fabric/**'
+      - 'FabricExample/ios/**'
+      - 'FabricExample/package.json'
+      - 'FabricExample/yarn.lock'
   push:
     branches:
       - main
@@ -23,7 +26,7 @@ jobs:
     runs-on: xcode-27
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: SPMBlankExample
+      WORKING_DIRECTORY: FabricExample
       DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
     concurrency:
       group: ios-spm-${{ github.ref }}
@@ -37,41 +40,24 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-          cache-dependency-path: yarn.lock
+          cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/yarn.lock
 
       - name: Get Xcode version
         run: xcodebuild -version
 
-      - name: Install library dependencies
+      - name: Install node dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
 
-      - name: Prepare library
-        run: yarn prepare
-
-      - name: Pack library
-        run: npm pack
-
-      - name: Determine React Native version
-        id: determine-rn-version
-        run: |
-          RN_VERSION=$(node -p "require('$GITHUB_WORKSPACE/package.json').devDependencies['react-native']")
-          echo "Using React Native $RN_VERSION"
-          echo "rn=$RN_VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Create blank app
-        run: |
-          npx @react-native-community/cli@latest init ${{ env.WORKING_DIRECTORY }} \
-            --version "${{ steps.determine-rn-version.outputs.rn }}" \
-            --pm npm \
-            --skip-git-init
-
-      - name: Install react-native-screens from tarball
+      - name: Migrate app to Swift Package Manager
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npm install "$GITHUB_WORKSPACE"/react-native-screens-*.tgz
+        run: npx react-native spm --deintegrate --yes
 
-      - name: Scaffold dependencies and migrate app to Swift Package Manager
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native spm scaffold --deintegrate --yes
+      # `pod deintegrate` leaves the CocoaPods workspace in place and the CLI
+      # builds a workspace when it finds one, so drop it to build the project.
+      - name: Remove CocoaPods workspace
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: rm -rf FabricExample.xcworkspace
 
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
