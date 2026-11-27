@@ -61,7 +61,6 @@ async function dismissMenu() {
 
 describeIfIOS('@smoke Stack Header Menu (iOS)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-header-menu-ios',

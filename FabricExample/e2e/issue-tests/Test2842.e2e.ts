@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import {
   expectHeaderViewShown,
@@ -71,10 +71,6 @@ async function swipeHeaderRightSlightly() {
 }
 
 describeIfIOS('Test2842 - pressables in modal', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test2842 should exist', async () => {
     await selectIssueTestScreen('Test2842');
   });

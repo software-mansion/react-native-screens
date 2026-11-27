@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_UI_CONTEXT_MENU_VIEW } from '@e2e/framework/native-classes-ios';
 
@@ -120,10 +120,6 @@ const expectInitialPageToExist = async (
 
 // TODO: Fix & reenable after https://github.com/software-mansion/react-native-screens/pull/3303
 describe.skip('Test2809', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test2809 should exist', async () => {
     await selectIssueTestScreen('Test2809');
   });

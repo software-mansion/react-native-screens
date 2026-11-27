@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   menuRowIcon,
@@ -62,7 +62,6 @@ const expectAllSubmenuRowIconsToBeVisible = async (iconId: string | RegExp) => {
 
 describeIfIOS('Stack Header Icon (iOS)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-header-icon-ios',

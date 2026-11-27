@@ -1,10 +1,6 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 
 describe('Simple Stack Presentation', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('should go to main screen', async () => {
     await expect(
       element(by.id('root-screen-example-StackPresentation')),

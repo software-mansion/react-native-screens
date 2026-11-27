@@ -1,4 +1,4 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
   chevronFor,
@@ -54,7 +54,6 @@ async function toggleAndExpectLabel(testID: string, expectedLabel: string) {
 
 describeIfIOS('Stack Header Menu Options (iOS)', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Stackv5',
       'test-stack-header-menu-options-ios',

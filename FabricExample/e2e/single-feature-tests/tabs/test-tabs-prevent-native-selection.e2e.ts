@@ -9,7 +9,6 @@ import { describeIfIPad } from '@e2e/framework/platform';
 
 describe('@smoke Tabs: preventNativeSelection', () => {
   beforeAll(async () => {
-    await device.reloadReactNative();
     await selectSingleFeatureTestsScreen(
       'Tabs',
       'test-tabs-prevent-native-selection',

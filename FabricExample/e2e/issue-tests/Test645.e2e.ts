@@ -1,14 +1,10 @@
-import { device, expect, element, by } from 'detox';
+import { expect, element, by } from 'detox';
 import { selectIssueTestScreen } from '@e2e/app/test-screen-navigation';
 import { CLASS_NAME_UI_NAVIGATION_BAR_LARGE_TITLE_VIEW } from '@e2e/framework/native-classes-ios';
 import { describeIfIOS } from '@e2e/framework/platform';
 
 // headerLargeTitle is supported only on iOS
 describeIfIOS('Test645', () => {
-  beforeAll(async () => {
-    await device.reloadReactNative();
-  });
-
   it('Test645 should exist', async () => {
     await selectIssueTestScreen('Test645');
   });
