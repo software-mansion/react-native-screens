@@ -5,7 +5,8 @@ export const scenarioDescription: ScenarioDescription = {
   key: 'test-stack-header-menu-ios',
   details:
     'Tests header item menus and title menu: action items, toggle items, singleSelection, ' +
-    'nested menus, and menu representation in the overflow menu.',
+    'nested menus, menu representation in the overflow menu, and toggle state retention ' +
+    'across navigation and header item changes.',
   platforms: ['ios'],
   devices: ['iphone', 'ipad'],
   osVersions: {
@@ -14,6 +15,6 @@ export const scenarioDescription: ScenarioDescription = {
   },
   e2eCoverage: 'incomplete',
   e2eCoverageDetails:
-    'Covers all manual scenario steps except the Menu representation section. On iOS 27 the header item "Menu 1" is only checked to exist, not to be visible.',
+    'Covers all manual scenario steps except the Toggle state retention and Menu representation (iOS 26) sections, which are not automated. On iOS 27 the header item "Menu 1" is only checked to exist, not to be visible.',
   smokeTest: true,
 };

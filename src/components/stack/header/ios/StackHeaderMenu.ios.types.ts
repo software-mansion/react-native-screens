@@ -72,6 +72,25 @@ export interface StackHeaderMenuItemIOS {
    * {@link StackHeaderMenuIOS.singleSelection | singleSelection} hierarchy, at
    * most one item can set this to `true`.
    *
+   * The initial state does not trigger
+   * {@link StackHeaderMenuIOS.onSelectionChange | onSelectionChange} at mount
+   * time.
+   *
+   * A change of the menu restores the selection to this value. The `menu` and
+   * `menuRepresentation` of a header item share their toggle state, so a
+   * change of either one restores both and discards everything view commands
+   * changed in both; a `titleMenu` change does the same for the title menu.
+   * Any real change counts; passing an equal menu again is a no-op and
+   * preserves the state. Removing a header item and adding it again, or
+   * moving it between `leadingItems` and `trailingItems`, restores the
+   * selection as well.
+   *
+   * Everything else preserves the state: a native header rebuild, navigating
+   * away from the screen and back, reordering the header items (this one
+   * included), adding or removing other header items and changing other
+   * props of the item. Neither a restore nor a rebuild triggers
+   * `onSelectionChange`.
+   *
    * @defaultValue `false`
    * @platform ios
    */

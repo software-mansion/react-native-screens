@@ -9,6 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackHeaderMenuToggleStateTracker;
+
 @protocol RNSStackHeaderItemDataProviding <NSObject>
 
 @property (nonatomic, readonly) RNSHeaderItemPlacement placement;
@@ -18,6 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) RNSStackHeaderIconData *icon;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menuRepresentation;
+
+/**
+ Toggle state of the items in menu and menuRepresentation. Owned by the header item, so that the state lives
+ exactly as long as the item does. The item replaces the tracker when either of the menus changes.
+ */
+@property (nonatomic, readonly) RNSStackHeaderMenuToggleStateTracker *menuToggleStateTracker;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) UIBarButtonItemStyle style;
 

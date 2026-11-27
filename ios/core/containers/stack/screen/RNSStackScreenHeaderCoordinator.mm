@@ -7,7 +7,7 @@
 #import "RNSStackHeaderItemSpacerDataProviding.h"
 #import "RNSStackHeaderMenuCoordinator.h"
 #import "RNSStackHeaderMenuFinder.h"
-#import "RNSStackHeaderMenuTrackerRegistry.h"
+#import "RNSStackHeaderMenuToggleStateTracker.h"
 #import "RNSStackNavigationBarCoordinator.h"
 #import "RNSStackNavigationController.h"
 #import "RNSStackScreenController.h"
@@ -28,7 +28,8 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   __weak UINavigationItem *_Nullable _backButtonConfigTargetItem;
 #endif // !TARGET_OS_TV
 
-  RNSStackHeaderMenuTrackerRegistry *_Nonnull _trackerRegistry;
+  // Toggle state of the title menu. Header items own the trackers of their menus.
+  RNSStackHeaderMenuToggleStateTracker *_Nonnull _titleMenuTracker;
 
   NSMutableArray<UIBarButtonItem *> *_Nonnull _leadingBarButtonItems;
   NSMutableArray<UIBarButtonItem *> *_Nonnull _trailingBarButtonItems;
@@ -39,7 +40,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 {
   if (self = [super init]) {
     _screenController = controller;
-    _trackerRegistry = [RNSStackHeaderMenuTrackerRegistry new];
+    _titleMenuTracker = [RNSStackHeaderMenuToggleStateTracker new];
     _leadingBarButtonItems = [NSMutableArray new];
     _trailingBarButtonItems = [NSMutableArray new];
     _barButtonItemsByItemId = [NSMutableDictionary new];
@@ -71,7 +72,6 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
   [_barButtonItemsByItemId removeAllObjects];
-  [_trackerRegistry clear];
 
   UIView *titleView = nil;
   UIView *subtitleView = nil;
@@ -237,13 +237,6 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   }
 }
 
-- (void)resetTrackerForItemWithId:(NSString *)itemId
-{
-  if (itemId != nil) {
-    [_trackerRegistry resetTrackerForItemId:itemId];
-  }
-}
-
 - (void)reapplyTitleMenu
 {
   if (_configDataProvider == nil) {
@@ -254,20 +247,47 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 
 - (void)resetTitleMenuTracker
 {
-  [_trackerRegistry resetTrackerForItemId:RNSTitleMenuTrackerItemId];
+  _titleMenuTracker = [RNSStackHeaderMenuToggleStateTracker new];
 }
 
 - (void)setToggleState:(BOOL)state
       forMenuElementId:(NSString *)elementId
-         trackerItemId:(NSString *)trackerItemId
+          inHeaderItem:(id<RNSStackHeaderItemDataProviding>)headerItem
               rootMenu:(RNSStackHeaderMenuData *)rootMenu
             parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
 {
-  if (_configDataProvider == nil || elementId == nil || trackerItemId == nil || rootMenu == nil) {
+  if (headerItem == nil) {
     return;
   }
 
-  RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:trackerItemId];
+  [self setToggleState:state
+      forMenuElementId:elementId
+               tracker:headerItem.menuToggleStateTracker
+              rootMenu:rootMenu
+            parentMenu:parentMenu];
+}
+
+- (void)setTitleMenuToggleState:(BOOL)state
+               forMenuElementId:(NSString *)elementId
+                       rootMenu:(RNSStackHeaderMenuData *)rootMenu
+                     parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+{
+  [self setToggleState:state
+      forMenuElementId:elementId
+               tracker:_titleMenuTracker
+              rootMenu:rootMenu
+            parentMenu:parentMenu];
+}
+
+- (void)setToggleState:(BOOL)state
+      forMenuElementId:(NSString *)elementId
+               tracker:(RNSStackHeaderMenuToggleStateTracker *)tracker
+              rootMenu:(RNSStackHeaderMenuData *)rootMenu
+            parentMenu:(nullable RNSStackHeaderMenuData *)parentMenu
+{
+  if (_configDataProvider == nil || elementId == nil || rootMenu == nil) {
+    return;
+  }
 
   if ([tracker toggleStateEquals:state forItemWithId:elementId]) {
     return;
@@ -314,7 +334,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   [_leadingBarButtonItems removeAllObjects];
   [_trailingBarButtonItems removeAllObjects];
   [_barButtonItemsByItemId removeAllObjects];
-  [_trackerRegistry clear];
+  _titleMenuTracker = [RNSStackHeaderMenuToggleStateTracker new];
 
   RNSStackScreenController *controller = [self requireScreenController];
   UINavigationItem *navItem = controller.navigationItem;
@@ -384,7 +404,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   if (item.menu == nil) {
     barButtonItem.menu = nil;
   } else {
-    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
+    RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
     __weak auto weakSelf = self;
     [RNSStackHeaderMenuCoordinator applyMenu:item.menu
                              toBarButtonItem:barButtonItem
@@ -419,7 +439,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     return;
   }
 
-  RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:itemId];
+  RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
   __weak auto weakSelf = self;
   [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
                                          toBarButtonItem:barButtonItem
@@ -571,7 +591,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
       return;
     }
 
-    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:RNSTitleMenuTrackerItemId];
+    RNSStackHeaderMenuToggleStateTracker *tracker = _titleMenuTracker;
     __weak auto weakSelf = self;
     __weak auto weakEventsDelegate = _eventsDelegate;
     __weak auto weakImageLoader = _imageLoader;
@@ -624,7 +644,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
 
   if (item.menu != nil && item.itemId != nil) {
-    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
+    RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
     __weak auto weakSelf = self;
     NSString *capturedItemId = item.itemId;
     [RNSStackHeaderMenuCoordinator applyMenu:item.menu
@@ -638,7 +658,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   }
 
   if (item.menuRepresentation != nil && item.itemId != nil) {
-    RNSStackHeaderMenuToggleStateTracker *tracker = [_trackerRegistry trackerForItemId:item.itemId];
+    RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
     __weak auto weakSelf = self;
     NSString *capturedItemId = item.itemId;
     [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation

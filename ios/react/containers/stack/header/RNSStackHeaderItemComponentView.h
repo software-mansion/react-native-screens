@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) RNSStackHeaderIconData *icon;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menu;
 @property (nonatomic, readonly, nullable) RNSStackHeaderMenuData *menuRepresentation;
+@property (nonatomic, readonly) RNSStackHeaderMenuToggleStateTracker *menuToggleStateTracker;
 @property (nonatomic, readonly, nullable) UIView *customView;
 @property (nonatomic, readonly) UIBarButtonItemStyle style;
 @property (nonatomic, readonly, nullable) UIColor *itemTintColor;
