@@ -105,7 +105,7 @@ class ScreenStack(
             check(!view.blockFrameworkTransitionFinalization) {
                 "[RNScreens] Attempt to finalize transition on view that blocks the action!"
             }
-            endViewTransition(view)
+            post { endViewTransition(view) }
         }
     }
 
