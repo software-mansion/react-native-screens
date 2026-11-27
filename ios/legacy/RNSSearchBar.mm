@@ -17,6 +17,7 @@ namespace react = facebook::react;
 @implementation RNSSearchBar {
   UISearchController *_controller;
   UIColor *_textColor;
+  UIColor *_tintColor;
 
   // We use those booleans to log a warning if user attempts to restore
   // default behavior after setting explicit value for the prop.
@@ -163,7 +164,11 @@ namespace react = facebook::react;
 
 - (void)setTintColor:(UIColor *)tintColor
 {
+  _tintColor = tintColor;
   [_controller.searchBar setTintColor:tintColor];
+#if !TARGET_OS_TV
+  [_controller.searchBar.searchTextField setTintColor:tintColor];
+#endif
 }
 
 - (void)setTextColor:(UIColor *)textColor
@@ -255,6 +260,9 @@ namespace react = facebook::react;
   // so we apply it again here
   if (_textColor != nil) {
     [_controller.searchBar.searchTextField setTextColor:_textColor];
+  }
+  if (_tintColor != nil) {
+    [_controller.searchBar.searchTextField setTintColor:_tintColor];
   }
 #endif
 
