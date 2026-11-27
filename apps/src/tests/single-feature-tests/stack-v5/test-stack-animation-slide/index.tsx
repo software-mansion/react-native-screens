@@ -5,21 +5,23 @@ import { createScenario } from '@apps/tests/shared/helpers';
 import { AnimationPresetPlayground } from '@apps/tests/shared/components/stack-v5/AnimationPresetPlayground';
 
 const ANIMATION_OPTIONS = [
-  'fade',
-  'fadeFromBottom',
-  'fadeFromTop',
+  'slideFromRight',
+  'slideFromLeft',
+  'slideFromTrailing',
+  'slideFromLeading',
+  'slideFromBottom',
+  'slideFromTop',
 ] as const satisfies readonly StackScreenAnimation[];
 
-function TestStackAnimationFadeAndroid() {
+function TestStackAnimationSlide() {
   return (
     <AnimationPresetPlayground
       animationOptions={ANIMATION_OPTIONS}
-      initialAnimation="fade"
+      initialAnimation="slideFromRight"
+      withDirectionPicker
+      withHeaderPicker
     />
   );
 }
 
-export default createScenario(
-  TestStackAnimationFadeAndroid,
-  scenarioDescription,
-);
+export default createScenario(TestStackAnimationSlide, scenarioDescription);

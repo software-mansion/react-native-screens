@@ -41,7 +41,7 @@ function asOption(
   );
 }
 
-function TestStackAnimationUpdateAndroid() {
+function TestStackAnimationUpdate() {
   return (
     <StackContainer
       routeConfigs={[
@@ -67,8 +67,8 @@ function TestStackAnimationUpdateAndroid() {
 
 /**
  * "this screen" updates the current route's options, so it changes the animation of a screen
- * that is already on the stack. It drives that screen's own pop, both with the button and with
- * the predictive back gesture.
+ * that is already on the stack. It drives that screen's own pop, both with the button and, on
+ * Android, with the predictive back gesture.
  */
 function AnimationControls() {
   const { routeKey, routeOptions, setRouteOptions } =
@@ -123,7 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createScenario(
-  TestStackAnimationUpdateAndroid,
-  scenarioDescription,
-);
+export default createScenario(TestStackAnimationUpdate, scenarioDescription);

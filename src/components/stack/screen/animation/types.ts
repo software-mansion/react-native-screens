@@ -149,13 +149,13 @@ export interface StackScreenAnimationSlideFromPresetConfig
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'preset';
   /**
    * Name of the preset.
    *
-   * @platform android
+   * @platform android, ios
    */
   name: StackScreenAnimationSlideFromPresetName;
 }
@@ -214,13 +214,13 @@ export interface StackScreenAnimationFadePresetConfig
   /**
    * Discriminator of the object.
    *
-   * @platform android
+   * @platform android, ios
    */
   type: 'preset';
   /**
    * Name of the preset.
    *
-   * @platform android
+   * @platform android, ios
    */
   name: 'fade';
 }
