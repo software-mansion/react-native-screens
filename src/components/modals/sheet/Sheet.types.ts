@@ -149,6 +149,8 @@ export interface SheetProps {
   initialDetentIndex?: SheetInitialDetentIndex | undefined;
   prefersScrollingExpandsWhenScrolledToEdge?: boolean | undefined;
   prefersEdgeAttachedInCompactHeight?: boolean | undefined;
+  preferredContentSize?: { width: number; height: number } | undefined;
+  widthFollowsPreferredContentSizeWhenEdgeAttached?: boolean | undefined;
   preventNativeDismiss?: boolean | undefined;
   nativeContainerStyle?: StyleProp<SheetNativeContainerStyleProps> | undefined;
   backgroundEffect?: SheetBackgroundEffect | undefined;

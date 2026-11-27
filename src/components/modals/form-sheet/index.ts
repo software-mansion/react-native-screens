@@ -7,6 +7,7 @@ export type {
   FormSheetInitialDetentIndex,
   FormSheetNativeContainerStyleProps,
   FormSheetBackgroundEffect,
+  FormSheetPreferredContentSize,
 } from './FormSheet.types';
 
 export { FormSheet } from './FormSheet';

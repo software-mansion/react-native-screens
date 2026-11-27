@@ -69,6 +69,24 @@ export type FormSheetBackgroundEffect = SheetBackgroundEffect;
 export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
+ * Preferred size of a form sheet, in density-independent pixels.
+ */
+export interface FormSheetPreferredContentSize {
+  /**
+   * Preferred width of the sheet.
+   *
+   * @platform ios
+   */
+  width: number;
+  /**
+   * Preferred height of the sheet.
+   *
+   * @platform ios
+   */
+  height: number;
+}
+
+/**
  * Props for {@link FormSheet}.
  */
 export interface FormSheetProps {
@@ -184,6 +202,39 @@ export interface FormSheetProps {
    * @platform ios
    */
   prefersEdgeAttachedInCompactHeight?: boolean | undefined;
+
+  /**
+   * Preferred size of the sheet, in density-independent pixels.
+   *
+   * @remarks
+   * On iPad, it sets the size of the centered panel the sheet presents as. On
+   * iOS 26 and later, the system may make the panel slightly taller than
+   * requested. While the sheet is attached to the bottom edge (in compact
+   * width, or in compact height with `prefersEdgeAttachedInCompactHeight`),
+   * its height comes from `detents`, and its width follows this size only
+   * when `widthFollowsPreferredContentSizeWhenEdgeAttached` is `true`. If not
+   * set, the system's default size is used.
+   *
+   * @see {@link https://developer.apple.com/documentation/uikit/uiviewcontroller/preferredcontentsize | UIViewController.preferredContentSize}
+   * @platform ios
+   */
+  preferredContentSize?: FormSheetPreferredContentSize | undefined;
+
+  /**
+   * Determines whether the width of the sheet follows the width of
+   * `preferredContentSize` while the sheet is attached to the bottom edge.
+   *
+   * @remarks
+   * When `false`, a sheet attached to the bottom edge is as wide as the safe
+   * area. When `true` without `preferredContentSize`, the sheet takes the
+   * system's default form sheet width, which can differ from its width when
+   * `false` (e.g. on iPhone in landscape).
+   *
+   * @defaultValue `false`
+   * @see {@link https://developer.apple.com/documentation/uikit/uisheetpresentationcontroller/widthfollowspreferredcontentsizewhenedgeattached | UISheetPresentationController.widthFollowsPreferredContentSizeWhenEdgeAttached}
+   * @platform ios
+   */
+  widthFollowsPreferredContentSizeWhenEdgeAttached?: boolean | undefined;
 
   /**
    * Prevents the user from dismissing the sheet natively by swiping down or
