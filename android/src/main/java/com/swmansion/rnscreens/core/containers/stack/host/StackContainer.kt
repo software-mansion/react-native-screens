@@ -222,7 +222,13 @@ internal class StackContainer(
             // recognized.
             fragmentOps.add(
                 OnCommitCallbackOp(
-                    { updateTopFragment() },
+                    {
+                        // FragmentManager resolves transitions before runOnCommit. Root
+                        // replacements do not change its back stack, so they never reach
+                        // onBackStackChanged to clear this context.
+                        transitionContext = null
+                        updateTopFragment()
+                    },
                     allowStateLoss = true,
                     flushSync = false,
                 ),
@@ -237,15 +243,23 @@ internal class StackContainer(
                     "[RNScreens] Unable to find a fragment to pop"
                 }
 
-            check(stackModel.size > 1) {
-                "[RNScreens] Attempt to pop last screen from the stack"
-            }
-
-            fragmentOps.add(PopBackStackOp(fragment))
-
-            check(stackModel.removeAt(stackModel.lastIndex) === fragment) {
+            check(stackModel.last() === fragment) {
                 "[RNScreens] Attempt to pop non-top screen"
             }
+
+            if (stackModel.size == 1) {
+                check(pendingPushOperations.isNotEmpty()) {
+                    "[RNScreens] Attempt to pop last screen from the stack"
+                }
+                // The root was never added to FragmentManager's back stack. A replacement
+                // must remove it directly; the pending push installs a new root without a
+                // back stack record, so Back cannot reveal the replaced screen.
+                fragmentOps.add(RemoveOp(fragment))
+            } else {
+                fragmentOps.add(PopBackStackOp(fragment))
+            }
+
+            stackModel.removeAt(stackModel.lastIndex)
         }
 
         pendingPushOperations.forEach { operation ->
@@ -280,7 +294,7 @@ internal class StackContainer(
      * before FragmentManager calls the transition getters: by [writeTransitionContext] for a batch,
      * by [onBackStackChangeStarted] for a pop FragmentManager starts itself (predictive back included).
      *
-     * Cleared in [onBackStackChanged], which follows the getter calls in every path
+     * Cleared by the batch's onCommit callback or [onBackStackChanged], after the getter calls
      * (`onBackStackChangeCommitted` comes before them). So a predictive back gesture start clears it
      * too: neither the commit nor the cancel (the record re-executed forward) resolves a transition.
      */
