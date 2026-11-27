@@ -112,7 +112,7 @@ namespace react = facebook::react;
       _menu = [RNSStackHeaderMenuCoordinator menu:_menu replacingChildWithId:elementId withElement:newElement];
     }
   }
-  [_invalidationDelegate headerItemMenuDidUpdateFromCommandWithId:_itemId];
+  [_invalidationDelegate headerItemMenuDidUpdateFromCommand:self];
 }
 
 #pragma mark - RNSStackHeaderItemDataProviding
@@ -140,18 +140,16 @@ namespace react = facebook::react;
 {
   [super mountChildComponentView:childComponentView index:index];
 
-  // An existing item may have transitioned from label-only to custom view,
-  // and needs to be rebuilt.
-  [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
+  // An existing item may have transitioned from label-only to custom view.
+  [_invalidationDelegate headerItemDidInvalidate:self];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super unmountChildComponentView:childComponentView index:index];
 
-  // An existing item may have transitioned from custom view to label-only,
-  // and needs to be rebuilt.
-  [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
+  // An existing item may have transitioned from custom view to label-only.
+  [_invalidationDelegate headerItemDidInvalidate:self];
 }
 
 - (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
@@ -283,7 +281,7 @@ RNS_IGNORE_SUPER_CALL_END
 // tvOS and visionOS are excluded on purpose: `visibilityPriority` exists there, but the only
 // supported value is `standard`, which is already the default.
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
-    // The item is rebuilt only on iOS 27+, where the priority is actually applied.
+    // The item is invalidated only on iOS 27+, where the priority is actually applied.
     if (@available(iOS 27.0, *)) {
       needsUpdate = YES;
     }
@@ -314,19 +312,14 @@ RNS_IGNORE_SUPER_CALL_END
     _menuRepresentation = _menuRepresentationProp;
   }
 
+  // The header applies both at the end of the mounting transaction. They are reported separately, because the menu
+  // is applied again only when it changed: other props leave the menu, and what the user sees in it, alone.
   if (needsUpdate) {
-    // rebuilds the item together with its menu; the menu state is kept unless the menu changed as well
-    [_invalidationDelegate headerItemDidInvalidateWithId:_itemId];
+    [_invalidationDelegate headerItemDidInvalidate:self];
   }
 
   if (menuDidChange) {
-    // there are 3 distinct cases for rebuilding the menu
-    // 1. only menu changed -- no item rebuilding, menu state reset
-    // 2. some different prop changed -- item rebuilds, but menu should keep its state
-    // 3. both menu and some other prop changed -- both item and menu rebuilds + menu state should be reset
-    // If we don't have separate if-s, we won't cover all cases,
-    // but unfortunately we're rebuilding the menu twice for 3. case.
-    [_invalidationDelegate headerItemMenuDidChangeWithId:_itemId];
+    [_invalidationDelegate headerItemMenuDidChange:self];
   }
 }
 

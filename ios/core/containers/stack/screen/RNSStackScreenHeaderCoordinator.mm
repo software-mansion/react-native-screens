@@ -18,6 +18,28 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     RNSHeaderItemVisibilityPriority visibilityPriority);
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
 
+/**
+ What the coordinator built for a child of the header config.
+ */
+@interface RNSStackHeaderChildRecord : NSObject
+
+// Set for the header items placed in the leading or the trailing area and for the spacers.
+@property (nonatomic, strong, nullable) UIBarButtonItem *barButtonItem;
+// Set for the header items that provide the title, subtitle or large subtitle view.
+@property (nonatomic, strong, nullable) UIView *wrapperView;
+@property (nonatomic) BOOL isFlexibleSpacer;
+
+@end
+
+@implementation RNSStackHeaderChildRecord
+@end
+
+// UIKit keeps moving the header items that were kept across an update for a while after the bar button items are
+// set, without a layout callback on their wrappers, so the frames are reported once more after this delay. In logs of
+// items growing, shrinking, added and removed the frames stopped changing 0.3 s after the items were set on iOS 26
+// and 0.85 s on iOS 27, where they were within 0.2 pt of the final ones after 0.65 s; iOS 17 moves the items at once.
+static const NSTimeInterval RNSItemFramesSettleDelay = 0.75;
+
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
 
@@ -31,9 +53,24 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   // Toggle state of the title menu. Header items own the trackers of their menus.
   RNSStackHeaderMenuToggleStateTracker *_Nonnull _titleMenuTracker;
 
-  NSMutableArray<UIBarButtonItem *> *_Nonnull _leadingBarButtonItems;
-  NSMutableArray<UIBarButtonItem *> *_Nonnull _trailingBarButtonItems;
-  NSMutableDictionary<NSString *, UIBarButtonItem *> *_Nonnull _barButtonItemsByItemId;
+  NSArray<UIBarButtonItem *> *_Nonnull _leadingBarButtonItems;
+  NSArray<UIBarButtonItem *> *_Nonnull _trailingBarButtonItems;
+
+  // Keyed by the child view, not by the item id: a child that is removed and added again in one transaction is a new
+  // view and gets a new bar button item, even when it reuses the id, while a child that is only moved keeps its own.
+  NSMapTable<id, RNSStackHeaderChildRecord *> *_Nonnull _recordsByChild;
+  // Children whose properties changed since the last `updateItems`.
+  NSHashTable<id> *_Nonnull _childrenNeedingUpdate;
+  // Header items whose menu or menu representation changed since the last `updateItems`.
+  NSHashTable<id> *_Nonnull _itemsNeedingMenuUpdate;
+
+  // The delayed report of the item frames that is pending, if any. See `setNeedsItemFramesUpdate`.
+  dispatch_block_t _Nullable _pendingItemFramesReport;
+}
+
+- (void)dealloc
+{
+  [self cancelPendingItemFramesReport];
 }
 
 - (instancetype)initWithScreenController:(RNSStackScreenController *)controller
@@ -41,11 +78,24 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   if (self = [super init]) {
     _screenController = controller;
     _titleMenuTracker = [RNSStackHeaderMenuToggleStateTracker new];
-    _leadingBarButtonItems = [NSMutableArray new];
-    _trailingBarButtonItems = [NSMutableArray new];
-    _barButtonItemsByItemId = [NSMutableDictionary new];
+    _leadingBarButtonItems = @[];
+    _trailingBarButtonItems = @[];
+    _recordsByChild = [RNSStackScreenHeaderCoordinator makeRecordsByChild];
+    _childrenNeedingUpdate = [RNSStackScreenHeaderCoordinator makeChildrenSet];
+    _itemsNeedingMenuUpdate = [RNSStackScreenHeaderCoordinator makeChildrenSet];
   }
   return self;
+}
+
++ (NSMapTable<id, RNSStackHeaderChildRecord *> *)makeRecordsByChild
+{
+  return [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality
+                               valueOptions:NSPointerFunctionsStrongMemory];
+}
+
++ (NSHashTable<id> *)makeChildrenSet
+{
+  return [NSHashTable hashTableWithOptions:NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality];
 }
 
 #pragma mark - Public
@@ -61,7 +111,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   [navController.navigationBarCoordinator setHidden:hidden forNavigationController:navController animated:animated];
 }
 
-- (void)rebuild
+- (void)applyHeaderConfiguration
 {
   if (_configDataProvider == nil) {
     return;
@@ -69,69 +119,139 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 
   RNSStackScreenController *controller = [self requireScreenController];
 
-  [_leadingBarButtonItems removeAllObjects];
-  [_trailingBarButtonItems removeAllObjects];
-  [_barButtonItemsByItemId removeAllObjects];
-
-  UIView *titleView = nil;
-  UIView *subtitleView = nil;
-  UIView *largeSubtitleView = nil;
-
-  for (UIView *child in _configDataProvider.children) {
-    if ([child conformsToProtocol:@protocol(RNSStackHeaderItemDataProviding)]) {
-      id<RNSStackHeaderItemDataProviding> item = (id<RNSStackHeaderItemDataProviding>)child;
-
-      switch (item.placement) {
-        case RNSHeaderItemPlacementLeading:
-          [_leadingBarButtonItems addObject:[self buildBarButtonItemForItem:item]];
-          break;
-        case RNSHeaderItemPlacementTrailing:
-          [_trailingBarButtonItems addObject:[self buildBarButtonItemForItem:item]];
-          break;
-        case RNSHeaderItemPlacementTitle:
-          if (item.customView != nil) {
-            titleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item
-                                                           frameChangeDelegate:_frameChangeDelegate];
-          }
-          break;
-        case RNSHeaderItemPlacementSubtitle:
-          if (item.customView != nil) {
-            subtitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item
-                                                              frameChangeDelegate:_frameChangeDelegate];
-          }
-          break;
-        case RNSHeaderItemPlacementLargeSubtitle:
-          if (item.customView != nil) {
-            largeSubtitleView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item
-                                                                   frameChangeDelegate:_frameChangeDelegate];
-          }
-          break;
-      }
-    } else if ([child conformsToProtocol:@protocol(RNSStackHeaderItemSpacerDataProviding)]) {
-      id<RNSStackHeaderItemSpacerDataProviding> spacer = (id<RNSStackHeaderItemSpacerDataProviding>)child;
-      UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer];
-      switch (spacer.placement) {
-        case RNSHeaderItemSpacerPlacementLeading:
-          [_leadingBarButtonItems addObject:barButtonItem];
-          break;
-        case RNSHeaderItemSpacerPlacementTrailing:
-          [_trailingBarButtonItems addObject:barButtonItem];
-          break;
-      }
-    }
-  }
-
   [self applyConfigPropertiesForController:controller];
-  [self applyItemsWithTitleView:titleView
-                   subtitleView:subtitleView
-              largeSubtitleView:largeSubtitleView
-                  forController:controller];
+  [self updateItems];
 
   [self applyTitleMenuForController:controller];
   [self updateNavigationBarVisibilityAnimated:YES];
 #if !TARGET_OS_TV
   [self updateBackButtonMenuEnabled];
 #endif // !TARGET_OS_TV
+}
+
+- (void)setNeedsUpdateForChild:(id)child
+{
+  if (child != nil) {
+    [_childrenNeedingUpdate addObject:child];
+  }
+}
+
+- (void)setNeedsMenuUpdateForItem:(id<RNSStackHeaderItemDataProviding>)item
+{
+  if (item != nil) {
+    [_itemsNeedingMenuUpdate addObject:item];
+  }
+}
+
+- (void)updateItems
+{
+  if (_configDataProvider == nil) {
+    return;
+  }
+
+  RNSStackScreenController *controller = [self requireScreenController];
+  UINavigationItem *navItem = controller.navigationItem;
+
+  NSMapTable<id, RNSStackHeaderChildRecord *> *records = [RNSStackScreenHeaderCoordinator makeRecordsByChild];
+  NSMutableArray<UIBarButtonItem *> *leadingBarButtonItems = [NSMutableArray new];
+  NSMutableArray<UIBarButtonItem *> *trailingBarButtonItems = [NSMutableArray new];
+
+  UIView *titleView = nil;
+  UIView *subtitleView = nil;
+  UIView *largeSubtitleView = nil;
+
+  BOOL didChangeAnyItem = NO;
+
+  for (UIView *child in _configDataProvider.children) {
+    RNSStackHeaderChildRecord *record = [_recordsByChild objectForKey:child];
+    if (record == nil) {
+      record = [RNSStackHeaderChildRecord new];
+    }
+    [records setObject:record forKey:child];
+
+    BOOL needsUpdate = [_childrenNeedingUpdate containsObject:child];
+
+    if ([child conformsToProtocol:@protocol(RNSStackHeaderItemDataProviding)]) {
+      id<RNSStackHeaderItemDataProviding> item = (id<RNSStackHeaderItemDataProviding>)child;
+
+      switch (item.placement) {
+        case RNSHeaderItemPlacementLeading:
+        case RNSHeaderItemPlacementTrailing: {
+          BOOL needsMenuUpdate = [_itemsNeedingMenuUpdate containsObject:child];
+          didChangeAnyItem |= [self updateBarButtonItemInRecord:record
+                                                        forItem:item
+                                                    needsUpdate:needsUpdate
+                                                needsMenuUpdate:needsMenuUpdate];
+          [item.placement == RNSHeaderItemPlacementLeading ? leadingBarButtonItems : trailingBarButtonItems
+              addObject:record.barButtonItem];
+          break;
+        }
+        case RNSHeaderItemPlacementTitle:
+          titleView = [self updateWrapperViewInRecord:record forItem:item];
+          break;
+        case RNSHeaderItemPlacementSubtitle:
+          subtitleView = [self updateWrapperViewInRecord:record forItem:item];
+          break;
+        case RNSHeaderItemPlacementLargeSubtitle:
+          largeSubtitleView = [self updateWrapperViewInRecord:record forItem:item];
+          break;
+      }
+    } else if ([child conformsToProtocol:@protocol(RNSStackHeaderItemSpacerDataProviding)]) {
+      id<RNSStackHeaderItemSpacerDataProviding> spacer = (id<RNSStackHeaderItemSpacerDataProviding>)child;
+      didChangeAnyItem |= [self updateBarButtonItemInRecord:record forSpacer:spacer needsUpdate:needsUpdate];
+      switch (spacer.placement) {
+        case RNSHeaderItemSpacerPlacementLeading:
+          [leadingBarButtonItems addObject:record.barButtonItem];
+          break;
+        case RNSHeaderItemSpacerPlacementTrailing:
+          [trailingBarButtonItems addObject:record.barButtonItem];
+          break;
+      }
+    }
+  }
+
+  // Records of the children that are gone are dropped here, together with their bar button items.
+  _recordsByChild = records;
+  [_childrenNeedingUpdate removeAllObjects];
+  [_itemsNeedingMenuUpdate removeAllObjects];
+
+#if !TARGET_OS_TV
+  if (!navItem.leftItemsSupplementBackButton) {
+    navItem.leftItemsSupplementBackButton = YES;
+  }
+#endif // !TARGET_OS_TV
+
+  // The arrays are compared by the identity of the bar button items. Setting an array that did not change would make
+  // UIKit lay the items out again for nothing.
+  if (![_leadingBarButtonItems isEqualToArray:leadingBarButtonItems]) {
+    _leadingBarButtonItems = [leadingBarButtonItems copy];
+    [navItem setLeftBarButtonItems:_leadingBarButtonItems animated:YES];
+    didChangeAnyItem = YES;
+  }
+  if (![_trailingBarButtonItems isEqualToArray:trailingBarButtonItems]) {
+    _trailingBarButtonItems = [trailingBarButtonItems copy];
+    [navItem setRightBarButtonItems:_trailingBarButtonItems animated:YES];
+    didChangeAnyItem = YES;
+  }
+
+  if (navItem.titleView != titleView) {
+    navItem.titleView = titleView;
+  }
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (navItem.subtitleView != subtitleView) {
+      navItem.subtitleView = subtitleView;
+    }
+    if (navItem.largeSubtitleView != largeSubtitleView) {
+      navItem.largeSubtitleView = largeSubtitleView;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+  if (didChangeAnyItem) {
+    [self setNeedsItemFramesUpdate];
+  }
 }
 
 - (void)applyConfigProperties
@@ -159,83 +279,6 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   [navController.navigationBarCoordinator setBackButtonMenuEnabled:enabled forNavigationController:navController];
 }
 #endif // !TARGET_OS_TV
-
-/**
- Rebuilds an existing item: sets all props and applies the menu config.
- */
-- (void)rebuildItemWithId:(NSString *)itemId
-{
-  if (_configDataProvider == nil || itemId == nil) {
-    return;
-  }
-
-  UIBarButtonItem *oldBarButtonItem = _barButtonItemsByItemId[itemId];
-
-  id<RNSStackHeaderItemDataProviding> targetItem = [self findItemWithId:itemId];
-  if (targetItem == nil) {
-    return;
-  }
-
-  RNSStackScreenController *controller = [self requireScreenController];
-
-  switch (targetItem.placement) {
-    case RNSHeaderItemPlacementLeading: {
-      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem];
-
-      if (oldBarButtonItem != nil) {
-        NSUInteger index = [_leadingBarButtonItems indexOfObject:oldBarButtonItem];
-        if (index != NSNotFound) {
-          _leadingBarButtonItems[index] = newBarButtonItem;
-        } else {
-          RNSLogW(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
-        }
-      }
-
-      [controller.navigationItem setLeftBarButtonItems:[_leadingBarButtonItems copy] animated:YES];
-      break;
-    }
-    case RNSHeaderItemPlacementTrailing: {
-      UIBarButtonItem *newBarButtonItem = [self buildBarButtonItemForItem:targetItem];
-
-      if (oldBarButtonItem != nil) {
-        NSUInteger index = [_trailingBarButtonItems indexOfObject:oldBarButtonItem];
-        if (index != NSNotFound) {
-          _trailingBarButtonItems[index] = newBarButtonItem;
-        } else {
-          RNSLogW(@"[RNScreens] Item %@ not found for rebuild.", oldBarButtonItem);
-        }
-      }
-
-      [controller.navigationItem setRightBarButtonItems:[_trailingBarButtonItems copy] animated:YES];
-      break;
-    }
-    case RNSHeaderItemPlacementTitle:
-      controller.navigationItem.titleView = targetItem.customView != nil
-          ? [RNSStackHeaderContentFactory wrappedViewForHeaderItem:targetItem frameChangeDelegate:_frameChangeDelegate]
-          : nil;
-      break;
-    case RNSHeaderItemPlacementSubtitle:
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-      if (@available(iOS 26.0, *)) {
-        controller.navigationItem.subtitleView = targetItem.customView != nil
-            ? [RNSStackHeaderContentFactory wrappedViewForHeaderItem:targetItem
-                                                 frameChangeDelegate:_frameChangeDelegate]
-            : nil;
-      }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-      break;
-    case RNSHeaderItemPlacementLargeSubtitle:
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-      if (@available(iOS 26.0, *)) {
-        controller.navigationItem.largeSubtitleView = targetItem.customView != nil
-            ? [RNSStackHeaderContentFactory wrappedViewForHeaderItem:targetItem
-                                                 frameChangeDelegate:_frameChangeDelegate]
-            : nil;
-      }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-      break;
-  }
-}
 
 - (void)reapplyTitleMenu
 {
@@ -331,9 +374,12 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
   _eventsDelegate = nil;
   _imageLoader = nil;
 
-  [_leadingBarButtonItems removeAllObjects];
-  [_trailingBarButtonItems removeAllObjects];
-  [_barButtonItemsByItemId removeAllObjects];
+  _leadingBarButtonItems = @[];
+  _trailingBarButtonItems = @[];
+  [_recordsByChild removeAllObjects];
+  [_childrenNeedingUpdate removeAllObjects];
+  [_itemsNeedingMenuUpdate removeAllObjects];
+  [self cancelPendingItemFramesReport];
   _titleMenuTracker = [RNSStackHeaderMenuToggleStateTracker new];
 
   RNSStackScreenController *controller = [self requireScreenController];
@@ -381,87 +427,18 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #endif // !TARGET_OS_TV
 }
 
-/**
- Finds an existing barButtonItem and its corresponding config, then applies it again.
- If the config is missing, it clears the menu.
- */
-- (void)reapplyMenuForItemWithId:(NSString *)itemId
+- (void)reapplyMenuForItem:(nullable id<RNSStackHeaderItemDataProviding>)item
 {
-  if (_configDataProvider == nil || itemId == nil) {
+  if (_configDataProvider == nil || item == nil) {
     return;
   }
 
-  UIBarButtonItem *barButtonItem = _barButtonItemsByItemId[itemId];
+  UIBarButtonItem *barButtonItem = [_recordsByChild objectForKey:item].barButtonItem;
   if (barButtonItem == nil) {
     return;
   }
 
-  id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
-  if (item == nil) {
-    return;
-  }
-
-  if (item.menu == nil) {
-    barButtonItem.menu = nil;
-  } else {
-    RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
-    __weak auto weakSelf = self;
-    [RNSStackHeaderMenuCoordinator applyMenu:item.menu
-                             toBarButtonItem:barButtonItem
-                    withHeaderEventsDelegate:_eventsDelegate
-                                stateTracker:tracker
-                             withImageLoader:_imageLoader
-                     menuInvalidatedCallback:^{
-                       [weakSelf reapplyMenuForItemWithId:itemId];
-                     }];
-  }
-
-  [self reapplyMenuRepresentationForItemWithId:itemId];
-}
-
-/**
- Finds an existing barButtonItem and its corresponding config, then applies the menu
- representation again. If the config is missing, it clears the representation.
- */
-- (void)reapplyMenuRepresentationForItemWithId:(NSString *)itemId
-{
-  if (_configDataProvider == nil || itemId == nil) {
-    return;
-  }
-
-  UIBarButtonItem *barButtonItem = _barButtonItemsByItemId[itemId];
-  if (barButtonItem == nil) {
-    return;
-  }
-
-  id<RNSStackHeaderItemDataProviding> item = [self findItemWithId:itemId];
-  if (item == nil) {
-    return;
-  }
-
-  RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
-  __weak auto weakSelf = self;
-  [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
-                                         toBarButtonItem:barButtonItem
-                                withHeaderEventsDelegate:_eventsDelegate
-                                            stateTracker:tracker
-                                         withImageLoader:_imageLoader
-                                 menuInvalidatedCallback:^{
-                                   [weakSelf reapplyMenuRepresentationForItemWithId:itemId];
-                                 }];
-}
-
-- (nullable id<RNSStackHeaderItemDataProviding>)findItemWithId:(NSString *)itemId
-{
-  for (UIView *child in _configDataProvider.children) {
-    if ([child conformsToProtocol:@protocol(RNSStackHeaderItemDataProviding)]) {
-      id<RNSStackHeaderItemDataProviding> item = (id<RNSStackHeaderItemDataProviding>)child;
-      if ([item.itemId isEqualToString:itemId]) {
-        return item;
-      }
-    }
-  }
-  return nil;
+  [self applyMenuOfItem:item toBarButtonItem:barButtonItem];
 }
 
 #pragma mark - Private
@@ -555,30 +532,6 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 }
 #endif // !TARGET_OS_TV
 
-- (void)applyItemsWithTitleView:(nullable UIView *)titleView
-                   subtitleView:(nullable UIView *)subtitleView
-              largeSubtitleView:(nullable UIView *)largeSubtitleView
-                  forController:(RNSStackScreenController *)controller
-{
-  UINavigationItem *navItem = controller.navigationItem;
-
-#if !TARGET_OS_TV
-  navItem.leftItemsSupplementBackButton = YES;
-#endif // !TARGET_OS_TV
-
-  [navItem setLeftBarButtonItems:[_leadingBarButtonItems copy] animated:YES];
-  [navItem setRightBarButtonItems:[_trailingBarButtonItems copy] animated:YES];
-
-  navItem.titleView = titleView;
-
-#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-  if (@available(iOS 26.0, *)) {
-    navItem.subtitleView = subtitleView;
-    navItem.largeSubtitleView = largeSubtitleView;
-  }
-#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
-}
-
 - (void)applyTitleMenuForController:(RNSStackScreenController *)controller
 {
 #if !TARGET_OS_TV
@@ -612,19 +565,163 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #endif // !TARGET_OS_TV
 }
 
-- (UIBarButtonItem *)buildBarButtonItemForItem:(id<RNSStackHeaderItemDataProviding>)item
-{
-  UIBarButtonItem *barButtonItem = [RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
-                                                                    withFrameChangeDelegate:_frameChangeDelegate
-                                                                   withHeaderEventsDelegate:_eventsDelegate
-                                                                            withImageLoader:_imageLoader];
+/**
+ Makes sure that `record` holds a bar button item that matches `item`: builds one when there is none yet, updates the
+ existing one when the item is marked, and leaves it alone otherwise. Returns whether anything was done.
 
+ UIKit applies these properties to a bar button item that is already in the navigation bar, so they are changed in
+ place: title, image, tint color, enabled, style, `primaryAction` (the `onPress` wiring), `customView` (an item
+ switching between a label and a custom view), `hidesSharedBackground`, menu and menu representation. Checked on
+ iOS 17.5, 26.5 and 27.3. See `needsNewBarButtonItemInsteadOf:forItem:` for the properties that need a new bar button
+ item.
+ */
+- (BOOL)updateBarButtonItemInRecord:(RNSStackHeaderChildRecord *)record
+                            forItem:(id<RNSStackHeaderItemDataProviding>)item
+                        needsUpdate:(BOOL)needsUpdate
+                    needsMenuUpdate:(BOOL)needsMenuUpdate
+{
+  UIBarButtonItem *barButtonItem = record.barButtonItem;
+  if (barButtonItem != nil && !needsUpdate && !needsMenuUpdate) {
+    return NO;
+  }
+
+  if (barButtonItem != nil && needsUpdate && [self needsNewBarButtonItemInsteadOf:barButtonItem forItem:item]) {
+    barButtonItem = nil;
+  }
+
+  if (barButtonItem == nil) {
+    barButtonItem = [RNSStackHeaderContentFactory barButtonItemForHeaderItem:item
+                                                     withFrameChangeDelegate:_frameChangeDelegate
+                                                    withHeaderEventsDelegate:_eventsDelegate
+                                                             withImageLoader:_imageLoader
+                                                          iconLoadedCallback:[self makeIconLoadedCallback]];
+    record.barButtonItem = barButtonItem;
+    [self applyCreationOnlyPropertiesOfItem:item toBarButtonItem:barButtonItem];
+    [self applyItemPropertiesOfItem:item toBarButtonItem:barButtonItem];
+    [self applyMenuOfItem:item toBarButtonItem:barButtonItem];
+    return YES;
+  }
+
+  if (needsUpdate) {
+    [RNSStackHeaderContentFactory updateBarButtonItem:barButtonItem
+                                        forHeaderItem:item
+                              withFrameChangeDelegate:_frameChangeDelegate
+                             withHeaderEventsDelegate:_eventsDelegate
+                                      withImageLoader:_imageLoader
+                                   iconLoadedCallback:[self makeIconLoadedCallback]];
+    [self applyItemPropertiesOfItem:item toBarButtonItem:barButtonItem];
+  }
+
+  if (needsMenuUpdate) {
+    [self applyMenuOfItem:item toBarButtonItem:barButtonItem];
+  }
+
+  return YES;
+}
+
+/**
+ An icon that is loaded asynchronously is set on the bar button item outside `updateItems`. It may differ in size from
+ its placeholder, which moves the other items.
+ */
+- (void (^)(void))makeIconLoadedCallback
+{
+  __weak auto weakSelf = self;
+  return ^{
+    [weakSelf setNeedsItemFramesUpdate];
+  };
+}
+
+- (BOOL)updateBarButtonItemInRecord:(RNSStackHeaderChildRecord *)record
+                          forSpacer:(id<RNSStackHeaderItemSpacerDataProviding>)spacer
+                        needsUpdate:(BOOL)needsUpdate
+{
+  if (record.barButtonItem != nil && !needsUpdate) {
+    return NO;
+  }
+
+  // A change of the sizing is the only one that needs a new bar spacer item: whether the item is a fixed or a flexible
+  // space is a system item kind, which UIKit lets us choose only when creating the item. The width of a fixed spacer
+  // is changed in place.
+  if (record.barButtonItem == nil || record.isFlexibleSpacer != spacer.isFlexible) {
+    record.barButtonItem = [RNSStackHeaderContentFactory spacerForHeaderSpacerItem:spacer];
+    record.isFlexibleSpacer = spacer.isFlexible;
+  } else {
+    [RNSStackHeaderContentFactory updateBarButtonItem:record.barButtonItem forHeaderSpacerItem:spacer];
+  }
+
+  return YES;
+}
+
+/**
+ Returns the view to put in the title, subtitle or large subtitle area for `item`. The view wrapping the custom view
+ is kept in `record` for as long as the item has a custom view.
+ */
+- (nullable UIView *)updateWrapperViewInRecord:(RNSStackHeaderChildRecord *)record
+                                       forItem:(id<RNSStackHeaderItemDataProviding>)item
+{
+  UIView *customView = item.customView;
+  if (customView == nil) {
+    record.wrapperView = nil;
+  } else if (record.wrapperView == nil || customView.superview != record.wrapperView) {
+    record.wrapperView = [RNSStackHeaderContentFactory wrappedViewForHeaderItem:item
+                                                            frameChangeDelegate:_frameChangeDelegate];
+  }
+  return record.wrapperView;
+}
+
+/**
+ Whether a property changed that UIKit takes into account only for a bar button item that is new to the navigation
+ bar.
+ */
+- (BOOL)needsNewBarButtonItemInsteadOf:(UIBarButtonItem *)barButtonItem
+                               forItem:(id<RNSStackHeaderItemDataProviding>)item
+{
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
   if (@available(iOS 26.0, *)) {
-    if (item.identifier != nil) {
-      barButtonItem.identifier = item.identifier;
+    // The identifier matches the items of two screens during a transition. It could not be shown that UIKit follows
+    // a change made on an item that is already in the bar: in a UIKit-only sample on iOS 26.5 the push transition
+    // with an identifier set on a live item did not look different from the one with no identifier at all. The item
+    // is therefore built again, as it was before the items started to be updated in place.
+    if (barButtonItem.identifier != item.identifier && ![barButtonItem.identifier isEqualToString:item.identifier]) {
+      return YES;
     }
-    barButtonItem.hidesSharedBackground = item.hidesSharedBackground;
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+  if (@available(iOS 27.0, *)) {
+    // On iOS 27.3 a new priority does not change which items go to the overflow menu when it is set on an item that
+    // is already in the bar. Laying out the navigation bar or setting the same bar button items again does not help
+    // either; only a new bar button item is placed according to its priority.
+    if (barButtonItem.visibilityPriority !=
+        RNSBarButtonItemVisibilityPriorityFromVisibilityPriority(item.visibilityPriority)) {
+      return YES;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+  if (@available(iOS 27.0, *)) {
+    // It was not checked whether UIKit follows a change of the padding removal made on an item that is already in
+    // the bar. The item is therefore built again, as it was before the items started to be updated in place.
+    if (barButtonItem.paddingRemoved != item.paddingRemoved) {
+      return YES;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+
+  return NO;
+}
+
+/**
+ Applies the properties that are set only on a new bar button item. See `needsNewBarButtonItemInsteadOf:forItem:`.
+ */
+- (void)applyCreationOnlyPropertiesOfItem:(id<RNSStackHeaderItemDataProviding>)item
+                          toBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    barButtonItem.identifier = item.identifier;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 
@@ -642,40 +739,132 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     barButtonItem.paddingRemoved = item.paddingRemoved;
   }
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(27_0)
+}
 
-  if (item.menu != nil && item.itemId != nil) {
-    RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
+/**
+ Applies the properties that are common to the label and the custom view bar button items and can be changed on
+ an item that is already in the navigation bar.
+ */
+- (void)applyItemPropertiesOfItem:(id<RNSStackHeaderItemDataProviding>)item
+                  toBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+  if (@available(iOS 26.0, *)) {
+    if (barButtonItem.hidesSharedBackground != item.hidesSharedBackground) {
+      barButtonItem.hidesSharedBackground = item.hidesSharedBackground;
+    }
+  }
+#endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
+}
+
+/**
+ Applies the menu and the menu representation of `item`; a missing one is cleared.
+ */
+- (void)applyMenuOfItem:(id<RNSStackHeaderItemDataProviding>)item toBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+  if (item.menu == nil) {
+    if (barButtonItem.menu != nil) {
+      barButtonItem.menu = nil;
+    }
+  } else {
     __weak auto weakSelf = self;
-    NSString *capturedItemId = item.itemId;
+    __weak id<RNSStackHeaderItemDataProviding> weakItem = item;
     [RNSStackHeaderMenuCoordinator applyMenu:item.menu
                              toBarButtonItem:barButtonItem
                     withHeaderEventsDelegate:_eventsDelegate
-                                stateTracker:tracker
+                                stateTracker:item.menuToggleStateTracker
                              withImageLoader:_imageLoader
                      menuInvalidatedCallback:^{
-                       [weakSelf reapplyMenuForItemWithId:capturedItemId];
+                       [weakSelf reapplyMenuForItem:weakItem];
                      }];
   }
 
-  if (item.menuRepresentation != nil && item.itemId != nil) {
-    RNSStackHeaderMenuToggleStateTracker *tracker = item.menuToggleStateTracker;
-    __weak auto weakSelf = self;
-    NSString *capturedItemId = item.itemId;
-    [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
-                                           toBarButtonItem:barButtonItem
-                                  withHeaderEventsDelegate:_eventsDelegate
-                                              stateTracker:tracker
-                                           withImageLoader:_imageLoader
-                                   menuInvalidatedCallback:^{
-                                     [weakSelf reapplyMenuRepresentationForItemWithId:capturedItemId];
-                                   }];
+  [self applyMenuRepresentationOfItem:item toBarButtonItem:barButtonItem];
+}
+
+- (void)applyMenuRepresentationOfItem:(id<RNSStackHeaderItemDataProviding>)item
+                      toBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+  __weak auto weakSelf = self;
+  __weak id<RNSStackHeaderItemDataProviding> weakItem = item;
+  [RNSStackHeaderMenuCoordinator applyMenuRepresentation:item.menuRepresentation
+                                         toBarButtonItem:barButtonItem
+                                withHeaderEventsDelegate:_eventsDelegate
+                                            stateTracker:item.menuToggleStateTracker
+                                         withImageLoader:_imageLoader
+                                 menuInvalidatedCallback:^{
+                                   [weakSelf reapplyMenuRepresentationForItem:weakItem];
+                                 }];
+}
+
+- (void)reapplyMenuRepresentationForItem:(nullable id<RNSStackHeaderItemDataProviding>)item
+{
+  if (_configDataProvider == nil || item == nil) {
+    return;
   }
 
-  if (item.itemId != nil) {
-    _barButtonItemsByItemId[item.itemId] = barButtonItem;
+  UIBarButtonItem *barButtonItem = [_recordsByChild objectForKey:item].barButtonItem;
+  if (barButtonItem == nil) {
+    return;
   }
 
-  return barButtonItem;
+  [self applyMenuRepresentationOfItem:item toBarButtonItem:barButtonItem];
+}
+
+#pragma mark - Item frames
+
+/**
+ Reports the frames of the items to the frame change delegate after the items changed.
+
+ A custom view reports its frame when its own wrapper is laid out. That is not enough once the bar button items are
+ kept across updates: UIKit moves an item that was left alone, when another one is added, removed or changes its
+ size, by moving the views above the wrapper, so the wrapper is not laid out and nothing is reported. The frames are
+ therefore reported on the next turn of the main queue, with the navigation bar laid out with the new items, and once
+ more after `RNSItemFramesSettleDelay`. Until then the reported frame of a moved custom view may lag behind.
+
+ A call made while a delayed report is pending puts that report off; there is at most one per header.
+ */
+- (void)setNeedsItemFramesUpdate
+{
+  [self cancelPendingItemFramesReport];
+
+  __weak auto weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [weakSelf reportItemFrames];
+  });
+
+  _pendingItemFramesReport = dispatch_block_create(static_cast<dispatch_block_flags_t>(0), ^{
+    [weakSelf reportItemFrames];
+  });
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(RNSItemFramesSettleDelay * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(),
+                 _pendingItemFramesReport);
+}
+
+- (void)cancelPendingItemFramesReport
+{
+  if (_pendingItemFramesReport != nil) {
+    dispatch_block_cancel(_pendingItemFramesReport);
+    _pendingItemFramesReport = nil;
+  }
+}
+
+- (void)reportItemFrames
+{
+  RNSStackScreenController *controller = _screenController;
+  UINavigationController *navController = controller.navigationController;
+  UINavigationBar *navigationBar = navController.navigationBar;
+
+  // The items of a screen that is covered or not in a window are not in the navigation bar. Their wrappers report
+  // the frames when they get there.
+  if (navController == nil || navController.topViewController != controller || navigationBar.window == nil) {
+    return;
+  }
+
+  // Does nothing unless a layout is pending; the frames are read from the views. The delegate skips the frames that
+  // did not change.
+  [navigationBar layoutIfNeeded];
+  [_frameChangeDelegate viewFrameDidChange:navigationBar];
 }
 
 @end

@@ -2,6 +2,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "RNSStackHeaderItemDataProviding.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol RNSStackHeaderEventsDelegate <NSObject>
@@ -10,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didChangeSelectionForMenu:(NSString *)menuId selectedMenuItemIds:(NSArray<NSString *> *)selectedIds;
 
-- (void)didPressHeaderItem:(NSString *)itemId;
+- (void)didPressHeaderItem:(id<RNSStackHeaderItemDataProviding>)headerItem;
 
 @end
 

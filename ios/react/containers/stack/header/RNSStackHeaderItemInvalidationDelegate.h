@@ -4,15 +4,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ The delegate is told which view changed, not its id: the header tells its children apart by the view.
+ */
 @protocol RNSStackHeaderItemInvalidationDelegate <NSObject>
 
-- (void)headerItemDidInvalidateWithId:(NSString *)itemId;
+/**
+ Properties of the header item other than the menus changed, or it gained or lost its custom view.
+ */
+- (void)headerItemDidInvalidate:(UIView *)headerItem;
 
-- (void)headerItemMenuDidChangeWithId:(NSString *)itemId;
+/**
+ The `menu` or the `menuRepresentation` prop of the header item changed.
+ */
+- (void)headerItemMenuDidChange:(UIView *)headerItem;
 
-- (void)headerItemMenuDidUpdateFromCommandWithId:(NSString *)itemId;
+/**
+ A view command changed the menu or the menu representation of the header item.
+ */
+- (void)headerItemMenuDidUpdateFromCommand:(UIView *)headerItem;
 
-- (void)headerItemSpacerDidInvalidate;
+- (void)headerItemSpacerDidInvalidate:(UIView *)headerItemSpacer;
 
 @end
 
