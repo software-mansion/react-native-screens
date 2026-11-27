@@ -22,6 +22,7 @@ import TestTabsGeneralAppearance from './test-tabs-general-appearance-android';
 import TestTabsLayoutAppearances from './test-tabs-layout-appearances-ios';
 import TestTabsItemIcon from './test-tabs-item-icon';
 import TestTabsItemIconTintAndSize from './test-tabs-item-icon-tint-and-size';
+import TestTabsItemIconAssetCatalogVariants from './test-tabs-item-icon-asset-catalog-variants-ios';
 import TestTabsItemTitle from './test-tabs-item-title';
 import TestTabsItemBadge from './test-tabs-item-badge';
 import TestTabsSystemItem from './test-tabs-system-item-ios';
@@ -57,6 +58,7 @@ export { default as TestTabsGeneralAppearance } from './test-tabs-general-appear
 export { default as TestTabsLayoutAppearances } from './test-tabs-layout-appearances-ios';
 export { default as TestTabsItemIcon } from './test-tabs-item-icon';
 export { default as TestTabsItemIconTintAndSize } from './test-tabs-item-icon-tint-and-size';
+export { default as TestTabsItemIconAssetCatalogVariants } from './test-tabs-item-icon-asset-catalog-variants-ios';
 export { default as TestTabsItemTitle } from './test-tabs-item-title';
 export { default as TestTabsItemBadge } from './test-tabs-item-badge';
 export { default as TestTabsSystemItem } from './test-tabs-system-item-ios';
@@ -92,6 +94,7 @@ const scenarios = {
   TestTabsLayoutAppearances,
   TestTabsItemIcon,
   TestTabsItemIconTintAndSize,
+  TestTabsItemIconAssetCatalogVariants,
   TestTabsItemTitle,
   TestTabsItemBadge,
   TestTabsSystemItem,
