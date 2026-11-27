@@ -328,6 +328,22 @@ namespace react = facebook::react;
       }
   }
 
+  if (newComponentProps.tabBarPlacement != oldComponentProps.tabBarPlacement) {
+#if RNS_IPHONE_OS_VERSION_AVAILABLE(18_0) && !TARGET_OS_TV
+    if (@available(iOS 18.0, *)) {
+      // UIKit moves the tab bar to the top for a regular horizontal size class, a compact one keeps it at the bottom
+      if (newComponentProps.tabBarPlacement == react::RNSTabsHostIOSTabBarPlacement::Bottom) {
+        _controller.traitOverrides.horizontalSizeClass = UIUserInterfaceSizeClassCompact;
+      } else {
+        [_controller.traitOverrides removeTrait:UITraitHorizontalSizeClass.class];
+      }
+    } else
+#endif // Check for iOS >= 18 && !TARGET_OS_TV
+      if (newComponentProps.tabBarPlacement != react::RNSTabsHostIOSTabBarPlacement::Automatic) {
+        RCTLogWarn(@"[RNScreens] tabBarPlacement is supported for iOS >= 18");
+      }
+  }
+
   if (newComponentProps.prominentScreenKey != oldComponentProps.prominentScreenKey) {
     _prominentScreenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.prominentScreenKey);
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_TV && !TARGET_OS_VISION
