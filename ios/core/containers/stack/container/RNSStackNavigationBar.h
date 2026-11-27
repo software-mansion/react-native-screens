@@ -8,7 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Navigation bar subclass used by RNSStackNavigationController.
  *
  * Its responsibility is to suppress the back button's navigation history
- * menu (long press and pointer secondary click).
+ * menu (long press and pointer secondary click) and to hit-test the content
+ * of header items where it reaches outside the custom view that holds it.
  */
 @interface RNSStackNavigationBar : UINavigationBar
 
