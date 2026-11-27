@@ -24,6 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
                layoutDirection:(UIUserInterfaceLayoutDirection)layoutDirection;
 
 /**
+ * Writes the values the view shows on screen to the properties the motion animates. Call outside any animation,
+ * before `addKeyframesForDurationMs:`.
+ */
+- (void)writePresentedValues;
+
+/**
  * Adds the motion as keyframes, starting at its time 0; call inside `+[UIView animateKeyframesWithDuration:...]`
  * lasting `durationMs`, which the motion must not outlast.
  */

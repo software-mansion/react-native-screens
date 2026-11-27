@@ -45,6 +45,11 @@
                                                                                          containerSize:containerSize
                                                                                        layoutDirection:layoutDirection];
 
+  [UIView performWithoutAnimation:^{
+    [enterBinding writePresentedValues];
+    [exitBinding writePresentedValues];
+  }];
+
   // Keyframes inside a property animator take its duration and its timing curve, so the linear animator leaves every
   // track's curve to the keyframes.
   NSInteger durationMs = _timeline.durationMs;

@@ -61,10 +61,28 @@
   return _animator;
 }
 
+- (BOOL)isRunning
+{
+  return _animator.isRunning;
+}
+
+- (void)finish
+{
+  if (!self.isRunning) {
+    return;
+  }
+  // `finishAnimationAtPosition:` needs a stopped animator. It writes the end values and runs the completion, which
+  // completes the transition and clears `_animator` inside this call.
+  UIViewPropertyAnimator *animator = _animator;
+  [animator stopAnimation:NO];
+  [animator finishAnimationAtPosition:UIViewAnimatingPositionEnd];
+}
+
 - (void)animationEnded:(BOOL)transitionCompleted
 {
   // The animator's completion holds the transition context, which holds this object.
   _animator = nil;
+  [_delegate transitionAnimatorDidEnd:self];
 }
 
 @end
