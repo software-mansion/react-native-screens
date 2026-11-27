@@ -17,6 +17,11 @@ internal data class PresetOptions(
     val easing: Easing? = null,
     val distance: Length? = null,
 ) {
+    init {
+        require(durationMs == null || durationMs >= 1L) { "[RNScreens] duration must be at least 1 ms." }
+        require(distance == null || distance.isPositive) { "[RNScreens] distance must be positive." }
+    }
+
     internal val present: Set<PresetOption>
         get() =
             PresetOption.entries.filterTo(mutableSetOf()) { option ->

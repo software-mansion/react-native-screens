@@ -159,7 +159,7 @@ internal class StackScreenViewManager :
                 StackAnimationConfig.DEFAULT
             } else {
                 try {
-                    parseStackAnimationConfig(value)
+                    parseStackAnimationConfig(value, view.context)
                 } catch (e: IllegalArgumentException) {
                     Log.w(TAG, "${e.message} Falling back to the default animation.")
                     StackAnimationConfig.DEFAULT
