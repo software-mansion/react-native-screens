@@ -28,7 +28,7 @@
     "@react-navigation/routers": "link:../react-navigation/packages/routers/",
     "@react-navigation/stack": "link:../react-navigation/packages/stack/",
     "@rnscreens/apps": "link:../apps",
-    "nanoid": "^4.0.2",
+    "nanoid": "^5.1.16",
     "react": "19.3.0",
     "react-native": "0.89.0-rc.0",
     "react-native-gesture-handler": "^3.5.0",
