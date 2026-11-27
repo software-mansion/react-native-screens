@@ -160,6 +160,13 @@ RNS_IGNORE_SUPER_CALL_BEGIN
       _layoutMetrics = layoutMetrics;
       if (sizeHasChanged) {
         [self invalidateIntrinsicContentSize];
+        // The bar only re-evaluates which items fit (and which go to the overflow menu)
+        // when it is handed its items again. Without this, an item that was moved to
+        // the overflow menu while it was too wide stays there after it shrinks back
+        // to a size that fits. See `setVisibilityPriority:` for the same mechanism.
+        if (_barButtonItem != nil) {
+          [[self getHeaderConfig] setNeedsViewControllerUpdate];
+        }
       }
     } else
 #endif // RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
