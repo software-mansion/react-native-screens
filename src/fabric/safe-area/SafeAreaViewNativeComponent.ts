@@ -9,6 +9,7 @@ import type {
 } from 'react-native';
 
 type InsetType = 'all' | 'system' | 'interface';
+type Mode = 'padding' | 'margin';
 
 export interface NativeProps extends ViewProps {
   edges?:
@@ -19,6 +20,7 @@ export interface NativeProps extends ViewProps {
         left: boolean;
       }>
     | undefined;
+  mode?: CT.WithDefault<Mode, 'padding'>;
   // Android-only
   insetType?: CT.WithDefault<InsetType, 'all'>;
 }

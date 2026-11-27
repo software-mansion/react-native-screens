@@ -22,6 +22,7 @@ const ROUTE_CONFIGS: StackRouteConfig[] = [
 function SafeAreaViewScreen() {
   return (
     <SafeAreaView
+      mode="margin"
       edges={{ top: true, bottom: true, left: true, right: true }}
       style={styles.safeArea}
     />
