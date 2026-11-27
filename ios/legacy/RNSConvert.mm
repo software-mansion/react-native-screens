@@ -333,6 +333,17 @@
   }
 }
 
++ (RNSHeaderMode)RNSHeaderModeFromCppEquivalent:(react::RNSScreenStackHeaderConfigHeaderMode)headerMode
+{
+  switch (headerMode) {
+    using enum react::RNSScreenStackHeaderConfigHeaderMode;
+    case Float:
+      return RNSHeaderModeFloat;
+    case Screen:
+      return RNSHeaderModeScreen;
+  }
+}
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
 + (UIBarMinimizationBehavior)UIBarMinimizationBehaviorFromRNSHeaderMinimizationBehavior:
     (RNSHeaderMinimizationBehavior)minimizationBehavior
