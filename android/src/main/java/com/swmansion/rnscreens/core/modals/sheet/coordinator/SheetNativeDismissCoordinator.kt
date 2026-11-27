@@ -25,10 +25,17 @@ internal class SheetNativeDismissCoordinator(
     internal fun setup() {
         dialog.cancelRequestInterceptor = this
         dialog.onBackPressedDispatcher.addCallback(preventNativeDismissBackPressCallback)
+        behaviorController?.onHideAttempt = {
+            if (shouldPreventDismiss) {
+                onDismissPrevented()
+            }
+            shouldPreventDismiss
+        }
     }
 
     internal fun destroy() {
         dialog.cancelRequestInterceptor = null
+        behaviorController?.onHideAttempt = null
         preventNativeDismissBackPressCallback.remove()
     }
 

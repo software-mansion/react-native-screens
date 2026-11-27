@@ -11,13 +11,25 @@ import {
 import { FormSheet } from 'react-native-screens';
 import { createScenario } from '@apps/tests/shared/helpers';
 import { Colors } from '@apps/shared/styling';
+import { SettingsPicker } from '@apps/shared/SettingsPicker';
 import { scenarioDescription } from './scenario-description';
+
+type DetentsKey = '[0.5, 1.0]' | '[1.0]' | 'fitToContents';
+
+const DETENTS: Record<DetentsKey, number[] | 'fitToContents'> = {
+  '[0.5, 1.0]': [0.5, 1.0],
+  '[1.0]': [1.0],
+  fitToContents: 'fitToContents',
+};
 
 function TestFormSheetPreventNativeDismiss() {
   const [isOpen, setIsOpen] = useState(false);
   const [preventDismiss, setPreventDismiss] = useState(true);
+  const [detentsKey, setDetentsKey] = useState<DetentsKey>('[0.5, 1.0]');
+  const [preventedCount, setPreventedCount] = useState(0);
 
   const handleDismissPrevented = () => {
+    setPreventedCount(count => count + 1);
     Alert.alert(
       'Dismissal Prevented',
       'Native dismissal is currently disabled. Please use the button to close the sheet.',
@@ -42,20 +54,39 @@ function TestFormSheetPreventNativeDismiss() {
 
       <View style={styles.spacing} />
 
+      <SettingsPicker<DetentsKey>
+        label="detents"
+        value={detentsKey}
+        onValueChange={setDetentsKey}
+        items={Object.keys(DETENTS) as DetentsKey[]}
+      />
+
+      <View style={styles.spacing} />
+
       <Button
         title="Open FormSheet"
         color={Colors.primary}
-        onPress={() => setIsOpen(true)}
+        onPress={() => {
+          setPreventedCount(0);
+          setIsOpen(true);
+        }}
       />
 
       <FormSheet
         isOpen={isOpen}
         onNativeDismiss={() => setIsOpen(false)}
         onNativeDismissPrevented={handleDismissPrevented}
-        detents={[0.5, 1.0]}
+        detents={DETENTS[detentsKey]}
         preventNativeDismiss={preventDismiss}>
-        <View style={styles.sheetContainer}>
+        <View
+          style={[
+            styles.sheetContainer,
+            detentsKey === 'fitToContents' && styles.fitToContents,
+          ]}>
           <Text style={styles.sheetTitle}>FormSheet Content</Text>
+          <Text style={styles.statusText}>
+            Dismissals prevented: {preventedCount}
+          </Text>
           <Text style={styles.instruction}>
             {preventDismiss
               ? 'Try swiping down or tapping the backdrop to dismiss. It should show an Alert.'
@@ -108,6 +139,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     padding: 24,
     alignItems: 'center',
+  },
+  fitToContents: {
+    flex: 0,
   },
   sheetTitle: {
     fontSize: 22,
