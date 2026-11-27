@@ -137,6 +137,14 @@ NS_ASSUME_NONNULL_END
  */
 - (void)setNeedsViewControllerUpdate;
 
+/**
+ * Same as `setNeedsViewControllerUpdate`, but the re-apply also hands the bar button items
+ * on the side of a subview of the given type to the navigation item again, even if they
+ * didn't change, so that the bar re-evaluates them. The other side is left untouched.
+ * Types other than left and right have no bar button items, so they only request the update.
+ */
+- (void)setNeedsBarButtonItemsReassignmentForSubviewType:(RNSScreenStackHeaderSubviewType)type;
+
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
 /**
  * Requests layout of all header subviews attached to the view hierarchy. Header subview updates its state in shadow

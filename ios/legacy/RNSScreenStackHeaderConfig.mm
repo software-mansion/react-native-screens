@@ -46,6 +46,11 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
 
 @end
 
+typedef NS_ENUM(NSInteger, RNSBarButtonItemsSide) {
+  RNSBarButtonItemsSideLeft,
+  RNSBarButtonItemsSideRight,
+};
+
 @interface RNSScreenStackHeaderConfig () <RCTMountingTransactionObserving>
 @end
 
@@ -63,6 +68,18 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   /// Consumed & reset in `mountingTransactionDidMount:withSurfaceTelemetry:`.
   bool _needsViewControllerUpdateInCurrentTransaction;
   RCTImageLoader *_imageLoader;
+
+  /// Native bar button items built from `headerLeftBarButtonItems` / `headerRightBarButtonItems`, together with
+  /// the configs they were built from. Holds `NSNull` for configs that don't produce an item.
+  NSArray<NSDictionary<NSString *, id> *> *_cachedLeftBarButtonItemConfigs;
+  NSArray<id> *_cachedLeftBarButtonItems;
+  NSArray<NSDictionary<NSString *, id> *> *_cachedRightBarButtonItemConfigs;
+  NSArray<id> *_cachedRightBarButtonItems;
+  /// Whether the next config re-apply must hand the left / right bar button items to the navigation item again,
+  /// even if they didn't change. Set by `setNeedsBarButtonItemsReassignmentForSubviewType:`, consumed in
+  /// `updateViewController:withConfig:animated:`.
+  BOOL _needsLeftBarButtonItemsReassignment;
+  BOOL _needsRightBarButtonItemsReassignment;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -172,6 +189,18 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)setNeedsViewControllerUpdate
 {
   _needsViewControllerUpdateInCurrentTransaction = true;
+}
+
+- (void)setNeedsBarButtonItemsReassignmentForSubviewType:(RNSScreenStackHeaderSubviewType)type
+{
+  // Only the side of the requesting subview is re-assigned: re-assigning a side detaches its items' custom
+  // views from the window, so a focused input on the other side would lose focus.
+  if (type == RNSScreenStackHeaderSubviewTypeLeft) {
+    _needsLeftBarButtonItemsReassignment = YES;
+  } else if (type == RNSScreenStackHeaderSubviewTypeRight) {
+    _needsRightBarButtonItemsReassignment = YES;
+  }
+  [self setNeedsViewControllerUpdate];
 }
 
 - (void)layoutNavigationControllerView
@@ -736,9 +765,13 @@ RNS_IGNORE_SUPER_CALL_END
   navitem.hidesBackButton = config.hideBackButton;
   navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
-  navitem.titleView = nil;
-  navitem.leftBarButtonItems = nil;
-  navitem.rightBarButtonItems = nil;
+  // Collect the title view and the bar button items first and assign them to `navitem` only when they changed.
+  // Re-assigning them, even to the same views, removes their custom views from the window for a moment. A
+  // focused `TextInput` inside the header (e.g. in `headerTitle`, `headerLeft` or `headerRight`) then resigns
+  // first responder, so any unrelated header update (e.g. a new icon on the other side) would dismiss the keyboard.
+  UIView *titleView = nil;
+  NSMutableArray<UIBarButtonItem *> *leftItems = [NSMutableArray new];
+  NSMutableArray<UIBarButtonItem *> *rightItems = [NSMutableArray new];
 
 #if !TARGET_OS_TV
   // We want to set navitem.searchController to nil only if we are sure
@@ -751,22 +784,16 @@ RNS_IGNORE_SUPER_CALL_END
     // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-        NSArray<UIBarButtonItem *> *currentItems = navitem.leftBarButtonItems ?: @[];
-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:[subview getUIBarButtonItem]];
-        navitem.leftBarButtonItems = mutableItems;
+        [leftItems addObject:[subview getUIBarButtonItem]];
         break;
       }
       case RNSScreenStackHeaderSubviewTypeRight: {
-        NSArray<UIBarButtonItem *> *currentItems = navitem.rightBarButtonItems ?: @[];
-        NSMutableArray<UIBarButtonItem *> *mutableItems = [currentItems mutableCopy];
-        [mutableItems addObject:[subview getUIBarButtonItem]];
-        navitem.rightBarButtonItems = mutableItems;
+        [rightItems addObject:[subview getUIBarButtonItem]];
         break;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
-        navitem.titleView = subview;
+        titleView = subview;
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
@@ -823,13 +850,28 @@ RNS_IGNORE_SUPER_CALL_END
   }
 #endif /* !TARGET_OS_TV */
 
+  if (navitem.titleView != titleView) {
+    navitem.titleView = titleView;
+  }
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
   navitem.title = config.title;
-  navitem.leftBarButtonItems = [config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
-                                                withCurrentItems:navitem.leftBarButtonItems];
-  navitem.rightBarButtonItems = [config barButtonItemsFromConfigs:config.headerRightBarButtonItems
-                                                 withCurrentItems:navitem.rightBarButtonItems];
+  BOOL forceLeftBarButtonItemsReassignment = config->_needsLeftBarButtonItemsReassignment;
+  BOOL forceRightBarButtonItemsReassignment = config->_needsRightBarButtonItemsReassignment;
+  config->_needsLeftBarButtonItemsReassignment = NO;
+  config->_needsRightBarButtonItemsReassignment = NO;
+  [RNSScreenStackHeaderConfig setBarButtonItems:[config barButtonItemsFromConfigs:config.headerLeftBarButtonItems
+                                                                 withCurrentItems:leftItems
+                                                                             side:RNSBarButtonItemsSideLeft]
+                               onNavigationItem:navitem
+                                           side:RNSBarButtonItemsSideLeft
+                                          force:forceLeftBarButtonItemsReassignment];
+  [RNSScreenStackHeaderConfig setBarButtonItems:[config barButtonItemsFromConfigs:config.headerRightBarButtonItems
+                                                                 withCurrentItems:rightItems
+                                                                             side:RNSBarButtonItemsSideRight]
+                               onNavigationItem:navitem
+                                           side:RNSBarButtonItemsSideRight
+                                          force:forceRightBarButtonItemsReassignment];
 
   // Setting navigation bar visibility is split to mitigate iOS 26 bug with bar button items
   // (setting nav bar visibility should be done after `navitem.*BarButtonItems`).
@@ -966,58 +1008,131 @@ RNS_IGNORE_SUPER_CALL_END
   }
 }
 
+/**
+ * Assigns `items` to the given side of `navitem` unless the very same items are already displayed there in the
+ * same order (`UIBarButtonItem` uses identity equality). Pass `force` to assign them anyway: the side is reset
+ * first, because UIKit ignores an assignment of the items it already displays.
+ */
++ (void)setBarButtonItems:(NSArray<UIBarButtonItem *> *)items
+         onNavigationItem:(UINavigationItem *)navitem
+                     side:(RNSBarButtonItemsSide)side
+                    force:(BOOL)force
+{
+  NSArray<UIBarButtonItem *> *currentItems =
+      (side == RNSBarButtonItemsSideLeft ? navitem.leftBarButtonItems : navitem.rightBarButtonItems) ?: @[];
+  if (!force && [currentItems isEqualToArray:items]) {
+    return;
+  }
+  NSArray<UIBarButtonItem *> *newItems = items.count > 0 ? items : nil;
+  if (side == RNSBarButtonItemsSideLeft) {
+    if (force) {
+      navitem.leftBarButtonItems = nil;
+    }
+    navitem.leftBarButtonItems = newItems;
+  } else {
+    if (force) {
+      navitem.rightBarButtonItems = nil;
+    }
+    navitem.rightBarButtonItems = newItems;
+  }
+}
+
 - (NSArray<UIBarButtonItem *> *)barButtonItemsFromConfigs:(NSArray<NSDictionary<NSString *, id> *> *)dicts
                                          withCurrentItems:(NSArray<UIBarButtonItem *> *)currentItems
+                                                     side:(RNSBarButtonItemsSide)side
 {
   if (dicts.count == 0) {
+    [self setCachedBarButtonItemConfigs:nil items:nil side:side];
     return currentItems;
   }
+
+  // Native bar button items are rebuilt only when their configs change. Recreating them on every header update
+  // would replace the items on their side of the bar, and with them any custom view sharing that side.
+  NSArray<NSDictionary<NSString *, id> *> *cachedConfigs =
+      side == RNSBarButtonItemsSideLeft ? _cachedLeftBarButtonItemConfigs : _cachedRightBarButtonItemConfigs;
+  NSArray<id> *nativeItems = side == RNSBarButtonItemsSideLeft ? _cachedLeftBarButtonItems : _cachedRightBarButtonItems;
+  if (nativeItems == nil || ![cachedConfigs isEqualToArray:dicts]) {
+    NSMutableArray<id> *createdItems = [NSMutableArray arrayWithCapacity:dicts.count];
+    for (NSDictionary<NSString *, id> *dict in dicts) {
+      [createdItems addObject:[self barButtonItemFromConfig:dict] ?: [NSNull null]];
+    }
+    nativeItems = createdItems;
+    [self setCachedBarButtonItemConfigs:[dicts copy] items:nativeItems side:side];
+  }
+
   NSMutableArray<UIBarButtonItem *> *items = [NSMutableArray arrayWithCapacity:currentItems.count + dicts.count];
   [items addObjectsFromArray:currentItems];
   for (NSUInteger i = 0; i < dicts.count; i++) {
-    NSDictionary *dict = dicts[i];
-    if (dict[@"buttonId"] || dict[@"menu"]) {
-      RNSBarButtonItem *item = [[RNSBarButtonItem alloc] initWithConfig:dict
-          action:^(NSString *buttonId) {
-            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
-                self->_eventEmitter);
-            if (eventEmitter && buttonId) {
-              eventEmitter->onPressHeaderBarButtonItem(
-                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
-                      .buttonId = std::string([buttonId UTF8String])});
-            }
-          }
-          menuAction:^(NSString *menuId) {
-            auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
-                self->_eventEmitter);
-            if (eventEmitter && menuId) {
-              eventEmitter->onPressHeaderBarButtonMenuItem(
-                  facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
-                      .menuId = std::string([menuId UTF8String])});
-            }
-          }
-          imageLoader:_imageLoader];
-      NSNumber *index = dict[@"index"];
-      if (index.integerValue < items.count) {
-        [items insertObject:item atIndex:index.integerValue];
-      } else {
-        [items addObject:item];
-      }
-    } else if (dict[@"spacing"]) {
-      UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                                                            target:nil
-                                                                            action:nil];
-      NSNumber *spacingValue = dict[@"spacing"];
-      item.width = [spacingValue doubleValue];
-      NSNumber *index = dict[@"index"];
-      if (index.integerValue < items.count) {
-        [items insertObject:item atIndex:index.integerValue];
-      } else {
-        [items addObject:item];
-      }
+    id item = nativeItems[i];
+    if (item == [NSNull null]) {
+      continue;
+    }
+    NSNumber *index = dicts[i][@"index"];
+    if (index.integerValue < items.count) {
+      [items insertObject:item atIndex:index.integerValue];
+    } else {
+      [items addObject:item];
     }
   }
   return items;
+}
+
+- (void)setCachedBarButtonItemConfigs:(nullable NSArray<NSDictionary<NSString *, id> *> *)configs
+                                items:(nullable NSArray<id> *)items
+                                 side:(RNSBarButtonItemsSide)side
+{
+  if (side == RNSBarButtonItemsSideLeft) {
+    _cachedLeftBarButtonItemConfigs = configs;
+    _cachedLeftBarButtonItems = items;
+  } else {
+    _cachedRightBarButtonItemConfigs = configs;
+    _cachedRightBarButtonItems = items;
+  }
+}
+
+- (nullable UIBarButtonItem *)barButtonItemFromConfig:(NSDictionary<NSString *, id> *)dict
+{
+  if (dict[@"buttonId"] || dict[@"menu"]) {
+    // The config caches the items it builds, so the actions must not retain it.
+    __weak RNSScreenStackHeaderConfig *weakSelf = self;
+    return [[RNSBarButtonItem alloc] initWithConfig:dict
+        action:^(NSString *buttonId) {
+          RNSScreenStackHeaderConfig *strongSelf = weakSelf;
+          if (strongSelf == nil) {
+            return;
+          }
+          auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+              strongSelf->_eventEmitter);
+          if (eventEmitter && buttonId) {
+            eventEmitter->onPressHeaderBarButtonItem(
+                facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonItem{
+                    .buttonId = std::string([buttonId UTF8String])});
+          }
+        }
+        menuAction:^(NSString *menuId) {
+          RNSScreenStackHeaderConfig *strongSelf = weakSelf;
+          if (strongSelf == nil) {
+            return;
+          }
+          auto eventEmitter = std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigEventEmitter>(
+              strongSelf->_eventEmitter);
+          if (eventEmitter && menuId) {
+            eventEmitter->onPressHeaderBarButtonMenuItem(
+                facebook::react::RNSScreenStackHeaderConfigEventEmitter::OnPressHeaderBarButtonMenuItem{
+                    .menuId = std::string([menuId UTF8String])});
+          }
+        }
+        imageLoader:_imageLoader];
+  }
+  if (dict[@"spacing"]) {
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                          target:nil
+                                                                          action:nil];
+    NSNumber *spacingValue = dict[@"spacing"];
+    item.width = [spacingValue doubleValue];
+    return item;
+  }
+  return nil;
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -1176,6 +1291,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   [super prepareForRecycle];
   _initialPropsSet = NO;
+  [self setCachedBarButtonItemConfigs:nil items:nil side:RNSBarButtonItemsSideLeft];
+  [self setCachedBarButtonItemConfigs:nil items:nil side:RNSBarButtonItemsSideRight];
+  _needsLeftBarButtonItemsReassignment = NO;
+  _needsRightBarButtonItemsReassignment = NO;
 
   _lastSendState = react::RNSScreenStackHeaderConfigState(react::Size{}, react::EdgeInsets{}, react::Point{});
 }
