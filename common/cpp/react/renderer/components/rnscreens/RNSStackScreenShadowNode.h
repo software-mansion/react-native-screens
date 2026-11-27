@@ -13,8 +13,13 @@ JSI_EXPORT extern const char RNSStackScreenComponentName[];
 class JSI_EXPORT RNSStackScreenShadowNode final
     : public ConcreteViewShadowNode<
           RNSStackScreenComponentName,
-          RNSStackScreenProps,
-          RNSStackScreenEventEmitter,
+#if !defined(ANDROID)
+          RNSStackScreenIOSProps,
+          RNSStackScreenIOSEventEmitter,
+#else // !defined(ANDROID)
+          RNSStackScreenAndroidProps,
+          RNSStackScreenAndroidEventEmitter,
+#endif // !defined(ANDROID)
           RNSStackScreenState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;

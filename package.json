@@ -202,7 +202,7 @@
         "RNSSearchBar": {
           "className": "RNSSearchBar"
         },
-        "RNSStackScreen": {
+        "RNSStackScreenIOS": {
           "className": "RNSStackScreenComponentView"
         },
         "RNSStackHost": {

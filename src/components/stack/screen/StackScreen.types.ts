@@ -1,20 +1,23 @@
 import type { ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type { StackScreenAnimation } from './animation';
+import type { StackScreenPropsIOS } from './StackScreen.ios.types';
 
 /**
  * Payload of the native dismiss event.
  *
  * @note
  * This is an implementation detail and may change. {@link Stack.Screen} turns
- * this event into a call of {@link StackScreenProps.onDismiss | onDismiss} or
- * {@link StackScreenProps.onNativeDismiss | onNativeDismiss}.
+ * this event into a call of
+ * {@link StackScreenPropsBase.onDismiss | onDismiss} or
+ * {@link StackScreenPropsBase.onNativeDismiss | onNativeDismiss}.
  */
 export type OnDismissEventPayload = {
   /**
    * Whether the user dismissed the screen natively (`true`) or the screen was
-   * popped because its {@link StackScreenProps.activityMode | activityMode}
-   * became `'detached'` (`false`).
+   * popped because its
+   * {@link StackScreenPropsBase.activityMode | activityMode} became
+   * `'detached'` (`false`).
    *
    * @platform android, ios
    */
@@ -34,7 +37,7 @@ export type StackScreenActivityMode = 'detached' | 'attached';
 
 /**
  * Transition a replace plays, see
- * {@link StackScreenProps.replaceAnimation | replaceAnimation}.
+ * {@link StackScreenPropsBase.replaceAnimation | replaceAnimation}.
  *
  * @remarks
  * The following values are supported:
@@ -49,15 +52,15 @@ export type StackScreenReplaceAnimation = 'push' | 'pop';
 /**
  * Function called when a {@link Stack.Screen} is dismissed.
  *
- * @param screenKey - The {@link StackScreenProps.screenKey | screenKey} of the
- *   dismissed screen.
+ * @param screenKey - The {@link StackScreenPropsBase.screenKey | screenKey} of
+ *   the dismissed screen.
  */
 export type StackScreenDismissHandler = (screenKey: string) => void;
 
 /**
- * Props for {@link Stack.Screen}.
+ * Cross-platform props for {@link Stack.Screen}.
  */
-export type StackScreenProps = {
+export interface StackScreenPropsBase {
   /**
    * Content of the screen.
    *
@@ -114,7 +117,8 @@ export type StackScreenProps = {
   onDidDisappear?: NativeEventHandler<EmptyEventPayload> | undefined;
   /**
    * Called when the screen was popped because its
-   * {@link StackScreenProps.activityMode | activityMode} became `'detached'`.
+   * {@link StackScreenPropsBase.activityMode | activityMode} became
+   * `'detached'`.
    *
    * @platform android, ios
    */
@@ -126,15 +130,15 @@ export type StackScreenProps = {
    * @remarks
    * The screen is no longer on the native stack: remove it from your state
    * instead of changing its
-   * {@link StackScreenProps.activityMode | activityMode} to `'detached'`.
+   * {@link StackScreenPropsBase.activityMode | activityMode} to `'detached'`.
    *
    * @platform android, ios
    */
   onNativeDismiss?: StackScreenDismissHandler | undefined;
   /**
    * Called when the user tries to dismiss the screen natively, but
-   * {@link StackScreenProps.preventNativeDismiss | preventNativeDismiss} stops
-   * it.
+   * {@link StackScreenPropsBase.preventNativeDismiss | preventNativeDismiss}
+   * stops it.
    *
    * @platform android
    */
@@ -158,8 +162,8 @@ export type StackScreenProps = {
    * screen drives a pop, including the predictive back gesture. A replace plays
    * the pop transition of the outgoing screen or the push transition of the
    * incoming one, see
-   * {@link StackScreenProps.replaceAnimation | replaceAnimation}. Changing the
-   * value on the top screen takes effect for the next pop.
+   * {@link StackScreenPropsBase.replaceAnimation | replaceAnimation}. Changing
+   * the value on the top screen takes effect for the next pop.
    *
    * On iOS, `'default'` plays UIKit's own transition and every other preset
    * and custom animation plays as described. A pop by the back swipe always
@@ -185,4 +189,16 @@ export type StackScreenProps = {
    * @platform android, ios
    */
   replaceAnimation?: StackScreenReplaceAnimation | undefined;
-};
+}
+
+/**
+ * Props for {@link Stack.Screen}.
+ */
+export interface StackScreenProps extends StackScreenPropsBase {
+  /**
+   * iOS-specific props.
+   *
+   * @platform ios
+   */
+  ios?: StackScreenPropsIOS | undefined;
+}

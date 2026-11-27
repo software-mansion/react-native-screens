@@ -647,7 +647,7 @@ export interface StackScreenAnimationCustom {
 
 /**
  * Preset names allowed as the whole animation, the
- * {@link StackScreenProps.animation | animation} prop itself.
+ * {@link StackScreenPropsBase.animation | animation} prop itself.
  *
  * @remarks
  * Accepts any {@link StackScreenAnimationTransitionPresetName} value, plus:
@@ -679,7 +679,7 @@ export type StackScreenAnimationPresetConfig =
   | StackScreenAnimationDefaultPresetConfig;
 
 /**
- * Value of the {@link StackScreenProps.animation | animation} prop of
+ * Value of the {@link StackScreenPropsBase.animation | animation} prop of
  * {@link Stack.Screen}.
  *
  * @remarks

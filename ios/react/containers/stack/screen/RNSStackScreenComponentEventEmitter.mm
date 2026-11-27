@@ -5,7 +5,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 
 @implementation RNSStackScreenComponentEventEmitter {
-  std::shared_ptr<const react::RNSStackScreenEventEmitter> _reactEventEmitter;
+  std::shared_ptr<const react::RNSStackScreenIOSEventEmitter> _reactEventEmitter;
 }
 
 - (BOOL)emitOnWillAppear
@@ -74,7 +74,7 @@
   }
 }
 
-- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSStackScreenEventEmitter> &)emitter
+- (void)updateEventEmitter:(const std::shared_ptr<const react::RNSStackScreenIOSEventEmitter> &)emitter
 {
   _reactEventEmitter = emitter;
 }

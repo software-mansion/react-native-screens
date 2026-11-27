@@ -2,7 +2,11 @@
 
 namespace facebook::react {
 
-extern const char RNSStackScreenComponentName[] = "RNSStackScreen";
+#if !defined(ANDROID)
+extern const char RNSStackScreenComponentName[] = "RNSStackScreenIOS";
+#else // !defined(ANDROID)
+extern const char RNSStackScreenComponentName[] = "RNSStackScreenAndroid";
+#endif // !defined(ANDROID)
 
 bool RNSStackScreenShadowNode::shouldApplyReportedFrame() const {
 #ifdef ANDROID

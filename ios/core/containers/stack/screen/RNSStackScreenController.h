@@ -55,6 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) RNSStackAnimationTransitionKind replaceAnimation;
 
+@property (nonatomic, readonly) BOOL backGestureEnabled;
+
+@property (nonatomic, readonly) BOOL fullScreenBackGestureEnabled;
+
 /**
  * Content scroll view registered within the screen, or nil if none has been registered.
  */
