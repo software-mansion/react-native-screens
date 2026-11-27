@@ -53,7 +53,11 @@ NS_ASSUME_NONNULL_BEGIN
 #if !TARGET_OS_TV
 - (void)updateBackButtonMenuEnabled;
 
-- (void)clearAppliedBackButtonConfig;
+/**
+ * Writes the back-button config of this screen onto `item`, the navigation item of the screen below it: UIKit
+ * builds this screen's back button from that item. Without a header config the defaults are written.
+ */
+- (void)applyBackButtonConfigToNavigationItem:(UINavigationItem *)item;
 #endif // !TARGET_OS_TV
 
 @end

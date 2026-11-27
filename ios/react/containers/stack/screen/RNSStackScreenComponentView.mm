@@ -272,6 +272,8 @@ RNS_IGNORE_SUPER_CALL_END
     _controller.headerCoordinator.frameChangeDelegate = _headerConfig;
     _controller.headerCoordinator.eventsDelegate = _headerConfig;
     _controller.headerCoordinator.imageLoader = _headerConfig.imageLoader;
+    // Fabric mounts the header config after its props are set, so the config has not reached the navigation item yet.
+    [_controller.headerCoordinator applyConfigProperties];
   }
   [super mountChildComponentView:childComponentView index:index];
 }

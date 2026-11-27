@@ -144,12 +144,21 @@ function TestStackBackButtonIOS() {
 }
 
 function HomeScreen() {
-  const { push } = useStackNavigationContext();
+  const { push, batch } = useStackNavigationContext();
 
   return (
     <CenteredLayoutView style={{ backgroundColor: Colors.YellowLight40 }}>
       <StackRouteInformation routeName="Home" />
       <Button title="Push First" onPress={() => push('First')} />
+      <Button
+        title="Push First and Second"
+        onPress={() =>
+          batch([
+            { type: 'push', routeName: 'First' },
+            { type: 'push', routeName: 'Second' },
+          ])
+        }
+      />
     </CenteredLayoutView>
   );
 }
@@ -226,7 +235,8 @@ function BackButtonConfigSection(props: {
 }
 
 function FirstScreen() {
-  const { routeKey, push, pop, setRouteOptions } = useStackNavigationContext();
+  const { routeKey, push, pop, batch, setRouteOptions } =
+    useStackNavigationContext();
   const { currentConfig, nextConfig, setCurrentConfig, setNextConfig } =
     useBackButtonConfigContext();
 
@@ -250,6 +260,15 @@ function FirstScreen() {
         onChange={setNextConfig}
       />
       <Button title="Push Second" onPress={() => push('Second')} />
+      <Button
+        title="Replace with Second"
+        onPress={() =>
+          batch([
+            { type: 'pop', routeKey },
+            { type: 'push', routeName: 'Second' },
+          ])
+        }
+      />
       <Button
         title="Push Bare (no header config)"
         onPress={() => push('Bare')}

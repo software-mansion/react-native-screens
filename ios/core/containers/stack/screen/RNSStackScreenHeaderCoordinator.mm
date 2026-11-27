@@ -21,13 +21,6 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 @implementation RNSStackScreenHeaderCoordinator {
   __weak RNSStackScreenController *_Nullable _screenController;
 
-#if !TARGET_OS_TV
-  // Navigation item of the screen below, onto which the back button
-  // configuration has been applied. Kept so that the configuration can be
-  // cleared when the owning screen is popped from the stack.
-  __weak UINavigationItem *_Nullable _backButtonConfigTargetItem;
-#endif // !TARGET_OS_TV
-
   RNSStackHeaderMenuTrackerRegistry *_Nonnull _trackerRegistry;
 
   NSMutableArray<UIBarButtonItem *> *_Nonnull _leadingBarButtonItems;
@@ -157,6 +150,13 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 
   BOOL enabled = _configDataProvider == nil || _configDataProvider.backButtonMenuEnabled;
   [navController.navigationBarCoordinator setBackButtonMenuEnabled:enabled forNavigationController:navController];
+}
+
+- (void)applyBackButtonConfigToNavigationItem:(UINavigationItem *)item
+{
+  item.backButtonTitle = _configDataProvider.backButtonTitle;
+  item.backButtonDisplayMode = _configDataProvider != nil ? _configDataProvider.backButtonDisplayMode
+                                                          : UINavigationItemBackButtonDisplayModeDefault;
 }
 #endif // !TARGET_OS_TV
 
@@ -351,8 +351,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
 #if !TARGET_OS_TV
   navItem.prompt = nil;
   navItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
-
-  [self clearAppliedBackButtonConfig];
+  [[self getNavigationController] applyBackButtonConfigs];
 #endif // !TARGET_OS_TV
 
   [self updateNavigationBarVisibilityAnimated:YES];
@@ -482,7 +481,7 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
     [controller.navigationController.view setNeedsLayout];
   }
 
-  [self applyBackButtonConfigForController:controller];
+  [[self getNavigationController] applyBackButtonConfigs];
 #endif // !TARGET_OS_TV
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(26_0)
@@ -508,32 +507,6 @@ static UIBarButtonItemVisibilityPriority RNSBarButtonItemVisibilityPriorityFromV
                                                                         : UINavigationItemLargeTitleDisplayModeNever;
 #endif // !TARGET_OS_TV
 }
-
-#if !TARGET_OS_TV
-- (void)applyBackButtonConfigForController:(RNSStackScreenController *)controller
-{
-  NSArray<UIViewController *> *viewControllers = controller.navigationController.viewControllers;
-  NSUInteger index = [viewControllers indexOfObject:controller];
-  if (index == NSNotFound || index == 0) {
-    return;
-  }
-
-  UINavigationItem *prevItem = viewControllers[index - 1].navigationItem;
-  _backButtonConfigTargetItem = prevItem;
-  prevItem.backButtonTitle = _configDataProvider.backButtonTitle;
-  prevItem.backButtonDisplayMode = _configDataProvider.backButtonDisplayMode;
-}
-#endif // !TARGET_OS_TV
-
-#if !TARGET_OS_TV
-- (void)clearAppliedBackButtonConfig
-{
-  UINavigationItem *targetItem = _backButtonConfigTargetItem;
-  _backButtonConfigTargetItem = nil;
-  targetItem.backButtonTitle = nil;
-  targetItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
-}
-#endif // !TARGET_OS_TV
 
 - (void)applyItemsWithTitleView:(nullable UIView *)titleView
                    subtitleView:(nullable UIView *)subtitleView
