@@ -4,9 +4,9 @@ export const scenarioDescription: ScenarioDescription = {
   name: 'Stack Animation Fade Presets',
   key: 'test-stack-animation-fade',
   details:
-    'Test the fade presets: fade crossfades both screens symmetrically on ' +
-    'Android and iOS, while on Android fadeFromBottom and fadeFromTop move ' +
-    'and fade one screen and pop over less time than they push',
+    'Test the fade presets: fade crossfades both screens symmetrically, ' +
+    'while fadeFromBottom and fadeFromTop move and fade one screen and pop ' +
+    'over less time than they push',
   platforms: ['android', 'ios'],
   devices: ['iphone', 'android-phone'],
   osVersions: {
@@ -15,9 +15,9 @@ export const scenarioDescription: ScenarioDescription = {
   },
   deviceSetup: {
     iphone:
-      'System animations on (Settings → Accessibility → Motion → Reduce Motion is off). Every group runs at real speed.',
+      'System animations on (Settings → Accessibility → Motion → Reduce Motion is off). Every group runs at normal speed.',
     'android-phone':
-      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationFade` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). The interactive predictive back gesture needs API 34 or newer. For the groups whose heading says "extended animation duration scale" only: in Developer options set "Animator duration scale" and "Transition animation scale" to 5x before the first of them and back to 1x after the last.',
+      'Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationFade` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). The interactive predictive back gesture needs API 34 or newer. For the groups whose heading says "Android: 5x animation scale, iOS: normal" only: in Developer options set "Animator duration scale" and "Transition animation scale" to 5x before the first of them and back to 1x after the last.',
   },
   e2eCoverage: 'incomplete',
   e2eCoverageDetails:

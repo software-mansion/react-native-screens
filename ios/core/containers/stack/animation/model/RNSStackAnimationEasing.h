@@ -8,18 +8,42 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, RNSStackAnimationEasingName) {
   RNSStackAnimationEasingNameLinear,
   RNSStackAnimationEasingNameAccelerateDecelerate,
+  RNSStackAnimationEasingNameAccelerateQuint,
+  RNSStackAnimationEasingNameDecelerateQuint,
 };
 
+/**
+ * A curve mapping a track's linear progress to its eased progress: a named curve or a cubic bezier.
+ */
 @interface RNSStackAnimationEasing : NSObject
 
-@property (nonatomic, readonly) RNSStackAnimationEasingName name;
++ (RNSStackAnimationEasing *)named:(RNSStackAnimationEasingName)name;
 
-+ (instancetype)named:(RNSStackAnimationEasingName)name;
+/**
+ * The cubic bezier from (0, 0) to (1, 1) with control points (x1, y1) and (x2, y2); x1 and x2 must be in [0, 1], so
+ * that the curve is a function of time.
+ */
++ (RNSStackAnimationEasing *)bezierWithX1:(CGFloat)x1 y1:(CGFloat)y1 x2:(CGFloat)x2 y2:(CGFloat)y2;
 
 /**
  * Eased progress for a linear progress in [0, 1].
  */
 - (CGFloat)valueAt:(CGFloat)progress;
+
+@end
+
+@interface RNSStackAnimationNamedEasing : RNSStackAnimationEasing
+
+@property (nonatomic, readonly) RNSStackAnimationEasingName name;
+
+@end
+
+@interface RNSStackAnimationBezierEasing : RNSStackAnimationEasing
+
+@property (nonatomic, readonly) CGFloat x1;
+@property (nonatomic, readonly) CGFloat y1;
+@property (nonatomic, readonly) CGFloat x2;
+@property (nonatomic, readonly) CGFloat y2;
 
 @end
 

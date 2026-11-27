@@ -6,6 +6,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSStackAnimationDimTrack;
 @class RNSStackAnimationEasing;
 @class RNSStackAnimationLength;
 @class RNSStackAnimationPropertyTrack;
@@ -15,7 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A `*From<Edge>` motion is a vector pointing away from the edge: an appearing view arrives at rest along it, a
- * disappearing view departs from rest along it (exiting through the opposite edge).
+ * disappearing view departs from rest along it (exiting through the opposite edge). Logical edges are written for
+ * left-to-right and mirrored by the engine.
  */
 + (RNSStackAnimationTranslateTrack *)translationTrackFromEdge:(RNSStackAnimationEdge)edge
                                                      distance:(RNSStackAnimationLength *)distance
@@ -25,8 +27,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (RNSStackAnimationPropertyTrack *)opacityTrackFrom:(CGFloat)from
                                                   to:(CGFloat)to
+                                             startMs:(NSInteger)startMs
                                           durationMs:(NSInteger)durationMs
                                               easing:(RNSStackAnimationEasing *)easing;
+
+/**
+ * A black scrim over the screen.
+ */
++ (RNSStackAnimationDimTrack *)dimTrackFrom:(CGFloat)from
+                                         to:(CGFloat)to
+                                 durationMs:(NSInteger)durationMs
+                                     easing:(RNSStackAnimationEasing *)easing;
 
 @end
 
