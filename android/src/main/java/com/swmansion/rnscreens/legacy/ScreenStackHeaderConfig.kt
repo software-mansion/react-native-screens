@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -273,6 +274,9 @@ class ScreenStackHeaderConfig(
         }
 
         if (isHeaderHidden) {
+            // A shown header gets its accessibility pane title from AppCompat when the toolbar title
+            // is set. Without it the window keeps the title of the previous screen, so set it here.
+            ViewCompat.setAccessibilityPaneTitle(activity.window.decorView, title)
             if (toolbar.parent != null) {
                 screenFragment?.removeToolbar()
             }
