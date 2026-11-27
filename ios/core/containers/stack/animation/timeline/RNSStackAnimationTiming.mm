@@ -22,6 +22,18 @@
   return _startMs + _durationMs;
 }
 
+- (instancetype)scaledBy:(double)factor
+{
+  return [[[self class] alloc] initWithStartMs:lround(_startMs * factor)
+                                    durationMs:lround(_durationMs * factor)
+                                        easing:_easing];
+}
+
+- (instancetype)withEasing:(RNSStackAnimationEasing *)easing
+{
+  return [[[self class] alloc] initWithStartMs:_startMs durationMs:_durationMs easing:easing];
+}
+
 - (CGFloat)progressAtMs:(double)timeMs
 {
   CGFloat linearProgress;

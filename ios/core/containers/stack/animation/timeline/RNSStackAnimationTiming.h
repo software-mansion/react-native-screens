@@ -22,6 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
                          easing:(RNSStackAnimationEasing *)easing;
 
 /**
+ * The start and the duration multiplied by `factor`, each rounded to whole milliseconds.
+ */
+- (instancetype)scaledBy:(double)factor;
+
+- (instancetype)withEasing:(RNSStackAnimationEasing *)easing;
+
+/**
  * Eased 0..1 progress at `timeMs` on the screen's timeline, clamped; a 0 ms span is a step.
  */
 - (CGFloat)progressAtMs:(double)timeMs;

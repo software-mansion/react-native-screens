@@ -11,7 +11,7 @@
 
 | Device        | Test on      | Setup                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| iPhone        | iOS 27.2     | System animations on (Settings → Accessibility → Motion → Reduce Motion is off). Every group runs at normal speed (350 ms transitions); judge the tint from a screen recording if needed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| iPhone        | iOS 27.2     | System animations on (Settings → Accessibility → Motion → Reduce Motion is off). Every group runs at normal speed (350 ms transitions).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Android phone | API Level 37 | Gesture navigation enabled. System animations on (Settings → Accessibility → Color and motion → Remove animations is off). Run the screen directly: in `apps/App.tsx` import and render `TestStackAnimationIOSFrom` as the root component instead of `Example` (opened through the in-app menu, system back leaves the screen instead of popping the stack). The interactive predictive back gesture needs API 34 or newer. For the groups whose heading says "Android: 10x animation scale, iOS: normal" only: in Developer options set "Animator duration scale" and "Transition animation scale" to 10x before the first of them and back to 1x after the last (at 1x these transitions last 200 ms and the tint cannot be compared against a swatch by eye). |
 
 **E2E coverage details:** No step is automated. For manual testing perform all steps. The tint, the travel distances, the draw order, the header during the transition and the interactive back gestures are not assertable with Detox.
@@ -220,6 +220,22 @@ and `iosFromLeft` do not.
    - [ ] "START" returns to the left of the row.
 
 ## Steps - iOS
+
+### Tint at 2000 ms
+
+1. On "Home", set "next push" to `iosFromRight 2000 ms`, then tap "Push Blue".
+
+   - [ ] "Blue" enters from the right over about 2 seconds.
+   - [ ] "Home" moves left by about a third of the width.
+   - [ ] "Home" is tinted while it moves (see Note).
+
+2. On "Blue", tap "Pop".
+
+   - [ ] "Blue" leaves to the right over about 2 seconds.
+   - [ ] "Home"'s tint lifts while it returns.
+   - [ ] "Home" is untinted once the pop ends.
+
+---
 
 ### Header back button
 

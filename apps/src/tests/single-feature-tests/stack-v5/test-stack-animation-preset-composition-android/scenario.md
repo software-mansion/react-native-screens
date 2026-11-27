@@ -25,7 +25,7 @@ separately and a transition can set the motion of each screen. Pass: each
 transition plays what is named for it, a name in the pop position keeps its
 own direction, an omitted part plays nothing, and an invalid value plays
 `default` instead. Preset options on the whole animation are covered by
-`test-stack-animation-options-android`.
+`test-stack-animation-options`.
 
 ## Note
 

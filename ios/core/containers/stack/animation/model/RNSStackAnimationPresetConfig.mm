@@ -28,8 +28,14 @@ static const struct {
 
 - (instancetype)initWithName:(RNSStackAnimationPresetName)name
 {
+  return [self initWithName:name options:RNSStackAnimationPresetOptions.none];
+}
+
+- (instancetype)initWithName:(RNSStackAnimationPresetName)name options:(RNSStackAnimationPresetOptions *)options
+{
   if (self = [super init]) {
     _name = name;
+    _options = options;
   }
   return self;
 }
@@ -63,6 +69,33 @@ static const struct {
   }
   RNSAssert(NO, @"[RNScreens] Animation preset %ld has no name.", static_cast<long>(name));
   return @"";
+}
+
++ (BOOL)presetNamed:(RNSStackAnimationPresetName)name acceptsOption:(RNSStackAnimationPresetOption)option
+{
+  switch (name) {
+    case RNSStackAnimationPresetNameDefault:
+    case RNSStackAnimationPresetNameNone:
+      return NO;
+    case RNSStackAnimationPresetNameFade:
+    case RNSStackAnimationPresetNameIosFromRight:
+    case RNSStackAnimationPresetNameIosFromLeft:
+    case RNSStackAnimationPresetNameIosFromTrailing:
+    case RNSStackAnimationPresetNameIosFromLeading:
+      return option != RNSStackAnimationPresetOptionDistance;
+    // A shortened slide is the parallax recede of one screen (the background of `iosFrom*`); a whole transition keeps
+    // the full width.
+    case RNSStackAnimationPresetNameSlideFromRight:
+    case RNSStackAnimationPresetNameSlideFromLeft:
+    case RNSStackAnimationPresetNameSlideFromTrailing:
+    case RNSStackAnimationPresetNameSlideFromLeading:
+    case RNSStackAnimationPresetNameSlideFromBottom:
+    case RNSStackAnimationPresetNameSlideFromTop:
+      return option != RNSStackAnimationPresetOptionDistance;
+    case RNSStackAnimationPresetNameFadeFromBottom:
+    case RNSStackAnimationPresetNameFadeFromTop:
+      return YES;
+  }
 }
 
 @end
