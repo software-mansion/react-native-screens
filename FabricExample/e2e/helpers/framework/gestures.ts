@@ -1,4 +1,4 @@
-import { device, element, by, waitFor } from 'detox';
+import { device, element, by, expect, waitFor } from 'detox';
 import type { NativeMatcher } from 'detox/detox';
 import { countMatches, getFrame, readSingleText, type Frame } from './matchers';
 
@@ -27,16 +27,30 @@ export async function scrollUntilVisible(
     .scroll(pixels, direction, Number.NaN, startPercentage);
 }
 
+/** Whether `id` passes Detox's visibility check right now; never scrolls. Any
+ * error reads as "not visible": the scroll that follows surfaces a real one. */
+async function isVisible(id: string): Promise<boolean> {
+  try {
+    await expect(element(by.id(id))).toBeVisible();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Rewinds to the top first — `whileElement` only scrolls one way. Down only:
- * rewinding to the top makes an upward scan pointless, so `direction` is
- * rejected at the type level.
+ * No-op when `id` is already visible. Otherwise rewinds to the top first —
+ * `whileElement` only scrolls one way. Down only: rewinding to the top makes an
+ * upward scan pointless, so `direction` is rejected at the type level.
  */
-export async function rewindAndScrollUntilVisible(
+export async function scrollIntoViewIfNeeded(
   id: string,
   scrollViewId: string,
   options: Omit<ScrollOptions, 'direction'> = {},
 ) {
+  if (await isVisible(id)) {
+    return;
+  }
   await element(by.id(scrollViewId)).scrollTo('top');
   await scrollUntilVisible(id, scrollViewId, options);
 }
@@ -91,20 +105,20 @@ export async function tapTopmostButton(title: string): Promise<void> {
 /** A scroll view plus the tuning used to bring one of its rows into view. */
 export type ScrollTargetOptions = ScrollOptions & { scrollViewId: string };
 
-/** Rewinds, scrolls `id` into view and taps it. */
+/** Scrolls `id` into view if needed and taps it. */
 export async function scrollToAndTap(
   id: string,
   { scrollViewId, ...scroll }: ScrollTargetOptions,
 ) {
-  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+  await scrollIntoViewIfNeeded(id, scrollViewId, scroll);
   await element(by.id(id)).tap();
 }
 
-/** Rewinds, scrolls `id` into view and returns its text (`''` when unset). */
+/** Scrolls `id` into view if needed and returns its text (`''` when unset). */
 export async function scrollToAndReadText(
   id: string,
   { scrollViewId, ...scroll }: ScrollTargetOptions,
 ): Promise<string> {
-  await rewindAndScrollUntilVisible(id, scrollViewId, scroll);
+  await scrollIntoViewIfNeeded(id, scrollViewId, scroll);
   return readSingleText(id);
 }

@@ -10,7 +10,7 @@ import {
 } from '@e2e/app/settings-controls';
 import { selectSingleFeatureTestsScreen } from '@e2e/app/test-screen-navigation';
 import {
-  rewindAndScrollUntilVisible,
+  scrollIntoViewIfNeeded,
   scrollToAndTap,
   scrollToAndReadText,
 } from '@e2e/framework/gestures';
@@ -68,7 +68,7 @@ const attributesOf = (matcher: NativeMatcher, description?: string) =>
 
 // Targets sit either side of the current offset, hence the rewind.
 async function scrollIntoView(id: string) {
-  await rewindAndScrollUntilVisible(id, SCROLLVIEW_ID, SETTINGS_CONTROL);
+  await scrollIntoViewIfNeeded(id, SCROLLVIEW_ID, SETTINGS_CONTROL);
 }
 
 // A submenu opens on top of the overflow menu, so at most two popups stack.
