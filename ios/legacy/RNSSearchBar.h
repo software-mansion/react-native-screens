@@ -4,6 +4,7 @@
 
 #if defined(__cplusplus)
 #import <React/RCTComponent.h>
+#import <React/RCTImageLoader.h>
 #import <React/RCTViewComponentView.h>
 #import <React/RCTViewManager.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -24,6 +25,15 @@
 @property (nonatomic) BOOL allowToolbarIntegration;
 
 @property (nonatomic, retain) UISearchController *controller;
+
+#if defined(__cplusplus)
+/**
+ * Image loader used to resolve `imageSource` / `templateSource` icons of the right accessory.
+ * The search bar has no shadow state of its own, so the header config that hosts it injects
+ * its loader when attaching the search controller to the navigation item.
+ */
+@property (nonatomic, weak) RCTImageLoader *imageLoader;
+#endif
 
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0) && !TARGET_OS_TV
 - (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))

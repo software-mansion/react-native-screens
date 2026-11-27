@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens.legacy
 
+import com.facebook.react.bridge.Dynamic
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -206,5 +207,15 @@ class SearchBarManager :
     override fun setTintColor(
         view: SearchBarView?,
         value: Int?,
+    ) = Unit
+
+    override fun setRightAccessoryIcon(
+        view: SearchBarView?,
+        value: Dynamic,
+    ) = Unit
+
+    override fun setRightAccessoryType(
+        view: SearchBarView?,
+        value: String?,
     ) = Unit
 }

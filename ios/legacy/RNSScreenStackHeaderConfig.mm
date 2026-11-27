@@ -781,6 +781,7 @@ RNS_IGNORE_SUPER_CALL_END
 #if !TARGET_OS_TV
           RNSSearchBar *searchBar = subview.subviews[0];
           searchBarPresent = true;
+          searchBar.imageLoader = config->_imageLoader;
           navitem.searchController = searchBar.controller;
           navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(16_0)

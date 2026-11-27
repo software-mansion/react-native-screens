@@ -25,6 +25,7 @@ type BarTintColor = 'lightcoral' | 'orange' | 'white' | 'darkslategray';
 
 type AutoCapitalize = Exclude<SearchBarProps['autoCapitalize'], undefined>;
 type InputType = Exclude<SearchBarProps['inputType'], undefined>;
+type RightAccessoryOption = 'none' | 'bookmark' | 'resultsList';
 
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
@@ -47,6 +48,8 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const [autoCapitalize, setAutoCapitalize] =
     useState<AutoCapitalize>('sentences');
   const [inputType, setInputType] = useState<InputType>('text');
+  const [rightAccessory, setRightAccessory] =
+    useState<RightAccessoryOption>('none');
   const searchBarRef = useRef<SearchBarCommands>(null);
 
   useLayoutEffect(() => {
@@ -66,6 +69,21 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         // to preserve test's original search bar configuration.
         placement: 'stacked',
         inputType,
+        rightAccessory:
+          rightAccessory === 'none'
+            ? undefined
+            : {
+                type: rightAccessory,
+                icon: {
+                  type: 'sfSymbol',
+                  name: 'line.3.horizontal.decrease.circle',
+                },
+                onPress: () =>
+                  toast.push({
+                    message: `[iOS] Right accessory (${rightAccessory}) pressed`,
+                    backgroundColor: 'teal',
+                  }),
+              },
         onChangeText: event => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
@@ -112,6 +130,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
     hideNavigationBar,
     autoCapitalize,
     inputType,
+    rightAccessory,
   ]);
 
   return (
@@ -151,6 +170,12 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         label="Hide when scrolling"
         value={hideWhenScrolling}
         onValueChange={setHideWhenScrolling}
+      />
+      <SettingsPicker<RightAccessoryOption>
+        label="Right accessory"
+        value={rightAccessory}
+        onValueChange={setRightAccessory}
+        items={['none', 'bookmark', 'resultsList']}
       />
       <ThemedText style={styles.heading}>Android only</ThemedText>
       <SettingsPicker<InputType>

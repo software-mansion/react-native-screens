@@ -11,12 +11,18 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSConvert.h"
+#import "RNSImageLoadingHelper.h"
 
 namespace react = facebook::react;
 
 @implementation RNSSearchBar {
   UISearchController *_controller;
   UIColor *_textColor;
+
+  // Flat icon config (`sfSymbolName` / `xcassetName` / `imageSource` / `templateSource`)
+  // for the right accessory button, or nil when no accessory should be shown.
+  NSDictionary *_rightAccessoryIconConfig;
+  BOOL _rightAccessoryUsesResultsList;
 
   // We use those booleans to log a warning if user attempts to restore
   // default behavior after setting explicit value for the prop.
@@ -95,6 +101,105 @@ namespace react = facebook::react;
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onChangeText(react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
   }
+}
+
+- (void)emitOnRightAccessoryPressEvent
+{
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onRightAccessoryPress(react::RNSSearchBarEventEmitter::OnRightAccessoryPress{});
+  }
+}
+
+#pragma mark - Right accessory
+
+- (void)setImageLoader:(RCTImageLoader *)imageLoader
+{
+  BOOL hadLoader = _imageLoader != nil;
+  _imageLoader = imageLoader;
+
+  // Icons backed by an image source could not be resolved before the loader was injected.
+  if (!hadLoader && imageLoader != nil && [self rightAccessoryIconRequiresImageLoader]) {
+    [self updateRightAccessory];
+  }
+}
+
+- (BOOL)rightAccessoryIconRequiresImageLoader
+{
+  return _rightAccessoryIconConfig[@"imageSource"] != nil || _rightAccessoryIconConfig[@"templateSource"] != nil;
+}
+
+- (void)setRightAccessoryIconConfig:(NSDictionary *)iconConfig usesResultsList:(BOOL)usesResultsList
+{
+  _rightAccessoryIconConfig = iconConfig;
+  _rightAccessoryUsesResultsList = usesResultsList;
+  [self updateRightAccessory];
+}
+
+- (void)updateRightAccessory
+{
+#if !TARGET_OS_TV
+  UISearchBar *searchBar = _controller.searchBar;
+  NSDictionary *config = _rightAccessoryIconConfig;
+  BOOL usesResultsList = _rightAccessoryUsesResultsList;
+  BOOL hasAccessory = config != nil;
+
+  searchBar.showsBookmarkButton = hasAccessory && !usesResultsList;
+  searchBar.showsSearchResultsButton = hasAccessory && usesResultsList;
+
+  // Restore system images on the slot that is no longer used.
+  [searchBar setImage:nil
+      forSearchBarIcon:usesResultsList ? UISearchBarIconBookmark : UISearchBarIconResultsList
+                 state:UIControlStateNormal];
+
+  if (!hasAccessory) {
+    [searchBar setImage:nil forSearchBarIcon:UISearchBarIconBookmark state:UIControlStateNormal];
+    [searchBar setImage:nil forSearchBarIcon:UISearchBarIconResultsList state:UIControlStateNormal];
+    return;
+  }
+
+  UISearchBarIcon slot = usesResultsList ? UISearchBarIconResultsList : UISearchBarIconBookmark;
+
+  __weak RNSSearchBar *weakSelf = self;
+  void (^applyImage)(UIImage *_Nullable) = ^(UIImage *_Nullable image) {
+    RNSSearchBar *strongSelf = weakSelf;
+    // Drop stale results if the accessory changed while the image was loading.
+    if (strongSelf == nil || strongSelf->_rightAccessoryIconConfig != config ||
+        strongSelf->_rightAccessoryUsesResultsList != usesResultsList) {
+      return;
+    }
+    [strongSelf->_controller.searchBar setImage:image forSearchBarIcon:slot state:UIControlStateNormal];
+  };
+
+  NSString *sfSymbolName = config[@"sfSymbolName"];
+  if (sfSymbolName != nil) {
+    applyImage([RNSImageLoadingHelper symbolImageNamed:sfSymbolName]);
+    return;
+  }
+
+  NSString *xcassetName = config[@"xcassetName"];
+  if (xcassetName != nil) {
+    applyImage([UIImage imageNamed:xcassetName]);
+    return;
+  }
+
+  id imageSource = config[@"imageSource"];
+  id templateSource = config[@"templateSource"];
+  id source = imageSource != nil ? imageSource : templateSource;
+  // JS normalizes sources to a single dictionary; ignore anything else instead of
+  // tripping the non-nil assertion in RNSImageLoadingHelper.
+  if ([source isKindOfClass:[NSDictionary class]]) {
+    RCTImageLoader *imageLoader = _imageLoader;
+    if (imageLoader == nil) {
+      // Resolved once the hosting header config injects the image loader.
+      return;
+    }
+    [RNSImageLoadingHelper loadImageSyncIfPossibleFromJsonSource:source
+                                                 withImageLoader:imageLoader
+                                                      asTemplate:imageSource == nil
+                                                 completionBlock:applyImage];
+  }
+#endif // !TARGET_OS_TV
 }
 
 - (void)setObscureBackground:(RNSOptionalBoolean)obscureBackground
@@ -289,6 +394,16 @@ namespace react = facebook::react;
   [self emitOnCancelButtonPressEvent];
   [self emitOnChangeTextEventWithText:_controller.searchBar.text];
 }
+
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
+{
+  [self emitOnRightAccessoryPressEvent];
+}
+
+- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar
+{
+  [self emitOnRightAccessoryPressEvent];
+}
 #endif // !TARGET_OS_TV
 
 - (void)blur
@@ -381,6 +496,14 @@ namespace react = facebook::react;
 
   if (oldScreenProps.allowToolbarIntegration != newScreenProps.allowToolbarIntegration) {
     self.allowToolbarIntegration = newScreenProps.allowToolbarIntegration;
+  }
+
+  if (oldScreenProps.rightAccessoryIcon != newScreenProps.rightAccessoryIcon ||
+      oldScreenProps.rightAccessoryType != newScreenProps.rightAccessoryType) {
+    id iconConfig = [RNSConvert idFromFollyDynamic:newScreenProps.rightAccessoryIcon];
+    [self setRightAccessoryIconConfig:[iconConfig isKindOfClass:[NSDictionary class]] ? iconConfig : nil
+                      usesResultsList:newScreenProps.rightAccessoryType ==
+                      react::RNSSearchBarRightAccessoryType::ResultsList];
   }
 
   [super updateProps:props oldProps:oldProps];
