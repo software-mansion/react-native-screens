@@ -10,7 +10,14 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHostManagerDelegate
 import com.facebook.react.viewmanagers.RNSStackHostManagerInterface
 import com.swmansion.rnscreens.core.common.colorscheme.ColorScheme
+import com.swmansion.rnscreens.core.containers.stack.host.StackActionOrigin
+import com.swmansion.rnscreens.core.containers.stack.host.StackNavigationStateRequest
+import com.swmansion.rnscreens.react.containers.stack.host.event.StackHostNativeDismissPreventedEvent
+import com.swmansion.rnscreens.react.containers.stack.host.event.StackHostNavStateChangedEvent
+import com.swmansion.rnscreens.react.containers.stack.host.event.StackHostNavStateRequestRejectedEvent
+import com.swmansion.rnscreens.react.containers.stack.host.event.StackHostScreensReleasedEvent
 import com.swmansion.rnscreens.react.containers.stack.screen.StackScreen
+import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
 
 @ReactModule(name = StackHostViewManager.REACT_CLASS)
 internal class StackHostViewManager :
@@ -59,6 +66,22 @@ internal class StackHostViewManager :
 
     override fun getChildCount(parent: StackHost): Int = parent.renderedScreens.size
 
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            makeEventRegistrationInfo(StackHostNavStateChangedEvent),
+            makeEventRegistrationInfo(StackHostNavStateRequestRejectedEvent),
+            makeEventRegistrationInfo(StackHostScreensReleasedEvent),
+            makeEventRegistrationInfo(StackHostNativeDismissPreventedEvent),
+        )
+
+    override fun addEventEmitters(
+        reactContext: ThemedReactContext,
+        view: StackHost,
+    ) {
+        super.addEventEmitters(reactContext, view)
+        view.onViewManagerAddEventEmitters()
+    }
+
     override fun onDropViewInstance(view: StackHost) {
         view.tearDown()
         super.onDropViewInstance(view)
@@ -77,14 +100,27 @@ internal class StackHostViewManager :
         view: StackHost,
         value: ReadableMap?,
     ) {
-        // Not applied yet: the stack does not hold a navigation state on Android so far.
+        val requestMap = requireNotNull(value) { "[RNScreens] navStateRequest must not be nullish" }
+        val stackArray = requireNotNull(requestMap.getArray("stack")) { "[RNScreens] navStateRequest.stack is required" }
+        val stack =
+            List(stackArray.size()) { index ->
+                requireNotNull(stackArray.getString(index)) { "[RNScreens] navStateRequest.stack must hold strings" }
+            }
+        view.updateJSNavigationStateRequest(
+            StackNavigationStateRequest(
+                requestId = requestMap.getInt("requestId"),
+                stack = stack,
+                baseProvenance = requestMap.getInt("baseProvenance"),
+                actionOrigin = StackActionOrigin.PROGRAMMATIC_JS,
+            ),
+        )
     }
 
     override fun setRejectStaleNavStateUpdates(
         view: StackHost,
         value: Boolean,
     ) {
-        // Not applied yet: the stack does not hold a navigation state on Android so far.
+        view.rejectStaleNavigationStateUpdates = value
     }
 
     override fun setColorScheme(
