@@ -331,11 +331,15 @@ static void rns_pushViewController(__unsafe_unretained id self,
 {
   _isHandlingExplicitSelectionUpdate = YES;
   [self createTabBarItemsIfNeeded];
+  // An item must carry its title & badge before it is installed: on iOS 26 a title that changes between the
+  // installation and the first layout of the tab bar leaves the titles truncated & misplaced.
+  [self updateTabBarItemsIfNeeded];
   [self updateChildViewControllersIfNeeded];
   [self updateSearchTabsIfNeeded];
   [self updateSelectedViewControllerIfNeeded];
   _isHandlingExplicitSelectionUpdate = NO;
 
+  // With the UITab API the items of the tabs installed above could not be updated earlier.
   [self updateTabBarItemsIfNeeded];
   [self updateTabBarAppearanceIfNeeded];
   [self updateTabBarA11yIfNeeded];
@@ -714,7 +718,8 @@ static void rns_pushViewController(__unsafe_unretained id self,
 }
 
 /// Always builds a FRESH instance, seeded with current content - the bar reads a `UITab` only
-/// when its instance enters the tabs array.
+/// when its instance enters the tabs array. The title has to be the final one: on iOS 26 changing
+/// it between the installation and the first layout of the tab bar leaves the titles truncated.
 - (UITab *)makeTabForTabScreenController:(RNSTabsScreenViewController *)screenController API_AVAILABLE(ios(18.0))
 {
   __weak RNSTabsScreenViewController *weakScreenController = screenController;
@@ -727,7 +732,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     // Set the custom title here, like `initWithTitle:` does for a regular tab. Setting it
     // after the tab is installed results in incorrect title truncation for the other tabs.
     // See https://github.com/software-mansion/react-native-screens/issues/5015
-    NSString *_Nullable title = screenController.configProvider.title;
+    NSString *_Nullable title = [_tabBarItemCoordinator titleForTabScreenController:screenController];
     if (title != nil) {
       searchTab.title = title;
     }
@@ -742,7 +747,7 @@ static void rns_pushViewController(__unsafe_unretained id self,
     return searchTab;
   }
 
-  return [[UITab alloc] initWithTitle:[screenController.configProvider title] ?: @""
+  return [[UITab alloc] initWithTitle:[_tabBarItemCoordinator titleForTabScreenController:screenController] ?: @""
                                 image:nil
                            identifier:[screenController.configProvider screenKey]
                viewControllerProvider:^UIViewController *(UITab *) {

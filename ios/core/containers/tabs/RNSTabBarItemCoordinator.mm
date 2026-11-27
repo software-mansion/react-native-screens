@@ -39,8 +39,10 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
 }
 
 /**
- * Updates the runtime properties of UITabBarItem: title and badge. If used with UITab API, it should be called after
- * the tab is built.
+ * Updates the runtime properties of UITabBarItem: title and badge. The items that cannot be updated yet keep their
+ * `tabBarItemNeedsUpdate` flag: call this both before the screens are installed (so that the items enter the tab bar
+ * complete) and after it (for the items that become writable only then, see
+ * `canUpdateTabBarItemForTabScreenController:`).
  */
 - (void)updateTabBarItemsForTabScreenControllers:(nullable NSArray<RNSTabsScreenViewController *> *)tabScreenCtrls
 {
@@ -51,11 +53,25 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
       continue;
     }
 
-    if (screenView.tabBarItemNeedsUpdate) {
+    if (screenView.tabBarItemNeedsUpdate && [self canUpdateTabBarItemForTabScreenController:tabScreenCtrl]) {
       screenView.tabBarItemNeedsUpdate = NO;
       [self updateTabBarItemForTabScreenController:tabScreenCtrl];
     }
   }
+}
+
+/**
+ * With the UITab API the item becomes writable only once the screen's tab is installed: at that moment UIKit
+ * overwrites the item with the content of the tab, dropping anything written to it earlier.
+ */
+- (BOOL)canUpdateTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
+{
+#if RNS_UITAB_API_SDK_AVAILABLE
+  if (RNS_UITAB_API_ENABLED) {
+    return tabScreenCtrl.tab != nil;
+  }
+#endif // RNS_UITAB_API_SDK_AVAILABLE
+  return YES;
 }
 
 - (void)createTabBarItemForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
@@ -97,19 +113,25 @@ static std::optional<UITabBarSystemItem> RNSUITabBarSystemItemFromTabsScreenSyst
 {
   UIView<RNSTabsContainerItemConfigProviding> *screenView = tabScreenCtrl.configProvider;
 
-  NSString *evaluatedTitle = screenView.title;
-  if (screenView.title == nil && screenView.systemItem != RNSTabsScreenSystemItemNone) {
-    // Restore default system item title
-    UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
-    if (systemTabBarItem == nil) {
-      RNSLogE(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
-      return;
-    }
-    evaluatedTitle = systemTabBarItem.title;
+  [self updateTabBarItemTitle:[self titleForTabScreenController:tabScreenCtrl] forTabScreenController:tabScreenCtrl];
+  [self updateTabBarItemBadge:screenView.badgeValue forTabScreenController:tabScreenCtrl];
+}
+
+- (nullable NSString *)titleForTabScreenController:(nonnull RNSTabsScreenViewController *)tabScreenCtrl
+{
+  UIView<RNSTabsContainerItemConfigProviding> *screenView = tabScreenCtrl.configProvider;
+
+  if (screenView.title != nil || screenView.systemItem == RNSTabsScreenSystemItemNone) {
+    return screenView.title;
   }
 
-  [self updateTabBarItemTitle:evaluatedTitle forTabScreenController:tabScreenCtrl];
-  [self updateTabBarItemBadge:screenView.badgeValue forTabScreenController:tabScreenCtrl];
+  // Fall back to the default system item title
+  UITabBarItem *systemTabBarItem = [RNSTabBarItemCoordinator tabBarItemWithSystemItem:screenView.systemItem];
+  if (systemTabBarItem == nil) {
+    RNSLogE(@"[RNScreens] No system tab bar item for tabs screen systemItem [%ld]", (long)screenView.systemItem);
+    return nil;
+  }
+  return systemTabBarItem.title;
 }
 
 - (void)updateTabBarItemTitle:(NSString *)newTitle
