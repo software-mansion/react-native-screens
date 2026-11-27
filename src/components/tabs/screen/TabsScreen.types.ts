@@ -23,6 +23,19 @@ import type {
  */
 export type TabsOrientation = InterfaceOrientation | 'inherit';
 
+// Currently iOS-only. Kept as a string union so it can be extended with
+// richer transition options (e.g. Stack v5-like presets) without breaking
+// changes.
+/**
+ * Transition played when switching to a tab screen.
+ *
+ * @remarks
+ * The following values are supported:
+ * - `'default'` — the system transition (e.g. a cross-fade on iOS 18 and 26).
+ * - `'none'` — the tab screen is shown immediately, without any animation.
+ */
+export type TabsScreenAnimation = 'default' | 'none';
+
 /**
  * Style of a {@link Tabs.Screen}.
  */
@@ -160,6 +173,27 @@ export interface TabsScreenPropsBase {
    * @platform ios
    */
   orientation?: TabsOrientation | undefined;
+  /**
+   * Specifies the transition played when this tab screen gets selected.
+   *
+   * @remarks
+   * The value of the destination screen is used: switching from tab A to
+   * tab B plays B's `animation`. This applies both to user-initiated and
+   * programmatic tab changes.
+   *
+   * Selecting the "More" tab (shown when there are more tabs than the tab
+   * bar can display) always uses the system transition, as does pushing a
+   * tab screen from the "More" list.
+   *
+   * @tip
+   * Useful e.g. when tab screens are transparent and share a background
+   * rendered behind {@link Tabs.Host}: with the system cross-fade, both
+   * screens are visible at the same time during the transition.
+   *
+   * @defaultValue `'default'`
+   * @platform ios
+   */
+  animation?: TabsScreenAnimation | undefined;
   // Accessibility
   /**
    * testID for the {@link Tabs.Screen}

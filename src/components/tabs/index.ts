@@ -26,6 +26,7 @@ export type {
 
 export type {
   TabsOrientation,
+  TabsScreenAnimation,
   TabsScreenStyleProps,
   TabsScreenSpecialEffects,
   TabsScreenRepeatedTabSelectionEffects,

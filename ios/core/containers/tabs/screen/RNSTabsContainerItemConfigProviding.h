@@ -30,6 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL automaticallyActivatesSearch;
 
 @property (nonatomic, readonly) RNSOrientation orientation;
+
+/**
+ * Transition played when this screen becomes the selected tab. Read when the transition starts: the destination
+ * screen's value decides.
+ */
+@property (nonatomic, readonly) RNSTabsScreenAnimation animation;
+
 @property (nonatomic, readonly) BOOL preventNativeSelection;
 @property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionPopToRootSpecialEffect;
 @property (nonatomic, readonly) BOOL shouldUseRepeatedTabSelectionScrollToTopSpecialEffect;

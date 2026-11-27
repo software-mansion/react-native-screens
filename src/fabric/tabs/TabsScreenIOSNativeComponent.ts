@@ -114,6 +114,8 @@ type TabRole = 'none' | 'search';
 
 type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 
+type Animation = 'default' | 'none';
+
 // #endregion iOS-specific helpers
 
 export interface NativeProps extends ViewProps {
@@ -131,6 +133,7 @@ export interface NativeProps extends ViewProps {
   title?: string | undefined | null;
   badgeValue?: string | undefined;
   orientation?: CT.WithDefault<Orientation, 'inherit'>;
+  animation?: CT.WithDefault<Animation, 'default'>;
 
   // Accessibility
   tabBarItemTestID?: string | undefined;

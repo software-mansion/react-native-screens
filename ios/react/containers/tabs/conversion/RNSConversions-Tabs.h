@@ -88,6 +88,8 @@ RCTImageSource *RCTImageSourceFromImageSourceAndIconType(const facebook::react::
 
 RNSOrientation RNSOrientationFromRNSTabsScreenOrientation(react::RNSTabsScreenIOSOrientation orientation);
 
+RNSTabsScreenAnimation RNSTabsScreenAnimationFromRNSTabsScreenIOSAnimation(react::RNSTabsScreenIOSAnimation animation);
+
 UITraitEnvironmentLayoutDirection UITraitEnvironmentLayoutDirectionFromTabsHostCppEquivalent(
     react::RNSTabsHostIOSLayoutDirection layoutDirection);
 
