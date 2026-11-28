@@ -11,7 +11,9 @@ import { Colors } from '@apps/shared/styling';
 //
 // Launch the app with an RTL app language, e.g.
 // `xcrun simctl launch booted <bundle-id> -AppleLanguages "(he)"`, or set the
-// app's language to Hebrew in iOS Settings. The navigation container pins the
+// app's language to Hebrew in iOS Settings (FabricExample lists `he` in
+// CFBundleLocalizations; without an RTL localization iOS falls back to
+// English and the app never runs RTL). The navigation container pins the
 // direction to 'ltr', so every header gets `direction: 'ltr'`.
 // Expected: Details' back button and title sit on the left, and swipe-back
 // starts from the left edge.
