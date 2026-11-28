@@ -86,6 +86,9 @@ static const NSNumber *const DEFAULT_TITLE_LARGE_FONT_SIZE = @34;
   _reactSubviews = [NSMutableArray new];
   _backTitleVisible = YES;
   _blurEffect = RNSBlurEffectStyleNone;
+  // Match the `direction` prop's codegen default ('ltr'): updateProps only applies a changed
+  // value, so an initial 'ltr' would otherwise leave the header following the app language.
+  _direction = UISemanticContentAttributeForceLeftToRight;
   _minimizationBehavior = RNSHeaderMinimizationBehaviorUndefined;
 #if RNS_IPHONE_OS_VERSION_AVAILABLE(27_0) && !TARGET_OS_VISION && !TARGET_OS_TV
   if (@available(iOS 27.0, *)) {
