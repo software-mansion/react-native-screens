@@ -1,3 +1,4 @@
+import type { Ref } from 'react';
 import type { ColorValue, StyleProp, ViewProps, ViewStyle } from 'react-native';
 import type {
   BlurEffectStyle,
@@ -137,6 +138,40 @@ export type SheetNativeContainerStyleProps = {
   backgroundColor?: ViewStyle['backgroundColor'] | undefined;
 };
 
+/**
+ * Detent to move a presented sheet to with
+ * {@link SheetCommands.selectDetent | selectDetent}.
+ *
+ * @remarks
+ * The following values are supported:
+ * - a number — zero-based index of a detent in `detents`.
+ * - `'last'` — the last, largest detent.
+ */
+export type SheetSelectDetentIndex = number | 'last';
+
+/**
+ * Imperative commands of a sheet, exposed through its `ref`.
+ */
+export interface SheetCommands {
+  /**
+   * Animates the presented sheet to the detent at the given index.
+   *
+   * @remarks
+   * The user can still drag the sheet between all detents afterwards. If the
+   * detent differs from the current one, `onDetentChanged` is called with its
+   * index, the same as after a user-driven change.
+   *
+   * The call takes effect once the sheet starts presenting (from
+   * `onWillAppear` on) and until it starts dismissing. Calls made outside of
+   * that window are ignored. To choose the detent the sheet opens at, use
+   * `initialDetentIndex` instead.
+   *
+   * @param index - Detent to move the sheet to.
+   * @platform android, ios
+   */
+  selectDetent: (index: SheetSelectDetentIndex) => void;
+}
+
 // iOS-specific props of `SheetBase`. Internal, like `SheetProps`.
 export interface SheetPropsIOS {
   backgroundEffect?: SheetBackgroundEffect | undefined;
@@ -146,6 +181,7 @@ export interface SheetPropsIOS {
 // its own props, sharing the compound types above.
 export interface SheetProps {
   children?: ViewProps['children'] | undefined;
+  ref?: Ref<SheetCommands> | undefined;
   isOpen: boolean;
   detents?: SheetDetents | undefined;
   prefersGrabberVisible?: boolean | undefined;

@@ -1,3 +1,4 @@
+import type { Ref } from 'react';
 import type { StyleProp, ViewProps } from 'react-native';
 import type { EmptyEventPayload, NativeEventHandler } from '../../shared/types';
 import type {
@@ -7,6 +8,8 @@ import type {
   SheetLargestUndimmedDetentIndex,
   SheetNativeContainerStyleProps,
   SheetPreferredCornerRadius,
+  SheetCommands,
+  SheetSelectDetentIndex,
 } from '../sheet';
 import type { FormSheetPropsIOS } from './FormSheet.ios.types';
 
@@ -61,6 +64,24 @@ export type FormSheetInitialDetentIndex = SheetInitialDetentIndex;
 export type FormSheetNativeContainerStyleProps = SheetNativeContainerStyleProps;
 
 /**
+ * Detent to move a presented form sheet to with
+ * {@link FormSheetCommands.selectDetent | selectDetent}.
+ *
+ * @remarks
+ * Accepts any {@link SheetSelectDetentIndex} value.
+ */
+export type FormSheetSelectDetentIndex = SheetSelectDetentIndex;
+
+/**
+ * Imperative commands of a {@link FormSheet}, exposed through its
+ * {@link FormSheetProps.ref | ref}.
+ *
+ * @remarks
+ * See {@link SheetCommands} for the available commands.
+ */
+export type FormSheetCommands = SheetCommands;
+
+/**
  * Cross-platform props for {@link FormSheet}.
  */
 export interface FormSheetPropsBase {
@@ -70,6 +91,14 @@ export interface FormSheetPropsBase {
    * @platform android, ios, tvos >= 26
    */
   children?: ViewProps['children'] | undefined;
+
+  /**
+   * Ref exposing the imperative commands of the sheet.
+   *
+   * @see {@link FormSheetCommands}
+   * @platform android, ios
+   */
+  ref?: Ref<FormSheetCommands> | undefined;
 
   /**
    * Determines whether the form sheet is currently visible.

@@ -13,6 +13,8 @@ export type {
   SheetBackgroundEffectColor,
   SheetNativeContainerStyleProps,
   SheetProps,
+  SheetCommands,
+  SheetSelectDetentIndex,
 } from './Sheet.types';
 
 export type { SheetBaseProps, SheetPresentationStyle } from './SheetBase';
